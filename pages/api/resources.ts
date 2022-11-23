@@ -5,6 +5,7 @@ import {
   GetResourcesRequest,
   GetResourcesResponse,
 } from "../../entities/resource";
+import { getResources } from "../../repository/inmemory";
 
 export default function handler(
   req: NextApiRequest,
@@ -12,11 +13,23 @@ export default function handler(
 ) {
   try {
     if (req.method === "GET") {
+      // Parse any parameters from the query
       const { limit } = req.query as unknown as GetResourcesRequest;
+
+      // Check if the request is correct
       if (!parseInt(limit))
         throw new Error(`Request parameter Limit is invalid: ${limit}`);
 
-      return res.status(200).json({ resources: [] });
+      // Query the repository and transform the response data into the right format
+      const response: GetResourcesResponse = {
+        resources: getResources(parseInt(limit)).map((r) => ({
+          id: r.id,
+          text: r.text,
+        })),
+      };
+
+      // Answer the request
+      return res.status(200).json(response);
     }
   } catch (error) {
     const e = error as Error;
@@ -25,6 +38,6 @@ export default function handler(
       .json({ message: JSON.stringify(e.message, null, 2) });
   }
 
-  // Fallthrough
+  // Fallthrough if request is not handled
   return res.status(404).json({ message: "Not found" });
 }
