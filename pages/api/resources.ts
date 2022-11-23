@@ -33,11 +33,9 @@ export default function handler(
     }
   } catch (error) {
     const e = error as Error;
-    return res
-      .status(500)
-      .json({ message: JSON.stringify(e.message, null, 2) });
+    return res.status(500).json({ info: JSON.stringify(e.message, null, 2) });
   }
 
   // Fallthrough if request is not handled
-  return res.status(404).json({ message: "Not found" });
+  return res.status(404).json({ info: "Not found" });
 }

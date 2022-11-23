@@ -1,3 +1,4 @@
 export interface RequestError {
-  message: string;
+  info: string;
+  status?: number;
 }
