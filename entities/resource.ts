@@ -5,6 +5,7 @@ export interface Resource {
 
 export interface GetResourcesRequest {
   limit: string;
+  repo: string;
 }
 
 export interface GetResourcesResponse {

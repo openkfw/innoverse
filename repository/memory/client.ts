@@ -4,7 +4,9 @@ interface ResourceInMemory {
   createdAt: Date;
 }
 
-const resources: ResourceInMemory[] = [
+export type InMemoryClient = ResourceInMemory[];
+
+const resources: InMemoryClient = [
   { id: "1", text: "Resource 1", createdAt: new Date() },
   { id: "2", text: "Resource 2", createdAt: new Date() },
   { id: "3", text: "Resource 3", createdAt: new Date() },
@@ -13,6 +15,8 @@ const resources: ResourceInMemory[] = [
   { id: "6", text: "Resource 6", createdAt: new Date() },
   { id: "7", text: "Resource 7", createdAt: new Date() },
 ];
+
+export default resources;
 
 export function getResources(limit: number) {
   if (limit > resources.length) return resources;
