@@ -33,6 +33,7 @@
     "typescript": "^4.9.3"
   },
   "prisma": {
-    "schema": "./repository/db/prisma/schema.prisma"
+    "schema": "./repository/db/prisma/schema.prisma",
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} ./repository/db/prisma/seed.ts"
   }
 }
