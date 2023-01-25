@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:prod": "node server.js",
+    "start:migrate:prod": "prisma migrate deploy && npm run start:prod",
     "lint": "next lint",
     "prisma": "prisma"
   },

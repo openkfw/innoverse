@@ -1,0 +1,23 @@
+version: "3.5"
+
+services:
+  db-service:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: inno
+      POSTGRES_PASSWORD: hub
+    ports:
+      - 5432:5432
+    restart: on-failure
+      
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: "postgresql://inno:hub@db-service:5432/inno"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db-service
+    restart: on-failure

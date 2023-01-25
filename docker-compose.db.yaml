@@ -1,0 +1,11 @@
+version: "3.5"
+
+services:
+  db-service:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: inno
+      POSTGRES_PASSWORD: hub
+    ports:
+      - 5432:5432
+    restart: on-failure
