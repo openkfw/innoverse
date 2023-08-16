@@ -1,3 +1,5 @@
+'use client'
+
 import useSWR from "swr";
 import { useState } from "react";
 
@@ -19,6 +21,7 @@ import Layout from "../components/layout/Layout";
 import { GetResourcesResponse } from "../entities/resource";
 import { RequestError } from "../entities/error";
 import fetcher from "../utils/fetcher";
+import React from "react";
 
 function IndexPage() {
   const [limit, setLimit] = useState<number>(3);
@@ -64,6 +67,7 @@ function IndexPage() {
               label="Limit"
               type="number"
               value={limit}
+              id="limit"
               onChange={(e) => setLimit(parseInt(e.target.value))}
             />
 
@@ -79,6 +83,7 @@ function IndexPage() {
                 value="memory"
                 control={<Radio />}
                 label="Memory"
+                htmlFor="limit"
               />
               <FormControlLabel value="db" control={<Radio />} label="DB" />
             </RadioGroup>

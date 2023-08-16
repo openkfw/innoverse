@@ -1,5 +1,5 @@
 {
-  "name": "web_db_template",
+  "name": "app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,28 +15,28 @@
     "prisma": "prisma"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/server": "^11.10.0",
-    "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^5.11.0",
-    "@mui/material": "^5.11.6",
-    "@prisma/client": "^4.9.0",
-    "next": "13.1.5",
+    "@emotion/react": "^11.11.1",
+    "@emotion/server": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.3",
+    "@mui/material": "^5.14.3",
+    "@prisma/client": "^5.1.0",
+    "next": "13.4.12",
     "next-fonts": "^1.5.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "swr": "^1.3.0"
+    "swr": "^2.2.0"
   },
   "devDependencies": {
-    "@types/node": "^18.11.18",
-    "@types/react": "18.0.27",
-    "@types/react-dom": "18.0.10",
-    "eslint": "8.32.0",
-    "eslint-config-next": "13.1.5",
-    "prettier": "^2.8.3",
-    "prisma": "^4.9.0",
+    "@types/node": "^20.4.5",
+    "@types/react": "18.2.18",
+    "@types/react-dom": "18.2.7",
+    "eslint": "8.46.0",
+    "eslint-config-next": "13.4.12",
+    "prettier": "^3.0.0",
+    "prisma": "^5.1.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.4"
+    "typescript": "^5.1.6"
   },
   "prisma": {
     "schema": "./repository/db/prisma/schema.prisma",
