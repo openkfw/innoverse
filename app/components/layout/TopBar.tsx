@@ -31,7 +31,14 @@ export default function TopBar() {
           >
             <Box sx={{ width: 200, height: 50, display: "block" }}>
               <Link href="/">
-                <Image src={logo} alt="***STRING_REMOVED***  Logo" layout="responsive" />
+                <Image
+                  src={logo}
+                  alt="***STRING_REMOVED***  Logo"
+                  sizes="100vw"
+                  style={{
+                    width: "100%",
+                    height: "auto"
+                  }} />
               </Link>
             </Box>
           </Box>
