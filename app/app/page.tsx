@@ -13,7 +13,7 @@ import Layout from "../components/layout/Layout";
 function IndexPage() {
   return (
     <Layout>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" >
         <Box
           sx={{
             py: 10,

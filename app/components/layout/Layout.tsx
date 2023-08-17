@@ -1,8 +1,7 @@
 import Container from "@mui/material/Container";
 
+import theme from "@/styles/theme";
 import TopBar from "./TopBar";
-import Footer from "./Footer";
-import theme from "../../styles/theme";
 
 interface LayoutProps {
   children: React.ReactNode;
