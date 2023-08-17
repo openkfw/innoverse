@@ -84,8 +84,7 @@ const SliderPill = (props:
     vr: {
       borderLeft: "6px solid white",
       height: "180px",
-      // left: "50%",
-      // marginLeft: "-3px",
+      marginLeft: "55%",
       top: "0"
     }
   }
@@ -147,7 +146,7 @@ const SliderPill = (props:
 }
 
 
-const FeaturedProjectSliderImage = () => {
+export const FeaturedProjectSlider = () => {
   //TODO: move css from FeatureProjectSlider.css here...
 
   return (
@@ -269,10 +268,4 @@ const fadeAnimationHandler: AnimationHandler = (props, state): AnimationHandlerR
     selectedStyle: { ...slideStyle, opacity: 1, position: 'relative' },
     prevStyle: { ...slideStyle },
   };
-};
-
-export const FeaturedProjectSlider = () => {
-  return (
-    <FeaturedProjectSliderImage />
-  );
 };
