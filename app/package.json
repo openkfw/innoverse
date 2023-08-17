@@ -12,6 +12,7 @@
     "lint:fix": "next lint --fix",
     "format": "prettier --write \"**/*.+(ts|tsx|yaml)\"",
     "format:check": "prettier --check \"**/*.+(ts|tsx)\"",
+    "format:fix": "prettier -w --check \"**/*.+(ts|tsx)\"",
     "prisma": "prisma"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
     "next-fonts": "^1.5.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-responsive-carousel": "^3.2.23",
     "swr": "^2.2.0"
   },
   "devDependencies": {
