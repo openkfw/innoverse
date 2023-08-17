@@ -22,9 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <SWRProvider>
-          <ThemeRegistry options={{ key: "mui" }}>
-            {children}
-            </ThemeRegistry>
+          <ThemeRegistry options={{ key: "mui" }}>{children}</ThemeRegistry>
         </SWRProvider>
       </body>
     </html>

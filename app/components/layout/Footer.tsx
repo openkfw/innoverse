@@ -32,7 +32,7 @@ export default function Footer() {
         </Grid>
         <Grid container item columnSpacing={2} xs={12} md={4}>
           <Grid item xs={12} md={4}>
-            <Typography variant="body2">Copyright ***STRING_REMOVED***  Innohub</Typography>
+            <Typography variant="caption">Copyright ***STRING_REMOVED***  Innohub</Typography>
           </Grid>
           <Grid item xs={12} md={4}>
             <Typography

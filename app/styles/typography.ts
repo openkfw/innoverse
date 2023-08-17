@@ -1,145 +1,143 @@
 import palette from "./palette";
 
 const baseStyles = {
+  typography: {
+    fontFeatureSettings: "'clig' off, 'liga' off",
+  },
   header: {
     h1: {
-      fontSize: "2.25rem",
-      lineHeight: "1.17",
-      "@media (max-width:600px)": {
-        fontSize: "1.75rem",
-        lineHeight: "1.21",
-      },
-      marginBottom: "24px",
+      fontFamily: "PFCentroSansProBold",
+      fontSize: "60px",
+      fontStyle: "normal",
+      fontWeight: "1000",
+      lineHeight: "120%",
+      letterSpacing: "-0.5px",
     },
     h2: {
-      fontSize: "1.75rem",
-      lineHeight: "1.21",
-      "@media (max-width:600px)": {
-        fontSize: "1.5rem",
-        lineHeight: "1.25",
-      },
-      marginBottom: "16px",
+      fontFamily: "PFCentroSansProBold",
+      fontSize: "60px",
+      fontStyle: "normal",
+      fontWeight: "1000",
+      lineHeight: "120%",
+      letterSpacing: "-0.5px",
     },
     h3: {
-      fontSize: "1.5rem",
-      lineHeight: "1.25",
-      "@media (max-width:600px)": {
-        fontSize: "1.25rem",
-        lineHeight: "1.4",
-      },
-      marginBottom: "16px",
+      fontFamily: "***FONT_REMOVED***",
+      fontSize: "60px",
+      fontStyle: "normal",
+      fontWeight: "1000",
+      lineHeight: "120%",
+      letterSpacing: "-0.5px",
     },
   },
   body: {
     body1: {
-      fontSize: "1rem",
-      lineHeight: "1.5",
+      fontFamily: "***FONT_REMOVED***",
+      fontSize: "16px",
+      fontStyle: "normal",
+      fontWeight: "400",
+      lineHeight: "150%",
+      letterSpacing: "0.15px",
     },
     body2: {
-      fontSize: "0.875rem",
-      lineHeight: "1.43",
+      fontFamily: "***FONT_REMOVED***",
+      fontSize: "16px",
+      fontStyle: "normal",
+      fontWeight: "400",
+      lineHeight: "150%",
+      letterSpacing: "0.15px",
     },
   },
 };
 
 const header = {
   h1: {
-    color: palette.custom?.textTertiary,
-    ...baseStyles.header.h1,
-  },
-  h1_primary_contrast: {
-    color: palette.primary?.contrastText,
+    color: palette.common?.white,
     ...baseStyles.header.h1,
   },
   h2: {
-    color: palette.custom?.textTertiary,
-    ...baseStyles.header.h2,
-  },
-  h2_primary_light: {
-    color: palette.primary?.light,
-    ...baseStyles.header.h2,
-  },
-  h2_secondary_main: {
-    color: palette.secondary?.main,
+    color: palette.common?.white,
     ...baseStyles.header.h2,
   },
   h3: {
-    color: palette.custom?.textTertiary,
-    ...baseStyles.header.h3,
-  },
-  h3_primary_contrast: {
-    color: palette.primary?.contrastText,
+    color: palette.common?.white,
     ...baseStyles.header.h3,
   },
   h4: {
-    color: palette.custom?.textTertiary,
-    fontSize: "1.25rem",
-    lineHeight: "1.4",
-    "@media (max-width:600px)": {
-      fontSize: "1.125rem",
-      lineHeight: "1.44",
-    },
+    color: palette.common?.white,
+    fontFamily: "PFCentroSansProBold",
+    fontSize: "34px",
+    fontStyle: "normal",
+    fontWeight: 1000,
+    lineHeight: "123.5%",
+    letterSpacing: "0.25px",
   },
   h5: {
-    color: palette.custom?.textTertiary,
+    color: palette.common?.white,
+    fontFamily: "PFCentroSansProBold",
     fontSize: "1.125rem",
     lineHeight: "1.44",
-    "@media (max-width:600px)": {
-      fontSize: "1rem",
-      lineHeight: "1.5",
-    },
   },
   h6: {
-    fontFamily: "***FONT_REMOVED***",
-    color: palette.text?.secondary,
-    fontSize: "0.85rem",
-    lineHeight: "1.5",
+    color: palette.common?.white,
+    fontFamily: "PFCentroSansProBold",
+    fontSize: "20px",
+    fontStyle: "normal",
+    fontWeight: "1000",
+    lineHeight: "160%",
+    letterSpacing: "0.15px",
   },
 };
 
 const body = {
-  body1_primary_contrast: {
-    color: palette.primary?.contrastText,
-    ...baseStyles.body.body1,
-  },
   body1: {
-    color: palette.text?.secondary,
+    color: palette.common?.white,
     ...baseStyles.body.body1,
-  },
-  body1_white: {
-    fontSize: "1rem",
-    color: "#fff",
-    lineHeight: "1.5",
-  },
-  body1_white_bold: {
-    fontFamily: "***FONT_REMOVED***",
-    fontSize: "1rem",
-    color: "#fff",
-    lineHeight: "1.5",
   },
   body2: {
-    color: palette.text?.secondary,
-    ...baseStyles.body.body2,
-  },
-  body2_primary_contrast: {
-    color: palette.primary?.contrastText,
+    color: palette.common?.white,
     ...baseStyles.body.body2,
   },
   link: {
-    color: palette.custom?.textTertiary,
-    fontSize: "0.875rem",
-    lineHeight: "1.43",
-  },
-  body2_bold: {
+    color: palette.common?.white,
     fontFamily: "***FONT_REMOVED***",
-    color: palette.text?.secondary,
-    fontSize: "0.875rem",
-    lineHeight: "1.43",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "150%",
+    letterSpacing: "0.15px",
   },
-  body3: {
-    color: palette.text?.secondary,
-    fontSize: "0.75rem",
-    lineHeight: "1.5",
+  caption: {
+    color: palette.text?.primary,
+    fontFamily: "***FONT_REMOVED***",
+    fontSize: "12px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "166%",
+    letterSpacing: "0.4px",
+  },
+  overline: {
+    color: palette.common?.white,
+    fontFamily: "***FONT_REMOVED***",
+    fontSize: "12px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "266%",
+    letterSpacing: "1px",
+    textTransform: "uppercase",
+  },
+  subtitle1: {
+    color: palette.common?.white,
+    fontFamily: "***FONT_REMOVED***",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "175%",
+    letterSpacing: "0.15px",
+  },
+  button: {
+    fontFamily: "***FONT_REMOVED***",
+    textTransform: "none",
   },
 };
 

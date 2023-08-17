@@ -1,109 +1,29 @@
-'use client'
-
-import useSWR from "swr";
-import { useState } from "react";
-
+"use client";
 import { useTheme } from "@mui/material/styles";
 
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import CircularProgress from "@mui/material/CircularProgress";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
+import Typography from "@mui/material/Typography";
 
-import Layout from "../components/layout/Layout";
-import { GetResourcesResponse } from "../entities/resource";
-import { RequestError } from "../entities/error";
-import fetcher from "../utils/fetcher";
+import { FeaturedProjectSlider } from "@/components/layout/FeaturedProjectSlider";
 import React from "react";
+import Container from "@mui/material/Container";
+import Layout from "../components/layout/Layout";
 
 function IndexPage() {
-  const [limit, setLimit] = useState<number>(3);
-  const [repo, setRepo] = useState<string>("memory");
-  const theme = useTheme();
-  const { data: resourceData, error: resourceError } = useSWR<
-    GetResourcesResponse,
-    RequestError
-  >(`/api/resources?limit=${limit}&repo=${repo}`, fetcher);
-
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRepo((event.target as HTMLInputElement).value);
-  };
-
   return (
     <Layout>
       <Container maxWidth="lg">
         <Box
           sx={{
-            my: 4,
+            py: 10,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <Typography variant="h3" component="h1" gutterBottom>
-            Yipii, du hast es geschaft das ***STRING_REMOVED***  Template zum laufen zu bringen.
-            Wie du dieses Template verwendest kannst du in der Readme.md
-            nachlesen.
-          </Typography>
-
-          <Box sx={{ width: "100%", my: 4 }}>
-            <Divider variant="middle" />
-          </Box>
-
-          <Typography variant="h3">
-            Hier ist ein Beispiel für einen API request
-          </Typography>
-          <Box sx={{ display: "flex", my: 2 }}>
-            <TextField
-              variant="outlined"
-              label="Limit"
-              type="number"
-              value={limit}
-              id="limit"
-              onChange={(e) => setLimit(parseInt(e.target.value))}
-            />
-
-            <RadioGroup
-              sx={{ px: 2 }}
-              row
-              aria-labelledby="repo-label"
-              name="repo-radio-buttons-group"
-              value={repo}
-              onChange={handleRadioChange}
-            >
-              <FormControlLabel
-                value="memory"
-                control={<Radio />}
-                label="Memory"
-                htmlFor="limit"
-              />
-              <FormControlLabel value="db" control={<Radio />} label="DB" />
-            </RadioGroup>
-          </Box>
-          <Typography variant="h5">Antwort:</Typography>
-
-          {!resourceData && !resourceError && <CircularProgress />}
-          {resourceData && !resourceError && (
-            <Typography variant="caption">
-              {JSON.stringify(resourceData, null, 2)}
-            </Typography>
-          )}
-          {resourceError && (
-            <Typography
-              sx={{ color: theme.palette.error.main }}
-              variant="caption"
-            >
-              {`Error: ${resourceError.info} | Status: ${resourceError.status}`}
-            </Typography>
-          )}
+          <FeaturedProjectSlider />
         </Box>
       </Container>
     </Layout>
