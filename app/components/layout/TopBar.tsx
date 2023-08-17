@@ -1,25 +1,42 @@
+import { Menu } from "@mui/base";
+import { Avatar, MenuProps, Typography } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
-
-import { useTheme } from "@mui/material/styles";
-
-import Link from "next/link";
+import MenuItem from "@mui/material/MenuItem";
+import Toolbar from "@mui/material/Toolbar";
+import { styled } from "@mui/material/styles";
 import Image from "next/image";
+import Link from "next/link";
 
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.svg";
+
+const StyledMenu = styled((props: MenuProps) => <Menu {...props} />)(
+  ({ theme }) => ({
+    "& .MuiMenu-listbox": {
+      display: "inline-flex",
+      "& .MuiMenuItem-root": {
+        borderRadius: "24px",
+        marginRight: "24px",
+      },
+      "& .MuiMenuItem-root:hover": {
+        backgroundColor: theme.palette.secondary.main,
+      },
+    },
+  })
+);
 
 export default function TopBar() {
-  const theme = useTheme();
-
   return (
     <AppBar
-      position="static"
+      position="sticky"
       elevation={0}
-      sx={{ backgroundColor: theme.palette.background.default }}
+      sx={{
+        backgroundColor: "rgba(255,255,255,0.1)",
+        backdropFilter: `blur(20px)`,
+      }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="lg">
         <Toolbar disableGutters>
           <Box
             sx={{
@@ -29,7 +46,7 @@ export default function TopBar() {
               width: "100%",
             }}
           >
-            <Box sx={{ width: 200, height: 50, display: "block" }}>
+            <Box sx={{ width: 200, display: "block" }}>
               <Link href="/">
                 <Image
                   src={logo}
@@ -37,9 +54,35 @@ export default function TopBar() {
                   sizes="100vw"
                   style={{
                     width: "100%",
-                    height: "auto"
-                  }} />
+                  }}
+                />
               </Link>
+            </Box>
+
+            <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ display: { xs: "none", md: "flex" } }}>
+              <StyledMenu open={true}>
+                <MenuItem>
+                  <Typography variant="body2">Projekte</Typography>
+                </MenuItem>
+                <MenuItem>
+                  <Typography variant="body2">Artikel</Typography>
+                </MenuItem>
+                <MenuItem>
+                  <Typography variant="body2">Backstage</Typography>
+                </MenuItem>
+              </StyledMenu>
+            </Box>
+            <Box>
+              <Menu>
+                <MenuItem>
+                  <Avatar
+                    alt="Avatar"
+                    src="https://source.boringavatars.com/beam/120/Stefan?colors=264653,f4a261,e76f51"
+                    variant="circular"
+                  />
+                </MenuItem>
+              </Menu>
             </Box>
           </Box>
         </Toolbar>

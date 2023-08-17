@@ -1,13 +1,5 @@
 import { PaletteOptions, SimplePaletteColorOptions } from "@mui/material";
 
-declare module "@mui/material/styles" {
-  interface PaletteOptions {
-    custom?: {
-      textTertiary: string;
-    };
-  }
-}
-
 interface DefaultPaletteOptions extends PaletteOptions {
   primary?: SimplePaletteColorOptions;
   secondary?: SimplePaletteColorOptions;
@@ -15,31 +7,31 @@ interface DefaultPaletteOptions extends PaletteOptions {
 
 const palette: DefaultPaletteOptions = {
   primary: {
-    main: "#12556F",
-    light: "#A1DCF8",
-    dark: "#13556F",
-    contrastText: "#ffffff",
+    main: "#0067A0",
+    dark: "#004267",
+    light: "#005A8C",
+    contrastText: "#FFFFFF",
   },
   secondary: {
-    main: "#879900",
-    light: "#A4B419",
+    main: "#A4B419",
+    light: "#879900",
     dark: "#5E7200",
-    contrastText: "#ffffff",
+    contrastText: "#0000008F",
   },
   text: {
-    primary: "#879900",
-    secondary: "#5A6166",
+    primary: "#000000DE",
+    secondary: "#FFFFFF",
     disabled: "#BDC0C2",
   },
-  custom: {
-    textTertiary: "#005A8C",
+  common: {
+    white: "#FFFFFF",
   },
   action: {
-    disabled: "#BDC0C2",
+    active: "#0000008F",
     disabledBackground: "#F5F5F5",
   },
   background: {
-    default: "#faf9f8",
+    default: "#0067A0",
     paper: "#FFFFFF",
   },
   error: {
