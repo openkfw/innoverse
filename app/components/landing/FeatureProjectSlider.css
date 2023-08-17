@@ -1,0 +1,11 @@
+.carousel{
+    height: 733px
+}
+.carousel .control-dots {
+    position: absolute;
+    bottom: 0;
+    margin: 10px 0;
+    text-align: inherit;
+    width: 100%;
+    z-index: 1;
+}
