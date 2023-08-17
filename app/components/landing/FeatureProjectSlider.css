@@ -1,5 +1,5 @@
 .carousel{
-    height: 733px
+    height: 800px
 }
 .carousel .control-dots {
     position: absolute;
@@ -9,3 +9,4 @@
     width: 100%;
     z-index: 1;
 }
+

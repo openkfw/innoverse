@@ -10,6 +10,7 @@ import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { AnimationHandler, AnimationHandlerResponse } from "react-responsive-carousel/lib/ts/components/Carousel/types";
 import featured_project from "../../assets/featured_project.png";
 import featured_project1 from "../../assets/featured_project1.png";
 import featured_project2 from "../../assets/featured_project2.png";
@@ -113,12 +114,12 @@ const SliderPill = (props:
       paddingLeft: "7px",
       paddingRight: "7px",
       paddingTop: "1px",
-      paddingBottom: "1px"
+      paddingBottom: "1px",
+      textAlign: "center",
+      verticalAlign: "middle"
     },
     itemNumberLable: {
       color: 'white',
-      fontSize: 12,
-      fontFamily: '***FONT_REMOVED***',
       fontWeight: '400',
       textTransform: 'uppercase',
       letterSpacing: 1,
@@ -127,22 +128,21 @@ const SliderPill = (props:
     itemNameLable: {
       color: 'white',
       fontSize: 20,
-      fontFamily: 'PF Centro Sans Pro',
       fontWeight: '1000',
       letterSpacing: 0.15,
       wordWrap: 'break-word'
+    },
+    itemNameLableActive: {
+      marginTop: "12.5%",
     },
     container: {
       marginLeft: '25px'
     },
     vr: {
       borderLeft: "1px solid white",
-      height: "180px",
-      marginLeft: "56.5%",
-      top: "0"
-    },
-    fadeIn: {
-
+      height: "236px",
+      marginLeft: "58.5%",
+      //top: "0"
     }
   }
 
@@ -172,7 +172,7 @@ const SliderPill = (props:
                 </Box>
               </Stack>
               <Box sx={styles.elementWrap}>
-                <Typography sx={styles.itemNameLable}>
+                <Typography sx={{ ...styles.itemNameLable, ...styles.itemNameLableActive }} >
                   {title}
                 </Typography>
               </Box>
@@ -221,6 +221,7 @@ export const FeaturedProjectSlider = () => {
       transitionTime={700}
       swipeable
       showArrows={false}
+    //animationHandler={fadeAnimationHandler}
     >
       {
         dummyData.items.map((el: any, id) =>
@@ -298,3 +299,42 @@ const renderIndicator = (
     </Box>
   </>
 }
+
+const fadeAnimationHandler: AnimationHandler = (props, state): AnimationHandlerResponse => {
+  const transitionTime = props.transitionTime + 'ms';
+  const transitionTimingFunction = 'liniar';//'ease-in-out';
+
+  let slideStyle: React.CSSProperties = {
+    position: 'absolute',
+    display: 'block',
+    //zIndex: -2,
+    minHeight: '100%',
+    opacity: 0,
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: 0,
+    transitionTimingFunction: transitionTimingFunction,
+    msTransitionTimingFunction: transitionTimingFunction,
+    MozTransitionTimingFunction: transitionTimingFunction,
+    WebkitTransitionTimingFunction: transitionTimingFunction,
+    OTransitionTimingFunction: transitionTimingFunction,
+  };
+
+  if (!state.swiping) {
+    slideStyle = {
+      ...slideStyle,
+      WebkitTransitionDuration: transitionTime,
+      MozTransitionDuration: transitionTime,
+      OTransitionDuration: transitionTime,
+      transitionDuration: transitionTime,
+      msTransitionDuration: transitionTime,
+    };
+  }
+
+  return {
+    slideStyle,
+    selectedStyle: { ...slideStyle, opacity: 1, position: 'relative' },
+    prevStyle: { ...slideStyle },
+  };
+};
