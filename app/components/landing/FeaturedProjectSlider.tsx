@@ -23,7 +23,7 @@ const dummyData = {
     {
       imageProps: {
         image: featured_project,
-        title: "Project 1",
+        title: "AI Driven",
         projectFrom: "Jan",
         projectTo: "Feb"
       },
@@ -36,7 +36,7 @@ const dummyData = {
     {
       imageProps: {
         image: featured_project1,
-        title: "Project 2",
+        title: "Deep Learning",
         projectFrom: "Mar",
         projectTo: "Jun"
       },
@@ -49,7 +49,7 @@ const dummyData = {
     {
       imageProps: {
         image: featured_project2,
-        title: "Project 3",
+        title: "Social",
         projectFrom: "Apr",
         projectTo: "Aug"
       },
@@ -62,7 +62,7 @@ const dummyData = {
     {
       imageProps: {
         image: featured_project,
-        title: "Project 1",
+        title: "Finance",
         projectFrom: "Jan",
         projectTo: "Feb"
       },
@@ -75,7 +75,7 @@ const dummyData = {
     {
       imageProps: {
         image: featured_project1,
-        title: "Project 2",
+        title: "Tech",
         projectFrom: "Mar",
         projectTo: "Jun"
       },
@@ -85,19 +85,7 @@ const dummyData = {
         description: "Suspendisse condimentum enim nec aliquet suscipit. Pellentesque elementum diam at urna rhoncus euismod. Ut tellus ligula, ornare eu finibus at, porta et ex. Quisque vitae rhoncus eros. Suspendisse vel nunc nulla. Ut vel faucibus leo. Ut nec velit vel eros tincidunt faucibus id ac risus. Etiam ornare lectus a rutrum vestibulum. Duis dictum metus leo, quis lacinia quam dictum faucibus. Phasellus sit amet elementum libero, non ornare enim."
       }
     },
-    {
-      imageProps: {
-        image: featured_project2,
-        title: "Project 3",
-        projectFrom: "Apr",
-        projectTo: "Aug"
-      },
-      textAera: {
-        title: "The most talked-about, futuristic product",
-        tags: ['Strategy2', 'AI in Finance2', 'Future2'],
-        description: "Nullam id turpis non sem sodales gravida non at urna. Etiam in urna at leo imperdiet elementum. Cras imperdiet pulvinar dui, a consequat odio ornare eget. Maecenas vehicula lacus sed sollicitudin sollicitudin. Aliquam convallis, augue et iaculis lacinia, nibh risus porttitor justo, id cursus nunc nulla ut metus. Curabitur pulvinar mi a tortor suscipit, non mattis mauris gravida. Vestibulum nec ornare quam. Phasellus vitae tincidunt tortor."
-      }
-    },
+
 
   ]
 }
@@ -116,33 +104,32 @@ const SliderPill = (props:
       paddingTop: "1px",
       paddingBottom: "1px",
       textAlign: "center",
-      verticalAlign: "middle"
+      verticalAlign: "middle",
+
     },
     itemNumberLable: {
       color: 'white',
       fontWeight: '400',
       textTransform: 'uppercase',
       letterSpacing: 1,
-      wordWrap: 'break-word'
+      wordWrap: 'break-word',
     },
     itemNameLable: {
       color: 'white',
-      fontSize: 20,
       fontWeight: '1000',
       letterSpacing: 0.15,
       wordWrap: 'break-word'
     },
     itemNameLableActive: {
-      marginTop: "12.5%",
+      marginTop: "11.75%",
     },
     container: {
       marginLeft: '25px'
     },
     vr: {
       borderLeft: "1px solid white",
-      height: "236px",
-      marginLeft: "58.5%",
-      //top: "0"
+      height: "178px",
+      marginLeft: "56.7%",
     }
   }
 
@@ -161,7 +148,7 @@ const SliderPill = (props:
             >
               <Stack>
                 <Box sx={styles.elementWrap}>
-                  <Typography sx={styles.itemNumberLable}>
+                  <Typography variant="overline" sx={styles.itemNumberLable}>
                     Project #{itemNumber}
                   </Typography>
                 </Box>
@@ -172,7 +159,7 @@ const SliderPill = (props:
                 </Box>
               </Stack>
               <Box sx={styles.elementWrap}>
-                <Typography sx={{ ...styles.itemNameLable, ...styles.itemNameLableActive }} >
+                <Typography variant="h4" sx={{ ...styles.itemNameLable, ...styles.itemNameLableActive }} >
                   {title}
                 </Typography>
               </Box>
@@ -186,12 +173,12 @@ const SliderPill = (props:
             sx={styles.container}
           >
             <Box sx={styles.elementWrap}>
-              <Typography sx={styles.itemNumberLable}>
+              <Typography variant="overline" sx={{ ...styles.itemNumberLable, marginTop: "80px" }}>
                 #{itemNumber}
               </Typography>
             </Box>
             <Box sx={styles.elementWrap}>
-              <Typography sx={styles.itemNameLable}>
+              <Typography variant="overline" sx={styles.itemNameLable}>
                 {title}
               </Typography>
             </Box>
@@ -206,22 +193,21 @@ const SliderPill = (props:
 
 export const FeaturedProjectSlider = () => {
   //TODO: move css from FeatureProjectSlider.css here...
-  const [selectedItem, setSelectedItem] = useState<number>(0)
-
+  const [selectedItem, setSelectedItem] = useState<number>(dummyData.items.length - 1)
   return (
     <Carousel
-      className="carousel"
+      className={"carousel"}
       showThumbs={false}
       showStatus={false}
       renderIndicator={(clickHandler: (e: React.MouseEvent | React.KeyboardEvent) => void,
         isSelected: boolean,
         index: number,
-        label: string) => renderIndicator(clickHandler, isSelected, index, label, setSelectedItem)}
+        label: string) => renderIndicator(clickHandler, isSelected, index, label, setSelectedItem, selectedItem)}
       selectedItem={selectedItem}
       transitionTime={700}
       swipeable
       showArrows={false}
-    //animationHandler={fadeAnimationHandler}
+      animationHandler={fadeAnimationHandler}
     >
       {
         dummyData.items.map((el: any, id) =>
@@ -282,10 +268,31 @@ const renderIndicator = (
   isSelected: boolean,
   index: number,
   label: string,
-  setSelectedItem: Dispatch<SetStateAction<number>>
+  setSelectedItem: Dispatch<SetStateAction<number>>,
+  selectedItem: number
 ) => {
+  const movePills = (newIndex: number) => {
+    let elems = document.querySelectorAll('.control-dots')
+    let index = 0, length = elems.length;
+    let moveByPx = 150
+
+    for (; index < length; index++) {
+      let old = elems[index].style.translate.split("px")[0]
+      if (old === 0)
+        return
+
+      if (selectedItem > newIndex) {
+        elems[index].style.translate = `${Number(old) + moveByPx}px`
+      }
+      if (selectedItem < newIndex) {
+        elems[index].style.translate = `${Number(old) - moveByPx}px`
+      }
+    }
+  }
+
   const handleClick = (index: number) => {
     setSelectedItem(index)
+    movePills(index)
   }
   return <>
     <Box sx={{ display: "inline-flex", cursor: "pointer" }} onClick={() => handleClick(index)} >
@@ -307,7 +314,6 @@ const fadeAnimationHandler: AnimationHandler = (props, state): AnimationHandlerR
   let slideStyle: React.CSSProperties = {
     position: 'absolute',
     display: 'block',
-    //zIndex: -2,
     minHeight: '100%',
     opacity: 0,
     top: 0,
