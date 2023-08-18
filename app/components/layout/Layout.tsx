@@ -9,16 +9,13 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div>
+    <div
+      style={{
+        background: `linear-gradient(84deg, ${theme.palette.primary?.dark} 0%, ${theme.palette.primary?.light} 100%)`,
+      }}>
       <TopBar />
-
       {/* About page is overriding this in the PageGridSection.tsx to have full width colored background */}
-      <Container
-        maxWidth="xl"
-        style={{
-          background: `linear-gradient(84deg, ${theme.palette.primary?.dark} 0%, ${theme.palette.primary?.light} 100%)`,
-        }}
-      >
+      <Container maxWidth="xl">
         {children}
       </Container>
       {/* <Footer /> */}
