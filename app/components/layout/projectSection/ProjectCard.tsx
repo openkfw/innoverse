@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 
 import CardMedia from "@mui/material/CardMedia";
 import Box from "@mui/material/Box";
+import ProgressStepper from "./ProgressStepper";
 
 interface ProjectCardProps {
   img: StaticImageData;
@@ -27,7 +28,7 @@ const bull = (
 export default function ProjectCard(props: ProjectCardProps) {
   const { img, contributors } = props;
   return (
-    <Card sx={{ height: 560, borderRadius: "24px" }}>
+    <Card sx={{ height: 580, borderRadius: "24px" }}>
       <CardMedia sx={{ height: 350 }}>
         <div
           style={{
@@ -39,18 +40,14 @@ export default function ProjectCard(props: ProjectCardProps) {
           <Image
             src={img}
             layout="fill"
-            style={{ objectFit: "cover", padding: 16 }}
+            style={{ objectFit: "cover", padding: 16, borderRadius: "24px" }}
             alt="project"
           />
         </div>
       </CardMedia>
 
-      <CardContent sx={{ p: 3 }}>
-        <Typography
-          variant="caption"
-          component="div"
-          sx={{ textAlign: "left" }}
-        >
+      <CardContent sx={{ p: 3, textAlign: "left" }}>
+        <Typography variant="caption" component="div">
           {contributors.map((contributor, index) =>
             index + 1 < contributors.length ? (
               <>
@@ -62,16 +59,15 @@ export default function ProjectCard(props: ProjectCardProps) {
             )
           )}
         </Typography>
-        <Typography variant="h5" sx={{ textAlign: "left" }}>
-          The most talked-about
-        </Typography>
+        <Typography variant="h5">The most talked-about</Typography>
         <Typography
           variant="subtitle1"
-          sx={{ color: "secondary.contrastText", textAlign: "left" }}
+          sx={{ color: "secondary.contrastText" }}
         >
           As in previous years, the company unveiled a feature before it was
           ready. The obvious question soon followed.
         </Typography>
+        {/* <ProgressStepper /> */}
       </CardContent>
     </Card>
   );
