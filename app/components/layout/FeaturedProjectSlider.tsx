@@ -49,7 +49,7 @@ const FeaturedProjectContent = () => {
 
 export const FeaturedProjectSlider = () => {
   return (
-    <Grid container spacing={4}>
+    <Grid container spacing={4} sx={{ mb: 5 }}>
       <Grid item xs={6} md={8}>
         <FeaturedProjectSliderImage />
       </Grid>

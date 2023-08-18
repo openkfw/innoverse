@@ -9,6 +9,7 @@ import { FeaturedProjectSlider } from "@/components/layout/FeaturedProjectSlider
 import React from "react";
 import Container from "@mui/material/Container";
 import Layout from "../components/layout/Layout";
+import { ProjectSection } from "@/components/layout/projectSection/ProjectSection";
 
 function IndexPage() {
   return (
@@ -24,6 +25,7 @@ function IndexPage() {
           }}
         >
           <FeaturedProjectSlider />
+          <ProjectSection />
         </Box>
       </Container>
     </Layout>

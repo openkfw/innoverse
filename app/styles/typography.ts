@@ -73,7 +73,7 @@ const header = {
     letterSpacing: "0.25px",
   },
   h5: {
-    color: palette.common?.white,
+    color: palette.secondary?.main,
     fontFamily: "PFCentroSansProBold",
     fontSize: "1.125rem",
     lineHeight: "1.44",
