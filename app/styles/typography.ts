@@ -124,7 +124,7 @@ const body = {
     fontWeight: "400",
     lineHeight: "266%",
     letterSpacing: "1px",
-    textTransform: "uppercase",
+    textTransform: "uppercase" as const,
   },
   subtitle1: {
     color: palette.common?.white,
@@ -137,7 +137,7 @@ const body = {
   },
   button: {
     fontFamily: "***FONT_REMOVED***",
-    textTransform: "none",
+    textTransform: "none" as const,
   },
 };
 

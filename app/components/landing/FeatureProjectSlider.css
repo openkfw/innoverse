@@ -1,13 +1,15 @@
-.carousel{
-    height: 750px
+.carousel {
+  height: 620px;
 }
 .carousel .control-dots {
-    position: absolute;
-    bottom: 0;
-    margin: 10px 0;
-    text-align: inherit;
-    width: 100%;
-    z-index: 1;
-    left: -300px
+  position: absolute;
+  bottom: 0;
+  margin: 10px 0;
+  text-align: inherit;
+  width: 100%;
+  z-index: 1;
+  left: -150px;
+  display: flex;
+  align-items: center;
+  transition: translate 0.5s;
 }
-

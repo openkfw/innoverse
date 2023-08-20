@@ -5,10 +5,6 @@ import Box from "@mui/material/Box";
 import { FeaturedProjectSlider } from "@/components/landing/FeaturedProjectSlider";
 import Layout from "../components/layout/Layout";
 
-
-
-
-
 function IndexPage() {
   return (
     <Layout>
