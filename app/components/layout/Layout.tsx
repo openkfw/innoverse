@@ -1,8 +1,7 @@
-import Container from "@mui/material/Container";
 
+import theme from "@/styles/theme";
+import { Box } from "@mui/material";
 import TopBar from "./TopBar";
-import Footer from "./Footer";
-import theme from "../../styles/theme";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -10,18 +9,17 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div>
+    <div
+      style={{
+        background: `linear-gradient(84deg, ${theme.palette.primary?.dark} 0%, ${theme.palette.primary?.light} 100%)`,
+      }}>
       <TopBar />
-
       {/* About page is overriding this in the PageGridSection.tsx to have full width colored background */}
-      <Container
-        maxWidth="xl"
-        style={{
-          background: `linear-gradient(84deg, ${theme.palette.primary?.dark} 0%, ${theme.palette.primary?.light} 100%)`,
-        }}
-      >
+      {/* <Container maxWidth="xl"> */}
+      <Box>
         {children}
-      </Container>
+      </Box>
+      {/* </Container> */}
       {/* <Footer /> */}
     </div>
   );

@@ -14,7 +14,7 @@ import { getResources as getResourcesFromDB } from "../../repository/db/resource
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RequestError | GetResourcesResponse>
+  res: NextApiResponse<RequestError | GetResourcesResponse>,
 ) {
   try {
     if (req.method === "GET") {
@@ -27,7 +27,7 @@ export default async function handler(
 
       if (repo !== "db" && repo !== "memory")
         throw new Error(
-          `Request parameter Repo ("db" or "memory") is invalid: ${repo}`
+          `Request parameter Repo ("db" or "memory") is invalid: ${repo}`,
         );
 
       // Query the repository and transform the response data into the right format
@@ -37,7 +37,7 @@ export default async function handler(
             (r) => ({
               id: r.id,
               text: r.text,
-            })
+            }),
           ),
         };
         return res.status(200).json(response);

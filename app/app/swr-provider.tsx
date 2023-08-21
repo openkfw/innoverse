@@ -1,6 +1,6 @@
-'use client';
-import React from 'react';
-import { SWRConfig } from 'swr'
+"use client";
+import React from "react";
+import { SWRConfig } from "swr";
 export const SWRProvider = ({ children }: any) => {
-  return <SWRConfig>{children}</SWRConfig>
+  return <SWRConfig>{children}</SWRConfig>;
 };
