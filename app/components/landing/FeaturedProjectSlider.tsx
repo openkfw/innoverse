@@ -126,7 +126,7 @@ const SliderPill = (props: {
     },
     vr: {
       borderLeft: "1px solid white",
-      height: "90px",
+      height: "70px",
       marginLeft: "55%",
     },
   };
