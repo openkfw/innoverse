@@ -6,8 +6,7 @@ import IconButton from "@mui/material/IconButton";
 
 interface ArrowControllersProps {
   currentSlide: number;
-  // TODO: fix any
-  setCurrentSlide: any;
+  setCurrentSlide: (setCurrentSlide: (prevState: number) => number) => void;
   slidesLength: number;
 }
 
@@ -35,13 +34,13 @@ export default function ArrowControllers(props: ArrowControllersProps) {
   };
 
   return (
-    <Grid item container xs={2}>
-      <Grid item xs={5}>
+    <Grid container p={0} spacing={0}>
+      <Grid item>
         <IconButton disabled={currentSlide == 0} onClick={prev} sx={iconStyles}>
           <ArrowLeftIcon style={{ fontSize: 40 }} />
         </IconButton>
       </Grid>
-      <Grid item xs={5}>
+      <Grid item>
         <IconButton
           disabled={currentSlide == slidesLength}
           onClick={next}

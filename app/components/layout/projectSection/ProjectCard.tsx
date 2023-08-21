@@ -7,13 +7,10 @@ import Typography from "@mui/material/Typography";
 
 import CardMedia from "@mui/material/CardMedia";
 import Box from "@mui/material/Box";
-import ProgressStepper from "./ProgressStepper";
 
 interface ProjectCardProps {
   img: StaticImageData;
   contributors: string[];
-  // TODO: fix any
-  progress: any;
 }
 
 const bull = (
@@ -39,23 +36,24 @@ export default function ProjectCard(props: ProjectCardProps) {
         >
           <Image
             src={img}
-            layout="fill"
-            style={{ objectFit: "cover", padding: 16, borderRadius: "24px" }}
+            width={200}
+            height={360}
+            style={{ objectFit: "cover", padding: 18, borderRadius: "24px" }}
             alt="project"
           />
         </div>
       </CardMedia>
 
       <CardContent sx={{ p: 3, textAlign: "left" }}>
-        <Typography variant="caption" component="div">
+        <Typography variant="caption" component="div" display="flex">
           {contributors.map((contributor, index) =>
-            index + 1 < contributors.length ? (
-              <>
+            index < contributors.length - 1 ? (
+              <div key={index}>
                 {contributor}
                 {bull}
-              </>
+              </div>
             ) : (
-              contributor
+              <div key={index}>{contributor}</div>
             )
           )}
         </Typography>
