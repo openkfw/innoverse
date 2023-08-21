@@ -2,10 +2,10 @@
 
 import Box from "@mui/material/Box";
 
-import { FeaturedProjectSlider } from "@/components/landing/FeaturedProjectSlider";
 import Layout from "../components/layout/Layout";
-import { ProjectSection } from "@/components/layout/projectSection/ProjectSection";
-import Container from "@mui/material/Container";
+import { NewsSection } from "@/components/landing/newsSection/NewsSection";
+import { ProjectSection } from "@/components/landing/projectSection/ProjectSection";
+import { FeaturedProjectSlider } from "@/components/landing/FeaturedProjectSlider";
 
 function IndexPage() {
   return (
@@ -21,9 +21,15 @@ function IndexPage() {
         }}
       >
         <FeaturedProjectSlider />
-        <Container maxWidth="lg">
-          <ProjectSection />
-        </Container>
+      </Box>
+      <Box
+        sx={{
+          marginLeft: "8%",
+          overflow: "hidden",
+        }}
+      >
+        <ProjectSection />
+        <NewsSection />
       </Box>
     </Layout>
   );

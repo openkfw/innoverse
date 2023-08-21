@@ -1,6 +1,7 @@
-.carousel {
+.main-carousel .carousel {
   height: 600px;
 }
+
 .carousel .control-dots {
   position: absolute;
   bottom: 0;

@@ -9,7 +9,7 @@ import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import Link from "next/link";
 
-import logo from "../../assets/logo.svg";
+import logo from "/public/logo.svg";
 
 const StyledMenu = styled((props: MenuProps) => <Menu {...props} />)(
   ({ theme }) => ({
