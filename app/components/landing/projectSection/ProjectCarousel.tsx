@@ -5,9 +5,9 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import ProjectCard from "./ProjectCard";
 import Grid from "@mui/material/Grid";
 
-import project1 from "../../../assets/images/project1.png";
-import project2 from "../../../assets/images/project2.png";
-import project3 from "../../../assets/images/project3.png";
+import project1 from "/public/images/project1.png";
+import project2 from "/public/images/project2.png";
+import project3 from "/public/images/project3.png";
 
 import ArrowControllers from "./ArrowControllers";
 
@@ -73,6 +73,7 @@ export default function ProjectCarousel() {
         showArrows={false}
         transitionTime={600}
         centerSlidePercentage={40}
+        onChange={(slide) => setCurrentSlide(slide)}
       >
         {dummyProjects.map((item) => (
           <Grid item xs={11} key={item.id}>

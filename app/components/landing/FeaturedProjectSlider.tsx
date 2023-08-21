@@ -7,9 +7,9 @@ import {
   AnimationHandler,
   AnimationHandlerResponse,
 } from "react-responsive-carousel/lib/ts/components/Carousel/types";
-import featured_project from "../../assets/featured_project.png";
-import featured_project1 from "../../assets/featured_project1.png";
-import featured_project2 from "../../assets/featured_project2.png";
+import featured_project from "/public/featured_project.png";
+import featured_project1 from "/public/featured_project1.png";
+import featured_project2 from "/public/featured_project2.png";
 
 import CustomChip from "../common/CustomChip";
 import "./FeatureProjectSlider.css";
@@ -179,7 +179,7 @@ export const FeaturedProjectSlider = () => {
   );
   return (
     <Carousel
-      className={"carousel"}
+      className={"main-carousel"}
       showThumbs={false}
       showStatus={false}
       renderIndicator={(
@@ -271,14 +271,14 @@ const renderIndicator = (
     let moveByPx = 150;
 
     for (; index < length; index++) {
-      let old = elems[index].style.translate.split("px")[0];
+      let old = (elems[index] as any).style.translate.split("px")[0];
       if (old === 0) return;
 
       if (selectedItem > newIndex) {
-        elems[index].style.translate = `${Number(old) + moveByPx}px`;
+        (elems[index] as any).style.translate = `${Number(old) + moveByPx}px`;
       }
       if (selectedItem < newIndex) {
-        elems[index].style.translate = `${Number(old) - moveByPx}px`;
+        (elems[index] as any).style.translate = `${Number(old) - moveByPx}px`;
       }
     }
   };

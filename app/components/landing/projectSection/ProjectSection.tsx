@@ -6,7 +6,7 @@ import ProjectCarousel from "./ProjectCarousel";
 
 export const ProjectSection = () => {
   return (
-    <Grid container spacing={4} sx={{ m: 5 }}>
+    <Grid container spacing={5} sx={{ m: 5 }}>
       <Grid item container xs={12}>
         <Grid item xs={9}>
           <Typography variant="overline">current project</Typography>

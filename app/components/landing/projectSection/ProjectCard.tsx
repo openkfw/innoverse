@@ -25,7 +25,7 @@ const bull = (
 export default function ProjectCard(props: ProjectCardProps) {
   const { img, contributors } = props;
   return (
-    <Card sx={{ height: 580, borderRadius: "24px" }}>
+    <Card sx={{ height: 550, borderRadius: "24px" }}>
       <CardMedia sx={{ height: 350 }}>
         <div
           style={{
