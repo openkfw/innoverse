@@ -12,6 +12,7 @@
     "lint:fix": "next lint --fix",
     "format": "prettier --write \"**/*.+(ts|tsx|yaml)\"",
     "format:check": "prettier --check \"**/*.+(ts|tsx)\"",
+    "format:fix": "prettier -w --check \"**/*.+(ts|tsx)\"",
     "prisma": "prisma"
   },
   "dependencies": {
