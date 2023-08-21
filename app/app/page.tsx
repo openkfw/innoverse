@@ -4,6 +4,8 @@ import Box from "@mui/material/Box";
 
 import { FeaturedProjectSlider } from "@/components/landing/FeaturedProjectSlider";
 import Layout from "../components/layout/Layout";
+import { ProjectSection } from "@/components/layout/projectSection/ProjectSection";
+import Container from "@mui/material/Container";
 
 function IndexPage() {
   return (
@@ -19,6 +21,9 @@ function IndexPage() {
         }}
       >
         <FeaturedProjectSlider />
+        <Container maxWidth="lg">
+          <ProjectSection />
+        </Container>
       </Box>
     </Layout>
   );

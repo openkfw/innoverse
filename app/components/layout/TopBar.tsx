@@ -54,6 +54,7 @@ export default function TopBar() {
                   sizes="100vw"
                   style={{
                     width: "100%",
+                    height: "100%",
                   }}
                 />
               </Link>
@@ -64,15 +65,15 @@ export default function TopBar() {
               <StyledMenu open={true}>
                 <MenuItem>
                   <Typography variant="body2">Projekte</Typography>
-                </MenuItem >
+                </MenuItem>
                 <MenuItem>
                   <Typography variant="body2">Artikel</Typography>
                 </MenuItem>
                 <MenuItem>
                   <Typography variant="body2">Backstage</Typography>
                 </MenuItem>
-              </StyledMenu >
-            </Box >
+              </StyledMenu>
+            </Box>
             <Box>
               <Menu>
                 <MenuItem>
@@ -84,9 +85,9 @@ export default function TopBar() {
                 </MenuItem>
               </Menu>
             </Box>
-          </Box >
-        </Toolbar >
-      </Container >
-    </AppBar >
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 }
