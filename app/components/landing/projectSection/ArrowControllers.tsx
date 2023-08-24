@@ -1,7 +1,7 @@
-import Grid from "@mui/material/Grid";
-import ArrowRightIcon from "@mui/icons-material/ArrowForward";
-import ArrowLeftIcon from "@mui/icons-material/ArrowBack";
-import IconButton from "@mui/material/IconButton";
+import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
+import ArrowRightIcon from '@mui/icons-material/ArrowForward';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
 
 interface ArrowControllersProps {
   currentSlide: number;
@@ -13,9 +13,9 @@ export default function ArrowControllers(props: ArrowControllersProps) {
   const { currentSlide, setCurrentSlide, slidesLength } = props;
 
   const iconStyles = {
-    color: "common.white",
-    "&:disabled": {
-      color: "common.white",
+    color: 'common.white',
+    '&:disabled': {
+      color: 'common.white',
       opacity: 0.5,
     },
   };
@@ -40,11 +40,7 @@ export default function ArrowControllers(props: ArrowControllersProps) {
         </IconButton>
       </Grid>
       <Grid item>
-        <IconButton
-          disabled={currentSlide == slidesLength}
-          onClick={next}
-          sx={iconStyles}
-        >
+        <IconButton disabled={currentSlide == slidesLength} onClick={next} sx={iconStyles}>
           <ArrowRightIcon style={{ fontSize: 40 }} />
         </IconButton>
       </Grid>

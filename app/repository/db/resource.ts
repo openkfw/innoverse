@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 export async function getResources(client: PrismaClient, limit: number) {
   return client.resource.findMany({ take: limit });

@@ -1,74 +1,76 @@
-import { useState } from "react";
-import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { useState } from 'react';
+import { Carousel } from 'react-responsive-carousel';
 
-import NewsCard from "./NewsCard";
-import Grid from "@mui/material/Grid";
+import Grid from '@mui/material/Grid';
 
-import avatarImg from "/public/images/avatar.png";
+import ArrowControllers from '../../common/SliderArrowControllers';
 
-import ArrowControllers from "../../common/SliderArrowControllers";
+import NewsCard from './NewsCard';
+
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+
+import avatarImg from '/public/images/avatar.png';
 
 const dummyNews = [
   {
     id: 1,
-    title: "Just the start",
+    title: 'Just the start',
     subtitle:
-      "As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.",
-    theme: "AI in Finance",
-    publisher: "Muster Macintosh",
-    date: "12 Sep 2023",
+      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
+    theme: 'AI in Finance',
+    publisher: 'Muster Macintosh',
+    date: '12 Sep 2023',
     avatar: avatarImg,
   },
   {
     id: 2,
-    title: "Something else",
+    title: 'Something else',
     subtitle:
-      "As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.",
-    theme: "Thema xzy",
-    publisher: "Muster Macintosh",
-    date: "12 Sep 2023",
+      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
+    theme: 'Thema xzy',
+    publisher: 'Muster Macintosh',
+    date: '12 Sep 2023',
     avatar: avatarImg,
   },
   {
     id: 3,
-    title: "Just the start",
+    title: 'Just the start',
     subtitle:
-      "As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.",
-    theme: "AI in Finance",
-    publisher: "Muster Macintosh",
+      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
+    theme: 'AI in Finance',
+    publisher: 'Muster Macintosh',
 
-    date: "12 Sep 2023",
+    date: '12 Sep 2023',
     avatar: avatarImg,
   },
   {
     id: 4,
-    title: "Something else",
+    title: 'Something else',
     subtitle:
-      "As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.",
-    theme: "Thema xzy",
-    publisher: "Muster Macintosh",
-    date: "12 Sep 2023",
+      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
+    theme: 'Thema xzy',
+    publisher: 'Muster Macintosh',
+    date: '12 Sep 2023',
     avatar: avatarImg,
   },
   {
     id: 5,
-    title: "Just the start",
+    title: 'Just the start',
     subtitle:
-      "As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.",
-    theme: "AI in Finance",
-    publisher: "Muster Macintosh",
-    date: "12 Sep 2023",
+      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
+    theme: 'AI in Finance',
+    publisher: 'Muster Macintosh',
+    date: '12 Sep 2023',
     avatar: avatarImg,
   },
   {
     id: 6,
-    title: "Something else",
+    title: 'Something else',
     subtitle:
-      "As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.",
-    theme: "Thema xzy",
-    publisher: "Muster Macintosh",
-    date: "12 Sep 2023",
+      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
+    theme: 'Thema xzy',
+    publisher: 'Muster Macintosh',
+    date: '12 Sep 2023',
     avatar: avatarImg,
   },
 ];
@@ -79,7 +81,7 @@ export default function NewsCarousel() {
   return (
     <Grid container item xs={12} spacing={2}>
       <Carousel
-        className={"carousel"}
+        className={'carousel'}
         swipeable
         emulateTouch
         useKeyboardArrows

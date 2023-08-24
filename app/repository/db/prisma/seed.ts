@@ -1,5 +1,5 @@
-import { addResource } from "../resource";
-import prisma from "./prisma";
+import { addResource } from '../resource';
+import prisma from './prisma';
 
 const client = prisma;
 
@@ -15,7 +15,7 @@ async function seed() {
 
 seed()
   .catch((e) => {
-    console.log("Seeding failed ... !");
+    console.log('Seeding failed ... !');
     console.error(e);
     process.exit(1);
   })

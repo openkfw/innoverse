@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { RequestError } from "../entities/error";
+import { RequestError } from '../entities/error';
 
 const fetcher = async (...args) => {
   const res = await fetch(...args);
@@ -8,11 +8,10 @@ const fetcher = async (...args) => {
   // we still try to parse and throw it.
   if (!res.ok) {
     const parsedError: RequestError = await res.json();
-    const error = new Error("An error occurred while fetching the data.");
+    const error = new Error('An error occurred while fetching the data.');
     // Attach extra info to the error object.
 
-    error.info =
-      parsedError.info || "An error occurred while fetching the data.";
+    error.info = parsedError.info || 'An error occurred while fetching the data.';
     error.status = parsedError.status || res.status;
 
     throw error;

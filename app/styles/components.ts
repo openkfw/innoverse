@@ -1,10 +1,10 @@
 // @ts-nocheck
 
-import palette from "./palette";
+import palette from './palette';
 
-import { Components, Theme } from "@mui/material/styles";
+import { Components, Theme } from '@mui/material/styles';
 
-const components: Components<Omit<Theme, "components">> = {
+const components: Components<Omit<Theme, 'components'>> = {
   MuiCssBaseline: {
     styleOverrides: `
       @font-face {
@@ -66,10 +66,10 @@ const components: Components<Omit<Theme, "components">> = {
     styleOverrides: {
       root: {
         color: palette.primary?.main,
-        "&:hover": {
+        '&:hover': {
           color: palette.primary?.light,
         },
-        "&:active": {
+        '&:active': {
           color: palette.secondary?.main,
         },
       },
@@ -81,13 +81,13 @@ const components: Components<Omit<Theme, "components">> = {
         color: palette.common?.white,
         backgroundColor: palette.primary?.light,
         borderRadius: 48,
-        backdropFilter: "blur(24px)",
-        "&:hover": {
+        backdropFilter: 'blur(24px)',
+        '&:hover': {
           color: palette.common?.white,
           backgroundColor: palette.secondary?.main,
           borderColor: palette.common?.white,
         },
-        "&:active": {
+        '&:active': {
           color: palette.common?.white,
           backgroundColor: palette.secondary?.main,
           borderColor: palette.common?.white,
@@ -101,7 +101,7 @@ const components: Components<Omit<Theme, "components">> = {
   MuiTypography: {
     defaultProps: {
       variantMapping: {
-        link: "p",
+        link: 'p',
       },
     },
   },

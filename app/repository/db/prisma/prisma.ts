@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 declare let global: { prisma: PrismaClient };
 
 // PrismaClient is attached to the `global` object in development to prevent
@@ -9,7 +9,7 @@ declare let global: { prisma: PrismaClient };
 
 let prisma: PrismaClient;
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === 'production') {
   prisma = new PrismaClient();
 } else {
   if (!global.prisma) {
