@@ -1,4 +1,4 @@
-import { InMemoryClient } from "./client";
+import { InMemoryClient } from './client';
 
 export function getResources(client: InMemoryClient, limit: number) {
   if (limit > client.length) return client;

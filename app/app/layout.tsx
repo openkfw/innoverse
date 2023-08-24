@@ -1,28 +1,25 @@
-"use client";
-import React from "react";
+'use client';
+import React from 'react';
+import type { Metadata } from 'next';
 
-import theme from "../styles/theme";
-import { SWRProvider } from "./swr-provider";
+import theme from '../styles/theme';
 
-import type { Metadata } from "next";
-import ThemeRegistry from "./ThemeRegistry";
+import { SWRProvider } from './swr-provider';
+import ThemeRegistry from './ThemeRegistry';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const metadata: Metadata = {
-  title: "InnoBuddy",
-  viewport: { width: "device-width", initialScale: 1 },
+  title: 'InnoBuddy',
+  viewport: { width: 'device-width', initialScale: 1 },
   themeColor: theme.palette.primary.main,
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
         <SWRProvider>
-          <ThemeRegistry options={{ key: "mui" }}>{children}</ThemeRegistry>
+          <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
         </SWRProvider>
       </body>
     </html>

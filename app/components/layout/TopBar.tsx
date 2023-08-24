@@ -1,30 +1,31 @@
-import { Menu } from "@mui/base";
-import { Avatar, MenuProps, Typography } from "@mui/material";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import MenuItem from "@mui/material/MenuItem";
-import Toolbar from "@mui/material/Toolbar";
-import { styled } from "@mui/material/styles";
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import logo from "/public/logo.svg";
+import { Menu } from '@mui/base';
+import AppBar from '@mui/material/AppBar';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import { MenuProps } from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { styled } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 
-const StyledMenu = styled((props: MenuProps) => <Menu {...props} />)(
-  ({ theme }) => ({
-    "& .MuiMenu-listbox": {
-      display: "inline-flex",
-      "& .MuiMenuItem-root": {
-        borderRadius: "24px",
-        marginRight: "24px",
-      },
-      "& .MuiMenuItem-root:hover": {
-        backgroundColor: theme.palette.secondary.main,
-      },
+import logo from '/public/logo.svg';
+
+const StyledMenu = styled((props: MenuProps) => <Menu {...props} />)(({ theme }) => ({
+  '& .MuiMenu-listbox': {
+    display: 'inline-flex',
+    '& .MuiMenuItem-root': {
+      borderRadius: '24px',
+      marginRight: '24px',
     },
-  })
-);
+    '& .MuiMenuItem-root:hover': {
+      backgroundColor: theme.palette.secondary.main,
+    },
+  },
+}));
 
 export default function TopBar() {
   return (
@@ -32,7 +33,7 @@ export default function TopBar() {
       position="sticky"
       elevation={0}
       sx={{
-        backgroundColor: "rgba(255,255,255,0.1)",
+        backgroundColor: 'rgba(255,255,255,0.1)',
         backdropFilter: `blur(20px)`,
       }}
     >
@@ -40,28 +41,28 @@ export default function TopBar() {
         <Toolbar disableGutters>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
             }}
           >
-            <Box sx={{ width: 200, display: "block" }}>
+            <Box sx={{ width: 200, display: 'block' }}>
               <Link href="/">
                 <Image
                   src={logo}
                   alt="***STRING_REMOVED***  Logo"
                   sizes="100vw"
                   style={{
-                    width: "100%",
-                    height: "100%",
+                    width: '100%',
+                    height: '100%',
                   }}
                 />
               </Link>
             </Box>
 
             <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ display: { xs: "none", md: "flex" } }}>
+            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <StyledMenu open={true}>
                 <MenuItem>
                   <Typography variant="body2">Projekte</Typography>

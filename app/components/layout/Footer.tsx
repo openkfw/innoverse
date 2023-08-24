@@ -1,13 +1,12 @@
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-
-import Typography from "@mui/material/Typography";
-import Facebook from "@mui/icons-material/Facebook";
-import Instagram from "@mui/icons-material/Instagram";
-import Twitter from "@mui/icons-material/Twitter";
-import YouTube from "@mui/icons-material/YouTube";
-import LinkedIn from "@mui/icons-material/LinkedIn";
-import GitHub from "@mui/icons-material/GitHub";
+import Facebook from '@mui/icons-material/Facebook';
+import GitHub from '@mui/icons-material/GitHub';
+import Instagram from '@mui/icons-material/Instagram';
+import LinkedIn from '@mui/icons-material/LinkedIn';
+import Twitter from '@mui/icons-material/Twitter';
+import YouTube from '@mui/icons-material/YouTube';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 export default function Footer() {
   const iconStyles = {
@@ -19,9 +18,9 @@ export default function Footer() {
     <Box
       sx={{
         flexGrow: 1,
-        textAlign: "center",
-        paddingBottom: "24px",
-        paddingTop: "48px",
+        textAlign: 'center',
+        paddingBottom: '24px',
+        paddingTop: '48px',
       }}
     >
       <Grid container alignItems="center" rowSpacing={2}>
@@ -38,8 +37,8 @@ export default function Footer() {
             <Typography
               variant="caption"
               sx={{
-                borderLeft: { md: "1px solid" },
-                borderRight: { md: "1px solid" },
+                borderLeft: { md: '1px solid' },
+                borderRight: { md: '1px solid' },
                 px: 3,
               }}
             >

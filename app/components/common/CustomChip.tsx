@@ -1,4 +1,4 @@
-import Chip from "@mui/material/Chip";
+import Chip from '@mui/material/Chip';
 
 type CustomChipProps = {
   label: string;
@@ -10,8 +10,8 @@ export default function CustomChip(props: CustomChipProps) {
       label={props.label}
       variant="filled"
       sx={{
-        backgroundColor: "rgba(255,255,255,0.1)",
-        color: "common.white",
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        color: 'common.white',
       }}
     />
   );
