@@ -6,6 +6,7 @@ import { FeaturedProjectSlider } from '@/components/landing/FeaturedProjectSlide
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
 
+import { MappingProjectsCard } from '../components/landing/mappingProjectsSection/MappingProjectsCard';
 import Layout from '../components/layout/Layout';
 
 function IndexPage() {
@@ -32,6 +33,9 @@ function IndexPage() {
         <ProjectSection />
         <Box>
           <NewsSection />
+        </Box>
+        <Box>
+          <MappingProjectsCard />
         </Box>
       </Box>
     </Layout>
