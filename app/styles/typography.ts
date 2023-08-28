@@ -135,6 +135,15 @@ const body = {
     lineHeight: '175%',
     letterSpacing: '0.15px',
   },
+  subtitle2: {
+    color: palette.secondary?.main,
+    fontFamily: '***FONT_REMOVED***',
+    fontSize: '16px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: '175%',
+    letterSpacing: '0.15px',
+  },
   button: {
     fontFamily: '***FONT_REMOVED***',
     textTransform: 'none' as const,
