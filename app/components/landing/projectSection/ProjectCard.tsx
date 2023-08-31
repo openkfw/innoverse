@@ -57,7 +57,6 @@ export default function ProjectCard(props: ProjectCardProps) {
         <Typography variant="subtitle1" sx={{ color: 'secondary.contrastText' }}>
           As in previous years, the company unveiled a feature before it was ready. The obvious question soon followed.
         </Typography>
-        {/* <ProgressStepper /> */}
       </CardContent>
     </Card>
   );

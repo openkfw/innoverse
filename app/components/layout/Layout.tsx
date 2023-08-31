@@ -12,6 +12,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div
       style={{
+        height: '100vh',
         background: `linear-gradient(84deg, ${theme.palette.primary?.dark} 0%, ${theme.palette.primary?.light} 100%)`,
       }}
     >
