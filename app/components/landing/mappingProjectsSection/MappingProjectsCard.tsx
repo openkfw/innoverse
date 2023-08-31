@@ -35,43 +35,38 @@ const mappingData = [
 
 export const MappingProjectsCard = () => {
   return (
-    <Grid container spacing={5} sx={{ m: 5 }}>
-      <Grid item container xs={12}>
-        <Grid item xs={9}>
-          <div style={{ flexGrow: 1, padding: 2 }}>
-            <Card
-              sx={{
-                backgroundColor: 'rgba(255,255,255,0.1)',
-                backdropFilter: `blur(20px)`,
-                borderRadius: '24px',
-                border: ' 1px solid rgba(255, 255, 255, 0.20)',
-                width: '1152px',
-                height: '600px',
-                boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
-              }}
-            >
-              <CardHeader
-                sx={{ textAlign: 'left', mt: '30px', ml: '25px', mr: '25px' }}
-                title={<Typography variant="h4">Mapping projects</Typography>}
-                action={<CustomButton>Backstage</CustomButton>}
-              />
-              <CardContent sx={{ ml: '25px', mr: '25px' }}>
-                <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  {mappingData.map((data) => {
-                    return (
-                      <PhaseColumn
-                        key={data.title}
-                        title={data.title}
-                        description={data.description}
-                        projects={data.projects}
-                      ></PhaseColumn>
-                    );
-                  })}
-                </Grid>
-              </CardContent>
-            </Card>
-          </div>
-        </Grid>
+    <Grid container justifyContent="center">
+      <Grid item xs={10} sx={{ mb: 10 }}>
+        <Card
+          sx={{
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            backdropFilter: `blur(20px)`,
+            borderRadius: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.20)',
+            height: '600px',
+            boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
+          }}
+        >
+          <CardHeader
+            sx={{ textAlign: 'left', mt: '30px', ml: '25px', mr: '25px' }}
+            title={<Typography variant="h4">Mapping projects</Typography>}
+            action={<CustomButton>Backstage</CustomButton>}
+          />
+          <CardContent sx={{ ml: '25px', mr: '25px' }}>
+            <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              {mappingData.map((data) => {
+                return (
+                  <PhaseColumn
+                    key={data.title}
+                    title={data.title}
+                    description={data.description}
+                    projects={data.projects}
+                  ></PhaseColumn>
+                );
+              })}
+            </Grid>
+          </CardContent>
+        </Card>
       </Grid>
     </Grid>
   );

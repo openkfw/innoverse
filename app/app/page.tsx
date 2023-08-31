@@ -1,6 +1,9 @@
 'use client';
 
+import Image from 'next/image';
+
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 
 import { FeaturedProjectSlider } from '@/components/landing/FeaturedProjectSlider';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
@@ -9,35 +12,72 @@ import { ProjectSection } from '@/components/landing/projectSection/ProjectSecti
 import { MappingProjectsCard } from '../components/landing/mappingProjectsSection/MappingProjectsCard';
 import Layout from '../components/layout/Layout';
 
+import bgBubble from '/public/images/bg-image.png';
+
 function IndexPage() {
   return (
     <Layout>
-      <Box
-        sx={{
-          marginRight: '10%',
-          py: 10,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <FeaturedProjectSlider />
-      </Box>
-      <Box
-        sx={{
-          marginLeft: '8%',
-          overflow: 'hidden',
-        }}
-      >
-        <ProjectSection />
-        <Box>
+      <Stack spacing={8} useFlexGap>
+        <Box
+          sx={{
+            pt: 10,
+            marginRight: '5%',
+            display: 'flex',
+          }}
+        >
+          <FeaturedProjectSlider />
+        </Box>
+
+        <Box
+          sx={{
+            marginLeft: '5%',
+            overflow: 'hidden',
+          }}
+        >
+          <ProjectSection />
+        </Box>
+
+        <Box sx={{ marginLeft: '5%', position: 'relative', overflowX: 'hidden' }}>
+          {/* Right bubble in the background */}
+          <Image
+            src={bgBubble}
+            alt="background-bubble"
+            sizes="33vw"
+            style={{
+              position: 'absolute',
+              width: 570,
+              height: 460,
+              zIndex: 0,
+              opacity: 0.56,
+              right: 0,
+              mixBlendMode: 'lighten',
+              transform: 'translate(50%, -10%)',
+            }}
+          />
           <NewsSection />
         </Box>
-        <Box>
+
+        <Box sx={{ position: 'relative', overflowX: 'hidden' }}>
+          {/* Left bubble in the background */}
+          <Image
+            src={bgBubble}
+            alt="background-bubble"
+            sizes="33vw"
+            style={{
+              position: 'absolute',
+              width: 570,
+              height: 460,
+              zIndex: 0,
+              opacity: 0.9,
+              left: 0,
+              overflowX: 'hidden',
+              mixBlendMode: 'lighten',
+              transform: 'translate(-50%, 20%)',
+            }}
+          />
           <MappingProjectsCard />
         </Box>
-      </Box>
+      </Stack>
     </Layout>
   );
 }
