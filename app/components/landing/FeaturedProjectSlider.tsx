@@ -15,9 +15,9 @@ import CustomChip from '../common/CustomChip';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import './FeatureProjectSlider.css';
 
-import featured_project from '/public/featured_project.png';
-import featured_project1 from '/public/featured_project1.png';
-import featured_project2 from '/public/featured_project2.png';
+import featured_project from '/public/images/featured_project.png';
+import featured_project1 from '/public/images/featured_project1.png';
+import featured_project2 from '/public/images/featured_project2.png';
 
 const dummyData = {
   items: [
