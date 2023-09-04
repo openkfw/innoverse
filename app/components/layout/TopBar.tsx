@@ -12,7 +12,7 @@ import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
-import logo from '/public/logo.svg';
+import logo from '/public/images/logo.svg';
 
 const StyledMenu = styled((props: MenuProps) => <Menu {...props} />)(({ theme }) => ({
   '& .MuiMenu-listbox': {
