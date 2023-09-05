@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
-import { FeaturedProjectSlider } from '@/components/landing/FeaturedProjectSlider';
+import { FeaturedProjectSlider } from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
 

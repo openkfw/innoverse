@@ -10,94 +10,12 @@ import ListItem from '@mui/material/ListItem';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import CustomChip from '../common/CustomChip';
+import { SliderContent, sliderContent } from '@/repository/mock/landing/main-slider';
+
+import CustomChip from '../../common/CustomChip';
 
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import './FeatureProjectSlider.css';
-
-import featured_project from '/public/images/featured_project.png';
-import featured_project1 from '/public/images/featured_project1.png';
-import featured_project2 from '/public/images/featured_project2.png';
-
-const dummyData = {
-  items: [
-    {
-      imageProps: {
-        image: featured_project,
-        title: 'AI Driven',
-        projectFrom: 'Jan',
-        projectTo: 'Feb',
-        year: '2023',
-      },
-      textAera: {
-        title: 'The most talked-about, futuristic product',
-        tags: ['Strategy', 'AI in Finance', 'Future'],
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer gravida velit nisl, quis feugiat enim convallis ac. Integer laoreet sed urna semper sagittis. ',
-      },
-    },
-    {
-      imageProps: {
-        image: featured_project1,
-        title: 'Deep Learning',
-        projectFrom: 'Mar',
-        projectTo: 'Jun',
-        year: '2023',
-      },
-      textAera: {
-        title: 'The most talked-about, futuristic product',
-        tags: ['Strategy', 'AI in Finance', 'Future'],
-        description:
-          'Suspendisse condimentum enim nec aliquet suscipit. Pellentesque elementum diam at urna rhoncus euismod. Ut tellus ligula, ornare eu finibus at, porta et ex.',
-      },
-    },
-    {
-      imageProps: {
-        image: featured_project2,
-        title: 'Social',
-        projectFrom: 'Apr',
-        projectTo: 'Aug',
-        year: '2023',
-      },
-      textAera: {
-        title: 'The most talked-about, futuristic product',
-        tags: ['Strategy', 'AI in Finance', 'Future'],
-        description:
-          'Nullam id turpis non sem sodales gravida non at urna. Etiam in urna at leo imperdiet elementum. Cras imperdiet pulvinar dui, a consequat odio ornare eget.',
-      },
-    },
-    {
-      imageProps: {
-        image: featured_project1,
-        title: 'Finance',
-        projectFrom: 'Jan',
-        projectTo: 'Feb',
-        year: '2023',
-      },
-      textAera: {
-        title: 'One of the most significant applications ',
-        tags: ['Strategy', 'AI in Finance', 'Future'],
-        description:
-          'In conclusion, the infusion of AI into the financial sector has ushered in a new era of efficiency, accuracy, and customer-centricity.',
-      },
-    },
-    {
-      imageProps: {
-        image: featured_project,
-        title: 'Tech',
-        projectFrom: 'Jan',
-        projectTo: 'Aug',
-        year: '2023',
-      },
-      textAera: {
-        title: 'The most talked-about, futuristic product',
-        tags: ['Strategy', 'AI in Finance', 'Future'],
-        description:
-          'As in previous years, the company unveiled a feature before it was ready. The obvious question soon followed: Should AI software that’s smart enough to trick humans be forced to disclose itself.',
-      },
-    },
-  ],
-};
 
 const SliderPill = (props: {
   active: boolean;
@@ -179,7 +97,8 @@ const SliderPill = (props: {
 
 export const FeaturedProjectSlider = () => {
   //TODO: move css from FeatureProjectSlider.css here...
-  const [selectedItem, setSelectedItem] = useState<number>(dummyData.items.length - 1);
+  const [selectedItem, setSelectedItem] = useState<number>(sliderContent.items.length - 1);
+  const [slides] = useState<SliderContent>(sliderContent);
   return (
     <Carousel
       className={'main-carousel'}
@@ -190,19 +109,19 @@ export const FeaturedProjectSlider = () => {
         isSelected: boolean,
         index: number,
         label: string,
-      ) => renderIndicator(clickHandler, isSelected, index, label, setSelectedItem, selectedItem)}
+      ) => renderIndicator(clickHandler, isSelected, index, label, setSelectedItem, selectedItem, slides)}
       selectedItem={selectedItem}
       transitionTime={700}
       swipeable
       showArrows={false}
       animationHandler={fadeAnimationHandler}
     >
-      {dummyData.items.map((el, id) => (
+      {slides.items.map((el, id) => (
         <div key={id}>
           <Grid container spacing={2}>
             <Grid item xs={6} md={8}>
               <Image
-                src={el.imageProps.image}
+                src={el.image.image}
                 alt="Project"
                 sizes="100vw"
                 style={{
@@ -212,11 +131,7 @@ export const FeaturedProjectSlider = () => {
               />
             </Grid>
             <Grid item xs={6} md={4}>
-              <FeaturedProjectContent
-                title={el.textAera.title}
-                tags={el.textAera.tags}
-                description={el.textAera.description}
-              />
+              <FeaturedProjectContent title={el.text.title} tags={el.text.tags} description={el.text.description} />
             </Grid>
           </Grid>
         </div>
@@ -253,6 +168,7 @@ const renderIndicator = (
   label: string,
   setSelectedItem: Dispatch<SetStateAction<number>>,
   selectedItem: number,
+  slides: SliderContent,
 ) => {
   const movePills = (newIndex: number) => {
     const elems = document.querySelectorAll('.control-dots');
@@ -284,10 +200,10 @@ const renderIndicator = (
         <SliderPill
           active={isSelected}
           itemNumber={(index + 1).toString()}
-          title={dummyData.items[index].imageProps.title || ''}
-          projectFrom={dummyData.items[index].imageProps.projectFrom || ''}
-          projectTo={dummyData.items[index].imageProps.projectTo || ''}
-          year={dummyData.items[index].imageProps.year || ''}
+          title={slides.items[index].image.title || ''}
+          projectFrom={slides.items[index].image.projectFrom || ''}
+          projectTo={slides.items[index].image.projectTo || ''}
+          year={slides.items[index].image.year || ''}
         />
       </Box>
     </>
