@@ -27,76 +27,90 @@ export const sliderContent = {
     {
       image: {
         image: featured_project,
-        title: 'AI Driven',
+        title: 'Innovationsplattform',
         projectFrom: 'Jan',
         projectTo: 'Feb',
         year: '2023',
       },
       text: {
-        title: 'The most talked-about, futuristic product',
-        tags: ['Strategy', 'AI in Finance', 'Future'],
+        title: 'Innovationsplattform',
+        tags: ['Strategy', 'Future'],
         description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer gravida velit nisl, quis feugiat enim convallis ac. Integer laoreet sed urna semper sagittis. ',
+          'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
       },
     },
     {
       image: {
         image: featured_project1,
-        title: 'Deep Learning',
+        title: 'Digitale Souveränität',
         projectFrom: 'Mar',
         projectTo: 'Jun',
         year: '2023',
       },
       text: {
-        title: 'The most talked-about, futuristic product',
-        tags: ['Strategy', 'AI in Finance', 'Future'],
-        description:
-          'Suspendisse condimentum enim nec aliquet suscipit. Pellentesque elementum diam at urna rhoncus euismod. Ut tellus ligula, ornare eu finibus at, porta et ex.',
+        title: 'Digitale Souveränität',
+        tags: ['Strategy', 'Future'],
+        description: 'Unsere D&I-Förderprogramme sind offen für alle Technologien, um D&I möglichst breit zu fördern',
       },
     },
     {
       image: {
         image: featured_project2,
-        title: 'Social',
+        title: 'Lead Transformation',
         projectFrom: 'Apr',
         projectTo: 'Aug',
         year: '2023',
       },
       text: {
-        title: 'The most talked-about, futuristic product',
-        tags: ['Strategy', 'AI in Finance', 'Future'],
+        title: 'Lead Transformation',
+        tags: ['Agility', 'Strategy', 'Future'],
         description:
-          'Nullam id turpis non sem sodales gravida non at urna. Etiam in urna at leo imperdiet elementum. Cras imperdiet pulvinar dui, a consequat odio ornare eget.',
+          'Lead Transformation ist ein Entwicklungsprogramm für ***STRING_REMOVED*** -Führungskräfte und ist Anfang 2023 in die zweite Runde gestartet. Insgesamt besteht es aus fünf Modulen.'
       },
     },
     {
       image: {
         image: featured_project1,
-        title: 'Finance',
+        title: 'Trubudget',
         projectFrom: 'Jan',
         projectTo: 'Feb',
         year: '2023',
       },
       text: {
-        title: 'One of the most significant applications ',
-        tags: ['Strategy', 'AI in Finance', 'Future'],
+        title: 'Trubudget',
+        tags: ['Blockchain', 'Future'],
         description:
-          'In conclusion, the infusion of AI into the financial sector has ushered in a new era of efficiency, accuracy, and customer-centricity.',
+          'Verwendung von Blockchain Technologie, um Daten sicher und zuverlässig verteilt zu speichern.',
       },
     },
     {
       image: {
         image: featured_project,
-        title: 'Tech',
+        title: 'Oscar',
         projectFrom: 'Jan',
         projectTo: 'Aug',
         year: '2023',
       },
       text: {
-        title: 'The most talked-about, futuristic product',
-        tags: ['Strategy', 'AI in Finance', 'Future'],
+        title: 'Oscar',
+        tags: ['Human action', 'Future'],
         description:
-          'As in previous years, the company unveiled a feature before it was ready. The obvious question soon followed: Should AI software that’s smart enough to trick humans be forced to disclose itself.',
+          'Mit OSCAR kann humanitäre Hilfe mit Satellitenkarten schneller ihren Weg finden.',
+      },
+    },
+    {
+      image: {
+        image: featured_project,
+        title: 'Trubduget As A Service',
+        projectFrom: 'Jan',
+        projectTo: 'Aug',
+        year: '2023',
+      },
+      text: {
+        title: 'Trubduget As A Service',
+        tags: ['Blockchain', 'Future'],
+        description:
+          'Einfacher Zugang zu TruBudget über eine Cloud Plattform',
       },
     },
   ],

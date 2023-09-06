@@ -1,15 +1,16 @@
 import { PROJECT_PROGRESS } from '../landing/project-section';
-import featured_project from '/public/featured_project.png';
 import avatarImg from '/public/images/avatar.png';
+import featured_project from '/public/images/featured_project.png';
 
 //TODO: define types after ui is implemented - there might be some changes
-export const project_progression = {
+export const project_progression = [{
   hero: {
     image: featured_project,
-    title: 'The most talked-about, futuristic product',
+    title: 'Innovationsplattform',
     author: {
       name: 'Susanne Grün',
       role: 'Senior Scientist',
+      avatar: avatarImg
     },
     project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
   },
@@ -19,7 +20,7 @@ export const project_progression = {
       start_date: 'Okt 2022',
       end_date: 'Nov 2023',
       summary:
-        '***STRING_REMOVED***  richtet ihr eigenes Investitionsverhalten auf Nachhaltigkeit aus. Seit 2006 ist sie Unterzeichnerin der UN...',
+        'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
       collaboration: {
         summary:
           'Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken.',
@@ -101,7 +102,7 @@ export const project_progression = {
       upvotes: 2,
     },
   ],
-};
+}];
 
 export const project_cooperation = {
   project_updates: [

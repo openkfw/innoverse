@@ -14,61 +14,50 @@ export type NewsSlider = {
 export const news = [
   {
     id: 1,
-    title: 'Just the start',
+    title: 'Innovationsplattform',
     subtitle:
-      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
-    theme: 'AI in Finance',
+      'Wir arbeiten gerade an den ersten Seiten der Innovationsplattform, lasst gerne Eure Meinung zum Design da.',
+    theme: 'Collaboration',
     publisher: 'Muster Macintosh',
     date: '12 Sep 2023',
     avatar: avatarImg,
   },
   {
     id: 2,
-    title: 'Something else',
+    title: 'Digitale Souveränität',
     subtitle:
-      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
-    theme: 'Thema xzy',
+      'Der erste Schritt ist geschafft! Wir haben die ersten Studien identifizert, gsichtet und sind diese nun am analysieren. Wir sind gespannt was wir herausfinden und halten euch auf dem Laufenden!',
+    theme: 'AI in Finance',
     publisher: 'Muster Macintosh',
     date: '12 Sep 2023',
     avatar: avatarImg,
   },
   {
     id: 3,
-    title: 'Just the start',
+    title: 'Lead Transformation',
     subtitle:
-      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
-    theme: 'AI in Finance',
+      '"Mich motiviert wenn meine eigene Idee ernst genommen und umgesetzt wird/" Dieser Aussage konnten die meisten unserer Gen Z Umfrage Teilnehmer zustimmen. Die größte Ablehnung gab es bei folgender Aussage:/"Viele persönliche Inhalte im Jour fixe empfinde ich als Grenzüberschreitung./" Wie ist deine Meinung dazu?  Siehst du es auch so wie unsere Gen Z oder bist du ganz anderer Meinung? Lass es uns wissen!',
+    theme: 'Lead Transformation',
     publisher: 'Muster Macintosh',
-
     date: '12 Sep 2023',
     avatar: avatarImg,
   },
   {
     id: 4,
-    title: 'Something else',
+    title: 'Digitale Souveränität',
     subtitle:
-      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
-    theme: 'Thema xzy',
+      'Wir sind nun dabei die potenziellen Fokusthemen pro Zielgruppe auszuarbeiten. Wenn ihr noch Impulse und/oder Feedback habt,lasst es uns gerne wissen.',
+    theme: 'Digitale Souveränität',
     publisher: 'Muster Macintosh',
     date: '12 Sep 2023',
     avatar: avatarImg,
   },
   {
     id: 5,
-    title: 'Just the start',
+    title: 'Digitale Souveränität',
     subtitle:
-      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
-    theme: 'AI in Finance',
-    publisher: 'Muster Macintosh',
-    date: '12 Sep 2023',
-    avatar: avatarImg,
-  },
-  {
-    id: 6,
-    title: 'Something else',
-    subtitle:
-      'As in previous years, the company unveiled a feature before it was ready. The obvous question soon followed.',
-    theme: 'Thema xzy',
+      'Wir sind nun dabei die potenziellen Fokusthemen pro Zielgruppe auszuarbeiten. Wenn ihr noch Impulse und/oder Feedback habt,lasst es uns gerne wissen.',
+    theme: 'Digitale Souveränität',
     publisher: 'Muster Macintosh',
     date: '12 Sep 2023',
     avatar: avatarImg,

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Image, { StaticImageData } from 'next/image';
 
 import Box from '@mui/material/Box';
@@ -11,6 +10,8 @@ import Typography from '@mui/material/Typography';
 interface ProjectCardProps {
   img: StaticImageData;
   contributors: string[];
+  title: string;
+  description: string
 }
 
 const bull = (
@@ -20,7 +21,7 @@ const bull = (
 );
 
 export default function ProjectCard(props: ProjectCardProps) {
-  const { img, contributors } = props;
+  const { img, contributors, title, description } = props;
   return (
     <Card sx={{ height: 550, borderRadius: '24px' }}>
       <CardActionArea href="/project">
@@ -55,10 +56,9 @@ export default function ProjectCard(props: ProjectCardProps) {
               ),
             )}
           </Typography>
-          <Typography variant="h5">The most talked-about</Typography>
+          <Typography variant="h5">{title}</Typography>
           <Typography variant="subtitle1" sx={{ color: 'secondary.contrastText' }}>
-            As in previous years, the company unveiled a feature before it was ready. The obvious question soon
-            followed.
+            {description}
           </Typography>
         </CardContent>
       </CardActionArea>

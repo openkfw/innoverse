@@ -1,3 +1,4 @@
+import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import Image from 'next/image';
 
 import Avatar from '@mui/material/Avatar';
@@ -7,12 +8,23 @@ import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import ProgressBar, { PROJECT_PROGRESS } from '../common/ProgressBar';
+import { PROJECT_PROGRESS } from '@/repository/mock/landing/project-section';
 
-import avatar from '/public/images/avatar2.png';
+import ProgressBar from '../common/ProgressBar';
+
+import avatarImg from '/public/images/avatar2.png';
 import project from '/public/images/project1.png';
 
-export const HeroSection = () => {
+interface HeroSectionProps {
+  title: string;
+  avatar: string | StaticImport;
+  author: string;
+  role: string
+  status: PROJECT_PROGRESS
+}
+
+
+export const HeroSection = (props: HeroSectionProps) => {
   return (
     <Grid container sx={{ position: 'relative', justifyItems: 'center', alignItems: 'center' }}>
       <Grid item xs={5}>
@@ -35,27 +47,27 @@ export const HeroSection = () => {
           }}
         >
           <Typography variant="h2" sx={{ fontSize: '48px' }}>
-            The most talked-about, futuristic product
+            {props.title}
           </Typography>
           <Grid container>
             <Grid item xs={6}>
               <CardHeader
                 avatar={
                   <Avatar sx={{ height: 52, width: 52 }}>
-                    <Image src={avatar} alt="avatar" fill sizes="33vw" />
+                    <Image src={avatarImg} alt="avatar" fill sizes="33vw" />
                   </Avatar>
                 }
-                title={<Typography variant="body2">Susanne Grün</Typography>}
+                title={<Typography variant="body2">{props.author}</Typography>}
                 subheader={
                   <Typography variant="caption" sx={{ color: 'secondary.main' }}>
-                    Senior scientist
+                    {props.role}
                   </Typography>
                 }
               />
             </Grid>
             <Grid item xs={6}>
               <Typography variant="overline">Status</Typography>
-              <ProgressBar active={PROJECT_PROGRESS.PROOF_OF_CONCEPT} />
+              <ProgressBar active={props.status} />
             </Grid>
           </Grid>
         </Card>
