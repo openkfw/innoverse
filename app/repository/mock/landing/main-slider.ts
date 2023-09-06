@@ -65,7 +65,7 @@ export const sliderContent = {
         title: 'Lead Transformation',
         tags: ['Agility', 'Strategy', 'Future'],
         description:
-          'Lead Transformation ist ein Entwicklungsprogramm für ***STRING_REMOVED*** -Führungskräfte und ist Anfang 2023 in die zweite Runde gestartet. Insgesamt besteht es aus fünf Modulen.'
+          'Lead Transformation ist ein Entwicklungsprogramm für ***STRING_REMOVED*** -Führungskräfte und ist Anfang 2023 in die zweite Runde gestartet. Insgesamt besteht es aus fünf Modulen.',
       },
     },
     {
@@ -79,8 +79,7 @@ export const sliderContent = {
       text: {
         title: 'Trubudget',
         tags: ['Blockchain', 'Future'],
-        description:
-          'Verwendung von Blockchain Technologie, um Daten sicher und zuverlässig verteilt zu speichern.',
+        description: 'Verwendung von Blockchain Technologie, um Daten sicher und zuverlässig verteilt zu speichern.',
       },
     },
     {
@@ -94,8 +93,7 @@ export const sliderContent = {
       text: {
         title: 'Oscar',
         tags: ['Human action', 'Future'],
-        description:
-          'Mit OSCAR kann humanitäre Hilfe mit Satellitenkarten schneller ihren Weg finden.',
+        description: 'Mit OSCAR kann humanitäre Hilfe mit Satellitenkarten schneller ihren Weg finden.',
       },
     },
     {
@@ -109,8 +107,7 @@ export const sliderContent = {
       text: {
         title: 'Trubduget As A Service',
         tags: ['Blockchain', 'Future'],
-        description:
-          'Einfacher Zugang zu TruBudget über eine Cloud Plattform',
+        description: 'Einfacher Zugang zu TruBudget über eine Cloud Plattform',
       },
     },
   ],

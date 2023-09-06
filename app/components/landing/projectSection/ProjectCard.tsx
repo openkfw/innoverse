@@ -1,17 +1,18 @@
 import Image, { StaticImageData } from 'next/image';
+import Link from 'next/link';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 
 interface ProjectCardProps {
+  id: number;
   img: StaticImageData;
   contributors: string[];
   title: string;
-  description: string
+  description: string;
 }
 
 const bull = (
@@ -21,10 +22,11 @@ const bull = (
 );
 
 export default function ProjectCard(props: ProjectCardProps) {
-  const { img, contributors, title, description } = props;
+  const { id, img, contributors, title, description } = props;
+
   return (
-    <Card sx={{ height: 550, borderRadius: '24px' }}>
-      <CardActionArea href="/project">
+    <Link href={`/projects/${encodeURIComponent(id)}`}>
+      <Card sx={{ height: 550, borderRadius: '24px' }}>
         <CardMedia sx={{ height: 350 }}>
           <div
             style={{
@@ -61,7 +63,7 @@ export default function ProjectCard(props: ProjectCardProps) {
             {description}
           </Typography>
         </CardContent>
-      </CardActionArea>
-    </Card>
+      </Card>
+    </Link>
   );
 }

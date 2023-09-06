@@ -1,108 +1,315 @@
 import { PROJECT_PROGRESS } from '../landing/project-section';
+
 import avatarImg from '/public/images/avatar.png';
 import featured_project from '/public/images/featured_project.png';
 
 //TODO: define types after ui is implemented - there might be some changes
-export const project_progression = [{
-  hero: {
-    image: featured_project,
-    title: 'Innovationsplattform',
-    author: {
-      name: 'Susanne Grün',
-      role: 'Senior Scientist',
-      avatar: avatarImg
-    },
-    project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
-  },
-  projectSummary: {
-    state: {
-      project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
-      start_date: 'Okt 2022',
-      end_date: 'Nov 2023',
-      summary:
-        'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
-      collaboration: {
-        summary:
-          'Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken.',
-        upvotes: 54,
-        comments: 14,
+export const project_progression = [
+  {
+    projectId: 1,
+    hero: {
+      image: featured_project,
+      title: 'Innovationsplattform',
+      author: {
+        name: 'Susanne Grün',
+        role: 'Senior Scientist',
+        avatar: avatarImg,
       },
-      team_members: [
+      project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
+    },
+    projectSummary: {
+      state: {
+        project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
+        start_date: 'Okt 2022',
+        end_date: 'Nov 2023',
+        summary:
+          'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
+        collaboration: {
+          summary:
+            'Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken.',
+          upvotes: 54,
+          comments: 14,
+        },
+        team_members: [
+          {
+            name: 'Max Muster',
+            role: 'Junior Scientist',
+            avatar: avatarImg,
+          },
+          {
+            name: 'Lisa Laimberger',
+            role: 'Senior Scientist',
+            avatar: avatarImg,
+          },
+          {
+            name: 'Bernhard Brunner',
+            role: 'Senior Scientist',
+            avatar: avatarImg,
+          },
+        ],
+      },
+      updates: [
         {
-          name: 'Max Muster',
-          role: 'Junior Scientist',
+          name: 'Martha Viatowsky',
           avatar: avatarImg,
+          posted_on: '12. Aug 2023',
+          content:
+            'Bleib gespannt auf bevorstehende Ankündigungen und Überraschungen. Wir können es kaum erwarten, zu teilen, was auf dich wartet. Sei bereit für etwas 🚀',
         },
         {
-          name: 'Lisa Laimberger',
-          role: 'Senior Scientist',
+          name: 'Tony Hawk',
           avatar: avatarImg,
+          posted_on: '4. Jul 2023',
+          content:
+            'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
         },
         {
-          name: 'Bernhard Brunner',
-          role: 'Senior Scientist',
+          name: 'Tony Hawk',
           avatar: avatarImg,
+          posted_on: '12. Aug 2023',
+          content:
+            'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
         },
       ],
     },
-    updates: [
-      {
-        name: 'Martha Viatowsky',
+    projectStatus: {
+      text: '',
+      author: {
+        name: 'Max Muster',
+        role: 'Junior Scientist',
         avatar: avatarImg,
-        posted_on: '12. Aug 2023',
-        content:
-          'Bleib gespannt auf bevorstehende Ankündigungen und Überraschungen. Wir können es kaum erwarten, zu teilen, was auf dich wartet. Sei bereit für etwas 🚀',
+        points: 536,
+        department: 'Department ABC, Frankfurt am Main',
+      },
+      tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
+    },
+    comments: [
+      {
+        author: {
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
+          avatar: avatarImg,
+        },
+        comment:
+          "I'm thrilled to hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills om different anom different anom different an. This can lead to more creative solutions and help you anticipate challenges from different angles. Also, consider creating a culture of experimentation and learning from failures. It's often in our failures that we find the seeds of great innovation. This ca ... alles anzeigen",
+        upvotes: 15,
       },
       {
-        name: 'Tony Hawk',
-        avatar: avatarImg,
-        posted_on: '4. Jul 2023',
-        content:
-          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
-      },
-      {
-        name: 'Tony Hawk',
-        avatar: avatarImg,
-        posted_on: '12. Aug 2023',
-        content:
-          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+        author: {
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
+          avatar: avatarImg,
+        },
+        comment:
+          'Yes. To hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills.',
+        upvotes: 2,
       },
     ],
   },
-  projectStatus: {
-    text: '',
-    author: {
-      name: 'Max Muster',
-      role: 'Junior Scientist',
-      avatar: avatarImg,
-      points: 536,
-      department: 'Department ABC, Frankfurt am Main',
+  {
+    projectId: 2,
+    hero: {
+      image: featured_project,
+      title: 'Innovationsplattform',
+      author: {
+        name: 'Susanne Grün',
+        role: 'Senior Scientist',
+        avatar: avatarImg,
+      },
+      project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
     },
-    tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
+    projectSummary: {
+      state: {
+        project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
+        start_date: 'Okt 2022',
+        end_date: 'Nov 2023',
+        summary:
+          'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
+        collaboration: {
+          summary:
+            'Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken.',
+          upvotes: 54,
+          comments: 14,
+        },
+        team_members: [
+          {
+            name: 'Max Muster',
+            role: 'Junior Scientist',
+            avatar: avatarImg,
+          },
+          {
+            name: 'Lisa Laimberger',
+            role: 'Senior Scientist',
+            avatar: avatarImg,
+          },
+          {
+            name: 'Bernhard Brunner',
+            role: 'Senior Scientist',
+            avatar: avatarImg,
+          },
+        ],
+      },
+      updates: [
+        {
+          name: 'Martha Viatowsky',
+          avatar: avatarImg,
+          posted_on: '12. Aug 2023',
+          content:
+            'Bleib gespannt auf bevorstehende Ankündigungen und Überraschungen. Wir können es kaum erwarten, zu teilen, was auf dich wartet. Sei bereit für etwas 🚀',
+        },
+        {
+          name: 'Tony Hawk',
+          avatar: avatarImg,
+          posted_on: '4. Jul 2023',
+          content:
+            'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+        },
+        {
+          name: 'Tony Hawk',
+          avatar: avatarImg,
+          posted_on: '12. Aug 2023',
+          content:
+            'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+        },
+      ],
+    },
+    projectStatus: {
+      text: '',
+      author: {
+        name: 'Max Muster',
+        role: 'Junior Scientist',
+        avatar: avatarImg,
+        points: 536,
+        department: 'Department ABC, Frankfurt am Main',
+      },
+      tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
+    },
+    comments: [
+      {
+        author: {
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
+          avatar: avatarImg,
+        },
+        comment:
+          "I'm thrilled to hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills om different anom different anom different an. This can lead to more creative solutions and help you anticipate challenges from different angles. Also, consider creating a culture of experimentation and learning from failures. It's often in our failures that we find the seeds of great innovation. This ca ... alles anzeigen",
+        upvotes: 15,
+      },
+      {
+        author: {
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
+          avatar: avatarImg,
+        },
+        comment:
+          'Yes. To hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills.',
+        upvotes: 2,
+      },
+    ],
   },
-  comments: [
-    {
+
+  {
+    projectId: 3,
+    hero: {
+      image: featured_project,
+      title: 'Innovationsplattform',
       author: {
-        name: 'Melanie Muster',
-        role: 'Junior Scientist',
+        name: 'Susanne Grün',
+        role: 'Senior Scientist',
         avatar: avatarImg,
       },
-      comment:
-        "I'm thrilled to hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills om different anom different anom different an. This can lead to more creative solutions and help you anticipate challenges from different angles. Also, consider creating a culture of experimentation and learning from failures. It's often in our failures that we find the seeds of great innovation. This ca ... alles anzeigen",
-      upvotes: 15,
+      project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
     },
-    {
+    projectSummary: {
+      state: {
+        project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
+        start_date: 'Okt 2022',
+        end_date: 'Nov 2023',
+        summary:
+          'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
+        collaboration: {
+          summary:
+            'Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken.',
+          upvotes: 54,
+          comments: 14,
+        },
+        team_members: [
+          {
+            name: 'Max Muster',
+            role: 'Junior Scientist',
+            avatar: avatarImg,
+          },
+          {
+            name: 'Lisa Laimberger',
+            role: 'Senior Scientist',
+            avatar: avatarImg,
+          },
+          {
+            name: 'Bernhard Brunner',
+            role: 'Senior Scientist',
+            avatar: avatarImg,
+          },
+        ],
+      },
+      updates: [
+        {
+          name: 'Martha Viatowsky',
+          avatar: avatarImg,
+          posted_on: '12. Aug 2023',
+          content:
+            'Bleib gespannt auf bevorstehende Ankündigungen und Überraschungen. Wir können es kaum erwarten, zu teilen, was auf dich wartet. Sei bereit für etwas 🚀',
+        },
+        {
+          name: 'Tony Hawk',
+          avatar: avatarImg,
+          posted_on: '4. Jul 2023',
+          content:
+            'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+        },
+        {
+          name: 'Tony Hawk',
+          avatar: avatarImg,
+          posted_on: '12. Aug 2023',
+          content:
+            'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+        },
+      ],
+    },
+    projectStatus: {
+      text: '',
       author: {
-        name: 'Melanie Muster',
+        name: 'Max Muster',
         role: 'Junior Scientist',
         avatar: avatarImg,
+        points: 536,
+        department: 'Department ABC, Frankfurt am Main',
       },
-      comment:
-        'Yes. To hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills.',
-      upvotes: 2,
+      tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
     },
-  ],
-}];
+    comments: [
+      {
+        author: {
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
+          avatar: avatarImg,
+        },
+        comment:
+          "I'm thrilled to hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills om different anom different anom different an. This can lead to more creative solutions and help you anticipate challenges from different angles. Also, consider creating a culture of experimentation and learning from failures. It's often in our failures that we find the seeds of great innovation. This ca ... alles anzeigen",
+        upvotes: 15,
+      },
+      {
+        author: {
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
+          avatar: avatarImg,
+        },
+        comment:
+          'Yes. To hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills.',
+        upvotes: 2,
+      },
+    ],
+  },
+];
 
 export const project_cooperation = {
   project_updates: [

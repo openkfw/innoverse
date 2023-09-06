@@ -1,4 +1,5 @@
 import { StaticImageData } from 'next/image';
+
 import project1 from '/public/images/project1.png';
 import project2 from '/public/images/project2.png';
 import project3 from '/public/images/project3.png';
@@ -15,7 +16,7 @@ export type ProjectCarouselItem = {
   contributors: string[];
   progress: PROJECT_PROGRESS;
   description: string;
-  title: string
+  title: string;
 };
 
 export const projects = [
@@ -26,7 +27,6 @@ export const projects = [
     contributors: ['Max Muster', 'Lisa Laimberger', 'Bernhard Brunner'],
     progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
     description: 'Unsere D&I-Förderprogramme sind offen für alle Technologien, um D&I möglichst breit zu fördern',
-
   },
   {
     id: 2,
@@ -35,8 +35,7 @@ export const projects = [
     contributors: ['Max Muster', 'Lisa Laimberger'],
     progress: PROJECT_PROGRESS.KONZEPTION,
     description:
-      'Lead Transformation ist ein Entwicklungsprogramm für ***STRING_REMOVED*** -Führungskräfte und ist Anfang 2023 in die zweite Runde gestartet. Insgesamt besteht es aus fünf Modulen.'
-
+      'Lead Transformation ist ein Entwicklungsprogramm für ***STRING_REMOVED*** -Führungskräfte und ist Anfang 2023 in die zweite Runde gestartet. Insgesamt besteht es aus fünf Modulen.',
   },
   {
     id: 3,
@@ -44,9 +43,7 @@ export const projects = [
     title: 'Trubudget',
     contributors: ['Max Muster', 'Lisa Laimberger', 'Bernhard Brunner'],
     progress: PROJECT_PROGRESS.KONZEPTION,
-    description:
-      'Verwendung von Blockchain Technologie, um Daten sicher und zuverlässig verteilt zu speichern.',
-
+    description: 'Verwendung von Blockchain Technologie, um Daten sicher und zuverlässig verteilt zu speichern.',
   },
   {
     id: 4,
@@ -54,18 +51,14 @@ export const projects = [
     title: 'Oscar',
     contributors: ['Max Muster', 'Lisa Laimberger', 'Bernhard Brunner'],
     progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
-    description:
-      'Mit OSCAR kann humanitäre Hilfe mit Satellitenkarten schneller ihren Weg finden.',
-
+    description: 'Mit OSCAR kann humanitäre Hilfe mit Satellitenkarten schneller ihren Weg finden.',
   },
   {
     id: 5,
     image: project2,
     title: 'Trubduget As A Service',
     contributors: ['Max Muster', 'Lisa Laimberger'],
-    description:
-      'Einfacher Zugang zu TruBudget über eine Cloud Plattform',
-
+    progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
+    description: 'Einfacher Zugang zu TruBudget über eine Cloud Plattform',
   },
-
 ];

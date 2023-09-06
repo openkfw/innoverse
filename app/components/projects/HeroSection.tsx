@@ -1,5 +1,4 @@
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -17,12 +16,11 @@ import project from '/public/images/project1.png';
 
 interface HeroSectionProps {
   title: string;
-  avatar: string | StaticImport;
+  avatar: string | StaticImageData;
   author: string;
-  role: string
-  status: PROJECT_PROGRESS
+  role: string;
+  status: PROJECT_PROGRESS;
 }
-
 
 export const HeroSection = (props: HeroSectionProps) => {
   return (
