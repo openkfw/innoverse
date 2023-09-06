@@ -99,15 +99,16 @@ export const sliderContent = {
     {
       image: {
         image: featured_project,
-        title: 'Trubduget As A Service',
-        projectFrom: 'Jan',
-        projectTo: 'Aug',
+        title: 'KI',
+        projectFrom: 'Mai',
+        projectTo: 'Nov',
         year: '2023',
       },
       text: {
-        title: 'Trubduget As A Service',
-        tags: ['Blockchain', 'Future'],
-        description: 'Einfacher Zugang zu TruBudget über eine Cloud Plattform',
+        title: 'Generative KI für ***STRING_REMOVED***  nutzen',
+        tags: ['KI', '***STRING_REMOVED***  Prozesse', 'Effizienzen'],
+        description:
+          'IT und KE arbeiten gemeinsam daran, wertstiftende Einsatzmöglichkeiten für generative KI in ***STRING_REMOVED***  zu identifizieren, zu bewerten und zu priorisieren.',
       },
     },
   ],

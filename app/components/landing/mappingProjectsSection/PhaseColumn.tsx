@@ -19,7 +19,7 @@ export default function PhaseColumn(props: PhaseColumnProps) {
       <Typography variant="subtitle1">{description}</Typography>
       <Divider sx={{ mt: 2, height: '1px', opacity: 0.2, borderColor: 'white' }} />
       <Typography variant="body1" sx={{ mt: 2 }}>
-        Projects
+        Projekte
       </Typography>
       {projects.map((project) => {
         return (

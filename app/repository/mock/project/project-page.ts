@@ -9,10 +9,10 @@ export const project_progression = [
     projectId: 1,
     hero: {
       image: featured_project,
-      title: 'Innovationsplattform',
+      title: 'Generative KI für ***STRING_REMOVED***  nutzen',
       author: {
         name: 'Susanne Grün',
-        role: 'Senior Scientist',
+        role: 'Data Scientist',
         avatar: avatarImg,
       },
       project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
