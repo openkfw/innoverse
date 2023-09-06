@@ -1,4 +1,5 @@
 import { StaticImageData } from 'next/image';
+
 import avatarImg from '/public/images/avatar.png';
 
 export type NewsSlider = {
@@ -17,8 +18,8 @@ export const news = [
     title: 'Innovationsplattform',
     subtitle:
       'Wir arbeiten gerade an den ersten Seiten der Innovationsplattform, lasst gerne Eure Meinung zum Design da.',
-    theme: 'Collaboration',
-    publisher: 'Muster Macintosh',
+    theme: 'Plattform',
+    publisher: 'Ingmar Müller',
     date: '12 Sep 2023',
     avatar: avatarImg,
   },
@@ -26,9 +27,9 @@ export const news = [
     id: 2,
     title: 'Digitale Souveränität',
     subtitle:
-      'Der erste Schritt ist geschafft! Wir haben die ersten Studien identifizert, gsichtet und sind diese nun am analysieren. Wir sind gespannt was wir herausfinden und halten euch auf dem Laufenden!',
-    theme: 'AI in Finance',
-    publisher: 'Muster Macintosh',
+      'Der erste Schritt ist geschafft! Wir haben die ersten Studien identifizert, gesichtet und sind diese nun am analysieren. Wir sind gespannt was wir herausfinden und halten euch auf dem Laufenden!',
+    theme: 'Research',
+    publisher: 'Tom Dapp',
     date: '12 Sep 2023',
     avatar: avatarImg,
   },
@@ -38,7 +39,7 @@ export const news = [
     subtitle:
       '"Mich motiviert wenn meine eigene Idee ernst genommen und umgesetzt wird/" Dieser Aussage konnten die meisten unserer Gen Z Umfrage Teilnehmer zustimmen. Die größte Ablehnung gab es bei folgender Aussage:/"Viele persönliche Inhalte im Jour fixe empfinde ich als Grenzüberschreitung./" Wie ist deine Meinung dazu?  Siehst du es auch so wie unsere Gen Z oder bist du ganz anderer Meinung? Lass es uns wissen!',
     theme: 'Lead Transformation',
-    publisher: 'Muster Macintosh',
+    publisher: 'Maurice Suiker',
     date: '12 Sep 2023',
     avatar: avatarImg,
   },

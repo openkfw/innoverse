@@ -1,8 +1,10 @@
 import { StaticImageData } from 'next/image';
 
-import featured_project from '/public/images/featured_project.png';
-import featured_project1 from '/public/images/featured_project1.png';
-import featured_project2 from '/public/images/featured_project2.png';
+import featured_project_ai from '/public/images/ai_01.png';
+import featured_project_ai2 from '/public/images/ai_02.png';
+import featured_project_data from '/public/images/datacenter_01.png';
+import featured_project_energy from '/public/images/energy_02.png';
+import featured_project_energy2 from '/public/images/energy_03.png';
 
 export type SliderContent = {
   items: SliderItem[];
@@ -26,79 +28,65 @@ export const sliderContent = {
   items: [
     {
       image: {
-        image: featured_project,
-        title: 'Innovationsplattform',
-        projectFrom: 'Jan',
-        projectTo: 'Feb',
-        year: '2023',
-      },
-      text: {
-        title: 'Innovationsplattform',
-        tags: ['Strategy', 'Future'],
-        description:
-          'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
-      },
-    },
-    {
-      image: {
-        image: featured_project1,
-        title: 'Digitale Souveränität',
+        image: featured_project_data,
+        title: 'DS',
         projectFrom: 'Mar',
-        projectTo: 'Jun',
+        projectTo: 'Nov',
         year: '2023',
       },
       text: {
-        title: 'Digitale Souveränität',
-        tags: ['Strategy', 'Future'],
-        description: 'Unsere D&I-Förderprogramme sind offen für alle Technologien, um D&I möglichst breit zu fördern',
+        title: 'Digitale Souveränität fördern',
+        tags: ['Strategie', 'Förderung'],
+        description: 'Wir arbeiten an der Fragestellung, wie wir Souveräntität von Deutschland und Europa auch im digitalen Raum ermöglichen können.',
       },
     },
     {
       image: {
-        image: featured_project2,
-        title: 'Lead Transformation',
+        image: featured_project_energy2,
+        title: 'InDigO',
+        projectFrom: 'Aug',
+        projectTo: 'Dez',
+        year: '2023',
+      },
+      text: {
+        title: 'Digitalisierung von KMU fördern',
+        tags: ['Digital', 'Förderung', 'KMU', 'Innovation'],
+        description:
+          'Das Ziel des Projekts ist die Erstellung und Erprobung von Lösungskonzepten, die zur Erhöhung des Digitalisuerngsgrads von KMU beitragen - finanziell und nicht-finanzell.',
+      },
+    },
+    {
+      image: {
+        image: featured_project_ai2,
+        title: 'LT',
         projectFrom: 'Apr',
         projectTo: 'Aug',
         year: '2023',
       },
       text: {
         title: 'Lead Transformation',
-        tags: ['Agility', 'Strategy', 'Future'],
+        tags: ['Agilität', 'Strategie', 'Jahrzehnt der Entscheidung'],
         description:
           'Lead Transformation ist ein Entwicklungsprogramm für ***STRING_REMOVED*** -Führungskräfte und ist Anfang 2023 in die zweite Runde gestartet. Insgesamt besteht es aus fünf Modulen.',
       },
     },
     {
       image: {
-        image: featured_project1,
-        title: 'Trubudget',
+        image: featured_project_energy,
+        title: 'Energie',
         projectFrom: 'Jan',
         projectTo: 'Feb',
         year: '2023',
       },
       text: {
-        title: 'Trubudget',
-        tags: ['Blockchain', 'Future'],
-        description: 'Verwendung von Blockchain Technologie, um Daten sicher und zuverlässig verteilt zu speichern.',
+        title: 'Energie genossen fördern',
+        tags: ['Förderung', 'Transformation', 'Nachhaltigkeit'],
+        description: '',
       },
     },
     {
       image: {
-        image: featured_project,
-        title: 'Oscar',
-        projectFrom: 'Jan',
-        projectTo: 'Aug',
-        year: '2023',
-      },
-      text: {
-        title: 'Oscar',
-        tags: ['Human action', 'Future'],
-        description: 'Mit OSCAR kann humanitäre Hilfe mit Satellitenkarten schneller ihren Weg finden.',
-      },
-    },
-    {
-      image: {
-        image: featured_project,
+        image: featured_project_ai,
         title: 'KI',
         projectFrom: 'Mai',
         projectTo: 'Nov',

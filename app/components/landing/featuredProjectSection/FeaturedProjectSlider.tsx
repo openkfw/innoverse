@@ -145,7 +145,7 @@ const FeaturedProjectContent = (props: { title: string; tags: string[]; descript
 
   return (
     <Box sx={{ textAlign: 'left' }}>
-      <Typography variant="overline">featured project</Typography>
+      <Typography variant="overline">featured</Typography>
       <Typography variant="h2">{title}</Typography>
       <Box>
         <List aria-label="tags" sx={{ display: 'inline-flex' }}>
