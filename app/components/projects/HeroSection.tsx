@@ -35,7 +35,7 @@ export const HeroSection = () => {
           }}
         >
           <Typography variant="h2" sx={{ fontSize: '48px' }}>
-            The most talked-about, futuristic product
+            Generative KI für ***STRING_REMOVED***  nutzen
           </Typography>
           <Grid container>
             <Grid item xs={6}>
@@ -48,7 +48,7 @@ export const HeroSection = () => {
                 title={<Typography variant="body2">Susanne Grün</Typography>}
                 subheader={
                   <Typography variant="caption" sx={{ color: 'secondary.main' }}>
-                    Senior scientist
+                    Data scientist
                   </Typography>
                 }
               />

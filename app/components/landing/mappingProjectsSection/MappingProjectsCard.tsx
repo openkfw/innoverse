@@ -13,22 +13,22 @@ const mappingData = [
     title: 'Exploration',
     description:
       'Explorationsprojekte beschäftigen sich in erster Linie damit, ein Thema zu erforschen und zu untersuchen, um ein tieferes Verständnis zu erlangen. Dies kann wissenschaftliche Forschung, Marktforschung oder jede andere Form der Untersuchung einschließen.',
-    projects: ['Transforming Banking for the Digital Age', 'Building the Bank of Future'],
+    projects: ['Digitale Souveränität fördern (InDigO Handlungsfeld 4)', 'Einfluss von Central bank digital currencies (CBDC)', 'Förderung von Energiegenossenschaften'],
   },
   {
     title: 'Konzeption',
     description:
       'In der Konzeptionsphase werden die Ziele und Ergebnisse des Projekts genau definiert. Dies sollte klar und präzise sein, damit alle Teammitglieder verstehen, was erreicht werden soll. Sie beinhaltet auch die Identifizierung von Risiken, die das Projekt beeinflussen könnten,',
-    projects: ['AI in Financial Technology'],
+    projects: ['Förderung von Digitalisierung und Innovation bei KMU (InDigO Handlungsfeld 2 und 3)', 'Anwendungsfälle für Generative KI in ***STRING_REMOVED*** '],
   },
   {
     title: 'Proof of Concept',
     description:
       'Ein PoC dient der Validierung einer Idee oder eines Konzepts. Es soll zeigen, dass das Konzept in der Praxis umsetzbar ist und die gewünschten Ergebnisse liefern kann. So können potenzielle Risiken und Herausforderungen frühzeitig erkannt und angegangen werden. ',
     projects: [
-      'DataBank: Leveraging Big Data for Insights',
-      'Strengthening Online Banking Security',
-      'Enhancing Personal Finance Management',
+      'Jahresabschluss-KI für die IPEX',
+      'Förderung von Energiemanagement für Privatkund:innen',
+      'Förderung von Digitalisierung und Innovation bei KMU (InDigO Handlungsfeld 2 und 3)',
     ],
   },
 ];
@@ -49,8 +49,8 @@ export const MappingProjectsCard = () => {
         >
           <CardHeader
             sx={{ textAlign: 'left', mt: '30px', ml: '25px', mr: '25px' }}
-            title={<Typography variant="h4">Mapping projects</Typography>}
-            action={<CustomButton>Backstage</CustomButton>}
+            title={<Typography variant="h4">Innovationsportfolio</Typography>}
+            action={<CustomButton>Details</CustomButton>}
           />
           <CardContent sx={{ ml: '25px', mr: '25px' }}>
             <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>

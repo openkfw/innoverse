@@ -6,10 +6,10 @@ import avatarImg from '/public/images/avatar.png';
 export const project_progression = {
   hero: {
     image: featured_project,
-    title: 'The most talked-about, futuristic product',
+    title: 'Generative KI für ***STRING_REMOVED***  nutzen',
     author: {
       name: 'Susanne Grün',
-      role: 'Senior Scientist',
+      role: 'Data Scientist',
     },
     project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
   },

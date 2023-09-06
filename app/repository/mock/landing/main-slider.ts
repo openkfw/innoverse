@@ -87,16 +87,16 @@ export const sliderContent = {
     {
       image: {
         image: featured_project,
-        title: 'Tech',
-        projectFrom: 'Jan',
-        projectTo: 'Aug',
+        title: 'KI',
+        projectFrom: 'Mai',
+        projectTo: 'Nov',
         year: '2023',
       },
       text: {
-        title: 'The most talked-about, futuristic product',
-        tags: ['Strategy', 'AI in Finance', 'Future'],
+        title: 'Generative KI für ***STRING_REMOVED***  nutzen',
+        tags: ['KI', '***STRING_REMOVED***  Prozesse', 'Effizienzen'],
         description:
-          'As in previous years, the company unveiled a feature before it was ready. The obvious question soon followed: Should AI software that’s smart enough to trick humans be forced to disclose itself.',
+          'Die .',
       },
     },
   ],
