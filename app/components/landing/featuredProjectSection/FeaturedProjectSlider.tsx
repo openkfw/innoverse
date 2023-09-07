@@ -145,18 +145,24 @@ const FeaturedProjectContent = (props: { title: string; tags: string[]; descript
 
   return (
     <Box sx={{ textAlign: 'left' }}>
-      <Typography variant="overline">featured project</Typography>
-      <Typography variant="h2">{title}</Typography>
+      <Typography variant="overline" sx={{ marginLeft: 6 / 8, fontSize: 12, fontFamily: '***FONT_REMOVED***' }}>
+        featured project
+      </Typography>
+      <Typography variant="h2" sx={{ marginLeft: 6 / 8, marginTop: 7 / 8, marginBottom: 3 }}>
+        {title}
+      </Typography>
       <Box>
-        <List aria-label="tags" sx={{ display: 'inline-flex' }}>
+        <List aria-label="tags" sx={{ display: 'inline-flex', gap: 1, padding: 0, margin: 0 }}>
           {tags.map((el, id) => (
-            <ListItem key={id}>
+            <ListItem key={id} sx={{ paddingLeft: 0, paddingRight: 0 }}>
               <CustomChip label={el} />
             </ListItem>
           ))}
         </List>
       </Box>
-      <Typography variant="body1">{description}</Typography>
+      <Typography variant="body1" sx={{ marginLeft: 6 / 8, marginTop: 3 }}>
+        {description}
+      </Typography>
     </Box>
   );
 };

@@ -12,6 +12,8 @@ export default function CustomChip(props: CustomChipProps) {
       sx={{
         backgroundColor: 'rgba(255,255,255,0.1)',
         color: 'common.white',
+        fontSize: 13,
+        fontFamily: '***FONT_REMOVED***',
       }}
     />
   );
