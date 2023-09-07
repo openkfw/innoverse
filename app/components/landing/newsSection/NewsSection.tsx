@@ -8,7 +8,7 @@ import NewsCarousel from './NewsCarousel';
 export const NewsSection = () => {
   return (
     <Grid container spacing={5} sx={{ m: 5 }}>
-      <Grid item container xs={12}>
+      <Grid item container xs={12} sx={{ marginBottom: 1 }}>
         <Grid item xs={9}>
           <Typography variant="overline">latest news</Typography>
           <Typography variant="h2">Title latest news</Typography>
