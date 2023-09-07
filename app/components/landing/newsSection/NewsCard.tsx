@@ -21,7 +21,7 @@ interface ProjectCardProps {
 export default function ProjectCard(props: ProjectCardProps) {
   const { title, subtitle, publisher, avatar, theme, date } = props;
   return (
-    <Card sx={{ p: 2, height: 220, borderRadius: '8px' }}>
+    <Card sx={{ p: 2, height: 250, borderRadius: '8px' }}>
       <CardHeader
         sx={{ textAlign: 'left' }}
         avatar={
@@ -44,7 +44,7 @@ export default function ProjectCard(props: ProjectCardProps) {
             display: '-webkit-box',
             overflow: 'hidden',
             WebkitBoxOrient: 'vertical',
-            WebkitLineClamp: 2,
+            WebkitLineClamp: 3,
             color: 'text.primary',
           }}
           variant="body1"

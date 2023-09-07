@@ -34,7 +34,7 @@ function IndexPage() {
             overflow: 'hidden',
           }}
         >
-          <ProjectSection />
+          <NewsSection />
         </Box>
 
         <Box sx={{ marginLeft: '5%', position: 'relative', overflowX: 'hidden' }}>
@@ -54,7 +54,7 @@ function IndexPage() {
               transform: 'translate(50%, -10%)',
             }}
           />
-          <NewsSection />
+          <ProjectSection />
         </Box>
 
         <Box sx={{ position: 'relative', overflowX: 'hidden' }}>

@@ -13,7 +13,7 @@ const mappingData = [
     title: 'Exploration',
     description:
       'Basierend auf dem strategischen Zielsystem ***STRING_REMOVED***  untersuchen wir mögliche Handlungsfelder für ***STRING_REMOVED***  und berücksichtigen dabei externe Entwicklungen und interne Leitplanken.',
-    projects: ['Digitale Souveränität fördern (InDigO Handlungsfeld 4)', 'Auswirkungen von Digital Currencies', 'Förderung von Energiegenossenschaften'],
+    projects: ['Digitale Souveränität fördern (InDigO Handlungsfeld 4)', 'Auswirkungen des Digitalen Euros (CBDC)', 'Förderung von Energieautarkie (am Beispiel Energiegenossenschaften)'],
   },
   {
     title: 'Konzeption',
@@ -27,9 +27,8 @@ const mappingData = [
       'Im PoC testen wir mittels Lean Experiments die Attraktivität, Machbarkeit und Rentabilität der Lösungskonzepte - auch hier direkt mit der Zielgruppe.',
     projects: [
       'Jahresabschluss-KI für die IPEX',
-      'Wirkung von Energiemanagement bei Privatkund:innen',
       'Förderung von Digitalisierung und Innovation bei KMU (InDigO Handlungsfeld 2 und 3)',
-      'Sanierungsrechner'
+      'Tokenisierte Anleihe', 'Energiemanagement für Privatkund:innen (failed)'
     ],
   },
 ];
@@ -50,7 +49,7 @@ export const MappingProjectsCard = () => {
         >
           <CardHeader
             sx={{ textAlign: 'left', mt: '30px', ml: '25px', mr: '25px' }}
-            title={<Typography variant="h4">Innovationsportfolio</Typography>}
+            title={<Typography variant="h4">Strategische Innovation @ ***STRING_REMOVED*** </Typography>}
             action={<CustomButton>Details</CustomButton>}
           />
           <CardContent sx={{ ml: '25px', mr: '25px' }}>

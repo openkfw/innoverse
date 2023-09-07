@@ -25,7 +25,6 @@ export default function ProjectCard(props: ProjectCardProps) {
   const { id, img, contributors, title, description } = props;
 
   return (
-    <Link href={`/projects/${encodeURIComponent(id)}`}>
       <Card sx={{ height: 550, borderRadius: '24px' }}>
         <CardMedia sx={{ height: 350 }}>
           <div
@@ -58,12 +57,14 @@ export default function ProjectCard(props: ProjectCardProps) {
               ),
             )}
           </Typography>
-          <Typography variant="h5">{title}</Typography>
+          <Link href={`/projects/${encodeURIComponent(id)}`}>
+            <Typography variant="h5">{title}</Typography>    
+          </Link>
           <Typography variant="subtitle1" sx={{ color: 'secondary.contrastText' }}>
             {description}
           </Typography>
         </CardContent>
       </Card>
-    </Link>
+
   );
 }

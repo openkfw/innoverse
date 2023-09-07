@@ -73,7 +73,7 @@ export const sliderContent = {
     {
       image: {
         image: featured_project_energy,
-        title: 'Energie',
+        title: 'Bürgerenergie',
         projectFrom: 'Jan',
         projectTo: 'Feb',
         year: '2023',
@@ -81,7 +81,7 @@ export const sliderContent = {
       text: {
         title: 'Energie genossen fördern',
         tags: ['Förderung', 'Transformation', 'Nachhaltigkeit'],
-        description: '',
+        description: 'Wir untersuchen, ob Bürgerenergie-Gemeinschaften als Transformationsbeschleuniger wirkung können - u.a. durch Mobilisierung vno privatem Kapital, durch verbesserte Akzeptanz der Energiewende und ggf. sogar durch Verringerung des Handwerker:innenmangels.',
       },
     },
     {

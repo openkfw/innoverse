@@ -11,8 +11,8 @@ export const project_progression = [
       image: featured_project,
       title: 'Generative KI für ***STRING_REMOVED***  nutzen',
       author: {
-        name: 'Susanne Grün',
-        role: 'Data Scientist',
+        name: 'Ingmar Müller',
+        role: 'Innovation Hub',
         avatar: avatarImg,
       },
       project_status: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
@@ -32,43 +32,43 @@ export const project_progression = [
         },
         team_members: [
           {
-            name: 'Max Muster',
-            role: 'Junior Scientist',
+            name: 'Willem Behrenbeck',
+            role: 'BDAI Experte',
             avatar: avatarImg,
           },
           {
-            name: 'Lisa Laimberger',
-            role: 'Senior Scientist',
+            name: 'Ingmar Müller',
+            role: 'Innovation Hub',
             avatar: avatarImg,
           },
           {
-            name: 'Bernhard Brunner',
-            role: 'Senior Scientist',
+            name: 'Rupert Rebentisch',
+            role: 'Tech Innovation Champion',
             avatar: avatarImg,
           },
         ],
       },
       updates: [
         {
-          name: 'Martha Viatowsky',
+          name: 'Rupert Rebentisch',
           avatar: avatarImg,
           posted_on: '12. Aug 2023',
           content:
-            'Bleib gespannt auf bevorstehende Ankündigungen und Überraschungen. Wir können es kaum erwarten, zu teilen, was auf dich wartet. Sei bereit für etwas 🚀',
+            'Wir haben unsere Ergebnisse dem Vorstand präsentiert, sehr gute Diskussion und viel Unterstützung - jetzt kanns losgehen',
         },
         {
-          name: 'Tony Hawk',
+          name: 'Willem Behrenbeck',
           avatar: avatarImg,
           posted_on: '4. Jul 2023',
           content:
-            'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+            'Wir haben jetzt ein Konzept erstellt, um Generative KI in ***STRING_REMOVED***  zu ermöglichen',
         },
         {
-          name: 'Tony Hawk',
+          name: 'Ingmar Müller',
           avatar: avatarImg,
-          posted_on: '12. Aug 2023',
+          posted_on: '12. Jul 2023',
           content:
-            'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+            'Wir haben heute dem Bereich BR eine Einführung in KI und Generative KI gegeben - hat Spaß gemacht!',
         },
       ],
     },
