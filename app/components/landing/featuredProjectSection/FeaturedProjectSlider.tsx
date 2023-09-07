@@ -42,7 +42,6 @@ const SliderPill = (props: {
       fontWeight: '400',
       textTransform: 'uppercase',
       letterSpacing: 1,
-      wordWrap: 'break-word',
     },
     container: {
       marginLeft: '25px',
@@ -57,28 +56,28 @@ const SliderPill = (props: {
   return (
     <>
       {active ? (
-        <>
-          <Stack>
-            <Box sx={styles.vr} />
-            <Stack direction="row" sx={styles.container}>
-              <Stack>
-                <Box sx={styles.elementWrap}>
-                  <Typography variant="overline" sx={styles.itemNumberLable}>
-                    Project #{itemNumber}
-                  </Typography>
-                </Box>
-                <Box sx={styles.elementWrap}>
-                  <Typography variant="overline" sx={styles.itemNumberLable}>
-                    {projectFrom} - {projectTo} {year}
-                  </Typography>
-                </Box>
-              </Stack>
+        <Stack>
+          <Box sx={styles.vr} />
+          <Stack direction="row" sx={styles.container}>
+            <Stack>
               <Box sx={styles.elementWrap}>
-                <Typography variant="h4">{title}</Typography>
+                <Typography variant="overline" sx={styles.itemNumberLable} noWrap>
+                  Project #{itemNumber}
+                </Typography>
+              </Box>
+              <Box sx={styles.elementWrap}>
+                <Typography variant="overline" sx={styles.itemNumberLable} noWrap>
+                  {projectFrom} - {projectTo} {year}
+                </Typography>
               </Box>
             </Stack>
+            <Box sx={styles.elementWrap}>
+              <Typography variant="h4" noWrap>
+                {title}
+              </Typography>
+            </Box>
           </Stack>
-        </>
+        </Stack>
       ) : (
         <Stack direction="row" spacing={0} sx={styles.container}>
           <Box sx={styles.elementWrap}>
@@ -87,7 +86,9 @@ const SliderPill = (props: {
             </Typography>
           </Box>
           <Box sx={styles.elementWrap}>
-            <Typography variant="h6">{title}</Typography>
+            <Typography variant="h6" noWrap>
+              {title}
+            </Typography>
           </Box>
         </Stack>
       )}
@@ -117,24 +118,22 @@ export const FeaturedProjectSlider = () => {
       animationHandler={fadeAnimationHandler}
     >
       {slides.items.map((el, id) => (
-        <div key={id}>
-          <Grid container spacing={2}>
-            <Grid item xs={6} md={8}>
-              <Image
-                src={el.image.image}
-                alt="Project"
-                sizes="100vw"
-                style={{
-                  width: '100%',
-                  height: '450px',
-                }}
-              />
-            </Grid>
-            <Grid item xs={6} md={4}>
-              <FeaturedProjectContent title={el.text.title} tags={el.text.tags} description={el.text.description} />
-            </Grid>
+        <Grid container spacing={2} key={id}>
+          <Grid item xs={6} md={8}>
+            <Image
+              src={el.image.image}
+              alt="Project"
+              sizes="50vw"
+              style={{
+                width: '100%',
+                height: '450px',
+              }}
+            />
           </Grid>
-        </div>
+          <Grid item xs={6} md={4}>
+            <FeaturedProjectContent title={el.text.title} tags={el.text.tags} description={el.text.description} />
+          </Grid>
+        </Grid>
       ))}
     </Carousel>
   );
@@ -145,8 +144,12 @@ const FeaturedProjectContent = (props: { title: string; tags: string[]; descript
 
   return (
     <Box sx={{ textAlign: 'left' }}>
-      <Typography variant="overline">featured</Typography>
-      <Typography variant="h2">{title}</Typography>
+      <Typography variant="overline" sx={{ display: 'block' }}>
+        featured
+      </Typography>
+      <Typography variant="h2" sx={{ display: 'inline-block', whiteSpace: 'pre-line' }}>
+        {title}
+      </Typography>
       <Box>
         <List aria-label="tags" sx={{ display: 'inline-flex' }}>
           {tags.map((el, id) => (
@@ -171,22 +174,16 @@ const renderIndicator = (
   slides: SliderContent,
 ) => {
   const movePills = (newIndex: number) => {
-    const elems = document.querySelectorAll('.control-dots');
-    let index = 0;
-    const length = elems.length;
-    const moveByPx = 150;
+    const slider = document.querySelectorAll('.control-dots')[0] as HTMLElement;
+    const old = Number(slider.style.translate.split('px')[0]);
+    const diff = Math.abs(selectedItem - newIndex);
+    const moveByPx = diff * 150;
 
-    for (; index < length; index++) {
-      const elem = elems[index] as HTMLElement;
-      const old = elem.style.translate.split('px')[0];
-      if (old === '0') return;
-
-      if (selectedItem > newIndex) {
-        elem.style.translate = `${Number(old) + moveByPx}px`;
-      }
-      if (selectedItem < newIndex) {
-        elem.style.translate = `${Number(old) - moveByPx}px`;
-      }
+    if (selectedItem > newIndex) {
+      slider.style.translate = `${old + moveByPx}px`;
+    }
+    if (selectedItem < newIndex) {
+      slider.style.translate = `${old - moveByPx}px`;
     }
   };
 

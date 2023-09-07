@@ -16,7 +16,9 @@ export default function PhaseColumn(props: PhaseColumnProps) {
       >
         {title}
       </Typography>
-      <Typography variant="subtitle1" sx={{ minHeight : '150px'}} >{description}</Typography>
+      <Typography variant="subtitle1" sx={{ minHeight: '150px' }}>
+        {description}
+      </Typography>
       <Divider sx={{ mt: 2, height: '1px', opacity: 0.2, borderColor: 'white' }} />
       <Typography variant="body1" sx={{ mt: 2 }}>
         Projekte
