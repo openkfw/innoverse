@@ -125,7 +125,7 @@ export const FeaturedProjectSlider = () => {
               alt="Project"
               sizes="50vw"
               style={{
-                width: '950px',
+                width: '100%',
                 height: '450px',
               }}
             />
@@ -144,8 +144,12 @@ const FeaturedProjectContent = (props: { title: string; tags: string[]; descript
 
   return (
     <Box sx={{ textAlign: 'left' }}>
-      <Typography variant="overline">featured</Typography>
-      <Typography variant="h2">{title}</Typography>
+      <Typography variant="overline" sx={{ display: 'block' }}>
+        featured
+      </Typography>
+      <Typography variant="h2" sx={{ display: 'inline-block', whiteSpace: 'pre-line' }}>
+        {title}
+      </Typography>
       <Box>
         <List aria-label="tags" sx={{ display: 'inline-flex' }}>
           {tags.map((el, id) => (
@@ -171,9 +175,9 @@ const renderIndicator = (
 ) => {
   const movePills = (newIndex: number) => {
     const slider = document.querySelectorAll('.control-dots')[0] as HTMLElement;
-
     const old = Number(slider.style.translate.split('px')[0]);
-    const moveByPx = 200;
+    const diff = Math.abs(selectedItem - newIndex);
+    const moveByPx = diff * 150;
 
     if (selectedItem > newIndex) {
       slider.style.translate = `${old + moveByPx}px`;

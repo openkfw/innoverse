@@ -13,7 +13,11 @@ const mappingData = [
     title: 'Exploration',
     description:
       'Basierend auf dem strategischen Zielsystem ***STRING_REMOVED***  untersuchen wir mögliche Handlungsfelder für ***STRING_REMOVED***  und berücksichtigen dabei externe Entwicklungen und interne Leitplanken.',
-    projects: ['Digitale Souveränität fördern (InDigO Handlungsfeld 4)', 'Auswirkungen von Digital Currencies', 'Förderung von Energiegenossenschaften'],
+    projects: [
+      'Digitale Souveränität fördern (InDigO Handlungsfeld 4)',
+      'Auswirkungen von Digital Currencies',
+      'Förderung von Energiegenossenschaften',
+    ],
   },
   {
     title: 'Konzeption',
@@ -29,7 +33,7 @@ const mappingData = [
       'Jahresabschluss-KI für die IPEX',
       'Wirkung von Energiemanagement bei Privatkund:innen',
       'Förderung von Digitalisierung und Innovation bei KMU (InDigO Handlungsfeld 2 und 3)',
-      'Sanierungsrechner'
+      'Sanierungsrechner',
     ],
   },
 ];
