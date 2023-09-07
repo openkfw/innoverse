@@ -45,7 +45,8 @@ export const projects = [
     title: 'Innovationsplattform',
     contributors: ['Ingmar Müller', 'Maurice Suiker', 'Remon Gerris'],
     progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
-    description: 'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
+    description:
+      'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
   },
   {
     id: 4,

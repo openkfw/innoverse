@@ -44,7 +44,7 @@ export const HeroSection = (props: HeroSectionProps) => {
             height: 320,
           }}
         >
-          <Typography variant="h2" sx={{ fontSize: '48px' }}>
+          <Typography variant="h2" sx={{ fontSize: '48px', wordWrap: 'break-word' }}>
             {props.title}
           </Typography>
           <Grid container>

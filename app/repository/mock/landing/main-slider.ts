@@ -37,7 +37,8 @@ export const sliderContent = {
       text: {
         title: 'Digitale Souveränität fördern',
         tags: ['Strategie', 'Förderung'],
-        description: 'Wir arbeiten an der Fragestellung, wie wir Souveräntität von Deutschland und Europa auch im digitalen Raum ermöglichen können.',
+        description:
+          'Wir arbeiten an der Fragestellung, wie wir Souveräntität von Deutschland und Europa auch im digitalen Raum ermöglichen können.',
       },
     },
     {

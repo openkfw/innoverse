@@ -37,14 +37,8 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
         Team Members
       </Typography>
       <AvatarGroup max={4} sx={avatarGroupStyle}>
-        {teamMembers.map((t) => (
-          <StyledToolip
-            arrow
-            sx={toolipStyle}
-            key={t.name}
-            title={<TooltipContent teamMember={t} />}
-            placement="bottom"
-          >
+        {teamMembers.map((t, index) => (
+          <StyledToolip arrow sx={toolipStyle} key={index} title={<TooltipContent teamMember={t} />} placement="bottom">
             <Avatar style={{ border: '2px solid white' }} key={t.name} alt={t.name} src={t.avatar} />
           </StyledToolip>
         ))}

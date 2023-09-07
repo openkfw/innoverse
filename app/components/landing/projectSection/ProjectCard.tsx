@@ -1,10 +1,10 @@
 import Image, { StaticImageData } from 'next/image';
-import Link from 'next/link';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
+import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 
 interface ProjectCardProps {
@@ -25,7 +25,7 @@ export default function ProjectCard(props: ProjectCardProps) {
   const { id, img, contributors, title, description } = props;
 
   return (
-    <Link href={`/projects/${encodeURIComponent(id)}`}>
+    <Link href={`/projects/${encodeURIComponent(id)}`} underline="none">
       <Card sx={{ height: 550, borderRadius: '24px' }}>
         <CardMedia sx={{ height: 350 }}>
           <div
