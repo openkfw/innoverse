@@ -1,19 +1,31 @@
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
+import EditIcon from '@mui/icons-material/Edit';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import SendIcon from '@mui/icons-material/Send';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import Button, { ButtonProps } from '@mui/material/Button';
+import { SxProps } from '@mui/material/styles';
 
 interface InteractionButtonProps extends ButtonProps {
   interactionType: InterfactionType;
   label?: string;
+  onClick?: () => void;
+  sx?: SxProps;
 }
 
-type InterfactionType = 'like' | 'project-follow' | 'user-follow' | 'collaboration' | 'comment';
+type InterfactionType =
+  | 'like'
+  | 'project-follow'
+  | 'user-follow'
+  | 'collaboration'
+  | 'comment'
+  | 'comment-send'
+  | 'share-opinion';
 
 export default function InteractionButton(props: InteractionButtonProps) {
-  const { interactionType, label } = props;
+  const { interactionType, label, onClick, sx } = props;
 
   const getInteractionIcon = () => {
     if (interactionType === 'like') return <ThumbUpOutlinedIcon fontSize="small" />;
@@ -21,6 +33,8 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === 'user-follow') return <PersonAddIcon fontSize="small" />;
     if (interactionType === 'collaboration') return <PeopleOutlineOutlinedIcon fontSize="small" />;
     if (interactionType === 'comment') return <ChatBubbleOutlineOutlinedIcon />;
+    if (interactionType === 'comment-send') return <SendIcon fontSize="small" />;
+    if (interactionType === 'share-opinion') return <EditIcon fontSize="small" />;
   };
 
   const getButtontext = () => {
@@ -29,17 +43,21 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === 'project-follow') return 'Projekt Folgen';
     if (interactionType === 'user-follow') return 'Folgen';
     if (interactionType === 'collaboration') return 'Zusammenarbeit Öffnen';
+    if (interactionType === 'comment-send') return 'Senden';
+    if (interactionType === 'share-opinion') return 'Teile deine Meinung';
     if (interactionType === 'comment') return;
   };
 
   return (
     <Button
+      onClick={onClick}
       variant="outlined"
       startIcon={getInteractionIcon()}
       sx={{
+        mr: 2,
+        px: 3,
+        py: 1,
         color: 'rgba(0, 0, 0, 0.56)',
-        mt: '20px',
-        mr: '15px',
         borderRadius: '48px',
         fontFamily: 'Arial',
         fontSize: '13px',
@@ -48,13 +66,14 @@ export default function InteractionButton(props: InteractionButtonProps) {
         border: ' 1px solid rgba(0, 0, 0, 0.10)',
         background: 'rgba(255, 255, 255, 0.10)',
         '&:hover': {
-          border: '2px solid rgba(255, 255, 255, 0.40)',
+          border: '1px solid rgba(255, 255, 255, 0.40)',
           background: 'secondary.main',
         },
         '&:active': {
-          border: '2px solid rgba(255, 255, 255, 0.40)',
+          border: '1px solid rgba(255, 255, 255, 0.40)',
           background: 'palette.secondary.main',
         },
+        ...sx,
       }}
     >
       {getButtontext()}

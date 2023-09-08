@@ -35,7 +35,7 @@ const palette: DefaultPaletteOptions = {
     paper: '#FFFFFF',
   },
   error: {
-    main: '#C80538',
+    main: '#C80439',
     light: '#FDECEB',
   },
   warning: {
@@ -47,7 +47,7 @@ const palette: DefaultPaletteOptions = {
     light: '#E9F5FE',
   },
   success: {
-    main: '#507666',
+    main: '#4F7765',
     light: '#EDF7EE',
   },
 };

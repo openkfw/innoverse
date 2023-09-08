@@ -4,8 +4,9 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import FormatAlignLeftOutlinedIcon from '@mui/icons-material/FormatAlignLeftOutlined';
 import { Avatar, Button, Chip, IconButton, Stack, Typography } from '@mui/material';
 
-import badge from '/public/images/badge.svg';
-import elipse from '/public/images/elipse.svg';
+import badge from '/public/images/icons/badge.svg';
+import elipse from '/public/images/icons/elipse.svg';
+
 export const AuthorInformation = () => {
   const buttonStyle = {
     borderRadius: '48px',

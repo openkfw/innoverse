@@ -1,17 +1,31 @@
 import { Grid, Typography } from '@mui/material';
 
+import { ProjectCollaboration } from '@/common/types';
+
 import InteractionButton from '../common/InteractionButton';
 
 interface CollaborationProps {
-  collaborationData: {
-    description: string;
-    participants: number;
-    votes: number;
-  };
+  collaborationData: ProjectCollaboration;
+  setActiveTab: (tab: number) => void;
 }
 
 const CollaborationColumn = (props: CollaborationProps) => {
-  const { collaborationData } = props;
+  const { collaborationData, setActiveTab } = props;
+
+  const handleCollaborationClick = async () => {
+    const scroll = () => {
+      const section = document.getElementById('collaboration-tab')?.offsetTop;
+
+      if (section) {
+        window.scrollTo({
+          top: section - 150,
+          behavior: 'smooth',
+        });
+      }
+    };
+    await setActiveTab(1);
+    scroll();
+  };
   return (
     <>
       <Grid container direction="column">
@@ -23,11 +37,11 @@ const CollaborationColumn = (props: CollaborationProps) => {
             {collaborationData.description}
           </Typography>
           <Typography variant="caption" sx={{ color: '#507666' }}>
-            {collaborationData.participants} Beteilungen - {collaborationData.votes} Votes
+            {collaborationData.participants} Beteilungen - {collaborationData.upvotes} Votes
           </Typography>
         </Grid>
         <Grid item xs={4}>
-          <InteractionButton interactionType="collaboration" />
+          <InteractionButton interactionType="collaboration" onClick={handleCollaborationClick} />
           <InteractionButton interactionType="collaboration" label="Take our Survey" />
           <InteractionButton interactionType="collaboration" label="Support Us" />
         </Grid>

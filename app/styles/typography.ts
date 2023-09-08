@@ -75,8 +75,9 @@ const header = {
   h5: {
     color: palette.secondary?.main,
     fontFamily: 'PFCentroSansProBold',
-    fontSize: '1.125rem',
-    lineHeight: '1.44',
+    fontSize: '24px',
+    fontWeight: 1000,
+    lineHeight: '133.4%',
   },
   h6: {
     color: palette.common?.white,
