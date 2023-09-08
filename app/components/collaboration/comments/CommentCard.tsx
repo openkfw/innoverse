@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
+import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -10,7 +11,6 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { CommentType } from '@/common/types';
-import AvatarIcon from '@/components/common/AvatarIcon';
 import theme from '@/styles/theme';
 
 import { VoteComponent } from '../VoteComponent';
@@ -47,7 +47,11 @@ export const CommentCard = ({ content }: CommentCardProps) => {
   return (
     <Card sx={{ background: 'transparent', border: 'none', boxShadow: 'none' }}>
       <CardHeader
-        avatar={<AvatarIcon src={avatar} size={32} />}
+        avatar={
+          <Avatar sx={{ width: 32, height: 32 }}>
+            <Image src={avatar} alt="avatar" fill sizes="33vw" />
+          </Avatar>
+        }
         title={
           <Stack
             direction="row"

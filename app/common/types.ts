@@ -74,10 +74,16 @@ export type PersonInfo = {
   department: string;
 };
 
+export type Info = {
+  title: string;
+  description: string;
+};
+
 export type ProjectStatus = {
   text: string;
   author: PersonInfo;
   tags: string[];
+  info: Info;
 };
 
 export type ProjectProgression = {

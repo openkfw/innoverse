@@ -1,5 +1,7 @@
 import { PROJECT_PROGRESS, ProjectColaboration, ProjectProgression } from '@/common/types';
 
+import TruBudget from './projects/TruBudget.md';
+
 import avatarMaxImg from '/public/images/avatarMax.png';
 import avatarMelanieImg from '/public/images/avatarMelanie.png';
 import avatarSusanImg from '/public/images/avatarSusan.png';
@@ -85,7 +87,7 @@ export const project_progression: ProjectProgression[] = [
       ],
     },
     projectStatus: {
-      text: '',
+      text: TruBudget,
       author: {
         name: 'Max Muster',
         role: 'Junior Scientist',
@@ -94,6 +96,10 @@ export const project_progression: ProjectProgression[] = [
         department: 'Department ABC, Frankfurt am Main',
       },
       tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
+      info: {
+        title: '##Blockchain',
+        description: 'Die Blockchain-Technologie stellt sicher, dass keine Manipulation möglich ist.',
+      },
     },
     comments: [
       {
@@ -208,6 +214,10 @@ export const project_progression: ProjectProgression[] = [
         department: 'Department ABC, Frankfurt am Main',
       },
       tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
+      info: {
+        title: '',
+        description: '',
+      },
     },
     comments: [
       {
@@ -322,6 +332,10 @@ export const project_progression: ProjectProgression[] = [
         department: 'Department ABC, Frankfurt am Main',
       },
       tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
+      info: {
+        title: '',
+        description: '',
+      },
     },
     comments: [
       {

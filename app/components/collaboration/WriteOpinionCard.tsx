@@ -1,9 +1,11 @@
+import Image from 'next/image';
+
+import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
 import { project_colaboration } from '@/repository/mock/project/project-page';
 
-import AvatarIcon from '../common/AvatarIcon';
 import InteractionButton from '../common/InteractionButton';
 
 import avatar from '/public/images/avatarSusan.png';
@@ -12,7 +14,9 @@ export const WriteOpinionCard = () => {
   const placeholderText = project_colaboration.writeOpinionText;
   return (
     <Stack direction="row" spacing={2} sx={{ position: 'relative' }}>
-      <AvatarIcon src={avatar} size={32} />
+      <Avatar sx={{ width: 32, height: 32 }}>
+        <Image src={avatar} alt="avatar" fill sizes="33vw" />
+      </Avatar>
       <TextField
         multiline
         rows={6}
