@@ -1,11 +1,14 @@
-import { Avatar, AvatarGroup, Typography } from '@mui/material';
+import { AvatarGroup, Typography } from '@mui/material';
 
-import { StyledToolip } from '../common/StyledTooltip';
+import { Person } from '@/common/types';
+
+import AvatarIcon from '../common/AvatarIcon';
+import { StyledTooltip } from '../common/StyledTooltip';
 
 import { TooltipContent } from './TooltipContent';
 
 interface TeamMembersProps {
-  teamMembers: { name: string; avatar: string; role: string }[];
+  teamMembers: Person[];
 }
 
 const avatarGroupStyle = {
@@ -21,14 +24,6 @@ const avatarGroupStyle = {
   },
 };
 
-const toolipStyle = {
-  backgroundColor: 'white',
-  borderRadius: '16px',
-  '& .mui-1sucosy-MuiTooltip-tooltip': {
-    backgroundColor: 'white',
-  },
-};
-
 const TeamMembersColumn = (props: TeamMembersProps) => {
   const { teamMembers } = props;
   return (
@@ -38,9 +33,9 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
       </Typography>
       <AvatarGroup max={4} sx={avatarGroupStyle}>
         {teamMembers.map((t, index) => (
-          <StyledToolip arrow sx={toolipStyle} key={index} title={<TooltipContent teamMember={t} />} placement="bottom">
-            <Avatar style={{ border: '2px solid white' }} key={t.name} alt={t.name} src={t.avatar} />
-          </StyledToolip>
+          <StyledTooltip arrow key={index} title={<TooltipContent teamMember={t} />} placement="bottom">
+            <AvatarIcon src={t.avatar} key={t.name} />
+          </StyledTooltip>
         ))}
       </AvatarGroup>
     </>

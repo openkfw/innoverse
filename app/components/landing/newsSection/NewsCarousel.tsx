@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 
+import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
 import { news, NewsSlider } from '@/repository/mock/landing/news-section';
@@ -17,34 +18,37 @@ export default function NewsCarousel() {
 
   return (
     <Grid container item xs={12} spacing={2}>
-      <Carousel
-        className={'carousel'}
-        swipeable
-        emulateTouch
-        useKeyboardArrows
-        centerMode
-        selectedItem={currentSlide}
-        showThumbs={false}
-        showStatus={false}
-        showIndicators={false}
-        showArrows={false}
-        transitionTime={600}
-        centerSlidePercentage={30}
-        onChange={(slide) => setCurrentSlide(slide)}
-      >
-        {slides.map((item) => (
-          <Grid item xs={11} key={item.id}>
-            <NewsCard
-              title={item.title}
-              subtitle={item.subtitle}
-              theme={item.theme}
-              publisher={item.publisher}
-              avatar={item.avatar}
-              date={item.date}
-            />
-          </Grid>
-        ))}
-      </Carousel>
+      <Box sx={{ marginBottom: 4 }}>
+        <Carousel
+          className={'carousel'}
+          swipeable
+          emulateTouch
+          useKeyboardArrows
+          centerMode
+          selectedItem={currentSlide}
+          showThumbs={false}
+          showStatus={false}
+          showIndicators={false}
+          showArrows={false}
+          transitionTime={600}
+          centerSlidePercentage={30}
+          onChange={(slide) => setCurrentSlide(slide)}
+        >
+          {slides.map((item) => (
+            <Grid item xs={11} key={item.id}>
+              <NewsCard
+                title={item.title}
+                subtitle={item.subtitle}
+                theme={item.theme}
+                publisher={item.publisher}
+                avatar={item.avatar}
+                date={item.date}
+              />
+            </Grid>
+          ))}
+        </Carousel>
+      </Box>
+
       <ArrowControllers
         currentSlide={currentSlide}
         setCurrentSlide={setCurrentSlide}

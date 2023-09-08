@@ -1,17 +1,13 @@
 import { StaticImageData } from 'next/image';
 
+import { PROJECT_PROGRESS } from '@/common/types';
+
 import featured_project_ai from '/public/images/ai_01.png';
 import featured_project_ai2 from '/public/images/ai_02.png';
 import featured_project_data from '/public/images/datacenter_01.png';
 import featured_project_energy from '/public/images/energy_02.png';
 import featured_project_energy2 from '/public/images/energy_03.png';
 import featured_project_room from '/public/images/room_01.png';
-
-export enum PROJECT_PROGRESS {
-  EXPLORATION = 'Exploration',
-  KONZEPTION = 'Konzeption',
-  PROOF_OF_CONCEPT = 'Proof of Concept',
-}
 
 export type ProjectCarouselItem = {
   id: number;

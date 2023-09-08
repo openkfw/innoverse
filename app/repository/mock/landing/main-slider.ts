@@ -82,7 +82,8 @@ export const sliderContent = {
       text: {
         title: 'Energie genossen fördern',
         tags: ['Förderung', 'Transformation', 'Nachhaltigkeit'],
-        description: 'Wir untersuchen, ob Bürgerenergie-Gemeinschaften als Transformationsbeschleuniger wirkung können - u.a. durch Mobilisierung vno privatem Kapital, durch verbesserte Akzeptanz der Energiewende und ggf. sogar durch Verringerung des Handwerker:innenmangels.',
+        description:
+          'Wir untersuchen, ob Bürgerenergie-Gemeinschaften als Transformationsbeschleuniger wirkung können - u.a. durch Mobilisierung vno privatem Kapital, durch verbesserte Akzeptanz der Energiewende und ggf. sogar durch Verringerung des Handwerker:innenmangels.',
       },
     },
     {

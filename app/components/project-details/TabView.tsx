@@ -1,25 +1,29 @@
 import * as React from 'react';
 
 import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import Tab, { TabProps } from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
+import { CollaborationTab } from '../collaboration/CollaborationTab';
+
 import { ProjectProgress } from './ProjectProgress';
 
 interface TabPanelProps {
   children?: React.ReactNode;
+  id: string;
   index: number;
   value: number;
 }
 
 function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+  const { children, value, id, index, ...other } = props;
 
   return (
-    <div role="tabpanel" hidden={value !== index} id={`tabpanel-${index}`} aria-labelledby={`tab-${index}`} {...other}>
+    <div role="tabpanel" hidden={value !== index} id={id} aria-labelledby={`tab-${id}`} {...other}>
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
@@ -54,17 +58,20 @@ const CustomTab = styled((props: TabProps) => <Tab disableRipple {...props} />)(
   },
 }));
 
-export default function BasicTabs() {
-  const [value, setValue] = React.useState(0);
+interface BasicTabsProps {
+  activeTab: number;
+  setActiveTab: (tab: number) => void;
+}
 
+export default function BasicTabs({ activeTab, setActiveTab }: BasicTabsProps) {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+    setActiveTab(newValue);
   };
 
   return (
-    <Box sx={{ width: '85%' }}>
+    <Container maxWidth="lg">
       <Box sx={{ borderBottom: 0.1, borderColor: 'main' }}>
-        <CustomTabs value={value} onChange={handleChange} aria-label="tab switcher">
+        <CustomTabs value={activeTab} onChange={handleChange} aria-label="tab switcher">
           <CustomTab label={<Typography variant="subtitle1">Projektverlauf</Typography>} {...a11yProps(0)} />
           <CustomTab
             label={
@@ -91,15 +98,15 @@ export default function BasicTabs() {
           />
         </CustomTabs>
       </Box>
-      <CustomTabPanel value={value} index={0}>
+      <CustomTabPanel value={activeTab} index={0} id="tabpanel-0">
         <ProjectProgress />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
+      <CustomTabPanel value={activeTab} index={1} id="collaboration-tab">
+        <CollaborationTab />
+      </CustomTabPanel>
+      <CustomTabPanel value={activeTab} index={2} id="tabpanel-0">
         <Typography>ToDo</Typography>
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        <Typography>ToDo</Typography>
-      </CustomTabPanel>
-    </Box>
+    </Container>
   );
 }

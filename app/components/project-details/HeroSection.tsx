@@ -7,22 +7,23 @@ import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { PROJECT_PROGRESS } from '@/repository/mock/landing/project-section';
+import { PROJECT_PROGRESS } from '@/common/types';
 
 import ProgressBar from '../common/ProgressBar';
 
-import avatarImg from '/public/images/avatar2.png';
 import project from '/public/images/project1.png';
 
 interface HeroSectionProps {
   title: string;
-  avatar: string | StaticImageData;
+  avatar: StaticImageData;
   author: string;
   role: string;
   status: PROJECT_PROGRESS;
 }
 
-export const HeroSection = (props: HeroSectionProps) => {
+export default function HeroSection(props: HeroSectionProps) {
+  const { title, avatar, author, role, status } = props;
+
   return (
     <Grid container sx={{ position: 'relative', justifyItems: 'center', alignItems: 'center' }}>
       <Grid item xs={5}>
@@ -44,32 +45,32 @@ export const HeroSection = (props: HeroSectionProps) => {
             height: 320,
           }}
         >
-          <Typography variant="h2" sx={{ fontSize: '48px', wordWrap: 'break-word' }}>
-            {props.title}
+          <Typography variant="h2" sx={{ fontSize: '48px' }}>
+            {title}
           </Typography>
           <Grid container>
             <Grid item xs={6}>
               <CardHeader
                 avatar={
-                  <Avatar sx={{ height: 52, width: 52 }}>
-                    <Image src={avatarImg} alt="avatar" fill sizes="33vw" />
+                  <Avatar sx={{ width: 52, height: 52 }}>
+                    <Image src={avatar} alt="avatar" fill sizes="33vw" />
                   </Avatar>
                 }
-                title={<Typography variant="body2">{props.author}</Typography>}
+                title={<Typography variant="body2"> {author}</Typography>}
                 subheader={
                   <Typography variant="caption" sx={{ color: 'secondary.main' }}>
-                    {props.role}
+                    {role}
                   </Typography>
                 }
               />
             </Grid>
             <Grid item xs={6}>
               <Typography variant="overline">Status</Typography>
-              <ProgressBar active={props.status} />
+              <ProgressBar active={status} />
             </Grid>
           </Grid>
         </Card>
       </Grid>
     </Grid>
   );
-};
+}

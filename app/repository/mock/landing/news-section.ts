@@ -1,6 +1,6 @@
 import { StaticImageData } from 'next/image';
 
-import avatarImg from '/public/images/avatar.png';
+import avatarTonyImg from '/public/images/avatarTony.png';
 
 export type NewsSlider = {
   id: number;
@@ -21,7 +21,7 @@ export const news = [
     theme: 'Plattform',
     publisher: 'Ingmar Müller',
     date: '12 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
   {
     id: 2,
@@ -31,7 +31,7 @@ export const news = [
     theme: 'Research',
     publisher: 'Tom Dapp',
     date: '10 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
   {
     id: 3,
@@ -41,7 +41,7 @@ export const news = [
     theme: 'Lead Transformation',
     publisher: 'Maurice Suiker',
     date: '09 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
   {
     id: 4,
@@ -51,7 +51,7 @@ export const news = [
     theme: 'Digitale Souveränität',
     publisher: 'Tom Dapp',
     date: '07 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
   {
     id: 5,
@@ -61,7 +61,7 @@ export const news = [
     theme: 'Leadership Training',
     publisher: 'Michael Strauß',
     date: '05 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
   {
     id: 6,
@@ -71,6 +71,6 @@ export const news = [
     theme: 'Förderung KMU',
     publisher: 'Remon Gerris',
     date: '01 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
 ];

@@ -1,10 +1,14 @@
-import { Avatar, Grid, Typography } from '@mui/material';
+import { StaticImageData } from 'next/image';
+
+import { Grid, Typography } from '@mui/material';
+
+import AvatarIcon from '../common/AvatarIcon';
 
 interface UpdateCardProps {
   update: {
     author: {
       name: string;
-      avatar: string;
+      avatar: StaticImageData;
     };
     content: string;
     date: string;
@@ -18,7 +22,7 @@ const UpdateCard = (props: UpdateCardProps) => {
     <>
       <Grid container alignItems="center" spacing={2}>
         <Grid item>
-          <Avatar key={update.author.name} alt={update.author.name} src={update.author.avatar} />
+          <AvatarIcon key={update.author.name} src={update.author.avatar} size={20} />
         </Grid>
         <Grid item>
           <Typography variant="caption" sx={{ color: 'text.primary' }}>

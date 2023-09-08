@@ -25,45 +25,45 @@ export default function ProjectCard(props: ProjectCardProps) {
   const { id, img, contributors, title, description } = props;
 
   return (
-      <Card sx={{ height: 550, borderRadius: '24px' }}>
-        <CardMedia sx={{ height: 350 }}>
-          <div
-            style={{
-              position: 'relative',
-              width: '100%',
-              height: '100%',
-            }}
-          >
-            <Image
-              src={img}
-              width={200}
-              height={360}
-              style={{ objectFit: 'cover', padding: 18, borderRadius: '24px' }}
-              alt="project"
-            />
-          </div>
-        </CardMedia>
+    <Card sx={{ height: 550, borderRadius: '24px' }}>
+      <CardMedia sx={{ height: 350 }}>
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <Image
+            src={img}
+            width={200}
+            height={360}
+            style={{ objectFit: 'cover', padding: 18, borderRadius: '24px' }}
+            alt="project"
+          />
+        </div>
+      </CardMedia>
 
-        <CardContent sx={{ p: 3, textAlign: 'left' }}>
-          <Typography variant="caption" component="div" display="flex">
-            {contributors.map((contributor, index) =>
-              index < contributors.length - 1 ? (
-                <div key={index}>
-                  {contributor}
-                  {bull}
-                </div>
-              ) : (
-                <div key={index}>{contributor}</div>
-              ),
-            )}
-          </Typography>
-          <Link href={`/projects/${encodeURIComponent(id)}`}>
-            <Typography variant="h5">{title}</Typography>    
-          </Link>
-          <Typography variant="subtitle1" sx={{ color: 'secondary.contrastText' }}>
-            {description}
-          </Typography>
-        </CardContent>
-      </Card>
+      <CardContent sx={{ p: 3, textAlign: 'left' }}>
+        <Typography variant="caption" component="div" display="flex">
+          {contributors.map((contributor, index) =>
+            index < contributors.length - 1 ? (
+              <div key={index}>
+                {contributor}
+                {bull}
+              </div>
+            ) : (
+              <div key={index}>{contributor}</div>
+            ),
+          )}
+        </Typography>
+        <Link href={`/projects/${encodeURIComponent(id)}`}>
+          <Typography variant="h5">{title}</Typography>
+        </Link>
+        <Typography variant="subtitle1" sx={{ color: 'secondary.contrastText' }}>
+          {description}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 }
