@@ -1,5 +1,6 @@
 import { StaticImageData } from 'next/image';
-import avatarImg from '/public/images/avatar.png';
+
+import avatarTonyImg from '/public/images/avatarTony.png';
 
 export type NewsSlider = {
   id: number;
@@ -20,7 +21,7 @@ export const news = [
     theme: 'AI in Finance',
     publisher: 'Muster Macintosh',
     date: '12 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
   {
     id: 2,
@@ -30,7 +31,7 @@ export const news = [
     theme: 'Thema xzy',
     publisher: 'Muster Macintosh',
     date: '12 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
   {
     id: 3,
@@ -41,7 +42,7 @@ export const news = [
     publisher: 'Muster Macintosh',
 
     date: '12 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
   {
     id: 4,
@@ -51,7 +52,7 @@ export const news = [
     theme: 'Thema xzy',
     publisher: 'Muster Macintosh',
     date: '12 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
   {
     id: 5,
@@ -61,7 +62,7 @@ export const news = [
     theme: 'AI in Finance',
     publisher: 'Muster Macintosh',
     date: '12 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
   {
     id: 6,
@@ -71,6 +72,6 @@ export const news = [
     theme: 'Thema xzy',
     publisher: 'Muster Macintosh',
     date: '12 Sep 2023',
-    avatar: avatarImg,
+    avatar: avatarTonyImg,
   },
 ];

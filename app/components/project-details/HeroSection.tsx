@@ -7,12 +7,15 @@ import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import ProgressBar, { PROJECT_PROGRESS } from '../common/ProgressBar';
+import { project_progression } from '@/repository/mock/project/project-page';
 
-import avatar from '/public/images/avatar2.png';
+import ProgressBar from '../common/ProgressBar';
+
+import avatar from '/public/images/avatarSusan.png';
 import project from '/public/images/project1.png';
 
-export const HeroSection = () => {
+const HeroSection = () => {
+  const { hero } = project_progression;
   return (
     <Grid container sx={{ position: 'relative', justifyItems: 'center', alignItems: 'center' }}>
       <Grid item xs={5}>
@@ -35,27 +38,27 @@ export const HeroSection = () => {
           }}
         >
           <Typography variant="h2" sx={{ fontSize: '48px' }}>
-            The most talked-about, futuristic product
+            {hero.title}
           </Typography>
           <Grid container>
             <Grid item xs={6}>
               <CardHeader
                 avatar={
-                  <Avatar sx={{ height: 52, width: 52 }}>
+                  <Avatar sx={{ width: 52, height: 52 }}>
                     <Image src={avatar} alt="avatar" fill sizes="33vw" />
                   </Avatar>
                 }
-                title={<Typography variant="body2">Susanne Grün</Typography>}
+                title={<Typography variant="body2"> {hero.author.name}</Typography>}
                 subheader={
                   <Typography variant="caption" sx={{ color: 'secondary.main' }}>
-                    Senior scientist
+                    {hero.author.role}
                   </Typography>
                 }
               />
             </Grid>
             <Grid item xs={6}>
               <Typography variant="overline">Status</Typography>
-              <ProgressBar active={PROJECT_PROGRESS.PROOF_OF_CONCEPT} />
+              <ProgressBar active={hero.projectStatus} />
             </Grid>
           </Grid>
         </Card>
@@ -63,3 +66,5 @@ export const HeroSection = () => {
     </Grid>
   );
 };
+
+export default HeroSection;

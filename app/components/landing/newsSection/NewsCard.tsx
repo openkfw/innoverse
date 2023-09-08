@@ -1,7 +1,6 @@
 import * as React from 'react';
-import Image, { StaticImageData } from 'next/image';
+import { StaticImageData } from 'next/image';
 
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -9,6 +8,8 @@ import CardHeader from '@mui/material/CardHeader';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+
+import AvatarIcon from '@/components/common/AvatarIcon';
 
 interface ProjectCardProps {
   title: string;
@@ -25,11 +26,7 @@ export default function ProjectCard(props: ProjectCardProps) {
     <Card sx={{ p: 3, height: 218, borderRadius: '8px' }}>
       <CardHeader
         sx={{ textAlign: 'left', padding: 0, marginTop: 1, '& .MuiCardHeader-avatar': { marginRight: 1 } }}
-        avatar={
-          <Avatar sx={{ width: 24, height: 24 }}>
-            <Image src={avatar} alt="avatar" fill />
-          </Avatar>
-        }
+        avatar={<AvatarIcon src={avatar} size={24} />}
         title={
           <Typography variant="caption" sx={{ color: 'text.primary' }}>
             {publisher}

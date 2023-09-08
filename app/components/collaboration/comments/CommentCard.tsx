@@ -1,0 +1,106 @@
+import { useState } from 'react';
+import Image from 'next/image';
+
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import Collapse from '@mui/material/Collapse';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+
+import { CommentType } from '@/common/types';
+import AvatarIcon from '@/components/common/AvatarIcon';
+import theme from '@/styles/theme';
+
+import { VoteComponent } from '../VoteComponent';
+
+import badgeIcon from '/public/images/icons/badge.svg';
+
+interface CommentCardProps {
+  content: CommentType;
+}
+
+const MAX_TEXT_LENGTH = 300;
+
+export const CommentCard = ({ content }: CommentCardProps) => {
+  const { author, comment, upvotes, downvotes } = content;
+  const { name, role, avatar, badge } = author;
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const handleToggle = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  const buttonStyle = {
+    p: 0,
+    pl: 1,
+    background: 'transparent',
+    color: theme.palette.secondary.main,
+    ':hover': {
+      background: 'transparent',
+      color: theme.palette.secondary.main,
+    },
+  };
+
+  return (
+    <Card sx={{ background: 'transparent', border: 'none', boxShadow: 'none' }}>
+      <CardHeader
+        avatar={<AvatarIcon src={avatar} size={32} />}
+        title={
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              fontSize: 14,
+              fontWeight: '500',
+              alignItems: 'center',
+              justifyItems: 'center',
+            }}
+          >
+            <Typography variant="subtitle2" color="text.primary">
+              {name}
+            </Typography>
+            {badge && <Image src={badgeIcon} alt="badge" />}
+            <Typography variant="subtitle2" color="success.main">
+              {role}
+            </Typography>
+          </Stack>
+        }
+      />
+      <CardContent sx={{ pt: 0, ml: 6 }}>
+        <Stack direction="column" spacing={1}>
+          <>
+            {!isCollapsed ? (
+              <>
+                <Typography variant="subtitle1" sx={{ color: 'text.primary' }}>
+                  {comment.slice(0, MAX_TEXT_LENGTH)}...
+                  <Button size="small" onClick={handleToggle} sx={buttonStyle}>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{
+                        fontSize: '14px',
+                        fontWeight: '500',
+                      }}
+                    >
+                      alles anzeigen
+                    </Typography>
+                  </Button>
+                </Typography>
+              </>
+            ) : (
+              <Collapse in={isCollapsed}>
+                <Typography variant="subtitle1" sx={{ color: 'text.primary' }}>
+                  {comment}
+                </Typography>
+              </Collapse>
+            )}
+          </>
+
+          <VoteComponent upvotes={upvotes} downvotes={downvotes} />
+        </Stack>
+      </CardContent>
+    </Card>
+  );
+};
