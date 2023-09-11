@@ -29,7 +29,7 @@ export const sliderContent = {
     {
       image: {
         image: featured_project_data,
-        title: 'DS',
+        title: 'Souveränität',
         projectFrom: 'Mar',
         projectTo: 'Nov',
         year: '2023',
@@ -59,7 +59,7 @@ export const sliderContent = {
     {
       image: {
         image: featured_project_ai2,
-        title: 'LT',
+        title: 'Training',
         projectFrom: 'Apr',
         projectTo: 'Aug',
         year: '2023',
@@ -69,21 +69,6 @@ export const sliderContent = {
         tags: ['Agilität', 'Strategie', 'Jahrzehnt der Entscheidung'],
         description:
           'Lead Transformation ist ein Entwicklungsprogramm für ***STRING_REMOVED*** -Führungskräfte und ist Anfang 2023 in die zweite Runde gestartet. Insgesamt besteht es aus fünf Modulen.',
-      },
-    },
-    {
-      image: {
-        image: featured_project_energy,
-        title: 'Bürgerenergie',
-        projectFrom: 'Jan',
-        projectTo: 'Feb',
-        year: '2023',
-      },
-      text: {
-        title: 'Energie genossen fördern',
-        tags: ['Förderung', 'Transformation', 'Nachhaltigkeit'],
-        description:
-          'Wir untersuchen, ob Bürgerenergie-Gemeinschaften als Transformationsbeschleuniger wirkung können - u.a. durch Mobilisierung vno privatem Kapital, durch verbesserte Akzeptanz der Energiewende und ggf. sogar durch Verringerung des Handwerker:innenmangels.',
       },
     },
     {
@@ -99,6 +84,21 @@ export const sliderContent = {
         tags: ['KI', '***STRING_REMOVED***  Prozesse', 'Effizienzen'],
         description:
           'IT und KE arbeiten gemeinsam daran, wertstiftende Einsatzmöglichkeiten für generative KI in ***STRING_REMOVED***  zu identifizieren, zu bewerten und zu priorisieren.',
+      },
+    },
+    {
+      image: {
+        image: featured_project_energy,
+        title: 'Bürgerenergie',
+        projectFrom: 'Jan',
+        projectTo: 'Feb',
+        year: '2023',
+      },
+      text: {
+        title: 'Bürgerenergie fördern',
+        tags: ['Förderung', 'Transformation', 'Nachhaltigkeit'],
+        description:
+          'Wir untersuchen, ob Bürgerenergie-Gemeinschaften als Transformationsbeschleuniger wirkung können - u.a. durch Mobilisierung vno privatem Kapital, durch verbesserte Akzeptanz der Energiewende und ggf. sogar durch Verringerung des Handwerker:innenmangels.',
       },
     },
   ],

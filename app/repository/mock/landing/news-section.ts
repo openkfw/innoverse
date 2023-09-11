@@ -1,5 +1,6 @@
 import { StaticImageData } from 'next/image';
 
+import avatarMelanieImg from '/public/images/avatarMelanie.png';
 import avatarTonyImg from '/public/images/avatarTony.png';
 
 export type NewsSlider = {
@@ -19,7 +20,7 @@ export const news = [
     subtitle:
       'Wir arbeiten gerade an den ersten Seiten der Innovationsplattform, lasst gerne Eure Meinung zum Design da.',
     theme: 'Plattform',
-    publisher: 'Ingmar Müller',
+    publisher: 'Maurice Suiker',
     date: '12 Sep 2023',
     avatar: avatarTonyImg,
   },
@@ -39,9 +40,9 @@ export const news = [
     subtitle:
       '"Mich motiviert wenn meine eigene Idee ernst genommen und umgesetzt wird" Dieser Aussage konnten die meisten unserer Gen Z Umfrage Teilnehmer zustimmen. Die größte Ablehnung gab es bei folgender Aussage:/"Viele persönliche Inhalte im Jour fixe empfinde ich als Grenzüberschreitung./" Wie ist deine Meinung dazu?  Siehst du es auch so wie unsere Gen Z oder bist du ganz anderer Meinung? Lass es uns wissen!',
     theme: 'Lead Transformation',
-    publisher: 'Maurice Suiker',
+    publisher: 'Ulrike Brandmeier',
     date: '09 Sep 2023',
-    avatar: avatarTonyImg,
+    avatar: avatarMelanieImg,
   },
   {
     id: 4,

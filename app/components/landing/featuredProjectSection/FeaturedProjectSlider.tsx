@@ -148,7 +148,7 @@ const FeaturedProjectContent = (props: { title: string; tags: string[]; descript
         variant="overline"
         sx={{ display: 'block', marginLeft: 6 / 8, fontSize: 12, fontFamily: '***FONT_REMOVED***' }}
       >
-        featured project
+        featured
       </Typography>
       <Typography
         variant="h2"

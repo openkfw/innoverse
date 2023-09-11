@@ -391,10 +391,10 @@ export const project_colaboration: ProjectColaboration = {
           author: {
             name: 'Jure Zakotnik',
             role: 'Junior Scientist',
-            avatar: avatarMelanieImg,
+            avatar: avatarMaxImg,
           },
           comment:
-            "Alles mit Dokumenten!",
+            "Hallo zusammen, ich kenne einen Use Case von einem Mittelständler in Frankfurt. Bei diesem überprüft die KI die Datenbanken hinsichtlich Inkonsistenten und fehlerhaten Einträgen. Die KI überarbeitet die Datenbanken automatisiert oder legt dem Sachbearbeiter die Stammdaten zur Prüfung vor. Das wäre sicherlich auch spannend für ***STRING_REMOVED*** , insbesondere in Hinblick auf unsere unzähligen Daten. Ich hoffe ich konnte weiterhelfen.Macht weiter so, super spannendes Projekt!",
           upvotes: 27,
           downvotes: 0,
         },
@@ -402,11 +402,11 @@ export const project_colaboration: ProjectColaboration = {
           id: 2,
           author: {
             name: 'Maurice Suiker',
-            role: 'Lead Scientist',
+            role: 'Dualer Student',
             avatar: avatarMaxImg,
           },
           comment:
-            "Alles mit Dokumenten!",
+            "Sprecht mal mit Aleph Alpha, da ist SAP gerade eingestiegen.",
           upvotes: 2,
           downvotes: 0,
         },
@@ -418,7 +418,7 @@ export const project_colaboration: ProjectColaboration = {
             avatar: avatarMaxImg,
           },
           comment:
-          "Alles mit Dokumenten!",
+          "Ruft mich mal an, dann sprechen wir darüber.",
           upvotes: 2,
           downvotes: 0,
         },
@@ -430,7 +430,7 @@ export const project_colaboration: ProjectColaboration = {
             avatar: avatarMaxImg,
           },
           comment:
-          "Alles mit Dokumenten!",
+          "Ich habe Euch einen Termin eingestellt, freue mich darauf.",
           upvotes: 2,
           downvotes: 0,
         },
@@ -450,24 +450,24 @@ export const project_colaboration: ProjectColaboration = {
         {
           id: 1,
           author: {
-            name: 'Melanie Muster',
-            role: 'Junior Scientist',
-            avatar: avatarMelanieImg,
+            name: 'Robin Hertz',
+            role: 'Teamleiter',
+            avatar: avatarMaxImg,
           },
           comment:
-            "I'm thrilled to hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills. This can lead to more creative solutions and help you anticipate challenges from different angles. Also, consider creating a culture of experimentation and learning from failures. It's often in our failures that we find the seeds of great innovation.",
+            "Hallo liebes Team, ich bin Teamleiter im Bereich OS. Bei uns liegen jeden Tag  so viele Anträge auf dem Tisch,dass wir kaum noch hinterher kommen. Das führt natürlich zu langen Wartezeiten und Frust bei unseren Kunden. KI könnte uns hier einen Teil der Arbeit abnehmen, in dem sie die Anträge schonmal vorab prüft und auf plausbilität untersucht. Das wäre eine mega Erleichterung für uns. Ich hoffe das hilft euch weiter. Haltet uns bitte auf dem Laufenden!",
           upvotes: 27,
           downvotes: 0,
         },
         {
           id: 2,
           author: {
-            name: 'Max Milian',
-            role: 'Lead Scientist',
+            name: 'Felix Stark',
+            role: 'Energiewende-Enthusiast',
             avatar: avatarMaxImg,
           },
           comment:
-            "Response 6: Greetings,Innovation projects thrive on creativity and collaboration. I recommend fostering a culture of brainstorming and idea-sharing within your team. Sometimes, the most innovative solutions emerge from unexpected sources. Also, don't be afraid to seek feedback and critique from outside experts or customers to refine your ideas further. Best of luck!",
+            "Ich hatte schon spannende Gespräche mit Ki-Zentralverband und würde gerne bei Euch mitarbeiten. Lasst uns mal sprechen.",
           upvotes: 2,
           downvotes: 0,
         },
