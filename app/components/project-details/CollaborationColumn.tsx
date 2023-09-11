@@ -2,7 +2,7 @@ import { Grid, Typography } from '@mui/material';
 
 import { ProjectCollaboration } from '@/common/types';
 
-import InteractionButton from '../common/InteractionButton';
+import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 interface CollaborationProps {
   collaborationData: ProjectCollaboration;
@@ -36,14 +36,14 @@ const CollaborationColumn = (props: CollaborationProps) => {
           <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', mb: '25px' }}>
             {collaborationData.description}
           </Typography>
-          <Typography variant="caption" sx={{ color: '#507666' }}>
+          <Typography variant="caption" color="text.primary">
             {collaborationData.participants} Beteilungen - {collaborationData.upvotes} Votes
           </Typography>
         </Grid>
         <Grid item xs={4}>
-          <InteractionButton interactionType="collaboration" onClick={handleCollaborationClick} />
-          <InteractionButton interactionType="collaboration" label="Take our Survey" />
-          <InteractionButton interactionType="collaboration" label="Support Us" />
+          <InteractionButton interactionType={InteractionType.COLLABORATION} onClick={handleCollaborationClick} />
+          <InteractionButton interactionType={InteractionType.COLLABORATION} label="Take our Survey" />
+          <InteractionButton interactionType={InteractionType.COLLABORATION} label="Support Us" />
         </Grid>
       </Grid>
     </>

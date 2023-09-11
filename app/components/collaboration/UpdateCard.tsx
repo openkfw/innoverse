@@ -1,8 +1,11 @@
+import { useState } from 'react';
+
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import { ProjectUpdate } from '@/common/types';
+import { project_colaboration } from '@/repository/mock/project/project-page';
 
 import AvatarIcon from '../common/AvatarIcon';
 import { StyledTooltip } from '../common/StyledTooltip';
@@ -10,7 +13,7 @@ import { TooltipContent } from '../project-details/TooltipContent';
 
 import { Comments } from './comments/Comments';
 import { ShareOpinionCard } from './ShareOpinionCard';
-import { WriteOpinionCard } from './WriteOpinionCard';
+import WriteCommentCard from './WriteCommentCard';
 
 interface UpdateCardProps {
   content: ProjectUpdate;
@@ -18,6 +21,7 @@ interface UpdateCardProps {
 
 export const UpdateCard = ({ content }: UpdateCardProps) => {
   const { headline, text, requiredBy, comments } = content;
+  const [newCommentText] = useState<string>(project_colaboration.writeCommentText);
 
   const avatarGroupStyle = {
     display: 'flex',
@@ -32,15 +36,15 @@ export const UpdateCard = ({ content }: UpdateCardProps) => {
   };
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={5}>
       <Grid container item xs={6} direction="column" spacing={2}>
         <Grid item>
-          <Typography variant="h5" color="text.primary">
+          <Typography variant="h5" color="secondary.contrastText">
             {headline}
           </Typography>
         </Grid>
         <Grid item>
-          <Typography variant="body1" color="text.primary">
+          <Typography variant="body1" color="secondary.contrastText">
             {text}
           </Typography>
         </Grid>
@@ -71,7 +75,7 @@ export const UpdateCard = ({ content }: UpdateCardProps) => {
         </Grid>
       ) : (
         <Grid container item xs={6}>
-          <WriteOpinionCard />
+          <WriteCommentCard text={newCommentText} />
         </Grid>
       )}
     </Grid>

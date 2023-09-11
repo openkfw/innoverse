@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import Avatar from '@mui/material/Avatar';
@@ -33,6 +33,12 @@ export const CommentCard = ({ content }: CommentCardProps) => {
     setIsCollapsed(!isCollapsed);
   };
 
+  useEffect(() => {
+    if (comment.length <= MAX_TEXT_LENGTH) {
+      setIsCollapsed(true);
+    }
+  }, [comment]);
+
   const buttonStyle = {
     p: 0,
     pl: 1,
@@ -44,8 +50,20 @@ export const CommentCard = ({ content }: CommentCardProps) => {
     },
   };
 
+  const cardStyle = {
+    background: 'transparent',
+    border: 'none',
+    boxShadow: 'none',
+    '.MuiCardHeader-root': {
+      paddingLeft: 0,
+    },
+    '.MuiCardContent-root': {
+      paddingLeft: 0,
+    },
+  };
+
   return (
-    <Card sx={{ background: 'transparent', border: 'none', boxShadow: 'none' }}>
+    <Card sx={cardStyle}>
       <CardHeader
         avatar={
           <Avatar sx={{ width: 32, height: 32 }}>
@@ -63,11 +81,11 @@ export const CommentCard = ({ content }: CommentCardProps) => {
               justifyItems: 'center',
             }}
           >
-            <Typography variant="subtitle2" color="text.primary">
+            <Typography variant="subtitle2" color="secondary.contrastText">
               {name}
             </Typography>
             {badge && <Image src={badgeIcon} alt="badge" />}
-            <Typography variant="subtitle2" color="success.main">
+            <Typography variant="subtitle2" color="text.secondary">
               {role}
             </Typography>
           </Stack>
@@ -76,9 +94,15 @@ export const CommentCard = ({ content }: CommentCardProps) => {
       <CardContent sx={{ pt: 0, ml: 6 }}>
         <Stack direction="column" spacing={1}>
           <>
-            {!isCollapsed ? (
+            {isCollapsed ? (
+              <Collapse in={isCollapsed}>
+                <Typography variant="body1" sx={{ color: 'secondary.contrastText' }}>
+                  {comment}
+                </Typography>
+              </Collapse>
+            ) : (
               <>
-                <Typography variant="subtitle1" sx={{ color: 'text.primary' }}>
+                <Typography variant="body1" sx={{ color: 'secondary.contrastText' }}>
                   {comment.slice(0, MAX_TEXT_LENGTH)}...
                   <Button size="small" onClick={handleToggle} sx={buttonStyle}>
                     <Typography
@@ -93,12 +117,6 @@ export const CommentCard = ({ content }: CommentCardProps) => {
                   </Button>
                 </Typography>
               </>
-            ) : (
-              <Collapse in={isCollapsed}>
-                <Typography variant="subtitle1" sx={{ color: 'text.primary' }}>
-                  {comment}
-                </Typography>
-              </Collapse>
             )}
           </>
 

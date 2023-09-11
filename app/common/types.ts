@@ -23,7 +23,7 @@ export type CommentType = {
 };
 
 export type ProjectColaboration = {
-  writeOpinionText: string;
+  writeCommentText: string;
   projectUpdates: ProjectUpdate[];
 };
 
@@ -92,4 +92,10 @@ export type ProjectProgression = {
   projectSummary: ProjectSummary;
   projectStatus: ProjectStatus;
   comments: CommentType[];
+  questions: string[];
+};
+
+export type ProjectsProgression = {
+  writeCommentText: string;
+  projects: ProjectProgression[];
 };

@@ -9,6 +9,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 
+import bull from '@/components/common/bull';
 import ProgressBar, { PROJECT_PROGRESS } from '@/components/common/ProgressBar';
 
 interface ProjectCardProps {
@@ -18,12 +19,6 @@ interface ProjectCardProps {
   title: string;
   description: string;
 }
-
-const bull = (
-  <Box component="span" sx={{ display: 'inline-block', mx: '6px', transform: 'scale(0.8)' }}>
-    •
-  </Box>
-);
 
 export default function ProjectCard(props: ProjectCardProps) {
   // -------- (to be removed - replace with real data) - random data to showcase Progress bar steps in project cards
