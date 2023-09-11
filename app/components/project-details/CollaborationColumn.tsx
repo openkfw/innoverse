@@ -33,17 +33,17 @@ const CollaborationColumn = (props: CollaborationProps) => {
           <Typography variant="overline" sx={{ color: 'primary.light', mb: '25px' }}>
             Zusammenarbeit
           </Typography>
-          <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', mb: '25px' }}>
+          <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', mb: '15px' }}>
             {collaborationData.description}
           </Typography>
           <Typography variant="caption" sx={{ color: '#507666' }}>
             {collaborationData.participants} Beteilungen - {collaborationData.upvotes} Votes
           </Typography>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={4} sx={{ color: 'primary.light', mt: '15px' }}>
           <InteractionButton interactionType="collaboration" onClick={handleCollaborationClick} />
-          <InteractionButton interactionType="collaboration" label="Take our Survey" />
-          <InteractionButton interactionType="collaboration" label="Support Us" />
+          <InteractionButton interactionType="collaboration" label="Komm ins Team!" />
+          <InteractionButton interactionType="collaboration" label="Umfrage machen!" />
         </Grid>
       </Grid>
     </>

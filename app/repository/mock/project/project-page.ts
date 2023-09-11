@@ -1,6 +1,6 @@
 import { PROJECT_PROGRESS, ProjectColaboration, ProjectProgression } from '@/common/types';
 
-import TruBudget from './projects/TruBudget.md';
+import GenerativeAI from './projects/GenerativeAI.md';
 
 import avatarMaxImg from '/public/images/avatarMax.png';
 import avatarMelanieImg from '/public/images/avatarMelanie.png';
@@ -26,7 +26,7 @@ export const project_progression: ProjectProgression[] = [
       summary:
         'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
       timing: {
-        projectStart: 'Okt 2022',
+        projectStart: 'Aug',
         projectEnd: 'Nov 2023',
       },
       collaboration: {
@@ -87,7 +87,7 @@ export const project_progression: ProjectProgression[] = [
       ],
     },
     projectStatus: {
-      text: TruBudget,
+      text: GenerativeAI,
       author: {
         name: 'Max Muster',
         role: 'Junior Scientist',

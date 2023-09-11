@@ -11,7 +11,7 @@ import { PROJECT_PROGRESS } from '@/common/types';
 
 import ProgressBar from '../common/ProgressBar';
 
-import project from '/public/images/project1.png';
+import project from '/public/images/ai_01.png';
 
 interface HeroSectionProps {
   title: string;

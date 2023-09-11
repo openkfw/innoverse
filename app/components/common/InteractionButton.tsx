@@ -40,11 +40,11 @@ export default function InteractionButton(props: InteractionButtonProps) {
   const getButtontext = () => {
     if (label) return label;
     if (interactionType === 'like') return 'Like';
-    if (interactionType === 'project-follow') return 'Projekt Folgen';
+    if (interactionType === 'project-follow') return 'Projekt folgen';
     if (interactionType === 'user-follow') return 'Folgen';
-    if (interactionType === 'collaboration') return 'Zusammenarbeit Öffnen';
+    if (interactionType === 'collaboration') return 'Hilf uns!';
     if (interactionType === 'comment-send') return 'Senden';
-    if (interactionType === 'share-opinion') return 'Teile deine Meinung';
+    if (interactionType === 'share-opinion') return 'Teile Deine Erfahrung';
     if (interactionType === 'comment') return;
   };
 
