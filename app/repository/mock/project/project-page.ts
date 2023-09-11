@@ -48,6 +48,16 @@ export const projects_progression: ProjectsProgression = {
         {
           name: 'Ingmar Müller',
           role: 'Innovation Hub',
+          avatar: avatarSusanImg,
+        },
+        {
+          name: 'Rupert Rebentisch',
+          role: 'Tech Innovation Champion',
+          avatar: avatarMaxImg,
+        },
+        {
+          name: 'Michael Strauß',
+          role: 'Innovation Hub',
           avatar: avatarMaxImg,
         },
       ],

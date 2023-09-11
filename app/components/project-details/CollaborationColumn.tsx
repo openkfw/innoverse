@@ -30,7 +30,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
     <>
       <Grid container direction="column">
         <Grid item xs={4}>
-          <Typography variant="overline" sx={{ color: 'primary.light', mb: '25px' }}>
+          <Typography variant="overline" sx={{ color: 'primary.light', mb: '15px' }}>
             Zusammenarbeit
           </Typography>
           <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', mb: '15px' }}>
@@ -40,7 +40,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
             {collaborationData.participants} Beteilungen - {collaborationData.upvotes} Votes
           </Typography>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={4} sx={{ mt: '15px' }}>
           <InteractionButton interactionType={InteractionType.COLLABORATION} onClick={handleCollaborationClick} />
           <InteractionButton interactionType={InteractionType.COLLABORATION} label="Komm ins Team!" />
           <InteractionButton interactionType={InteractionType.COLLABORATION} label="Umfrage machen!" />

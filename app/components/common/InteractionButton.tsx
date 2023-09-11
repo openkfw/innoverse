@@ -44,7 +44,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
   const getButtontext = () => {
     if (label) return label;
     if (interactionType === InteractionType.LIKE) return 'Like';
-    if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Projekt Folgen';
+    if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Projekt folgen';
     if (interactionType === InteractionType.USER_FOLLOW) return 'Folgen';
     if (interactionType === InteractionType.COLLABORATION) return 'Hilf uns!';
     if (interactionType === InteractionType.COMMENT_SEND) return 'Senden';
