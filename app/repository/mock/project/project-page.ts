@@ -117,7 +117,7 @@ export const projects_progression: ProjectsProgression = {
             role: 'BDAI Experte',
           },
           comment:
-            "I'm thrilled to hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills om different anom different anom different an. This can lead to more creative solutions and help you anticipate challenges from different angles. Also, consider creating a culture of experimentation and learning from failures. It's often in our failures that we find the seeds of great innovation.",
+            "Danke, super spannend. Mich würde interessieren, wie ihr beim Thema Datenschutz und IP vorgeht, schreibt doch dazu mal ein Update.",
           upvotes: 15,
           downvotes: 0,
         },
@@ -129,15 +129,13 @@ export const projects_progression: ProjectsProgression = {
             avatar: avatarMelanieImg,
           },
           comment:
-            'Yes. To hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills.',
+            'Könnt ihr mal Eure Architektur mit uns teilen, für uns auch super spannend.',
           upvotes: 2,
           downvotes: 0,
         },
       ],
       questions: [
-        'Hast du in letzter Zeit Banking-Innovationen erlebt, die deine Art der Finanzverwaltung verändert haben?',
-        'Wie hat die Technologie deine persönlichen Bankinteraktionen beeinflusst?',
-        'Könntest du eine persönliche Geschichte über eine Bankinnovation teilen, die sich auf dich ausgewirkt hat?',
+        'Hast Du Fragen zum Projekt? Welche Informationen fehlen Dir noch? Was möchtest Du in Zukunft von uns hören?',
       ],
     },
     {
@@ -413,7 +411,7 @@ export const project_colaboration: ProjectColaboration = {
           id: 1,
           author: {
             name: 'Jure Zakotnik',
-            role: 'Junior Scientist',
+            role: 'KI Experte',
             avatar: avatarMaxImg,
           },
           comment:
