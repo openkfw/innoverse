@@ -13,6 +13,8 @@ import Stack from '@mui/material/Stack';
 import { Info, ProjectStatus } from '@/common/types';
 
 import { AuthorInformation } from './AuthorInformation';
+import CommentsSection from './CommentsSection';
+import { ProjectTags } from './ProjectTags';
 
 import robotic_hand from '/public/images/robotic-hand.png';
 
@@ -56,7 +58,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
   const showMoreButtonStyle = {
     background: 'linear-gradient(to bottom, rgba(255,0,0,0), rgba(255,255,255,1))',
     position: 'absolute',
-    bottom: '20%',
+    bottom: '67%',
     paddingTop: '150px',
     textAlign: 'center',
     width: '100%',
@@ -100,7 +102,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
           <Stack direction="row" spacing={0} justifyContent={'space-between'}>
             <Box
               sx={{
-                m: 5,
+                m: 2,
               }}
             >
               <MuiMarkdown overrides={{ style: { color: 'text.primary' } } as unknown as Overrides}>
@@ -118,9 +120,11 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
           </Stack>
         </Box>
 
-        <Divider />
+        <Divider sx={{ width: '662px' }} />
+        <ProjectTags tags={projectStatus.tags} />
         <AuthorInformation author={projectStatus.author} />
-        <Divider />
+        <Divider sx={{ my: 2, width: '662px' }} />
+        <CommentsSection />
       </Stack>
     </Card>
   );

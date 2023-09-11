@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 
 import { ProjectSummary } from '@/common/types';
 
-import InteractionButton from '../common/InteractionButton';
+import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 import CollaborationColumn from './CollaborationColumn';
 import ProjectStageCard from './ProjectStageCard';
@@ -37,12 +37,12 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
               <Grid item xs={4}>
                 <ProjectStageCard timingData={projectSummary.timing} />
               </Grid>
-              <Grid item xs={4}>
-                <InteractionButton interactionType="like" sx={{ mt: '30px' }} />
-                <InteractionButton interactionType="project-follow" sx={{ mt: '30px' }} />
+              <Grid item xs={4} sx={{ mt: 2 }}>
+                <InteractionButton interactionType={InteractionType.LIKE} />
+                <InteractionButton interactionType={InteractionType.PROJECT_FOLLOW} />
               </Grid>
               <Grid item xs={4}>
-                <Typography variant="caption" sx={{ color: '#507666' }}>
+                <Typography variant="caption" color="text.primary">
                   {projectSummary.likes} Likes - {projectSummary.followers} Innovaders folgen
                 </Typography>
               </Grid>

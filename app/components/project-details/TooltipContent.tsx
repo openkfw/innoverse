@@ -2,7 +2,7 @@ import { Grid, Typography } from '@mui/material';
 
 import { Person } from '@/common/types';
 
-import InteractionButton from '../common/InteractionButton';
+import InteractionButton, { InteractionType } from '../common/InteractionButton';
 interface TeamMemberProps {
   teamMember: Person;
 }
@@ -14,16 +14,16 @@ export const TooltipContent = (props: TeamMemberProps) => {
         <Typography variant="subtitle1" sx={{ color: 'text.primary' }}>
           {teamMember.name}
         </Typography>
-        <Typography variant="caption" sx={{ color: '#507666;' }}>
+        <Typography variant="caption" color="text.primary">
           {teamMember.role}
         </Typography>
       </Grid>
       <Grid item container xs={7}>
         <Grid item xs={7}>
-          <InteractionButton interactionType="user-follow" />
+          <InteractionButton interactionType={InteractionType.USER_FOLLOW} />
         </Grid>
         <Grid item xs={5}>
-          <InteractionButton interactionType="comment" />
+          <InteractionButton interactionType={InteractionType.COMMENT} />
         </Grid>
       </Grid>
     </Grid>

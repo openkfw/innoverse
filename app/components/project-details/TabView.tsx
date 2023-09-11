@@ -80,7 +80,7 @@ export default function BasicTabs({ projectStatus, activeTab, setActiveTab }: Ba
             label={
               <Stack direction="row" spacing={1}>
                 <Typography variant="subtitle1" color="secondary.main">
-                  12
+                  3
                 </Typography>
                 <Typography variant="subtitle1">Zusammenarbeit</Typography>
               </Stack>
@@ -92,7 +92,7 @@ export default function BasicTabs({ projectStatus, activeTab, setActiveTab }: Ba
             label={
               <Stack direction="row" spacing={1}>
                 <Typography variant="subtitle1" color="secondary.main">
-                  3
+                  8
                 </Typography>
                 <Typography variant="subtitle1">Updates</Typography>
               </Stack>

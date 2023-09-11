@@ -15,7 +15,7 @@ const baseStyles = {
     },
     h2: {
       fontFamily: 'PFCentroSansProBold',
-      fontSize: '60px',
+      fontSize: '55px',
       fontStyle: 'normal',
       fontWeight: '1000',
       lineHeight: '120%',
@@ -141,7 +141,7 @@ const body = {
     fontFamily: '***FONT_REMOVED***',
     fontSize: '16px',
     fontStyle: 'normal',
-    fontWeight: '700',
+    fontWeight: '500',
     lineHeight: '175%',
     letterSpacing: '0.15px',
   },

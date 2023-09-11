@@ -1,13 +1,16 @@
 import Image from 'next/image';
 
-import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
-import FormatAlignLeftOutlinedIcon from '@mui/icons-material/FormatAlignLeftOutlined';
-import { Avatar, Button, Chip, IconButton, Stack, Typography } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 import { PersonInfo } from '@/common/types';
 
-import badge from '/public/images/icons/badge.svg';
-import elipse from '/public/images/icons/elipse.svg';
+import bull from '../common/bull';
+import InteractionButton, { InteractionType } from '../common/InteractionButton';
+
+import badgeIcon from '/public/images/icons/badge.svg';
 
 interface AuthorInformationProps {
   author: PersonInfo;
@@ -16,62 +19,41 @@ interface AuthorInformationProps {
 export const AuthorInformation = (props: AuthorInformationProps) => {
   const { author } = props;
 
-  const buttonStyle = {
-    borderRadius: '48px',
-    border: '1px solid rgba(0, 0, 0, 0.10)',
-    backdropFilter: 'blur(24px)',
-    background: 'white',
-  };
-
   return (
-    <Stack
-      sx={{
-        display: 'flex',
-        width: '662px',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        mt: 4,
-        ml: 4,
-      }}
-      spacing={2}
-    >
-      <Stack direction="row" spacing={2}>
-        <Chip label="#KI" />
-        <Chip label="#Effizienz" />
-        <Chip label="#Geschäftsbereiche" />
-        <Chip label="#AI" />
-        <Chip label="#Dokumente" />
-      </Stack>
-      <Stack direction="row" spacing={2}>
-        <Avatar src="https://source.boringavatars.com/beam/120/Stefan?colors=264653,f4a261,e76f51" />
-        <Stack direction="column">
-          <Typography variant="subtitle1" color={'var(--text-primary, rgba(0, 0, 0, 0.87))'}>
-            {author.name}
+    <Stack sx={{ width: 662 }} spacing={4} pt={4} mt={1}>
+      <Stack spacing={1}>
+        <Stack direction="row" justifyContent="space-between">
+          <Stack direction="row" spacing={1}>
+            <Box>
+              <Avatar sx={{ width: 48, height: 48 }}>
+                <Image src={author.avatar} alt="avatar" fill sizes="33vw" />
+              </Avatar>
+            </Box>
+            <Box>
+              <Typography variant="subtitle1" color="text.primary">
+                {author.name}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {author.role}
+              </Typography>
+            </Box>
+          </Stack>
+          <Stack direction="row" spacing={1}>
+            <InteractionButton interactionType={InteractionType.USER_FOLLOW} />
+            <InteractionButton interactionType={InteractionType.COMMENT} />
+            <InteractionButton interactionType={InteractionType.ADD_INSIGHTS} />
+          </Stack>
+        </Stack>
+        <Stack direction="row" alignItems="center" pb={4} spacing={1} sx={{ m: 0 }} mt={2}>
+          <Image src={badgeIcon} alt="badge" />
+          <Typography variant="caption" color="text.primary">
+            {author.points} Points
           </Typography>
-          <Typography variant="caption" color={'#507666'}>
-            {author.role}
+          {bull}
+          <Typography variant="caption" color="text.primary">
+            {author.department}
           </Typography>
         </Stack>
-        <Button style={buttonStyle}>
-          <Typography variant="caption">Folgen</Typography>
-        </Button>
-        <IconButton style={buttonStyle}>
-          <ChatBubbleOutlineOutlinedIcon></ChatBubbleOutlineOutlinedIcon>
-        </IconButton>
-        <IconButton style={buttonStyle}>
-          <FormatAlignLeftOutlinedIcon></FormatAlignLeftOutlinedIcon>
-          <Typography variant="caption">Teile Deine Erfahrungen!</Typography>
-        </IconButton>
-      </Stack>
-      <Stack direction="row" sx={{ mt: '20px', mb: '20px' }}>
-        <Image style={{ marginRight: '5px' }} src={badge} alt={''} />
-        <Typography variant="caption" color={'#507666'}>
-          {author.points} Points
-        </Typography>
-        <Image style={{ marginTop: '8px', paddingLeft: '13px', paddingRight: '13px' }} src={elipse} alt={''} />
-        <Typography variant="caption" color={'#507666'}>
-          {author.department}
-        </Typography>
       </Stack>
     </Stack>
   );

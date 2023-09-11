@@ -33,7 +33,7 @@ const UpdateCard = (props: UpdateCardProps) => {
       <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)' }}>
         {update.content}
       </Typography>
-      <Typography variant="caption" sx={{ color: '#507666' }}>
+      <Typography variant="caption" color="text.primary">
         {update.date}
       </Typography>
     </>
