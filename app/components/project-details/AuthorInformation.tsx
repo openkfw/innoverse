@@ -36,11 +36,11 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
       spacing={2}
     >
       <Stack direction="row" spacing={2}>
-        <Chip label="#Gesellschaft" />
-        <Chip label="#Bildung" />
-        <Chip label="#Gründen" />
+        <Chip label="#KI" />
+        <Chip label="#Effizienz" />
+        <Chip label="#Geschäftsbereiche" />
         <Chip label="#AI" />
-        <Chip label="#XYZ" />
+        <Chip label="#Dokumente" />
       </Stack>
       <Stack direction="row" spacing={2}>
         <Avatar src="https://source.boringavatars.com/beam/120/Stefan?colors=264653,f4a261,e76f51" />
@@ -60,7 +60,7 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
         </IconButton>
         <IconButton style={buttonStyle}>
           <FormatAlignLeftOutlinedIcon></FormatAlignLeftOutlinedIcon>
-          <Typography variant="caption">Add your insights</Typography>
+          <Typography variant="caption">Teile Deine Erfahrungen!</Typography>
         </IconButton>
       </Stack>
       <Stack direction="row" sx={{ mt: '20px', mb: '20px' }}>

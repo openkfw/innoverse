@@ -18,7 +18,7 @@ const steps = [
   },
   {
     label: 'PoC',
-    description: `***STRING_REMOVED***  richtet ihr eigenes Investitionsverhalten auf Nachhaltigkeit aus. Seit 2006 ist sie Unterzeichnerin der UN Principles for Responsible Investment (PRI). Nachhaltigkeitskriterien w`,
+    description: `Der Vorstand hat uns beauftragt, Anwendungsfälle für Generative Ki in ***STRING_REMOVED***  zu erheben und zu bewerten, sowie parallel die benötigten IT Skills, Tools und Prozesse aufzusetzen.`,
   },
 ];
 
@@ -77,7 +77,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
                   {!isCollapsed ? (
                     <>
                       <Typography variant="body1" sx={{ color: 'text.primary' }}>
-                        {step.description.slice(0, 100)}
+                        {step.description.slice(0, 120)}
                       </Typography>
                       <Button
                         onClick={handleToggle}

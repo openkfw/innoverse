@@ -24,7 +24,7 @@ export const project_progression: ProjectProgression[] = [
     },
     projectSummary: {
       summary:
-        'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
+        '',
       timing: {
         projectStart: 'Aug',
         projectEnd: 'Nov 2023',
@@ -64,7 +64,7 @@ export const project_progression: ProjectProgression[] = [
           },
           date: '12. Aug 2023',
           content:
-            'Wir haben unsere Ergebnisse dem Vorstand präsentiert, sehr gute Diskussion und viel Unterstützung - jetzt kanns losgehen',
+            'Wir haben unsere Ergebnisse dem Vorstand präsentiert, sehr gute Diskussion und viel Unterstützung - jetzt kanns losgehen!',
         },
         {
           author: {
@@ -72,8 +72,8 @@ export const project_progression: ProjectProgression[] = [
             avatar: avatarTonyImg,
             role: '',
           },
-          date: '4. Jul 2023',
-          content: 'Wir haben jetzt ein Konzept erstellt, um Generative KI in ***STRING_REMOVED***  zu ermöglichen',
+          date: '20. Jul 2023',
+          content: 'Wir haben jetzt ein Konzept erstellt, um Generative KI in ***STRING_REMOVED***  zu ermöglichen.',
         },
         {
           author: {
@@ -89,13 +89,13 @@ export const project_progression: ProjectProgression[] = [
     projectStatus: {
       text: GenerativeAI,
       author: {
-        name: 'Max Muster',
-        role: 'Junior Scientist',
+        name: 'Ingmar Müller',
+        role: 'Innovation Hub',
         avatar: avatarMaxImg,
         points: 536,
-        department: 'Department ABC, Frankfurt am Main',
+        department: 'KEe, Frankfurt am Main',
       },
-      tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
+      tags: ['KI', 'Effizienz', 'Geschäftsbereiche', 'AI'],
       info: {
         title: '##Blockchain',
         description: 'Die Blockchain-Technologie stellt sicher, dass keine Manipulation möglich ist.',
@@ -371,12 +371,12 @@ export const project_colaboration: ProjectColaboration = {
     'Teil deine Ratschläge und Gedanken zu diesem Thema, damit deine Kollegen von deiner Expertise profitieren können.',
   projectUpdates: [
     {
-      headline: 'First Question about some topics I need advice',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+      headline: 'Welche spannende Use Cases für Künstliche Intelligenz kennt ihr aus anderen Unternehmen?',
+      text: 'Haben die Anwendungsfälle einen signifikanten Mehrwert geleistet? Helft uns in dem ihr Eure Erfahrungen und Euer Wissen  mit uns teilt!',
       requiredBy: [
         {
-          name: 'Susan Brown',
-          role: 'Lead Scientist',
+          name: 'Willem Behrenbeck',
+          role: 'Data Scientist',
           avatar: avatarSusanImg,
         },
         {
@@ -389,24 +389,24 @@ export const project_colaboration: ProjectColaboration = {
         {
           id: 1,
           author: {
-            name: 'Melanie Muster',
+            name: 'Jure Zakotnik',
             role: 'Junior Scientist',
             avatar: avatarMelanieImg,
           },
           comment:
-            "I'm thrilled to hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills. This can lead to more creative solutions and help you anticipate challenges from different angles. Also, consider creating a culture of experimentation and learning from failures. It's often in our failures that we find the seeds of great innovation.",
+            "Alles mit Dokumenten!",
           upvotes: 27,
           downvotes: 0,
         },
         {
           id: 2,
           author: {
-            name: 'Max Milian',
+            name: 'Maurice Suiker',
             role: 'Lead Scientist',
             avatar: avatarMaxImg,
           },
           comment:
-            "Response 6: Greetings,Innovation projects thrive on creativity and collaboration. I recommend fostering a culture of brainstorming and idea-sharing within your team. Sometimes, the most innovative solutions emerge from unexpected sources. Also, don't be afraid to seek feedback and critique from outside experts or customers to refine your ideas further. Best of luck!",
+            "Alles mit Dokumenten!",
           upvotes: 2,
           downvotes: 0,
         },
@@ -418,7 +418,7 @@ export const project_colaboration: ProjectColaboration = {
             avatar: avatarMaxImg,
           },
           comment:
-            "Response 6: Greetings,Innovation projects thrive on creativity and collaboration. I recommend fostering a culture of brainstorming and idea-sharing within your team. Sometimes, the most innovative solutions emerge from unexpected sources. Also, don't be afraid to seek feedback and critique from outside experts or customers to refine your ideas further. Best of luck!",
+          "Alles mit Dokumenten!",
           upvotes: 2,
           downvotes: 0,
         },
@@ -430,15 +430,15 @@ export const project_colaboration: ProjectColaboration = {
             avatar: avatarMaxImg,
           },
           comment:
-            "Response 6: Greetings,Innovation projects thrive on creativity and collaboration. I recommend fostering a culture of brainstorming and idea-sharing within your team. Sometimes, the most innovative solutions emerge from unexpected sources. Also, don't be afraid to seek feedback and critique from outside experts or customers to refine your ideas further. Best of luck!",
+          "Alles mit Dokumenten!",
           upvotes: 2,
           downvotes: 0,
         },
       ],
     },
     {
-      headline: 'Second Question about some topics I need advice',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+      headline: 'Welche eurer täglichen Herausforderungen könnten durch den Einsatz von KI gelöst werden?',
+      text: 'Helft uns in dem ihr Eure Erfahrungen und Euer Wissen  mit uns teilt!',
       requiredBy: [
         {
           name: 'Melanie Muster',
@@ -474,8 +474,8 @@ export const project_colaboration: ProjectColaboration = {
       ],
     },
     {
-      headline: 'Third Question about some topics I need advice',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+      headline: 'Welche Bedenken habt ihr hinsichtlich des Einsatzes von KI, in eurem Bereich?',
+      text: '',
       requiredBy: [],
       comments: [],
     },
