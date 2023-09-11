@@ -20,15 +20,15 @@ export type ProjectCarouselItem = {
 
 export const projects = [
   {
-    id: 1,
+    id: 0,
     image: featured_project_ai,
-    title: 'Jahresabschluss-KI für die IPEX',
-    contributors: ['Tobias Richter', 'Caroline Löffler', 'MIcheala Altmeyer', 'Syndey Richards'],
+    title: 'Generative KI für ***STRING_REMOVED*** ',
+    contributors: ['Rupert Rebentisch', 'Willem Behrenbeck', 'Ingmar Müller'],
     progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
-    description: 'Unsere D&I-Förderprogramme sind offen für alle Technologien, um D&I möglichst breit zu fördern',
+    description: 'Wir wollen generative KI in ***STRING_REMOVED***  bringen, und ermitteln gemeinsam mit den Bereichen die sinnvollsten Anwendungsfälle.',
   },
   {
-    id: 2,
+    id: 1,
     image: featured_project_ai2,
     title: 'Lead Transformation',
     contributors: ['Matthias Zorn', 'Ulrike Brandmeier'],
@@ -37,20 +37,36 @@ export const projects = [
       'Lead Transformation ist ein Entwicklungsprogramm für ***STRING_REMOVED*** -Führungskräfte und ist Anfang 2023 in die zweite Runde gestartet. Insgesamt besteht es aus fünf Modulen.',
   },
   {
-    id: 3,
+    id: 2,
     image: featured_project_room,
     title: 'Innovationsplattform',
     contributors: ['Ingmar Müller', 'Maurice Suiker', 'Remon Gerris'],
     progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
     description:
-      'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
+      'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler:innen, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
+  },
+  {
+    id: 3,
+    image: featured_project_ai,
+    title: 'Jahresabschluss-KI für die IPEX',
+    contributors: ['Caroline Löffler', 'Micheala Altmeyer', 'Christina Wittwer', 'Syndey Richards', 'Tobias Richter'],
+    progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
+    description: 'JaKI hilft den Risikoanalysten bei der Analyse von Unternehmensberichten sowie der Risikobewertung der Unternehmen.',
+  },
+  {
+    id: 6,
+    image: featured_project_data,
+    title: 'Digitale Souveränität',
+    contributors: ['Max Muster', 'Lisa Laimberger', 'Bernhard Brunner'],
+    progress: PROJECT_PROGRESS.EXPLORATION,
+    description: 'Wir analysieren, mit welchen Angeboten ***STRING_REMOVED***  bestmöglich Digitale Souveräntität fördern kann.',
   },
   {
     id: 4,
     image: featured_project_energy,
     title: 'Oscar',
     contributors: ['Max Muster', 'Lisa Laimberger', 'Bernhard Brunner'],
-    progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
+    progress: PROJECT_PROGRESS.KONZEPTION,
     description: 'Mit OSCAR kann humanitäre Hilfe mit Satellitenkarten schneller ihren Weg finden.',
   },
   {
@@ -59,14 +75,6 @@ export const projects = [
     title: 'Trubduget As A Service',
     contributors: ['Max Muster', 'Lisa Laimberger'],
     progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
-    description: 'Einfacher Zugang zu TruBudget über eine Cloud Plattform',
-  },
-  {
-    id: 6,
-    image: featured_project_data,
-    title: 'Digitale Souveränität',
-    contributors: ['Max Muster', 'Lisa Laimberger', 'Bernhard Brunner'],
-    progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
-    description: 'Unsere D&I-Förderprogramme sind offen für alle Technologien, um D&I möglichst breit zu fördern',
+    description: 'Schnell und einfach ein TruBudget für Deinen Anwendungsfall erstellen.',
   },
 ];

@@ -29,7 +29,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
   return (
     <>
       <Typography variant="overline" sx={{ textAlign: 'left', color: 'primary.light', mb: '25px' }}>
-        Team Members
+        Unser Team
       </Typography>
       <AvatarGroup max={4} sx={avatarGroupStyle}>
         {teamMembers.map((t, index) => (

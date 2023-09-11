@@ -18,7 +18,7 @@ const steps = [
   },
   {
     label: 'PoC',
-    description: `***STRING_REMOVED***  richtet ihr eigenes Investitionsverhalten auf Nachhaltigkeit aus. Seit 2006 ist sie Unterzeichnerin der UN Principles for Responsible Investment (PRI). Nachhaltigkeitskriterien w`,
+    description: `Der Vorstand hat uns beauftragt, Anwendungsfälle für Generative Ki in ***STRING_REMOVED***  zu erheben und zu bewerten, sowie parallel die benötigten IT Skills, Tools und Prozesse aufzusetzen.`,
   },
 ];
 
@@ -40,13 +40,14 @@ const ProjectStageCard = (props: TimingDataProps) => {
   return (
     <>
       <Typography variant="overline" sx={{ textAlign: 'center', color: 'primary.light', mb: '25px' }}>
-        Project Info & Status
+        Projekt Info & Status
       </Typography>
       <Card
         sx={{
           backgroundColor: '#F0EEE1',
           borderRadius: '24px',
           width: '350px',
+          height: '370px',
         }}
       >
         <CardContent>
@@ -75,8 +76,8 @@ const ProjectStageCard = (props: TimingDataProps) => {
                 <StepContent>
                   {!isCollapsed ? (
                     <>
-                      <Typography variant="subtitle1" sx={{ color: 'text.primary' }}>
-                        {step.description.slice(0, 60)}
+                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                        {step.description.slice(0, 120)}
                       </Typography>
                       <Button
                         onClick={handleToggle}
@@ -95,12 +96,12 @@ const ProjectStageCard = (props: TimingDataProps) => {
                         }}
                         startIcon={<AddIcon color="secondary" fontSize="small" />}
                       >
-                        <Typography variant="subtitle2">weiter lesen</Typography>
+                        <Typography variant="subtitle2">weiterlesen</Typography>
                       </Button>
                     </>
                   ) : (
                     <Collapse in={isCollapsed}>
-                      <Typography variant="subtitle1" sx={{ color: 'text.primary' }}>
+                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
                         {step.description}
                       </Typography>
                     </Collapse>

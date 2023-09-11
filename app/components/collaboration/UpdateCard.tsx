@@ -50,7 +50,7 @@ export const UpdateCard = ({ content }: UpdateCardProps) => {
         </Grid>
         <Grid item>
           <Typography variant="overline" color="primary.main">
-            benötigter Betrag von
+            Frage von
           </Typography>
           <AvatarGroup sx={avatarGroupStyle}>
             {requiredBy.length > 0 ? (
@@ -61,7 +61,7 @@ export const UpdateCard = ({ content }: UpdateCardProps) => {
               ))
             ) : (
               <Typography variant="caption" color="text.disabled">
-                Kein Member zugewiesen
+                Niemand zugewiesen
               </Typography>
             )}
           </AvatarGroup>
