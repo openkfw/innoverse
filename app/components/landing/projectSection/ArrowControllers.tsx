@@ -5,12 +5,13 @@ import IconButton from '@mui/material/IconButton';
 
 interface ArrowControllersProps {
   currentSlide: number;
-  setCurrentSlide: (setCurrentSlide: (prevState: number) => number) => void;
   slidesLength: number;
+  prevSlide: () => void;
+  nextSlide: () => void;
 }
 
 export default function ArrowControllers(props: ArrowControllersProps) {
-  const { currentSlide, setCurrentSlide, slidesLength } = props;
+  const { currentSlide, slidesLength, prevSlide, nextSlide } = props;
 
   const iconStyles = {
     color: 'common.white',
@@ -22,13 +23,13 @@ export default function ArrowControllers(props: ArrowControllersProps) {
 
   const next = () => {
     if (currentSlide != slidesLength) {
-      setCurrentSlide((prevState: number) => prevState + 1);
+      nextSlide();
     }
   };
 
   const prev = () => {
     if (currentSlide != 0) {
-      setCurrentSlide((prevState: number) => prevState - 1);
+      prevSlide();
     }
   };
 

@@ -23,7 +23,7 @@ interface ProjectCardProps {
 export default function ProjectCard(props: ProjectCardProps) {
   const { title, subtitle, publisher, avatar, theme, date } = props;
   return (
-    <Card sx={{ p: 3, height: 218, borderRadius: '8px' }}>
+    <Card sx={{ p: 3, height: 218, borderRadius: '8px', width: 368, marginRight: '24px' }}>
       <CardHeader
         sx={{ textAlign: 'left', padding: 0, marginTop: 1, '& .MuiCardHeader-avatar': { marginRight: 1 } }}
         avatar={<AvatarIcon src={avatar} size={24} />}
