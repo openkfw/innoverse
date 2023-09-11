@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -7,15 +7,23 @@ import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { project_progression } from '@/repository/mock/project/project-page';
+import { PROJECT_PROGRESS } from '@/common/types';
 
 import ProgressBar from '../common/ProgressBar';
 
-import avatar from '/public/images/avatarSusan.png';
 import project from '/public/images/project1.png';
 
-const HeroSection = () => {
-  const { hero } = project_progression;
+interface HeroSectionProps {
+  title: string;
+  avatar: StaticImageData;
+  author: string;
+  role: string;
+  status: PROJECT_PROGRESS;
+}
+
+export default function HeroSection(props: HeroSectionProps) {
+  const { title, avatar, author, role, status } = props;
+
   return (
     <Grid container sx={{ position: 'relative', justifyItems: 'center', alignItems: 'center' }}>
       <Grid item xs={5}>
@@ -38,7 +46,7 @@ const HeroSection = () => {
           }}
         >
           <Typography variant="h2" sx={{ fontSize: '48px' }}>
-            {hero.title}
+            {title}
           </Typography>
           <Grid container>
             <Grid item xs={6}>
@@ -48,23 +56,21 @@ const HeroSection = () => {
                     <Image src={avatar} alt="avatar" fill sizes="33vw" />
                   </Avatar>
                 }
-                title={<Typography variant="body2"> {hero.author.name}</Typography>}
+                title={<Typography variant="body2"> {author}</Typography>}
                 subheader={
                   <Typography variant="caption" sx={{ color: 'secondary.main' }}>
-                    {hero.author.role}
+                    {role}
                   </Typography>
                 }
               />
             </Grid>
             <Grid item xs={6}>
               <Typography variant="overline">Status</Typography>
-              <ProgressBar active={hero.projectStatus} />
+              <ProgressBar active={status} />
             </Grid>
           </Grid>
         </Card>
       </Grid>
     </Grid>
   );
-};
-
-export default HeroSection;
+}

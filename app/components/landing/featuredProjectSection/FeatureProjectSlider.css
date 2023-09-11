@@ -9,7 +9,7 @@
   text-align: inherit;
   width: 100%;
   z-index: 1;
-  left: -150px;
+  left: 200px;
   display: flex;
   align-items: center;
   transition: translate 0.5s;

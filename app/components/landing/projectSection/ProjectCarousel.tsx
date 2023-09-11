@@ -32,7 +32,13 @@ export default function ProjectCarousel() {
       >
         {slides.map((item) => (
           <Grid item xs={11} key={item.id}>
-            <ProjectCard img={item.image} contributors={item.contributors} />
+            <ProjectCard
+              id={item.id}
+              img={item.image}
+              contributors={item.contributors}
+              title={item.title}
+              description={item.description}
+            />
           </Grid>
         ))}
       </Carousel>

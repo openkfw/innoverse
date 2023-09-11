@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { project_progression } from '@/repository/mock/project/project-page';
+import { ProjectSummary } from '@/common/types';
 
 import InteractionButton from '../common/InteractionButton';
 
@@ -14,12 +14,12 @@ import TeamMembersColumn from './TeamMembersColumn';
 import UpdateCard from './UpdateCard';
 
 interface ProjectInfoProps {
+  projectSummary: ProjectSummary;
   setActiveTab: (tab: number) => void;
 }
 
 export const ProjectInfoCard = (props: ProjectInfoProps) => {
-  const { setActiveTab } = props;
-  const { projectSummary } = project_progression;
+  const { projectSummary, setActiveTab } = props;
 
   return (
     <Card
@@ -71,7 +71,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
                   <UpdateCard update={projectSummary.updates[0]} />
                 </Grid>
                 <Grid item xs={4}>
-                  <UpdateCard update={projectSummary.updates[2]} />
+                  <UpdateCard update={projectSummary.updates[1]} />
                 </Grid>
                 <Grid item xs={4}>
                   <UpdateCard update={projectSummary.updates[2]} />

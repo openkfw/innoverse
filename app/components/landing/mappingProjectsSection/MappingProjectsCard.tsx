@@ -12,23 +12,28 @@ const mappingData = [
   {
     title: 'Exploration',
     description:
-      'Explorationsprojekte beschäftigen sich in erster Linie damit, ein Thema zu erforschen und zu untersuchen, um ein tieferes Verständnis zu erlangen. Dies kann wissenschaftliche Forschung, Marktforschung oder jede andere Form der Untersuchung einschließen.',
-    projects: ['Transforming Banking for the Digital Age', 'Building the Bank of Future'],
+      'Basierend auf dem strategischen Zielsystem ***STRING_REMOVED***  untersuchen wir mögliche Handlungsfelder für ***STRING_REMOVED***  und berücksichtigen dabei externe Entwicklungen und interne Leitplanken.',
+    projects: [
+      'Digitale Souveränität fördern (InDigO Handlungsfeld 4)',
+      'Auswirkungen des Digitalen Euros (CBDC)',
+      'Förderung von Energieautarkie (am Beispiel Energiegenossenschaften)',
+    ],
   },
   {
     title: 'Konzeption',
     description:
-      'In der Konzeptionsphase werden die Ziele und Ergebnisse des Projekts genau definiert. Dies sollte klar und präzise sein, damit alle Teammitglieder verstehen, was erreicht werden soll. Sie beinhaltet auch die Identifizierung von Risiken, die das Projekt beeinflussen könnten,',
-    projects: ['AI in Financial Technology'],
+      'In der Konzeptionsphase sind wir im engen Austausch mit der Zielgruppe: Aus erster Hand verstehen wir zunächst die Probleme, um basierend darauf Lösungskonzepte zu erarbeiten und mit der Zielgruppe zu validieren.',
+    projects: ['***STRING_REMOVED***  Innovationsplattform', 'Anwendungsfälle für Generative KI in ***STRING_REMOVED*** '],
   },
   {
     title: 'Proof of Concept',
     description:
-      'Ein PoC dient der Validierung einer Idee oder eines Konzepts. Es soll zeigen, dass das Konzept in der Praxis umsetzbar ist und die gewünschten Ergebnisse liefern kann. So können potenzielle Risiken und Herausforderungen frühzeitig erkannt und angegangen werden. ',
+      'Im PoC testen wir mittels Lean Experiments die Attraktivität, Machbarkeit und Rentabilität der Lösungskonzepte - auch hier direkt mit der Zielgruppe.',
     projects: [
-      'DataBank: Leveraging Big Data for Insights',
-      'Strengthening Online Banking Security',
-      'Enhancing Personal Finance Management',
+      'Jahresabschluss-KI für die IPEX',
+      'Förderung von Digitalisierung und Innovation bei KMU (InDigO Handlungsfeld 2 und 3)',
+      'Tokenisierte Anleihe',
+      'Energiemanagement für Privatkund:innen (failed)',
     ],
   },
 ];
@@ -49,8 +54,8 @@ export const MappingProjectsCard = () => {
         >
           <CardHeader
             sx={{ textAlign: 'left', mt: '30px', ml: '25px', mr: '25px' }}
-            title={<Typography variant="h4">Mapping projects</Typography>}
-            action={<CustomButton>Backstage</CustomButton>}
+            title={<Typography variant="h4">Strategische Innovation @ ***STRING_REMOVED*** </Typography>}
+            action={<CustomButton>Details</CustomButton>}
           />
           <CardContent sx={{ ml: '25px', mr: '25px' }}>
             <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>

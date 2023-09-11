@@ -39,6 +39,7 @@ export type Hero = {
   author: {
     name: string;
     role: string;
+    avatar: StaticImageData;
   };
   projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT;
 };
@@ -50,6 +51,7 @@ export type ProjectCollaboration = {
 };
 
 export type ProjectSummary = {
+  summary: string;
   timing: { projectStart: string; projectEnd: string };
   collaboration: ProjectCollaboration;
   likes: number;
@@ -72,13 +74,20 @@ export type PersonInfo = {
   department: string;
 };
 
+export type Info = {
+  title: string;
+  description: string;
+};
+
 export type ProjectStatus = {
   text: string;
   author: PersonInfo;
   tags: string[];
+  info: Info;
 };
 
 export type ProjectProgression = {
+  projectId: number;
   hero: Hero;
   projectSummary: ProjectSummary;
   projectStatus: ProjectStatus;

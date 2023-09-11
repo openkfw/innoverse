@@ -1,5 +1,7 @@
 import { PROJECT_PROGRESS, ProjectColaboration, ProjectProgression } from '@/common/types';
 
+import TruBudget from './projects/TruBudget.md';
+
 import avatarMaxImg from '/public/images/avatarMax.png';
 import avatarMelanieImg from '/public/images/avatarMelanie.png';
 import avatarSusanImg from '/public/images/avatarSusan.png';
@@ -7,127 +9,362 @@ import avatarTonyImg from '/public/images/avatarTony.png';
 import featured_project from '/public/images/featured_project.png';
 
 //TODO: define types after ui is implemented - there might be some changes
-export const project_progression: ProjectProgression = {
-  hero: {
-    image: featured_project,
-    title: 'The most talked-about, futuristic product',
-    author: {
-      name: 'Susanne Grün',
-      role: 'Senior Scientist',
+export const project_progression: ProjectProgression[] = [
+  {
+    projectId: 1,
+    hero: {
+      image: featured_project,
+      title: 'Generative KI für ***STRING_REMOVED***  nutzen',
+      author: {
+        name: 'Ingmar Müller',
+        role: 'Innovation Hub',
+        avatar: avatarMaxImg,
+      },
+      projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
     },
-    projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
-  },
-  projectSummary: {
-    timing: {
-      projectStart: 'Okt 2022',
-      projectEnd: 'Nov 2023',
+    projectSummary: {
+      summary:
+        'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
+      timing: {
+        projectStart: 'Okt 2022',
+        projectEnd: 'Nov 2023',
+      },
+      collaboration: {
+        description:
+          'Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken.',
+        upvotes: 54,
+        participants: 14,
+      },
+      likes: 153,
+      followers: 43,
+      teamMembers: [
+        {
+          name: 'Willem Behrenbeck',
+          role: 'BDAI Experte',
+          avatar: avatarTonyImg,
+        },
+        {
+          name: 'Ingmar Müller',
+          role: 'Innovation Hub',
+          avatar: avatarMaxImg,
+        },
+        {
+          name: 'Rupert Rebentisch',
+          role: 'Tech Innovation Champion',
+          avatar: avatarMaxImg,
+        },
+      ],
+
+      updates: [
+        {
+          author: {
+            name: 'Rupert Rebentisch',
+            avatar: avatarMaxImg,
+            role: '',
+          },
+          date: '12. Aug 2023',
+          content:
+            'Wir haben unsere Ergebnisse dem Vorstand präsentiert, sehr gute Diskussion und viel Unterstützung - jetzt kanns losgehen',
+        },
+        {
+          author: {
+            name: 'Willem Behrenbeck',
+            avatar: avatarTonyImg,
+            role: '',
+          },
+          date: '4. Jul 2023',
+          content: 'Wir haben jetzt ein Konzept erstellt, um Generative KI in ***STRING_REMOVED***  zu ermöglichen',
+        },
+        {
+          author: {
+            name: 'Ingmar Müller',
+            avatar: avatarMaxImg,
+            role: '',
+          },
+          date: '12. Jul 2023',
+          content: 'Wir haben heute dem Bereich BR eine Einführung in KI und Generative KI gegeben - hat Spaß gemacht!',
+        },
+      ],
     },
-    collaboration: {
-      description:
-        'Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken.',
-      upvotes: 54,
-      participants: 14,
+    projectStatus: {
+      text: TruBudget,
+      author: {
+        name: 'Max Muster',
+        role: 'Junior Scientist',
+        avatar: avatarMaxImg,
+        points: 536,
+        department: 'Department ABC, Frankfurt am Main',
+      },
+      tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
+      info: {
+        title: '##Blockchain',
+        description: 'Die Blockchain-Technologie stellt sicher, dass keine Manipulation möglich ist.',
+      },
     },
-    likes: 153,
-    followers: 43,
-    teamMembers: [
+    comments: [
       {
-        name: 'Anna Schwarz',
-        avatar: avatarMelanieImg,
-        role: 'Junior Consultant',
-      },
-      {
-        name: 'Tony Hawk',
-        avatar: avatarTonyImg,
-        role: 'Junior Consultant',
-      },
-      {
-        name: 'Anna Schwarz',
-        avatar: avatarMelanieImg,
-        role: 'Junior Consultant',
-      },
-      {
-        name: 'Tony Hawk',
-        avatar: avatarTonyImg,
-        role: 'Junior Consultant',
-      },
-      {
-        name: 'Anna Schwarz',
-        avatar: avatarMelanieImg,
-        role: 'Junior Consultant',
-      },
-    ],
-    updates: [
-      {
+        id: 1,
         author: {
-          name: 'Anna Schwarz',
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
           avatar: avatarMelanieImg,
-          role: 'Junior Consultant',
         },
-        content:
-          'Bleib gespannt auf bevorstehende Ankündigungen und Überraschungen. Wir können es kaum erwarten, zu teilen, was auf dich wartet. Sei bereit für etwas 🚀',
-        date: '12. Aug 2023',
+        comment:
+          "I'm thrilled to hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills om different anom different anom different an. This can lead to more creative solutions and help you anticipate challenges from different angles. Also, consider creating a culture of experimentation and learning from failures. It's often in our failures that we find the seeds of great innovation. This ca ... alles anzeigen",
+        upvotes: 15,
+        downvotes: 0,
       },
       {
+        id: 2,
         author: {
-          name: 'Tony Hawk',
-          avatar: avatarTonyImg,
-          role: 'Junior Consultant',
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
+          avatar: avatarMelanieImg,
         },
-        content:
-          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
-        date: '4. Jul 2023',
-      },
-      {
-        author: {
-          name: 'Tony Hawk',
-          avatar: avatarTonyImg,
-          role: 'Junior Consultant',
-        },
-        content:
-          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
-        date: '4. Jul 2023',
+        comment:
+          'Yes. To hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills.',
+        upvotes: 2,
+        downvotes: 0,
       },
     ],
   },
-  projectStatus: {
-    text: '',
-    author: {
-      name: 'Max Muster',
-      role: 'Junior Scientist',
-      avatar: avatarMaxImg,
-      points: 536,
-      department: 'Department ABC, Frankfurt am Main',
+  {
+    projectId: 2,
+    hero: {
+      image: featured_project,
+      title: 'Generative KI für ***STRING_REMOVED***  nutzen',
+      author: {
+        name: 'Ingmar Müller',
+        role: 'Innovation Hub',
+        avatar: avatarMaxImg,
+      },
+      projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
     },
-    tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
+    projectSummary: {
+      summary:
+        'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
+      timing: {
+        projectStart: 'Okt 2022',
+        projectEnd: 'Nov 2023',
+      },
+      collaboration: {
+        description:
+          'Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken.',
+        upvotes: 54,
+        participants: 14,
+      },
+      likes: 153,
+      followers: 43,
+      teamMembers: [
+        {
+          name: 'Willem Behrenbeck',
+          role: 'BDAI Experte',
+          avatar: avatarTonyImg,
+        },
+        {
+          name: 'Ingmar Müller',
+          role: 'Innovation Hub',
+          avatar: avatarMaxImg,
+        },
+        {
+          name: 'Rupert Rebentisch',
+          role: 'Tech Innovation Champion',
+          avatar: avatarMaxImg,
+        },
+      ],
+
+      updates: [
+        {
+          author: {
+            name: 'Rupert Rebentisch',
+            avatar: avatarMaxImg,
+            role: '',
+          },
+          date: '12. Aug 2023',
+          content:
+            'Wir haben unsere Ergebnisse dem Vorstand präsentiert, sehr gute Diskussion und viel Unterstützung - jetzt kanns losgehen',
+        },
+        {
+          author: {
+            name: 'Willem Behrenbeck',
+            avatar: avatarTonyImg,
+            role: '',
+          },
+          date: '4. Jul 2023',
+          content: 'Wir haben jetzt ein Konzept erstellt, um Generative KI in ***STRING_REMOVED***  zu ermöglichen',
+        },
+        {
+          author: {
+            name: 'Ingmar Müller',
+            avatar: avatarMaxImg,
+            role: '',
+          },
+          date: '12. Jul 2023',
+          content: 'Wir haben heute dem Bereich BR eine Einführung in KI und Generative KI gegeben - hat Spaß gemacht!',
+        },
+      ],
+    },
+    projectStatus: {
+      text: '',
+      author: {
+        name: 'Max Muster',
+        role: 'Junior Scientist',
+        avatar: avatarMaxImg,
+        points: 536,
+        department: 'Department ABC, Frankfurt am Main',
+      },
+      tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
+      info: {
+        title: '',
+        description: '',
+      },
+    },
+    comments: [
+      {
+        id: 1,
+        author: {
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
+          avatar: avatarMelanieImg,
+        },
+        comment:
+          "I'm thrilled to hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills om different anom different anom different an. This can lead to more creative solutions and help you anticipate challenges from different angles. Also, consider creating a culture of experimentation and learning from failures. It's often in our failures that we find the seeds of great innovation. This ca ... alles anzeigen",
+        upvotes: 15,
+        downvotes: 0,
+      },
+      {
+        id: 2,
+        author: {
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
+          avatar: avatarMelanieImg,
+        },
+        comment:
+          'Yes. To hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills.',
+        upvotes: 2,
+        downvotes: 0,
+      },
+    ],
   },
-  comments: [
-    {
-      id: 1,
+  {
+    projectId: 3,
+    hero: {
+      image: featured_project,
+      title: 'Generative KI für ***STRING_REMOVED***  nutzen',
       author: {
-        name: 'Melanie Muster',
-        role: 'Junior Scientist',
-        avatar: avatarMelanieImg,
+        name: 'Ingmar Müller',
+        role: 'Innovation Hub',
+        avatar: avatarMaxImg,
       },
-      comment:
-        "I'm thrilled to hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills om different anom different anom different an. This can lead to more creative solutions and help you anticipate challenges from different angles. Also, consider creating a culture of experimentation and learning from failures. It's often in our failures that we find the seeds of great innovation.",
-      upvotes: 15,
-      downvotes: 0,
+      projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
     },
-    {
-      id: 2,
+    projectSummary: {
+      summary:
+        'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
+      timing: {
+        projectStart: 'Okt 2022',
+        projectEnd: 'Nov 2023',
+      },
+      collaboration: {
+        description:
+          'Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken.',
+        upvotes: 54,
+        participants: 14,
+      },
+      likes: 153,
+      followers: 43,
+      teamMembers: [
+        {
+          name: 'Willem Behrenbeck',
+          role: 'BDAI Experte',
+          avatar: avatarMaxImg,
+        },
+        {
+          name: 'Ingmar Müller',
+          role: 'Innovation Hub',
+          avatar: avatarMaxImg,
+        },
+        {
+          name: 'Rupert Rebentisch',
+          role: 'Tech Innovation Champion',
+          avatar: avatarMaxImg,
+        },
+      ],
+
+      updates: [
+        {
+          author: {
+            name: 'Rupert Rebentisch',
+            avatar: avatarMaxImg,
+            role: '',
+          },
+          date: '12. Aug 2023',
+          content:
+            'Wir haben unsere Ergebnisse dem Vorstand präsentiert, sehr gute Diskussion und viel Unterstützung - jetzt kanns losgehen',
+        },
+        {
+          author: {
+            name: 'Willem Behrenbeck',
+            avatar: avatarMaxImg,
+            role: '',
+          },
+          date: '4. Jul 2023',
+          content: 'Wir haben jetzt ein Konzept erstellt, um Generative KI in ***STRING_REMOVED***  zu ermöglichen',
+        },
+        {
+          author: {
+            name: 'Ingmar Müller',
+            avatar: avatarMaxImg,
+            role: '',
+          },
+          date: '12. Jul 2023',
+          content: 'Wir haben heute dem Bereich BR eine Einführung in KI und Generative KI gegeben - hat Spaß gemacht!',
+        },
+      ],
+    },
+    projectStatus: {
+      text: '',
       author: {
-        name: 'Melanie Muster',
+        name: 'Max Muster',
         role: 'Junior Scientist',
-        avatar: avatarMelanieImg,
+        avatar: avatarMaxImg,
+        points: 536,
+        department: 'Department ABC, Frankfurt am Main',
       },
-      comment:
-        'Yes. To hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills.',
-      upvotes: 2,
-      downvotes: 0,
+      tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
+      info: {
+        title: '',
+        description: '',
+      },
     },
-  ],
-};
+    comments: [
+      {
+        id: 1,
+        author: {
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
+          avatar: avatarMelanieImg,
+        },
+        comment:
+          "I'm thrilled to hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills om different anom different anom different an. This can lead to more creative solutions and help you anticipate challenges from different angles. Also, consider creating a culture of experimentation and learning from failures. It's often in our failures that we find the seeds of great innovation. This ca ... alles anzeigen",
+        upvotes: 15,
+        downvotes: 0,
+      },
+      {
+        id: 2,
+        author: {
+          name: 'Melanie Muster',
+          role: 'Junior Scientist',
+          avatar: avatarMelanieImg,
+        },
+        comment:
+          'Yes. To hear about your innovation project! Innovation is such an exciting space to be in. My advice would be to ensure you have a diverse team with varied perspectives and skills.',
+        upvotes: 2,
+        downvotes: 0,
+      },
+    ],
+  },
+];
 
 export const project_colaboration: ProjectColaboration = {
   writeOpinionText:

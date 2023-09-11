@@ -9,7 +9,7 @@ import ThemeRegistry from './ThemeRegistry';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const metadata: Metadata = {
-  title: 'InnoBuddy',
+  title: 'InnoPlatte',
   viewport: { width: 'device-width', initialScale: 1 },
   themeColor: theme.palette.primary.main,
 };
