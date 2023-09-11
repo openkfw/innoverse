@@ -16,11 +16,11 @@ const palette: DefaultPaletteOptions = {
     main: '#A4B419',
     light: '#879900',
     dark: '#5E7200',
-    contrastText: '#0000008F',
+    contrastText: '#000',
   },
   text: {
-    primary: '#000000DE',
-    secondary: '#FFFFFF',
+    primary: '#5A6166',
+    secondary: '#507666',
     disabled: '#BDC0C2',
   },
   common: {

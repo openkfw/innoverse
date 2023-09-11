@@ -10,18 +10,18 @@ import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/project-details/HeroSection';
 import TabView from '@/components/project-details/TabView';
-import { project_progression } from '@/repository/mock/project/project-page';
+import { projects_progression } from '@/repository/mock/project/project-page';
 
 import { ProjectInfoCard } from '../../../components/project-details/ProjectInfoCard';
 
 function ProjectPage({ params }: { params: { id: string } }) {
   const projectId = parseInt(params.id) || 1;
-  let projectInformation = project_progression.filter((project) => project.projectId == projectId)[0];
+  let projectInformation = projects_progression.projects.filter((project) => project.projectId == projectId)[0];
   const [activeTab, setActiveTab] = useState(0);
 
   // TODO: Remove when there is data for all the projects
   if (!projectInformation) {
-    projectInformation = project_progression[0];
+    projectInformation = projects_progression.projects[0];
   }
 
   return (
