@@ -2,8 +2,11 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 import { project_colaboration } from '@/repository/mock/project/project-page';
+
+import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 import { UpdateCard } from './UpdateCard';
 
@@ -33,6 +36,30 @@ export const CollaborationTab = () => {
       ></Box>
 
       <CardContent>
+        <Grid container spacing={8} sx={{ p: 4 }}>
+          <Grid item xs={6}>
+            <Typography variant="h5" color="secondary.contrastText">
+              Möchtest du michtachen oder einen Kollegen empfehlen?
+            </Typography>
+          </Grid>
+
+          <Grid item xs={6}>
+            <Box
+              sx={{
+                marginLeft: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                gap: 1,
+              }}
+            >
+              <InteractionButton interactionType={InteractionType.APPLY} />
+              <InteractionButton interactionType={InteractionType.RECOMMEND} />
+            </Box>
+          </Grid>
+        </Grid>
+
         <Grid container sx={{ p: 4 }} spacing={8}>
           {projectUpdates.map((update, i) => (
             <Grid item key={i}>
