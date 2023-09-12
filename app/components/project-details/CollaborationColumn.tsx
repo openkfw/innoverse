@@ -12,13 +12,13 @@ interface CollaborationProps {
 const CollaborationColumn = (props: CollaborationProps) => {
   const { collaborationData, setActiveTab } = props;
 
-  const handleCollaborationClick = async () => {
+  const handleCollaborationClick = async (offset: number) => {
     const scroll = () => {
       const section = document.getElementById('collaboration-tab')?.offsetTop;
 
       if (section) {
         window.scrollTo({
-          top: section - 150,
+          top: section - offset,
           behavior: 'smooth',
         });
       }
@@ -26,6 +26,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
     await setActiveTab(1);
     scroll();
   };
+
   return (
     <>
       <Grid container direction="column">
@@ -41,8 +42,15 @@ const CollaborationColumn = (props: CollaborationProps) => {
           </Typography>
         </Grid>
         <Grid item xs={4} sx={{ mt: '15px' }}>
-          <InteractionButton interactionType={InteractionType.COLLABORATION} onClick={handleCollaborationClick} />
-          <InteractionButton interactionType={InteractionType.COLLABORATION} label="Komm ins Team!" />
+          <InteractionButton
+            interactionType={InteractionType.COLLABORATION}
+            onClick={() => handleCollaborationClick(-100)}
+          />
+          <InteractionButton
+            interactionType={InteractionType.COLLABORATION}
+            onClick={() => handleCollaborationClick(75)}
+            label="Komm ins Team!"
+          />
           <InteractionButton interactionType={InteractionType.COLLABORATION} label="Umfrage machen!" />
         </Grid>
       </Grid>
