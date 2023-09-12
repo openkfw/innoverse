@@ -119,15 +119,14 @@ export const FeaturedProjectSlider = () => {
     >
       {slides.items.map((el, id) => (
         <Grid container spacing={2} key={id}>
-          <Grid item xs={6} md={8}>
+          <Grid item xs={6} md={7}>
             <Image
               src={el.image.image}
               alt="Project"
-              //sizes="50vw"
+              sizes="50vw"
               style={{
-                width: '90%',
-                height: '90%',
-                marginLeft: '-10%',
+                width: '100%',
+                height: 'auto',
               }}
             />
           </Grid>
