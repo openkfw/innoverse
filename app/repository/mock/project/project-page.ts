@@ -1,4 +1,4 @@
-import { PROJECT_PROGRESS, ProjectColaboration, ProjectsProgression } from '@/common/types';
+import { PROJECT_PROGRESS, ProjectColaboration, ProjectsProgression, Update } from '@/common/types';
 
 import GenerativeAI from './projects/GenerativeAI.md';
 
@@ -12,56 +12,55 @@ import featured_project from '/public/images/featured_project.png';
 export const projects_progression: ProjectsProgression = {
   writeCommentText: 'Gib hier deinen Kommentar zu diesem Artikel ein.',
   projects: [
-  {
-    projectId: 1,
-    hero: {
-      image: featured_project,
-      title: 'Generative KI für ***STRING_REMOVED***  nutzen',
-      author: {
-        name: 'Ingmar Müller',
-        role: 'Innovation Hub',
-        avatar: avatarMaxImg,
-      },
-      projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
-    },
-    projectSummary: {
-      summary:
-        '',
-      timing: {
-        projectStart: 'Aug',
-        projectEnd: 'Nov 2023',
-      },
-      collaboration: {
-        description:
-          'Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken.',
-        upvotes: 54,
-        participants: 14,
-      },
-      likes: 153,
-      followers: 43,
-      teamMembers: [
-        {
-          name: 'Willem Behrenbeck',
-          role: 'BDAI Experte',
-          avatar: avatarTonyImg,
-        },
-        {
+    {
+      projectId: 1,
+      hero: {
+        image: featured_project,
+        title: 'Generative KI für ***STRING_REMOVED***  nutzen',
+        author: {
           name: 'Ingmar Müller',
           role: 'Innovation Hub',
-          avatar: avatarSusanImg,
-        },
-        {
-          name: 'Rupert Rebentisch',
-          role: 'Tech Innovation Champion',
           avatar: avatarMaxImg,
         },
-        {
-          name: 'Michael Strauß',
-          role: 'Innovation Hub',
-          avatar: avatarMaxImg,
+        projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
+      },
+      projectSummary: {
+        summary: '',
+        timing: {
+          projectStart: 'Aug',
+          projectEnd: 'Nov 2023',
         },
-      ],
-      updates: [
+        collaboration: {
+          description:
+            'Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken.',
+          upvotes: 54,
+          participants: 14,
+        },
+        likes: 153,
+        followers: 43,
+        teamMembers: [
+          {
+            name: 'Willem Behrenbeck',
+            role: 'BDAI Experte',
+            avatar: avatarTonyImg,
+          },
+          {
+            name: 'Ingmar Müller',
+            role: 'Innovation Hub',
+            avatar: avatarSusanImg,
+          },
+          {
+            name: 'Rupert Rebentisch',
+            role: 'Tech Innovation Champion',
+            avatar: avatarMaxImg,
+          },
+          {
+            name: 'Michael Strauß',
+            role: 'Innovation Hub',
+            avatar: avatarMaxImg,
+          },
+        ],
+        updates: [
           {
             author: {
               name: 'Rupert Rebentisch',
@@ -117,7 +116,7 @@ export const projects_progression: ProjectsProgression = {
             role: 'BDAI Experte',
           },
           comment:
-            "Danke, super spannend. Mich würde interessieren, wie ihr beim Thema Datenschutz und IP vorgeht, schreibt doch dazu mal ein Update.",
+            'Danke, super spannend. Mich würde interessieren, wie ihr beim Thema Datenschutz und IP vorgeht, schreibt doch dazu mal ein Update.',
           upvotes: 15,
           downvotes: 0,
         },
@@ -128,8 +127,7 @@ export const projects_progression: ProjectsProgression = {
             role: 'Junior Scientist',
             avatar: avatarMelanieImg,
           },
-          comment:
-            'Könnt ihr mal Eure Architektur mit uns teilen, für uns auch super spannend.',
+          comment: 'Könnt ihr mal Eure Architektur mit uns teilen, für uns auch super spannend.',
           upvotes: 2,
           downvotes: 0,
         },
@@ -415,7 +413,7 @@ export const project_colaboration: ProjectColaboration = {
             avatar: avatarMaxImg,
           },
           comment:
-            "Hallo zusammen, ich kenne einen Use Case von einem Mittelständler in Frankfurt. Bei diesem überprüft die KI die Datenbanken hinsichtlich Inkonsistenten und fehlerhaten Einträgen. Die KI überarbeitet die Datenbanken automatisiert oder legt dem Sachbearbeiter die Stammdaten zur Prüfung vor. Das wäre sicherlich auch spannend für ***STRING_REMOVED*** , insbesondere in Hinblick auf unsere unzähligen Daten. Ich hoffe ich konnte weiterhelfen.Macht weiter so, super spannendes Projekt!",
+            'Hallo zusammen, ich kenne einen Use Case von einem Mittelständler in Frankfurt. Bei diesem überprüft die KI die Datenbanken hinsichtlich Inkonsistenten und fehlerhaten Einträgen. Die KI überarbeitet die Datenbanken automatisiert oder legt dem Sachbearbeiter die Stammdaten zur Prüfung vor. Das wäre sicherlich auch spannend für ***STRING_REMOVED*** , insbesondere in Hinblick auf unsere unzähligen Daten. Ich hoffe ich konnte weiterhelfen.Macht weiter so, super spannendes Projekt!',
           upvotes: 27,
           downvotes: 0,
         },
@@ -426,8 +424,7 @@ export const project_colaboration: ProjectColaboration = {
             role: 'Dualer Student',
             avatar: avatarMaxImg,
           },
-          comment:
-            "Sprecht mal mit Aleph Alpha, da ist SAP gerade eingestiegen.",
+          comment: 'Sprecht mal mit Aleph Alpha, da ist SAP gerade eingestiegen.',
           upvotes: 2,
           downvotes: 0,
         },
@@ -438,8 +435,7 @@ export const project_colaboration: ProjectColaboration = {
             role: 'Lead Scientist',
             avatar: avatarMaxImg,
           },
-          comment:
-          "Ruft mich mal an, dann sprechen wir darüber.",
+          comment: 'Ruft mich mal an, dann sprechen wir darüber.',
           upvotes: 2,
           downvotes: 0,
         },
@@ -450,8 +446,7 @@ export const project_colaboration: ProjectColaboration = {
             role: 'Lead Scientist',
             avatar: avatarMaxImg,
           },
-          comment:
-          "Ich habe Euch einen Termin eingestellt, freue mich darauf.",
+          comment: 'Ich habe Euch einen Termin eingestellt, freue mich darauf.',
           upvotes: 2,
           downvotes: 0,
         },
@@ -476,7 +471,7 @@ export const project_colaboration: ProjectColaboration = {
             avatar: avatarMaxImg,
           },
           comment:
-            "Hallo liebes Team, ich bin Teamleiter im Bereich OS. Bei uns liegen jeden Tag  so viele Anträge auf dem Tisch,dass wir kaum noch hinterher kommen. Das führt natürlich zu langen Wartezeiten und Frust bei unseren Kunden. KI könnte uns hier einen Teil der Arbeit abnehmen, in dem sie die Anträge schonmal vorab prüft und auf plausbilität untersucht. Das wäre eine mega Erleichterung für uns. Ich hoffe das hilft euch weiter. Haltet uns bitte auf dem Laufenden!",
+            'Hallo liebes Team, ich bin Teamleiter im Bereich OS. Bei uns liegen jeden Tag  so viele Anträge auf dem Tisch,dass wir kaum noch hinterher kommen. Das führt natürlich zu langen Wartezeiten und Frust bei unseren Kunden. KI könnte uns hier einen Teil der Arbeit abnehmen, in dem sie die Anträge schonmal vorab prüft und auf plausbilität untersucht. Das wäre eine mega Erleichterung für uns. Ich hoffe das hilft euch weiter. Haltet uns bitte auf dem Laufenden!',
           upvotes: 27,
           downvotes: 0,
         },
@@ -488,7 +483,7 @@ export const project_colaboration: ProjectColaboration = {
             avatar: avatarMaxImg,
           },
           comment:
-            "Ich hatte schon spannende Gespräche mit Ki-Zentralverband und würde gerne bei Euch mitarbeiten. Lasst uns mal sprechen.",
+            'Ich hatte schon spannende Gespräche mit Ki-Zentralverband und würde gerne bei Euch mitarbeiten. Lasst uns mal sprechen.',
           upvotes: 2,
           downvotes: 0,
         },
@@ -502,3 +497,100 @@ export const project_colaboration: ProjectColaboration = {
     },
   ],
 };
+
+export const project_updates: Update[] = [
+  {
+    projectId: 1,
+    updates: [
+      {
+        id: 1,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '4. Jul 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 2,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '12. Jun 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 3,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '8. Jun 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 4,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '30. Mai 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 5,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '2. Feb 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 6,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '15. Jan 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 7,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '16. Dez 2022',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 8,
+        projectStart: true,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '25. Nov 2022',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+    ],
+  },
+];

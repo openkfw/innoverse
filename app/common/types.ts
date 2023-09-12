@@ -18,8 +18,8 @@ export type CommentType = {
   id: number;
   author: Person;
   comment: string;
-  upvotes: number;
-  downvotes: number;
+  upvotes?: number;
+  downvotes?: number;
 };
 
 export type ProjectColaboration = {
@@ -98,4 +98,17 @@ export type ProjectProgression = {
 export type ProjectsProgression = {
   writeCommentText: string;
   projects: ProjectProgression[];
+};
+
+export type UpdateContent = {
+  id: number;
+  author: Person;
+  date: string;
+  comment: string;
+  projectStart?: boolean;
+};
+
+export type Update = {
+  projectId: number;
+  updates: UpdateContent[];
 };

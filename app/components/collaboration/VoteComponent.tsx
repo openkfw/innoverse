@@ -9,19 +9,17 @@ import Typography from '@mui/material/Typography';
 
 import ArrowUpIcon from '../icons/ArrowUpIcon';
 
-// TODO: Remove downvotes from interface
 interface VoteComponentProps {
-  upvotes: number;
-  downvotes: number; 
+  upvotes?: number;
 }
 
 const VOTE_VALUE = {
   UP: 'up',
-  DOWN: 'down',
+  DOWN: ' down',
 };
 
 export const VoteComponent = (props: VoteComponentProps) => {
-  const { upvotes } = props;
+  const { upvotes = 0 } = props;
   const [value, setValue] = useState<string>('');
   const [upvoteValue, setUpvoteValue] = useState<number>(upvotes);
 

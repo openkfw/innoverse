@@ -10,18 +10,20 @@ import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/project-details/HeroSection';
 import TabView from '@/components/project-details/TabView';
-import { projects_progression } from '@/repository/mock/project/project-page';
+import { project_updates, projects_progression } from '@/repository/mock/project/project-page';
 
 import { ProjectInfoCard } from '../../../components/project-details/ProjectInfoCard';
 
 function ProjectPage({ params }: { params: { id: string } }) {
   const projectId = parseInt(params.id) || 1;
   let projectInformation = projects_progression.projects.filter((project) => project.projectId == projectId)[0];
+  let projectUpdates = project_updates.filter((project) => project.projectId == projectId)[0].updates;
   const [activeTab, setActiveTab] = useState(0);
 
   // TODO: Remove when there is data for all the projects
   if (!projectInformation) {
     projectInformation = projects_progression.projects[0];
+    projectUpdates = project_updates[0].updates;
   }
 
   return (
@@ -41,7 +43,12 @@ function ProjectPage({ params }: { params: { id: string } }) {
           <ProjectInfoCard projectSummary={projectInformation.projectSummary} setActiveTab={setActiveTab} />
         </Box>
         <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
-          <TabView projectStatus={projectInformation.projectStatus} activeTab={activeTab} setActiveTab={setActiveTab} />
+          <TabView
+            projectStatus={projectInformation.projectStatus}
+            updates={projectUpdates}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
         </Box>
       </Stack>
     </Layout>
