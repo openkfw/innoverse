@@ -4,14 +4,17 @@ import Link from 'next/link';
 import { Menu } from '@mui/base';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
+import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
+import avatarMaxImg from '/public/images/avatarMax.png';
 import logo from '/public/images/logo.svg';
 
 const StyledMenu = styled((props: MenuProps) => <Menu {...props} />)(({ theme }) => ({
@@ -27,6 +30,14 @@ const StyledMenu = styled((props: MenuProps) => <Menu {...props} />)(({ theme })
   },
 }));
 
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.secondary.main,
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+  },
+}));
+
 export default function TopBar() {
   return (
     <AppBar
@@ -35,6 +46,10 @@ export default function TopBar() {
       sx={{
         backgroundColor: 'rgba(255,255,255,0.1)',
         backdropFilter: `blur(20px)`,
+        ':hover': {
+          backgroundColor: 'rgba(0,0,0,0.2)',
+          backdropFilter: `blur(20px)`,
+        },
       }}
     >
       <Container maxWidth="lg">
@@ -61,9 +76,8 @@ export default function TopBar() {
               </Link>
             </Box>
 
-            <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <StyledMenu open={true}>
+            <Stack direction="row" spacing={0}>
+              <StyledMenu open>
                 <MenuItem>
                   <Typography variant="body2">Projekte</Typography>
                 </MenuItem>
@@ -74,18 +88,17 @@ export default function TopBar() {
                   <Typography variant="body2">Backstage</Typography>
                 </MenuItem>
               </StyledMenu>
-            </Box>
-            <Box>
+
               <Menu>
                 <MenuItem>
-                  <Avatar
-                    alt="Avatar"
-                    src="https://source.boringavatars.com/beam/120/Stefan?colors=264653,f4a261,e76f51"
-                    variant="circular"
-                  />
+                  <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'top', horizontal: 'right' }} variant="dot">
+                    <Avatar sx={{ width: 32, height: 32 }}>
+                      <Image src={avatarMaxImg} alt="avatar" fill sizes="33vw" />
+                    </Avatar>
+                  </StyledBadge>
                 </MenuItem>
               </Menu>
-            </Box>
+            </Stack>
           </Box>
         </Toolbar>
       </Container>

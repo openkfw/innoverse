@@ -19,7 +19,7 @@ function IndexPage() {
   return (
     <Layout>
       <Stack spacing={8} useFlexGap>
-        <Box sx={{ pt: 10, marginRight: '5%', display: 'flex' }}>
+        <Box sx={{ pt: 10, marginRight: '5%', marginBottom: '10%', display: 'flex' }}>
           <FeaturedProjectSlider />
         </Box>
 

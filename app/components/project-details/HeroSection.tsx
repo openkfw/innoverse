@@ -58,7 +58,7 @@ export default function HeroSection(props: HeroSectionProps) {
                 }
                 title={<Typography variant="body2"> {author}</Typography>}
                 subheader={
-                  <Typography variant="caption" sx={{ color: 'secondary.main' }}>
+                  <Typography variant="caption" sx={{ color: 'common.white' }}>
                     {role}
                   </Typography>
                 }
