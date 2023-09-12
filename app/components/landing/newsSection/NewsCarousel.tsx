@@ -19,9 +19,9 @@ export default function NewsCarousel() {
 
   const sliderRef = useRef<Slider>(null);
 
-  const handleMouseDown = (e: { pageX: any }) => {
+  const handleMouseDown = (e: { pageX: number }) => {
     const startX = e.pageX;
-    const mouseMoveHandler = (moveEvent: { pageX: any }) => {
+    const mouseMoveHandler = (moveEvent: { pageX: number }) => {
       const endX = moveEvent.pageX;
       const distance = endX - startX;
       if (sliderRef.current) {

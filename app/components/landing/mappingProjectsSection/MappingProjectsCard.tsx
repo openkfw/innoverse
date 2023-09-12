@@ -5,12 +5,17 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import CustomButton from '@/components/common/CustomButton';
+import ExplorationIcon from '@/components/icons/ExplorationIcon';
+import KonzeptionIcon from '@/components/icons/KonzeptionIcon';
+import ProofOfConceptIcon from '@/components/icons/ProofOfConceptIcon';
 
 import PhaseColumn from './PhaseColumn';
 
 const mappingData = [
   {
+    isFirstStep: true,
     title: 'Exploration',
+    icon: <ExplorationIcon />,
     description:
       'Basierend auf dem strategischen Zielsystem ***STRING_REMOVED***  untersuchen wir mögliche Handlungsfelder für ***STRING_REMOVED***  und berücksichtigen dabei externe Entwicklungen und interne Leitplanken.',
     projects: [
@@ -21,12 +26,14 @@ const mappingData = [
   },
   {
     title: 'Konzeption',
+    icon: <KonzeptionIcon />,
     description:
       'In der Konzeptionsphase sind wir im engen Austausch mit der Zielgruppe: Aus erster Hand verstehen wir zunächst die Probleme, um basierend darauf Lösungskonzepte zu erarbeiten und mit der Zielgruppe zu validieren.',
     projects: ['***STRING_REMOVED***  Innovationsplattform', 'Anwendungsfälle für Generative KI in ***STRING_REMOVED*** '],
   },
   {
     title: 'Proof of Concept',
+    icon: <ProofOfConceptIcon />,
     description:
       'Im PoC testen wir mittels Lean Experiments die Attraktivität, Machbarkeit und Rentabilität der Lösungskonzepte - auch hier direkt mit der Zielgruppe.',
     projects: [
@@ -57,6 +64,7 @@ export const MappingProjectsCard = () => {
             title={<Typography variant="h4">Strategische Innovation @ ***STRING_REMOVED*** </Typography>}
             action={<CustomButton>Details</CustomButton>}
           />
+
           <CardContent sx={{ ml: '25px', mr: '25px' }}>
             <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
               {mappingData.map((data) => {
@@ -66,6 +74,8 @@ export const MappingProjectsCard = () => {
                     title={data.title}
                     description={data.description}
                     projects={data.projects}
+                    icon={data.icon}
+                    isFirstStep={data?.isFirstStep}
                   ></PhaseColumn>
                 );
               })}

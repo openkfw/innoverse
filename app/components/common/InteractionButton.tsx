@@ -9,6 +9,9 @@ import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { SxProps } from '@mui/material/styles';
 
+import ApplyIcon from '@/components/icons/ApplyIcon';
+import RecommendIcon from '@/components/icons/RecommendIcon';
+
 interface InteractionButtonProps extends ButtonProps {
   interactionType: InteractionType;
   label?: string;
@@ -25,6 +28,8 @@ export enum InteractionType {
   COMMENT_SEND = 'comment-send',
   SHARE_OPINION = 'share-opinion',
   ADD_INSIGHTS = 'add-insights',
+  APPLY = 'apply',
+  RECOMMEND = 'recommend',
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
@@ -39,6 +44,8 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.COMMENT_SEND) return <SendIcon fontSize="small" />;
     if (interactionType === InteractionType.SHARE_OPINION) return <EditIcon fontSize="small" />;
     if (interactionType === InteractionType.ADD_INSIGHTS) return <FormatAlignLeftOutlinedIcon fontSize="small" />;
+    if (interactionType === InteractionType.APPLY) return <ApplyIcon />;
+    if (interactionType === InteractionType.RECOMMEND) return <RecommendIcon />;
   };
 
   const getButtontext = () => {
@@ -51,6 +58,8 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.SHARE_OPINION) return 'Teile Deine Erfahrung';
     if (interactionType === InteractionType.COMMENT) return;
     if (interactionType === InteractionType.ADD_INSIGHTS) return 'Teile Deine Erfahrung';
+    if (interactionType === InteractionType.APPLY) return 'Teilnehmen';
+    if (interactionType === InteractionType.RECOMMEND) return 'Member vorschlagen';
   };
 
   return (

@@ -1,4 +1,4 @@
-import { PROJECT_PROGRESS, ProjectColaboration, ProjectsProgression } from '@/common/types';
+import { PROJECT_PROGRESS, ProjectColaboration, ProjectsProgression, Update } from '@/common/types';
 
 import GenerativeAI from './projects/GenerativeAI.md';
 
@@ -497,3 +497,100 @@ export const project_colaboration: ProjectColaboration = {
     },
   ],
 };
+
+export const project_updates: Update[] = [
+  {
+    projectId: 1,
+    updates: [
+      {
+        id: 1,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '4. Jul 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 2,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '12. Jun 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 3,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '8. Jun 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 4,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '30. Mai 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 5,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '2. Feb 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 6,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '15. Jan 2023',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 7,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '16. Dez 2022',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+      {
+        id: 8,
+        projectStart: true,
+        author: {
+          name: 'Martha Viatowsky',
+          role: 'Senior Analyst',
+          avatar: avatarMelanieImg,
+        },
+        date: '25. Nov 2022',
+        comment:
+          'Wir arbeiten hinter den Kulissen fleißig daran, unser Angebot für dich zu optimieren. Bleib dran, um bald mehr zu erfahren!',
+      },
+    ],
+  },
+];
