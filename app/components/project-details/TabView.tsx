@@ -8,9 +8,10 @@ import Tab, { TabProps } from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import { ProjectStatus } from '@/common/types';
+import { ProjectStatus, UpdateContent } from '@/common/types';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
+import { UpdatesTab } from '../updates/UpdatesTab';
 
 import { ProjectProgress } from './ProjectProgress';
 
@@ -61,12 +62,14 @@ const CustomTab = styled((props: TabProps) => <Tab disableRipple {...props} />)(
 }));
 
 interface BasicTabsProps {
+  updates: UpdateContent[];
   projectStatus: ProjectStatus;
   activeTab: number;
   setActiveTab: (tab: number) => void;
 }
 
-export default function BasicTabs({ projectStatus, activeTab, setActiveTab }: BasicTabsProps) {
+export default function BasicTabs(props: BasicTabsProps) {
+  const { updates, projectStatus, activeTab, setActiveTab } = props;
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
@@ -88,11 +91,10 @@ export default function BasicTabs({ projectStatus, activeTab, setActiveTab }: Ba
             {...a11yProps(1)}
           />
           <CustomTab
-            disabled
             label={
               <Stack direction="row" spacing={1}>
                 <Typography variant="subtitle1" color="secondary.main">
-                  8
+                  {updates.length}
                 </Typography>
                 <Typography variant="subtitle1">Updates</Typography>
               </Stack>
@@ -108,7 +110,7 @@ export default function BasicTabs({ projectStatus, activeTab, setActiveTab }: Ba
         <CollaborationTab />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={2} id="tabpanel-0">
-        <Typography>ToDo</Typography>
+        <UpdatesTab updates={updates} />
       </CustomTabPanel>
     </Container>
   );

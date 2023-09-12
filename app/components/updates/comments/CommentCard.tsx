@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
+import { SxProps } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -13,18 +14,17 @@ import Typography from '@mui/material/Typography';
 import { CommentType } from '@/common/types';
 import theme from '@/styles/theme';
 
-import { VoteComponent } from '../VoteComponent';
-
 import badgeIcon from '/public/images/icons/badge.svg';
 
 interface CommentCardProps {
   content: CommentType;
+  sx?: SxProps;
 }
 
 const MAX_TEXT_LENGTH = 300;
 
-export const CommentCard = ({ content }: CommentCardProps) => {
-  const { author, comment, upvotes } = content;
+export const CommentCard = ({ content, sx }: CommentCardProps) => {
+  const { author, comment } = content;
   const { name, role, avatar, badge } = author;
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -60,6 +60,7 @@ export const CommentCard = ({ content }: CommentCardProps) => {
     '.MuiCardContent-root': {
       paddingLeft: 0,
     },
+    ...sx,
   };
 
   return (
@@ -119,8 +120,6 @@ export const CommentCard = ({ content }: CommentCardProps) => {
               </>
             )}
           </>
-
-          <VoteComponent upvotes={upvotes} />
         </Stack>
       </CardContent>
     </Card>

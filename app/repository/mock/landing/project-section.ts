@@ -25,7 +25,8 @@ export const projects = [
     title: 'Generative KI für ***STRING_REMOVED*** ',
     contributors: ['Rupert Rebentisch', 'Willem Behrenbeck', 'Ingmar Müller'],
     progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
-    description: 'Wir wollen generative KI in ***STRING_REMOVED***  bringen, und ermitteln gemeinsam mit den Bereichen die sinnvollsten Anwendungsfälle.',
+    description:
+      'Wir wollen generative KI in ***STRING_REMOVED***  bringen, und ermitteln gemeinsam mit den Bereichen die sinnvollsten Anwendungsfälle.',
   },
   {
     id: 1,
@@ -51,7 +52,8 @@ export const projects = [
     title: 'Jahresabschluss-KI für die IPEX',
     contributors: ['Caroline Löffler', 'Micheala Altmeyer', 'Christina Wittwer', 'Syndey Richards', 'Tobias Richter'],
     progress: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
-    description: 'JaKI hilft den Risikoanalysten bei der Analyse von Unternehmensberichten sowie der Risikobewertung der Unternehmen.',
+    description:
+      'JaKI hilft den Risikoanalysten bei der Analyse von Unternehmensberichten sowie der Risikobewertung der Unternehmen.',
   },
   {
     id: 6,
