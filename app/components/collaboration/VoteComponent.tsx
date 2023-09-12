@@ -12,7 +12,7 @@ import ArrowUpIcon from '../icons/ArrowUpIcon';
 // TODO: Remove downvotes from interface
 interface VoteComponentProps {
   upvotes: number;
-  downvotes: number; 
+  downvotes: number;
 }
 
 const VOTE_VALUE = {

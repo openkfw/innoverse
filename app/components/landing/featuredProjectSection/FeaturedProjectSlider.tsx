@@ -123,10 +123,11 @@ export const FeaturedProjectSlider = () => {
             <Image
               src={el.image.image}
               alt="Project"
-              sizes="50vw"
+              //sizes="50vw"
               style={{
-                width: '100%',
-                height: '450px',
+                width: '90%',
+                height: '90%',
+                marginLeft: '-10%',
               }}
             />
           </Grid>
