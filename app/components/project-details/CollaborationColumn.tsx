@@ -45,15 +45,19 @@ const CollaborationColumn = (props: CollaborationProps) => {
           <InteractionButton
             interactionType={InteractionType.COLLABORATION}
             onClick={() => handleCollaborationClick(-100)}
-            sx={{background: 'secondary.main', color:'rgba(255, 255, 255, 1)'}}
+            sx={{ background: 'secondary.main', color: 'rgba(255, 255, 255, 1)' }}
           />
           <InteractionButton
             interactionType={InteractionType.COLLABORATION}
             onClick={() => handleCollaborationClick(75)}
             label="Komm ins Team!"
-            sx={{background: 'secondary.main', color:'rgba(255, 255, 255, 1)'}}
+            sx={{ background: 'secondary.main', color: 'rgba(255, 255, 255, 1)' }}
           />
-          <InteractionButton interactionType={InteractionType.COLLABORATION} label="Umfrage machen!" sx={{background: 'secondary.main', color:'rgba(255, 255, 255, 1)'}}/>
+          <InteractionButton
+            interactionType={InteractionType.COLLABORATION}
+            label="Umfrage machen!"
+            sx={{ background: 'secondary.main', color: 'rgba(255, 255, 255, 1)' }}
+          />
         </Grid>
       </Grid>
     </>
