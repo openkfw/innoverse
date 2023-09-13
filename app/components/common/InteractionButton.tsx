@@ -58,8 +58,8 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.SHARE_OPINION) return 'Teile Deine Erfahrung';
     if (interactionType === InteractionType.COMMENT) return;
     if (interactionType === InteractionType.ADD_INSIGHTS) return 'Teile Deine Erfahrung';
-    if (interactionType === InteractionType.APPLY) return 'Teilnehmen';
-    if (interactionType === InteractionType.RECOMMEND) return 'Member vorschlagen';
+    if (interactionType === InteractionType.APPLY) return 'Ich bin dabei';
+    if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
   };
 
   return (

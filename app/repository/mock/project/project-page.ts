@@ -391,7 +391,7 @@ export const project_colaboration: ProjectColaboration = {
   projectUpdates: [
     {
       headline: 'Welche spannende Use Cases für Künstliche Intelligenz kennt ihr aus anderen Unternehmen?',
-      text: 'Haben die Anwendungsfälle einen signifikanten Mehrwert geleistet? Helft uns in dem ihr Eure Erfahrungen und Euer Wissen  mit uns teilt!',
+      text: 'Haben die Anwendungsfälle einen signifikanten Mehrwert geleistet? Helft uns indem ihr Eure Erfahrungen und Euer Wissen  mit uns teilt!',
       requiredBy: [
         {
           name: 'Willem Behrenbeck',
@@ -454,7 +454,7 @@ export const project_colaboration: ProjectColaboration = {
     },
     {
       headline: 'Welche eurer täglichen Herausforderungen könnten durch den Einsatz von KI gelöst werden?',
-      text: 'Helft uns in dem ihr Eure Erfahrungen und Euer Wissen  mit uns teilt!',
+      text: 'Helft uns indem ihr Eure Erfahrungen und Euer Wissen  mit uns teilt!',
       requiredBy: [
         {
           name: 'Melanie Muster',
