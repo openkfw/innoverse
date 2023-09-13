@@ -62,7 +62,7 @@ export default function TopBar() {
               width: '100%',
             }}
           >
-            <Box sx={{ width: 200, display: 'block' }}>
+            <Box sx={{ width: 245, display: 'block' }}>
               <Link href="/">
                 <Image
                   src={logo}

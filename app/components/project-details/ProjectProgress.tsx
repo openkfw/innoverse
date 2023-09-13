@@ -58,7 +58,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
   const showMoreButtonStyle = {
     background: 'linear-gradient(to bottom, rgba(255,0,0,0), rgba(255,255,255,1))',
     position: 'absolute',
-    bottom: '67%',
+    bottom: '63%',
     paddingTop: '150px',
     textAlign: 'center',
     width: '100%',
