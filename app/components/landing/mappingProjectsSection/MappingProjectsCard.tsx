@@ -40,7 +40,6 @@ const mappingData = [
       'Jahresabschluss-KI für die IPEX',
       'Förderung von Digitalisierung und Innovation bei KMU (InDigO Handlungsfeld 2 und 3)',
       'Tokenisierte Anleihe',
-      'Energiemanagement für Privatkund:innen (failed)',
     ],
   },
 ];

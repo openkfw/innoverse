@@ -1,6 +1,8 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
@@ -38,11 +40,16 @@ export const CollaborationTab = () => {
       <CardContent>
         <Grid container spacing={8} sx={{ p: 4 }}>
           <Grid item xs={6}>
-            <Typography variant="h5" color="secondary.contrastText">
-              Möchtest du michtachen oder einen Kollegen empfehlen?
+            <Typography variant="h5" color="secondary.contrastText" sx ={{ mb: '10px'}}>
+              Wir suchen Deine Unterstützung beim Thema Midjourney. 
             </Typography>
+            <Typography variant="body1" color="secondary.contrastText">
+              Du kennst Dich mit Midjourney und Co. aus? Dann brauchen wir Dich für einen Workshop mit den Geschäftsbereichen, um das Thema verständlich zu präsentieren und Anwendungsfälle zu brainstormen. 
+            </Typography>
+            <Typography variant="overline" color="primary.main">
+              Aufwand: ca. 1 Tag
+            </Typography>  
           </Grid>
-
           <Grid item xs={6}>
             <Box
               sx={{
@@ -59,6 +66,9 @@ export const CollaborationTab = () => {
             </Box>
           </Grid>
         </Grid>
+        <Divider textAlign='left' sx={{ m:4}}>
+        <Chip label="Hilf uns bei diesen Fragen" />
+        </Divider>
 
         <Grid container sx={{ p: 4 }} spacing={8}>
           {projectUpdates.map((update, i) => (
