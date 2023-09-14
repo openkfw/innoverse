@@ -44,7 +44,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
         <Grid item xs={4} sx={{ mt: '15px' }}>
           <InteractionButton
             interactionType={InteractionType.COLLABORATION}
-            onClick={() => handleCollaborationClick(-100)}
+            onClick={() => handleCollaborationClick(-325)}
             sx={{ background: 'secondary.main', color: 'rgba(255, 255, 255, 1)' }}
           />
           <InteractionButton
