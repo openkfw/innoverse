@@ -29,9 +29,9 @@ const CustomDialog: FC<CustomDialogProps> = ({ children, open, handleClose, titl
     >
       <DialogActions
         sx={{
-          backgroundColor: 'transparent', // Remove background color
-          marginTop: 8, // Add 8px gap
-          justifyContent: 'right', // Center the actions,
+          backgroundColor: 'transparent',
+          marginTop: 8,
+          justifyContent: 'right',
           paddingRight: 0,
         }}
       >
