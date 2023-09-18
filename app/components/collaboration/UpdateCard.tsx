@@ -56,7 +56,7 @@ export const UpdateCard = ({ content }: UpdateCardProps) => {
             {requiredBy.length > 0 ? (
               requiredBy.map((teamMember, index) => (
                 <StyledTooltip arrow key={index} title={<TooltipContent teamMember={teamMember} />} placement="bottom">
-                  <AvatarIcon src={teamMember.avatar} size={48} index={index} allowAnimation />
+                  <AvatarIcon src={teamMember.avatar} size={48} index={index} allowAnimation={true} />
                 </StyledTooltip>
               ))
             ) : (

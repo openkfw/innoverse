@@ -18,6 +18,15 @@ interface TeamMembersProps {
 
 const maxAvatars = 3;
 
+const boxStyles = {
+  marginLeft: 1,
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+};
+
 const avatarGroupStyle = {
   display: 'flex',
   flexDirection: 'row-reverse',
@@ -57,7 +66,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
       >
         {teamMembers.map((teamMember, index) => (
           <StyledTooltip arrow key={index} title={<TooltipContent teamMember={teamMember} />} placement="bottom">
-            <AvatarIcon src={teamMember.avatar} key={teamMember.name} index={index} allowAnimation />
+            <AvatarIcon src={teamMember.avatar} key={teamMember.name} index={index} allowAnimation={true} />
           </StyledTooltip>
         ))}
       </AvatarGroup>
@@ -68,16 +77,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
             <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <AvatarIcon size={48} src={teamMember.avatar} key={teamMember.name} />
 
-              <Box
-                sx={{
-                  marginLeft: 1,
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'flex-start',
-                }}
-              >
+              <Box sx={boxStyles}>
                 <Typography variant="subtitle1" sx={{ color: 'text.primary', lineHeight: 1 }}>
                   {teamMember.name}
                 </Typography>

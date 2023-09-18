@@ -17,12 +17,12 @@ const hoverStyle: CSSProperties = {
 };
 
 const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, ref: LegacyRef<HTMLDivElement>) {
-  const { src, size = 40, index, allowAnimation } = props;
+  const { src, size = 40, index, allowAnimation, ...restProps } = props;
   const appliedStyle = allowAnimation ? { ...hoverStyle, zIndex: index } : { zIndex: index };
 
   return (
     <div
-      {...props}
+      {...restProps}
       ref={ref}
       style={appliedStyle}
       onMouseOverCapture={(e) => {
