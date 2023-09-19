@@ -39,17 +39,10 @@ const ProjectStageCard = (props: TimingDataProps) => {
 
   return (
     <>
-      <Typography variant="overline" sx={{ textAlign: 'center', color: 'primary.light', mb: '25px' }}>
+      <Typography variant="overline" sx={{ textAlign: 'center', color: 'primary.light' }}>
         Projekt Info & Status
       </Typography>
-      <Card
-        sx={{
-          backgroundColor: '#F0EEE1',
-          borderRadius: '24px',
-          width: '350px',
-          height: '370px',
-        }}
-      >
+      <Card sx={cardStyles}>
         <CardContent>
           <Stepper nonLinear activeStep={2} orientation="vertical">
             {steps.map((step, index) => (
@@ -82,18 +75,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
                       <Button
                         onClick={handleToggle}
                         variant="outlined"
-                        sx={{
-                          border: 'none',
-                          background: 'none',
-                          '&:hover': {
-                            border: 'none',
-                            background: 'none',
-                          },
-                          '&:active': {
-                            border: 'none',
-                            background: 'none',
-                          },
-                        }}
+                        sx={buttonStyles}
                         startIcon={<AddIcon color="secondary" fontSize="small" />}
                       >
                         <Typography variant="subtitle2">weiterlesen</Typography>
@@ -121,3 +103,26 @@ const CustomStepIcon = (props: StepIconProps) => {
 };
 
 export default ProjectStageCard;
+
+// Project stage card Styles
+
+const cardStyles = {
+  backgroundColor: '#F0EEE1',
+  borderRadius: '24px',
+  width: '350px',
+  height: '370px',
+  marginTop: 1,
+};
+
+const buttonStyles = {
+  border: 'none',
+  background: 'none',
+  '&:hover': {
+    border: 'none',
+    background: 'none',
+  },
+  '&:active': {
+    border: 'none',
+    background: 'none',
+  },
+};

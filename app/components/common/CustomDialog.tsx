@@ -1,11 +1,11 @@
-import { FC, ReactElement, ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 import React from 'react';
 
 import { DialogActions, IconButton, Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Fade from '@mui/material/Fade';
+import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 
 import CloseIcon from '@/components/icons/CloseIcon';
@@ -17,25 +17,21 @@ interface CustomDialogProps {
   title?: string;
 }
 
-const ForwardedFade = React.forwardRef<HTMLDivElement, TransitionProps & { children: ReactElement }>((props, ref) => {
-  const { children, in: open } = props;
-  return (
-    <Fade ref={ref} in={open} timeout={500}>
-      {React.cloneElement(children)}
-    </Fade>
-  );
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & { children?: React.ReactElement<any, any> },
+  ref: React.Ref<unknown>,
+) {
+  const { children, ...otherProps } = props;
+  return children ? (
+    <Slide direction="up" ref={ref} {...otherProps}>
+      {children}
+    </Slide>
+  ) : null;
 });
-
-ForwardedFade.displayName = 'ForwardedFade';
 
 const CustomDialog: FC<CustomDialogProps> = ({ children, open, handleClose, title }) => {
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      PaperProps={{ style: paperPropsStyle }}
-      TransitionComponent={ForwardedFade}
-    >
+    <Dialog open={open} onClose={handleClose} PaperProps={{ style: paperPropsStyle }} TransitionComponent={Transition}>
       <DialogActions sx={dialogActionsStyle}>
         <IconButton onClick={handleClose} sx={iconButtonStyle}>
           <CloseIcon />
