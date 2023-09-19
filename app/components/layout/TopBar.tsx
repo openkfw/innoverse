@@ -1,34 +1,27 @@
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Menu } from '@mui/base';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import { MenuProps } from '@mui/material/Menu';
+import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
+import theme from '@/styles/theme';
+
+import UserMenu from './UserMenu';
+
 import avatarMaxImg from '/public/images/avatarMax.png';
 import logo from '/public/images/logo.svg';
 
-const StyledMenu = styled((props: MenuProps) => <Menu {...props} />)(({ theme }) => ({
-  '& .MuiMenu-listbox': {
-    display: 'inline-flex',
-    '& .MuiMenuItem-root': {
-      borderRadius: '24px',
-      marginRight: '24px',
-    },
-    '& .MuiMenuItem-root:hover': {
-      backgroundColor: theme.palette.secondary.main,
-    },
-  },
-}));
+const pages = ['Projekte', 'Artikel', 'Backstage'];
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -39,6 +32,22 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 export default function TopBar() {
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const menuItemStyle = {
+    borderRadius: '8px',
+    ':hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    },
+    ':active': {
+      backgroundColor: theme.palette.primary.light,
+    },
+  };
+
   return (
     <AppBar
       position="sticky"
@@ -76,29 +85,21 @@ export default function TopBar() {
               </Link>
             </Box>
 
-            <Stack direction="row" spacing={0}>
-              <StyledMenu open>
-                <MenuItem>
-                  <Typography variant="body2">Projekte</Typography>
+            <Stack direction="row" spacing={3}>
+              {pages.map((page) => (
+                <MenuItem key={page} sx={menuItemStyle}>
+                  <Typography variant="body2">{page}</Typography>
                 </MenuItem>
-                <MenuItem>
-                  <Typography variant="body2">Artikel</Typography>
-                </MenuItem>
-                <MenuItem>
-                  <Typography variant="body2">Backstage</Typography>
-                </MenuItem>
-              </StyledMenu>
-
-              <Menu>
-                <MenuItem>
-                  <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'top', horizontal: 'right' }} variant="dot">
-                    <Avatar sx={{ width: 32, height: 32 }}>
-                      <Image src={avatarMaxImg} alt="avatar" fill sizes="33vw" />
-                    </Avatar>
-                  </StyledBadge>
-                </MenuItem>
-              </Menu>
+              ))}
+              <IconButton sx={menuItemStyle} onClick={handleOpenUserMenu}>
+                <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'top', horizontal: 'right' }} variant="dot">
+                  <Avatar sx={{ width: 32, height: 32 }}>
+                    <Image src={avatarMaxImg} alt="avatar" fill sizes="33vw" />
+                  </Avatar>
+                </StyledBadge>
+              </IconButton>
             </Stack>
+            <UserMenu anchorElUser={anchorElUser} setAnchorElUser={setAnchorElUser} />
           </Box>
         </Toolbar>
       </Container>
