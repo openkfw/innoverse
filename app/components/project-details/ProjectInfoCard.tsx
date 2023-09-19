@@ -22,14 +22,8 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
   const { projectSummary, setActiveTab } = props;
 
   return (
-    <Card
-      sx={{
-        borderRadius: '24px',
-        width: '1280px',
-        height: '563px',
-      }}
-    >
-      <CardContent sx={{ ml: '25px', mr: '25px' }}>
+    <Card sx={{ borderRadius: '24px', width: '1280px' }}>
+      <CardContent sx={{ margin: '56px 64px' }}>
         <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
           {/* First Column - Project Info */}
           <Grid item xs={4}>
@@ -42,7 +36,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
                 <InteractionButton interactionType={InteractionType.PROJECT_FOLLOW} />
               </Grid>
               <Grid item xs={4}>
-                <Typography variant="caption" color="text.primary">
+                <Typography variant="caption" color="text.secondary">
                   {projectSummary.likes} Likes - {projectSummary.followers} Innovaders folgen
                 </Typography>
               </Grid>
@@ -63,7 +57,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="overline" sx={{ textAlign: 'center', color: 'primary.light', mb: '25px' }}>
-                  Updates (3 von 12)
+                  Neuesten updates (3 von 12)
                 </Typography>
               </Grid>
               <Grid item container xs={12} spacing={2}>

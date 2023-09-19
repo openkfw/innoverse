@@ -29,7 +29,9 @@ const CommentsSection = () => {
         ))}
       </Stack>
 
-      <Typography variant="caption">{comments.length} Kommentare</Typography>
+      <Typography variant="caption" color="primary.main">
+        {comments.length} Kommentare
+      </Typography>
       <Stack sx={{ p: 0 }} spacing={3}>
         {comments.map((comment) => (
           <CommentCard content={comment} key={comment.id} />

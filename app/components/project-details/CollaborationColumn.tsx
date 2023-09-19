@@ -31,13 +31,13 @@ const CollaborationColumn = (props: CollaborationProps) => {
     <>
       <Grid container direction="column">
         <Grid item xs={4}>
-          <Typography variant="overline" sx={{ color: 'primary.light', mb: '15px' }}>
+          <Typography variant="overline" sx={{ color: 'primary.light' }}>
             Zusammenarbeit
           </Typography>
-          <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', mb: '15px' }}>
+          <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', mb: '15px', marginTop: 1 }}>
             {collaborationData.description}
           </Typography>
-          <Typography variant="caption" color="text.primary">
+          <Typography variant="caption" color="text.secondary">
             {collaborationData.participants} Beteilungen - {collaborationData.upvotes} Votes
           </Typography>
         </Grid>

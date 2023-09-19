@@ -32,7 +32,11 @@ export default function BreadcrumbsNav() {
   ];
 
   return (
-    <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} sx={{ pb: 3 }} aria-label="breadcrumb-navigation">
+    <Breadcrumbs
+      separator={<NavigateNextIcon fontSize="small" />}
+      sx={{ marginBottom: '27px' }}
+      aria-label="breadcrumb-navigation"
+    >
       {breadcrumbs}
     </Breadcrumbs>
   );
