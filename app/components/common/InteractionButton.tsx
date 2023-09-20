@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import FormatAlignLeftOutlinedIcon from '@mui/icons-material/FormatAlignLeftOutlined';
@@ -34,18 +36,19 @@ export enum InteractionType {
 
 export default function InteractionButton(props: InteractionButtonProps) {
   const { interactionType, label, onClick, sx } = props;
+  const [isHovered, setIsHovered] = useState(false);
 
   const getInteractionIcon = () => {
     if (interactionType === InteractionType.LIKE) return <ThumbUpOutlinedIcon fontSize="small" />;
     if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddOutlinedIcon fontSize="small" />;
     if (interactionType === InteractionType.USER_FOLLOW) return <PersonAddIcon fontSize="small" />;
     if (interactionType === InteractionType.COLLABORATION) return <PeopleOutlineOutlinedIcon fontSize="small" />;
-    if (interactionType === InteractionType.COMMENT) return <ChatIcon />;
+    if (interactionType === InteractionType.COMMENT) return <ChatIcon color={isHovered ? 'white' : 'black'} />;
     if (interactionType === InteractionType.COMMENT_SEND) return <SendIcon fontSize="small" />;
     if (interactionType === InteractionType.SHARE_OPINION) return <EditIcon fontSize="small" />;
     if (interactionType === InteractionType.ADD_INSIGHTS) return <FormatAlignLeftOutlinedIcon fontSize="small" />;
-    if (interactionType === InteractionType.APPLY) return <ApplyIcon />;
-    if (interactionType === InteractionType.RECOMMEND) return <RecommendIcon />;
+    if (interactionType === InteractionType.APPLY) return <ApplyIcon color={isHovered ? 'white' : 'black'} />;
+    if (interactionType === InteractionType.RECOMMEND) return <RecommendIcon color={isHovered ? 'white' : 'black'} />;
   };
 
   const getButtontext = () => {
@@ -65,11 +68,13 @@ export default function InteractionButton(props: InteractionButtonProps) {
   return (
     <Button
       onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       variant="outlined"
       startIcon={getInteractionIcon()}
       sx={{
         mr: 1,
-        px: 2,
+        px: getButtontext() === undefined ? 1 : 2,
         py: 1,
         color: 'rgba(0, 0, 0, 0.56)',
         borderRadius: '48px',
@@ -80,6 +85,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
         border: ' 1px solid rgba(0, 0, 0, 0.10)',
         background: 'rgba(255, 255, 255, 0.10)',
         minWidth: 0,
+        height: '35px',
         '&:hover': {
           border: '1px solid rgba(255, 255, 255, 0.40)',
           background: 'secondary.main',
