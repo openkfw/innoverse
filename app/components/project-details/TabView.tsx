@@ -27,7 +27,7 @@ function CustomTabPanel(props: TabPanelProps) {
 
   return (
     <div role="tabpanel" hidden={value !== index} id={id} aria-labelledby={`tab-${id}`} {...other}>
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box sx={{ paddingTop: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -40,7 +40,7 @@ function a11yProps(index: number) {
 }
 
 const CustomTabs = styled(Tabs)({
-  borderBottom: '1px solid #e8e8e8',
+  borderBottom: '1px solid rgba(232, 232, 232, 0.5)',
   '& .MuiTabs-indicator': {
     backgroundColor: '#FFF',
   },
@@ -49,7 +49,6 @@ const CustomTabs = styled(Tabs)({
 const CustomTab = styled((props: TabProps) => <Tab disableRipple {...props} />)(({ theme }) => ({
   minWidth: 0,
   fontWeight: theme.typography.fontWeightRegular,
-  marginRight: theme.spacing(1),
   color: 'rgba(242, 242, 242, 0.85)',
   '&:hover': {
     color: '#FFF',
@@ -58,6 +57,9 @@ const CustomTab = styled((props: TabProps) => <Tab disableRipple {...props} />)(
   '&.Mui-selected': {
     color: '#FFF',
     fontWeight: theme.typography.fontWeightMedium,
+  },
+  '&:not(:last-child)': {
+    marginRight: '46px',
   },
 }));
 
@@ -75,17 +77,26 @@ export default function BasicTabs(props: BasicTabsProps) {
   };
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ borderBottom: 0.1, borderColor: 'main' }}>
+    <Container maxWidth="lg" style={{ padding: 0, minWidth: '1280px' }}>
+      <Box sx={{ marginLeft: '64px', display: 'inline-flex', borderBottom: '1px', borderColor: 'main' }}>
         <CustomTabs value={activeTab} onChange={handleChange} aria-label="tab switcher">
-          <CustomTab label={<Typography variant="subtitle1">Projektverlauf</Typography>} {...a11yProps(0)} />
+          <CustomTab
+            label={
+              <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
+                Projektverlauf
+              </Typography>
+            }
+            {...a11yProps(0)}
+          />
           <CustomTab
             label={
               <Stack direction="row" spacing={1}>
-                <Typography variant="subtitle1" color="secondary.main">
+                <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
                   3
                 </Typography>
-                <Typography variant="subtitle1">Zusammenarbeit</Typography>
+                <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
+                  Zusammenarbeit
+                </Typography>
               </Stack>
             }
             {...a11yProps(1)}
@@ -93,10 +104,12 @@ export default function BasicTabs(props: BasicTabsProps) {
           <CustomTab
             label={
               <Stack direction="row" spacing={1}>
-                <Typography variant="subtitle1" color="secondary.main">
+                <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
                   {updates.length}
                 </Typography>
-                <Typography variant="subtitle1">Updates</Typography>
+                <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
+                  Updates
+                </Typography>
               </Stack>
             }
             {...a11yProps(2)}

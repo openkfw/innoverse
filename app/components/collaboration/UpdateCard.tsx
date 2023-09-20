@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import AvatarGroup from '@mui/material/AvatarGroup';
+import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
@@ -37,7 +38,7 @@ export const UpdateCard = ({ content }: UpdateCardProps) => {
 
   return (
     <Grid container spacing={5}>
-      <Grid container item xs={6} direction="column" spacing={2}>
+      <Grid container item xs={6} direction="column" spacing={2} sx={{ paddingRight: '100px' }}>
         <Grid item>
           <Typography variant="h5" color="secondary.contrastText">
             {headline}
@@ -68,16 +69,18 @@ export const UpdateCard = ({ content }: UpdateCardProps) => {
         </Grid>
       </Grid>
 
-      {comments.length > 0 ? (
-        <Grid container item spacing={2} xs={6}>
-          <ShareOpinionCard />
-          <Comments comments={comments} />
-        </Grid>
-      ) : (
-        <Grid container item xs={6}>
-          <WriteCommentCard text={newCommentText} />
-        </Grid>
-      )}
+      <Grid container item xs={6} spacing={2}>
+        <Box sx={{ marginLeft: '-20px' }}>
+          {comments.length > 0 ? (
+            <>
+              <ShareOpinionCard />
+              <Comments comments={comments} />
+            </>
+          ) : (
+            <WriteCommentCard text={newCommentText} />
+          )}
+        </Box>
+      </Grid>
     </Grid>
   );
 };
