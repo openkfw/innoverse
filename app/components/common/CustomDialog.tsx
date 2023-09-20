@@ -87,7 +87,6 @@ const dialogActionsStyle = {
 
 const dialogContentStyle = {
   margin: 0,
-  width: 458,
   backgroundColor: 'white',
   borderBottomLeftRadius: '16px',
   borderBottomRightRadius: '16px',

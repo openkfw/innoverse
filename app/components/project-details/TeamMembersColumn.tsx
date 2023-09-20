@@ -86,7 +86,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
                 </Typography>
               </Box>
 
-              <Box sx={{ flex: 1, display: 'flex' }}>
+              <Box sx={{ flex: 1, display: 'flex', marginLeft: '120px' }}>
                 <Grid item>
                   <InteractionButton interactionType={InteractionType.USER_FOLLOW} />
                 </Grid>
