@@ -22,9 +22,16 @@ export type CommentType = {
   downvotes?: number;
 };
 
+export type SurveyQuestion = {
+  question: string;
+  responseOptions: string[];
+  votes: number
+};
+
 export type ProjectColaboration = {
   writeCommentText: string;
   projectUpdates: ProjectUpdate[];
+  surveyQuestions: SurveyQuestion[];
 };
 
 export enum PROJECT_PROGRESS {

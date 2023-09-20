@@ -10,10 +10,11 @@ import { project_colaboration } from '@/repository/mock/project/project-page';
 
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
+import { SurveyCard } from './SurveyCard';
 import { UpdateCard } from './UpdateCard';
 
 export const CollaborationTab = () => {
-  const { projectUpdates } = project_colaboration;
+  const { projectUpdates, surveyQuestions } = project_colaboration;
   return (
     <Card sx={containerStyles}>
       <Box sx={colorOverlayStyles} />
@@ -42,6 +43,14 @@ export const CollaborationTab = () => {
         <Divider textAlign="left" sx={{ m: 4 }}>
           <Chip label="Hilf uns bei diesen Fragen" />
         </Divider>
+
+        <Grid container sx={{ p: 4 }} spacing={8}>
+          {surveyQuestions.map((question, i) => (
+            <Grid item key={i}>
+              <SurveyCard surveyQuestion={question} />
+            </Grid>
+          ))}
+        </Grid>
 
         <Grid container sx={{ p: 4 }} spacing={8}>
           {projectUpdates.map((update, i) => (
