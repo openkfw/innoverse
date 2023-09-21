@@ -55,17 +55,20 @@ export default function ProjectCarousel() {
     <Grid container item xs={12} spacing={2} onMouseDown={handleMouseDown}>
       <Box sx={{ marginBottom: 4 }}>
         <Slider {...settings} ref={sliderRef}>
-          {slides.map((item) => (
-            <Grid item key={item.id}>
-              <ProjectCard
-                id={item.id}
-                img={item.image}
-                contributors={item.contributors}
-                title={item.title}
-                description={item.description}
-              />
-            </Grid>
-          ))}
+          {slides.map((item) => {
+            return (
+              <Grid item key={item.id}>
+                <ProjectCard
+                  id={item.id}
+                  img={item.image}
+                  contributors={item.contributors}
+                  title={item.title}
+                  description={item.description}
+                  progress={item.progress}
+                />
+              </Grid>
+            );
+          })}
         </Slider>
       </Box>
       <ArrowControllers

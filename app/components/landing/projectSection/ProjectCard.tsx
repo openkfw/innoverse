@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
 import Image, { StaticImageData } from 'next/image';
 
 import { CardActionArea } from '@mui/material';
@@ -9,8 +8,8 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 
-import bull from '@/components/common/bull';
-import ProgressBar, { PROJECT_PROGRESS } from '@/components/common/ProgressBar';
+import ProgressBar from '@/components/common/ProgressBar';
+import VisibleContributors from '@/components/project-details/VisibleContributors';
 
 interface ProjectCardProps {
   id: number;
@@ -18,56 +17,39 @@ interface ProjectCardProps {
   contributors: string[];
   title: string;
   description: string;
+  progress: string;
 }
 
 export default function ProjectCard(props: ProjectCardProps) {
-  // -------- (to be removed - replace with real data) - random data to showcase Progress bar steps in project cards
-  const [randomStep, setRandomStep] = useState<string>('');
-  useEffect(() => {
-    const steps = [PROJECT_PROGRESS.EXPLORATION, PROJECT_PROGRESS.KONZEPTION, PROJECT_PROGRESS.PROOF_OF_CONCEPT];
+  const { id, img, contributors, title, description, progress } = props;
 
-    setRandomStep(steps[Math.floor(Math.random() * steps.length)]);
-  }, []);
-  // --------
-
-  const { id, img, contributors, title, description } = props;
   return (
-    <Card sx={{ width: 466, height: 670, display: 'flex', borderRadius: 4, marginRight: 3 }}>
-      <CardActionArea href={`/projects/${encodeURIComponent(id)}`} sx={{ padding: 0, margin: 0 }}>
-        <CardMedia sx={{ height: 418 }}>
-          <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-            <Image
-              src={img}
-              height={418}
-              width={466}
-              style={{ objectFit: 'cover', padding: 18, borderRadius: '24px' }}
-              alt="project"
-            />
-          </div>
+    <Card sx={cardStyles}>
+      <CardActionArea href={`/projects/${encodeURIComponent(id)}`}>
+        <CardMedia sx={cardMediaStyles}>
+          <Image
+            src={img}
+            width={418}
+            height={237}
+            alt="project"
+            style={{ objectFit: 'cover', margin: '24px', borderRadius: '8px' }}
+          />
         </CardMedia>
 
-        <CardContent sx={{ padding: 3 }}>
+        <CardContent sx={cardContentStyles}>
           <Box sx={{ textAlign: 'left' }}>
-            <Typography variant="caption" component="div" display="flex" sx={{ flexWrap: 'wrap' }}>
-              {contributors.map((contributor, index) =>
-                index < contributors.length - 1 ? (
-                  <div key={index}>
-                    {contributor}
-                    {bull}
-                  </div>
-                ) : (
-                  <div key={index}>{contributor}</div>
-                ),
-              )}
+            <VisibleContributors contributors={contributors} />
+
+            <Typography variant="h5" sx={titleStyles}>
+              {title}
             </Typography>
 
-            <Typography variant="h5">{title}</Typography>
-            <Typography variant="subtitle1" sx={{ color: 'secondary.contrastText', marginBottom: 3 }}>
+            <Typography variant="subtitle1" sx={{ ...descriptionStyles, WebkitLineClamp: title.length > 50 ? 1 : 2 }}>
               {description}
             </Typography>
 
-            <Box sx={{ bottom: 24, position: 'absolute' }}>
-              <ProgressBar active={randomStep} />
+            <Box sx={progressBarContainerStyles}>
+              <ProgressBar active={progress} />
             </Box>
           </Box>
         </CardContent>
@@ -75,3 +57,41 @@ export default function ProjectCard(props: ProjectCardProps) {
     </Card>
   );
 }
+
+// Project Card styles
+const cardStyles = {
+  width: 466,
+  height: 473,
+  display: 'flex',
+  borderRadius: 4,
+  marginRight: 3,
+};
+
+const cardMediaStyles = {
+  height: 237,
+};
+
+const cardContentStyles = {
+  padding: 3,
+  height: '100%',
+};
+
+const titleStyles = {
+  display: '-webkit-box',
+  overflow: 'hidden',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+};
+
+const descriptionStyles = {
+  color: 'secondary.contrastText',
+  marginBottom: 3,
+  display: '-webkit-box',
+  overflow: 'hidden',
+  WebkitBoxOrient: 'vertical',
+};
+
+const progressBarContainerStyles = {
+  bottom: 24,
+  position: 'absolute',
+};
