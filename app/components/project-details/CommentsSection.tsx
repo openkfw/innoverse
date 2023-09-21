@@ -1,5 +1,8 @@
 import { useState } from 'react';
 
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
@@ -15,6 +18,17 @@ const CommentsSection = () => {
   const [questions] = useState<string[]>(project.questions);
   const [newCommentText] = useState<string>(projects_progression.writeCommentText);
 
+  const listStyle = {
+    listStyleType: 'decimal',
+    pl: 2,
+    '& .MuiListItem-root': {
+      display: 'list-item',
+      fontFamily: '***FONT_REMOVED***',
+      fontWeight: 700,
+      pl: 0,
+    },
+  };
+
   return (
     <Stack spacing={3} sx={{ mt: 3, ml: 1, width: 622 }} direction="column">
       <Stack spacing={3}>
@@ -22,11 +36,19 @@ const CommentsSection = () => {
           Deine Meinung ist gefragt
         </Typography>
 
-        {questions.map((question, i) => (
-          <Typography key={i} variant="body1" color="text.primary" sx={{ fontWeight: 700 }}>
-            {i + 1}. {question}
-          </Typography>
-        ))}
+        <List sx={listStyle}>
+          {questions.map((question, i) => (
+            <ListItem key={i}>
+              <ListItemText
+                primary={
+                  <Typography variant="body1" color="text.primary" sx={{ fontWeight: 700 }}>
+                    {question}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          ))}
+        </List>
       </Stack>
 
       <Typography variant="caption" color="primary.main">
