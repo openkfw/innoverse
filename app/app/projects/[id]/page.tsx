@@ -17,13 +17,14 @@ import { ProjectInfoCard } from '../../../components/project-details/ProjectInfo
 function ProjectPage({ params }: { params: { id: string } }) {
   const projectId = parseInt(params.id) || 1;
   let projectInformation = projects_progression.projects.filter((project) => project.projectId == projectId)[0];
-  let projectUpdates = project_updates.filter((project) => project.projectId == projectId)[0].updates;
+  const projectUpdates = project_updates.filter((project) => project.projectId == projectId)[0];
+
   const [activeTab, setActiveTab] = useState(0);
 
   // TODO: Remove when there is data for all the projects
+  const updates = projectUpdates ? projectUpdates.updates : project_updates[0].updates;
   if (!projectInformation) {
     projectInformation = projects_progression.projects[0];
-    projectUpdates = project_updates[0].updates;
   }
 
   return (
@@ -45,7 +46,7 @@ function ProjectPage({ params }: { params: { id: string } }) {
         <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
           <TabView
             projectStatus={projectInformation.projectStatus}
-            updates={projectUpdates}
+            updates={updates}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
           />
