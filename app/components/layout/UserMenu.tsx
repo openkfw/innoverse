@@ -25,11 +25,7 @@ export default function UserMenu(props: UserMenuProps) {
       onClick={handleCloseUserMenu}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      PaperProps={{
-        style: {
-          width: 220,
-        },
-      }}
+      PaperProps={{ style: { width: 220, marginTop: 16 } }}
     >
       <MenuItem>
         <Typography variant="body2" color="text.primary">
