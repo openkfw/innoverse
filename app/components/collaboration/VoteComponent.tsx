@@ -36,27 +36,43 @@ export const VoteComponent = (props: VoteComponentProps) => {
     setValue(newValue);
   };
 
-  const buttonStyle = {
-    color: 'rgba(0, 0, 0, 0.56)',
-    borderRadius: '48px',
-    fontSize: '13px',
-    fontWeight: '700',
-    lineHeight: '19px',
-    background: 'rgba(255, 255, 255, 0.10)',
-  };
-
   return (
-    <Stack direction="row" sx={{ pt: 2 }}>
+    <Stack direction="row" spacing={1}>
       <ToggleButtonGroup value={value} exclusive onChange={handleChange} aria-label="vote">
         <ToggleButton value={VOTE_VALUE.UP} sx={buttonStyle}>
           <ArrowUpIcon color={value == VOTE_VALUE.UP ? 'green' : 'black'} /> {upvoteValue}
         </ToggleButton>
       </ToggleButtonGroup>
-      <Button variant="outlined" startIcon={<ReplyIcon sx={{ color: 'black', opacity: '0.38' }} />} sx={buttonStyle}>
-        <Typography variant="subtitle2" color="text.primary" sx={{ fontSize: 13, fontWeight: 700, opacity: 0.56 }}>
+
+      <Button variant="outlined" startIcon={<ReplyIcon sx={replyIconStyles} />} sx={buttonStyle}>
+        <Typography variant="subtitle2" color="text.primary" sx={typographyStyles}>
           Antworten
         </Typography>
       </Button>
     </Stack>
   );
+};
+
+// Vote Component Styles
+
+const buttonStyle = {
+  color: 'rgba(0, 0, 0, 0.56)',
+  borderRadius: '48px',
+  fontSize: '13px',
+  fontWeight: '700',
+  lineHeight: '19px',
+  background: 'rgba(255, 255, 255, 0.10)',
+  height: '32px',
+  '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.10)' },
+};
+
+const replyIconStyles = {
+  color: 'black',
+  opacity: '0.38',
+};
+
+const typographyStyles = {
+  fontSize: 13,
+  fontWeight: 700,
+  opacity: 0.56,
 };

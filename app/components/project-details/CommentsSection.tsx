@@ -18,20 +18,9 @@ const CommentsSection = () => {
   const [questions] = useState<string[]>(project.questions);
   const [newCommentText] = useState<string>(projects_progression.writeCommentText);
 
-  const listStyle = {
-    listStyleType: 'decimal',
-    pl: 2,
-    '& .MuiListItem-root': {
-      display: 'list-item',
-      fontFamily: '***FONT_REMOVED***',
-      fontWeight: 700,
-      pl: 0,
-    },
-  };
-
   return (
-    <Stack spacing={3} sx={{ mt: 3, ml: 1, width: 622 }} direction="column">
-      <Stack spacing={3}>
+    <Stack sx={containerStyles} direction="column">
+      <Stack>
         <Typography variant="overline" color="primary.light">
           Deine Meinung ist gefragt
         </Typography>
@@ -51,10 +40,11 @@ const CommentsSection = () => {
         </List>
       </Stack>
 
-      <Typography variant="caption" color="primary.main">
+      <Typography variant="caption" color="text.secondary" sx={{ marginTop: 1, marginBottom: 3 }}>
         {comments.length} Kommentare
       </Typography>
-      <Stack sx={{ p: 0 }} spacing={3}>
+
+      <Stack sx={{ p: 0 }}>
         {comments.map((comment) => (
           <CommentCard content={comment} key={comment.id} />
         ))}
@@ -65,3 +55,22 @@ const CommentsSection = () => {
 };
 
 export default CommentsSection;
+
+// Comment  Section Styles
+
+const containerStyles = {
+  mt: 3,
+  ml: 1,
+  width: 622,
+};
+
+const listStyle = {
+  listStyleType: 'decimal',
+  pl: 2,
+  '& .MuiListItem-root': {
+    display: 'list-item',
+    fontFamily: '***FONT_REMOVED***',
+    fontWeight: 700,
+    pl: 0,
+  },
+};
