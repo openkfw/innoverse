@@ -28,32 +28,37 @@ export default function HeroSection(props: HeroSectionProps) {
     <Grid container sx={containerStyles}>
       <Grid item xs={5}>
         <Box>
-          <Image src={project} alt="Project" sizes="50vw" style={{ width: 720, height: 380 }} />
+          <Image src={project} alt="Project" sizes="50vw" style={backgroundImageStyles} />
         </Box>
       </Grid>
       <Grid item xs={7}>
         <Card sx={cardStyles}>
-          <Typography variant="h2" sx={{ fontSize: '48px', marginBottom: 3 }}>
+          <Typography variant="h2" sx={cardTitleStyles}>
             {title}
           </Typography>
-          <Grid container sx={{ alignItems: 'center' }}>
-            <Grid item xs={6}>
-              <CardHeader
-                avatar={
-                  <Avatar sx={{ width: 52, height: 52 }}>
-                    <Image src={avatar} alt="avatar" fill sizes="33vw" />
-                  </Avatar>
-                }
-                title={<Typography variant="body2"> {author}</Typography>}
-                subheader={
-                  <Typography variant="caption" sx={{ color: 'common.white' }}>
-                    {role}
-                  </Typography>
-                }
-              />
+          <Grid container spacing={0} sx={cardBodyStyles}>
+            <Grid item sx={avatarContainerStyles}>
+              <Box display="flex" flexDirection="column" justifyContent="flex-end" height="100%">
+                <CardHeader
+                  avatar={
+                    <Avatar sx={avatarStyles}>
+                      <Image src={avatar} alt="avatar" fill sizes="33vw" />
+                    </Avatar>
+                  }
+                  title={<Typography variant="body2"> {author}</Typography>}
+                  subheader={
+                    <Typography variant="caption" sx={{ color: 'common.white' }}>
+                      {role}
+                    </Typography>
+                  }
+                  sx={cardHeaderStyles}
+                />
+              </Box>
             </Grid>
-            <Grid item xs={6}>
-              <Typography variant="overline">Status</Typography>
+            <Grid item sx={statusContainerStyles}>
+              <Typography variant="overline" sx={statusStyles}>
+                Status
+              </Typography>
               <ProgressBar active={status} />
             </Grid>
           </Grid>
@@ -65,6 +70,11 @@ export default function HeroSection(props: HeroSectionProps) {
 
 // Hero section styles
 
+const backgroundImageStyles = {
+  width: 720,
+  height: 380,
+};
+
 const containerStyles = {
   position: 'relative',
   justifyItems: 'center',
@@ -73,12 +83,50 @@ const containerStyles = {
 
 const cardStyles = {
   ml: '10%',
-  p: 4,
+  padding: '40px 24px 32px 24px',
   borderRadius: '16px',
   border: '1px solid rgba(255, 255, 255, 0.20)',
   backgroundColor: 'rgba(255, 255, 255, 0.15)',
   boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
   backdropFilter: 'blur(20px)',
-  width: 580,
-  height: 320,
+  width: 588,
+  height: 312,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+};
+
+const cardTitleStyles = {
+  fontSize: '48px',
+};
+
+const cardBodyStyles = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-end',
+};
+
+const avatarContainerStyles = {
+  padding: 0,
+  margin: 0,
+};
+
+const avatarStyles = {
+  width: 52,
+  height: 52,
+};
+
+const cardHeaderStyles = {
+  paddingBottom: 0,
+  paddingLeft: 0,
+};
+
+const statusContainerStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  paddingRight: 1,
+};
+
+const statusStyles = {
+  textAlign: 'flex-start',
 };
