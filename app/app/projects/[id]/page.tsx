@@ -30,7 +30,7 @@ function ProjectPage({ params }: { params: { id: string } }) {
   return (
     <Layout>
       <Stack spacing={8} useFlexGap>
-        <Container maxWidth="lg" sx={{ pt: 10, pb: 5 }}>
+        <Container maxWidth="lg" sx={{ pb: 5 }}>
           <BreadcrumbsNav />
           <HeroSection
             title={projectInformation.hero.title}

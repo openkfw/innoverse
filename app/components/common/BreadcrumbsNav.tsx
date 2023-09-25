@@ -1,8 +1,10 @@
 import Link from 'next/link';
 
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import Box from '@mui/material/Box';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Typography from '@mui/material/Typography';
+
+import ChevronRightIcon from '../icons/ChevronRightIcon';
 
 export default function BreadcrumbsNav() {
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -11,16 +13,7 @@ export default function BreadcrumbsNav() {
 
   const breadcrumbs = [
     <Link key="1" href="/" style={{ textDecoration: 'none' }}>
-      <Typography
-        variant="caption"
-        color="common.white"
-        sx={{
-          opacity: 0.8,
-          ':hover': {
-            color: 'secondary.main',
-          },
-        }}
-      >
+      <Typography variant="caption" color="common.white" sx={typographyStyles}>
         Startseite
       </Typography>
     </Link>,
@@ -33,11 +26,35 @@ export default function BreadcrumbsNav() {
 
   return (
     <Breadcrumbs
-      separator={<NavigateNextIcon fontSize="small" />}
-      sx={{ marginBottom: '27px' }}
+      sx={breadcrumbsStyles}
       aria-label="breadcrumb-navigation"
+      separator={
+        <Box sx={iconContainerStyles}>
+          <ChevronRightIcon />
+        </Box>
+      }
     >
       {breadcrumbs}
     </Breadcrumbs>
   );
 }
+
+// Breadcrumbs Nav Styles
+
+const typographyStyles = {
+  opacity: 0.8,
+  ':hover': {
+    color: 'secondary.main',
+  },
+};
+
+const breadcrumbsStyles = {
+  marginTop: '32px',
+  marginBottom: '45.95px',
+};
+
+const iconContainerStyles = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+};
