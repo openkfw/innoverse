@@ -83,7 +83,7 @@ const containerStyles = {
 
 const cardStyles = {
   ml: '10%',
-  padding: '40px 24px 32px 24px',
+  padding: '32px 24px',
   borderRadius: '16px',
   border: '1px solid rgba(255, 255, 255, 0.20)',
   backgroundColor: 'rgba(255, 255, 255, 0.15)',

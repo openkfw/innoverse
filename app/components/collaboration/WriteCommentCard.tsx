@@ -17,21 +17,16 @@ interface WriteOpinionCardProps {
 const WriteCommentCard = ({ text, sx }: WriteOpinionCardProps) => {
   return (
     <Stack direction="row" spacing={2}>
-      <Avatar sx={{ width: 32, height: 32 }}>
+      <Avatar sx={avatarStyles}>
         <Image src={avatar} alt="avatar" fill sizes="33vw" />
       </Avatar>
       <TextField
         multiline
         rows={6}
         placeholder={text}
-        sx={{ borderRadius: '8px', width: 450, '& .MuiInputBase-root': { p: 3 }, ...sx }}
+        sx={{ ...textFieldStyles, ...sx }}
         InputProps={{
-          endAdornment: (
-            <InteractionButton
-              interactionType={InteractionType.COMMENT_SEND}
-              sx={{ bottom: 10, right: '0%', position: 'absolute' }}
-            />
-          ),
+          endAdornment: <InteractionButton interactionType={InteractionType.COMMENT_SEND} sx={buttonStyles} />,
         }}
       />
     </Stack>
@@ -39,3 +34,30 @@ const WriteCommentCard = ({ text, sx }: WriteOpinionCardProps) => {
 };
 
 export default WriteCommentCard;
+
+// Write Comment Card Styles
+
+const avatarStyles = {
+  width: 32,
+  height: 32,
+};
+
+const textFieldStyles = {
+  borderRadius: '8px',
+  width: 450,
+  '& .MuiInputBase-root': {
+    p: '22px 24px',
+    color: 'text.primary',
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: 'text.primary',
+    },
+  },
+};
+
+const buttonStyles = {
+  bottom: 22,
+  right: 24,
+  position: 'absolute',
+};
