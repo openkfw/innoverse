@@ -388,6 +388,13 @@ export const projects_progression: ProjectsProgression = {
 export const project_colaboration: ProjectColaboration = {
   writeCommentText:
     'Teil deine Ratschläge und Gedanken zu diesem Thema, damit deine Kollegen von deiner Expertise profitieren können.',
+  surveyQuestions: [
+    {
+      question: '1. Welche Methode bevorzugt ihr für das XYZ Verfahren',
+      responseOptions: ['Usability testing', 'Monitoring', '101 Interview', 'Interviews'],
+      votes: 54
+    },
+  ],
   projectUpdates: [
     {
       headline: 'Welche spannende Use Cases für Künstliche Intelligenz kennt ihr aus anderen Unternehmen?',
