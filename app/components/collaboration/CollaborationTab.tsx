@@ -20,7 +20,7 @@ export const CollaborationTab = () => {
       <Box sx={colorOverlayStyles} />
 
       <CardContent>
-        <Grid container spacing={8} sx={{ p: 4 }}>
+        <Grid container spacing={8} sx={gridStyles}>
           <Grid item xs={6} sx={{ paddingRight: '100px' }}>
             <Typography variant="h5" color="secondary.contrastText" sx={{ mb: '10px' }}>
               Wir suchen Deine Unterstützung beim Thema Midjourney.
@@ -40,11 +40,12 @@ export const CollaborationTab = () => {
             </Box>
           </Grid>
         </Grid>
+
         <Divider textAlign="left" sx={{ m: 4 }}>
           <Chip label="Hilf uns bei diesen Fragen" />
         </Divider>
 
-        <Grid container sx={{ p: 4 }} spacing={8}>
+        <Grid container sx={gridStyles} spacing={8}>
           {surveyQuestions.map((question, i) => (
             <Grid item key={i}>
               <SurveyCard surveyQuestion={question} />
@@ -52,7 +53,7 @@ export const CollaborationTab = () => {
           ))}
         </Grid>
 
-        <Grid container sx={{ p: 4 }} spacing={8}>
+        <Grid container sx={gridStyles} spacing={8}>
           {projectUpdates.map((update, i) => (
             <Grid item key={i}>
               <UpdateCard content={update} />
@@ -92,4 +93,8 @@ const joinTeamStyles = {
   alignItems: 'flex-start',
   justifyContent: 'center',
   gap: 1,
+};
+
+const gridStyles = {
+  padding: '88px 64px ',
 };
