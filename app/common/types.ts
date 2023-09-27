@@ -25,7 +25,7 @@ export type CommentType = {
 export type SurveyQuestion = {
   question: string;
   responseOptions: string[];
-  votes: number
+  votes: number;
 };
 
 export type ProjectColaboration = {

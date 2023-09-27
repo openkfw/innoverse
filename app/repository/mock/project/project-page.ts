@@ -392,7 +392,7 @@ export const project_colaboration: ProjectColaboration = {
     {
       question: '1. Welche Methode bevorzugt ihr für das XYZ Verfahren',
       responseOptions: ['Usability testing', 'Monitoring', '101 Interview', 'Interviews'],
-      votes: 54
+      votes: 54,
     },
   ],
   projectUpdates: [
