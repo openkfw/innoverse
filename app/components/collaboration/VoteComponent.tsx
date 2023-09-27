@@ -44,8 +44,8 @@ export const VoteComponent = (props: VoteComponentProps) => {
         </ToggleButton>
       </ToggleButtonGroup>
 
-      <Button variant="outlined" startIcon={<ReplyIcon/>} sx={buttonStyle}>
-        <Typography color="text.primary" sx={typographyStyles}>
+      <Button variant="outlined" startIcon={<ReplyIcon />} sx={buttonStyle}>
+        <Typography variant="subtitle2" sx={typographyStyles}>
           antworten
         </Typography>
       </Button>
@@ -64,6 +64,7 @@ const buttonStyle = {
   background: 'rgba(255, 255, 255, 0.10)',
   height: '32px',
   '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.10)' },
+  '&:active': { backgroundColor: 'rgba(0, 0, 0, 0.10)' },
 };
 
 const typographyStyles = {
