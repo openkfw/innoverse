@@ -64,7 +64,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
             </IconButton>
           </Box>
           <Stack direction="row" spacing={0} justifyContent={'space-between'}>
-            <Box sx={{ m: 2 }}>
+            <Box>
               <MuiMarkdown overrides={{ style: { color: 'text.primary' } } as unknown as Overrides}>
                 {projectStatus.text}
               </MuiMarkdown>
