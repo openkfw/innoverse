@@ -103,7 +103,7 @@ export const projects_progression: ProjectsProgression = {
         },
         tags: ['KI', 'Effizienz', 'Geschäftsbereiche', 'AI'],
         info: {
-          title: '##Künstliche Intelligenz',
+          title: 'Künstliche Intelligenz',
           description: 'Generative KI könnte ein Gamechanger für die Zusammenarbeit zwischen Mensch und Maschine sein.',
         },
       },
@@ -223,8 +223,8 @@ export const projects_progression: ProjectsProgression = {
         },
         tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
         info: {
-          title: '',
-          description: '',
+          title: 'Künstliche Intelligenz',
+          description: 'Generative KI könnte ein Gamechanger für die Zusammenarbeit zwischen Mensch und Maschine sein.',
         },
       },
       comments: [
@@ -346,8 +346,8 @@ export const projects_progression: ProjectsProgression = {
         },
         tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
         info: {
-          title: '',
-          description: '',
+          title: 'Künstliche Intelligenz',
+          description: 'Generative KI könnte ein Gamechanger für die Zusammenarbeit zwischen Mensch und Maschine sein.',
         },
       },
       comments: [

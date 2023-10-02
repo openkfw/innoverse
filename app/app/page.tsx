@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import { FeaturedProjectSlider } from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
-import Footer from '@/components/layout/Footer';
 
 import { MappingProjectsCard } from '../components/landing/mappingProjectsSection/MappingProjectsCard';
 import Layout from '../components/layout/Layout';
@@ -66,10 +65,6 @@ function IndexPage() {
             }}
           />
           <MappingProjectsCard />
-        </Box>
-
-        <Box sx={{ marginLeft: 146 / 8, marginBottom: 48 / 8 }}>
-          <Footer />
         </Box>
       </Stack>
     </Layout>
