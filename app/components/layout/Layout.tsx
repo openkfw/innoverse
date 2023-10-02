@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 
 import theme from '@/styles/theme';
 
+import Footer from './Footer';
 import TopBar from './TopBar';
 
 interface LayoutProps {
@@ -16,11 +17,8 @@ export default function Layout({ children }: LayoutProps) {
       }}
     >
       <TopBar />
-      {/* About page is overriding this in the PageGridSection.tsx to have full width colored background */}
-      {/* <Container maxWidth="xl"> */}
       <Box>{children}</Box>
-      {/* </Container> */}
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }

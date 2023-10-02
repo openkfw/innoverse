@@ -4,7 +4,7 @@ import Image from 'next/image';
 import MuiMarkdown, { Overrides } from 'mui-markdown';
 
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { Box, Divider, IconButton } from '@mui/material';
+import { Box, Divider, IconButton, Typography } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -28,17 +28,21 @@ interface InfoItemProps {
 
 const InfoItemRight = ({ info }: InfoItemProps) => {
   return (
-    <Card sx={infoItemRightStyles}>
-      <CardContent>
-        <MuiMarkdown overrides={{ style: { color: 'text.primary' } } as unknown as Overrides}>{info.title}</MuiMarkdown>
+    <Card sx={infoItemRightStyles} elevation={0}>
+      <CardContent sx={{ p: '18px', pb: 1 }}>
+        <Typography variant="subtitle1" color="text.primary" sx={{ textTransform: 'uppercase' }}>
+          {info.title}
+        </Typography>
       </CardContent>
-      <CardMedia>
-        <Image src={robotic_hand} alt="image" height={140} style={{ marginLeft: '4%' }} />
+      <Divider sx={dividerStyle} />
+
+      <CardMedia sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Image src={robotic_hand} alt="image" width={235} height={130} />
       </CardMedia>
-      <CardContent>
-        <MuiMarkdown overrides={{ style: { color: 'text.primary' } } as unknown as Overrides}>
+      <CardContent sx={{ p: '18px' }}>
+        <Typography variant="subtitle2" color="text.primary">
           {info.description}
-        </MuiMarkdown>
+        </Typography>
       </CardContent>
     </Card>
   );
@@ -88,7 +92,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
 // Project Progress Styles
 const wrapperStyles = {
   position: 'relative',
-  borderRadius: '24px',
+  borderRadius: '8px',
 };
 
 const contentStyles = {
@@ -98,7 +102,7 @@ const contentStyles = {
 const showMoreButtonStyle = {
   background: 'linear-gradient(to bottom, rgba(255,0,0,0), rgba(255,255,255,1))',
   position: 'absolute',
-  bottom: '63%',
+  bottom: '60%',
   paddingTop: '150px',
   textAlign: 'center',
   width: '100%',
@@ -113,7 +117,14 @@ const infoItemRightContainerStyles = {
 
 const infoItemRightStyles = {
   width: 270,
-  height: 370,
   backgroundColor: '#EBF3F7',
-  borderRadius: 'var(--1, 8px)',
+  borderRadius: '8px',
+};
+
+const dividerStyle = {
+  width: '100%',
+  height: '2px',
+  bgcolor: 'common.white',
+  borderColor: 'common.white',
+  mb: '17px',
 };
