@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "tests",
+  "collectionName": "post",
   "info": {
-    "singularName": "test",
-    "pluralName": "tests",
-    "displayName": "Test"
+    "singularName": "post",
+    "pluralName": "posts",
+    "displayName": "Post"
   },
   "options": {
     "draftAndPublish": true
@@ -12,6 +12,9 @@
   "pluginOptions": {},
   "attributes": {
     "title": {
+      "type": "string"
+    },
+    "description": {
       "type": "string"
     }
   }

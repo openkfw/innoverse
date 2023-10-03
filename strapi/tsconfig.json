@@ -9,7 +9,7 @@
     "./**/*.ts",
     "./**/*.js",
     "src/**/*.json"
-  ],
+, "src/api/.item"  ],
   "exclude": [
     "node_modules/",
     "build/",

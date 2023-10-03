@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_slider_text_slider_texts",
+  "info": {
+    "displayName": "Slider-Text"
+  },
+  "options": {},
+  "attributes": {
+    "Title": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "richtext"
+    },
+    "Tags": {
+      "type": "json"
+    }
+  }
+}

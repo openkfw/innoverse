@@ -13,3 +13,12 @@ based on the[ setup guide](https://docs.strapi.io/dev-docs/quick-start) here but
 
 ## setup with docker
  Run the `docker-compose.yml` file in this folder, this builds a new strapi API container along with the postgres container
+
+
+ ## Add Collection Types
+ add a new folder in the `./src/api` folder (similar to e.g. `/test`), with the following files: a schema.json file, a controller, a route and a service. Then you need to run `npm run strapi ts:generate-types` to generate the necessary types.
+
+ ## Export & Import
+Using the command `npm run strapi export -- --no-encrypt --file my-strapi-export` you can create an export from strapi, which includes all types and entities. Optionally you can set an encryption key for more security. 
+
+This exported file can be imported e.g. in a new strapi instance using the command `npm run strapi import -- --file my-strapi-export.tar.gz`.

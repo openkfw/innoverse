@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "item",
+  "info": {
+    "singularName": "item",
+    "pluralName": "items",
+    "displayName": "Slider Item",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "Image": {
+      "displayName": "Image",
+      "type": "component",
+      "repeatable": false,
+      "component": "image.image"
+    },
+    "Text": {
+      "displayName": "Texr",
+      "type": "component",
+      "repeatable": false,
+      "component": "slider-text.slider-text"
+    }
+  }
+}
