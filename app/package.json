@@ -17,6 +17,7 @@
     "prisma": "prisma"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.4",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
@@ -30,8 +31,7 @@
     "react-dom": "18.2.0",
     "react-responsive-carousel": "^3.2.23",
     "react-slick": "^0.29.0",
-    "slick-carousel": "^1.8.1",
-    "swr": "^2.2.0"
+    "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
     "@types/node": "^20.4.5",

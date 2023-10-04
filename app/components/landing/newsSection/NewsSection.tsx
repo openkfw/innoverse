@@ -2,10 +2,15 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import CustomButton from '@/components/common/CustomButton';
+import { NewsSlider } from '@/repository/mock/landing/news-section';
 
 import NewsCarousel from './NewsCarousel';
 
-export const NewsSection = () => {
+type NewsSectionProps = {
+  news: NewsSlider[];
+};
+
+export const NewsSection = (props: NewsSectionProps) => {
   return (
     <Grid container spacing={5} sx={{ m: 5 }}>
       <Grid item container xs={12} sx={{ marginBottom: 1 }}>
@@ -17,7 +22,7 @@ export const NewsSection = () => {
           <CustomButton>Mehr</CustomButton>
         </Grid>
       </Grid>
-      <NewsCarousel />
+      <NewsCarousel news={props.news} />
     </Grid>
   );
 };

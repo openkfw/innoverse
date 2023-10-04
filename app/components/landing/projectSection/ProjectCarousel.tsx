@@ -1,3 +1,4 @@
+'use client';
 import { SetStateAction, useRef, useState } from 'react';
 import Slider from 'react-slick';
 
@@ -9,8 +10,8 @@ import { ProjectCarouselItem, projects } from '@/repository/mock/landing/project
 import ArrowControllers from './ArrowControllers';
 import ProjectCard from './ProjectCard';
 
-import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import 'slick-carousel/slick/slick.css';
 
 export default function ProjectCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);

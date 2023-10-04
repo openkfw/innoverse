@@ -57,3 +57,7 @@ function ProjectPage({ params }: { params: { id: string } }) {
 }
 
 export default ProjectPage;
+
+// export async function getStaticPaths() {
+//   //TODO: https://nextjs.org/docs/pages/building-your-application/data-fetching/incremental-static-regeneration
+// }

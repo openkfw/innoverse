@@ -1,3 +1,4 @@
+'use client';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import { AnimationHandler, AnimationHandlerResponse } from 'react-responsive-carousel/lib/ts/components/Carousel/types';
@@ -10,12 +11,16 @@ import ListItem from '@mui/material/ListItem';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { SliderContent, sliderContent } from '@/repository/mock/landing/main-slider';
+import { SliderContent, SliderItem } from '@/repository/mock/landing/main-slider';
 
 import CustomChip from '../../common/CustomChip';
 
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import './FeatureProjectSlider.css';
+
+type FeaturedProjectSliderProps = {
+  items: SliderItem[];
+};
 
 const SliderPill = (props: {
   active: boolean;
@@ -96,10 +101,10 @@ const SliderPill = (props: {
   );
 };
 
-export const FeaturedProjectSlider = () => {
+export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   //TODO: move css from FeatureProjectSlider.css here...
-  const [selectedItem, setSelectedItem] = useState<number>(sliderContent.items.length - 1);
-  const [slides] = useState<SliderContent>(sliderContent);
+  const [selectedItem, setSelectedItem] = useState<number>(props.items.length - 1);
+  const slides = props;
   return (
     <Carousel
       className={'main-carousel'}
@@ -121,9 +126,12 @@ export const FeaturedProjectSlider = () => {
         <Grid container spacing={2} key={id}>
           <Grid item xs={6} md={7}>
             <Image
+              unoptimized
               src={el.image.image}
               alt="Project"
               sizes="50vw"
+              width={'100'}
+              height={'100'}
               style={{
                 width: '100%',
                 height: 'auto',

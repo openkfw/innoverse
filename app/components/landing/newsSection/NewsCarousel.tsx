@@ -1,22 +1,26 @@
+'use client';
 import { SetStateAction, useRef, useState } from 'react';
 import Slider from 'react-slick';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
-import { news, NewsSlider } from '@/repository/mock/landing/news-section';
+import { NewsSlider } from '@/repository/mock/landing/news-section';
 
 import ArrowControllers from '../../landing/projectSection/ArrowControllers';
 
 import NewsCard from './NewsCard';
 
-import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import 'slick-carousel/slick/slick.css';
 
-export default function NewsCarousel() {
+type NewsSliderProps = {
+  news: NewsSlider[];
+};
+
+export default function NewsCarousel(props: NewsSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [slides] = useState<NewsSlider[]>(news);
-
+  const slides = props.news;
   const sliderRef = useRef<Slider>(null);
 
   const handleMouseDown = (e: { pageX: number }) => {
