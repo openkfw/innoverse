@@ -14,7 +14,7 @@ import { SurveyCard } from './SurveyCard';
 import { UpdateCard } from './UpdateCard';
 
 export const CollaborationTab = () => {
-  const { projectUpdates, surveyQuestions } = project_colaboration;
+  const { projectUpdates, projectName, surveyQuestions } = project_colaboration;
   return (
     <Card sx={containerStyles}>
       <Box sx={colorOverlayStyles} />
@@ -35,8 +35,8 @@ export const CollaborationTab = () => {
           </Grid>
           <Grid item xs={6}>
             <Box sx={joinTeamStyles}>
-              <InteractionButton interactionType={InteractionType.APPLY} />
-              <InteractionButton interactionType={InteractionType.RECOMMEND} />
+              <InteractionButton projectName={projectName} interactionType={InteractionType.APPLY} />
+              <InteractionButton projectName={projectName} interactionType={InteractionType.RECOMMEND} />
             </Box>
           </Grid>
         </Grid>
@@ -56,7 +56,7 @@ export const CollaborationTab = () => {
         <Grid container sx={gridStyles} spacing={8}>
           {projectUpdates.map((update, i) => (
             <Grid item key={i}>
-              <UpdateCard content={update} />
+              <UpdateCard projectName={projectName} content={update} />
             </Grid>
           ))}
         </Grid>

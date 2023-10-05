@@ -14,6 +14,7 @@ import { TooltipContent } from './TooltipContent';
 
 interface TeamMembersProps {
   teamMembers: Person[];
+  projectName: string;
 }
 
 const maxAvatars = 3;
@@ -48,7 +49,7 @@ const avatarGroupStyle = {
 };
 
 const TeamMembersColumn = (props: TeamMembersProps) => {
-  const { teamMembers } = props;
+  const { teamMembers, projectName } = props;
 
   const [open, setOpen] = useState(false);
 
@@ -65,7 +66,12 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
         }}
       >
         {teamMembers.map((teamMember, index) => (
-          <StyledTooltip arrow key={index} title={<TooltipContent teamMember={teamMember} />} placement="bottom">
+          <StyledTooltip
+            arrow
+            key={index}
+            title={<TooltipContent teamMember={teamMember} projectName={projectName} />}
+            placement="bottom"
+          >
             <AvatarIcon src={teamMember.avatar} key={teamMember.name} index={index} allowAnimation={true} />
           </StyledTooltip>
         ))}
@@ -88,10 +94,10 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
 
               <Box sx={{ flex: 1, display: 'flex', marginLeft: '120px' }}>
                 <Grid item>
-                  <InteractionButton interactionType={InteractionType.USER_FOLLOW} />
+                  <InteractionButton projectName={projectName} interactionType={InteractionType.USER_FOLLOW} />
                 </Grid>
                 <Grid item>
-                  <InteractionButton interactionType={InteractionType.COMMENT} />
+                  <InteractionButton projectName={projectName} interactionType={InteractionType.COMMENT} />
                 </Grid>
               </Box>
             </Box>

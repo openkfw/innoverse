@@ -6,10 +6,11 @@ import InteractionButton, { InteractionType } from '../common/InteractionButton'
 
 interface TeamMemberProps {
   teamMember: Person;
+  projectName: string;
 }
 
 export const TooltipContent = (props: TeamMemberProps) => {
-  const { teamMember } = props;
+  const { teamMember, projectName } = props;
   return (
     <Grid container sx={{ m: 3, display: 'flex', justifyContent: 'space-between', gap: 3, width: 'fit-content' }}>
       <Grid item container sx={{ display: 'flex', flexDirection: 'column', width: 'fit-content' }}>
@@ -21,8 +22,8 @@ export const TooltipContent = (props: TeamMemberProps) => {
         </Typography>
       </Grid>
       <Grid item>
-        <InteractionButton interactionType={InteractionType.USER_FOLLOW} />
-        <InteractionButton interactionType={InteractionType.COMMENT} />
+        <InteractionButton projectName={projectName} interactionType={InteractionType.USER_FOLLOW} />
+        <InteractionButton projectName={projectName} interactionType={InteractionType.COMMENT} />
       </Grid>
     </Grid>
   );

@@ -18,6 +18,7 @@ function ProjectPage({ params }: { params: { id: string } }) {
   const projectId = parseInt(params.id) || 1;
   let projectInformation = projects_progression.projects.filter((project) => project.projectId == projectId)[0];
   const projectUpdates = project_updates.filter((project) => project.projectId == projectId)[0];
+  const projectName = projectInformation.projectSummary.projectName;
 
   const [activeTab, setActiveTab] = useState(0);
 
@@ -49,6 +50,7 @@ function ProjectPage({ params }: { params: { id: string } }) {
             updates={updates}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
+            projectName={projectName}
           />
         </Box>
       </Stack>

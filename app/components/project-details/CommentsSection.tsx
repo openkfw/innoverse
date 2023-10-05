@@ -17,6 +17,7 @@ const CommentsSection = () => {
   const [comments] = useState<CommentType[]>(project.comments);
   const [questions] = useState<string[]>(project.questions);
   const [newCommentText] = useState<string>(projects_progression.writeCommentText);
+  const projectName = project.projectSummary.projectName;
 
   return (
     <Stack sx={containerStyles} direction="column">
@@ -48,7 +49,7 @@ const CommentsSection = () => {
         {comments.map((comment) => (
           <CommentCard content={comment} key={comment.id} />
         ))}
-        <WriteCommentCard text={newCommentText} sx={{ width: '622px' }} />
+        <WriteCommentCard projectName={projectName} text={newCommentText} sx={{ width: '622px' }} />
       </Stack>
     </Stack>
   );

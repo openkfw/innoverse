@@ -29,6 +29,7 @@ export type SurveyQuestion = {
 };
 
 export type ProjectColaboration = {
+  projectName: string;
   writeCommentText: string;
   projectUpdates: ProjectUpdate[];
   surveyQuestions: SurveyQuestion[];
@@ -65,6 +66,7 @@ export type ProjectSummary = {
   followers: number;
   teamMembers: Person[];
   updates: ProjectShortUpdate[];
+  projectName: string;
 };
 
 export type ProjectShortUpdate = {
@@ -91,6 +93,7 @@ export type ProjectStatus = {
   author: PersonInfo;
   tags: string[];
   info: Info;
+  projectName: string;
 };
 
 export type ProjectProgression = {

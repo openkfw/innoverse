@@ -25,6 +25,7 @@ export const projects_progression: ProjectsProgression = {
         projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
       },
       projectSummary: {
+        projectName: 'TruBudget',
         summary: '',
         timing: {
           projectStart: 'Aug',
@@ -93,6 +94,7 @@ export const projects_progression: ProjectsProgression = {
         ],
       },
       projectStatus: {
+        projectName: 'Generative AI',
         text: GenerativeAI,
         author: {
           name: 'Ingmar Müller',
@@ -149,6 +151,7 @@ export const projects_progression: ProjectsProgression = {
         projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
       },
       projectSummary: {
+        projectName: 'InnoHub',
         summary:
           'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
         timing: {
@@ -213,6 +216,7 @@ export const projects_progression: ProjectsProgression = {
         ],
       },
       projectStatus: {
+        projectName: 'InnoHub',
         text: '',
         author: {
           name: 'Max Muster',
@@ -272,6 +276,7 @@ export const projects_progression: ProjectsProgression = {
         projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
       },
       projectSummary: {
+        projectName: 'Generative AI',
         summary:
           'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
         timing: {
@@ -336,6 +341,7 @@ export const projects_progression: ProjectsProgression = {
         ],
       },
       projectStatus: {
+        projectName: 'Generative AI',
         text: '',
         author: {
           name: 'Max Muster',
@@ -386,6 +392,7 @@ export const projects_progression: ProjectsProgression = {
 };
 
 export const project_colaboration: ProjectColaboration = {
+  projectName: 'TruBudget',
   writeCommentText:
     'Teil deine Ratschläge und Gedanken zu diesem Thema, damit deine Kollegen von deiner Expertise profitieren können.',
   surveyQuestions: [
