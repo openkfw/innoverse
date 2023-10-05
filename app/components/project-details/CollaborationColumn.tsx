@@ -7,10 +7,11 @@ import InteractionButton, { InteractionType } from '../common/InteractionButton'
 interface CollaborationProps {
   collaborationData: ProjectCollaboration;
   setActiveTab: (tab: number) => void;
+  projectName: string;
 }
 
 const CollaborationColumn = (props: CollaborationProps) => {
-  const { collaborationData, setActiveTab } = props;
+  const { collaborationData, setActiveTab, projectName } = props;
 
   const handleCollaborationClick = async (offset: number) => {
     const scroll = () => {
@@ -43,11 +44,13 @@ const CollaborationColumn = (props: CollaborationProps) => {
         </Grid>
         <Grid item xs={4} sx={{ mt: '15px' }}>
           <InteractionButton
+            projectName={projectName}
             interactionType={InteractionType.COLLABORATION}
             onClick={() => handleCollaborationClick(-325)}
             sx={{ background: 'secondary.main', color: 'rgba(255, 255, 255, 1)' }}
           />
           <InteractionButton
+            projectName={projectName}
             interactionType={InteractionType.COLLABORATION}
             onClick={() => handleCollaborationClick(75)}
             label="Komm ins Team!"
@@ -55,6 +58,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
           />
           <InteractionButton
             interactionType={InteractionType.COLLABORATION}
+            projectName={projectName}
             label="Umfrage machen!"
             sx={{ background: 'secondary.main', color: 'rgba(255, 255, 255, 1)' }}
           />

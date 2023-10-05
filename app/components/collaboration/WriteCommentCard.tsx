@@ -11,10 +11,11 @@ import avatar from '/public/images/avatarSusan.png';
 
 interface WriteOpinionCardProps {
   text: string;
+  projectName: string;
   sx?: SxProps;
 }
 
-const WriteCommentCard = ({ text, sx }: WriteOpinionCardProps) => {
+const WriteCommentCard = ({ text, sx, projectName }: WriteOpinionCardProps) => {
   return (
     <Stack direction="row" spacing={2}>
       <Avatar sx={avatarStyles}>
@@ -26,7 +27,14 @@ const WriteCommentCard = ({ text, sx }: WriteOpinionCardProps) => {
         placeholder={text}
         sx={{ ...textFieldStyles, ...sx }}
         InputProps={{
-          endAdornment: <InteractionButton interactionType={InteractionType.COMMENT_SEND} sx={buttonStyles} />,
+          endAdornment: (
+            <InteractionButton
+              projectName={projectName}
+              onClick={() => console.log('pressed')}
+              interactionType={InteractionType.COMMENT_SEND}
+              sx={buttonStyles}
+            />
+          ),
         }}
       />
     </Stack>

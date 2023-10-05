@@ -14,10 +14,11 @@ import badgeIcon from '/public/images/icons/badge.svg';
 
 interface AuthorInformationProps {
   author: PersonInfo;
+  projectName: string;
 }
 
 export const AuthorInformation = (props: AuthorInformationProps) => {
-  const { author } = props;
+  const { author, projectName } = props;
 
   return (
     <Stack sx={{ width: 662 }} spacing={4} pt={4} mt={1}>
@@ -39,9 +40,9 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
             </Box>
           </Stack>
           <Stack direction="row" spacing={1}>
-            <InteractionButton interactionType={InteractionType.USER_FOLLOW} />
-            <InteractionButton interactionType={InteractionType.COMMENT} />
-            <InteractionButton interactionType={InteractionType.ADD_INSIGHTS} />
+            <InteractionButton projectName={projectName} interactionType={InteractionType.USER_FOLLOW} />
+            <InteractionButton projectName={projectName} interactionType={InteractionType.COMMENT} />
+            <InteractionButton projectName={projectName} interactionType={InteractionType.ADD_INSIGHTS} />
           </Stack>
         </Stack>
         <Stack direction="row" alignItems="center" pb={4} spacing={1} sx={{ m: 0 }} mt={2}>

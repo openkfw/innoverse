@@ -10,12 +10,14 @@ import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { SxProps } from '@mui/material/styles';
 
+import triggerAnalyticsEvent from '@/analytics/analytics';
 import ApplyIcon from '@/components/icons/ApplyIcon';
 import ChatIcon from '@/components/icons/ChatIcon';
 import RecommendIcon from '@/components/icons/RecommendIcon';
 
 interface InteractionButtonProps extends ButtonProps {
   interactionType: InteractionType;
+  projectName: string;
   label?: string;
   onClick?: () => void;
   sx?: SxProps;
@@ -35,7 +37,7 @@ export enum InteractionType {
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
-  const { interactionType, label, onClick, sx } = props;
+  const { interactionType, label, onClick, sx, projectName } = props;
   const [isHovered, setIsHovered] = useState(false);
 
   const getInteractionIcon = () => {
@@ -64,10 +66,14 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.APPLY) return 'Ich bin dabei';
     if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
   };
+  const handleClick = () => {
+    triggerAnalyticsEvent(interactionType.toString(), projectName || 'unknown-project');
+    if (onClick !== undefined) onClick();
+  };
 
   return (
     <Button
-      onClick={onClick}
+      onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       variant="outlined"

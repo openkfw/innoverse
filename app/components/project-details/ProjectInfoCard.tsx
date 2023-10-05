@@ -32,8 +32,11 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
                 <ProjectStageCard timingData={projectSummary.timing} />
               </Grid>
               <Grid item xs={4} sx={{ mt: 2 }}>
-                <InteractionButton interactionType={InteractionType.LIKE} />
-                <InteractionButton interactionType={InteractionType.PROJECT_FOLLOW} />
+                <InteractionButton projectName={projectSummary.projectName} interactionType={InteractionType.LIKE} />
+                <InteractionButton
+                  projectName={projectSummary.projectName}
+                  interactionType={InteractionType.PROJECT_FOLLOW}
+                />
               </Grid>
               <Grid item xs={4}>
                 <Typography variant="caption" color="text.secondary">
@@ -46,10 +49,14 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
           <Grid item xs={8}>
             <Grid container spacing={2} sx={{ ml: '10px' }}>
               <Grid item xs={9}>
-                <CollaborationColumn collaborationData={projectSummary.collaboration} setActiveTab={setActiveTab} />
+                <CollaborationColumn
+                  projectName={projectSummary.projectName}
+                  collaborationData={projectSummary.collaboration}
+                  setActiveTab={setActiveTab}
+                />
               </Grid>
               <Grid item xs={3}>
-                <TeamMembersColumn teamMembers={projectSummary.teamMembers} />
+                <TeamMembersColumn projectName={projectSummary.projectName} teamMembers={projectSummary.teamMembers} />
               </Grid>
 
               <Grid item xs={12}>

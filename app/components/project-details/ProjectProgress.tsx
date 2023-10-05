@@ -10,6 +10,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Stack from '@mui/material/Stack';
 
+import triggerAnalyticsEvent from '@/analytics/analytics';
 import { Info, ProjectStatus } from '@/common/types';
 
 import { AuthorInformation } from './AuthorInformation';
@@ -20,6 +21,7 @@ import robotic_hand from '/public/images/robotic-hand.png';
 
 interface ProjectProgressProps {
   projectStatus: ProjectStatus;
+  projectName: string;
 }
 
 interface InfoItemProps {
@@ -49,11 +51,12 @@ const InfoItemRight = ({ info }: InfoItemProps) => {
 };
 
 export const ProjectProgress = (props: ProjectProgressProps) => {
-  const { projectStatus } = props;
+  const { projectStatus, projectName } = props;
   const [contentSize, setContentSize] = useState<string>('600px');
   const [showMoreButtonVisible, setShowMoreButtonVisible] = useState<boolean>(true);
 
   const expand = () => {
+    triggerAnalyticsEvent('expand-project-description', projectName);
     setContentSize('100%');
     setShowMoreButtonVisible(false);
   };
@@ -81,7 +84,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
 
         <Divider sx={{ width: '662px' }} />
         <ProjectTags tags={projectStatus.tags} />
-        <AuthorInformation author={projectStatus.author} />
+        <AuthorInformation projectName={projectName} author={projectStatus.author} />
         <Divider sx={{ my: 2, width: '662px' }} />
         <CommentsSection />
       </Stack>
