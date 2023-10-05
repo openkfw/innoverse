@@ -41,7 +41,7 @@ export const CollaborationTab = () => {
           </Grid>
         </Grid>
 
-        <Divider textAlign="left" sx={{ m: 4 }}>
+        <Divider textAlign="left" sx={dividerStyles}>
           <Chip label="Hilf uns bei diesen Fragen" />
         </Divider>
 
@@ -97,4 +97,8 @@ const joinTeamStyles = {
 
 const gridStyles = {
   padding: '88px 64px ',
+};
+
+const dividerStyles = {
+  margin: 4,
 };
