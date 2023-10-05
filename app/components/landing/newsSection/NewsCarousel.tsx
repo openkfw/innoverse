@@ -54,7 +54,7 @@ export default function NewsCarousel() {
   };
 
   return (
-    <Grid container item xs={12} spacing={2} onMouseDown={handleMouseDown}>
+    <Grid container item xs={12} spacing={2} onMouseDown={handleMouseDown} sx={{ zIndex: 1 }}>
       <Box sx={{ marginBottom: 4 }}>
         <Slider {...settings} ref={sliderRef}>
           {slides.map((item) => (

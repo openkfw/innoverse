@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
 import { FeaturedProjectSlider } from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
+import { BackgroundArrows } from '@/components/landing/newsSection/BackgroundArrows';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
 
@@ -18,15 +19,21 @@ function IndexPage() {
   return (
     <Layout>
       <Stack spacing={8} useFlexGap>
-        <Box sx={{ pt: 10, marginRight: '5%', marginBottom: '10%', display: 'flex' }}>
+        <Box sx={featuredProjectSliderStyles}>
           <FeaturedProjectSlider />
         </Box>
 
-        <Box sx={{ marginLeft: '5%', overflow: 'hidden' }}>
-          <NewsSection />
-        </Box>
+        <div style={{ position: 'relative' }}>
+          <Box sx={newsSectionStyles}>
+            <NewsSection />
+          </Box>
 
-        <Box sx={{ marginLeft: '5%', position: 'relative', overflowX: 'hidden' }}>
+          <Box sx={arrowContainerStyles}>
+            <BackgroundArrows />
+          </Box>
+        </div>
+
+        <Box sx={projectSectionStyles}>
           {/* Right bubble in the background */}
           <Image
             src={bgBubble}
@@ -46,7 +53,7 @@ function IndexPage() {
           <ProjectSection />
         </Box>
 
-        <Box sx={{ position: 'relative', overflowX: 'hidden' }}>
+        <Box sx={mappingProjectsCardStyles}>
           {/* Left bubble in the background */}
           <Image
             src={bgBubble}
@@ -72,3 +79,37 @@ function IndexPage() {
 }
 
 export default IndexPage;
+
+// Page Styles
+const featuredProjectSliderStyles = {
+  display: 'flex',
+  paddingTop: 10,
+  marginRight: '5%',
+  marginBottom: '10%',
+};
+
+const newsSectionStyles = {
+  marginLeft: '5%',
+  overflow: 'hidden',
+};
+
+const arrowContainerStyles = {
+  position: 'absolute',
+  top: '320px',
+  left: 0,
+  right: 0,
+  bottom: 0,
+  zIndex: 0,
+  marginLeft: '-130px',
+};
+
+const projectSectionStyles = {
+  marginLeft: '5%',
+  position: 'relative',
+  overflowX: 'hidden',
+};
+
+const mappingProjectsCardStyles = {
+  position: 'relative',
+  overflowX: 'hidden',
+};
