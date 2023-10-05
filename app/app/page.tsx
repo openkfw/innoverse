@@ -8,7 +8,7 @@ import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
 import Footer from '@/components/layout/Footer';
 import { news } from '@/repository/mock/landing/news-section';
-import { GetFeaturedSliderItemsQuery, STRAPI_QUERY, withResponseTransformer } from '@/utils/queries';
+import { STRAPI_QUERY, StaticBuildGetFeaturedSliderItemsQuery, withResponseTransformer } from '@/utils/queries';
 
 import { MappingProjectsCard } from '../components/landing/mappingProjectsSection/MappingProjectsCard';
 import Layout from '../components/layout/Layout';
@@ -28,11 +28,12 @@ async function getData() {
         Authentication: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
       body: JSON.stringify({
-        query: GetFeaturedSliderItemsQuery,
+        query: StaticBuildGetFeaturedSliderItemsQuery,
       }),
       next: { revalidate: 60 * 2 },
     });
-    const result = withResponseTransformer(STRAPI_QUERY.GetFeaturedSliderItems, await request.json());
+    //TODO: ONE QUERY should fetch all the main page data
+    const result = withResponseTransformer(STRAPI_QUERY.StaticBuildGetFeaturedSliderItems, await request.json());
     return {
       sliderContent: result?.items,
       news: news,

@@ -12,6 +12,8 @@ import HeroSection from '@/components/project-details/HeroSection';
 import TabView from '@/components/project-details/TabView';
 import { project_updates, projects_progression } from '@/repository/mock/project/project-page';
 
+import { getStandaloneApolloClient } from '@/utils/apolloStandalone';
+import { STRAPI_QUERY, StaticBuildGetProjectIdsQuery, withResponseTransformer } from '@/utils/queries';
 import { ProjectInfoCard } from '../../../components/project-details/ProjectInfoCard';
 
 function ProjectPage({ params }: { params: { id: string } }) {
@@ -58,6 +60,24 @@ function ProjectPage({ params }: { params: { id: string } }) {
 
 export default ProjectPage;
 
-// export async function getStaticPaths() {
-//   //TODO: https://nextjs.org/docs/pages/building-your-application/data-fetching/incremental-static-regeneration
-// }
+export async function getStaticPaths() {
+  const client = await getStandaloneApolloClient();
+  const { data, error } = await client.query(StaticBuildGetProjectIdsQuery)
+  if (error)
+    throw new Error(JSON.stringify(error))
+
+  const pageIds = withResponseTransformer(
+    STRAPI_QUERY.StaticBuildFetchProjectIds,
+    data
+  )
+
+  // Get the paths we want to pre-render based on posts
+  const paths = pageIds.map((page) => ({
+    params: { id: page.id },
+  }))
+
+  // We'll pre-render only these paths at build time.
+  // { fallback: 'blocking' } will server-render pages
+  // on-demand if the path doesn't exist.
+  return { paths, fallback: 'blocking' }
+}

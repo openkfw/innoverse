@@ -1,8 +1,39 @@
+
 export enum STRAPI_QUERY {
-  GetFeaturedSliderItems,
+  StaticBuildGetFeaturedSliderItems,
+  StaticBuildGetProjectIds,
+  StaticBuildFetchProjectIds
 }
 
-export const GetFeaturedSliderItemsQuery = `query GetFeaturedSliderItems {
+export const StaticBuildGetFeaturedSliderItemsQuery = `query GetFeaturedSliderItems {
+  items {
+    data {
+      id,
+      attributes {
+        title,
+        Text{
+          Title,
+          Description,
+          Tags
+        }
+        Image{
+          sliderImage{
+            data{
+              attributes{
+                url,
+              }
+            }
+          }
+          projectTo
+          projectFrom
+          year
+        }
+      }
+    }
+  }
+}`;
+
+export const StaticBuildGetProjectIdsQuery = `query GetFeaturedSliderItems {
   items {
     data {
       id,
@@ -32,14 +63,22 @@ export const GetFeaturedSliderItemsQuery = `query GetFeaturedSliderItems {
 
 export const withResponseTransformer = (query: STRAPI_QUERY, data: unknown) => {
   switch (query) {
-    case STRAPI_QUERY.GetFeaturedSliderItems:
-      return getFeaturedSliderItemsTransformer(data);
+    case STRAPI_QUERY.StaticBuildGetFeaturedSliderItems:
+      return getStaticBuildFeaturedSliderItemsTransformer(data);
+    case STRAPI_QUERY.StaticBuildFetchProjectIds:
+      return getStaticBuildFetchProjectIds(data);
     default:
       break;
   }
 };
 
-function getFeaturedSliderItemsTransformer(graphqlResponse: any) {
+function getStaticBuildFeaturedSliderItemsTransformer(graphqlResponse: any) {
+  return {
+    pages: [1, 2, 3, 4],
+  };
+}
+
+function getStaticBuildFetchProjectIds(graphqlResponse: any) {
   const formattedItems = graphqlResponse.data.items.data.map((item: any) => {
     const {
       title,
