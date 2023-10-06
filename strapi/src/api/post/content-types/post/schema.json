@@ -4,7 +4,7 @@
   "info": {
     "singularName": "post",
     "pluralName": "posts",
-    "displayName": "Post"
+    "displayName": "News Section"
   },
   "options": {
     "draftAndPublish": true
@@ -14,8 +14,23 @@
     "title": {
       "type": "string"
     },
-    "description": {
+    "subtitle": {
       "type": "string"
+    },
+    "theme": {
+      "type": "string"
+    },
+    "publisher": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "files", "videos", "audios"]
     }
   }
 }

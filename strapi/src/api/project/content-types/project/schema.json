@@ -16,6 +16,18 @@
     },
     "description": {
       "type": "string"
+    },
+    "progress": {
+      "type": "string"
+    },
+    "contributors": {
+      "type": "json"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "files", "videos", "audios"]
     }
   }
 }
