@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Image, { StaticImageData } from 'next/image';
 
-import { CardActionArea } from '@mui/material';
+import { CardActionArea, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 
 import ProgressBar from '@/components/common/ProgressBar';
 import VisibleContributors from '@/components/project-details/VisibleContributors';
+import theme from '@/styles/theme';
 
 interface ProjectCardProps {
   id: number;
@@ -23,16 +24,24 @@ interface ProjectCardProps {
 export default function ProjectCard(props: ProjectCardProps) {
   const { id, img, contributors, title, description, progress } = props;
 
+  const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
+
   return (
-    <Card sx={cardStyles}>
+    <Card sx={{ ...cardStyles, height: isWideScreen ? 473 : 440 }}>
       <CardActionArea href={`/projects/${encodeURIComponent(id)}`}>
-        <CardMedia sx={cardMediaStyles}>
+        <CardMedia sx={{ height: isWideScreen ? 237 : 175, borderRadius: '8px' }}>
           <Image
             src={img}
-            width={418}
-            height={237}
+            width={isWideScreen ? 418 : undefined}
+            height={isWideScreen ? 237 : 175}
             alt="project"
-            style={{ objectFit: 'cover', margin: '24px', borderRadius: '8px' }}
+            layout={isWideScreen ? 'intrinsic' : 'responsive'}
+            style={{
+              objectFit: 'cover',
+              margin: isWideScreen ? '24px' : '0px',
+              padding: isWideScreen ? '0px' : '24px',
+              borderRadius: '8px',
+            }}
           />
         </CardMedia>
 
@@ -44,9 +53,15 @@ export default function ProjectCard(props: ProjectCardProps) {
               {title}
             </Typography>
 
-            <Typography variant="subtitle1" sx={{ ...descriptionStyles, WebkitLineClamp: title.length > 50 ? 1 : 2 }}>
-              {description}
-            </Typography>
+            {isWideScreen ? (
+              <Typography variant="subtitle1" sx={{ ...descriptionStyles, WebkitLineClamp: title.length > 50 ? 1 : 2 }}>
+                {description}
+              </Typography>
+            ) : (
+              <Typography variant="subtitle1" sx={{ ...descriptionStyles, WebkitLineClamp: title.length > 20 ? 2 : 3 }}>
+                {description}
+              </Typography>
+            )}
 
             <Box sx={progressBarContainerStyles}>
               <ProgressBar active={progress} />
@@ -60,17 +75,16 @@ export default function ProjectCard(props: ProjectCardProps) {
 
 // Project Card styles
 const cardStyles = {
-  width: 466,
-  height: 473,
   display: 'flex',
   borderRadius: 4,
-  marginRight: 3,
+  marginRight: '24px',
+  [theme.breakpoints.up('sm')]: {
+    width: 466,
+  },
+  [theme.breakpoints.down('sm')]: {
+    maxWidth: '100%',
+  },
 };
-
-const cardMediaStyles = {
-  height: 237,
-};
-
 const cardContentStyles = {
   padding: 3,
   height: '100%',
