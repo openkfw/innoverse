@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import bull from '@/components/common/bull';
 import { StyledTooltip } from '@/components/common/StyledTooltip';
+import theme from '@/styles/theme';
 
 interface VisibleContributorsProps {
   contributors: string[];
@@ -31,8 +33,10 @@ const HiddenContributorsTooltip: React.FC<HiddenContributorsTooltipProps> = ({ h
 const VisibleContributors: React.FC<VisibleContributorsProps> = ({ contributors }) => {
   const [visibleContributors, setVisibleContributors] = useState<React.ReactNode>('');
 
+  const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
+
   useEffect(() => {
-    const containerWidth = 418;
+    const containerWidth = isWideScreen ? 418 : 200;
     let currentWidth = 0;
     let hiddenCount = 0;
     const result: React.ReactNode[] = [];
@@ -83,7 +87,7 @@ const VisibleContributors: React.FC<VisibleContributorsProps> = ({ contributors 
     }
 
     setVisibleContributors(result);
-  }, [contributors]);
+  }, [contributors, isWideScreen]);
 
   return (
     <Typography variant="caption" component="div">

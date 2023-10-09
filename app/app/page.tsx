@@ -9,6 +9,7 @@ import { FeaturedProjectSlider } from '@/components/landing/featuredProjectSecti
 import { BackgroundArrows } from '@/components/landing/newsSection/BackgroundArrows';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
+import theme from '@/styles/theme';
 
 import { MappingProjectsCard } from '../components/landing/mappingProjectsSection/MappingProjectsCard';
 import Layout from '../components/layout/Layout';
@@ -89,8 +90,10 @@ const featuredProjectSliderStyles = {
 };
 
 const newsSectionStyles = {
-  marginLeft: '5%',
   overflow: 'hidden',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: '5%',
+  },
 };
 
 const arrowContainerStyles = {
@@ -104,9 +107,11 @@ const arrowContainerStyles = {
 };
 
 const projectSectionStyles = {
-  marginLeft: '5%',
   position: 'relative',
   overflowX: 'hidden',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: '5%',
+  },
 };
 
 const mappingProjectsCardStyles = {
