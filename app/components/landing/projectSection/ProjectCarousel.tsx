@@ -108,6 +108,11 @@ const sliderBox = {
   [theme.breakpoints.down('sm')]: {
     width: 'min(90%, 368px)',
   },
+  [theme.breakpoints.up('sm')]: {
+    '& .slick-list': {
+      overflow: 'visible',
+    },
+  },
 };
 
 const cardContainerStyles = {

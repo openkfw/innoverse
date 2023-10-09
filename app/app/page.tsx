@@ -92,7 +92,7 @@ const featuredProjectSliderStyles = {
 const newsSectionStyles = {
   overflow: 'hidden',
   [theme.breakpoints.up('sm')]: {
-    marginLeft: '5%',
+    paddingLeft: '5%',
   },
 };
 
@@ -110,7 +110,7 @@ const projectSectionStyles = {
   position: 'relative',
   overflowX: 'hidden',
   [theme.breakpoints.up('sm')]: {
-    marginLeft: '5%',
+    paddingLeft: '5%',
   },
 };
 
