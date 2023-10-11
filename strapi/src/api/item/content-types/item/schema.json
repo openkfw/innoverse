@@ -15,14 +15,14 @@
     "title": {
       "type": "string"
     },
-    "Image": {
+    "image": {
       "displayName": "Image",
       "type": "component",
       "repeatable": false,
       "component": "image.image"
     },
-    "Text": {
-      "displayName": "Texr",
+    "text": {
+      "displayName": "Text",
       "type": "component",
       "repeatable": false,
       "component": "slider-text.slider-text"

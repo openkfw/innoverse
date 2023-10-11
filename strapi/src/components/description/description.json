@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_description_descriptions",
+  "info": {
+    "displayName": "Description"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "richtext"
+    },
+    "author": {
+      "type": "component",
+      "repeatable": false,
+      "component": "user.author"
+    },
+    "tags": {
+      "type": "json"
+    },
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 /**
- * test controller
+ * project controller
  */
 
 import { factories } from '@strapi/strapi'

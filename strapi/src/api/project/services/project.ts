@@ -1,5 +1,5 @@
 /**
- * test service
+ * project service
  */
 
 import { factories } from '@strapi/strapi';

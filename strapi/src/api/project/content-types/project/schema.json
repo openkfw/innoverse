@@ -1,10 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "project",
+  "collectionName": "projects",
   "info": {
     "singularName": "project",
     "pluralName": "projects",
-    "displayName": "Project"
+    "displayName": "Project",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -14,20 +15,68 @@
     "title": {
       "type": "string"
     },
-    "description": {
-      "type": "string"
-    },
-    "progress": {
-      "type": "string"
-    },
-    "contributors": {
-      "type": "json"
+    "featured": {
+      "type": "boolean"
     },
     "image": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images", "files", "videos", "audios"]
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "Exploration",
+        "Konzeption",
+        "Proof of Concept"
+      ]
+    },
+    "author": {
+      "displayName": "author",
+      "type": "component",
+      "repeatable": false,
+      "component": "user.author"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "projectStart": {
+      "type": "string"
+    },
+    "projectEnd": {
+      "type": "string"
+    },
+    "description": {
+      "displayName": "Description",
+      "type": "component",
+      "repeatable": false,
+      "component": "description.description"
+    },
+    "update": {
+      "displayName": "update",
+      "type": "component",
+      "repeatable": true,
+      "component": "update.update"
+    },
+    "question": {
+      "displayName": "collaboration",
+      "type": "component",
+      "repeatable": true,
+      "component": "collaboration.collaboration"
+    },
+    "team": {
+      "type": "component",
+      "repeatable": true,
+      "component": "user.author"
+    },
+    "collaboration": {
+      "type": "string"
     }
   }
 }

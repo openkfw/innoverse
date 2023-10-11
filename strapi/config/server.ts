@@ -4,6 +4,9 @@ export default ({ env }) => ({
   app: {
     keys: env.array('APP_KEYS'),
   },
+  payload: {
+    maxBytes: 10485760, // Set the maximum payload size to 10MB (adjust as needed)
+  },
   webhooks: {
     populateRelations: env.bool('WEBHOOKS_POPULATE_RELATIONS', false),
   },
