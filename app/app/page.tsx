@@ -8,7 +8,7 @@ import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
 import Footer from '@/components/layout/Footer';
 import { news } from '@/repository/mock/landing/news-section';
-import { STRAPI_QUERY, StaticBuildGetFeaturedSliderItemsQuery, withResponseTransformer } from '@/utils/queries';
+import { StaticBuildGetFeaturedSliderItemsQuery, STRAPI_QUERY, withResponseTransformer } from '@/utils/queries';
 
 import { MappingProjectsCard } from '../components/landing/mappingProjectsSection/MappingProjectsCard';
 import Layout from '../components/layout/Layout';
@@ -25,18 +25,19 @@ async function getData() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authentication: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+        // Authentication: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
       body: JSON.stringify({
         query: StaticBuildGetFeaturedSliderItemsQuery,
       }),
       next: { revalidate: 60 * 2 },
     });
+    console.log('request', request);
     //TODO: ONE QUERY should fetch all the main page data
-    const result = withResponseTransformer(STRAPI_QUERY.StaticBuildGetFeaturedSliderItems, await request.json());
+    const result = withResponseTransformer(STRAPI_QUERY.StaticBuildGetFeaturedSliderItemsQuery, await request.json());
+    console.log('result', result);
     return {
       sliderContent: result?.items,
-      news: news,
     };
   } catch (err) {
     console.info(err);
@@ -46,7 +47,7 @@ async function getData() {
 async function IndexPage() {
   const data = await getData();
   const sliderContent = data?.sliderContent;
-  const news = data?.news;
+  // const news = data?.news;
   if (!sliderContent || !news) {
     return <></>;
   }

@@ -1,8 +1,7 @@
-
 export enum STRAPI_QUERY {
-  StaticBuildGetFeaturedSliderItems,
+  StaticBuildGetFeaturedSliderItemsQuery,
   StaticBuildGetProjectIds,
-  StaticBuildFetchProjectIds
+  StaticBuildFetchProjectIds,
 }
 
 export const StaticBuildGetFeaturedSliderItemsQuery = `query GetFeaturedSliderItems {
@@ -11,12 +10,12 @@ export const StaticBuildGetFeaturedSliderItemsQuery = `query GetFeaturedSliderIt
       id,
       attributes {
         title,
-        Text{
-          Title,
-          Description,
-          Tags
+        text{
+          title,
+          description,
+          tags
         }
-        Image{
+        image{
           sliderImage{
             data{
               attributes{
@@ -39,12 +38,12 @@ export const StaticBuildGetProjectIdsQuery = `query GetFeaturedSliderItems {
       id,
       attributes {
         title,
-        Text{
-          Title,
-          Description,
-          Tags
+        text{
+          title,
+          description,
+          tags
         }
-        Image{
+        image{
           sliderImage{
             data{
               attributes{
@@ -63,8 +62,8 @@ export const StaticBuildGetProjectIdsQuery = `query GetFeaturedSliderItems {
 
 export const withResponseTransformer = (query: STRAPI_QUERY, data: unknown) => {
   switch (query) {
-    case STRAPI_QUERY.StaticBuildGetFeaturedSliderItems:
-      return getStaticBuildFeaturedSliderItemsTransformer(data);
+    case STRAPI_QUERY.StaticBuildGetFeaturedSliderItemsQuery:
+      return getStaticBuildFetchProjectIds(data);
     case STRAPI_QUERY.StaticBuildFetchProjectIds:
       return getStaticBuildFetchProjectIds(data);
     default:
@@ -82,8 +81,8 @@ function getStaticBuildFetchProjectIds(graphqlResponse: any) {
   const formattedItems = graphqlResponse.data.items.data.map((item: any) => {
     const {
       title,
-      Text: { Title, Description, Tags },
-      Image: { sliderImage, projectTo, projectFrom, year },
+      text: { description, tags },
+      image: { sliderImage, projectTo, projectFrom, year },
     } = item.attributes;
 
     return {
@@ -95,9 +94,9 @@ function getStaticBuildFetchProjectIds(graphqlResponse: any) {
         year,
       },
       text: {
-        title: Title,
-        tags: Tags.tags,
-        description: Description,
+        title,
+        tags: tags.tags,
+        description: description,
       },
     };
   });
