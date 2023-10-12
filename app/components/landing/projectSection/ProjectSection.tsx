@@ -5,7 +5,11 @@ import CustomButton from '@/components/common/CustomButton';
 
 import ProjectCarousel from './ProjectCarousel';
 
-export const ProjectSection = () => {
+export type ProjectProps = {
+  projects: any[]; //todo
+};
+
+export const ProjectSection = (props: ProjectProps) => {
   return (
     <Grid container spacing={5} sx={{ m: 5 }}>
       <Grid item container xs={12}>
@@ -17,7 +21,7 @@ export const ProjectSection = () => {
           <CustomButton>Mehr</CustomButton>
         </Grid>
       </Grid>
-      <ProjectCarousel />
+      <ProjectCarousel projects={props.projects}/>
     </Grid>
   );
 };

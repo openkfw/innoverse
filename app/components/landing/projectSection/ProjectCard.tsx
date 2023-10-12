@@ -14,20 +14,22 @@ import VisibleContributors from '@/components/project-details/VisibleContributor
 interface ProjectCardProps {
   id: number;
   img: StaticImageData;
-  contributors: string[];
+  contributors: {name: string}[];
   title: string;
   description: string;
-  progress: string;
+  status: string;
 }
 
 export default function ProjectCard(props: ProjectCardProps) {
-  const { id, img, contributors, title, description, progress } = props;
+  const { id, img, contributors, title, description, status } = props;
+  console.log("status", status)
 
   return (
     <Card sx={cardStyles}>
       <CardActionArea href={`/projects/${encodeURIComponent(id)}`}>
         <CardMedia sx={cardMediaStyles}>
           <Image
+            unoptimized
             src={img}
             width={418}
             height={237}
@@ -49,7 +51,7 @@ export default function ProjectCard(props: ProjectCardProps) {
             </Typography>
 
             <Box sx={progressBarContainerStyles}>
-              <ProgressBar active={progress} />
+              <ProgressBar active={status} />
             </Box>
           </Box>
         </CardContent>

@@ -11,9 +11,9 @@ import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/project-details/HeroSection';
 import TabView from '@/components/project-details/TabView';
 import { project_updates, projects_progression } from '@/repository/mock/project/project-page';
-
 import { getStandaloneApolloClient } from '@/utils/apolloStandalone';
-import { STRAPI_QUERY, StaticBuildGetProjectIdsQuery, withResponseTransformer } from '@/utils/queries';
+import { StaticBuildGetProjectIdsQuery, STRAPI_QUERY, withResponseTransformer } from '@/utils/queries';
+
 import { ProjectInfoCard } from '../../../components/project-details/ProjectInfoCard';
 
 function ProjectPage({ params }: { params: { id: string } }) {

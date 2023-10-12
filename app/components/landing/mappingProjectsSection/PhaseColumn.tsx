@@ -3,7 +3,7 @@ import { Box, Divider, Grid, Typography } from '@mui/material';
 interface PhaseColumnProps {
   title: string;
   description: string;
-  projects: string[];
+  projects: any[];
   icon: any;
   isFirstStep: boolean | undefined;
 }
@@ -59,7 +59,7 @@ export default function PhaseColumn(props: PhaseColumnProps) {
         return (
           <Typography
             variant="subtitle2"
-            key={project}
+            key={project.title}
             sx={{
               cursor: 'pointer',
               fontFamily: '***FONT_REMOVED***',
@@ -71,7 +71,7 @@ export default function PhaseColumn(props: PhaseColumnProps) {
               },
             }}
           >
-            {project}
+            {project.title}
           </Typography>
         );
       })}

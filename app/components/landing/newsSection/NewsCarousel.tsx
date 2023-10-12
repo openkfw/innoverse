@@ -64,12 +64,7 @@ export default function NewsCarousel(props: NewsSliderProps) {
           {slides.map((item) => (
             <Grid item xs={11} key={item.id}>
               <NewsCard
-                title={item.title}
-                subtitle={item.subtitle}
-                theme={item.theme}
-                publisher={item.publisher}
-                avatar={item.avatar}
-                date={item.date}
+                item={item}
               />
             </Grid>
           ))}

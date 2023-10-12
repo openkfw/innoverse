@@ -7,11 +7,11 @@ import bull from '@/components/common/bull';
 import { StyledTooltip } from '@/components/common/StyledTooltip';
 
 interface VisibleContributorsProps {
-  contributors: string[];
+  contributors: { name: string }[];
 }
 
 interface HiddenContributorsTooltipProps {
-  hiddenContributors: string[];
+  hiddenContributors:  {name: string }[];
 }
 
 const HiddenContributorsTooltip: React.FC<HiddenContributorsTooltipProps> = ({ hiddenContributors }) => {
@@ -20,7 +20,7 @@ const HiddenContributorsTooltip: React.FC<HiddenContributorsTooltipProps> = ({ h
     <Box display="flex" flexDirection="row" flexWrap="wrap">
       {hiddenContributors.map((contributor, index) => (
         <Typography variant="caption" key={index}>
-          {contributor}
+          {contributor.name}
           {index < hiddenContributors.length - 1 ? ', ' : ''}
         </Typography>
       ))}
@@ -46,15 +46,15 @@ const VisibleContributors: React.FC<VisibleContributorsProps> = ({ contributors 
     document.body.appendChild(tempDiv);
 
     contributors.forEach((contributor, index) => {
-      tempDiv.innerText = contributor;
+      tempDiv.innerText = contributor.name;
       const textWidth = tempDiv.offsetWidth;
 
       if (currentWidth + textWidth < containerWidth) {
-        result.push(<span key={`${contributor}-${index}`}>{contributor}</span>);
+        result.push(<span key={`${contributor.name}-${index}`}>{contributor.name}</span>);
         currentWidth += textWidth;
 
         if (index < contributors.length - 1) {
-          tempDiv.innerText = contributors[index + 1];
+          tempDiv.innerText = contributors[index + 1].name;
           const nextContributorWidth = tempDiv.offsetWidth;
 
           if (currentWidth + nextContributorWidth < containerWidth) {

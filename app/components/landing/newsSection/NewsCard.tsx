@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { StaticImageData } from 'next/image';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -10,26 +9,24 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import AvatarIcon from '@/components/common/AvatarIcon';
+import { NewsSlider } from '@/repository/mock/landing/news-section';
 
 interface ProjectCardProps {
-  title: string;
-  subtitle: string;
-  publisher: string;
-  avatar: StaticImageData;
-  theme: string;
-  date: string;
+  item: NewsSlider;
 }
 
 export default function ProjectCard(props: ProjectCardProps) {
-  const { title, subtitle, publisher, avatar, theme, date } = props;
+  const { item } = props;
+  const { title, comment, author, theme, date } = item;
+
   return (
     <Card sx={{ p: 3, height: 218, borderRadius: '8px', width: 368, marginRight: '24px' }}>
       <CardHeader
         sx={{ textAlign: 'left', padding: 0, marginTop: 1, '& .MuiCardHeader-avatar': { marginRight: 1 } }}
-        avatar={<AvatarIcon src={avatar} size={24} />}
+        avatar={<AvatarIcon src={author.avatar} size={24} />}
         title={
           <Typography variant="caption" sx={{ color: 'text.primary' }}>
-            {publisher}
+            {author.name}
           </Typography>
         }
       />
@@ -50,7 +47,7 @@ export default function ProjectCard(props: ProjectCardProps) {
             }}
             variant="body1"
           >
-            {subtitle}
+            {comment}
           </Typography>
         </Box>
 

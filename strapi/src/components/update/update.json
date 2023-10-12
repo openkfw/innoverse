@@ -1,7 +1,8 @@
 {
   "collectionName": "components_update_updates",
   "info": {
-    "displayName": "update"
+    "displayName": "update",
+    "description": ""
   },
   "options": {},
   "attributes": {
@@ -15,6 +16,9 @@
       "type": "component",
       "repeatable": false,
       "component": "user.author"
+    },
+    "theme": {
+      "type": "string"
     }
   }
 }

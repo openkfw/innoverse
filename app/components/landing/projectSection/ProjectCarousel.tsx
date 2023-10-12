@@ -5,15 +5,17 @@ import Slider from 'react-slick';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
-import { ProjectCarouselItem, projects } from '@/repository/mock/landing/project-section';
+import { ProjectCarouselItem } from '@/repository/mock/landing/project-section';
 
 import ArrowControllers from './ArrowControllers';
 import ProjectCard from './ProjectCard';
+import { ProjectProps } from './ProjectSection';
 
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 
-export default function ProjectCarousel() {
+export default function ProjectCarousel(props: ProjectProps) {
+  const { projects } = props;
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slides] = useState<ProjectCarouselItem[]>(projects);
   const sliderRef = useRef<Slider>(null);
@@ -62,10 +64,10 @@ export default function ProjectCarousel() {
                 <ProjectCard
                   id={item.id}
                   img={item.image}
-                  contributors={item.contributors}
+                  contributors={item.team}
                   title={item.title}
-                  description={item.description}
-                  progress={item.progress}
+                  description={item.summary}
+                  status={item.status}
                 />
               </Grid>
             );
