@@ -1,18 +1,11 @@
-import { StaticImageData } from 'next/image';
-
 import { Grid, Typography } from '@mui/material';
+
+import { ProjectUpdate } from '@/common/types';
 
 import AvatarIcon from '../common/AvatarIcon';
 
 interface UpdateCardProps {
-  update: {
-    author: {
-      name: string;
-      avatar: StaticImageData;
-    };
-    content: string;
-    date: string;
-  };
+  update: ProjectUpdate;
 }
 
 const UpdateCard = (props: UpdateCardProps) => {
@@ -31,7 +24,7 @@ const UpdateCard = (props: UpdateCardProps) => {
         </Grid>
       </Grid>
       <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', marginTop: 1, marginBottom: 1 }}>
-        {update.content}
+        {update.comment}
       </Typography>
       <Typography variant="caption" color="text.secondary">
         {update.date}

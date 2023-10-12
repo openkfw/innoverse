@@ -13,7 +13,7 @@ import { StyledTooltip } from '../common/StyledTooltip';
 import { TooltipContent } from './TooltipContent';
 
 interface TeamMembersProps {
-  teamMembers: Person[];
+  team: Person[];
 }
 
 const maxAvatars = 3;
@@ -48,7 +48,7 @@ const avatarGroupStyle = {
 };
 
 const TeamMembersColumn = (props: TeamMembersProps) => {
-  const { teamMembers } = props;
+  const { team } = props;
 
   const [open, setOpen] = useState(false);
 
@@ -64,7 +64,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
           additionalAvatar: { onClick: () => setOpen(true) },
         }}
       >
-        {teamMembers.map((teamMember, index) => (
+        {team.map((teamMember, index) => (
           <StyledTooltip arrow key={index} title={<TooltipContent teamMember={teamMember} />} placement="bottom">
             <AvatarIcon src={teamMember.avatar} key={teamMember.name} index={index} allowAnimation={true} />
           </StyledTooltip>
@@ -73,7 +73,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
 
       <CustomDialog open={open} handleClose={() => setOpen(false)} title="All team members">
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {teamMembers.map((teamMember, index) => (
+          {team.map((teamMember, index) => (
             <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <AvatarIcon size={48} src={teamMember.avatar} key={teamMember.name} />
 

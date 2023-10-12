@@ -1,9 +1,11 @@
 import Stack from '@mui/material/Stack';
 
+import { Tags } from '@/common/types';
+
 import TagChip from '../common/TagChip';
 
 interface ProjectTagsProps {
-  tags: string[];
+  tags: Tags;
 }
 
 export const ProjectTags = (props: ProjectTagsProps) => {
@@ -12,7 +14,7 @@ export const ProjectTags = (props: ProjectTagsProps) => {
   return (
     <Stack sx={{ width: 662 }} spacing={4} pt={4} mt={1}>
       <Stack direction="row" spacing={1}>
-        {tags.map((tag, i) => (
+        {tags.tags.map((tag, i) => (
           <TagChip key={i} label={`#${tag}`} />
         ))}
       </Stack>

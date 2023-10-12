@@ -63,9 +63,7 @@ export default function NewsCarousel(props: NewsSliderProps) {
         <Slider {...settings} ref={sliderRef}>
           {slides.map((item) => (
             <Grid item xs={11} key={item.id}>
-              <NewsCard
-                item={item}
-              />
+              <NewsCard item={item} />
             </Grid>
           ))}
         </Slider>

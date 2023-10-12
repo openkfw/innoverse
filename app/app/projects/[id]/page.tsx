@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -10,74 +10,75 @@ import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/project-details/HeroSection';
 import TabView from '@/components/project-details/TabView';
-import { project_updates, projects_progression } from '@/repository/mock/project/project-page';
-import { getStandaloneApolloClient } from '@/utils/apolloStandalone';
-import { StaticBuildGetProjectIdsQuery, STRAPI_QUERY, withResponseTransformer } from '@/utils/queries';
+import { GetProjectByIdQuery, STRAPI_QUERY, withResponseTransformer } from '@/utils/queries';
 
 import { ProjectInfoCard } from '../../../components/project-details/ProjectInfoCard';
 
+async function getData(id: string) {
+  try {
+    const requestProjects = await fetch(process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT || '', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Authentication: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+      },
+      body: JSON.stringify({
+        query: GetProjectByIdQuery,
+        variables: { id },
+      }),
+      next: { revalidate: 60 * 2 },
+    });
+    //TODO: ONE QUERY should fetch all the main page data
+    const resultProjects = withResponseTransformer(STRAPI_QUERY.GetProjectByIdQuery, await requestProjects.json());
+
+    return {
+      project: resultProjects?.project,
+    };
+  } catch (err) {
+    console.info(err);
+  }
+}
+
 function ProjectPage({ params }: { params: { id: string } }) {
-  const projectId = parseInt(params.id) || 1;
-  let projectInformation = projects_progression.projects.filter((project) => project.projectId == projectId)[0];
-  const projectUpdates = project_updates.filter((project) => project.projectId == projectId)[0];
+  const [project, setProject] = useState<any>();
+
+  useEffect(() => {
+    const getProject = async () => {
+      const data = await getData(params.id);
+      if (data) {
+        setProject(data.project);
+      }
+    };
+
+    getProject();
+  }, []);
 
   const [activeTab, setActiveTab] = useState(0);
 
-  // TODO: Remove when there is data for all the projects
-  const updates = projectUpdates ? projectUpdates.updates : project_updates[0].updates;
-  if (!projectInformation) {
-    projectInformation = projects_progression.projects[0];
-  }
-
   return (
     <Layout>
-      <Stack spacing={8} useFlexGap>
-        <Container maxWidth="lg" sx={{ pb: 5 }}>
-          <BreadcrumbsNav />
-          <HeroSection
-            title={projectInformation.hero.title}
-            avatar={projectInformation.hero.author.avatar}
-            author={projectInformation.hero.author.name}
-            role={projectInformation.hero.author.role}
-            status={projectInformation.hero.projectStatus}
-          />
-        </Container>
-        <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
-          <ProjectInfoCard projectSummary={projectInformation.projectSummary} setActiveTab={setActiveTab} />
-        </Box>
-        <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
-          <TabView
-            projectStatus={projectInformation.projectStatus}
-            updates={updates}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-          />
-        </Box>
-      </Stack>
+      {project && (
+        <Stack spacing={8} useFlexGap>
+          <Container maxWidth="lg" sx={{ pb: 5 }}>
+            <BreadcrumbsNav />
+            <HeroSection
+              title={project.title}
+              avatar={project.author.avatar}
+              author={project.author.name}
+              role={project.author.role}
+              status={project.status}
+            />
+          </Container>
+          <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
+            <ProjectInfoCard project={project} setActiveTab={setActiveTab} />
+          </Box>
+          <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
+            <TabView project={project} updates={project.updates} activeTab={activeTab} setActiveTab={setActiveTab} />
+          </Box>
+        </Stack>
+      )}
     </Layout>
   );
 }
 
 export default ProjectPage;
-
-export async function getStaticPaths() {
-  const client = await getStandaloneApolloClient();
-  const { data, error } = await client.query(StaticBuildGetProjectIdsQuery)
-  if (error)
-    throw new Error(JSON.stringify(error))
-
-  const pageIds = withResponseTransformer(
-    STRAPI_QUERY.StaticBuildFetchProjectIds,
-    data
-  )
-
-  // Get the paths we want to pre-render based on posts
-  const paths = pageIds.map((page) => ({
-    params: { id: page.id },
-  }))
-
-  // We'll pre-render only these paths at build time.
-  // { fallback: 'blocking' } will server-render pages
-  // on-demand if the path doesn't exist.
-  return { paths, fallback: 'blocking' }
-}

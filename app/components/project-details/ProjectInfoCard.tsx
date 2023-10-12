@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { ProjectSummary } from '@/common/types';
+import { Project } from '@/common/types';
 
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
@@ -14,12 +14,12 @@ import TeamMembersColumn from './TeamMembersColumn';
 import UpdateCard from './UpdateCard';
 
 interface ProjectInfoProps {
-  projectSummary: ProjectSummary;
+  project: Project;
   setActiveTab: (tab: number) => void;
 }
 
 export const ProjectInfoCard = (props: ProjectInfoProps) => {
-  const { projectSummary, setActiveTab } = props;
+  const { project, setActiveTab } = props;
 
   return (
     <Card sx={{ borderRadius: '24px', width: '1280px' }}>
@@ -29,7 +29,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
           <Grid item xs={4}>
             <Grid container direction="column" spacing={1}>
               <Grid item xs={4}>
-                <ProjectStageCard timingData={projectSummary.timing} />
+                <ProjectStageCard projectStart={project.projectStart} projectEnd={project.projectEnd} />
               </Grid>
               <Grid item xs={4} sx={{ mt: 2 }}>
                 <InteractionButton interactionType={InteractionType.LIKE} />
@@ -37,7 +37,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
               </Grid>
               <Grid item xs={4}>
                 <Typography variant="caption" color="text.secondary">
-                  {projectSummary.likes} Likes - {projectSummary.followers} Innovaders folgen
+                  {project.likes} Likes - {project.followers} Innovaders folgen
                 </Typography>
               </Grid>
             </Grid>
@@ -46,10 +46,10 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
           <Grid item xs={8}>
             <Grid container spacing={2} sx={{ ml: '10px' }}>
               <Grid item xs={9}>
-                <CollaborationColumn collaborationData={projectSummary.collaboration} setActiveTab={setActiveTab} />
+                <CollaborationColumn collaborationData={project.collaboration} setActiveTab={setActiveTab} />
               </Grid>
               <Grid item xs={3}>
-                <TeamMembersColumn teamMembers={projectSummary.teamMembers} />
+                <TeamMembersColumn team={project.team} />
               </Grid>
 
               <Grid item xs={12}>
@@ -61,15 +61,12 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
                 </Typography>
               </Grid>
               <Grid item container xs={12} spacing={2}>
-                <Grid item xs={4}>
-                  <UpdateCard update={projectSummary.updates[0]} />
-                </Grid>
-                <Grid item xs={4}>
-                  <UpdateCard update={projectSummary.updates[1]} />
-                </Grid>
-                <Grid item xs={4}>
-                  <UpdateCard update={projectSummary.updates[2]} />
-                </Grid>
+                {project.updates.map((update, key) => (
+                  <Grid key={key} item xs={4}>
+                    <UpdateCard update={update} />
+                  </Grid>
+                ))}
+                ;
               </Grid>
             </Grid>
           </Grid>

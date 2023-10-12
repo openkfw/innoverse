@@ -52,7 +52,7 @@ async function getData() {
     });
     //TODO: ONE QUERY should fetch all the main page data
     const resultProjects = withResponseTransformer(STRAPI_QUERY.GetProjectsSummaryQuery, await requestProjects.json());
-    console.log(resultProjects)
+
     return {
       sliderContent: result?.items,
       projects: resultProjects?.projects,
@@ -121,7 +121,7 @@ async function IndexPage() {
               transform: 'translate(-50%, 20%)',
             }}
           />
-          <MappingProjectsCard projects={projects}/>
+          <MappingProjectsCard projects={projects} />
         </Box>
 
         <Box sx={{ marginLeft: 146 / 8, marginBottom: 48 / 8 }}>

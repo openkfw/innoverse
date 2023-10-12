@@ -19,7 +19,6 @@ interface ProgressStepLabelProps {
   label: string;
 }
 
-
 function ActiveStepLabel({ label }: ProgressStepLabelProps) {
   return (
     <Box
@@ -148,7 +147,11 @@ export default function ProgressBar({ active }: ProgressBarProps) {
     <Box sx={{ justifyContent: 'flex-start', alignItems: 'flex-start', display: 'inline-flex' }}>
       <FirstStep id="1" label={PROJECT_PROGRESS.EXPLORATION} active={active == PROJECT_PROGRESS.EXPLORATION} />
       <Step id="2" label={PROJECT_PROGRESS.KONZEPTION} active={active == PROJECT_PROGRESS.KONZEPTION} />
-      <Step id="3" label={PROJECT_PROGRESS.PROOF_OF_CONCEPT.replace(/_/g, ' ')} active={active == PROJECT_PROGRESS.PROOF_OF_CONCEPT} />
+      <Step
+        id="3"
+        label={PROJECT_PROGRESS.PROOF_OF_CONCEPT.replace(/_/g, ' ')}
+        active={active == PROJECT_PROGRESS.PROOF_OF_CONCEPT}
+      />
     </Box>
   );
 }

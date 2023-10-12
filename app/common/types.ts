@@ -5,9 +5,11 @@ export type Person = {
   role: string;
   avatar: StaticImageData;
   badge?: boolean;
+  department?: string;
+  points?: number;
 };
 
-export type ProjectUpdate = {
+export type ProjectUpdateMock = {
   headline: string;
   text: string;
   requiredBy: Person[];
@@ -22,9 +24,9 @@ export type CommentType = {
   downvotes?: number;
 };
 
-export type ProjectColaboration = {
+export type ProjectColaborationMock = {
   writeCommentText: string;
-  projectUpdates: ProjectUpdate[];
+  projectUpdates: ProjectUpdateMock[];
 };
 
 export enum PROJECT_PROGRESS {
@@ -50,19 +52,34 @@ export type ProjectCollaboration = {
   participants: number;
 };
 
-export type ProjectSummary = {
+export type Project = {
   summary: string;
-  timing: { projectStart: string; projectEnd: string };
+  projectStart: string;
+  projectEnd: string;
   collaboration: ProjectCollaboration;
   likes: number;
   followers: number;
-  teamMembers: Person[];
-  updates: ProjectShortUpdate[];
+  team: Person[];
+  updates: ProjectUpdate[];
+  description: ProjectDescription;
 };
 
-export type ProjectShortUpdate = {
+export type ProjectDescription = {
+  text: string;
+  title: string;
+  summary: string;
   author: Person;
-  content: string;
+  tags: Tags;
+};
+
+export type Tags = {
+  tags: string[];
+};
+
+export type ProjectUpdate = {
+  author: Person;
+  comment: string;
+  theme: string;
   date: string;
 };
 
@@ -89,7 +106,7 @@ export type ProjectStatus = {
 export type ProjectProgression = {
   projectId: number;
   hero: Hero;
-  projectSummary: ProjectSummary;
+  projectSummary: Project;
   projectStatus: ProjectStatus;
   comments: CommentType[];
   questions: string[];

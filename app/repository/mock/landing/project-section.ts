@@ -12,7 +12,7 @@ import { PROJECT_PROGRESS } from '@/common/types';
 export type ProjectCarouselItem = {
   id: number;
   image: StaticImageData;
-  team: {name: string}[];
+  team: { name: string }[];
   status: PROJECT_PROGRESS;
   summary: string;
   title: string;

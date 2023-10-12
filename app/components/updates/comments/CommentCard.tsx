@@ -68,7 +68,7 @@ export const CommentCard = ({ content, sx }: CommentCardProps) => {
       <CardHeader
         avatar={
           <Avatar sx={{ width: 32, height: 32 }}>
-            <Image src={avatar} alt="avatar" fill sizes="33vw" />
+            <Image unoptimized src={avatar} alt="avatar" fill sizes="33vw" />
           </Avatar>
         }
         title={
@@ -85,7 +85,7 @@ export const CommentCard = ({ content, sx }: CommentCardProps) => {
             <Typography variant="subtitle2" color="secondary.contrastText">
               {name}
             </Typography>
-            {badge && <Image src={badgeIcon} alt="badge" />}
+            {badge && <Image unoptimized src={badgeIcon} alt="badge" />}
             <Typography variant="subtitle2" color="text.secondary">
               {role}
             </Typography>

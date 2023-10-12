@@ -1,11 +1,9 @@
 import { Grid, Typography } from '@mui/material';
 
-import { ProjectCollaboration } from '@/common/types';
-
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 interface CollaborationProps {
-  collaborationData: ProjectCollaboration;
+  collaborationData: string;
   setActiveTab: (tab: number) => void;
 }
 
@@ -35,10 +33,10 @@ const CollaborationColumn = (props: CollaborationProps) => {
             Zusammenarbeit
           </Typography>
           <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', mb: '15px', marginTop: 1 }}>
-            {collaborationData.description}
+            {collaborationData}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {collaborationData.participants} Beteilungen - {collaborationData.upvotes} Votes
+            26531 Beteilungen - 91283 Votes
           </Typography>
         </Grid>
         <Grid item xs={4} sx={{ mt: '15px' }}>

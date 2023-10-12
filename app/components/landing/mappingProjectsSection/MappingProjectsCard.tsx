@@ -64,7 +64,7 @@ export const MappingProjectsCard = (props: ProjectProps) => {
                     key={data.title}
                     title={data.title}
                     description={data.description}
-                    projects={projects.filter(p => p.status.replace(/_/g, ' ') === data.title)}
+                    projects={projects.filter((p) => p.status.replace(/_/g, ' ') === data.title)}
                     icon={data.icon}
                     isFirstStep={data?.isFirstStep}
                   ></PhaseColumn>

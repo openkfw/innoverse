@@ -28,7 +28,7 @@ export default function HeroSection(props: HeroSectionProps) {
     <Grid container sx={containerStyles}>
       <Grid item xs={5}>
         <Box>
-          <Image src={project} alt="Project" sizes="50vw" style={backgroundImageStyles} />
+          <Image unoptimized src={project} alt="Project" sizes="50vw" style={backgroundImageStyles} />
         </Box>
       </Grid>
       <Grid item xs={7}>
@@ -42,7 +42,7 @@ export default function HeroSection(props: HeroSectionProps) {
                 <CardHeader
                   avatar={
                     <Avatar sx={avatarStyles}>
-                      <Image src={avatar} alt="avatar" fill sizes="33vw" />
+                      <Image unoptimized src={avatar} alt="avatar" fill sizes="33vw" />
                     </Avatar>
                   }
                   title={<Typography variant="body2"> {author}</Typography>}

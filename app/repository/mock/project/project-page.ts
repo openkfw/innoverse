@@ -1,4 +1,4 @@
-import { PROJECT_PROGRESS, ProjectColaboration, ProjectsProgression, Update } from '@/common/types';
+import { PROJECT_PROGRESS, Update } from '@/common/types';
 
 import GenerativeAI from './projects/GenerativeAI.md';
 
@@ -9,7 +9,7 @@ import avatarTonyImg from '/public/images/avatarTony.png';
 import featured_project from '/public/images/featured_project.png';
 
 //TODO: define types after ui is implemented - there might be some changes
-export const projects_progression: ProjectsProgression = {
+export const projects_progression: any = {
   writeCommentText: 'Gib hier deinen Kommentar zu diesem Artikel ein.',
   projects: [
     {
@@ -385,7 +385,7 @@ export const projects_progression: ProjectsProgression = {
   ],
 };
 
-export const project_colaboration: ProjectColaboration = {
+export const project_colaboration: any = {
   writeCommentText:
     'Teil deine Ratschläge und Gedanken zu diesem Thema, damit deine Kollegen von deiner Expertise profitieren können.',
   projectUpdates: [

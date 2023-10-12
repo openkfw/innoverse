@@ -21,7 +21,7 @@ export const ProjectSection = (props: ProjectProps) => {
           <CustomButton>Mehr</CustomButton>
         </Grid>
       </Grid>
-      <ProjectCarousel projects={props.projects}/>
+      <ProjectCarousel projects={props.projects} />
     </Grid>
   );
 };

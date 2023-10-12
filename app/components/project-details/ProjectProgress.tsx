@@ -10,7 +10,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Stack from '@mui/material/Stack';
 
-import { Info, ProjectStatus } from '@/common/types';
+import { Project, ProjectDescription } from '@/common/types';
 
 import { AuthorInformation } from './AuthorInformation';
 import CommentsSection from './CommentsSection';
@@ -19,14 +19,14 @@ import { ProjectTags } from './ProjectTags';
 import robotic_hand from '/public/images/robotic-hand.png';
 
 interface ProjectProgressProps {
-  projectStatus: ProjectStatus;
+  project: Project;
 }
 
 interface InfoItemProps {
-  info: Info;
+  description: ProjectDescription;
 }
 
-const InfoItemRight = ({ info }: InfoItemProps) => {
+const InfoItemRight = ({ description }: InfoItemProps) => {
   return (
     <Card
       sx={{
@@ -37,14 +37,16 @@ const InfoItemRight = ({ info }: InfoItemProps) => {
       }}
     >
       <CardContent>
-        <MuiMarkdown overrides={{ style: { color: 'text.primary' } } as unknown as Overrides}>{info.title}</MuiMarkdown>
+        <MuiMarkdown overrides={{ style: { color: 'text.primary' } } as unknown as Overrides}>
+          {description.title}
+        </MuiMarkdown>
       </CardContent>
       <CardMedia>
-        <Image src={robotic_hand} alt="image" height={140} style={{ marginLeft: '4%' }} />
+        <Image unoptimized src={robotic_hand} alt="image" height={140} style={{ marginLeft: '4%' }} />
       </CardMedia>
       <CardContent>
         <MuiMarkdown overrides={{ style: { color: 'text.primary' } } as unknown as Overrides}>
-          {info.description}
+          {description.summary}
         </MuiMarkdown>
       </CardContent>
     </Card>
@@ -52,7 +54,7 @@ const InfoItemRight = ({ info }: InfoItemProps) => {
 };
 
 export const ProjectProgress = (props: ProjectProgressProps) => {
-  const { projectStatus } = props;
+  const { project } = props;
   const [contentSize, setContentSize] = useState<string>('600px');
   const [showMoreButtonVisible, setShowMoreButtonVisible] = useState<boolean>(true);
   const showMoreButtonStyle = {
@@ -106,7 +108,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
               }}
             >
               <MuiMarkdown overrides={{ style: { color: 'text.primary' } } as unknown as Overrides}>
-                {projectStatus.text}
+                {project.description.text}
               </MuiMarkdown>
             </Box>
             <Box
@@ -115,14 +117,14 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
                 mt: '25%',
               }}
             >
-              <InfoItemRight info={projectStatus.info} />
+              <InfoItemRight description={project.description} />
             </Box>
           </Stack>
         </Box>
 
         <Divider sx={{ width: '662px' }} />
-        <ProjectTags tags={projectStatus.tags} />
-        <AuthorInformation author={projectStatus.author} />
+        <ProjectTags tags={project.description.tags} />
+        <AuthorInformation author={project.description.author} />
         <Divider sx={{ my: 2, width: '662px' }} />
         <CommentsSection />
       </Stack>

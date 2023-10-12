@@ -1,8 +1,5 @@
 import { StaticImageData } from 'next/image';
 
-import avatarMelanieImg from '/public/images/avatarMelanie.png';
-import avatarTonyImg from '/public/images/avatarTony.png';
-
 export type NewsSlider = {
   id: number;
   title: string;
@@ -12,7 +9,7 @@ export type NewsSlider = {
   author: {
     name: string;
     avatar: StaticImageData;
-  }
+  };
 };
 
 // export const news = [

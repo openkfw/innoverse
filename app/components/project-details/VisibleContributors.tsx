@@ -11,7 +11,7 @@ interface VisibleContributorsProps {
 }
 
 interface HiddenContributorsTooltipProps {
-  hiddenContributors:  {name: string }[];
+  hiddenContributors: { name: string }[];
 }
 
 const HiddenContributorsTooltip: React.FC<HiddenContributorsTooltipProps> = ({ hiddenContributors }) => {

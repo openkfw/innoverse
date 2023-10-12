@@ -14,7 +14,7 @@ import VisibleContributors from '@/components/project-details/VisibleContributor
 interface ProjectCardProps {
   id: number;
   img: StaticImageData;
-  contributors: {name: string}[];
+  contributors: { name: string }[];
   title: string;
   description: string;
   status: string;
@@ -22,7 +22,6 @@ interface ProjectCardProps {
 
 export default function ProjectCard(props: ProjectCardProps) {
   const { id, img, contributors, title, description, status } = props;
-  console.log("status", status)
 
   return (
     <Card sx={cardStyles}>
