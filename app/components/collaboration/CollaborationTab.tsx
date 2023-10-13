@@ -10,16 +10,17 @@ import { project_colaboration } from '@/repository/mock/project/project-page';
 
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
+import { SurveyCard } from './SurveyCard';
 import { UpdateCard } from './UpdateCard';
 
 export const CollaborationTab = () => {
-  const { projectUpdates } = project_colaboration;
+  const { projectUpdates, projectName, surveyQuestions } = project_colaboration;
   return (
     <Card sx={containerStyles}>
       <Box sx={colorOverlayStyles} />
 
       <CardContent>
-        <Grid container spacing={8} sx={{ p: 4 }}>
+        <Grid container spacing={8} sx={gridStyles}>
           <Grid item xs={6} sx={{ paddingRight: '100px' }}>
             <Typography variant="h5" color="secondary.contrastText" sx={{ mb: '10px' }}>
               Wir suchen Deine Unterstützung beim Thema Midjourney.
@@ -34,19 +35,28 @@ export const CollaborationTab = () => {
           </Grid>
           <Grid item xs={6}>
             <Box sx={joinTeamStyles}>
-              <InteractionButton interactionType={InteractionType.APPLY} />
-              <InteractionButton interactionType={InteractionType.RECOMMEND} />
+              <InteractionButton projectName={projectName} interactionType={InteractionType.APPLY} />
+              <InteractionButton projectName={projectName} interactionType={InteractionType.RECOMMEND} />
             </Box>
           </Grid>
         </Grid>
-        <Divider textAlign="left" sx={{ m: 4 }}>
+
+        <Divider textAlign="left" sx={dividerStyles}>
           <Chip label="Hilf uns bei diesen Fragen" />
         </Divider>
 
-        <Grid container sx={{ p: 4 }} spacing={8}>
+        <Grid container sx={gridStyles} spacing={8}>
+          {surveyQuestions.map((question, i) => (
+            <Grid item key={i}>
+              <SurveyCard surveyQuestion={question} />
+            </Grid>
+          ))}
+        </Grid>
+
+        <Grid container sx={gridStyles} spacing={8}>
           {projectUpdates.map((update, i) => (
             <Grid item key={i}>
-              <UpdateCard content={update} />
+              <UpdateCard projectName={projectName} content={update} />
             </Grid>
           ))}
         </Grid>
@@ -83,4 +93,12 @@ const joinTeamStyles = {
   alignItems: 'flex-start',
   justifyContent: 'center',
   gap: 1,
+};
+
+const gridStyles = {
+  padding: '88px 64px ',
+};
+
+const dividerStyles = {
+  margin: 4,
 };

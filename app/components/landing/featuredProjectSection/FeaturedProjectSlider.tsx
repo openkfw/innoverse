@@ -12,6 +12,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { SliderContent, SliderItem } from '@/repository/mock/landing/main-slider';
+import theme from '@/styles/theme';
 
 import CustomChip from '../../common/CustomChip';
 
@@ -138,7 +139,8 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
               }}
             />
           </Grid>
-          <Grid item xs={6} md={4}>
+          {/*// todo - temporarily hide content for smaller screens - awaiting design*/}
+          <Grid item xs={6} md={4} sx={{ [theme.breakpoints.down('sm')]: { display: 'none' } }}>
             <FeaturedProjectContent title={el.text.title} tags={el.text.tags} description={el.text.description} />
           </Grid>
         </Grid>

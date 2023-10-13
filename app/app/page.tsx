@@ -1,12 +1,16 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
 import { FeaturedProjectSlider } from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
+import { BackgroundArrows } from '@/components/landing/newsSection/BackgroundArrows';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
-import Footer from '@/components/layout/Footer';
+import theme from '@/styles/theme';
 import {
   GetProjectsSummaryQuery,
   StaticBuildGetFeaturedSliderItemsQuery,
@@ -63,8 +67,20 @@ async function getData() {
   }
 }
 
-async function IndexPage() {
-  const data = await getData();
+function IndexPage() {
+  const [data, setData] = useState<any>();
+
+  useEffect(() => {
+    const getProject = async () => {
+      const data = await getData();
+      if (data) {
+        setData(data);
+      }
+    };
+
+    getProject();
+  }, []);
+
   const sliderContent = data?.sliderContent;
   const projects = data?.projects;
   const news = data?.news;
@@ -75,15 +91,21 @@ async function IndexPage() {
   return (
     <Layout>
       <Stack spacing={8} useFlexGap>
-        <Box sx={{ pt: 10, marginRight: '5%', marginBottom: '10%', display: 'flex' }}>
+        <Box sx={featuredProjectSliderStyles}>
           <FeaturedProjectSlider items={sliderContent} />
         </Box>
 
-        <Box sx={{ marginLeft: '5%', overflow: 'hidden' }}>
-          <NewsSection news={news} />
-        </Box>
+        <div style={{ position: 'relative' }}>
+          <Box sx={newsSectionStyles}>
+            <NewsSection news={news} />
+          </Box>
 
-        <Box sx={{ marginLeft: '5%', position: 'relative', overflowX: 'hidden' }}>
+          <Box sx={arrowContainerStyles}>
+            <BackgroundArrows />
+          </Box>
+        </div>
+
+        <Box sx={projectSectionStyles}>
           {/* Right bubble in the background */}
           <Image
             src={bgBubble}
@@ -103,7 +125,7 @@ async function IndexPage() {
           <ProjectSection projects={projects} />
         </Box>
 
-        <Box sx={{ position: 'relative', overflowX: 'hidden' }}>
+        <Box sx={mappingProjectsCardStyles}>
           {/* Left bubble in the background */}
           <Image
             src={bgBubble}
@@ -123,13 +145,47 @@ async function IndexPage() {
           />
           <MappingProjectsCard projects={projects} />
         </Box>
-
-        <Box sx={{ marginLeft: 146 / 8, marginBottom: 48 / 8 }}>
-          <Footer />
-        </Box>
       </Stack>
     </Layout>
   );
 }
 
 export default IndexPage;
+
+// Page Styles
+const featuredProjectSliderStyles = {
+  display: 'flex',
+  paddingTop: 10,
+  marginRight: '5%',
+  marginBottom: '10%',
+};
+
+const newsSectionStyles = {
+  overflow: 'hidden',
+  [theme.breakpoints.up('sm')]: {
+    paddingLeft: '5%',
+  },
+};
+
+const arrowContainerStyles = {
+  position: 'absolute',
+  top: '320px',
+  left: 0,
+  right: 0,
+  bottom: 0,
+  zIndex: 0,
+  marginLeft: '-130px',
+};
+
+const projectSectionStyles = {
+  position: 'relative',
+  overflowX: 'hidden',
+  [theme.breakpoints.up('sm')]: {
+    paddingLeft: '5%',
+  },
+};
+
+const mappingProjectsCardStyles = {
+  position: 'relative',
+  overflowX: 'hidden',
+};

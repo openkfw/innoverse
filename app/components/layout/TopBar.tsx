@@ -60,6 +60,11 @@ export default function TopBar() {
           backgroundColor: 'rgba(0,0,0,0.2)',
           backdropFilter: `blur(20px)`,
         },
+
+        // todo - hide until design for smaller screens
+        [theme.breakpoints.down('sm')]: {
+          display: 'none',
+        },
       }}
     >
       <Container maxWidth="lg">

@@ -73,7 +73,13 @@ function ProjectPage({ params }: { params: { id: string } }) {
             <ProjectInfoCard project={project} setActiveTab={setActiveTab} />
           </Box>
           <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
-            <TabView project={project} updates={project.updates} activeTab={activeTab} setActiveTab={setActiveTab} />
+            <TabView
+              project={project}
+              updates={project.updates}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              projectName={project.tite}
+            />
           </Box>
         </Stack>
       )}

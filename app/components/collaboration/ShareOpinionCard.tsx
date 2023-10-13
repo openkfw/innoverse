@@ -8,7 +8,7 @@ import InteractionButton, { InteractionType } from '../common/InteractionButton'
 
 import avatar from '/public/images/avatarSusan.png';
 
-export const ShareOpinionCard = () => {
+export const ShareOpinionCard = ({ projectName }: { projectName: string }) => {
   return (
     <Card sx={{ background: 'transparent', boxShadow: 'none', '.MuiCardHeader-root': { pl: 0 } }}>
       <CardHeader
@@ -17,7 +17,7 @@ export const ShareOpinionCard = () => {
             <Image src={avatar} alt="avatar" fill sizes="33vw" />
           </Avatar>
         }
-        title={<InteractionButton interactionType={InteractionType.SHARE_OPINION} />}
+        title={<InteractionButton projectName={projectName} interactionType={InteractionType.SHARE_OPINION} />}
       />
     </Card>
   );

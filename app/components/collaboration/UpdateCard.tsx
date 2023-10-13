@@ -18,9 +18,10 @@ import WriteCommentCard from './WriteCommentCard';
 
 interface UpdateCardProps {
   content: ProjectUpdate;
+  projectName: string;
 }
 
-export const UpdateCard = ({ content }: UpdateCardProps) => {
+export const UpdateCard = ({ content, projectName }: UpdateCardProps) => {
   const { headline, text, requiredBy, comments } = content;
   const [newCommentText] = useState<string>(project_colaboration.writeCommentText);
 
@@ -56,7 +57,12 @@ export const UpdateCard = ({ content }: UpdateCardProps) => {
           <AvatarGroup sx={avatarGroupStyle}>
             {requiredBy.length > 0 ? (
               requiredBy.map((teamMember, index) => (
-                <StyledTooltip arrow key={index} title={<TooltipContent teamMember={teamMember} />} placement="bottom">
+                <StyledTooltip
+                  arrow
+                  key={index}
+                  title={<TooltipContent projectName={projectName} teamMember={teamMember} />}
+                  placement="bottom"
+                >
                   <AvatarIcon src={teamMember.avatar} size={48} index={index} allowAnimation={true} />
                 </StyledTooltip>
               ))
@@ -73,11 +79,11 @@ export const UpdateCard = ({ content }: UpdateCardProps) => {
         <Box sx={{ marginLeft: '-20px' }}>
           {comments.length > 0 ? (
             <>
-              <ShareOpinionCard />
+              <ShareOpinionCard projectName={projectName} />
               <Comments comments={comments} />
             </>
           ) : (
-            <WriteCommentCard text={newCommentText} />
+            <WriteCommentCard projectName={projectName} text={newCommentText} />
           )}
         </Box>
       </Grid>

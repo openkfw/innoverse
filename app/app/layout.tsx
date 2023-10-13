@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 import theme from '../styles/theme';
@@ -22,6 +23,10 @@ const client = new ApolloClient({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <Script
+        src={`${process.env.NEXT_PUBLIC_UMAMI_URL}/script.js`}
+        data-website-id={`${process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}`}
+      />
       <body>
         <ApolloProvider client={client}>
           <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>

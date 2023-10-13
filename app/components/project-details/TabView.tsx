@@ -8,6 +8,7 @@ import Tab, { TabProps } from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
+import triggerAnalyticsEvent from '@/analytics/analytics';
 import { Project, UpdateContent } from '@/common/types';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
@@ -68,11 +69,20 @@ interface BasicTabsProps {
   project: Project;
   activeTab: number;
   setActiveTab: (tab: number) => void;
+  projectName: string;
 }
 
 export default function BasicTabs(props: BasicTabsProps) {
-  const { updates, project, activeTab, setActiveTab } = props;
+  const { updates, project, activeTab, setActiveTab, projectName } = props;
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    switch (newValue) {
+      case 0:
+        triggerAnalyticsEvent('tab-projektverlauf-clicked', projectName);
+      case 1:
+        triggerAnalyticsEvent('tab-zusammernarbeit-clicked', projectName);
+      case 2:
+        triggerAnalyticsEvent('tab-updates-clicked', projectName);
+    }
     setActiveTab(newValue);
   };
 
@@ -117,7 +127,7 @@ export default function BasicTabs(props: BasicTabsProps) {
         </CustomTabs>
       </Box>
       <CustomTabPanel value={activeTab} index={0} id="tabpanel-0">
-        <ProjectProgress project={project} />
+        <ProjectProgress project={project} projectName={projectName} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={1} id="collaboration-tab">
         <CollaborationTab />

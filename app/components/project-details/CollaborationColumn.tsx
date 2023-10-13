@@ -1,14 +1,17 @@
 import { Grid, Typography } from '@mui/material';
 
+import { ProjectCollaboration } from '@/common/types';
+
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 interface CollaborationProps {
-  collaborationData: string;
+  collaboration: ProjectCollaboration;
   setActiveTab: (tab: number) => void;
+  projectName: string;
 }
 
 const CollaborationColumn = (props: CollaborationProps) => {
-  const { collaborationData, setActiveTab } = props;
+  const { collaboration, setActiveTab, projectName } = props;
 
   const handleCollaborationClick = async (offset: number) => {
     const scroll = () => {
@@ -33,7 +36,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
             Zusammenarbeit
           </Typography>
           <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', mb: '15px', marginTop: 1 }}>
-            {collaborationData}
+            {collaboration.description}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             26531 Beteilungen - 91283 Votes
@@ -41,11 +44,13 @@ const CollaborationColumn = (props: CollaborationProps) => {
         </Grid>
         <Grid item xs={4} sx={{ mt: '15px' }}>
           <InteractionButton
+            projectName={projectName}
             interactionType={InteractionType.COLLABORATION}
             onClick={() => handleCollaborationClick(-325)}
             sx={{ background: 'secondary.main', color: 'rgba(255, 255, 255, 1)' }}
           />
           <InteractionButton
+            projectName={projectName}
             interactionType={InteractionType.COLLABORATION}
             onClick={() => handleCollaborationClick(75)}
             label="Komm ins Team!"
@@ -53,6 +58,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
           />
           <InteractionButton
             interactionType={InteractionType.COLLABORATION}
+            projectName={projectName}
             label="Umfrage machen!"
             sx={{ background: 'secondary.main', color: 'rgba(255, 255, 255, 1)' }}
           />

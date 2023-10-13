@@ -27,6 +27,8 @@ RUN npm run prisma generate --schema ./repository/db/prisma/schema.prisma
 # RUN yarn run prisma db push
 # RUN yarn run prisma migrate dev --name init
 
+
+
 RUN npm run build
 
 # Production image, copy all the files and run next
@@ -52,10 +54,11 @@ COPY --from=builder /app/repository/db/prisma ./repository/db/prisma
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+
 USER nextjs
 
 EXPOSE 3000
 
 ENV PORT 3000
 
-CMD [  "npm", "run", "start:migrate:prod" ]
+CMD [  "npm", "run", "start" ]

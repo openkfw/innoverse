@@ -39,7 +39,7 @@ export const MappingProjectsCard = (props: ProjectProps) => {
   const { projects } = props;
   return (
     <Grid container justifyContent="center">
-      <Grid item xs={10} sx={{ mb: 10 }}>
+      <Grid item xs={10}>
         <Card
           sx={{
             backgroundColor: 'rgba(255,255,255,0.1)',

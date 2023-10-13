@@ -29,6 +29,19 @@ export type ProjectColaborationMock = {
   projectUpdates: ProjectUpdateMock[];
 };
 
+export type SurveyQuestion = {
+  question: string;
+  responseOptions: string[];
+  votes: number;
+};
+
+export type ProjectColaboration = {
+  projectName: string;
+  writeCommentText: string;
+  projectUpdates: ProjectUpdate[];
+  surveyQuestions: SurveyQuestion[];
+};
+
 export enum PROJECT_PROGRESS {
   EXPLORATION = 'Exploration',
   KONZEPTION = 'Konzeption',
@@ -53,12 +66,14 @@ export type ProjectCollaboration = {
 };
 
 export type Project = {
+  title: string;
   summary: string;
   projectStart: string;
   projectEnd: string;
   collaboration: ProjectCollaboration;
   likes: number;
   followers: number;
+  projectName: string;
   team: Person[];
   updates: ProjectUpdate[];
   description: ProjectDescription;
@@ -101,6 +116,7 @@ export type ProjectStatus = {
   author: PersonInfo;
   tags: string[];
   info: Info;
+  projectName: string;
 };
 
 export type ProjectProgression = {

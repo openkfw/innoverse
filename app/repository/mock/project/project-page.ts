@@ -25,6 +25,7 @@ export const projects_progression: any = {
         projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
       },
       projectSummary: {
+        projectName: 'TruBudget',
         summary: '',
         timing: {
           projectStart: 'Aug',
@@ -93,6 +94,7 @@ export const projects_progression: any = {
         ],
       },
       projectStatus: {
+        projectName: 'Generative AI',
         text: GenerativeAI,
         author: {
           name: 'Ingmar Müller',
@@ -103,7 +105,7 @@ export const projects_progression: any = {
         },
         tags: ['KI', 'Effizienz', 'Geschäftsbereiche', 'AI'],
         info: {
-          title: '##Künstliche Intelligenz',
+          title: 'Künstliche Intelligenz',
           description: 'Generative KI könnte ein Gamechanger für die Zusammenarbeit zwischen Mensch und Maschine sein.',
         },
       },
@@ -149,6 +151,7 @@ export const projects_progression: any = {
         projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
       },
       projectSummary: {
+        projectName: 'InnoHub',
         summary:
           'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
         timing: {
@@ -213,6 +216,7 @@ export const projects_progression: any = {
         ],
       },
       projectStatus: {
+        projectName: 'InnoHub',
         text: '',
         author: {
           name: 'Max Muster',
@@ -223,8 +227,8 @@ export const projects_progression: any = {
         },
         tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
         info: {
-          title: '',
-          description: '',
+          title: 'Künstliche Intelligenz',
+          description: 'Generative KI könnte ein Gamechanger für die Zusammenarbeit zwischen Mensch und Maschine sein.',
         },
       },
       comments: [
@@ -272,6 +276,7 @@ export const projects_progression: any = {
         projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT,
       },
       projectSummary: {
+        projectName: 'Generative AI',
         summary:
           'Die Innovationsplattform ist der zentrale Ort für alle ***STRING_REMOVED*** ler, um sich über Innovation in ***STRING_REMOVED***  zu informieren und sich aktiv einzubringen.',
         timing: {
@@ -336,6 +341,7 @@ export const projects_progression: any = {
         ],
       },
       projectStatus: {
+        projectName: 'Generative AI',
         text: '',
         author: {
           name: 'Max Muster',
@@ -346,8 +352,8 @@ export const projects_progression: any = {
         },
         tags: ['Gesellschaft', 'Bildung', 'Gründen', 'AI'],
         info: {
-          title: '',
-          description: '',
+          title: 'Künstliche Intelligenz',
+          description: 'Generative KI könnte ein Gamechanger für die Zusammenarbeit zwischen Mensch und Maschine sein.',
         },
       },
       comments: [
@@ -386,8 +392,16 @@ export const projects_progression: any = {
 };
 
 export const project_colaboration: any = {
+  projectName: 'TruBudget',
   writeCommentText:
     'Teil deine Ratschläge und Gedanken zu diesem Thema, damit deine Kollegen von deiner Expertise profitieren können.',
+  surveyQuestions: [
+    {
+      question: '1. Welche Methode bevorzugt ihr für das XYZ Verfahren',
+      responseOptions: ['Usability testing', 'Monitoring', '101 Interview', 'Interviews'],
+      votes: 54,
+    },
+  ],
   projectUpdates: [
     {
       headline: 'Welche spannende Use Cases für Künstliche Intelligenz kennt ihr aus anderen Unternehmen?',

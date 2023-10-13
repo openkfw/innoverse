@@ -1,0 +1,8 @@
+.wrapper {
+    background-image: url("../../icons/ArrowBackground.svg");
+    background-repeat: repeat-x;
+    display: flex;
+    align-content: center;
+    width: 100%;
+    height: 348px;
+}

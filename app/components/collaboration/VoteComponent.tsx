@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import ReplyIcon from '@mui/icons-material/Reply';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -8,6 +7,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
 import ArrowUpIcon from '../icons/ArrowUpIcon';
+import ReplyIcon from '../icons/ReplyIcon';
 
 interface VoteComponentProps {
   upvotes?: number;
@@ -44,9 +44,9 @@ export const VoteComponent = (props: VoteComponentProps) => {
         </ToggleButton>
       </ToggleButtonGroup>
 
-      <Button variant="outlined" startIcon={<ReplyIcon sx={replyIconStyles} />} sx={buttonStyle}>
-        <Typography variant="subtitle2" color="text.primary" sx={typographyStyles}>
-          Antworten
+      <Button variant="outlined" startIcon={<ReplyIcon />} sx={buttonStyle}>
+        <Typography variant="subtitle2" sx={typographyStyles}>
+          antworten
         </Typography>
       </Button>
     </Stack>
@@ -64,15 +64,11 @@ const buttonStyle = {
   background: 'rgba(255, 255, 255, 0.10)',
   height: '32px',
   '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.10)' },
-};
-
-const replyIconStyles = {
-  color: 'black',
-  opacity: '0.38',
+  '&:active': { backgroundColor: 'rgba(0, 0, 0, 0.10)' },
 };
 
 const typographyStyles = {
+  color: 'rgba(0, 0, 0, 0.56)',
   fontSize: 13,
   fontWeight: 700,
-  opacity: 0.56,
 };

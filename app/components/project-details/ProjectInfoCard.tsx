@@ -22,18 +22,18 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
   const { project, setActiveTab } = props;
 
   return (
-    <Card sx={{ borderRadius: '24px', width: '1280px' }}>
-      <CardContent sx={{ margin: '56px 64px' }}>
-        <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+    <Card sx={cardStyles}>
+      <CardContent sx={cardContentStyles}>
+        <Grid container spacing={2} sx={containerStyles}>
           {/* First Column - Project Info */}
           <Grid item xs={4}>
             <Grid container direction="column" spacing={1}>
               <Grid item xs={4}>
                 <ProjectStageCard projectStart={project.projectStart} projectEnd={project.projectEnd} />
               </Grid>
-              <Grid item xs={4} sx={{ mt: 2 }}>
-                <InteractionButton interactionType={InteractionType.LIKE} />
-                <InteractionButton interactionType={InteractionType.PROJECT_FOLLOW} />
+              <Grid item xs={4} sx={interactionStyles}>
+                <InteractionButton projectName={project.projectName} interactionType={InteractionType.LIKE} />
+                <InteractionButton projectName={project.projectName} interactionType={InteractionType.PROJECT_FOLLOW} />
               </Grid>
               <Grid item xs={4}>
                 <Typography variant="caption" color="text.secondary">
@@ -44,19 +44,23 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
           </Grid>
           {/* Second Column - Collaboration and Updates */}
           <Grid item xs={8}>
-            <Grid container spacing={2} sx={{ ml: '10px' }}>
+            <Grid container spacing={2} sx={collaborationWrapperStyles}>
               <Grid item xs={9}>
-                <CollaborationColumn collaborationData={project.collaboration} setActiveTab={setActiveTab} />
+                <CollaborationColumn
+                  collaboration={project.collaboration}
+                  setActiveTab={setActiveTab}
+                  projectName={project.title}
+                />
               </Grid>
               <Grid item xs={3}>
-                <TeamMembersColumn team={project.team} />
+                <TeamMembersColumn team={project.team} projectName={project.title} />
               </Grid>
 
               <Grid item xs={12}>
-                <Divider sx={{ height: '1px', mt: '20px', mb: '20px', background: 'rgba(0, 90, 140, 0.20)' }} />
+                <Divider sx={dividerStyles} />
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="overline" sx={{ textAlign: 'center', color: 'primary.light', mb: '25px' }}>
+                <Typography variant="overline" sx={latestUpdatesStyles}>
                   Neuesten updates (3 von 12)
                 </Typography>
               </Grid>
@@ -74,4 +78,43 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
       </CardContent>
     </Card>
   );
+};
+
+// Project Info Card Styles
+
+const cardStyles = {
+  borderRadius: '24px',
+  width: '1280px',
+  boxShadow:
+    '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
+};
+
+const cardContentStyles = {
+  margin: '56px 64px',
+};
+
+const containerStyles = {
+  display: 'flex',
+  justifyContent: 'space-between',
+};
+
+const interactionStyles = {
+  marginTop: 2,
+};
+
+const dividerStyles = {
+  height: '1px',
+  marginTop: '20px',
+  marginBottom: '20px',
+  background: 'rgba(0, 90, 140, 0.20)',
+};
+
+const latestUpdatesStyles = {
+  textAlign: 'center',
+  color: 'primary.light',
+  marginBottom: '25px',
+};
+
+const collaborationWrapperStyles = {
+  marginLeft: '10px',
 };
