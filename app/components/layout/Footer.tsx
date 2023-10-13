@@ -4,18 +4,6 @@ import Typography from '@mui/material/Typography';
 const footerNav = ['© ***STRING_REMOVED***  2023', 'Impressum', 'DSGVO'];
 
 function Footer() {
-  const footerStyle = {
-    paddingLeft: 24,
-    paddingTop: '48px',
-    paddingBottom: '48px',
-  };
-
-  const typographyStyle = {
-    fontWeight: 700,
-    fontFamily: '***FONT_REMOVED***',
-    fontSize: '14px',
-  };
-
   return (
     <Grid container spacing={3} sx={footerStyle}>
       {footerNav.map((link, key) => (
@@ -28,3 +16,17 @@ function Footer() {
 }
 
 export default Footer;
+
+// Footer styles
+const footerStyle = {
+  paddingLeft: 24,
+  marginTop: 0,
+  paddingTop: '48px',
+  paddingBottom: '40px',
+};
+
+const typographyStyle = {
+  fontWeight: 700,
+  fontFamily: '***FONT_REMOVED***',
+  fontSize: '14px',
+};
