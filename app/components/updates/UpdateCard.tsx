@@ -24,16 +24,7 @@ export const UpdateCard = ({ content, divider }: UpdateCardProps) => {
         <DateField date={dayMonth} divider={divider} />
 
         {projectStart && (
-          <Box
-            sx={{
-              mt: 1,
-              p: 1,
-              background: 'rgba(0, 90, 140, 0.10)',
-              borderRadius: '8px',
-              width: 170,
-              textAlign: 'center',
-            }}
-          >
+          <Box sx={projectStartStyles}>
             <Typography variant="subtitle2" color="primary.main">
               Project Kickoff
             </Typography>
@@ -41,8 +32,25 @@ export const UpdateCard = ({ content, divider }: UpdateCardProps) => {
         )}
       </Grid>
       <Grid container item xs={7}>
-        <CommentCard content={commentContent} sx={{ '.MuiCardHeader-root': { pt: 1 } }} />
+        <CommentCard content={commentContent} sx={commentCardStyles} />
       </Grid>
     </Grid>
   );
+};
+
+// Update Card Styles
+
+const projectStartStyles = {
+  mt: 1,
+  p: 1,
+  background: 'rgba(0, 90, 140, 0.10)',
+  borderRadius: '8px',
+  width: 170,
+  textAlign: 'center',
+};
+
+const commentCardStyles = {
+  '.MuiCardHeader-root': {
+    pt: 1,
+  },
 };

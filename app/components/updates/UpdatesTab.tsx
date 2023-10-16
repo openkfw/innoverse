@@ -37,43 +37,50 @@ export const UpdatesTab = (props: UpdatesTabProps) => {
   });
 
   return (
-    <Card
-      sx={{
-        borderRadius: '24px',
-        background: '#FFF',
-        position: 'relative',
-        zIndex: 0,
-        boxShadow:
-          '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
-      }}
-    >
-      <Box
-        sx={{
-          width: 320,
-          height: '100%',
-          borderRadius: 'var(--2, 16px) 0px 0px var(--2, 16px)',
-          opacity: 0.6,
-          background: 'linear-gradient(90deg, rgba(240, 238, 225, 0.00) 10.42%, #F0EEE1 100%)',
-          position: 'absolute',
-          zIndex: -1,
-        }}
-      ></Box>
+    <Card sx={cardStyles}>
+      <Box sx={colorOverlayStyles} />
 
-      <CardContent>
+      <CardContent sx={cardContentStyles}>
         {datesByYear.map((updates, index) => {
           const year = getYear(updates[0].date);
           return (
-            <Grid container key={index} pt={5}>
+            <Grid container key={index}>
               <YearField year={year} />
-              {updates.map((update, i) => {
-                if (update) {
-                  return <UpdateCard key={i} content={update} divider={i != updates.length - 1} />;
-                }
-              })}
+              {updates.map(
+                (update, i) => update && <UpdateCard key={i} content={update} divider={i !== updates.length - 1} />,
+              )}
             </Grid>
           );
         })}
       </CardContent>
     </Card>
   );
+};
+
+// Updates Tab Styles
+const cardStyles = {
+  borderRadius: '24px',
+  background: '#FFF',
+  position: 'relative',
+  zIndex: 0,
+  boxShadow:
+    '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
+};
+
+const colorOverlayStyles = {
+  width: 320,
+  height: '100%',
+  borderRadius: 'var(--2, 16px) 0px 0px var(--2, 16px)',
+  opacity: 0.6,
+  background: 'linear-gradient(90deg, rgba(240, 238, 225, 0.00) 10.42%, #F0EEE1 100%)',
+  position: 'absolute',
+  zIndex: -1,
+};
+
+const cardContentStyles = {
+  marginTop: 11,
+  marginBottom: 11,
+  '&.MuiCardContent-root': {
+    padding: 0,
+  },
 };
