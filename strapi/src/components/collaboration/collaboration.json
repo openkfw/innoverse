@@ -5,16 +5,9 @@
   },
   "options": {},
   "attributes": {
-    "title": {
-      "type": "string"
-    },
     "description": {
-      "type": "string"
-    },
-    "author": {
-      "type": "component",
-      "repeatable": true,
-      "component": "user.author"
+      "type": "text",
+      "required": true
     }
   }
 }

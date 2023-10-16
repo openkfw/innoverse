@@ -62,6 +62,45 @@ export const StaticBuildGetProjectIdsQuery = `query GetFeaturedSliderItems {
   }
 }`;
 
+export const GetFeaturedProjectsQuery = `query GetProjectSummary {
+  projects {
+    data {
+      id
+      attributes {
+        title
+        summary
+        status
+        image {
+          data {
+            attributes {
+              url
+            }
+          }
+        }
+        team {
+          name
+        }
+        updates {
+          date
+          comment
+          theme
+          author {
+            name
+            avatar {
+              data {
+                attributes {
+                  url
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`;
+
 export const GetProjectsSummaryQuery = `query GetProjectSummary {
   projects {
     data {
@@ -80,7 +119,7 @@ export const GetProjectsSummaryQuery = `query GetProjectSummary {
         team {
           name
         }
-        update {
+        updates {
           date
           comment
           theme
@@ -103,55 +142,90 @@ export const GetProjectsSummaryQuery = `query GetProjectSummary {
 
 export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
   project(id: $id) {
-     data {
-      id
-      attributes {
-        title
-        summary
-        status
-        projectStart
-        projectEnd
-        collaboration
-        image {
-          data {
-            attributes {
-              url
-            }
-          }
-        }
-        description {
-          title
-          summary
-          text
-          tags
-          author {
-            name
-            avatar {
-              data {
-                attributes {
-                  url
-                }
-              }
-            }
-          }
-  				
-        }
-        author {
-            name
-          	role
-          	department
-            avatar {
-              data {
-                attributes {
-                  url
-                }
-              }
-            }
-        }
-        team {
+    data {
+     id
+     attributes {
+       title
+       summary
+       status
+       projectStart
+       projectEnd
+       image {
+         data {
+           attributes {
+             url
+           }
+         }
+       }
+       description {
+         title
+         summary
+         text
+         tags
+         author {
+           name
+           role
+           department
+           avatar {
+             data {
+               attributes {
+                 url
+               }
+             }
+           }
+         }
+         
+       }
+       author {
+           name
+           role
+           department
+           avatar {
+             data {
+               attributes {
+                 url
+               }
+             }
+           }
+       }
+       team {
+         name
+         role
+         department
+         avatar {
+           data {
+             attributes {
+               url
+             }
+           }
+         }
+       }
+       updates {
+         date
+         comment
+         theme
+         author {
+           name
+           role
+           department
+           avatar {
+             data {
+               attributes {
+                 url
+               }
+             }
+           }
+         }
+       }
+       collaboration {
+         description
+       }
+       questions {
+        headline
+        text
+        authors {
           name
           role
-          department
           avatar {
             data {
               attributes {
@@ -160,42 +234,20 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
             }
           }
         }
-        update {
-          date
-          comment
-          theme
-          author {
-            name
-            role
-            department
-            avatar {
-              data {
-                attributes {
-                  url
-                }
-              }
-            }
-          }
-        }
-        question {
-          title
-          description
-          author {
-            name
-            role
-            department
-            avatar {
-              data {
-                attributes {
-                  url
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+       }
+       surveyQuestions {
+        question
+        responseOptions
+        votes
+       }
+       jobs {
+        title
+        description
+        email
+       }
+     }
+   }
+ }
 }`;
 
 export const withResponseTransformer = (query: STRAPI_QUERY, data: unknown) => {
@@ -213,11 +265,11 @@ export const withResponseTransformer = (query: STRAPI_QUERY, data: unknown) => {
   }
 };
 
-function getStaticBuildFeaturedSliderItemsTransformer(graphqlResponse: any) {
-  return {
-    pages: [1, 2, 3, 4],
-  };
-}
+// function getStaticBuildFeaturedSliderItemsTransformer(graphqlResponse: any) {
+//   return {
+//     pages: [1, 2, 3, 4],
+//   };
+// }
 
 function getStaticBuildFetchProjectIds(graphqlResponse: any) {
   const formattedItems = graphqlResponse.data.items.data.map((item: any) => {
@@ -249,11 +301,11 @@ function getStaticBuildFetchProjectIds(graphqlResponse: any) {
 }
 
 function getStaticBuildFetchProjectSummary(graphqlResponse: any) {
-  const formattedNews: any[] = [];
+  const formattedUpdates: any[] = [];
   const formattedProjects = graphqlResponse.data.projects.data.map((project: any) => {
-    const { title, summary, image, status, team, update } = project.attributes;
+    const { title, summary, image, status, team, updates } = project.attributes;
 
-    const formattedUpdates = update.map((u: any) => {
+    const formattedUpdate = updates.map((u: any) => {
       return {
         title,
         comment: u.comment,
@@ -266,7 +318,7 @@ function getStaticBuildFetchProjectSummary(graphqlResponse: any) {
       };
     });
 
-    formattedNews.push(...formattedUpdates);
+    formattedUpdates.push(...formattedUpdate);
     return {
       id: project.id,
       title,
@@ -278,7 +330,7 @@ function getStaticBuildFetchProjectSummary(graphqlResponse: any) {
   });
   return {
     projects: formattedProjects,
-    news: formattedNews,
+    updates: formattedUpdates,
   };
 }
 
@@ -296,11 +348,13 @@ function getStaticBuildFetchProjectById(graphqlResponse: any) {
     description,
     author,
     team,
-    update,
-    question,
+    updates,
+    questions,
+    surveyQuestions,
+    jobs,
   } = project.attributes;
 
-  const formattedUpdates = update.map((u: any) => {
+  const formattedUpdates = updates.map((u: any) => {
     return {
       title,
       comment: u.comment,
@@ -325,10 +379,10 @@ function getStaticBuildFetchProjectById(graphqlResponse: any) {
     };
   });
 
-  const formattedQuestion = question.map((q: any) => {
+  const formattedQuestions = questions.map((q: any) => {
     return {
       ...q,
-      author: q.author.map((a: any) => {
+      author: q.authors.map((a: any) => {
         return {
           ...a,
           avatar: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.avatar.data.attributes.url}`,
@@ -354,12 +408,14 @@ function getStaticBuildFetchProjectById(graphqlResponse: any) {
       projectStart,
       projectEnd,
       collaboration,
+      surveyQuestions,
+      jobs,
       description: formattedDescription,
       author: formattedAuthor,
       team: formattedTeam,
-      question: formattedQuestion,
       image: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
       updates: formattedUpdates,
+      questions: formattedQuestions,
     },
   };
 }

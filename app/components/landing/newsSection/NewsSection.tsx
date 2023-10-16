@@ -10,7 +10,7 @@ import theme from '@/styles/theme';
 import NewsCarousel from './NewsCarousel';
 
 type NewsSectionProps = {
-  news: NewsSlider[];
+  updates: NewsSlider[];
 };
 
 export const NewsSection = (props: NewsSectionProps) => {
@@ -29,7 +29,7 @@ export const NewsSection = (props: NewsSectionProps) => {
           <CustomButton>Mehr</CustomButton>
         </Grid>
       </Grid>
-      <NewsCarousel news={props.news} />
+      <NewsCarousel updates={props.updates} />
     </Grid>
   );
 };

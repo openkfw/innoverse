@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_survey_questions_survey_questions",
+  "info": {
+    "displayName": "surveyQuestions",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true
+    },
+    "votes": {
+      "type": "integer",
+      "required": true
+    },
+    "responseOptions": {
+      "type": "json",
+      "required": true
+    }
+  }
+}

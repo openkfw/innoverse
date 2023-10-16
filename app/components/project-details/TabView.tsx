@@ -130,7 +130,7 @@ export default function BasicTabs(props: BasicTabsProps) {
         <ProjectProgress project={project} projectName={projectName} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={1} id="collaboration-tab">
-        <CollaborationTab />
+        <CollaborationTab project={project} projectName={projectName} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={2} id="tabpanel-0">
         <UpdatesTab updates={updates} />

@@ -18,12 +18,12 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 
 type NewsSliderProps = {
-  news: NewsSlider[];
+  updates: NewsSlider[];
 };
 
 export default function NewsCarousel(props: NewsSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const slides = props.news;
+  const slides = props.updates;
   const sliderRef = useRef<Slider>(null);
 
   const handleMouseDown = (e: { pageX: number }) => {

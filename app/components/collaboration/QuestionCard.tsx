@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { ProjectUpdate } from '@/common/types';
+import { ProjectQuestion } from '@/common/types';
 import { project_colaboration } from '@/repository/mock/project/project-page';
 
 import AvatarIcon from '../common/AvatarIcon';
@@ -17,13 +17,14 @@ import { ShareOpinionCard } from './ShareOpinionCard';
 import WriteCommentCard from './WriteCommentCard';
 
 interface UpdateCardProps {
-  content: ProjectUpdate;
+  content: ProjectQuestion;
   projectName: string;
 }
 
-export const UpdateCard = ({ content, projectName }: UpdateCardProps) => {
-  const { headline, text, requiredBy, comments } = content;
+export const QuestionCard = ({ content, projectName }: UpdateCardProps) => {
+  const { headline, text, authors } = content;
   const [newCommentText] = useState<string>(project_colaboration.writeCommentText);
+  const comments = project_colaboration.projectUpdates[0].comments;
 
   const avatarGroupStyle = {
     display: 'flex',
@@ -55,15 +56,15 @@ export const UpdateCard = ({ content, projectName }: UpdateCardProps) => {
             Frage von
           </Typography>
           <AvatarGroup sx={avatarGroupStyle}>
-            {requiredBy.length > 0 ? (
-              requiredBy.map((teamMember, index) => (
+            {authors.length > 0 ? (
+              authors.map((author, index) => (
                 <StyledTooltip
                   arrow
                   key={index}
-                  title={<TooltipContent projectName={projectName} teamMember={teamMember} />}
+                  title={<TooltipContent projectName={projectName} teamMember={author} />}
                   placement="bottom"
                 >
-                  <AvatarIcon src={teamMember.avatar} size={48} index={index} allowAnimation={true} />
+                  <AvatarIcon src={author.avatar} size={48} index={index} allowAnimation={true} />
                 </StyledTooltip>
               ))
             ) : (

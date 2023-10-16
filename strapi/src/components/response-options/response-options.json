@@ -1,0 +1,12 @@
+{
+  "collectionName": "components_response_options_response_options",
+  "info": {
+    "displayName": "responseOptions"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_questions_questions",
+  "info": {
+    "displayName": "questions",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "headline": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "text",
+      "required": true
+    },
+    "authors": {
+      "type": "component",
+      "repeatable": true,
+      "component": "user.author",
+      "required": true
+    }
+  }
+}

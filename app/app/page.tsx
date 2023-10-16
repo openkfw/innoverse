@@ -60,7 +60,7 @@ async function getData() {
     return {
       sliderContent: result?.items,
       projects: resultProjects?.projects,
-      news: resultProjects?.news,
+      updates: resultProjects?.updates,
     };
   } catch (err) {
     console.info(err);
@@ -83,9 +83,9 @@ function IndexPage() {
 
   const sliderContent = data?.sliderContent;
   const projects = data?.projects;
-  const news = data?.news;
-  // const news = data?.news;
-  if (!sliderContent || !projects || !news) {
+  const updates = data?.updates;
+
+  if (!sliderContent || !projects || !updates) {
     return <></>;
   }
   return (
@@ -97,7 +97,7 @@ function IndexPage() {
 
         <div style={{ position: 'relative' }}>
           <Box sx={newsSectionStyles}>
-            <NewsSection news={news} />
+            <NewsSection updates={updates} />
           </Box>
 
           <Box sx={arrowContainerStyles}>

@@ -13,20 +13,21 @@
   "pluginOptions": {},
   "attributes": {
     "title": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "featured": {
-      "type": "boolean"
+      "type": "boolean",
+      "required": true,
+      "default": true
     },
     "image": {
       "type": "media",
       "multiple": false,
-      "required": false,
+      "required": true,
       "allowedTypes": [
         "images",
-        "files",
-        "videos",
-        "audios"
+        "files"
       ]
     },
     "status": {
@@ -35,48 +36,73 @@
         "Exploration",
         "Konzeption",
         "Proof of Concept"
-      ]
+      ],
+      "required": true
     },
     "author": {
       "displayName": "author",
       "type": "component",
       "repeatable": false,
-      "component": "user.author"
+      "component": "user.author",
+      "required": true
     },
     "summary": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "projectStart": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "projectEnd": {
-      "type": "string"
+      "type": "string",
+      "required": false
     },
     "description": {
       "displayName": "Description",
       "type": "component",
       "repeatable": false,
-      "component": "description.description"
+      "component": "description.description",
+      "required": true
     },
-    "update": {
+    "updates": {
       "displayName": "update",
       "type": "component",
       "repeatable": true,
-      "component": "update.update"
-    },
-    "question": {
-      "displayName": "collaboration",
-      "type": "component",
-      "repeatable": true,
-      "component": "collaboration.collaboration"
+      "component": "update.update",
+      "required": false
     },
     "team": {
       "type": "component",
       "repeatable": true,
-      "component": "user.author"
+      "component": "user.author",
+      "required": true
     },
     "collaboration": {
-      "type": "string"
+      "displayName": "collaboration",
+      "type": "component",
+      "repeatable": true,
+      "component": "collaboration.collaboration",
+      "required": false
+    },
+    "questions": {
+      "displayName": "questions",
+      "type": "component",
+      "repeatable": true,
+      "component": "questions.questions"
+    },
+    "surveyQuestions": {
+      "displayName": "surveyQuestions",
+      "type": "component",
+      "repeatable": true,
+      "component": "survey-questions.survey-questions",
+      "required": false
+    },
+    "jobs": {
+      "displayName": "jobs",
+      "type": "component",
+      "repeatable": true,
+      "component": "jobs.jobs"
     }
   }
 }

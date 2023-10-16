@@ -1,17 +1,20 @@
 {
   "collectionName": "components_description_descriptions",
   "info": {
-    "displayName": "Description"
+    "displayName": "Description",
+    "description": ""
   },
   "options": {},
   "attributes": {
     "text": {
-      "type": "richtext"
+      "type": "richtext",
+      "required": true
     },
     "author": {
       "type": "component",
       "repeatable": false,
-      "component": "user.author"
+      "component": "user.author",
+      "required": true
     },
     "tags": {
       "type": "json"
@@ -20,7 +23,8 @@
       "type": "string"
     },
     "summary": {
-      "type": "string"
+      "type": "string",
+      "required": true
     }
   }
 }

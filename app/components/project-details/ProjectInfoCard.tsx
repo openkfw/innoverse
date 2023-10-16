@@ -18,6 +18,8 @@ interface ProjectInfoProps {
   setActiveTab: (tab: number) => void;
 }
 
+const MAX_UPDATES = 1;
+
 export const ProjectInfoCard = (props: ProjectInfoProps) => {
   const { project, setActiveTab } = props;
 
@@ -37,7 +39,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
               </Grid>
               <Grid item xs={4}>
                 <Typography variant="caption" color="text.secondary">
-                  {project.likes} Likes - {project.followers} Innovaders folgen
+                  153 Likes - 43 Innovaders folgen
                 </Typography>
               </Grid>
             </Grid>
@@ -47,9 +49,9 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
             <Grid container spacing={2} sx={collaborationWrapperStyles}>
               <Grid item xs={9}>
                 <CollaborationColumn
+                  projectName={project.title}
                   collaboration={project.collaboration}
                   setActiveTab={setActiveTab}
-                  projectName={project.title}
                 />
               </Grid>
               <Grid item xs={3}>
@@ -61,11 +63,11 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="overline" sx={latestUpdatesStyles}>
-                  Neuesten updates (3 von 12)
+                  Neuesten updates ({Math.min(project.updates.length, MAX_UPDATES)} von {project.updates.length})
                 </Typography>
               </Grid>
               <Grid item container xs={12} spacing={2}>
-                {project.updates.map((update, key) => (
+                {project.updates.slice(0, MAX_UPDATES).map((update, key) => (
                   <Grid key={key} item xs={4}>
                     <UpdateCard update={update} />
                   </Grid>

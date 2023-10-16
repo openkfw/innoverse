@@ -33,7 +33,7 @@ export default function ProjectCard(props: ProjectCardProps) {
           <Image
             unoptimized
             src={img}
-            width={isWideScreen ? 418 : undefined}
+            width={isWideScreen ? 418 : 500}
             height={isWideScreen ? 237 : 175}
             alt="project"
             layout={isWideScreen ? 'intrinsic' : 'responsive'}

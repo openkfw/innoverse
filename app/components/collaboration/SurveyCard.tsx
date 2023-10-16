@@ -31,7 +31,7 @@ export const SurveyCard = ({ surveyQuestion }: SurveyCardProps) => {
 
       <Grid container direction="row" item xs={6} spacing={2} sx={{ justifyContent: 'space-evenly' }}>
         <Grid item sx={{ ml: '4px' }}>
-          {responseOptions.map((response) => {
+          {responseOptions.options.map((response) => {
             return (
               <Chip
                 label={response}

@@ -7,7 +7,8 @@
   "options": {},
   "attributes": {
     "date": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "comment": {
       "type": "string"
@@ -15,10 +16,12 @@
     "author": {
       "type": "component",
       "repeatable": false,
-      "component": "user.author"
+      "component": "user.author",
+      "required": true
     },
     "theme": {
-      "type": "string"
+      "type": "string",
+      "required": true
     }
   }
 }

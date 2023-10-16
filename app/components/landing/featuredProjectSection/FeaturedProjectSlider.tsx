@@ -131,8 +131,8 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
               src={el.image.image}
               alt="Project"
               sizes="50vw"
-              width={'100'}
-              height={'100'}
+              width="100"
+              height="100"
               style={{
                 width: '100%',
                 height: 'auto',

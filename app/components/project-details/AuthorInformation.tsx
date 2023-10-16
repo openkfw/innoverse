@@ -48,7 +48,7 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
         <Stack direction="row" alignItems="center" pb={4} spacing={1} sx={{ m: 0 }} mt={2}>
           <Image unoptimized src={badgeIcon} alt="badge" />
           <Typography variant="caption" color="text.primary">
-            {author.points} Points
+            20 Points
           </Typography>
           {bull}
           <Typography variant="caption" color="text.primary">
