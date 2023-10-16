@@ -12,8 +12,8 @@ import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
 import theme from '@/styles/theme';
 import {
+  GetFeaturedProjectsQuery,
   GetProjectsSummaryQuery,
-  StaticBuildGetFeaturedSliderItemsQuery,
   STRAPI_QUERY,
   withResponseTransformer,
 } from '@/utils/queries';
@@ -36,12 +36,12 @@ async function getData() {
         // Authentication: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
       body: JSON.stringify({
-        query: StaticBuildGetFeaturedSliderItemsQuery,
+        query: GetFeaturedProjectsQuery,
       }),
       next: { revalidate: 60 * 2 },
     });
     //TODO: ONE QUERY should fetch all the main page data
-    const result = withResponseTransformer(STRAPI_QUERY.StaticBuildGetFeaturedSliderItemsQuery, await request.json());
+    const result = withResponseTransformer(STRAPI_QUERY.GetFeaturedProjectsQuery, await request.json());
 
     const requestProjects = await fetch(process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT || '', {
       method: 'POST',
@@ -56,9 +56,9 @@ async function getData() {
     });
     //TODO: ONE QUERY should fetch all the main page data
     const resultProjects = withResponseTransformer(STRAPI_QUERY.GetProjectsSummaryQuery, await requestProjects.json());
-
+    console.log('resultProjects', result);
     return {
-      sliderContent: result?.items,
+      sliderContent: result?.projects,
       projects: resultProjects?.projects,
       updates: resultProjects?.updates,
     };
@@ -84,6 +84,8 @@ function IndexPage() {
   const sliderContent = data?.sliderContent;
   const projects = data?.projects;
   const updates = data?.updates;
+
+  console.log('sliderContent', sliderContent);
 
   if (!sliderContent || !projects || !updates) {
     return <></>;

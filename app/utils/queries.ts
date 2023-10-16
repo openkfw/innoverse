@@ -4,6 +4,7 @@ export enum STRAPI_QUERY {
   StaticBuildFetchProjectIds,
   GetProjectsSummaryQuery,
   GetProjectByIdQuery,
+  GetFeaturedProjectsQuery,
 }
 
 export const StaticBuildGetFeaturedSliderItemsQuery = `query GetFeaturedSliderItems {
@@ -63,12 +64,14 @@ export const StaticBuildGetProjectIdsQuery = `query GetFeaturedSliderItems {
 }`;
 
 export const GetFeaturedProjectsQuery = `query GetProjectSummary {
-  projects {
+  projects(filters: {featured: {eq : true}}){
     data {
       id
       attributes {
         title
         summary
+        projectStart
+        projectEnd
         status
         image {
           data {
@@ -76,6 +79,12 @@ export const GetFeaturedProjectsQuery = `query GetProjectSummary {
               url
             }
           }
+        }
+        description {
+          title
+          summary
+          text
+          tags
         }
         team {
           name
@@ -174,7 +183,6 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
              }
            }
          }
-         
        }
        author {
            name
@@ -252,8 +260,8 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
 
 export const withResponseTransformer = (query: STRAPI_QUERY, data: unknown) => {
   switch (query) {
-    case STRAPI_QUERY.StaticBuildGetFeaturedSliderItemsQuery:
-      return getStaticBuildFetchProjectIds(data);
+    case STRAPI_QUERY.GetFeaturedProjectsQuery:
+      return getStaticBuildFetchFeaturedProjectSummary(data);
     case STRAPI_QUERY.StaticBuildFetchProjectIds:
       return getStaticBuildFetchProjectIds(data);
     case STRAPI_QUERY.GetProjectsSummaryQuery:
@@ -331,6 +339,27 @@ function getStaticBuildFetchProjectSummary(graphqlResponse: any) {
   return {
     projects: formattedProjects,
     updates: formattedUpdates,
+  };
+}
+
+function getStaticBuildFetchFeaturedProjectSummary(graphqlResponse: any) {
+  const formattedProjects = graphqlResponse.data.projects.data.map((project: any) => {
+    const { title, summary, projectStart, projectEnd, image, status, team, description } = project.attributes;
+
+    return {
+      id: project.id,
+      title,
+      summary,
+      projectStart,
+      projectEnd,
+      status,
+      team,
+      description,
+      image: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
+    };
+  });
+  return {
+    projects: formattedProjects,
   };
 }
 

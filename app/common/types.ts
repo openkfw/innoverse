@@ -67,6 +67,8 @@ export type ProjectCollaboration = {
 
 export type Project = {
   title: string;
+  featured: boolean;
+  image: string;
   summary: string;
   projectStart: string;
   projectEnd: string;

@@ -11,7 +11,7 @@ import ListItem from '@mui/material/ListItem';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { SliderContent, SliderItem } from '@/repository/mock/landing/main-slider';
+import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
 import CustomChip from '../../common/CustomChip';
@@ -20,7 +20,7 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import './FeatureProjectSlider.css';
 
 type FeaturedProjectSliderProps = {
-  items: SliderItem[];
+  items: Project[];
 };
 
 const SliderPill = (props: {
@@ -29,9 +29,8 @@ const SliderPill = (props: {
   title: string;
   projectFrom: string;
   projectTo: string;
-  year: string;
 }) => {
-  const { active, itemNumber, title, projectFrom, projectTo, year } = props;
+  const { active, itemNumber, title, projectFrom, projectTo } = props;
 
   const styles = {
     elementWrap: {
@@ -73,7 +72,7 @@ const SliderPill = (props: {
               </Box>
               <Box sx={styles.elementWrap}>
                 <Typography variant="overline" sx={styles.itemNumberLable} noWrap>
-                  {projectFrom} - {projectTo} {year}
+                  {projectFrom} - {projectTo}
                 </Typography>
               </Box>
             </Stack>
@@ -105,7 +104,8 @@ const SliderPill = (props: {
 export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   //TODO: move css from FeatureProjectSlider.css here...
   const [selectedItem, setSelectedItem] = useState<number>(props.items.length - 1);
-  const slides = props;
+  const slides = props.items;
+  console.log('slides', slides);
   return (
     <Carousel
       className={'main-carousel'}
@@ -123,16 +123,16 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
       showArrows={false}
       animationHandler={fadeAnimationHandler}
     >
-      {slides.items.map((el, id) => (
+      {slides.map((el, id) => (
         <Grid container spacing={2} key={id}>
           <Grid item xs={6} md={7}>
             <Image
               unoptimized
-              src={el.image.image}
+              src={el.image}
               alt="Project"
               sizes="50vw"
-              width="100"
-              height="100"
+              width={'100'}
+              height={'100'}
               style={{
                 width: '100%',
                 height: 'auto',
@@ -141,7 +141,11 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
           </Grid>
           {/*// todo - temporarily hide content for smaller screens - awaiting design*/}
           <Grid item xs={6} md={4} sx={{ [theme.breakpoints.down('sm')]: { display: 'none' } }}>
-            <FeaturedProjectContent title={el.text.title} tags={el.text.tags} description={el.text.description} />
+            <FeaturedProjectContent
+              title={el.title}
+              tags={el.description.tags.tags}
+              description={el.description.text}
+            />
           </Grid>
         </Grid>
       ))}
@@ -189,7 +193,7 @@ const renderIndicator = (
   label: string,
   setSelectedItem: Dispatch<SetStateAction<number>>,
   selectedItem: number,
-  slides: SliderContent,
+  slides: Project[],
 ) => {
   const movePills = (newIndex: number) => {
     const slider = document.querySelectorAll('.control-dots')[0] as HTMLElement;
@@ -215,10 +219,9 @@ const renderIndicator = (
         <SliderPill
           active={isSelected}
           itemNumber={(index + 1).toString()}
-          title={slides.items[index].image.title || ''}
-          projectFrom={slides.items[index].image.projectFrom || ''}
-          projectTo={slides.items[index].image.projectTo || ''}
-          year={slides.items[index].image.year || ''}
+          title={slides[index].title || ''}
+          projectFrom={slides[index].projectStart || ''}
+          projectTo={slides[index].projectEnd || 'Present'}
         />
       </Box>
     </>
