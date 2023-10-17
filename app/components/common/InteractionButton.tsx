@@ -4,6 +4,7 @@ import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import FormatAlignLeftOutlinedIcon from '@mui/icons-material/FormatAlignLeftOutlined';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
+import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SendIcon from '@mui/icons-material/Send';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
@@ -17,7 +18,7 @@ import RecommendIcon from '@/components/icons/RecommendIcon';
 
 interface InteractionButtonProps extends ButtonProps {
   interactionType: InteractionType;
-  projectName: string;
+  projectName?: string;
   label?: string;
   onClick?: () => void;
   sx?: SxProps;
@@ -34,6 +35,7 @@ export enum InteractionType {
   ADD_INSIGHTS = 'add-insights',
   APPLY = 'apply',
   RECOMMEND = 'recommend',
+  LOG_IN = 'log-in',
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
@@ -51,6 +53,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.ADD_INSIGHTS) return <FormatAlignLeftOutlinedIcon fontSize="small" />;
     if (interactionType === InteractionType.APPLY) return <ApplyIcon color={isHovered ? 'white' : 'black'} />;
     if (interactionType === InteractionType.RECOMMEND) return <RecommendIcon color={isHovered ? 'white' : 'black'} />;
+    if (interactionType === InteractionType.LOG_IN) return <PersonIcon fontSize="small" />;
   };
 
   const getButtontext = () => {
@@ -65,6 +68,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.ADD_INSIGHTS) return 'Teile Deine Erfahrung';
     if (interactionType === InteractionType.APPLY) return 'Ich bin dabei';
     if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
+    if (interactionType === InteractionType.LOG_IN) return 'Log in';
   };
   const handleClick = () => {
     triggerAnalyticsEvent(interactionType.toString(), projectName || 'unknown-project');

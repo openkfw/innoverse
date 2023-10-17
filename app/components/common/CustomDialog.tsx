@@ -1,20 +1,25 @@
 import { FC, ReactNode } from 'react';
 import React from 'react';
 
-import { DialogActions, IconButton, Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
 import Slide from '@mui/material/Slide';
+import { SxProps } from '@mui/material/styles';
 import { TransitionProps } from '@mui/material/transitions';
+import Typography from '@mui/material/Typography';
 
 import CloseIcon from '@/components/icons/CloseIcon';
 
 interface CustomDialogProps {
   children: ReactNode;
   open: boolean;
-  handleClose: () => void;
+  handleClose?: () => void;
   title?: string;
+  closeIcon?: boolean;
+  sx?: SxProps;
 }
 
 const Transition = React.forwardRef(function Transition(
@@ -29,14 +34,22 @@ const Transition = React.forwardRef(function Transition(
   ) : null;
 });
 
-const CustomDialog: FC<CustomDialogProps> = ({ children, open, handleClose, title }) => {
+const CustomDialog: FC<CustomDialogProps> = ({ children, open, handleClose, title, sx, closeIcon = true }) => {
   return (
-    <Dialog open={open} onClose={handleClose} PaperProps={{ style: paperPropsStyle }} TransitionComponent={Transition}>
-      <DialogActions sx={dialogActionsStyle}>
-        <IconButton onClick={handleClose} sx={iconButtonStyle}>
-          <CloseIcon />
-        </IconButton>
-      </DialogActions>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      sx={sx}
+      PaperProps={{ style: paperPropsStyle }}
+      TransitionComponent={Transition}
+    >
+      {closeIcon && (
+        <DialogActions sx={dialogActionsStyle}>
+          <IconButton onClick={handleClose} sx={iconButtonStyle}>
+            <CloseIcon />
+          </IconButton>
+        </DialogActions>
+      )}
 
       <DialogTitle sx={dialogTitleStyle}>
         <Typography variant="caption" sx={typographyStyle}>

@@ -1,15 +1,20 @@
+import { User } from 'next-auth';
+import { signOut } from 'next-auth/react';
+
 import Badge from '@mui/material/Badge';
+import Divider from '@mui/material/Divider';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
 interface UserMenuProps {
+  user: User;
   anchorElUser: HTMLElement | null;
   setAnchorElUser: (anchor: HTMLElement | null) => void;
 }
 
 export default function UserMenu(props: UserMenuProps) {
-  const { anchorElUser, setAnchorElUser } = props;
+  const { user, anchorElUser, setAnchorElUser } = props;
 
   const open = Boolean(anchorElUser);
 
@@ -27,6 +32,13 @@ export default function UserMenu(props: UserMenuProps) {
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       PaperProps={{ style: { width: 220, marginTop: 16 } }}
     >
+      <Typography variant="body2" color="text.primary" sx={{ mx: 2, my: 1 }}>
+        {user.name}
+      </Typography>
+      <Typography variant="body2" color="text.primary" sx={{ mx: 2, my: 1, fontSize: 13 }}>
+        {user.email}
+      </Typography>
+      <Divider sx={{ mx: 2, my: 1 }} />
       <MenuItem>
         <Typography variant="body2" color="text.primary">
           Profil
@@ -46,6 +58,11 @@ export default function UserMenu(props: UserMenuProps) {
             },
           }}
         />
+      </MenuItem>
+      <MenuItem onClick={() => signOut()}>
+        <Typography variant="body2" color="text.primary">
+          Sign out
+        </Typography>
       </MenuItem>
     </Menu>
   );
