@@ -8,12 +8,14 @@ import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SendIcon from '@mui/icons-material/Send';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
+import { Box } from '@mui/material';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { SxProps } from '@mui/material/styles';
 
 import triggerAnalyticsEvent from '@/analytics/analytics';
 import ApplyIcon from '@/components/icons/ApplyIcon';
 import ChatIcon from '@/components/icons/ChatIcon';
+import CloseIcon from '@/components/icons/CloseIcon';
 import RecommendIcon from '@/components/icons/RecommendIcon';
 
 interface InteractionButtonProps extends ButtonProps {
@@ -21,6 +23,7 @@ interface InteractionButtonProps extends ButtonProps {
   projectName?: string;
   label?: string;
   onClick?: () => void;
+  onIconClick?: () => void;
   sx?: SxProps;
 }
 
@@ -35,11 +38,12 @@ export enum InteractionType {
   ADD_INSIGHTS = 'add-insights',
   APPLY = 'apply',
   RECOMMEND = 'recommend',
+  FEEDBACK = 'feedback',
   LOG_IN = 'log-in',
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
-  const { interactionType, label, onClick, sx, projectName } = props;
+  const { interactionType, label, onClick, onIconClick, sx, projectName } = props;
   const [isHovered, setIsHovered] = useState(false);
 
   const getInteractionIcon = () => {
@@ -56,6 +60,21 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.LOG_IN) return <PersonIcon fontSize="small" />;
   };
 
+  function handleIconClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (onIconClick) onIconClick();
+  }
+
+  const getEndIcon = () => {
+    if (interactionType === InteractionType.FEEDBACK) {
+      return (
+        <Box onClick={handleIconClick}>
+          <CloseIcon color="black" />
+        </Box>
+      );
+    }
+  };
+
   const getButtontext = () => {
     if (label) return label;
     if (interactionType === InteractionType.LIKE) return 'Like';
@@ -68,8 +87,10 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.ADD_INSIGHTS) return 'Teile Deine Erfahrung';
     if (interactionType === InteractionType.APPLY) return 'Ich bin dabei';
     if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
+    if (interactionType === InteractionType.FEEDBACK) return 'FEEDBACK';
     if (interactionType === InteractionType.LOG_IN) return 'Log in';
   };
+
   const handleClick = () => {
     triggerAnalyticsEvent(interactionType.toString(), projectName || 'unknown-project');
     if (onClick !== undefined) onClick();
@@ -82,6 +103,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
       onMouseLeave={() => setIsHovered(false)}
       variant="outlined"
       startIcon={getInteractionIcon()}
+      endIcon={getEndIcon()}
       sx={{
         mr: 1,
         px: getButtontext() === undefined ? 1 : 2,
