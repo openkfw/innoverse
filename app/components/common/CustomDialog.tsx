@@ -18,12 +18,15 @@ interface CustomDialogProps {
   open: boolean;
   handleClose?: () => void;
   title?: string;
+  subtitle?: string;
   closeIcon?: boolean;
   sx?: SxProps;
 }
 
 const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & { children?: React.ReactElement<any, any> },
+  props: TransitionProps & {
+    children?: React.ReactElement;
+  },
   ref: React.Ref<unknown>,
 ) {
   const { children, ...otherProps } = props;
@@ -34,7 +37,15 @@ const Transition = React.forwardRef(function Transition(
   ) : null;
 });
 
-const CustomDialog: FC<CustomDialogProps> = ({ children, open, handleClose, title, sx, closeIcon = true }) => {
+const CustomDialog: FC<CustomDialogProps> = ({
+  children,
+  open,
+  handleClose,
+  title,
+  subtitle,
+  sx,
+  closeIcon = true,
+}) => {
   return (
     <Dialog
       open={open}
@@ -42,6 +53,7 @@ const CustomDialog: FC<CustomDialogProps> = ({ children, open, handleClose, titl
       sx={sx}
       PaperProps={{ style: paperPropsStyle }}
       TransitionComponent={Transition}
+      maxWidth={false}
     >
       {closeIcon && (
         <DialogActions sx={dialogActionsStyle}>
@@ -52,8 +64,12 @@ const CustomDialog: FC<CustomDialogProps> = ({ children, open, handleClose, titl
       )}
 
       <DialogTitle sx={dialogTitleStyle}>
-        <Typography variant="caption" sx={typographyStyle}>
+        <Typography variant="caption" sx={titleStyles} component="div">
           {title}
+        </Typography>
+
+        <Typography variant="subtitle1" sx={subtitleStyles} component="div">
+          {subtitle}
         </Typography>
       </DialogTitle>
 
@@ -89,6 +105,8 @@ const dialogTitleStyle = {
   backgroundColor: 'white',
   borderTopLeftRadius: '16px',
   borderTopRightRadius: '16px',
+  border: 'none',
+  outline: 'none',
 };
 
 const dialogActionsStyle = {
@@ -103,9 +121,18 @@ const dialogContentStyle = {
   backgroundColor: 'white',
   borderBottomLeftRadius: '16px',
   borderBottomRightRadius: '16px',
+  border: 'none',
+  outline: 'none',
 };
 
-const typographyStyle = {
+const titleStyles = {
   textTransform: 'uppercase',
   color: 'primary.light',
+  marginTop: 1,
+};
+
+const subtitleStyles = {
+  color: 'text.primary',
+  fontWeight: '700',
+  marginTop: 1,
 };
