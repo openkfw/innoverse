@@ -2,6 +2,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Script from 'next/script';
+import { SessionProvider } from 'next-auth/react';
 
 import theme from '../styles/theme';
 
@@ -23,9 +24,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         data-website-id={`${process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}`}
       />
       <body>
-        <SWRProvider>
-          <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
-        </SWRProvider>
+        <SessionProvider>
+          <SWRProvider>
+            <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+          </SWRProvider>
+        </SessionProvider>
       </body>
     </html>
   );
