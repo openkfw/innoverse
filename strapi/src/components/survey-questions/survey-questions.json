@@ -1,18 +1,18 @@
 {
   "collectionName": "components_survey_questions_survey_questions",
   "info": {
-    "displayName": "surveyQuestions",
-    "description": ""
+    "displayName": "surveyQuestions"
   },
   "options": {},
   "attributes": {
     "question": {
-      "type": "string",
+      "type": "text",
       "required": true
     },
     "votes": {
-      "type": "integer",
-      "required": true
+      "type": "biginteger",
+      "required": true,
+      "default": "0"
     },
     "responseOptions": {
       "type": "json",

@@ -27,10 +27,10 @@ const SliderPill = (props: {
   active: boolean;
   itemNumber: string;
   title: string;
-  projectFrom: string;
-  projectTo: string;
+  projectStart: string;
+  projectEnd: string;
 }) => {
-  const { active, itemNumber, title, projectFrom, projectTo } = props;
+  const { active, itemNumber, title, projectStart, projectEnd } = props;
 
   const styles = {
     elementWrap: {
@@ -41,6 +41,7 @@ const SliderPill = (props: {
       paddingBottom: '1px',
       display: 'flex',
       alignItems: 'center',
+      height: '100%',
     },
     itemNumberLable: {
       color: 'white',
@@ -51,17 +52,23 @@ const SliderPill = (props: {
     container: {
       marginLeft: '25px',
     },
+    activeContainer: {
+      position: 'relative',
+    },
     vr: {
       borderLeft: '1px solid white',
-      height: '70px',
-      marginLeft: '55%',
+      position: 'absolute',
+      height: '100px',
+      marginLeft: '50%',
+      marginTop: '-100px',
+      zIndex: 0,
     },
   };
 
   return (
     <>
       {active ? (
-        <Stack>
+        <Stack sx={styles.activeContainer}>
           <Box sx={styles.vr} />
           <Stack direction="row" sx={styles.container}>
             <Stack>
@@ -72,12 +79,12 @@ const SliderPill = (props: {
               </Box>
               <Box sx={styles.elementWrap}>
                 <Typography variant="overline" sx={styles.itemNumberLable} noWrap>
-                  {projectFrom} - {projectTo}
+                  {projectStart} - {projectEnd}
                 </Typography>
               </Box>
             </Stack>
             <Box sx={styles.elementWrap}>
-              <Typography variant="h4" noWrap>
+              <Typography variant="h4" sx={{ wordWrap: 'break-word' }}>
                 {title}
               </Typography>
             </Box>
@@ -91,7 +98,7 @@ const SliderPill = (props: {
             </Typography>
           </Box>
           <Box sx={styles.elementWrap}>
-            <Typography variant="h6" noWrap>
+            <Typography variant="h6" sx={{ wordWrap: 'break-word' }}>
               {title}
             </Typography>
           </Box>
@@ -105,7 +112,7 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   //TODO: move css from FeatureProjectSlider.css here...
   const [selectedItem, setSelectedItem] = useState<number>(props.items.length - 1);
   const slides = props.items;
-  console.log('slides', slides);
+
   return (
     <Carousel
       className={'main-carousel'}
@@ -129,23 +136,16 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
             <Image
               unoptimized
               src={el.image}
+              width={0}
+              height={0}
               alt="Project"
               sizes="50vw"
-              width={'100'}
-              height={'100'}
-              style={{
-                width: '100%',
-                height: 'auto',
-              }}
+              style={{ width: '100%', height: '450px' }}
             />
           </Grid>
           {/*// todo - temporarily hide content for smaller screens - awaiting design*/}
           <Grid item xs={6} md={4} sx={{ [theme.breakpoints.down('sm')]: { display: 'none' } }}>
-            <FeaturedProjectContent
-              title={el.title}
-              tags={el.description.tags.tags}
-              description={el.description.text}
-            />
+            <FeaturedProjectContent title={el.description.title} tags={el.description.tags} summary={el.summary} />
           </Grid>
         </Grid>
       ))}
@@ -153,8 +153,9 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   );
 };
 
-const FeaturedProjectContent = (props: { title: string; tags: string[]; description: string }) => {
-  const { title, tags, description } = props;
+const FeaturedProjectContent = (props: { title: string; tags: string[]; summary: string }) => {
+  const { title, tags, summary } = props;
+  console.log('title', title, summary);
 
   return (
     <Box sx={{ textAlign: 'left' }}>
@@ -180,7 +181,7 @@ const FeaturedProjectContent = (props: { title: string; tags: string[]; descript
         </List>
       </Box>
       <Typography variant="body1" sx={{ marginLeft: 6 / 8, marginTop: 3 }}>
-        {description}
+        {summary}
       </Typography>
     </Box>
   );
@@ -220,8 +221,8 @@ const renderIndicator = (
           active={isSelected}
           itemNumber={(index + 1).toString()}
           title={slides[index].title || ''}
-          projectFrom={slides[index].projectStart || ''}
-          projectTo={slides[index].projectEnd || 'Present'}
+          projectStart={slides[index].projectStart || ''}
+          projectEnd={slides[index].projectEnd || 'Present'}
         />
       </Box>
     </>

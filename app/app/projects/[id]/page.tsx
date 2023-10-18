@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 
+import { Project, ProjectByIdQueryResult } from '@/common/types';
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/project-details/HeroSection';
@@ -28,11 +29,13 @@ async function getData(id: string) {
       }),
       next: { revalidate: 60 * 2 },
     });
-    //TODO: ONE QUERY should fetch all the main page data
-    const resultProjects = withResponseTransformer(STRAPI_QUERY.GetProjectByIdQuery, await requestProjects.json());
+    const resultProjects = withResponseTransformer(
+      STRAPI_QUERY.GetProjectById,
+      await requestProjects.json(),
+    ) as ProjectByIdQueryResult;
 
     return {
-      project: resultProjects?.project,
+      project: resultProjects.project,
     };
   } catch (err) {
     console.info(err);
@@ -40,7 +43,7 @@ async function getData(id: string) {
 }
 
 function ProjectPage({ params }: { params: { id: string } }) {
-  const [project, setProject] = useState<any>();
+  const [project, setProject] = useState<Project>();
 
   useEffect(() => {
     const getProject = async () => {
@@ -62,7 +65,7 @@ function ProjectPage({ params }: { params: { id: string } }) {
           <Container maxWidth="lg" sx={{ pb: 5 }}>
             <BreadcrumbsNav />
             <HeroSection
-              title={project.title}
+              title={project.description.title}
               avatar={project.author.avatar}
               author={project.author.name}
               role={project.author.role}
@@ -78,7 +81,7 @@ function ProjectPage({ params }: { params: { id: string } }) {
               updates={project.updates}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              projectName={project.tite}
+              projectName={project.title}
             />
           </Box>
         </Stack>

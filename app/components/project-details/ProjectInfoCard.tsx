@@ -72,7 +72,6 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
                     <UpdateCard update={update} />
                   </Grid>
                 ))}
-                ;
               </Grid>
             </Grid>
           </Grid>

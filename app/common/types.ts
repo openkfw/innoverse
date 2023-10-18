@@ -1,6 +1,6 @@
 import { StaticImageData } from 'next/image';
 
-export type Person = {
+export type User = {
   name: string;
   role: string;
   avatar: StaticImageData;
@@ -12,13 +12,13 @@ export type Person = {
 export type ProjectUpdateMock = {
   headline: string;
   text: string;
-  requiredBy: Person[];
+  requiredBy: User[];
   comments: CommentType[];
 };
 
 export type CommentType = {
-  id: number;
-  author: Person;
+  id: string;
+  author: User;
   comment: string;
   upvotes?: number;
   downvotes?: number;
@@ -31,7 +31,7 @@ export type ProjectColaborationMock = {
 
 export type SurveyQuestion = {
   question: string;
-  responseOptions: { options: string[] };
+  responseOptions: string[];
   votes: number;
 };
 
@@ -66,8 +66,10 @@ export type ProjectCollaboration = {
 };
 
 export type Project = {
+  id: string;
   title: string;
   featured: boolean;
+  status: PROJECT_PROGRESS;
   image: string;
   summary: string;
   projectStart: string;
@@ -76,36 +78,36 @@ export type Project = {
   likes: number;
   followers: number;
   projectName: string;
-  team: Person[];
+  team: User[];
   updates: ProjectUpdate[];
   description: ProjectDescription;
   questions: ProjectQuestion[];
   surveyQuestions: SurveyQuestion[];
+  author: User;
 };
 
 export type ProjectDescription = {
   text: string;
   title: string;
   summary: string;
-  author: Person;
-  tags: Tags;
-};
-
-export type Tags = {
+  author: User;
   tags: string[];
 };
 
 export type ProjectQuestion = {
   headline: string;
   text: string;
-  authors: Person[];
+  authors: User[];
 };
 
 export type ProjectUpdate = {
-  author: Person;
+  id: string;
+  title: string;
+  author: User;
   comment: string;
   theme: string;
   date: string;
+  projectStart?: boolean;
 };
 
 export type PersonInfo = {
@@ -147,15 +149,17 @@ export type ProjectsProgression = {
   projects: ProjectProgression[];
 };
 
-export type UpdateContent = {
-  id: number;
-  author: Person;
-  date: string;
-  comment: string;
-  projectStart?: boolean;
+export type ProjectsQueryResult = {
+  projects: any;
+  updates: any;
 };
 
-export type Update = {
-  projectId: number;
-  updates: UpdateContent[];
+export type ProjectByIdQueryResult = {
+  project: any;
+};
+
+export type MainPageData = {
+  sliderContent: Project[];
+  projects: Project[];
+  updates: ProjectUpdate[];
 };

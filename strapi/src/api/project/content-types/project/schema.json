@@ -19,7 +19,7 @@
     "featured": {
       "type": "boolean",
       "required": true,
-      "default": true
+      "default": false
     },
     "image": {
       "type": "media",
@@ -27,7 +27,9 @@
       "required": true,
       "allowedTypes": [
         "images",
-        "files"
+        "files",
+        "videos",
+        "audios"
       ]
     },
     "status": {
@@ -37,7 +39,8 @@
         "Konzeption",
         "Proof of Concept"
       ],
-      "required": true
+      "required": true,
+      "default": "Exploration"
     },
     "author": {
       "displayName": "author",
@@ -55,8 +58,7 @@
       "required": true
     },
     "projectEnd": {
-      "type": "string",
-      "required": false
+      "type": "string"
     },
     "description": {
       "displayName": "Description",
@@ -69,8 +71,13 @@
       "displayName": "update",
       "type": "component",
       "repeatable": true,
-      "component": "update.update",
-      "required": false
+      "component": "update.update"
+    },
+    "questions": {
+      "displayName": "collaboration",
+      "type": "component",
+      "repeatable": true,
+      "component": "collaboration.collaboration"
     },
     "team": {
       "type": "component",
@@ -78,31 +85,23 @@
       "component": "user.author",
       "required": true
     },
-    "collaboration": {
-      "displayName": "collaboration",
+    "jobs": {
+      "displayName": "jobs",
       "type": "component",
       "repeatable": true,
-      "component": "collaboration.collaboration",
+      "component": "jobs.jobs",
       "required": false
-    },
-    "questions": {
-      "displayName": "questions",
-      "type": "component",
-      "repeatable": true,
-      "component": "questions.questions"
     },
     "surveyQuestions": {
       "displayName": "surveyQuestions",
       "type": "component",
       "repeatable": true,
-      "component": "survey-questions.survey-questions",
-      "required": false
+      "component": "survey-questions.survey-questions"
     },
-    "jobs": {
-      "displayName": "jobs",
+    "collaboration": {
       "type": "component",
       "repeatable": true,
-      "component": "jobs.jobs"
+      "component": "collaboration.collaboration"
     }
   }
 }

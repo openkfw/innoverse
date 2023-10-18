@@ -3,17 +3,17 @@
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
+import { ProjectUpdate } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
-import { NewsSlider } from '@/repository/mock/landing/news-section';
 import theme from '@/styles/theme';
 
 import NewsCarousel from './NewsCarousel';
 
-type NewsSectionProps = {
-  updates: NewsSlider[];
+type NewsProps = {
+  updates: ProjectUpdate[];
 };
 
-export const NewsSection = (props: NewsSectionProps) => {
+export const NewsSection = (props: NewsProps) => {
   return (
     <Grid container spacing={5} sx={wrapperStyles}>
       <Grid item container xs={12} sx={titleContainerStyles}>

@@ -6,8 +6,8 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { ProjectUpdate } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
-import { NewsSlider } from '@/repository/mock/landing/news-section';
 import theme from '@/styles/theme';
 
 import ArrowControllers from '../../landing/projectSection/ArrowControllers';
@@ -18,7 +18,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 
 type NewsSliderProps = {
-  updates: NewsSlider[];
+  updates: ProjectUpdate[];
 };
 
 export default function NewsCarousel(props: NewsSliderProps) {

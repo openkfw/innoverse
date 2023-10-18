@@ -1,4 +1,4 @@
-import { PROJECT_PROGRESS, Update } from '@/common/types';
+import { PROJECT_PROGRESS } from '@/common/types';
 
 import GenerativeAI from './projects/GenerativeAI.md';
 
@@ -512,7 +512,7 @@ export const project_colaboration: any = {
   ],
 };
 
-export const project_updates: Update[] = [
+export const project_updates: any[] = [
   {
     projectId: 1,
     updates: [

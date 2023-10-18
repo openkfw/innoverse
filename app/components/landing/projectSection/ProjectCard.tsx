@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 
 import { CardActionArea, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -13,32 +13,30 @@ import VisibleContributors from '@/components/project-details/VisibleContributor
 import theme from '@/styles/theme';
 
 interface ProjectCardProps {
-  id: number;
-  img: StaticImageData;
+  id: string;
+  img: string;
   contributors: { name: string }[];
   title: string;
-  description: string;
+  summary: string;
   status: string;
 }
 
 export default function ProjectCard(props: ProjectCardProps) {
-  const { id, img, contributors, title, description, status } = props;
+  const { id, img, contributors, title, summary, status } = props;
 
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
-    <Card sx={{ ...cardStyles, height: isWideScreen ? 473 : 440 }}>
+    <Card sx={{ ...cardStyles, height: isWideScreen ? 490 : 440 }}>
       <CardActionArea href={`/projects/${encodeURIComponent(id)}`}>
         <CardMedia sx={{ height: isWideScreen ? 237 : 175, borderRadius: '8px' }}>
           <Image
             unoptimized
             src={img}
             width={isWideScreen ? 418 : 500}
-            height={isWideScreen ? 237 : 175}
+            height={isWideScreen ? 245 : 175}
             alt="project"
-            layout={isWideScreen ? 'intrinsic' : 'responsive'}
             style={{
-              objectFit: 'cover',
               margin: isWideScreen ? '24px' : '0px',
               padding: isWideScreen ? '0px' : '24px',
               borderRadius: '8px',
@@ -56,11 +54,11 @@ export default function ProjectCard(props: ProjectCardProps) {
 
             {isWideScreen ? (
               <Typography variant="subtitle1" sx={{ ...descriptionStyles, WebkitLineClamp: title.length > 50 ? 1 : 2 }}>
-                {description}
+                {summary}
               </Typography>
             ) : (
               <Typography variant="subtitle1" sx={{ ...descriptionStyles, WebkitLineClamp: title.length > 20 ? 2 : 3 }}>
-                {description}
+                {summary}
               </Typography>
             )}
 

@@ -1,74 +1,15 @@
 export enum STRAPI_QUERY {
-  StaticBuildGetFeaturedSliderItemsQuery,
-  StaticBuildGetProjectIds,
-  StaticBuildFetchProjectIds,
-  GetProjectsSummaryQuery,
-  GetProjectByIdQuery,
-  GetFeaturedProjectsQuery,
+  GetProjects,
+  GetProjectById,
 }
 
-export const StaticBuildGetFeaturedSliderItemsQuery = `query GetFeaturedSliderItems {
-  items {
-    data {
-      id,
-      attributes {
-        title,
-        text{
-          title,
-          description,
-          tags
-        }
-        image{
-          sliderImage{
-            data{
-              attributes{
-                url,
-              }
-            }
-          }
-          projectTo
-          projectFrom
-          year
-        }
-      }
-    }
-  }
-}`;
-
-export const StaticBuildGetProjectIdsQuery = `query GetFeaturedSliderItems {
-  items {
-    data {
-      id,
-      attributes {
-        title,
-        text{
-          title,
-          description,
-          tags
-        }
-        image{
-          sliderImage{
-            data{
-              attributes{
-                url,
-              }
-            }
-          }
-          projectTo
-          projectFrom
-          year
-        }
-      }
-    }
-  }
-}`;
-
-export const GetFeaturedProjectsQuery = `query GetProjectSummary {
-  projects(filters: {featured: {eq : true}}){
+export const GetProjectsQuery = `query GetProjects {
+  projects(sort: "id:asc") {
     data {
       id
       attributes {
         title
+        featured
         summary
         projectStart
         projectEnd
@@ -80,53 +21,14 @@ export const GetFeaturedProjectsQuery = `query GetProjectSummary {
             }
           }
         }
+        team {
+          name
+        }
         description {
           title
           summary
           text
           tags
-        }
-        team {
-          name
-        }
-        updates {
-          date
-          comment
-          theme
-          author {
-            name
-            avatar {
-              data {
-                attributes {
-                  url
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-`;
-
-export const GetProjectsSummaryQuery = `query GetProjectSummary {
-  projects {
-    data {
-      id
-      attributes {
-        title
-        summary
-        status
-        image {
-          data {
-            attributes {
-              url
-            }
-          }
-        }
-        team {
-          name
         }
         updates {
           date
@@ -229,8 +131,8 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
          description
        }
        questions {
-        headline
-        text
+        title
+        description
         authors {
           name
           role
@@ -260,62 +162,24 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
 
 export const withResponseTransformer = (query: STRAPI_QUERY, data: unknown) => {
   switch (query) {
-    case STRAPI_QUERY.GetFeaturedProjectsQuery:
-      return getStaticBuildFetchFeaturedProjectSummary(data);
-    case STRAPI_QUERY.StaticBuildFetchProjectIds:
-      return getStaticBuildFetchProjectIds(data);
-    case STRAPI_QUERY.GetProjectsSummaryQuery:
-      return getStaticBuildFetchProjectSummary(data);
-    case STRAPI_QUERY.GetProjectByIdQuery:
+    case STRAPI_QUERY.GetProjects:
+      return getStaticBuildFetchProjects(data);
+    case STRAPI_QUERY.GetProjectById:
       return getStaticBuildFetchProjectById(data);
     default:
       break;
   }
 };
 
-// function getStaticBuildFeaturedSliderItemsTransformer(graphqlResponse: any) {
-//   return {
-//     pages: [1, 2, 3, 4],
-//   };
-// }
-
-function getStaticBuildFetchProjectIds(graphqlResponse: any) {
-  const formattedItems = graphqlResponse.data.items.data.map((item: any) => {
-    const {
-      title,
-      text: { description, tags },
-      image: { sliderImage, projectTo, projectFrom, year },
-    } = item.attributes;
-
-    return {
-      image: {
-        image: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${sliderImage.data.attributes.url}`,
-        title: title,
-        projectFrom,
-        projectTo,
-        year,
-      },
-      text: {
-        title,
-        tags: tags.tags,
-        description: description,
-      },
-    };
-  });
-
-  return {
-    items: formattedItems,
-  };
-}
-
-function getStaticBuildFetchProjectSummary(graphqlResponse: any) {
-  const formattedUpdates: any[] = [];
+function getStaticBuildFetchProjects(graphqlResponse: any) {
+  const formattedUpdates: any = [];
   const formattedProjects = graphqlResponse.data.projects.data.map((project: any) => {
-    const { title, summary, image, status, team, updates } = project.attributes;
+    const { title, featured, projectStart, projectEnd, summary, image, status, team, updates, description } =
+      project.attributes;
 
     const formattedUpdate = updates.map((u: any) => {
       return {
-        title,
+        title: description.title,
         comment: u.comment,
         date: u.date,
         theme: u.theme,
@@ -329,37 +193,23 @@ function getStaticBuildFetchProjectSummary(graphqlResponse: any) {
     formattedUpdates.push(...formattedUpdate);
     return {
       id: project.id,
+      featured,
+      projectStart,
+      projectEnd,
       title,
       summary,
       status,
       team,
+      description: {
+        ...description,
+        tags: description.tags.tags,
+      },
       image: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
     };
   });
   return {
     projects: formattedProjects,
     updates: formattedUpdates,
-  };
-}
-
-function getStaticBuildFetchFeaturedProjectSummary(graphqlResponse: any) {
-  const formattedProjects = graphqlResponse.data.projects.data.map((project: any) => {
-    const { title, summary, projectStart, projectEnd, image, status, team, description } = project.attributes;
-
-    return {
-      id: project.id,
-      title,
-      summary,
-      projectStart,
-      projectEnd,
-      status,
-      team,
-      description,
-      image: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
-    };
-  });
-  return {
-    projects: formattedProjects,
   };
 }
 
@@ -411,7 +261,7 @@ function getStaticBuildFetchProjectById(graphqlResponse: any) {
   const formattedQuestions = questions.map((q: any) => {
     return {
       ...q,
-      author: q.authors.map((a: any) => {
+      authors: q.authors.map((a: any) => {
         return {
           ...a,
           avatar: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.avatar.data.attributes.url}`,
@@ -422,11 +272,19 @@ function getStaticBuildFetchProjectById(graphqlResponse: any) {
 
   const formattedDescription = {
     ...description,
+    tags: description.tags.tags,
     author: {
       ...description.author,
       avatar: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${description.author.avatar.data.attributes.url}`,
     },
   };
+
+  const formattedSurveyQuestions = surveyQuestions.map((q: any) => {
+    return {
+      ...q,
+      responseOptions: q.responseOptions.responseOptions,
+    };
+  });
 
   return {
     project: {
@@ -437,8 +295,8 @@ function getStaticBuildFetchProjectById(graphqlResponse: any) {
       projectStart,
       projectEnd,
       collaboration,
-      surveyQuestions,
       jobs,
+      surveyQuestions: formattedSurveyQuestions,
       description: formattedDescription,
       author: formattedAuthor,
       team: formattedTeam,

@@ -2,13 +2,13 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { UpdateContent } from '@/common/types';
+import { ProjectUpdate } from '@/common/types';
 
 import { CommentCard } from './comments/CommentCard';
 import { DateField } from './DateField';
 
 interface UpdateCardProps {
-  content: UpdateContent;
+  content: ProjectUpdate;
   divider: boolean;
 }
 

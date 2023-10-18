@@ -6,15 +6,15 @@
   "options": {},
   "attributes": {
     "title": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "description": {
-      "type": "string",
+      "type": "text",
       "required": true
     },
     "email": {
-      "type": "email"
+      "type": "email",
+      "required": true
     }
   }
 }

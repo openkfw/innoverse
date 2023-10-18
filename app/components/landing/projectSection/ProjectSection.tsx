@@ -3,13 +3,14 @@
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
+import { Project } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
 import theme from '@/styles/theme';
 
 import ProjectCarousel from './ProjectCarousel';
 
 export type ProjectProps = {
-  projects: any[]; //todo
+  projects: Project[];
 };
 
 export const ProjectSection = (props: ProjectProps) => {

@@ -9,7 +9,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import triggerAnalyticsEvent from '@/analytics/analytics';
-import { Project, UpdateContent } from '@/common/types';
+import { Project, ProjectUpdate } from '@/common/types';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
 import { UpdatesTab } from '../updates/UpdatesTab';
@@ -65,7 +65,7 @@ const CustomTab = styled((props: TabProps) => <Tab disableRipple {...props} />)(
 }));
 
 interface BasicTabsProps {
-  updates: UpdateContent[];
+  updates: ProjectUpdate[];
   project: Project;
   activeTab: number;
   setActiveTab: (tab: number) => void;

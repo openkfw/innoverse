@@ -6,17 +6,13 @@ import Image from 'next/image';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
+import { MainPageData, Project, ProjectsQueryResult } from '@/common/types';
 import { FeaturedProjectSlider } from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
 import { BackgroundArrows } from '@/components/landing/newsSection/BackgroundArrows';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
 import theme from '@/styles/theme';
-import {
-  GetFeaturedProjectsQuery,
-  GetProjectsSummaryQuery,
-  STRAPI_QUERY,
-  withResponseTransformer,
-} from '@/utils/queries';
+import { GetProjectsQuery, STRAPI_QUERY, withResponseTransformer } from '@/utils/queries';
 
 import { MappingProjectsCard } from '../components/landing/mappingProjectsSection/MappingProjectsCard';
 import Layout from '../components/layout/Layout';
@@ -27,22 +23,8 @@ async function getData() {
   // As this is the "Main" Page no ISR here. Fetch data from Endpoint via fetch
   // Revalidate the cache every 2 mins.
   // Use fetch here as we want to revalidate the data from the CMS.
-  // As the page is not staticaly genereate and no ISR is used here fetch is required
+  // As the page is not staticaly generated and no ISR is used here fetch is required
   try {
-    const request = await fetch(process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT || '', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // Authentication: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
-      },
-      body: JSON.stringify({
-        query: GetFeaturedProjectsQuery,
-      }),
-      next: { revalidate: 60 * 2 },
-    });
-    //TODO: ONE QUERY should fetch all the main page data
-    const result = withResponseTransformer(STRAPI_QUERY.GetFeaturedProjectsQuery, await request.json());
-
     const requestProjects = await fetch(process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT || '', {
       method: 'POST',
       headers: {
@@ -50,17 +32,23 @@ async function getData() {
         // Authentication: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
       body: JSON.stringify({
-        query: GetProjectsSummaryQuery,
+        query: GetProjectsQuery,
       }),
       next: { revalidate: 60 * 2 },
     });
-    //TODO: ONE QUERY should fetch all the main page data
-    const resultProjects = withResponseTransformer(STRAPI_QUERY.GetProjectsSummaryQuery, await requestProjects.json());
-    console.log('resultProjects', result);
+
+    const result = withResponseTransformer(
+      STRAPI_QUERY.GetProjects,
+      await requestProjects.json(),
+    ) as ProjectsQueryResult;
+
+    // Filter projects which are featured in the main slider
+    const featuredProjects = result.projects.filter((project: Project) => project.featured == true) as Project[];
+
     return {
-      sliderContent: result?.projects,
-      projects: resultProjects?.projects,
-      updates: resultProjects?.updates,
+      sliderContent: featuredProjects,
+      projects: result.projects,
+      updates: result.updates,
     };
   } catch (err) {
     console.info(err);
@@ -68,7 +56,7 @@ async function getData() {
 }
 
 function IndexPage() {
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState<MainPageData>();
 
   useEffect(() => {
     const getProject = async () => {
@@ -84,8 +72,6 @@ function IndexPage() {
   const sliderContent = data?.sliderContent;
   const projects = data?.projects;
   const updates = data?.updates;
-
-  console.log('sliderContent', sliderContent);
 
   if (!sliderContent || !projects || !updates) {
     return <></>;

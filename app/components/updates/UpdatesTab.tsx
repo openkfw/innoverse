@@ -3,13 +3,13 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 
-import { UpdateContent } from '@/common/types';
+import { ProjectUpdate } from '@/common/types';
 
 import { UpdateCard } from './UpdateCard';
 import { YearField } from './YearField';
 
 interface UpdatesTabProps {
-  updates: UpdateContent[];
+  updates: ProjectUpdate[];
 }
 
 function getYear(date: string) {
@@ -30,10 +30,10 @@ export const UpdatesTab = (props: UpdatesTabProps) => {
     return updates
       .map((update) => {
         if (getYear(update.date) == uniqueYear) {
-          return update as UpdateContent;
+          return update as ProjectUpdate;
         }
       })
-      .filter((item) => item) as UpdateContent[];
+      .filter((item) => item) as ProjectUpdate[];
   });
 
   return (

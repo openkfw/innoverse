@@ -20,12 +20,13 @@
       "required": true,
       "allowedTypes": [
         "images",
-        "files"
+        "files",
+        "videos",
+        "audios"
       ]
     },
     "department": {
-      "type": "string",
-      "required": false
+      "type": "string"
     }
   }
 }

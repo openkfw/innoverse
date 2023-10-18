@@ -13,14 +13,15 @@
     "author": {
       "type": "component",
       "repeatable": false,
-      "component": "user.author",
-      "required": true
+      "component": "user.author"
     },
     "tags": {
-      "type": "json"
+      "type": "json",
+      "required": true
     },
     "title": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "summary": {
       "type": "string",

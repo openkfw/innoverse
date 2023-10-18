@@ -6,8 +6,8 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { Project } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
-import { ProjectCarouselItem } from '@/repository/mock/landing/project-section';
 import theme from '@/styles/theme';
 
 import ArrowControllers from './ArrowControllers';
@@ -20,7 +20,7 @@ import 'slick-carousel/slick/slick.css';
 export default function ProjectCarousel(props: ProjectProps) {
   const { projects } = props;
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [slides] = useState<ProjectCarouselItem[]>(projects);
+  const [slides] = useState<Project[]>(projects);
   const sliderRef = useRef<Slider>(null);
 
   const handleMouseDown = (e: { pageX: number }) => {
@@ -71,8 +71,8 @@ export default function ProjectCarousel(props: ProjectProps) {
                   id={item.id}
                   img={item.image}
                   contributors={item.team}
-                  title={item.title}
-                  description={item.summary}
+                  title={item.description.title}
+                  summary={item.summary}
                   status={item.status}
                 />
               </Grid>
