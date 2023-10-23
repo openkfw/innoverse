@@ -27,16 +27,18 @@ export default function ProjectCard(props: ProjectCardProps) {
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
-    <Card sx={{ ...cardStyles, height: isWideScreen ? 490 : 440 }}>
+    <Card sx={{ ...cardStyles, height: isWideScreen ? 473 : 440 }}>
       <CardActionArea href={`/projects/${encodeURIComponent(id)}`}>
         <CardMedia sx={{ height: isWideScreen ? 237 : 175, borderRadius: '8px' }}>
           <Image
             unoptimized
             src={img}
             width={isWideScreen ? 418 : 500}
-            height={isWideScreen ? 245 : 175}
+            height={isWideScreen ? 237 : 175}
             alt="project"
+            layout={isWideScreen ? 'intrinsic' : 'responsive'}
             style={{
+              objectFit: 'cover',
               margin: isWideScreen ? '24px' : '0px',
               padding: isWideScreen ? '0px' : '24px',
               borderRadius: '8px',

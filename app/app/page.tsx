@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 
 import { MainPageData, Project, ProjectsQueryResult } from '@/common/types';
 import { FeaturedProjectSlider } from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
+import FeedbackSection from '@/components/landing/feedbackSection/FeedbackSection';
 import { BackgroundArrows } from '@/components/landing/newsSection/BackgroundArrows';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
@@ -81,6 +82,10 @@ function IndexPage() {
       <Stack spacing={8} useFlexGap>
         <Box sx={featuredProjectSliderStyles}>
           <FeaturedProjectSlider items={sliderContent} />
+        </Box>
+
+        <Box sx={feedbackSectionStyles}>
+          <FeedbackSection />
         </Box>
 
         <div style={{ position: 'relative' }}>
@@ -176,4 +181,13 @@ const projectSectionStyles = {
 const mappingProjectsCardStyles = {
   position: 'relative',
   overflowX: 'hidden',
+};
+
+// todo - awaiting design for sm screens
+const feedbackSectionStyles = {
+  width: '100%',
+  marginTop: '-100px',
+  paddingRight: '32px',
+  display: 'flex',
+  justifyContent: 'flex-end',
 };

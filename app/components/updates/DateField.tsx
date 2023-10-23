@@ -13,23 +13,30 @@ interface DateFieldProps {
 export const DateField = ({ date, divider }: DateFieldProps) => {
   return (
     <Stack display="flex" justifyContent="flex-start" alignItems="center">
-      <Box
-        sx={{
-          p: 1,
-          border: '1px solid',
-          borderColor: 'primary.main',
-          borderRadius: '8px',
-          width: 170,
-          textAlign: 'center',
-        }}
-      >
+      <Box sx={wrapperStyles}>
         <Typography variant="h5" color="text.primary">
           {date}
         </Typography>
       </Box>
-      {divider && (
-        <Divider color={theme.palette.primary.light} orientation="vertical" sx={{ width: '1px', height: 112 }} />
-      )}
+      {divider && <Divider color={theme.palette.primary.light} orientation="vertical" sx={dividerStyles} />}
     </Stack>
   );
+};
+
+// Date Field Styles
+const wrapperStyles = {
+  border: '1px solid',
+  borderColor: 'primary.main',
+  borderRadius: '8px',
+  width: 170,
+  height: 64,
+  textAlign: 'center',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+};
+
+const dividerStyles = {
+  width: '1px',
+  height: 112,
 };

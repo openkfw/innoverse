@@ -1,24 +1,32 @@
 import { FC, ReactNode } from 'react';
 import React from 'react';
 
-import { DialogActions, IconButton, Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
 import Slide from '@mui/material/Slide';
+import { SxProps } from '@mui/material/styles';
 import { TransitionProps } from '@mui/material/transitions';
+import Typography from '@mui/material/Typography';
 
 import CloseIcon from '@/components/icons/CloseIcon';
 
 interface CustomDialogProps {
   children: ReactNode;
   open: boolean;
-  handleClose: () => void;
+  handleClose?: () => void;
   title?: string;
+  subtitle?: string;
+  closeIcon?: boolean;
+  sx?: SxProps;
 }
 
 const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & { children?: React.ReactElement<any, any> },
+  props: TransitionProps & {
+    children?: React.ReactElement;
+  },
   ref: React.Ref<unknown>,
 ) {
   const { children, ...otherProps } = props;
@@ -29,18 +37,39 @@ const Transition = React.forwardRef(function Transition(
   ) : null;
 });
 
-const CustomDialog: FC<CustomDialogProps> = ({ children, open, handleClose, title }) => {
+const CustomDialog: FC<CustomDialogProps> = ({
+  children,
+  open,
+  handleClose,
+  title,
+  subtitle,
+  sx,
+  closeIcon = true,
+}) => {
   return (
-    <Dialog open={open} onClose={handleClose} PaperProps={{ style: paperPropsStyle }} TransitionComponent={Transition}>
-      <DialogActions sx={dialogActionsStyle}>
-        <IconButton onClick={handleClose} sx={iconButtonStyle}>
-          <CloseIcon />
-        </IconButton>
-      </DialogActions>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      sx={sx}
+      PaperProps={{ style: paperPropsStyle }}
+      TransitionComponent={Transition}
+      maxWidth={false}
+    >
+      {closeIcon && (
+        <DialogActions sx={dialogActionsStyle}>
+          <IconButton onClick={handleClose} sx={iconButtonStyle}>
+            <CloseIcon />
+          </IconButton>
+        </DialogActions>
+      )}
 
       <DialogTitle sx={dialogTitleStyle}>
-        <Typography variant="caption" sx={typographyStyle}>
+        <Typography variant="caption" sx={titleStyles} component="div">
           {title}
+        </Typography>
+
+        <Typography variant="subtitle1" sx={subtitleStyles} component="div">
+          {subtitle}
         </Typography>
       </DialogTitle>
 
@@ -76,6 +105,8 @@ const dialogTitleStyle = {
   backgroundColor: 'white',
   borderTopLeftRadius: '16px',
   borderTopRightRadius: '16px',
+  border: 'none',
+  outline: 'none',
 };
 
 const dialogActionsStyle = {
@@ -90,9 +121,18 @@ const dialogContentStyle = {
   backgroundColor: 'white',
   borderBottomLeftRadius: '16px',
   borderBottomRightRadius: '16px',
+  border: 'none',
+  outline: 'none',
 };
 
-const typographyStyle = {
+const titleStyles = {
   textTransform: 'uppercase',
   color: 'primary.light',
+  marginTop: 1,
+};
+
+const subtitleStyles = {
+  color: 'text.primary',
+  fontWeight: '700',
+  marginTop: 1,
 };

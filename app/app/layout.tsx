@@ -2,10 +2,12 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Script from 'next/script';
+import { SessionProvider } from 'next-auth/react';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 import theme from '../styles/theme';
 
+import { SWRProvider } from './swr-provider';
 import ThemeRegistry from './ThemeRegistry';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,7 +31,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       />
       <body>
         <ApolloProvider client={client}>
-          <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+          <SessionProvider>
+            <SWRProvider>
+              <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+            </SWRProvider>
+          </SessionProvider>
         </ApolloProvider>
       </body>
     </html>

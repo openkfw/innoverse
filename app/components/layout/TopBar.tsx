@@ -1,43 +1,25 @@
-'use client';
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 import AppBar from '@mui/material/AppBar';
-import Avatar from '@mui/material/Avatar';
-import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 import theme from '@/styles/theme';
 
-import UserMenu from './UserMenu';
+import LoggedInMenu from './LoggedInMenu';
 
-import avatarMaxImg from '/public/images/avatarMax.png';
 import logo from '/public/images/logo.svg';
 
 const pages = ['Projekte', 'Artikel', 'Backstage'];
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  '& .MuiBadge-badge': {
-    backgroundColor: theme.palette.secondary.main,
-    color: theme.palette.secondary.main,
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-  },
-}));
-
 export default function TopBar() {
-  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
+  const { data: session } = useSession();
 
   const menuItemStyle = {
     borderRadius: '8px',
@@ -97,15 +79,8 @@ export default function TopBar() {
                   <Typography variant="body2">{page}</Typography>
                 </MenuItem>
               ))}
-              <IconButton sx={menuItemStyle} onClick={handleOpenUserMenu}>
-                <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'top', horizontal: 'right' }} variant="dot">
-                  <Avatar sx={{ width: 32, height: 32 }}>
-                    <Image src={avatarMaxImg} alt="avatar" fill sizes="33vw" />
-                  </Avatar>
-                </StyledBadge>
-              </IconButton>
+              {session && <LoggedInMenu user={session.user} />}
             </Stack>
-            <UserMenu anchorElUser={anchorElUser} setAnchorElUser={setAnchorElUser} />
           </Box>
         </Toolbar>
       </Container>

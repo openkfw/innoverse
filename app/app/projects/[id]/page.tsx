@@ -75,7 +75,7 @@ function ProjectPage({ params }: { params: { id: string } }) {
           <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
             <ProjectInfoCard project={project} setActiveTab={setActiveTab} />
           </Box>
-          <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
+          <Box display="flex" justifyContent="center" alignItems="center">
             <TabView
               project={project}
               updates={project.updates}

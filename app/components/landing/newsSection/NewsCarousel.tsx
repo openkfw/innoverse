@@ -67,7 +67,7 @@ export default function NewsCarousel(props: NewsSliderProps) {
       <Box sx={sliderBox}>
         <Slider {...settings} ref={sliderRef}>
           {slides.map((item) => (
-            <Grid item xs={11} key={item.id}>
+            <Grid item xs={11} key={item.id} sx={cardContainerStyles}>
               <NewsCard item={item} />
             </Grid>
           ))}
@@ -110,6 +110,17 @@ const sliderBox = {
     '& .slick-list': {
       overflow: 'visible',
     },
+  },
+};
+
+const cardContainerStyles = {
+  height: '218px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  margin: 0,
+  [theme.breakpoints.down('sm')]: {
+    marginLeft: '3px',
   },
 };
 
