@@ -15,7 +15,7 @@ const UpdateCard = (props: UpdateCardProps) => {
     <>
       <Grid container alignItems="center" spacing={2}>
         <Grid item>
-          <AvatarIcon key={update.author.name} src={update.author.avatar} size={20} />
+          <AvatarIcon user={update.author} size={20} />
         </Grid>
         <Grid item sx={{ marginLeft: 1, paddingLeft: '0 !important' }}>
           <Typography variant="caption" sx={{ color: 'text.primary', fontSize: 16 }}>

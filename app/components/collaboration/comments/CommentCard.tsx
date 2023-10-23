@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { CommentType } from '@/common/types';
+import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
 import theme from '@/styles/theme';
 
 import { VoteComponent } from '../VoteComponent';
@@ -44,9 +45,13 @@ export const CommentCard = ({ content }: CommentCardProps) => {
       <CardHeader
         sx={cardHeaderStyles}
         avatar={
-          <Avatar sx={avatarStyles}>
-            <Image src={avatar} alt="avatar" fill sizes="33vw" />
-          </Avatar>
+          avatar ? (
+            <Avatar sx={avatarStyles}>
+              <Image src={avatar} alt="avatar" fill sizes="33vw" />
+            </Avatar>
+          ) : (
+            <AvatarInitialsIcon name={name} size={32} />
+          )
         }
         title={
           <Stack direction="row" spacing={1} sx={cardHeaderTitleStyles}>

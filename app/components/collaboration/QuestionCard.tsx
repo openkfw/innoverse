@@ -64,7 +64,7 @@ export const QuestionCard = ({ content, projectName }: UpdateCardProps) => {
                   title={<TooltipContent projectName={projectName} teamMember={author} />}
                   placement="bottom"
                 >
-                  <AvatarIcon src={author.avatar} size={48} index={index} allowAnimation={true} />
+                  <AvatarIcon user={author} size={48} index={index} allowAnimation={true} />
                 </StyledTooltip>
               ))
             ) : (

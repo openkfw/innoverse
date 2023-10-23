@@ -24,7 +24,7 @@ export default function NewsCard(props: ProjectCardProps) {
     <Card sx={cardStyles}>
       <CardHeader
         sx={cardHeaderStyles}
-        avatar={<AvatarIcon src={author.avatar} size={24} />}
+        avatar={<AvatarIcon user={author} size={24} />}
         title={
           <Typography variant="caption" sx={{ color: 'text.primary' }}>
             {author.name}

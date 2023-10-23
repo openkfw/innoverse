@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 
 import { PROJECT_PROGRESS } from '@/common/types';
 
+import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 import ProgressBar from '../common/ProgressBar';
 
 import project from '/public/images/ai_01.png';
@@ -41,9 +42,13 @@ export default function HeroSection(props: HeroSectionProps) {
               <Box display="flex" flexDirection="column" justifyContent="flex-end" height="100%">
                 <CardHeader
                   avatar={
-                    <Avatar sx={avatarStyles}>
-                      <Image unoptimized src={avatar} alt="avatar" fill sizes="33vw" />
-                    </Avatar>
+                    avatar ? (
+                      <Avatar sx={avatarStyles}>
+                        <Image unoptimized src={avatar} alt="avatar" fill sizes="33vw" />
+                      </Avatar>
+                    ) : (
+                      <AvatarInitialsIcon name={author} size={52} />
+                    )
                   }
                   title={<Typography variant="body2"> {author}</Typography>}
                   subheader={

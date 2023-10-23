@@ -1,3 +1,14 @@
+import {
+  ProjectData,
+  ProjectResponse,
+  ProjectsResponse,
+  Question,
+  SurveyQuestion,
+  Update,
+  UpdateQuery,
+  UserQuery,
+} from '@/common/strapiTypes';
+
 export enum STRAPI_QUERY {
   GetProjects,
   GetProjectById,
@@ -166,24 +177,24 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
  }
 }`;
 
-export const withResponseTransformer = (query: STRAPI_QUERY, data: unknown) => {
+export const withResponseTransformer = (query: STRAPI_QUERY, data: ProjectsResponse | ProjectResponse) => {
   switch (query) {
     case STRAPI_QUERY.GetProjects:
-      return getStaticBuildFetchProjects(data);
+      return getStaticBuildFetchProjects(data as ProjectsResponse);
     case STRAPI_QUERY.GetProjectById:
-      return getStaticBuildFetchProjectById(data);
+      return getStaticBuildFetchProjectById(data as ProjectResponse);
     default:
       break;
   }
 };
 
-function getStaticBuildFetchProjects(graphqlResponse: any) {
-  const formattedUpdates: any = [];
-  const formattedProjects = graphqlResponse.data.projects.data.map((project: any) => {
+function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
+  const formattedUpdates: Update[] = [];
+  const formattedProjects = graphqlResponse.data.projects.data.map((project: ProjectData) => {
     const { title, featured, projectStart, projectEnd, summary, image, status, team, updates, description } =
       project.attributes;
 
-    const formattedUpdate = updates.map((u: any) => {
+    const formattedUpdate = (updates as unknown as UpdateQuery[]).map((u: UpdateQuery) => {
       return {
         title: description.title,
         comment: u.comment,
@@ -191,7 +202,8 @@ function getStaticBuildFetchProjects(graphqlResponse: any) {
         theme: u.theme,
         author: {
           name: u.author.name,
-          avatar: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${u.author.avatar.data.attributes.url}`,
+          avatar:
+            u.author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${u.author.avatar.data.attributes.url}`,
         },
       };
     });
@@ -219,7 +231,7 @@ function getStaticBuildFetchProjects(graphqlResponse: any) {
   };
 }
 
-function getStaticBuildFetchProjectById(graphqlResponse: any) {
+function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
   const project = graphqlResponse.data.project.data;
 
   const {
@@ -239,7 +251,7 @@ function getStaticBuildFetchProjectById(graphqlResponse: any) {
     jobs,
   } = project.attributes;
 
-  const formattedUpdates = updates.map((u: any) => {
+  const formattedUpdates = (updates as unknown as UpdateQuery[]).map((u: UpdateQuery) => {
     return {
       title,
       comment: u.comment,
@@ -247,30 +259,31 @@ function getStaticBuildFetchProjectById(graphqlResponse: any) {
       theme: u.theme,
       author: {
         name: u.author.name,
-        avatar: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${u.author.avatar.data.attributes.url}`,
+        avatar:
+          u.author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${u.author.avatar.data.attributes.url}`,
       },
     };
   });
 
   const formattedAuthor = {
     ...author,
-    avatar: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
+    avatar: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
   };
 
-  const formattedTeam = team.map((t: any) => {
+  const formattedTeam = team.map((t: UserQuery) => {
     return {
       ...t,
-      avatar: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${t.avatar.data.attributes.url}`,
+      avatar: t.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${t.avatar.data.attributes.url}`,
     };
   });
 
-  const formattedQuestions = questions.map((q: any) => {
+  const formattedQuestions = questions.map((q: Question) => {
     return {
       ...q,
-      authors: q.authors.map((a: any) => {
+      authors: q.authors.map((a: UserQuery) => {
         return {
           ...a,
-          avatar: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.avatar.data.attributes.url}`,
+          avatar: a.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.avatar.data.attributes.url}`,
         };
       }),
     };
@@ -281,16 +294,20 @@ function getStaticBuildFetchProjectById(graphqlResponse: any) {
     tags: description.tags,
     author: {
       ...description.author,
-      avatar: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${description.author.avatar.data.attributes.url}`,
+      avatar:
+        description.author.avatar.data &&
+        `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${description.author.avatar.data.attributes.url}`,
     },
   };
 
-  const formattedSurveyQuestions = surveyQuestions.map((q: any) => {
-    return {
-      ...q,
-      responseOptions: q.responseOptions,
-    };
-  });
+  const formattedSurveyQuestions =
+    surveyQuestions &&
+    surveyQuestions.map((q: SurveyQuestion) => {
+      return {
+        ...q,
+        responseOptions: q.responseOptions,
+      };
+    });
 
   return {
     project: {

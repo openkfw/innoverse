@@ -71,7 +71,8 @@
       "displayName": "update",
       "type": "component",
       "repeatable": true,
-      "component": "update.update"
+      "component": "update.update",
+      "required": true
     },
     "questions": {
       "displayName": "collaboration",
