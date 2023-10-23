@@ -133,7 +133,7 @@ export type Tag = {
 
 export type ProjectStatus = {
   text: string;
-  author: PersonInfo;
+  author: User;
   tags: Tag[];
   info: Info;
   projectName: string;
