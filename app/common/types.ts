@@ -29,9 +29,13 @@ export type ProjectColaborationMock = {
   projectUpdates: ProjectUpdateMock[];
 };
 
+export type ResponseOption = {
+  responseOption: string;
+};
+
 export type SurveyQuestion = {
   question: string;
-  responseOptions: string[];
+  responseOptions: ResponseOption[];
   votes: number;
 };
 
@@ -91,7 +95,7 @@ export type ProjectDescription = {
   title: string;
   summary: string;
   author: User;
-  tags: string[];
+  tags: Tag[];
 };
 
 export type ProjectQuestion = {
@@ -123,10 +127,14 @@ export type Info = {
   description: string;
 };
 
+export type Tag = {
+  tag: string;
+};
+
 export type ProjectStatus = {
   text: string;
   author: PersonInfo;
-  tags: string[];
+  tags: Tag[];
   info: Info;
   projectName: string;
 };

@@ -28,7 +28,9 @@ export const GetProjectsQuery = `query GetProjects {
           title
           summary
           text
-          tags
+          tags {
+            tag
+          }
         }
         updates {
           date
@@ -72,7 +74,9 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
          title
          summary
          text
-         tags
+         tags {
+          tag
+         }
          author {
            name
            role
@@ -147,7 +151,9 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
        }
        surveyQuestions {
         question
-        responseOptions
+        responseOptions {
+          responseOption
+        }
         votes
        }
        jobs {
@@ -202,7 +208,7 @@ function getStaticBuildFetchProjects(graphqlResponse: any) {
       team,
       description: {
         ...description,
-        tags: description.tags.tags,
+        tags: description.tags,
       },
       image: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
     };
@@ -272,7 +278,7 @@ function getStaticBuildFetchProjectById(graphqlResponse: any) {
 
   const formattedDescription = {
     ...description,
-    tags: description.tags.tags,
+    tags: description.tags,
     author: {
       ...description.author,
       avatar: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${description.author.avatar.data.attributes.url}`,
@@ -282,7 +288,7 @@ function getStaticBuildFetchProjectById(graphqlResponse: any) {
   const formattedSurveyQuestions = surveyQuestions.map((q: any) => {
     return {
       ...q,
-      responseOptions: q.responseOptions.responseOptions,
+      responseOptions: q.responseOptions,
     };
   });
 

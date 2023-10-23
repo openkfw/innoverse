@@ -15,16 +15,19 @@
       "repeatable": false,
       "component": "user.author"
     },
-    "tags": {
-      "type": "json",
-      "required": true
-    },
     "title": {
       "type": "string",
       "required": true
     },
     "summary": {
       "type": "string",
+      "required": true
+    },
+    "tags": {
+      "displayName": "tags",
+      "type": "component",
+      "repeatable": true,
+      "component": "tags.tags",
       "required": true
     }
   }

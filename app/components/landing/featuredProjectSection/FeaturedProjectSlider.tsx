@@ -11,7 +11,7 @@ import ListItem from '@mui/material/ListItem';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { Project } from '@/common/types';
+import { Project, Tag } from '@/common/types';
 import theme from '@/styles/theme';
 
 import CustomChip from '../../common/CustomChip';
@@ -153,7 +153,7 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   );
 };
 
-const FeaturedProjectContent = (props: { title: string; tags: string[]; summary: string }) => {
+const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: string }) => {
   const { title, tags, summary } = props;
   console.log('title', title, summary);
 
@@ -175,7 +175,7 @@ const FeaturedProjectContent = (props: { title: string; tags: string[]; summary:
         <List aria-label="tags" sx={{ display: 'inline-flex', gap: 1, padding: 0, margin: 0 }}>
           {tags.map((el, id) => (
             <ListItem key={id} sx={{ paddingLeft: 0, paddingRight: 0 }}>
-              <CustomChip label={el} />
+              <CustomChip label={el.tag} />
             </ListItem>
           ))}
         </List>

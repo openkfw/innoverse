@@ -1,7 +1,8 @@
 {
   "collectionName": "components_survey_questions_survey_questions",
   "info": {
-    "displayName": "surveyQuestions"
+    "displayName": "surveyQuestions",
+    "description": ""
   },
   "options": {},
   "attributes": {
@@ -15,7 +16,10 @@
       "default": "0"
     },
     "responseOptions": {
-      "type": "json",
+      "displayName": "responseOptions",
+      "type": "component",
+      "repeatable": true,
+      "component": "response-options.response-options",
       "required": true
     }
   }
