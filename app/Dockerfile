@@ -17,6 +17,9 @@ COPY --from=deps /app/node_modules ./node_modules
 
 COPY . .
 
+ARG NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT
+ARG NEXT_PUBLIC_STRAPI_ENDPOINT
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
@@ -27,7 +30,8 @@ RUN npm run prisma generate --schema ./repository/db/prisma/schema.prisma
 # RUN yarn run prisma db push
 # RUN yarn run prisma migrate dev --name init
 
-
+ENV NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT ${NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT}
+ENV NEXT_PUBLIC_STRAPI_ENDPOINT ${NEXT_PUBLIC_STRAPI_ENDPOINT}
 
 RUN npm run build
 
@@ -38,6 +42,8 @@ WORKDIR /app
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED 1
+
+
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
