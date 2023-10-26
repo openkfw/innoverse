@@ -26,11 +26,11 @@ async function getData() {
   // Use fetch here as we want to revalidate the data from the CMS.
   // As the page is not staticaly generated and no ISR is used here fetch is required
   try {
-    const requestProjects = await fetch(process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT || '', {
+    const requestProjects = await fetch('/api/strapi', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Authentication: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
       body: JSON.stringify({
         query: GetProjectsQuery,

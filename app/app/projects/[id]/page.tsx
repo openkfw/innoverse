@@ -17,11 +17,11 @@ import { ProjectInfoCard } from '../../../components/project-details/ProjectInfo
 
 async function getData(id: string) {
   try {
-    const requestProjects = await fetch(process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT || '', {
+    const requestProject = await fetch('/api/strapi', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Authentication: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
       body: JSON.stringify({
         query: GetProjectByIdQuery,
@@ -29,13 +29,13 @@ async function getData(id: string) {
       }),
       next: { revalidate: 60 * 2 },
     });
-    const resultProjects = withResponseTransformer(
+    const resultProject = withResponseTransformer(
       STRAPI_QUERY.GetProjectById,
-      await requestProjects.json(),
+      await requestProject.json(),
     ) as ProjectByIdQueryResult;
 
     return {
-      project: resultProjects.project,
+      project: resultProject.project,
     };
   } catch (err) {
     console.info(err);
