@@ -147,10 +147,13 @@ export default IndexPage;
 
 // Page Styles
 const featuredProjectSliderStyles = {
-  display: 'flex',
   paddingTop: 10,
   marginRight: '5%',
-  marginBottom: '10%',
+  marginBottom: 'min(10%, 229px)',
+  [theme.breakpoints.down('sm')]: {
+    marginRight: 0,
+    marginLeft: 0,
+  },
 };
 
 const newsSectionStyles = {

@@ -1,138 +1,67 @@
-'use client';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { Carousel } from 'react-responsive-carousel';
-import { AnimationHandler, AnimationHandlerResponse } from 'react-responsive-carousel/lib/ts/components/Carousel/types';
+import { useRef, useState } from 'react';
+import Slider from 'react-slick';
 import Image from 'next/image';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { Project, Tag } from '@/common/types';
+import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
-import CustomChip from '../../common/CustomChip';
+import FeaturedProjectContent from './slider/FeaturedProjectContent';
+import Indicator from './slider/Indicator';
+import SmallSliderPill from './slider/SmallSliderPill';
 
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import './FeatureProjectSlider.css';
 
 type FeaturedProjectSliderProps = {
   items: Project[];
 };
 
-const SliderPill = (props: {
-  active: boolean;
-  itemNumber: string;
-  title: string;
-  projectStart: string;
-  projectEnd: string;
-}) => {
-  const { active, itemNumber, title, projectStart, projectEnd } = props;
+export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
+  const [selectedItem, setSelectedItem] = useState<number>(props.items.length - 1);
+  const slides = props.items;
+  const sliderRef = useRef<Slider>(null);
 
-  const styles = {
-    elementWrap: {
-      border: '0.50px white solid',
-      paddingLeft: '7px',
-      paddingRight: '7px',
-      paddingTop: '1px',
-      paddingBottom: '1px',
-      display: 'flex',
-      alignItems: 'center',
-      height: '100%',
+  const setSelected = (index: number) => {
+    sliderRef?.current?.slickGoTo(index);
+    setSelectedItem(index);
+  };
+
+  const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
+
+  const settings = {
+    initialSlide: selectedItem,
+    arrows: false,
+    dots: true,
+    infinite: false,
+    speed: 750,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    vertical: false,
+    fade: isWideScreen,
+    customPaging: function (index: number) {
+      return (
+        <Indicator
+          index={index}
+          isSelected={selectedItem == index}
+          setSelectedItem={setSelected}
+          selectedItem={selectedItem}
+          slide={slides[index]}
+        />
+      );
     },
-    itemNumberLable: {
-      color: 'white',
-      fontWeight: '400',
-      textTransform: 'uppercase',
-      letterSpacing: 1,
-    },
-    container: {
-      marginLeft: '25px',
-    },
-    activeContainer: {
-      position: 'relative',
-    },
-    vr: {
-      borderLeft: '1px solid white',
-      position: 'absolute',
-      height: '100px',
-      marginLeft: '50%',
-      marginTop: '-100px',
-      zIndex: 0,
-    },
+    dotsClass: 'slick-dots slick-thumb',
+    rows: 1,
+    variableWidth: !isWideScreen,
   };
 
   return (
-    <>
-      {active ? (
-        <Stack sx={styles.activeContainer}>
-          <Box sx={styles.vr} />
-          <Stack direction="row" sx={styles.container}>
-            <Stack>
-              <Box sx={styles.elementWrap}>
-                <Typography variant="overline" sx={styles.itemNumberLable} noWrap>
-                  Project #{itemNumber}
-                </Typography>
-              </Box>
-              <Box sx={styles.elementWrap}>
-                <Typography variant="overline" sx={styles.itemNumberLable} noWrap>
-                  {projectStart} - {projectEnd}
-                </Typography>
-              </Box>
-            </Stack>
-            <Box sx={styles.elementWrap}>
-              <Typography variant="h4" sx={{ wordWrap: 'break-word' }}>
-                {title}
-              </Typography>
-            </Box>
-          </Stack>
-        </Stack>
-      ) : (
-        <Stack direction="row" spacing={0} sx={styles.container}>
-          <Box sx={styles.elementWrap}>
-            <Typography variant="overline" sx={{ ...styles.itemNumberLable }}>
-              #{itemNumber}
-            </Typography>
-          </Box>
-          <Box sx={styles.elementWrap}>
-            <Typography variant="h6" sx={{ wordWrap: 'break-word' }}>
-              {title}
-            </Typography>
-          </Box>
-        </Stack>
-      )}
-    </>
-  );
-};
-
-export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
-  //TODO: move css from FeatureProjectSlider.css here...
-  const [selectedItem, setSelectedItem] = useState<number>(props.items.length - 1);
-  const slides = props.items;
-
-  return (
-    <Carousel
-      className={'main-carousel'}
-      showThumbs={false}
-      showStatus={false}
-      renderIndicator={(
-        clickHandler: (e: React.MouseEvent | React.KeyboardEvent) => void,
-        isSelected: boolean,
-        index: number,
-        label: string,
-      ) => renderIndicator(clickHandler, isSelected, index, label, setSelectedItem, selectedItem, slides)}
-      selectedItem={selectedItem}
-      transitionTime={700}
-      swipeable
-      showArrows={false}
-      animationHandler={fadeAnimationHandler}
-    >
+    <Slider {...settings} ref={sliderRef}>
       {slides.map((el, id) => (
-        <Grid container spacing={2} key={id}>
-          <Grid item xs={6} md={7}>
+        <Grid container key={id} sx={wrapperStyles}>
+          <Grid container item sx={imageContainerStyles}>
             <Image
               unoptimized
               src={el.image}
@@ -140,129 +69,82 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
               height={0}
               alt="Project"
               sizes="50vw"
-              style={{ width: '100%', height: '450px' }}
+              className="slider-image"
+              objectFit="contain"
+              objectPosition="center"
             />
           </Grid>
-          {/*// todo - temporarily hide content for smaller screens - awaiting design*/}
-          <Grid item xs={6} md={4} sx={{ [theme.breakpoints.down('sm')]: { display: 'none' } }}>
+
+          <Box sx={smallScreenSliderPill}>
+            <SmallSliderPill itemNumber={(id + 1).toString()} title={el.title} />
+          </Box>
+
+          <Grid item md={4} sx={contentStyles}>
             <FeaturedProjectContent title={el.description.title} tags={el.description.tags} summary={el.summary} />
           </Grid>
         </Grid>
       ))}
-    </Carousel>
+    </Slider>
   );
 };
 
-const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: string }) => {
-  const { title, tags, summary } = props;
-  console.log('title', title, summary);
+// Featured Project Slider Styles
+const wrapperStyles = {
+  display: 'flex !important',
+  flexWrap: 'noWrap',
+  gap: theme.spacing(2),
+  maxWidth: '1500px',
 
-  return (
-    <Box sx={{ textAlign: 'left' }}>
-      <Typography
-        variant="overline"
-        sx={{ display: 'block', marginLeft: 6 / 8, fontSize: 12, fontFamily: '***FONT_REMOVED***' }}
-      >
-        featured
-      </Typography>
-      <Typography
-        variant="h2"
-        sx={{ display: 'inline-block', whiteSpace: 'pre-line', marginLeft: 6 / 8, marginTop: 7 / 8, marginBottom: 3 }}
-      >
-        {title}
-      </Typography>
-      <Box>
-        <List aria-label="tags" sx={{ display: 'inline-flex', gap: 1, padding: 0, margin: 0 }}>
-          {tags.map((el, id) => (
-            <ListItem key={id} sx={{ paddingLeft: 0, paddingRight: 0 }}>
-              <CustomChip label={el.tag} />
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-      <Typography variant="body1" sx={{ marginLeft: 6 / 8, marginTop: 3 }}>
-        {summary}
-      </Typography>
-    </Box>
-  );
+  [theme.breakpoints.up('xl')]: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    marginLeft: '100px',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 0,
+    marginLeft: 3,
+    marginBottom: 0,
+    paddingBottom: 2,
+    borderBottom: '1px solid rgba(255, 255, 255, 0.10)',
+  },
 };
 
-const renderIndicator = (
-  clickHandler: (e: React.MouseEvent | React.KeyboardEvent) => void,
-  isSelected: boolean,
-  index: number,
-  label: string,
-  setSelectedItem: Dispatch<SetStateAction<number>>,
-  selectedItem: number,
-  slides: Project[],
-) => {
-  const movePills = (newIndex: number) => {
-    const slider = document.querySelectorAll('.control-dots')[0] as HTMLElement;
-    const old = Number(slider.style.translate.split('px')[0]);
-    const diff = Math.abs(selectedItem - newIndex);
-    const moveByPx = diff * 150;
+const imageContainerStyles = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  overflow: 'hidden',
+  height: '509px',
+  flexGrow: { xs: 0, sm: 7 },
+  maxWidth: { xs: 'none', sm: `${(7 / 12) * 100}%` },
 
-    if (selectedItem > newIndex) {
-      slider.style.translate = `${old + moveByPx}px`;
-    }
-    if (selectedItem < newIndex) {
-      slider.style.translate = `${old - moveByPx}px`;
-    }
-  };
+  [theme.breakpoints.up('xl')]: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
+  },
 
-  const handleClick = (index: number) => {
-    setSelectedItem(index);
-    movePills(index);
-  };
-  return (
-    <>
-      <Box sx={{ display: 'inline-flex', cursor: 'pointer' }} onClick={() => handleClick(index)}>
-        <SliderPill
-          active={isSelected}
-          itemNumber={(index + 1).toString()}
-          title={slides[index].title || ''}
-          projectStart={slides[index].projectStart || ''}
-          projectEnd={slides[index].projectEnd || 'Present'}
-        />
-      </Box>
-    </>
-  );
+  [theme.breakpoints.down('sm')]: {
+    width: 'calc(100vw - 80px)',
+    height: 'initial',
+  },
 };
 
-const fadeAnimationHandler: AnimationHandler = (props, state): AnimationHandlerResponse => {
-  const transitionTime = props.transitionTime + 'ms';
-  const transitionTimingFunction = 'liniar'; //'ease-in-out';
+const contentStyles = {
+  width: 'calc(100vw - 80px)',
+  flexGrow: { xs: 0, sm: 6, md: 4 },
+  maxWidth: { xs: 'none', sm: `${(6 / 12) * 100}%`, md: `${(4 / 12) * 100}%` },
+};
 
-  let slideStyle: React.CSSProperties = {
-    position: 'absolute',
-    display: 'block',
-    minHeight: '100%',
-    opacity: 0,
-    top: 0,
-    right: 0,
-    left: 0,
-    bottom: 0,
-    transitionTimingFunction: transitionTimingFunction,
-    msTransitionTimingFunction: transitionTimingFunction,
-    MozTransitionTimingFunction: transitionTimingFunction,
-    WebkitTransitionTimingFunction: transitionTimingFunction,
-    OTransitionTimingFunction: transitionTimingFunction,
-  };
+const smallScreenSliderPill = {
+  marginTop: '21px',
+  marginBottom: 4,
 
-  if (!state.swiping) {
-    slideStyle = {
-      ...slideStyle,
-      WebkitTransitionDuration: transitionTime,
-      MozTransitionDuration: transitionTime,
-      OTransitionDuration: transitionTime,
-      transitionDuration: transitionTime,
-      msTransitionDuration: transitionTime,
-    };
-  }
-
-  return {
-    slideStyle,
-    selectedStyle: { ...slideStyle, opacity: 1, position: 'relative' },
-    prevStyle: { ...slideStyle },
-  };
+  [theme.breakpoints.up('sm')]: {
+    display: 'none',
+  },
 };

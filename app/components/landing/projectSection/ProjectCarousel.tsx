@@ -56,7 +56,6 @@ export default function ProjectCarousel(props: ProjectProps) {
     vertical: false,
     beforeChange: (current: number, next: SetStateAction<number>) => setCurrentSlide(next),
     variableWidth: isWideScreen,
-
     rows: 1,
   };
 
