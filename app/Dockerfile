@@ -19,7 +19,6 @@ COPY . .
 
 ARG NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT
 ARG NEXT_PUBLIC_STRAPI_ENDPOINT
-ARG NEXT_PUBLIC_STRAPI_TOKEN
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -33,7 +32,6 @@ RUN npm run prisma generate --schema ./repository/db/prisma/schema.prisma
 
 ENV NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT ${NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT}
 ENV NEXT_PUBLIC_STRAPI_ENDPOINT ${NEXT_PUBLIC_STRAPI_ENDPOINT}
-ENV NEXT_PUBLIC_STRAPI_TOKEN ${NEXT_PUBLIC_STRAPI_TOKEN}
 
 RUN npm run build
 
