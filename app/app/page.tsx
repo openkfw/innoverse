@@ -30,7 +30,7 @@ async function getData() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.NEXT_STRAPI_TOKEN}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
       body: JSON.stringify({
         query: GetProjectsQuery,
