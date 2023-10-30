@@ -17,7 +17,7 @@ export const TooltipContent = (props: TeamMemberProps) => {
         <Typography variant="subtitle1" sx={{ color: 'text.primary', lineHeight: 1 }}>
           {teamMember.name}
         </Typography>
-        <Typography variant="caption" color="text.primary">
+        <Typography variant="caption" color="text.secondary">
           {teamMember.role}
         </Typography>
       </Grid>
