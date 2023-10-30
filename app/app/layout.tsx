@@ -19,10 +19,12 @@ const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <Script
-        src={`${process.env.NEXT_PUBLIC_UMAMI_URL}/script.js`}
-        data-website-id={`${process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}`}
-      />
+      {process.env.NEXT_PUBLIC_UMAMI_URL && process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+        <Script
+          src={`${process.env.NEXT_PUBLIC_UMAMI_URL}/script.js`}
+          data-website-id={`${process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}`}
+        />
+      )}
       <body>
         <SessionProvider>
           <SWRProvider>
