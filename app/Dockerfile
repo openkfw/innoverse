@@ -17,6 +17,10 @@ COPY --from=deps /app/node_modules ./node_modules
 
 COPY . .
 
+ARG NEXT_PUBLIC_UMAMI_URL
+ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID
+
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
@@ -27,6 +31,8 @@ RUN npm run prisma generate --schema ./repository/db/prisma/schema.prisma
 # RUN yarn run prisma db push
 # RUN yarn run prisma migrate dev --name init
 
+ENV NEXT_PUBLIC_UMAMI_URL ${NEXT_PUBLIC_UMAMI_URL}
+ENV NEXT_PUBLIC_UMAMI_WEBSITE_ID ${NEXT_PUBLIC_UMAMI_WEBSITE_ID}
 
 
 RUN npm run build
