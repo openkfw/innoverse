@@ -22,7 +22,7 @@ interface UpdateCardProps {
 }
 
 export const QuestionCard = ({ content, projectName }: UpdateCardProps) => {
-  const { headline, text, authors } = content;
+  const { title, description, authors } = content;
   const [newCommentText] = useState<string>(project_colaboration.writeCommentText);
   const comments = project_colaboration.projectUpdates[0].comments;
 
@@ -43,12 +43,12 @@ export const QuestionCard = ({ content, projectName }: UpdateCardProps) => {
       <Grid container item xs={6} direction="column" spacing={2} sx={{ paddingRight: '100px' }}>
         <Grid item>
           <Typography variant="h5" color="secondary.contrastText">
-            {headline}
+            {title}
           </Typography>
         </Grid>
         <Grid item>
           <Typography variant="body1" color="secondary.contrastText">
-            {text}
+            {description}
           </Typography>
         </Grid>
         <Grid item>

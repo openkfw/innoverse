@@ -9,24 +9,12 @@ export type User = {
   points?: number;
 };
 
-export type ProjectUpdateMock = {
-  headline: string;
-  text: string;
-  requiredBy: User[];
-  comments: CommentType[];
-};
-
 export type CommentType = {
   id: string;
   author: User;
   comment: string;
   upvotes?: number;
   downvotes?: number;
-};
-
-export type ProjectColaborationMock = {
-  writeCommentText: string;
-  projectUpdates: ProjectUpdateMock[];
 };
 
 export type ResponseOption = {
@@ -99,8 +87,8 @@ export type ProjectDescription = {
 };
 
 export type ProjectQuestion = {
-  headline: string;
-  text: string;
+  title: string;
+  description: string;
   authors: User[];
 };
 
