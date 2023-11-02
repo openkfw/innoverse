@@ -5,6 +5,9 @@ export const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
 ))(({ theme }) => ({
   [`& .${tooltipClasses.arrow}`]: {
     color: theme.palette.common.white,
+    '&:before': {
+      border: '1px solid rgba(0, 90, 140, 0.20)',
+    },
   },
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: theme.palette.common.white,

@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -25,10 +24,13 @@ export const CollaborationTab = (props: CollaborationTabProps) => {
     <Card sx={containerStyles}>
       <Box sx={colorOverlayStyles} />
 
-      <CardContent>
+      <CardContent sx={cardContentStyles}>
+        <Typography color="primary.main" sx={titleStyles}>
+          Jobs
+        </Typography>
         <Grid container spacing={8} sx={gridStyles}>
           <Grid item xs={6} sx={{ paddingRight: '100px' }}>
-            <Typography variant="h5" color="secondary.contrastText" sx={{ mb: '10px' }}>
+            <Typography variant="h5" color="secondary.contrastText">
               Wir suchen Deine Unterstützung beim Thema Midjourney.
             </Typography>
             <Typography variant="body1" color="secondary.contrastText">
@@ -47,10 +49,11 @@ export const CollaborationTab = (props: CollaborationTabProps) => {
           </Grid>
         </Grid>
 
-        <Divider textAlign="left" sx={dividerStyles}>
-          <Chip label="Hilf uns bei diesen Fragen" />
-        </Divider>
+        <Divider textAlign="left" sx={dividerStyles} />
 
+        <Typography color="primary.main" sx={titleStyles}>
+          Umfrage
+        </Typography>
         <Grid container sx={gridStyles} spacing={8}>
           {project.surveyQuestions.map((surveyQuestion, i) => (
             <Grid item key={i}>
@@ -59,6 +62,11 @@ export const CollaborationTab = (props: CollaborationTabProps) => {
           ))}
         </Grid>
 
+        <Divider textAlign="left" sx={dividerStyles} />
+
+        <Typography color="primary.main" sx={titleStyles}>
+          Hilf uns bei deisen Fragen
+        </Typography>
         <Grid container sx={gridStyles} spacing={8}>
           {project.questions.map((question, i) => (
             <Grid item key={i}>
@@ -82,6 +90,11 @@ const containerStyles = {
     '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
 };
 
+const cardContentStyles = {
+  margin: 0,
+  padding: 0,
+};
+
 const colorOverlayStyles = {
   width: '50%',
   height: '100%',
@@ -102,9 +115,21 @@ const joinTeamStyles = {
 };
 
 const gridStyles = {
-  padding: '88px 64px ',
+  padding: '0 64px 88px 64px',
 };
 
 const dividerStyles = {
-  margin: 4,
+  // margin: 4,
+};
+
+const titleStyles = {
+  marginLeft: '64px',
+  marginTop: '88px',
+  marginBottom: '36px',
+  fontSize: 12,
+  fontStyle: 'normal',
+  fontWeight: 400,
+  lineHeight: '169%',
+  letterSpacing: 1,
+  textTransform: 'uppercase',
 };

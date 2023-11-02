@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
+import { Box } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
-import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
@@ -67,26 +66,17 @@ export const CommentCard = ({ content }: CommentCardProps) => {
       />
       <CardContent sx={cardContentStyles}>
         <Stack direction="column" spacing={2}>
-          <>
-            {isCollapsed ? (
-              <Collapse in={isCollapsed}>
-                <Typography variant="body1" sx={{ color: 'secondary.contrastText', marginTop: 2 }}>
-                  {comment}
-                </Typography>
-              </Collapse>
-            ) : (
-              <>
-                <Typography variant="body1" sx={{ color: 'secondary.contrastText' }}>
-                  {comment.slice(0, MAX_TEXT_LENGTH)}...
-                  <Button size="small" onClick={handleToggle} sx={buttonStyle}>
-                    <Typography variant="subtitle2" sx={{ fontSize: '14px', fontWeight: '500' }}>
-                      alles anzeigen
-                    </Typography>
-                  </Button>
-                </Typography>
-              </>
+          <Box sx={{ ...commentContainerStyles, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
+            <Typography variant="body1" sx={commentStyles}>
+              {comment}
+            </Typography>
+
+            {!isCollapsed && (
+              <Typography variant="subtitle2" onClick={handleToggle} sx={buttonOverlayStyle}>
+                ... alles anzeigen
+              </Typography>
             )}
-          </>
+          </Box>
 
           <VoteComponent upvotes={upvotes} />
         </Stack>
@@ -132,13 +122,32 @@ const cardContentStyles = {
   marginBottom: 1,
 };
 
-const buttonStyle = {
-  p: 0,
-  pl: 1,
-  background: 'transparent',
+const commentContainerStyles = {
+  position: 'relative',
+  overflow: 'hidden',
+  display: '-webkit-box',
+  WebkitBoxOrient: 'vertical',
+};
+
+const commentStyles = {
+  color: 'secondary.contrastText',
+  marginBottom: '24px',
+};
+
+const buttonOverlayStyle = {
+  position: 'absolute',
+  bottom: '0',
+  right: '0',
+  background: '#ffffff',
   color: theme.palette.secondary.main,
   ':hover': {
-    background: 'transparent',
+    background: '#ffffff',
     color: theme.palette.secondary.main,
   },
+  fontSize: '14px',
+  fontWeight: '500',
+  marginBottom: '-1px',
+  paddingLeft: '4px',
+  cursor: 'pointer',
+  boxShadow: '-10px 0 10px white',
 };
