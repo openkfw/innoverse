@@ -5,15 +5,21 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { project_colaboration } from '@/repository/mock/project/project-page';
+import { Project } from '@/common/types';
 
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
+import { QuestionCard } from './QuestionCard';
 import { SurveyCard } from './SurveyCard';
-import { UpdateCard } from './UpdateCard';
 
-export const CollaborationTab = () => {
-  const { projectUpdates, projectName, surveyQuestions } = project_colaboration;
+interface CollaborationTabProps {
+  project: Project;
+  projectName: string;
+}
+
+export const CollaborationTab = (props: CollaborationTabProps) => {
+  const { project, projectName } = props;
+
   return (
     <Card sx={containerStyles}>
       <Box sx={colorOverlayStyles} />
@@ -49,9 +55,9 @@ export const CollaborationTab = () => {
           Umfrage
         </Typography>
         <Grid container sx={gridStyles} spacing={8}>
-          {surveyQuestions.map((question, i) => (
+          {project.surveyQuestions.map((surveyQuestion, i) => (
             <Grid item key={i}>
-              <SurveyCard surveyQuestion={question} />
+              <SurveyCard surveyQuestion={surveyQuestion} />
             </Grid>
           ))}
         </Grid>
@@ -62,9 +68,9 @@ export const CollaborationTab = () => {
           Hilf uns bei deisen Fragen
         </Typography>
         <Grid container sx={gridStyles} spacing={8}>
-          {projectUpdates.map((update, i) => (
+          {project.questions.map((question, i) => (
             <Grid item key={i}>
-              <UpdateCard projectName={projectName} content={update} />
+              <QuestionCard projectName={projectName} content={question} />
             </Grid>
           ))}
         </Grid>

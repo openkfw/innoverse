@@ -3,6 +3,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 import theme from '../styles/theme';
 
@@ -16,6 +17,11 @@ const metadata: Metadata = {
   themeColor: theme.palette.primary.main,
 };
 
+const client = new ApolloClient({
+  uri: process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT,
+  cache: new InMemoryCache(),
+});
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -26,11 +32,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       )}
       <body>
-        <SessionProvider>
-          <SWRProvider>
-            <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
-          </SWRProvider>
-        </SessionProvider>
+        <ApolloProvider client={client}>
+          <SessionProvider>
+            <SWRProvider>
+              <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+            </SWRProvider>
+          </SessionProvider>
+        </ApolloProvider>
       </body>
     </html>
   );

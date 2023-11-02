@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_user_authors",
+  "info": {
+    "displayName": "user",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "role": {
+      "type": "string",
+      "required": true
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "department": {
+      "type": "string"
+    }
+  }
+}

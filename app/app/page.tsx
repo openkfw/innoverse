@@ -1,28 +1,87 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
+import { MainPageData, Project, ProjectsQueryResult } from '@/common/types';
 import { FeaturedProjectSlider } from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
 import FeedbackSection from '@/components/landing/feedbackSection/FeedbackSection';
 import { BackgroundArrows } from '@/components/landing/newsSection/BackgroundArrows';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
 import theme from '@/styles/theme';
+import { GetProjectsQuery, STRAPI_QUERY, withResponseTransformer } from '@/utils/queries';
 
 import { MappingProjectsCard } from '../components/landing/mappingProjectsSection/MappingProjectsCard';
 import Layout from '../components/layout/Layout';
 
 import bgBubble from '/public/images/bg-image.png';
 
+async function getData() {
+  // As this is the "Main" Page no ISR here. Fetch data from Endpoint via fetch
+  // Revalidate the cache every 2 mins.
+  // Use fetch here as we want to revalidate the data from the CMS.
+  // As the page is not staticaly generated and no ISR is used here fetch is required
+  try {
+    const requestProjects = await fetch('/api/strapi', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+      },
+      body: JSON.stringify({
+        query: GetProjectsQuery,
+      }),
+      next: { revalidate: 60 * 2 },
+    });
+
+    const result = withResponseTransformer(
+      STRAPI_QUERY.GetProjects,
+      await requestProjects.json(),
+    ) as ProjectsQueryResult;
+
+    // Filter projects which are featured in the main slider
+    const featuredProjects = result.projects.filter((project: Project) => project.featured == true) as Project[];
+
+    return {
+      sliderContent: featuredProjects,
+      projects: result.projects,
+      updates: result.updates,
+    };
+  } catch (err) {
+    console.info(err);
+  }
+}
+
 function IndexPage() {
+  const [data, setData] = useState<MainPageData>();
+
+  useEffect(() => {
+    const getProject = async () => {
+      const data = await getData();
+      if (data) {
+        setData(data);
+      }
+    };
+
+    getProject();
+  }, []);
+
+  const sliderContent = data?.sliderContent;
+  const projects = data?.projects;
+  const updates = data?.updates;
+
+  if (!sliderContent || !projects || !updates) {
+    return <></>;
+  }
   return (
     <Layout>
       <Stack spacing={8} useFlexGap>
         <Box sx={featuredProjectSliderStyles}>
-          <FeaturedProjectSlider />
+          <FeaturedProjectSlider items={sliderContent} />
         </Box>
 
         <Box sx={feedbackSectionStyles}>
@@ -31,7 +90,7 @@ function IndexPage() {
 
         <div style={{ position: 'relative' }}>
           <Box sx={newsSectionStyles}>
-            <NewsSection />
+            <NewsSection updates={updates} />
           </Box>
 
           <Box sx={arrowContainerStyles}>
@@ -56,7 +115,7 @@ function IndexPage() {
               transform: 'translate(50%, -10%)',
             }}
           />
-          <ProjectSection />
+          <ProjectSection projects={projects} />
         </Box>
 
         <Box sx={mappingProjectsCardStyles}>
@@ -77,7 +136,7 @@ function IndexPage() {
               transform: 'translate(-50%, 20%)',
             }}
           />
-          <MappingProjectsCard />
+          <MappingProjectsCard projects={projects} />
         </Box>
       </Stack>
     </Layout>

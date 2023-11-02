@@ -11,7 +11,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Stack from '@mui/material/Stack';
 
 import triggerAnalyticsEvent from '@/analytics/analytics';
-import { Info, ProjectStatus } from '@/common/types';
+import { Project, ProjectDescription } from '@/common/types';
 
 import { AuthorInformation } from './AuthorInformation';
 import CommentsSection from './CommentsSection';
@@ -20,20 +20,20 @@ import { ProjectTags } from './ProjectTags';
 import robotic_hand from '/public/images/robotic-hand.png';
 
 interface ProjectProgressProps {
-  projectStatus: ProjectStatus;
+  project: Project;
   projectName: string;
 }
 
 interface InfoItemProps {
-  info: Info;
+  description: ProjectDescription;
 }
 
-const InfoItemRight = ({ info }: InfoItemProps) => {
+const InfoItemRight = ({ description }: InfoItemProps) => {
   return (
     <Card sx={infoItemRightStyles} elevation={0}>
       <CardContent sx={{ p: '18px', pb: 1 }}>
         <Typography variant="subtitle1" color="text.primary" sx={{ textTransform: 'uppercase' }}>
-          {info.title}
+          {description.title}
         </Typography>
       </CardContent>
       <Divider sx={dividerStyle} />
@@ -43,7 +43,7 @@ const InfoItemRight = ({ info }: InfoItemProps) => {
       </CardMedia>
       <CardContent sx={{ p: '18px' }}>
         <Typography variant="subtitle2" color="text.primary">
-          {info.description}
+          {description.summary}
         </Typography>
       </CardContent>
     </Card>
@@ -51,7 +51,7 @@ const InfoItemRight = ({ info }: InfoItemProps) => {
 };
 
 export const ProjectProgress = (props: ProjectProgressProps) => {
-  const { projectStatus, projectName } = props;
+  const { project, projectName } = props;
   const [contentSize, setContentSize] = useState<string>('600px');
   const [showMoreButtonVisible, setShowMoreButtonVisible] = useState<boolean>(true);
 
@@ -73,18 +73,18 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
           <Stack direction="row" spacing={0} justifyContent={'space-between'}>
             <Box>
               <MuiMarkdown overrides={{ style: { color: 'text.primary' } } as unknown as Overrides}>
-                {projectStatus.text}
+                {project.description.text}
               </MuiMarkdown>
             </Box>
             <Box sx={infoItemRightContainerStyles}>
-              <InfoItemRight info={projectStatus.info} />
+              <InfoItemRight description={project.description} />
             </Box>
           </Stack>
         </Box>
 
         <Divider sx={{ width: '662px' }} />
-        <ProjectTags tags={projectStatus.tags} />
-        <AuthorInformation projectName={projectName} author={projectStatus.author} />
+        <ProjectTags tags={project.description.tags} />
+        <AuthorInformation projectName={projectName} author={project.description.author} />
         <Divider sx={{ my: 2, width: '662px' }} />
         <CommentsSection />
       </Stack>

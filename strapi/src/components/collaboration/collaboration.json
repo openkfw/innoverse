@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_collaboration_collaborations",
+  "info": {
+    "displayName": "collaboration",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "authors": {
+      "type": "component",
+      "repeatable": true,
+      "component": "user.author",
+      "required": false
+    }
+  }
+}

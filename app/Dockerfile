@@ -17,6 +17,9 @@ COPY --from=deps /app/node_modules ./node_modules
 
 COPY . .
 
+ARG NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT
+ARG NEXT_PUBLIC_STRAPI_ENDPOINT
+ARG NEXT_PUBLIC_STRAPI_TOKEN
 ARG NEXT_PUBLIC_UMAMI_URL
 ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID
 
@@ -31,6 +34,9 @@ RUN npm run prisma generate --schema ./repository/db/prisma/schema.prisma
 # RUN yarn run prisma db push
 # RUN yarn run prisma migrate dev --name init
 
+ENV NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT ${NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT}
+ENV NEXT_PUBLIC_STRAPI_ENDPOINT ${NEXT_PUBLIC_STRAPI_ENDPOINT}
+ENV NEXT_PUBLIC_STRAPI_TOKEN ${NEXT_PUBLIC_STRAPI_TOKEN}
 ENV NEXT_PUBLIC_UMAMI_URL ${NEXT_PUBLIC_UMAMI_URL}
 ENV NEXT_PUBLIC_UMAMI_WEBSITE_ID ${NEXT_PUBLIC_UMAMI_WEBSITE_ID}
 
@@ -44,6 +50,8 @@ WORKDIR /app
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED 1
+
+
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs

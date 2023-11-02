@@ -21,11 +21,10 @@ const SliderPill = (props: {
   active: boolean;
   itemNumber: string;
   title: string;
-  projectFrom: string;
-  projectTo: string;
-  year: string;
+  projectStart: string;
+  projectEnd: string;
 }) => {
-  const { active, itemNumber, title, projectFrom, projectTo, year } = props;
+  const { active, itemNumber, title, projectStart, projectEnd } = props;
 
   const styles = {
     elementWrap: {
@@ -56,18 +55,16 @@ const SliderPill = (props: {
           <Stack direction="row">
             <Stack>
               <PillBox sx={{ pl: '13px', pr: '24px' }}>
-                <Typography variant="overline" noWrap>
-                  Project #{itemNumber}
-                </Typography>
+                <Typography variant="overline">Project #{itemNumber}</Typography>
               </PillBox>
               <PillBox sx={{ pl: '13px', pr: '24px' }}>
-                <Typography variant="overline" noWrap>
-                  {projectFrom}-{projectTo} {year}
+                <Typography variant="overline">
+                  {projectStart}-{projectEnd}
                 </Typography>
               </PillBox>
             </Stack>
             <PillBox sx={{ px: '32px' }}>
-              <Typography variant="h4" noWrap>
+              <Typography variant="h4" sx={{ wordWrap: 'break-word' }}>
                 {title}
               </Typography>
             </PillBox>

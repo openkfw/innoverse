@@ -1,30 +1,29 @@
 import { StaticImageData } from 'next/image';
 
-export type Person = {
+export type User = {
   name: string;
   role: string;
   avatar: StaticImageData;
   badge?: boolean;
-};
-
-export type ProjectUpdate = {
-  headline: string;
-  text: string;
-  requiredBy: Person[];
-  comments: CommentType[];
+  department?: string;
+  points?: number;
 };
 
 export type CommentType = {
-  id: number;
-  author: Person;
+  id: string;
+  author: User;
   comment: string;
   upvotes?: number;
   downvotes?: number;
 };
 
+export type ResponseOption = {
+  responseOption: string;
+};
+
 export type SurveyQuestion = {
   question: string;
-  responseOptions: string[];
+  responseOptions: ResponseOption[];
   votes: number;
 };
 
@@ -38,7 +37,7 @@ export type ProjectColaboration = {
 export enum PROJECT_PROGRESS {
   EXPLORATION = 'Exploration',
   KONZEPTION = 'Konzeption',
-  PROOF_OF_CONCEPT = 'Proof of Concept',
+  PROOF_OF_CONCEPT = 'Proof_of_Concept',
 }
 
 export type Hero = {
@@ -58,21 +57,49 @@ export type ProjectCollaboration = {
   participants: number;
 };
 
-export type ProjectSummary = {
+export type Project = {
+  id: string;
+  title: string;
+  featured: boolean;
+  status: PROJECT_PROGRESS;
+  image: string;
   summary: string;
-  timing: { projectStart: string; projectEnd: string };
+  projectStart: string;
+  projectEnd: string;
   collaboration: ProjectCollaboration;
   likes: number;
   followers: number;
-  teamMembers: Person[];
-  updates: ProjectShortUpdate[];
   projectName: string;
+  team: User[];
+  updates: ProjectUpdate[];
+  description: ProjectDescription;
+  questions: ProjectQuestion[];
+  surveyQuestions: SurveyQuestion[];
+  author: User;
 };
 
-export type ProjectShortUpdate = {
-  author: Person;
-  content: string;
+export type ProjectDescription = {
+  text: string;
+  title: string;
+  summary: string;
+  author: User;
+  tags: Tag[];
+};
+
+export type ProjectQuestion = {
+  title: string;
+  description: string;
+  authors: User[];
+};
+
+export type ProjectUpdate = {
+  id: string;
+  title: string;
+  author: User;
+  comment: string;
+  theme: string;
   date: string;
+  projectStart?: boolean;
 };
 
 export type PersonInfo = {
@@ -88,10 +115,14 @@ export type Info = {
   description: string;
 };
 
+export type Tag = {
+  tag: string;
+};
+
 export type ProjectStatus = {
   text: string;
-  author: PersonInfo;
-  tags: string[];
+  author: User;
+  tags: Tag[];
   info: Info;
   projectName: string;
 };
@@ -99,10 +130,14 @@ export type ProjectStatus = {
 export type ProjectProgression = {
   projectId: number;
   hero: Hero;
-  projectSummary: ProjectSummary;
+  projectSummary: Project;
   projectStatus: ProjectStatus;
   comments: CommentType[];
-  questions: string[];
+  questions: Question[];
+};
+
+export type Question = {
+  text: string;
 };
 
 export type ProjectsProgression = {
@@ -110,15 +145,17 @@ export type ProjectsProgression = {
   projects: ProjectProgression[];
 };
 
-export type UpdateContent = {
-  id: number;
-  author: Person;
-  date: string;
-  comment: string;
-  projectStart?: boolean;
+export type ProjectsQueryResult = {
+  projects: any;
+  updates: any;
 };
 
-export type Update = {
-  projectId: number;
-  updates: UpdateContent[];
+export type ProjectByIdQueryResult = {
+  project: any;
+};
+
+export type MainPageData = {
+  sliderContent: Project[];
+  projects: Project[];
+  updates: ProjectUpdate[];
 };

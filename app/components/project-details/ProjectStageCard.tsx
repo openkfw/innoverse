@@ -23,15 +23,13 @@ const steps = [
 ];
 
 interface TimingDataProps {
-  timingData: {
-    projectStart: string;
-    projectEnd: string;
-  };
+  projectStart: string;
+  projectEnd: string;
 }
 
 const ProjectStageCard = (props: TimingDataProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { projectStart, projectEnd } = props.timingData;
+  const { projectStart, projectEnd } = props;
 
   const handleToggle = () => {
     setIsCollapsed(!isCollapsed);

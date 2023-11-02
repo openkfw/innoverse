@@ -5,13 +5,13 @@ import { ProjectCollaboration } from '@/common/types';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 interface CollaborationProps {
-  collaborationData: ProjectCollaboration;
+  collaboration: ProjectCollaboration;
   setActiveTab: (tab: number) => void;
   projectName: string;
 }
 
 const CollaborationColumn = (props: CollaborationProps) => {
-  const { collaborationData, setActiveTab, projectName } = props;
+  const { collaboration, setActiveTab, projectName } = props;
 
   const handleCollaborationClick = async (offset: number) => {
     const scroll = () => {
@@ -36,10 +36,10 @@ const CollaborationColumn = (props: CollaborationProps) => {
             Zusammenarbeit
           </Typography>
           <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', mb: '15px', marginTop: 1 }}>
-            {collaborationData.description}
+            {collaboration.description}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {collaborationData.participants} Beteilungen - {collaborationData.upvotes} Votes
+            26531 Beteilungen - 91283 Votes
           </Typography>
         </Grid>
         <Grid item xs={4} sx={{ mt: '15px' }}>

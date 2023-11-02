@@ -5,15 +5,16 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { PersonInfo } from '@/common/types';
+import { User } from '@/common/types';
 
+import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 import bull from '../common/bull';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
 interface AuthorInformationProps {
-  author: PersonInfo;
+  author: User;
   projectName: string;
 }
 
@@ -26,9 +27,13 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
         <Stack direction="row" justifyContent="space-between">
           <Stack direction="row" spacing={1}>
             <Box>
-              <Avatar sx={{ width: 48, height: 48 }}>
-                <Image src={author.avatar} alt="avatar" fill sizes="33vw" />
-              </Avatar>
+              {author.avatar ? (
+                <Avatar sx={{ width: 48, height: 48 }}>
+                  <Image unoptimized src={author.avatar} alt="avatar" fill sizes="33vw" />
+                </Avatar>
+              ) : (
+                <AvatarInitialsIcon name={author.name} size={48} />
+              )}
             </Box>
             <Box>
               <Typography variant="subtitle1" color="text.primary">
@@ -46,9 +51,9 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
           </Stack>
         </Stack>
         <Stack direction="row" alignItems="center" pb={4} spacing={1} sx={{ m: 0 }} mt={2}>
-          <Image src={badgeIcon} alt="badge" />
+          <Image unoptimized src={badgeIcon} alt="badge" />
           <Typography variant="caption" color="text.primary">
-            {author.points} Points
+            20 Points
           </Typography>
           {bull}
           <Typography variant="caption" color="text.primary">

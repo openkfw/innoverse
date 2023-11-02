@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_image_images",
+  "info": {
+    "displayName": "Slider-Image",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "sliderImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "projectFrom": {
+      "type": "string"
+    },
+    "projectTo": {
+      "type": "string"
+    },
+    "year": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "kind": "collectionType",
+  "collectionName": "projects",
+  "info": {
+    "singularName": "project",
+    "pluralName": "projects",
+    "displayName": "Project",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "featured": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "Exploration",
+        "Konzeption",
+        "Proof of Concept"
+      ],
+      "required": true,
+      "default": "Exploration"
+    },
+    "author": {
+      "displayName": "author",
+      "type": "component",
+      "repeatable": false,
+      "component": "user.author",
+      "required": true
+    },
+    "summary": {
+      "type": "string",
+      "required": true
+    },
+    "projectStart": {
+      "type": "string",
+      "required": true
+    },
+    "projectEnd": {
+      "type": "string"
+    },
+    "description": {
+      "displayName": "Description",
+      "type": "component",
+      "repeatable": false,
+      "component": "description.description",
+      "required": true
+    },
+    "updates": {
+      "displayName": "update",
+      "type": "component",
+      "repeatable": true,
+      "component": "update.update",
+      "required": true
+    },
+    "questions": {
+      "displayName": "collaboration",
+      "type": "component",
+      "repeatable": true,
+      "component": "collaboration.collaboration"
+    },
+    "team": {
+      "type": "component",
+      "repeatable": true,
+      "component": "user.author",
+      "required": true
+    },
+    "jobs": {
+      "displayName": "jobs",
+      "type": "component",
+      "repeatable": true,
+      "component": "jobs.jobs",
+      "required": false
+    },
+    "surveyQuestions": {
+      "displayName": "surveyQuestions",
+      "type": "component",
+      "repeatable": true,
+      "component": "survey-questions.survey-questions"
+    },
+    "collaboration": {
+      "type": "component",
+      "repeatable": true,
+      "component": "collaboration.collaboration"
+    }
+  }
+}

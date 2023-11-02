@@ -1,12 +1,19 @@
+'use client';
+
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
+import { ProjectUpdate } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
 import theme from '@/styles/theme';
 
 import NewsCarousel from './NewsCarousel';
 
-export const NewsSection = () => {
+type NewsProps = {
+  updates: ProjectUpdate[];
+};
+
+export const NewsSection = (props: NewsProps) => {
   return (
     <Grid container spacing={5} sx={wrapperStyles}>
       <Grid item container xs={12} sx={titleContainerStyles}>
@@ -22,7 +29,7 @@ export const NewsSection = () => {
           <CustomButton>Mehr</CustomButton>
         </Grid>
       </Grid>
-      <NewsCarousel />
+      <NewsCarousel updates={props.updates} />
     </Grid>
   );
 };

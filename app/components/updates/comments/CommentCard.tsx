@@ -12,6 +12,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { CommentType } from '@/common/types';
+import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
 import theme from '@/styles/theme';
 
 import badgeIcon from '/public/images/icons/badge.svg';
@@ -67,9 +68,13 @@ export const CommentCard = ({ content, sx }: CommentCardProps) => {
     <Card sx={cardStyle}>
       <CardHeader
         avatar={
-          <Avatar sx={{ width: 32, height: 32 }}>
-            <Image src={avatar} alt="avatar" fill sizes="33vw" />
-          </Avatar>
+          avatar ? (
+            <Avatar sx={{ width: 32, height: 32 }}>
+              <Image unoptimized src={avatar} alt="avatar" fill sizes="33vw" />
+            </Avatar>
+          ) : (
+            <AvatarInitialsIcon name={name} size={32} />
+          )
         }
         title={
           <Stack
@@ -85,7 +90,7 @@ export const CommentCard = ({ content, sx }: CommentCardProps) => {
             <Typography variant="subtitle2" color="secondary.contrastText">
               {name}
             </Typography>
-            {badge && <Image src={badgeIcon} alt="badge" />}
+            {badge && <Image unoptimized src={badgeIcon} alt="badge" />}
             <Typography variant="subtitle2" color="text.secondary">
               {role}
             </Typography>

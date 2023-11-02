@@ -1,10 +1,14 @@
 import React, { CSSProperties, LegacyRef } from 'react';
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 
 import Avatar from '@mui/material/Avatar';
 
+import { User } from '@/common/types';
+
+import AvatarInitialsIcon from './AvatarInitialsIcon';
+
 interface AvatarIconProps {
-  src: StaticImageData;
+  user: User;
   size?: number;
   index?: number;
   allowAnimation?: boolean;
@@ -17,7 +21,7 @@ const hoverStyle: CSSProperties = {
 };
 
 const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, ref: LegacyRef<HTMLDivElement>) {
-  const { src, size = 40, index, allowAnimation, ...restProps } = props;
+  const { user, size = 40, index, allowAnimation, ...restProps } = props;
   const appliedStyle = allowAnimation ? { ...hoverStyle, zIndex: index } : { zIndex: index };
 
   return (
@@ -32,9 +36,13 @@ const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, 
         if (allowAnimation) e.currentTarget.style.transform = 'translateX(0px)';
       }}
     >
-      <Avatar sx={{ width: size, height: size, border: '2px solid white' }}>
-        <Image src={src} alt="avatar" fill sizes="33vw" />
-      </Avatar>
+      {user.avatar ? (
+        <Avatar sx={{ width: size, height: size, border: '2px solid white' }}>
+          <Image unoptimized src={user.avatar} alt="avatar" fill sizes="33vw" />
+        </Avatar>
+      ) : (
+        <AvatarInitialsIcon name={user.name} size={size} sx={{ border: '2px solid white' }} />
+      )}
     </div>
   );
 });

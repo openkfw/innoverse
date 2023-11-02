@@ -3,11 +3,12 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 
+import { Tag } from '@/common/types';
 import CustomChip from '@/components/common/CustomChip';
 import theme from '@/styles/theme';
 
-const FeaturedProjectContent = (props: { title: string; tags: string[]; description: string }) => {
-  const { title, tags, description } = props;
+const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: string }) => {
+  const { title, tags, summary } = props;
 
   return (
     <Box sx={wrapperStyles}>
@@ -21,13 +22,13 @@ const FeaturedProjectContent = (props: { title: string; tags: string[]; descript
         <List aria-label="tags" sx={listStyles}>
           {tags.map((el, id) => (
             <ListItem key={id} sx={listItemStyles}>
-              <CustomChip label={el} />
+              <CustomChip label={el.tag} />
             </ListItem>
           ))}
         </List>
       </Box>
       <Typography variant="body1" sx={descriptionStyles}>
-        {description}
+        {summary}
       </Typography>
     </Box>
   );

@@ -9,6 +9,8 @@ import ExplorationIcon from '@/components/icons/ExplorationIcon';
 import KonzeptionIcon from '@/components/icons/KonzeptionIcon';
 import ProofOfConceptIcon from '@/components/icons/ProofOfConceptIcon';
 
+import { ProjectProps } from '../projectSection/ProjectSection';
+
 import PhaseColumn from './PhaseColumn';
 
 const mappingData = [
@@ -18,33 +20,23 @@ const mappingData = [
     icon: <ExplorationIcon />,
     description:
       'Basierend auf dem strategischen Zielsystem ***STRING_REMOVED***  untersuchen wir mögliche Handlungsfelder für ***STRING_REMOVED***  und berücksichtigen dabei externe Entwicklungen und interne Leitplanken.',
-    projects: [
-      'Digitale Souveränität fördern (InDigO Handlungsfeld 4)',
-      'Auswirkungen des Digitalen Euros (CBDC)',
-      'Förderung von Energieautarkie (am Beispiel Energiegenossenschaften)',
-    ],
   },
   {
     title: 'Konzeption',
     icon: <KonzeptionIcon />,
     description:
       'In der Konzeptionsphase sind wir im engen Austausch mit der Zielgruppe: Aus erster Hand verstehen wir zunächst die Probleme, um basierend darauf Lösungskonzepte zu erarbeiten und mit der Zielgruppe zu validieren.',
-    projects: ['***STRING_REMOVED***  Innovationsplattform', 'Anwendungsfälle für Generative KI in ***STRING_REMOVED*** '],
   },
   {
     title: 'Proof of Concept',
     icon: <ProofOfConceptIcon />,
     description:
       'Im PoC testen wir mittels Lean Experiments die Attraktivität, Machbarkeit und Rentabilität der Lösungskonzepte - auch hier direkt mit der Zielgruppe.',
-    projects: [
-      'Jahresabschluss-KI für die IPEX',
-      'Förderung von Digitalisierung und Innovation bei KMU (InDigO Handlungsfeld 2 und 3)',
-      'Tokenisierte Anleihe',
-    ],
   },
 ];
 
-export const MappingProjectsCard = () => {
+export const MappingProjectsCard = (props: ProjectProps) => {
+  const { projects } = props;
   return (
     <Grid container justifyContent="center">
       <Grid item xs={10}>
@@ -72,7 +64,7 @@ export const MappingProjectsCard = () => {
                     key={data.title}
                     title={data.title}
                     description={data.description}
-                    projects={data.projects}
+                    projects={projects.filter((p) => p.status.replace(/_/g, ' ') === data.title)}
                     icon={data.icon}
                     isFirstStep={data?.isFirstStep}
                   ></PhaseColumn>

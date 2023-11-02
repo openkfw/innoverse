@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_description_descriptions",
+  "info": {
+    "displayName": "Description",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "richtext",
+      "required": true
+    },
+    "author": {
+      "type": "component",
+      "repeatable": false,
+      "component": "user.author"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "summary": {
+      "type": "string",
+      "required": true
+    },
+    "tags": {
+      "displayName": "tags",
+      "type": "component",
+      "repeatable": true,
+      "component": "tags.tags",
+      "required": true
+    }
+  }
+}

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { AvatarGroup, Grid, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 
-import { Person } from '@/common/types';
+import { User } from '@/common/types';
 
 import AvatarIcon from '../common/AvatarIcon';
 import CustomDialog from '../common/CustomDialog';
@@ -13,7 +13,7 @@ import { StyledTooltip } from '../common/StyledTooltip';
 import { TooltipContent } from './TooltipContent';
 
 interface TeamMembersProps {
-  teamMembers: Person[];
+  team: User[];
   projectName: string;
 }
 
@@ -49,7 +49,7 @@ const avatarGroupStyle = {
 };
 
 const TeamMembersColumn = (props: TeamMembersProps) => {
-  const { teamMembers, projectName } = props;
+  const { team, projectName } = props;
 
   const [open, setOpen] = useState(false);
 
@@ -65,23 +65,23 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
           additionalAvatar: { onClick: () => setOpen(true) },
         }}
       >
-        {teamMembers.map((teamMember, index) => (
+        {team.map((teamMember, index) => (
           <StyledTooltip
             arrow
             key={index}
             title={<TooltipContent teamMember={teamMember} projectName={projectName} />}
             placement="bottom"
           >
-            <AvatarIcon src={teamMember.avatar} key={teamMember.name} index={index} allowAnimation={true} />
+            <AvatarIcon user={teamMember} key={teamMember.name} index={index} allowAnimation={true} />
           </StyledTooltip>
         ))}
       </AvatarGroup>
 
       <CustomDialog open={open} handleClose={() => setOpen(false)} title="All team members">
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {teamMembers.map((teamMember, index) => (
+          {team.map((teamMember, index) => (
             <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <AvatarIcon size={48} src={teamMember.avatar} key={teamMember.name} />
+              <AvatarIcon size={48} user={teamMember} key={teamMember.name} />
 
               <Box sx={boxStyles}>
                 <Typography variant="subtitle1" sx={{ color: 'text.primary', lineHeight: 1 }}>

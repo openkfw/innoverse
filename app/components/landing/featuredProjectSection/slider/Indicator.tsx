@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 
-import { SliderItem } from '@/repository/mock/landing/main-slider';
+import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
 import SliderPill from './SliderPill';
@@ -10,7 +10,7 @@ interface IndicatorProps {
   index: number;
   setSelectedItem: (index: number) => void;
   selectedItem: number;
-  slide: SliderItem;
+  slide: Project;
 }
 
 const Indicator = (props: IndicatorProps) => {
@@ -38,10 +38,9 @@ const Indicator = (props: IndicatorProps) => {
       <SliderPill
         active={isSelected}
         itemNumber={(index + 1).toString()}
-        title={slide.image.title}
-        projectFrom={slide.image.projectFrom}
-        projectTo={slide.image.projectTo}
-        year={slide.image.year}
+        title={slide.title || ''}
+        projectStart={slide.projectStart || ''}
+        projectEnd={slide.projectEnd || 'Present'}
       />
     </Box>
   );

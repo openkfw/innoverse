@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { SliderContent, sliderContent } from '@/repository/mock/landing/main-slider';
+import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
 import FeaturedProjectContent from './slider/FeaturedProjectContent';
@@ -15,9 +15,13 @@ import SmallSliderPill from './slider/SmallSliderPill';
 
 import './FeatureProjectSlider.css';
 
-export const FeaturedProjectSlider = () => {
-  const [selectedItem, setSelectedItem] = useState<number>(sliderContent.items.length - 1);
-  const [slides] = useState<SliderContent>(sliderContent);
+type FeaturedProjectSliderProps = {
+  items: Project[];
+};
+
+export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
+  const [selectedItem, setSelectedItem] = useState<number>(props.items.length - 1);
+  const slides = props.items;
   const sliderRef = useRef<Slider>(null);
 
   const setSelected = (index: number) => {
@@ -44,7 +48,7 @@ export const FeaturedProjectSlider = () => {
           isSelected={selectedItem == index}
           setSelectedItem={setSelected}
           selectedItem={selectedItem}
-          slide={slides.items[index]}
+          slide={slides[index]}
         />
       );
     },
@@ -55,11 +59,14 @@ export const FeaturedProjectSlider = () => {
 
   return (
     <Slider {...settings} ref={sliderRef}>
-      {slides.items.map((el, id) => (
+      {slides.map((el, id) => (
         <Grid container key={id} sx={wrapperStyles}>
           <Grid container item sx={imageContainerStyles}>
             <Image
-              src={el.image.image}
+              unoptimized
+              src={el.image}
+              width={0}
+              height={0}
               alt="Project"
               sizes="50vw"
               className="slider-image"
@@ -69,11 +76,11 @@ export const FeaturedProjectSlider = () => {
           </Grid>
 
           <Box sx={smallScreenSliderPill}>
-            <SmallSliderPill itemNumber={(id + 1).toString()} title={el.image.title} />
+            <SmallSliderPill itemNumber={(id + 1).toString()} title={el.title} />
           </Box>
 
           <Grid item md={4} sx={contentStyles}>
-            <FeaturedProjectContent title={el.text.title} tags={el.text.tags} description={el.text.description} />
+            <FeaturedProjectContent title={el.description.title} tags={el.description.tags} summary={el.summary} />
           </Grid>
         </Grid>
       ))}

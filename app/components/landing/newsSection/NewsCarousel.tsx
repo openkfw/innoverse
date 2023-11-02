@@ -1,3 +1,4 @@
+'use client';
 import { SetStateAction, useRef, useState } from 'react';
 import Slider from 'react-slick';
 
@@ -5,21 +6,24 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { ProjectUpdate } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
-import { news, NewsSlider } from '@/repository/mock/landing/news-section';
 import theme from '@/styles/theme';
 
 import ArrowControllers from '../../landing/projectSection/ArrowControllers';
 
 import NewsCard from './NewsCard';
 
-import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import 'slick-carousel/slick/slick.css';
 
-export default function NewsCarousel() {
+type NewsSliderProps = {
+  updates: ProjectUpdate[];
+};
+
+export default function NewsCarousel(props: NewsSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [slides] = useState<NewsSlider[]>(news);
-
+  const slides = props.updates;
   const sliderRef = useRef<Slider>(null);
 
   const handleMouseDown = (e: { pageX: number }) => {
@@ -64,14 +68,7 @@ export default function NewsCarousel() {
         <Slider {...settings} ref={sliderRef}>
           {slides.map((item) => (
             <Grid item xs={11} key={item.id} sx={cardContainerStyles}>
-              <NewsCard
-                title={item.title}
-                subtitle={item.subtitle}
-                theme={item.theme}
-                publisher={item.publisher}
-                avatar={item.avatar}
-                date={item.date}
-              />
+              <NewsCard item={item} />
             </Grid>
           ))}
         </Slider>

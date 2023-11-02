@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { StaticImageData } from 'next/image';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -9,28 +8,26 @@ import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
+import { ProjectUpdate } from '@/common/types';
 import AvatarIcon from '@/components/common/AvatarIcon';
 import theme from '@/styles/theme';
 
 interface ProjectCardProps {
-  title: string;
-  subtitle: string;
-  publisher: string;
-  avatar: StaticImageData;
-  theme: string;
-  date: string;
+  item: ProjectUpdate;
 }
 
-export default function ProjectCard(props: ProjectCardProps) {
-  const { title, subtitle, publisher, avatar, theme, date } = props;
+export default function NewsCard(props: ProjectCardProps) {
+  const { item } = props;
+  const { title, comment, author, theme, date } = item;
+
   return (
     <Card sx={cardStyles}>
       <CardHeader
         sx={cardHeaderStyles}
-        avatar={<AvatarIcon src={avatar} size={24} />}
+        avatar={<AvatarIcon user={author} size={24} />}
         title={
           <Typography variant="caption" sx={{ color: 'text.primary' }}>
-            {publisher}
+            {author.name}
           </Typography>
         }
       />
@@ -42,7 +39,7 @@ export default function ProjectCard(props: ProjectCardProps) {
           </Typography>
 
           <Typography sx={subtitleStyles} variant="body1">
-            {subtitle}
+            {comment}
           </Typography>
         </Box>
 
@@ -65,7 +62,7 @@ export default function ProjectCard(props: ProjectCardProps) {
 // News Card Styles
 const cardStyles = {
   padding: 3,
-  height: '218px',
+  height: '225px',
   borderRadius: '8px',
   marginRight: '24px',
   [theme.breakpoints.up('sm')]: {

@@ -6,6 +6,15 @@ const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   swcMinify: true,
+  async rewrites() {
+    return [
+      {
+        source: '/api/strapi',
+        destination: process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
@@ -25,6 +34,9 @@ const nextConfig = {
       use: 'raw-loader',
     });
     return config;
+  },
+  env: {
+    NEXT_PUBLIC_STRAPI_TOKEN: process.env.NEXT_PUBLIC_STRAPI_TOKEN,
   },
 };
 

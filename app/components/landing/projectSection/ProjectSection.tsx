@@ -1,12 +1,19 @@
+'use client';
+
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
+import { Project } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
 import theme from '@/styles/theme';
 
 import ProjectCarousel from './ProjectCarousel';
 
-export const ProjectSection = () => {
+export type ProjectProps = {
+  projects: Project[];
+};
+
+export const ProjectSection = (props: ProjectProps) => {
   return (
     <Grid container spacing={5} sx={wrapperStyles}>
       <Grid item container xs={12} sx={titleContainerStyles}>
@@ -22,7 +29,7 @@ export const ProjectSection = () => {
           <CustomButton>Mehr</CustomButton>
         </Grid>
       </Grid>
-      <ProjectCarousel />
+      <ProjectCarousel projects={props.projects} />
     </Grid>
   );
 };

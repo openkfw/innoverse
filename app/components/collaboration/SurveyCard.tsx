@@ -34,8 +34,8 @@ export const SurveyCard = ({ surveyQuestion }: SurveyCardProps) => {
           {responseOptions.map((response) => {
             return (
               <Chip
-                label={response}
-                key={response}
+                label={response.responseOption}
+                key={response.responseOption}
                 sx={{
                   display: 'flex',
                   mb: '10px',

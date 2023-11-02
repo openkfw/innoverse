@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_update_updates",
+  "info": {
+    "displayName": "updates",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "date": {
+      "type": "string"
+    },
+    "comment": {
+      "type": "string"
+    },
+    "author": {
+      "type": "component",
+      "repeatable": false,
+      "component": "user.author"
+    },
+    "theme": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

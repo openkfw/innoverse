@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { ProjectSummary } from '@/common/types';
+import { Project } from '@/common/types';
 
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
@@ -14,12 +14,14 @@ import TeamMembersColumn from './TeamMembersColumn';
 import UpdateCard from './UpdateCard';
 
 interface ProjectInfoProps {
-  projectSummary: ProjectSummary;
+  project: Project;
   setActiveTab: (tab: number) => void;
 }
 
+const MAX_UPDATES = 1;
+
 export const ProjectInfoCard = (props: ProjectInfoProps) => {
-  const { projectSummary, setActiveTab } = props;
+  const { project, setActiveTab } = props;
 
   return (
     <Card sx={cardStyles}>
@@ -29,18 +31,15 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
           <Grid item xs={4}>
             <Grid container direction="column" spacing={1}>
               <Grid item xs={4}>
-                <ProjectStageCard timingData={projectSummary.timing} />
+                <ProjectStageCard projectStart={project.projectStart} projectEnd={project.projectEnd} />
               </Grid>
               <Grid item xs={4} sx={interactionStyles}>
-                <InteractionButton projectName={projectSummary.projectName} interactionType={InteractionType.LIKE} />
-                <InteractionButton
-                  projectName={projectSummary.projectName}
-                  interactionType={InteractionType.PROJECT_FOLLOW}
-                />
+                <InteractionButton projectName={project.projectName} interactionType={InteractionType.LIKE} />
+                <InteractionButton projectName={project.projectName} interactionType={InteractionType.PROJECT_FOLLOW} />
               </Grid>
               <Grid item xs={4}>
                 <Typography variant="caption" color="text.secondary">
-                  {projectSummary.likes} Likes - {projectSummary.followers} Innovaders folgen
+                  153 Likes - 43 Innovaders folgen
                 </Typography>
               </Grid>
             </Grid>
@@ -50,13 +49,13 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
             <Grid container spacing={2} sx={collaborationWrapperStyles}>
               <Grid item xs={9}>
                 <CollaborationColumn
-                  projectName={projectSummary.projectName}
-                  collaborationData={projectSummary.collaboration}
+                  projectName={project.title}
+                  collaboration={project.collaboration}
                   setActiveTab={setActiveTab}
                 />
               </Grid>
               <Grid item xs={3}>
-                <TeamMembersColumn projectName={projectSummary.projectName} teamMembers={projectSummary.teamMembers} />
+                <TeamMembersColumn team={project.team} projectName={project.title} />
               </Grid>
 
               <Grid item xs={12}>
@@ -64,19 +63,15 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="overline" sx={latestUpdatesStyles}>
-                  Neuesten updates (3 von 12)
+                  Neuesten updates ({Math.min(project.updates.length, MAX_UPDATES)} von {project.updates.length})
                 </Typography>
               </Grid>
               <Grid item container xs={12} spacing={2}>
-                <Grid item xs={4}>
-                  <UpdateCard update={projectSummary.updates[0]} />
-                </Grid>
-                <Grid item xs={4}>
-                  <UpdateCard update={projectSummary.updates[1]} />
-                </Grid>
-                <Grid item xs={4}>
-                  <UpdateCard update={projectSummary.updates[2]} />
-                </Grid>
+                {project.updates.slice(0, MAX_UPDATES).map((update, key) => (
+                  <Grid key={key} item xs={4}>
+                    <UpdateCard update={update} />
+                  </Grid>
+                ))}
               </Grid>
             </Grid>
           </Grid>

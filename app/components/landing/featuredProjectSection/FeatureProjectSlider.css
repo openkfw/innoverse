@@ -1,77 +1,77 @@
 .slick-dots.slick-thumb li {
-    width: auto;
-    height: auto;
+  width: auto;
+  height: auto;
 }
 
 .slider-image {
-    align-self: flex-end;
-    width: 100%;
-    height: auto;
-    max-width: 806px;
-    aspect-ratio: 806/477;
-    position: relative;
+  align-self: flex-end;
+  width: 100%;
+  height: auto;
+  max-width: 806px;
+  aspect-ratio: 806/477;
+  position: relative;
 }
 
 .slick-dots.slick-thumb {
-    position: absolute !important;
-    margin-left: calc(50% - 1000px);
-    width: fit-content;
-    bottom: initial !important;
-    display: flex !important;
-    flex-direction: row;
-    justify-items: center;
-    align-items: center;
-    gap: 25px;
-    top: calc(100% + 100px);
-    transition-timing-function: ease-in-out;
-    transition: translate 750ms;
+  position: absolute !important;
+  margin-left: calc(50% - 1000px);
+  width: fit-content;
+  bottom: initial !important;
+  display: flex !important;
+  flex-direction: row;
+  justify-items: center;
+  align-items: center;
+  gap: 25px;
+  top: calc(100% + 100px);
+  transition-timing-function: ease-in-out;
+  transition: translate 750ms;
 }
 
 /* XXL */
 @media only screen and (min-width: 1920px) {
-    .slick-dots.slick-thumb {
-        margin-left: -100px;
-    }
+  .slick-dots.slick-thumb {
+    margin-left: -100px;
+  }
 }
 
 /* XL */
 @media only screen and (min-width: 1536px) {
-    .slider-image {
-        height: 100%;
-        width: auto;
-    }
+  .slider-image {
+    height: 100%;
+    width: auto;
+  }
 }
 
 /* LG */
 @media only screen and (min-width: 1301px) and (max-width: 1536px) {
-    .slider-image {
-        height: 100%;
-        width: auto;
-    }
+  .slider-image {
+    height: 100%;
+    width: auto;
+  }
 }
 
 /* MD */
 @media only screen and (min-width: 900px) and (max-width: 1300px) {
-    .slick-dots.slick-thumb {
-        top: calc(100% + 100px);
-    }
+  .slick-dots.slick-thumb {
+    top: calc(100% + 100px);
+  }
 
-    .slider-image {
-        height: 100%;
-        width: auto;
-    }
+  .slider-image {
+    height: 100%;
+    width: auto;
+  }
 }
 
 /* SM */
 @media only screen and (min-width: 600px) and (max-width: 899px) {
-    .slick-dots.slick-thumb {
-        top: calc(100% + 45px);
-        transform: scale(0.6);
-        gap: 40px;
-    }
+  .slick-dots.slick-thumb {
+    top: calc(100% + 45px);
+    transform: scale(0.6);
+    gap: 40px;
+  }
 
-    .slider-image {
-        height: 100%;
-        width: auto;
-    }
+  .slider-image {
+    height: 100%;
+    width: auto;
+  }
 }

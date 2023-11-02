@@ -1,11 +1,11 @@
 import { Grid, Typography } from '@mui/material';
 
-import { Person } from '@/common/types';
+import { User } from '@/common/types';
 
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 interface TeamMemberProps {
-  teamMember: Person;
+  teamMember: User;
   projectName: string;
 }
 
