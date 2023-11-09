@@ -1,10 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import MuiMarkdown, { Overrides } from 'mui-markdown';
+import MuiMarkdown, { getOverrides,Overrides } from 'mui-markdown';
 
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { Box, Divider, IconButton, Typography } from '@mui/material';
+import { Box, Collapse, Divider, Grid, IconButton, Link, List, ListItemButton, Typography } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -19,6 +19,13 @@ import { ProjectTags } from './ProjectTags';
 
 import robotic_hand from '/public/images/robotic-hand.png';
 
+interface MarkdownHeading {
+  title: string;
+  depth: number;
+  id: string;
+  active: boolean;
+}
+
 interface ProjectProgressProps {
   project: Project;
   projectName: string;
@@ -26,6 +33,21 @@ interface ProjectProgressProps {
 
 interface InfoItemProps {
   description: ProjectDescription;
+}
+
+interface ProjectTextProps {
+  showMoreButtonVisible: boolean;
+  text: string;
+}
+
+interface ProjectTextAnchorMenuProps {
+  headings: MarkdownHeading[] | undefined;
+  setHeadingActive: (id: string) => void;
+}
+
+interface ProjectTextProps {
+  showMoreButtonVisible: boolean;
+  text: string;
 }
 
 const InfoItemRight = ({ description }: InfoItemProps) => {
@@ -50,16 +72,107 @@ const InfoItemRight = ({ description }: InfoItemProps) => {
   );
 };
 
+const ProjectText = (props: ProjectTextProps) => (
+  <Box
+    id="main-text"
+    sx={{
+      overflowY: props.showMoreButtonVisible ? 'none' : 'scroll',
+      height: '800px',
+      scrollBehavior: 'smooth',
+    }}
+  >
+    <MuiMarkdown overrides={muiMarkdownOverrides as Overrides}>{props.text}</MuiMarkdown>
+  </Box>
+);
+
+const ProjectTextAnchorMenu = (props: ProjectTextAnchorMenuProps) => {
+  return (
+    <Box>
+      <List
+        sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+        component="nav"
+        aria-labelledby="nested-list-subheader"
+      >
+        {props.headings?.map((heading) => {
+          if (heading.depth > 1) {
+            return (
+              <Collapse in timeout="auto" unmountOnExit key={heading.id}>
+                <List component="div" disablePadding>
+                  <ListItemButton sx={{ pl: 4 }} onClick={() => props.setHeadingActive(heading.id)}>
+                    <Link
+                      color={heading.active ? 'secondary.main' : 'primary.main'}
+                      href={`#${heading.id}`}
+                      variant="body2"
+                      underline="none"
+                    >
+                      {heading.title}
+                    </Link>
+                  </ListItemButton>
+                </List>
+              </Collapse>
+            );
+          }
+          return (
+            <ListItemButton key={heading.id} onClick={() => props.setHeadingActive(heading.id)}>
+              <Link
+                color={heading.active ? 'secondary.main' : 'primary.main'}
+                href={`#${heading.id}`}
+                variant="body2"
+                underline="none"
+              >
+                {heading.title}
+              </Link>
+            </ListItemButton>
+          );
+        })}
+      </List>
+    </Box>
+  );
+};
+
 export const ProjectProgress = (props: ProjectProgressProps) => {
   const { project, projectName } = props;
   const [contentSize, setContentSize] = useState<string>('600px');
   const [showMoreButtonVisible, setShowMoreButtonVisible] = useState<boolean>(true);
+  const [headings, setHeadings] = useState<MarkdownHeading[] | undefined>();
 
   const expand = () => {
     triggerAnalyticsEvent('expand-project-description', projectName);
     setContentSize('100%');
     setShowMoreButtonVisible(false);
   };
+
+  const generateLinkMarkup = (contentElement: Element | null): MarkdownHeading[] => {
+    if (!contentElement) return [] as MarkdownHeading[];
+    const headings = [...contentElement.querySelectorAll<HTMLElement>('h1, h2')];
+    return headings.map((heading) => ({
+      title: heading.innerText,
+      depth: parseInt(heading.nodeName.replace(/\D/g, '')) || 0,
+      id: heading.getAttribute('id') || '',
+      active: false,
+    }));
+  };
+
+  const setHeadingActive = (id: string) => {
+    if (showMoreButtonVisible) {
+      setShowMoreButtonVisible(false);
+      expand();
+    }
+    setHeadings(
+      (prev) =>
+        prev?.reduce((pV, cV) => {
+          if (cV.id === id) cV.active = true;
+          else cV.active = false;
+          pV.push(cV);
+          return pV;
+        }, [] as MarkdownHeading[]),
+    );
+  };
+
+  useEffect(() => {
+    const renderedMarkdown = document.querySelector<Element>('#main-text');
+    setHeadings(generateLinkMarkup(renderedMarkdown));
+  }, [project]);
 
   return (
     <Card sx={wrapperStyles}>
@@ -70,16 +183,23 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
               <ArrowDownwardIcon />
             </IconButton>
           </Box>
-          <Stack direction="row" spacing={0} justifyContent={'space-between'}>
-            <Box>
-              <MuiMarkdown overrides={{ style: { color: 'text.primary' } } as unknown as Overrides}>
-                {project.description.text}
-              </MuiMarkdown>
-            </Box>
-            <Box sx={infoItemRightContainerStyles}>
-              <InfoItemRight description={project.description} />
-            </Box>
-          </Stack>
+          <Grid container>
+            <Grid xs={2}>
+              <Box>
+                <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
+              </Box>
+            </Grid>
+
+            <Grid xs={7}>
+              <ProjectText showMoreButtonVisible={showMoreButtonVisible} text={project.description.text} />
+            </Grid>
+
+            <Grid xs={3}>
+              <Box sx={infoItemRightContainerStyles}>
+                <InfoItemRight description={project.description} />
+              </Box>
+            </Grid>
+          </Grid>
         </Box>
 
         <Divider sx={{ width: '662px' }} />
@@ -100,6 +220,7 @@ const wrapperStyles = {
   zIndex: 0,
   boxShadow:
     '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
+  flexGrow: 1,
 };
 
 const contentStyles = {
@@ -134,4 +255,32 @@ const dividerStyle = {
   bgcolor: 'common.white',
   borderColor: 'common.white',
   mb: '17px',
+};
+
+const muiMarkdownOverrides = {
+  ...getOverrides(), // This will keep the other default overrides.
+  p: {
+    component: 'p',
+    props: {
+      style: { color: 'text.primary' },
+    } as React.HTMLProps<HTMLParagraphElement>,
+  },
+  code: {
+    component: 'code',
+    props: {
+      style: { color: 'text.primary' },
+    } as React.HTMLProps<HTMLParagraphElement>,
+  },
+  h1: {
+    component: 'h1',
+    props: {
+      style: { scrollMargin: '5em' },
+    } as React.HTMLProps<HTMLParagraphElement>,
+  },
+  h2: {
+    component: 'h2',
+    props: {
+      style: { scrollMargin: '5em' },
+    } as React.HTMLProps<HTMLParagraphElement>,
+  },
 };
