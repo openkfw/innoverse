@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
+import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import FormatAlignLeftOutlinedIcon from '@mui/icons-material/FormatAlignLeftOutlined';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
@@ -40,6 +41,7 @@ export enum InteractionType {
   RECOMMEND = 'recommend',
   FEEDBACK = 'feedback',
   LOG_IN = 'log-in',
+  CLEAR = 'clear',
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
@@ -58,6 +60,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.APPLY) return <ApplyIcon color={isHovered ? 'white' : 'black'} />;
     if (interactionType === InteractionType.RECOMMEND) return <RecommendIcon color={isHovered ? 'white' : 'black'} />;
     if (interactionType === InteractionType.LOG_IN) return <PersonIcon fontSize="small" />;
+    if (interactionType === InteractionType.CLEAR) return <ClearIcon fontSize="small" />;
   };
 
   function handleIconClick(e: React.MouseEvent) {
@@ -89,6 +92,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
     if (interactionType === InteractionType.FEEDBACK) return 'FEEDBACK';
     if (interactionType === InteractionType.LOG_IN) return 'Log in';
+    if (interactionType === InteractionType.CLEAR) return 'Entfernen';
   };
 
   const handleClick = () => {

@@ -66,9 +66,9 @@ export default function NewsCarousel(props: NewsSliderProps) {
     <Grid container item xs={12} spacing={2} onMouseDown={handleMouseDown} sx={wrapper}>
       <Box sx={sliderBox}>
         <Slider {...settings} ref={sliderRef}>
-          {slides.map((item) => (
-            <Grid item xs={11} key={item.id} sx={cardContainerStyles}>
-              <NewsCard item={item} />
+          {slides.map((item, index) => (
+            <Grid item xs={11} key={index} sx={cardContainerStyles}>
+              <NewsCard key={index} item={item} />
             </Grid>
           ))}
         </Slider>

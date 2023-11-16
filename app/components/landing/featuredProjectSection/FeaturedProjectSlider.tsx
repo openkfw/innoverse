@@ -70,8 +70,7 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
               alt="Project"
               sizes="50vw"
               className="slider-image"
-              objectFit="contain"
-              objectPosition="center"
+              style={{ objectFit: 'contain', objectPosition: 'center' }}
             />
           </Grid>
 

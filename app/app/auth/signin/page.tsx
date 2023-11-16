@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 
 import IndexPage from '@/app/page';
 import CustomDialog from '@/components/common/CustomDialog';
-import SignInOptions from '@/components/common/SignInOptions';
+import SignInOptions from '@/components/login/SignInOptions';
 
 export default function SignIn() {
   return (
@@ -23,7 +23,7 @@ export default function SignIn() {
           borderRadius: '24px',
         }}
       >
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 410 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 440 }}>
           <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 700 }}>
             Sign in to continue
           </Typography>

@@ -32,11 +32,12 @@ const options: NextAuthOptions = {
     async jwt({ token, account }) {
       if (account) {
         token.accessToken = account.access_token;
+        token.provider = account.provider;
       }
       return token;
     },
-    async session({ session }) {
-      return session;
+    async session({ session, token }) {
+      return { ...session, provider: token.provider };
     },
     async redirect({ baseUrl }) {
       return baseUrl;

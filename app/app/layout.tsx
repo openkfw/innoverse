@@ -9,6 +9,7 @@ import theme from '../styles/theme';
 
 import { SWRProvider } from './swr-provider';
 import ThemeRegistry from './ThemeRegistry';
+import { UserContext } from './user-context';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const metadata: Metadata = {
@@ -35,7 +36,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ApolloProvider client={client}>
           <SessionProvider>
             <SWRProvider>
-              <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+              <UserContext>
+                <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+              </UserContext>
             </SWRProvider>
           </SessionProvider>
         </ApolloProvider>
