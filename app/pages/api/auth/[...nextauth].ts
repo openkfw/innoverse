@@ -3,6 +3,11 @@ import NextAuth, { NextAuthOptions } from 'next-auth';
 import AzureADProvider from 'next-auth/providers/azure-ad';
 import GitLabProvider from 'next-auth/providers/gitlab';
 
+const PROVIDERS = {
+  GITLAB: 'gitlab',
+  AZURE_AD: 'azure-ad',
+};
+
 const options: NextAuthOptions = {
   providers: [
     AzureADProvider({
@@ -37,7 +42,18 @@ const options: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      return { ...session, provider: token.provider };
+      const gitlabId = token.provider == PROVIDERS.GITLAB ? token.sub : null;
+      const azureId = token.provider == PROVIDERS.AZURE_AD ? token.sub : null;
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.sub,
+          provider: token.provider,
+          gitlabId,
+          azureId,
+        },
+      };
     },
     async redirect({ baseUrl }) {
       return baseUrl;

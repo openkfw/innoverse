@@ -15,10 +15,9 @@
       "required": true
     },
     "authors": {
-      "type": "component",
-      "repeatable": true,
-      "component": "user.author",
-      "required": false
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::inno-user.inno-user"
     }
   }
 }

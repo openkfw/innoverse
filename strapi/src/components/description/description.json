@@ -10,11 +10,6 @@
       "type": "richtext",
       "required": true
     },
-    "author": {
-      "type": "component",
-      "repeatable": false,
-      "component": "user.author"
-    },
     "title": {
       "type": "string",
       "required": true
@@ -29,6 +24,11 @@
       "repeatable": true,
       "component": "tags.tags",
       "required": true
+    },
+    "author": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::inno-user.inno-user"
     }
   }
 }

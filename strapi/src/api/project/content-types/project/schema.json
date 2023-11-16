@@ -42,13 +42,6 @@
       "required": true,
       "default": "Exploration"
     },
-    "author": {
-      "displayName": "author",
-      "type": "component",
-      "repeatable": false,
-      "component": "user.author",
-      "required": true
-    },
     "summary": {
       "type": "string",
       "required": true
@@ -80,12 +73,6 @@
       "repeatable": true,
       "component": "collaboration.collaboration"
     },
-    "team": {
-      "type": "component",
-      "repeatable": true,
-      "component": "user.author",
-      "required": true
-    },
     "jobs": {
       "displayName": "jobs",
       "type": "component",
@@ -103,6 +90,17 @@
       "type": "component",
       "repeatable": true,
       "component": "collaboration.collaboration"
+    },
+    "author": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::inno-user.inno-user"
+    },
+    "team": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::inno-user.inno-user",
+      "mappedBy": "project"
     }
   }
 }

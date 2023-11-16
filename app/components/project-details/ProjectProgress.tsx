@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import MuiMarkdown, { getOverrides,Overrides } from 'mui-markdown';
+import MuiMarkdown, { getOverrides, Overrides } from 'mui-markdown';
 
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Box, Collapse, Divider, Grid, IconButton, Link, List, ListItemButton, Typography } from '@mui/material';

@@ -16,6 +16,26 @@ export type ProjectsResponse = {
   };
 };
 
+export type GetInnoUserResponse = {
+  data: {
+    innoUsers: {
+      data: UserQuery[];
+    };
+  };
+};
+
+export type CreateInnoUserResponse = {
+  data: {
+    createInnoUser: {
+      data: UserQuery;
+    };
+  };
+};
+
+export type UserQueryResult = {
+  user: any;
+};
+
 export type ProjectData = {
   id: string;
   attributes: Project;
@@ -30,8 +50,8 @@ export type Project = {
   projectEnd: string;
   image: ImageType;
   description: Description;
-  author: UserQuery;
-  team: UserQuery[];
+  author: { data: UserQuery };
+  team: { data: UserQuery[] };
   updates: Update[];
   collaboration: { description: string };
   questions: Question[];
@@ -48,10 +68,12 @@ export type ImageType = {
 };
 
 export type UserQuery = {
-  name: string;
-  role?: string;
-  department?: string;
-  avatar: ImageType;
+  attributes: {
+    name: string;
+    role?: string;
+    department?: string;
+    avatar: ImageType;
+  };
 };
 
 export type User = {
@@ -59,6 +81,7 @@ export type User = {
   role?: string;
   department?: string;
   avatar: string;
+  email?: string;
 };
 
 export type Description = {
@@ -66,7 +89,7 @@ export type Description = {
   summary: string;
   text: string;
   tags: { tag: string };
-  author: UserQuery;
+  author: { data: UserQuery };
 };
 
 export type Update = {
@@ -80,13 +103,13 @@ export type UpdateQuery = {
   date: string;
   comment: string;
   theme: string;
-  author: UserQuery;
+  author: { data: UserQuery };
 };
 
 export type Question = {
   title: string;
   description: string;
-  authors: UserQuery[];
+  authors: { data: UserQuery[] };
 };
 
 export type SurveyQuestion = {
