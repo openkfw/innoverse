@@ -1,4 +1,6 @@
 import {
+  CreateInnoUserResponse,
+  GetInnoUserResponse,
   ProjectData,
   ProjectResponse,
   ProjectsResponse,
@@ -12,7 +14,77 @@ import {
 export enum STRAPI_QUERY {
   GetProjects,
   GetProjectById,
+  GetInnoUserByEmail,
+  CreateInnoUser,
 }
+
+const userQuery = `
+  data {
+    attributes {
+      gitlabId
+      azureId
+      name
+      role
+      department
+      email
+      avatar {
+        data {
+          attributes {
+            url
+          }   
+        }
+      }
+    }
+  }
+`;
+
+export const CreateInnoUserQuery = `mutation PostInnoUser($gitlabId: String, $azureId: String, $name: String!, $role: String, $department: String, $email: String, $avatarId: ID) {
+  createInnoUser(data: { gitlabId: $gitlabId, azureId: $azureId,name: $name, role: $role, department: $department, email: $email, avatar: $avatarId}) {
+    data {
+      id
+      attributes {
+        gitlabId
+        azureId
+        name
+        role
+        department
+        email
+        avatar {
+          data {
+            attributes {
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`;
+
+export const GetInnoUserByEmailQuery = `query GetInnoUser($email: String) {
+  innoUsers(filters: { email: { eq: $email } }) {
+    data {
+      id
+      attributes {
+        gitlabId
+        azureId
+        name
+        role
+        department
+        email
+        avatar {
+          data {
+            attributes {
+            url
+            }
+          }
+        }
+      }
+    }  
+  }  
+}
+`;
 
 export const GetProjectsQuery = `query GetProjects {
   projects(sort: "id:asc") {
@@ -33,7 +105,7 @@ export const GetProjectsQuery = `query GetProjects {
           }
         }
         team {
-          name
+          ${userQuery}
         }
         description {
           title
@@ -48,14 +120,7 @@ export const GetProjectsQuery = `query GetProjects {
           comment
           theme
           author {
-            name
-            avatar {
-              data {
-                attributes {
-                  url
-                }
-              }
-            }
+            ${userQuery}
           }
         }
       }
@@ -89,57 +154,21 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
           tag
          }
          author {
-           name
-           role
-           department
-           avatar {
-             data {
-               attributes {
-                 url
-               }
-             }
-           }
+          ${userQuery}
          }
        }
        author {
-           name
-           role
-           department
-           avatar {
-             data {
-               attributes {
-                 url
-               }
-             }
-           }
+        ${userQuery}
        }
        team {
-         name
-         role
-         department
-         avatar {
-           data {
-             attributes {
-               url
-             }
-           }
-         }
+        ${userQuery}
        }
        updates {
          date
          comment
          theme
          author {
-           name
-           role
-           department
-           avatar {
-             data {
-               attributes {
-                 url
-               }
-             }
-           }
+          ${userQuery}
          }
        }
        collaboration {
@@ -149,15 +178,7 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
         title
         description
         authors {
-          name
-          role
-          avatar {
-            data {
-              attributes {
-                url
-              }
-            }
-          }
+          ${userQuery}
         }
        }
        surveyQuestions {
@@ -169,7 +190,7 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
        }
        jobs {
         title
-        description
+        description 
         email
        }
      }
@@ -177,16 +198,41 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
  }
 }`;
 
-export const withResponseTransformer = (query: STRAPI_QUERY, data: ProjectsResponse | ProjectResponse) => {
+export const withResponseTransformer = (
+  query: STRAPI_QUERY,
+  data: ProjectsResponse | ProjectResponse | GetInnoUserResponse | CreateInnoUserResponse,
+) => {
   switch (query) {
     case STRAPI_QUERY.GetProjects:
       return getStaticBuildFetchProjects(data as ProjectsResponse);
     case STRAPI_QUERY.GetProjectById:
       return getStaticBuildFetchProjectById(data as ProjectResponse);
+    case STRAPI_QUERY.GetInnoUserByEmail:
+      return getStaticBuildGetInnoUser(data as GetInnoUserResponse);
+    case STRAPI_QUERY.CreateInnoUser:
+      return getStaticBuildCreateInnoUser(data as CreateInnoUserResponse);
     default:
       break;
   }
 };
+
+function getStaticBuildCreateInnoUser(graphqlResponse: CreateInnoUserResponse) {
+  const user = graphqlResponse.data.createInnoUser.data.attributes;
+
+  return {
+    ...user,
+    avatar: user.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.avatar.data.attributes.url}`,
+  };
+}
+
+function getStaticBuildGetInnoUser(graphqlResponse: GetInnoUserResponse) {
+  const user = graphqlResponse.data.innoUsers.data[0].attributes;
+
+  return {
+    ...user,
+    avatar: user.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.avatar.data.attributes.url}`,
+  };
+}
 
 function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
   const formattedUpdates: Update[] = [];
@@ -195,16 +241,24 @@ function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
       project.attributes;
 
     const formattedUpdate = (updates as unknown as UpdateQuery[]).map((u: UpdateQuery) => {
+      const author = u.author.data.attributes;
+
       return {
         title: description.title,
         comment: u.comment,
         date: u.date,
         theme: u.theme,
         author: {
-          name: u.author.name,
+          ...author,
           avatar:
-            u.author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${u.author.avatar.data.attributes.url}`,
+            author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
         },
+      };
+    });
+
+    const formattedTeam = team.data.map((t: UserQuery) => {
+      return {
+        ...t.attributes,
       };
     });
 
@@ -217,7 +271,7 @@ function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
       title,
       summary,
       status,
-      team,
+      team: formattedTeam,
       description: {
         ...description,
         tags: description.tags,
@@ -225,6 +279,7 @@ function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
       image: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
     };
   });
+
   return {
     projects: formattedProjects,
     updates: formattedUpdates,
@@ -252,38 +307,44 @@ function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
   } = project.attributes;
 
   const formattedUpdates = (updates as unknown as UpdateQuery[]).map((u: UpdateQuery) => {
+    const author = u.author.data.attributes;
     return {
       title,
       comment: u.comment,
       date: u.date,
       theme: u.theme,
       author: {
-        name: u.author.name,
-        avatar:
-          u.author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${u.author.avatar.data.attributes.url}`,
+        ...author,
+        avatar: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
       },
     };
   });
 
   const formattedAuthor = {
-    ...author,
-    avatar: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
+    ...author.data.attributes,
+    avatar:
+      author.data.attributes.avatar.data &&
+      `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.data.attributes.avatar.data.attributes.url}`,
   };
 
-  const formattedTeam = team.map((t: UserQuery) => {
+  const formattedTeam = team.data.map((t: UserQuery) => {
     return {
-      ...t,
-      avatar: t.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${t.avatar.data.attributes.url}`,
+      ...t.attributes,
+      avatar:
+        t.attributes.avatar.data &&
+        `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${t.attributes.avatar.data.attributes.url}`,
     };
   });
 
   const formattedQuestions = questions.map((q: Question) => {
     return {
       ...q,
-      authors: q.authors.map((a: UserQuery) => {
+      authors: q.authors.data.map((a: UserQuery) => {
         return {
-          ...a,
-          avatar: a.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.avatar.data.attributes.url}`,
+          ...a.attributes,
+          avatar:
+            a.attributes.avatar.data &&
+            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.attributes.avatar.data.attributes.url}`,
         };
       }),
     };
@@ -295,8 +356,8 @@ function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
     author: {
       ...description.author,
       avatar:
-        description.author.avatar.data &&
-        `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${description.author.avatar.data.attributes.url}`,
+        description.author.data.attributes.avatar.data &&
+        `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${description.author.data.attributes.avatar.data.attributes.url}`,
     },
   };
 

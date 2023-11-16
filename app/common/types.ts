@@ -159,3 +159,13 @@ export type MainPageData = {
   projects: Project[];
   updates: ProjectUpdate[];
 };
+
+export type UserSession = {
+  gitlabId?: string;
+  azureId?: string;
+  name: string;
+  role?: string;
+  department?: string;
+  image: string;
+  email?: string;
+};

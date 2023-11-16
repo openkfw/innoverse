@@ -1,4 +1,3 @@
-import { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 
 import Badge from '@mui/material/Badge';
@@ -7,8 +6,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
+import { UserSession } from '@/common/types';
+
 interface UserMenuProps {
-  user: User;
+  user: UserSession;
   anchorElUser: HTMLElement | null;
   setAnchorElUser: (anchor: HTMLElement | null) => void;
 }

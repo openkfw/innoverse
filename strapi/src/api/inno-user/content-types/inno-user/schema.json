@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "inno_users",
+  "info": {
+    "singularName": "inno-user",
+    "pluralName": "inno-users",
+    "displayName": "InnoUser",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "role": {
+      "type": "string",
+      "required": false
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "department": {
+      "type": "string"
+    },
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project",
+      "inversedBy": "team"
+    },
+    "email": {
+      "type": "email"
+    },
+    "gitlabId": {
+      "type": "uid",
+      "required": false
+    },
+    "azureId": {
+      "type": "uid"
+    }
+  }
+}

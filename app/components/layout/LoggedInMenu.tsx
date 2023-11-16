@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { User } from 'next-auth';
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Avatar from '@mui/material/Avatar';
@@ -7,12 +6,13 @@ import Badge from '@mui/material/Badge';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 
+import { UserSession } from '@/common/types';
 import theme from '@/styles/theme';
 
 import UserMenu from './UserMenu';
 
 interface LoggedInMenuProps {
-  user: User;
+  user: UserSession;
 }
 
 const StyledBadge = styled(Badge)(({ theme }) => ({

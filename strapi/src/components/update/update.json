@@ -12,14 +12,14 @@
     "comment": {
       "type": "string"
     },
-    "author": {
-      "type": "component",
-      "repeatable": false,
-      "component": "user.author"
-    },
     "theme": {
       "type": "string",
       "required": true
+    },
+    "author": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::inno-user.inno-user"
     }
   }
 }

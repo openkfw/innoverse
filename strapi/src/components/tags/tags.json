@@ -1,7 +1,8 @@
 {
   "collectionName": "components_tags_tags",
   "info": {
-    "displayName": "tags"
+    "displayName": "tags",
+    "description": ""
   },
   "options": {},
   "attributes": {

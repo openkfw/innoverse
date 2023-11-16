@@ -12,6 +12,10 @@ const nextConfig = {
         source: '/api/strapi',
         destination: process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT,
       },
+      {
+        source: '/api/strapi/upload',
+        destination: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`,
+      },
     ];
   },
 
