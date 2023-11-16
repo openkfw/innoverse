@@ -49,10 +49,10 @@ const options: NextAuthOptions = {
         user: {
           ...session.user,
           id: token.sub,
-          provider: token.provider,
           gitlabId,
           azureId,
         },
+        provider: token.provider,
       };
     },
     async redirect({ baseUrl }) {
