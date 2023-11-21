@@ -307,15 +307,15 @@ function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
   } = project.attributes;
 
   const formattedUpdates = (updates as unknown as UpdateQuery[]).map((u: UpdateQuery) => {
-    const author = u.author.data.attributes;
+    const author = u.author.data;
     return {
       title,
       comment: u.comment,
       date: u.date,
       theme: u.theme,
       author: {
-        ...author,
-        avatar: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
+        ...author.attributes,
+        avatar: author && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.attributes.avatar.data.attributes.url}`,
       },
     };
   });
@@ -323,8 +323,7 @@ function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
   const formattedAuthor = {
     ...author.data.attributes,
     avatar:
-      author.data.attributes.avatar.data &&
-      `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.data.attributes.avatar.data.attributes.url}`,
+      author.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.data.attributes.avatar.data.attributes.url}`,
   };
 
   const formattedTeam = team.data.map((t: UserQuery) => {
@@ -356,7 +355,7 @@ function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
     author: {
       ...description.author,
       avatar:
-        description.author.data.attributes.avatar.data &&
+        description.author.data &&
         `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${description.author.data.attributes.avatar.data.attributes.url}`,
     },
   };

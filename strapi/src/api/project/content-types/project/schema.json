@@ -91,16 +91,17 @@
       "repeatable": true,
       "component": "collaboration.collaboration"
     },
-    "author": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::inno-user.inno-user"
-    },
     "team": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToMany",
       "target": "api::inno-user.inno-user",
-      "mappedBy": "project"
+      "mappedBy": "projects"
+    },
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::inno-user.inno-user",
+      "inversedBy": "project"
     }
   }
 }

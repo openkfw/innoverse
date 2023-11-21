@@ -17,8 +17,19 @@
       "required": true
     },
     "role": {
-      "type": "string",
-      "required": false
+      "type": "string"
+    },
+    "department": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email"
+    },
+    "gitlabId": {
+      "type": "uid"
+    },
+    "azureId": {
+      "type": "uid"
     },
     "avatar": {
       "type": "media",
@@ -31,24 +42,17 @@
         "audios"
       ]
     },
-    "department": {
-      "type": "string"
-    },
-    "project": {
+    "projects": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "manyToMany",
       "target": "api::project.project",
       "inversedBy": "team"
     },
-    "email": {
-      "type": "email"
-    },
-    "gitlabId": {
-      "type": "uid",
-      "required": false
-    },
-    "azureId": {
-      "type": "uid"
+    "project": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::project.project",
+      "mappedBy": "author"
     }
   }
 }
