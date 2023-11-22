@@ -24,7 +24,7 @@ export default function SignInOptions() {
   }, []);
 
   const getCookieData = () => {
-    const cookieData = JSON.parse(atob(session));
+    const cookieData = JSON.parse(decodeURIComponent(atob(session)));
     return {
       name: cookieData.user.name,
       image: cookieData.user.image,
