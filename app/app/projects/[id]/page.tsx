@@ -64,13 +64,7 @@ function ProjectPage({ params }: { params: { id: string } }) {
         <Stack spacing={8} useFlexGap>
           <Container maxWidth="lg" sx={{ pb: 5 }}>
             <BreadcrumbsNav />
-            <HeroSection
-              title={project.description.title}
-              avatar={project.author.avatar}
-              author={project.author.name}
-              role={project.author.role}
-              status={project.status}
-            />
+            <HeroSection project={project} />
           </Container>
           <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
             <ProjectInfoCard project={project} setActiveTab={setActiveTab} />

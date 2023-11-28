@@ -24,12 +24,11 @@ const steps = [
 
 interface TimingDataProps {
   projectStart: string;
-  projectEnd: string;
 }
 
 const ProjectStageCard = (props: TimingDataProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { projectStart, projectEnd } = props;
+  const { projectStart } = props;
 
   const handleToggle = () => {
     setIsCollapsed(!isCollapsed);
@@ -58,7 +57,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
                           variant="subtitle1"
                           sx={{ color: 'text.primary', display: 'flex', flexDirection: 'row-reverse' }}
                         >
-                          {projectStart} - {projectEnd}
+                          {projectStart}
                         </Typography>
                       ) : null}
                     </Grid>

@@ -17,14 +17,8 @@ const PillBox = ({ children, sx }: { children: ReactNode; sx?: SxProps }) => {
   return <Box sx={style}>{children}</Box>;
 };
 
-const SliderPill = (props: {
-  active: boolean;
-  itemNumber: string;
-  title: string;
-  projectStart: string;
-  projectEnd: string;
-}) => {
-  const { active, itemNumber, title, projectStart, projectEnd } = props;
+const SliderPill = (props: { active: boolean; itemNumber: string; title: string; projectStart: string }) => {
+  const { active, itemNumber, title, projectStart } = props;
 
   const styles = {
     elementWrap: {
@@ -58,9 +52,7 @@ const SliderPill = (props: {
                 <Typography variant="overline">Project #{itemNumber}</Typography>
               </PillBox>
               <PillBox sx={{ pl: '13px', pr: '24px' }}>
-                <Typography variant="overline">
-                  {projectStart}-{projectEnd}
-                </Typography>
+                <Typography variant="overline">{projectStart}</Typography>
               </PillBox>
             </Stack>
             <PillBox sx={{ px: '32px' }}>

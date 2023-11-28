@@ -15,6 +15,8 @@ import SmallSliderPill from './slider/SmallSliderPill';
 
 import './FeatureProjectSlider.css';
 
+export const defaultImage = '/images/ai_01.png';
+
 type FeaturedProjectSliderProps = {
   items: Project[];
 };
@@ -64,7 +66,7 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
           <Grid container item sx={imageContainerStyles}>
             <Image
               unoptimized
-              src={el.image}
+              src={el.image || defaultImage}
               width={0}
               height={0}
               alt="Project"
@@ -79,7 +81,7 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
           </Box>
 
           <Grid item md={4} sx={contentStyles}>
-            <FeaturedProjectContent title={el.description.title} tags={el.description.tags} summary={el.summary} />
+            <FeaturedProjectContent title={el.title} tags={el.description.tags} summary={el.summary} />
           </Grid>
         </Grid>
       ))}

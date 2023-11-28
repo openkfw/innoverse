@@ -38,9 +38,8 @@ const Indicator = (props: IndicatorProps) => {
       <SliderPill
         active={isSelected}
         itemNumber={(index + 1).toString()}
-        title={slide.title || ''}
+        title={slide.shortTitle || ''}
         projectStart={slide.projectStart || ''}
-        projectEnd={slide.projectEnd || 'Present'}
       />
     </Box>
   );

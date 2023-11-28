@@ -31,7 +31,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
           <Grid item xs={4}>
             <Grid container direction="column" spacing={1}>
               <Grid item xs={4}>
-                <ProjectStageCard projectStart={project.projectStart} projectEnd={project.projectEnd} />
+                <ProjectStageCard projectStart={project.projectStart} />
               </Grid>
               <Grid item xs={4} sx={interactionStyles}>
                 <InteractionButton projectName={project.projectName} interactionType={InteractionType.LIKE} />

@@ -1,4 +1,4 @@
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -7,29 +7,33 @@ import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { PROJECT_PROGRESS } from '@/common/types';
+import { Project } from '@/common/types';
 
 import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 import ProgressBar from '../common/ProgressBar';
-
-import project from '/public/images/ai_01.png';
+import { defaultImage } from '../landing/featuredProjectSection/FeaturedProjectSlider';
 
 interface HeroSectionProps {
-  title: string;
-  avatar: StaticImageData;
-  author: string;
-  role: string;
-  status: PROJECT_PROGRESS;
+  project: Project;
 }
 
 export default function HeroSection(props: HeroSectionProps) {
-  const { title, avatar, author, role, status } = props;
+  const { project } = props;
+  const { title, author, status, image } = project;
 
   return (
     <Grid container sx={containerStyles}>
       <Grid item xs={5}>
         <Box>
-          <Image unoptimized src={project} alt="Project" sizes="50vw" style={backgroundImageStyles} />
+          <Image
+            unoptimized
+            src={image || defaultImage}
+            alt="Project"
+            width={0}
+            height={0}
+            sizes="50vw"
+            style={backgroundImageStyles}
+          />
         </Box>
       </Grid>
       <Grid item xs={7}>
@@ -42,18 +46,18 @@ export default function HeroSection(props: HeroSectionProps) {
               <Box display="flex" flexDirection="column" justifyContent="flex-end" height="100%">
                 <CardHeader
                   avatar={
-                    avatar ? (
+                    author.avatar ? (
                       <Avatar sx={avatarStyles}>
-                        <Image unoptimized src={avatar} alt="avatar" fill sizes="33vw" />
+                        <Image unoptimized src={author.avatar} alt="avatar" fill sizes="33vw" />
                       </Avatar>
                     ) : (
-                      <AvatarInitialsIcon name={author} size={52} />
+                      <AvatarInitialsIcon name={author.name} size={52} />
                     )
                   }
-                  title={<Typography variant="body2"> {author}</Typography>}
+                  title={<Typography variant="body2"> {author.name}</Typography>}
                   subheader={
                     <Typography variant="caption" sx={{ color: 'common.white' }}>
-                      {role}
+                      {author.role}
                     </Typography>
                   }
                   sx={cardHeaderStyles}

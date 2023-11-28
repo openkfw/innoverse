@@ -43,11 +43,11 @@ export type ProjectData = {
 
 export type Project = {
   title: string;
+  shortTitle: string;
   summary: string;
   featured: boolean;
   status: PROJECT_PROGRESS;
   projectStart: string;
-  projectEnd: string;
   image: ImageType;
   description: Description;
   author: { data: UserQuery };
@@ -56,7 +56,7 @@ export type Project = {
   collaboration: { description: string };
   questions: Question[];
   surveyQuestions?: SurveyQuestion[];
-  jobs?: Job[];
+  opportunities?: Opportunity[];
 };
 
 export type ImageType = {
@@ -85,11 +85,8 @@ export type User = {
 };
 
 export type Description = {
-  title: string;
-  summary: string;
   text: string;
   tags: { tag: string };
-  author: { data: UserQuery };
 };
 
 export type Update = {
@@ -118,7 +115,7 @@ export type SurveyQuestion = {
   votes: number;
 };
 
-export type Job = {
+export type Opportunity = {
   title: string;
   description: string;
   email: string;
