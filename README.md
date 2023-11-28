@@ -1,94 +1,59 @@
-# nextjs skeleton
+# InnoBuddy-Platform StartUp Guide
 
-todo:
+This is the StartUp Guide for the InnoBuddy Platform.
+As a short introduction, the main components of the InnoBuddy Platform are shown in the diagram below:
 
-- description of skeleton
-- dynamic badges
+![arch](./docs/innoplatform.png)
 
-# Getting Started
+For starting the platform, you need to start at least the Strapi CMS, the Database and the Innobuddy app.
+Optionally, you can also start up Umami to get an overview of the user analytics, but this is not needed for local development.
 
-Just created a new project using this template? Here are some pointers to get started:
+## InnoBuddy App locally, strapi & umami with docker
 
-#### Frontend
+The most common way to stat up the platform is by starting all components with docker except the InnoBuddy Next.js App.
+For this you can use the `docker-compose-strapi.yaml` for strapi & DB or the `docker-compose-full.yaml` for strapi & umami & DB
 
-- Add members to the respository
-- Create high level diagram in draw.io and upload it to the repo (optional)
-- Test this template by `cd app` and start it by running `npm install` and `npm dev`. The app should be visible under `http://localhost:3000`. You should see a NextJs example app.
-- Adapt the `package.json` to your requirements
+First set up the correct env vars:
 
-#### API: Create API routes in NextJS
-
-- Under the `pages/api` folder, create the respective API services
-- Test them via direct browser requests or curl/postman
-
-#### Containerize frontend locally
-
-- Before creating the container, run `npm build` locally to make sure the application builds.
-- Add additional entries to `.dockerignore` file in the `app` directory to ignore (sensitive) files during container build:
-- Run `docker build .` in the `app` folder to verify that the container builds locally.
-- Run `docker run ` with the respective image to see if the container runs
-
-#### Database: Run DB using docker
-
-- Run `docker-compose -f docker-compose.db.yaml up` in the root folder to spin up an empty database for development.
-
-#### Database: Configure Prisma for your DB
-
-- Create `.env` file in the `app` folder that points to a local database:
+- For the Azure and Gitlab Env vars (`./app/.env.example`) some examples can be found in GitLab in the [CICD Variable](***URL_REMOVED***) `InnoBuddyAppEnv`.
+- For some of the Strapi env vars (`./strapi/.env.example`) some examples can be found in GitLab in the [CICD Variable](***URL_REMOVED***) `StrapiEnv`.
 
 ```bash
-DATABASE_URL="postgresql://inno:hub@localhost:5432/mydb?schema=inno"
+# from project root
+cp .env.example .en
+cp ./app/.env.example .env # and then fill the missing env vars
+cp ./strapi/.env.example .env # and then fill the missing env vars
 ```
 
-- Add `.env` to `.gitignore` if not present yet
-
-- Create Prisma instance: `npm run prisma init --datasource-provider postgresql`
-- Update the `schema.prisma` with the respective entities. Make sure that the data source is configured to Postgres and the respective environment variable.
-
-```js
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-```
-
-- In the `repository` folder, create helper functions to create entities in the database
-- In the `entities` folder, create helper responses for the API
-- Create or copy a `seed.ts` to create a seeding script
-- Copy `prisma.ts` from the template project into the `prisma` folder
-
-#### Database: Migrations/Init your tables/data
-
-You have 2 options for local development with a database now. Either start frontend locally and database from container. Or start everything in a container.
-
-- Follow these steps for DB only (for local development)
+then start the components:
 
 ```bash
-# from root
-# starts a "naked" postgre db
-docker-compose -f docker-compose.db.yaml down
-docker-compose -f docker-compose.db.yaml up -d
-
-# init (migrate and seed) our database
-cd frontend
-npm run prisma migrate deploy
-npm run prisma db seed
-
-# get started with your local development
-yarn dev
+docker-compose -f up docker-compose-strapi.yaml # for starting the project with strapi
 ```
 
-#### Quickstart for trying out the application locally without development
+or
 
 ```bash
-# from root
-# starts postgre db and the app
-# migrations are run on app startup
-docker-compose up
+docker-compose -f up docker-compose-full.yaml # for starting the project with strapi and umami
 ```
+
+> **IMPORTANT:**
+> Now you need to generate & set the Strapi API Token
+
+Please go the strapi admin dashboard [http://localhost:1337/admin](http://localhost:1337/admin), create an admin user and after login go to the [API Tokens settings Page](http://localhost:1337/admin/settings/api-tokens) and generate a new API Token (Token duration - Unlimited, Token type - Full Access) - then copy and save the token, and paste the token in the `./app/.env` file under NEXT_PUBLIC_STRAPI_TOKEN
+
+```bash
+cd app
+npm run dev
+```
+
+now your app should be visible under [http://localhost:3000](http://localhost:3000)
+
+> **Important:**
+> The CMS is not filled with data by default. You can create your own data or opt for importing data from an existing strapi instance - check the docs in [./strapi/README.md](./strapi/README.md##Export&Import)
 
 #### Database: Accessing/Viewing the DB (Prisma Studio)
 
-- Run `npm run prisma studio` to run the database browser and check that the seed data is in the database.
+- Run `npm run prisma studio` to run the database browser and check the database.
 
 YOU MADE IT! (locally)

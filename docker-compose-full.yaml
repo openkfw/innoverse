@@ -1,0 +1,47 @@
+version: "3.5"
+
+services:
+  umami:
+    container_name: umami
+    image: ghcr.io/umami-software/umami:postgresql-v2.7.0
+    environment:
+      - DATABASE_URL=${UMAMI_DATABASE_URL}
+    ports:
+      - 3001:3000
+    depends_on:
+      - database
+    restart: on-failure
+
+  database:
+    container_name: DB
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=innohub,umami,strapi
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    restart: on-failure
+
+  strapi:
+    container_name: strapi
+    build: ./strapi
+    restart: unless-stopped
+    env_file: ./strapi/.env
+    environment:
+      DATABASE_HOST: database
+      NODE_ENV: ${NODE_ENV}
+    volumes:
+      - ./strapi/config:/opt/app/config
+      - ./strapi/src:/opt/app/src
+      - ./strapi/package.json:/opt/package.json
+      - ./strapi/yarn.lock:/opt/yarn.lock
+      - ./strapi/.env:/opt/app/.env
+      - ./strapi/public/uploads:/opt/app/public/uploads
+    ports:
+      - "1337:1337"
+    depends_on:
+      - database
