@@ -18,6 +18,13 @@ export enum STRAPI_QUERY {
   CreateInnoUser,
 }
 
+function formatDate(value: string, locale = 'de-DE') {
+  const date = new Date(value);
+  const month = date.toLocaleString(locale, { month: 'long' });
+  const year = date.toLocaleString(locale, { year: 'numeric' });
+  return `${month} ${year}`;
+}
+
 const userQuery = `
   data {
     attributes {
@@ -92,10 +99,10 @@ export const GetProjectsQuery = `query GetProjects {
       id
       attributes {
         title
+        shortTitle
         featured
         summary
         projectStart
-        projectEnd
         status
         image {
           data {
@@ -108,8 +115,6 @@ export const GetProjectsQuery = `query GetProjects {
           ${userQuery}
         }
         description {
-          title
-          summary
           text
           tags {
             tag
@@ -135,10 +140,10 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
      id
      attributes {
        title
+       shortTitle
        summary
        status
        projectStart
-       projectEnd
        image {
          data {
            attributes {
@@ -147,14 +152,9 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
          }
        }
        description {
-         title
-         summary
          text
          tags {
           tag
-         }
-         author {
-          ${userQuery}
          }
        }
        author {
@@ -188,7 +188,7 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
         }
         votes
        }
-       jobs {
+       opportunities {
         title
         description 
         email
@@ -237,19 +237,18 @@ function getStaticBuildGetInnoUser(graphqlResponse: GetInnoUserResponse) {
 function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
   const formattedUpdates: Update[] = [];
   const formattedProjects = graphqlResponse.data.projects.data.map((project: ProjectData) => {
-    const { title, featured, projectStart, projectEnd, summary, image, status, team, updates, description } =
+    const { title, shortTitle, featured, projectStart, summary, image, status, team, updates, description } =
       project.attributes;
 
     const formattedUpdate = (updates as unknown as UpdateQuery[]).map((u: UpdateQuery) => {
       const author = u.author.data.attributes;
-
       return {
-        title: description.title,
+        title: title || shortTitle,
         comment: u.comment,
         date: u.date,
         theme: u.theme,
         author: {
-          ...author,
+          name: author.name,
           avatar:
             author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
         },
@@ -259,6 +258,9 @@ function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
     const formattedTeam = team.data.map((t: UserQuery) => {
       return {
         ...t.attributes,
+        avatar:
+          t.attributes.avatar.data &&
+          `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${t.attributes.avatar.data.attributes.url}`,
       };
     });
 
@@ -266,9 +268,9 @@ function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
     return {
       id: project.id,
       featured,
-      projectStart,
-      projectEnd,
+      projectStart: formatDate(projectStart),
       title,
+      shortTitle,
       summary,
       status,
       team: formattedTeam,
@@ -276,7 +278,7 @@ function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
         ...description,
         tags: description.tags,
       },
-      image: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
+      image: image.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
     };
   });
 
@@ -291,11 +293,11 @@ function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
 
   const {
     title,
+    shortTitle,
     summary,
     image,
     status,
     projectStart,
-    projectEnd,
     collaboration,
     description,
     author,
@@ -303,7 +305,7 @@ function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
     updates,
     questions,
     surveyQuestions,
-    jobs,
+    opportunities,
   } = project.attributes;
 
   const formattedUpdates = (updates as unknown as UpdateQuery[]).map((u: UpdateQuery) => {
@@ -352,12 +354,6 @@ function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
   const formattedDescription = {
     ...description,
     tags: description.tags,
-    author: {
-      ...description.author,
-      avatar:
-        description.author.data &&
-        `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${description.author.data.attributes.avatar.data.attributes.url}`,
-    },
   };
 
   const formattedSurveyQuestions =
@@ -373,17 +369,17 @@ function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
     project: {
       id: project.id,
       title,
+      shortTitle,
       summary,
       status,
-      projectStart,
-      projectEnd,
+      projectStart: formatDate(projectStart),
       collaboration,
-      jobs,
+      opportunities,
       surveyQuestions: formattedSurveyQuestions,
       description: formattedDescription,
       author: formattedAuthor,
       team: formattedTeam,
-      image: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
+      image: image.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
       updates: formattedUpdates,
       questions: formattedQuestions,
     },

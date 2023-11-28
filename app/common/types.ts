@@ -60,12 +60,12 @@ export type ProjectCollaboration = {
 export type Project = {
   id: string;
   title: string;
+  shortTitle: string;
   featured: boolean;
   status: PROJECT_PROGRESS;
   image: string;
   summary: string;
   projectStart: string;
-  projectEnd: string;
   collaboration: ProjectCollaboration;
   likes: number;
   followers: number;
@@ -80,9 +80,6 @@ export type Project = {
 
 export type ProjectDescription = {
   text: string;
-  title: string;
-  summary: string;
-  author: User;
   tags: Tag[];
 };
 

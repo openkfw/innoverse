@@ -11,7 +11,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Stack from '@mui/material/Stack';
 
 import triggerAnalyticsEvent from '@/analytics/analytics';
-import { Project, ProjectDescription } from '@/common/types';
+import { Project } from '@/common/types';
 
 import { AuthorInformation } from './AuthorInformation';
 import CommentsSection from './CommentsSection';
@@ -32,7 +32,8 @@ interface ProjectProgressProps {
 }
 
 interface InfoItemProps {
-  description: ProjectDescription;
+  title: string;
+  summary: string;
 }
 
 interface ProjectTextProps {
@@ -50,12 +51,12 @@ interface ProjectTextProps {
   text: string;
 }
 
-const InfoItemRight = ({ description }: InfoItemProps) => {
+const InfoItemRight = ({ title, summary }: InfoItemProps) => {
   return (
     <Card sx={infoItemRightStyles} elevation={0}>
       <CardContent sx={{ p: '18px', pb: 1 }}>
         <Typography variant="subtitle1" color="text.primary" sx={{ textTransform: 'uppercase' }}>
-          {description.title}
+          {title}
         </Typography>
       </CardContent>
       <Divider sx={dividerStyle} />
@@ -65,7 +66,7 @@ const InfoItemRight = ({ description }: InfoItemProps) => {
       </CardMedia>
       <CardContent sx={{ p: '18px' }}>
         <Typography variant="subtitle2" color="text.primary">
-          {description.summary}
+          {summary}
         </Typography>
       </CardContent>
     </Card>
@@ -196,7 +197,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
 
             <Grid xs={3}>
               <Box sx={infoItemRightContainerStyles}>
-                <InfoItemRight description={project.description} />
+                <InfoItemRight title={project.title} summary={project.summary} />
               </Box>
             </Grid>
           </Grid>
@@ -204,7 +205,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
 
         <Divider sx={{ width: '662px' }} />
         <ProjectTags tags={project.description.tags} />
-        <AuthorInformation projectName={projectName} author={project.description.author} />
+        <AuthorInformation projectName={projectName} author={project.author} />
         <Divider sx={{ my: 2, width: '662px' }} />
         <CommentsSection />
       </Stack>

@@ -26,7 +26,7 @@ export const CollaborationTab = (props: CollaborationTabProps) => {
 
       <CardContent sx={cardContentStyles}>
         <Typography color="primary.main" sx={titleStyles}>
-          Jobs
+          Opportunities
         </Typography>
         <Grid container spacing={8} sx={gridStyles}>
           <Grid item xs={6} sx={{ paddingRight: '100px' }}>
@@ -62,18 +62,21 @@ export const CollaborationTab = (props: CollaborationTabProps) => {
           ))}
         </Grid>
 
-        <Divider textAlign="left" sx={dividerStyles} />
-
-        <Typography color="primary.main" sx={titleStyles}>
-          Hilf uns bei deisen Fragen
-        </Typography>
-        <Grid container sx={gridStyles} spacing={8}>
-          {project.questions.map((question, i) => (
-            <Grid item key={i}>
-              <QuestionCard projectName={projectName} content={question} />
+        {project.questions.length > 0 && (
+          <>
+            <Divider textAlign="left" sx={dividerStyles} />
+            <Typography color="primary.main" sx={titleStyles}>
+              Hilf uns bei deisen Fragen
+            </Typography>
+            <Grid container sx={gridStyles} spacing={8}>
+              {project.questions.map((question, i) => (
+                <Grid item key={i}>
+                  <QuestionCard projectName={projectName} content={question} />
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
+          </>
+        )}
       </CardContent>
     </Card>
   );

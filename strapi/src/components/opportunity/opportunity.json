@@ -1,16 +1,16 @@
 {
-  "collectionName": "components_jobs_jobs",
+  "collectionName": "components_opportunity_opportunities",
   "info": {
-    "displayName": "jobs"
+    "displayName": "opportunity"
   },
   "options": {},
   "attributes": {
     "title": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "description": {
-      "type": "text",
-      "required": true
+      "type": "text"
     },
     "email": {
       "type": "email",

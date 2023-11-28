@@ -10,6 +10,8 @@ import { Project } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
 import theme from '@/styles/theme';
 
+import { defaultImage } from '../featuredProjectSection/FeaturedProjectSlider';
+
 import ArrowControllers from './ArrowControllers';
 import ProjectCard from './ProjectCard';
 import { ProjectProps } from './ProjectSection';
@@ -68,9 +70,9 @@ export default function ProjectCarousel(props: ProjectProps) {
               <Grid item key={item.id} sx={cardContainerStyles}>
                 <ProjectCard
                   id={item.id}
-                  img={item.image}
+                  img={item.image || defaultImage}
                   contributors={item.team}
-                  title={item.description.title}
+                  title={item.title}
                   summary={item.summary}
                   status={item.status}
                 />
