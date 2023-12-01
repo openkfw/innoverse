@@ -11,7 +11,7 @@ async function uploadImage(imageUrl: string, fileName: string) {
       formData.append('ref', 'api::event.event');
       formData.append('field', 'image');
 
-      return fetch('/api/strapi/upload', {
+      return fetch(`${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
@@ -27,10 +27,10 @@ async function uploadImage(imageUrl: string, fileName: string) {
 
 export async function createInnoUser(body: UserSession) {
   try {
-    const uploadedImages = await uploadImage(body.image, `avatar-${body.name}`);
+    const uploadedImages = body.image ? await uploadImage(body.image, `avatar-${body.name}`) : null;
     const uploadedImage = uploadedImages ? uploadedImages[0] : null;
 
-    const requestUser = await fetch('/api/strapi', {
+    const requestUser = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export async function createInnoUser(body: UserSession) {
 
 export async function getInnoUserByEmail(email: string) {
   try {
-    const requestUser = await fetch('/api/strapi', {
+    const requestUser = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,10 +68,15 @@ export async function getInnoUserByEmail(email: string) {
     });
     const resultUser = withResponseTransformer(STRAPI_QUERY.GetInnoUserByEmail, await requestUser.json());
 
-    return {
-      ...resultUser,
-    };
+    return resultUser;
   } catch (err) {
     console.info(err);
+  }
+}
+
+export async function createInnoUserIfNotExist(body: UserSession) {
+  if (body.email) {
+    const user = await getInnoUserByEmail(body.email);
+    return user ? user : await createInnoUser(body);
   }
 }

@@ -158,8 +158,8 @@ export type MainPageData = {
 };
 
 export type UserSession = {
-  gitlabId?: string;
-  azureId?: string;
+  providerId?: string;
+  provider?: string;
   name: string;
   role?: string;
   department?: string;
