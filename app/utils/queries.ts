@@ -28,8 +28,8 @@ function formatDate(value: string, locale = 'de-DE') {
 const userQuery = `
   data {
     attributes {
-      gitlabId
-      azureId
+      providerId
+      provider
       name
       role
       department
@@ -45,13 +45,13 @@ const userQuery = `
   }
 `;
 
-export const CreateInnoUserQuery = `mutation PostInnoUser($gitlabId: String, $azureId: String, $name: String!, $role: String, $department: String, $email: String, $avatarId: ID) {
-  createInnoUser(data: { gitlabId: $gitlabId, azureId: $azureId,name: $name, role: $role, department: $department, email: $email, avatar: $avatarId}) {
+export const CreateInnoUserQuery = `mutation PostInnoUser($providerId: String, $provider: String, $name: String!, $role: String, $department: String, $email: String, $avatarId: ID) {
+  createInnoUser(data: { providerId: $providerId, provider: $provider,name: $name, role: $role, department: $department, email: $email, avatar: $avatarId}) {
     data {
       id
       attributes {
-        gitlabId
-        azureId
+        providerId
+        provider
         name
         role
         department
@@ -74,8 +74,8 @@ export const GetInnoUserByEmailQuery = `query GetInnoUser($email: String) {
     data {
       id
       attributes {
-        gitlabId
-        azureId
+        providerId
+        provider
         name
         role
         department
@@ -226,12 +226,14 @@ function getStaticBuildCreateInnoUser(graphqlResponse: CreateInnoUserResponse) {
 }
 
 function getStaticBuildGetInnoUser(graphqlResponse: GetInnoUserResponse) {
-  const user = graphqlResponse.data.innoUsers.data[0].attributes;
+  if (graphqlResponse.data.innoUsers.data.length) {
+    const user = graphqlResponse.data.innoUsers.data[0].attributes;
 
-  return {
-    ...user,
-    avatar: user.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.avatar.data.attributes.url}`,
-  };
+    return {
+      ...user,
+      avatar: user.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.avatar.data.attributes.url}`,
+    };
+  }
 }
 
 function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {

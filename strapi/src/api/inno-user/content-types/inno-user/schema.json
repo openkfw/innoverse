@@ -32,12 +32,12 @@
     "email": {
       "type": "email"
     },
-    "gitlabId": {
+    "providerId": {
       "type": "uid",
       "required": false
     },
-    "azureId": {
-      "type": "uid"
+    "provider": {
+      "type": "string"
     },
     "projects": {
       "type": "relation",

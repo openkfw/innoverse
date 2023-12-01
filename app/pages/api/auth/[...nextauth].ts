@@ -3,6 +3,9 @@ import NextAuth, { NextAuthOptions } from 'next-auth';
 import AzureADProvider from 'next-auth/providers/azure-ad';
 import GitLabProvider from 'next-auth/providers/gitlab';
 
+import { UserSession } from '@/common/types';
+import { createInnoUserIfNotExist } from '@/utils/requests';
+
 const PROVIDERS = {
   GITLAB: 'gitlab',
   AZURE_AD: 'azure-ad',
@@ -35,9 +38,18 @@ const options: NextAuthOptions = {
       return true;
     },
     async jwt({ token, account }) {
-      if (account) {
+      if (account && token.name && token.email) {
         token.accessToken = account.access_token;
         token.provider = account.provider;
+        const user: UserSession = {
+          name: token.name,
+          email: token.email,
+          image: token.picture || '',
+          department: '',
+          providerId: token.sub,
+          provider: token.provider as string,
+        };
+        await createInnoUserIfNotExist(user);
       }
       return token;
     },

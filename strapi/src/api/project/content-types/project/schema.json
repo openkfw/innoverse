@@ -25,11 +25,20 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images", "files", "videos", "audios"]
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     },
     "status": {
       "type": "enumeration",
-      "enum": ["Exploration", "Konzeption", "Proof of Concept"],
+      "enum": [
+        "Exploration",
+        "Konzeption",
+        "Proof of Concept"
+      ],
       "required": true,
       "default": "Exploration"
     },
