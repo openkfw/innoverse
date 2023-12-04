@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "updates",
+  "info": {
+    "singularName": "update",
+    "pluralName": "updates",
+    "displayName": "Update",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "comment": {
+      "type": "text",
+      "required": true
+    },
+    "theme": {
+      "type": "string"
+    },
+    "date": {
+      "type": "date",
+      "required": false
+    },
+    "author": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::inno-user.inno-user"
+    },
+    "project": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::project.project"
+    }
+  }
+}

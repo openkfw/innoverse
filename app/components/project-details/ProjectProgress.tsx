@@ -185,17 +185,15 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
             </IconButton>
           </Box>
           <Grid container>
-            <Grid xs={2}>
-              <Box>
-                <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
-              </Box>
+            <Grid item xs={2}>
+              <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
             </Grid>
 
-            <Grid xs={7}>
+            <Grid item xs={7}>
               <ProjectText showMoreButtonVisible={showMoreButtonVisible} text={project.description.text} />
             </Grid>
 
-            <Grid xs={3}>
+            <Grid item xs={3}>
               <Box sx={infoItemRightContainerStyles}>
                 <InfoItemRight title={project.title} summary={project.summary} />
               </Box>

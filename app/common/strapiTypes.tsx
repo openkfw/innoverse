@@ -1,4 +1,4 @@
-import { PROJECT_PROGRESS } from './types';
+import { Opportunity, PROJECT_PROGRESS } from './types';
 
 export type ProjectResponse = {
   data: {
@@ -12,6 +12,46 @@ export type ProjectsResponse = {
   data: {
     projects: {
       data: ProjectData[];
+    };
+  };
+};
+
+export type UpdatesResponse = {
+  data: {
+    updates: {
+      data: UpdateQuery[];
+    };
+  };
+};
+
+export type OpportunitiesResponse = {
+  data: {
+    opportunities: {
+      data: OpportunityQuery[];
+    };
+  };
+};
+
+export type SurveyQuestionsResponse = {
+  data: {
+    surveyQuestions: {
+      data: SurveyQuestionQuery[];
+    };
+  };
+};
+
+export type QuestionsResponse = {
+  data: {
+    questions: {
+      data: QuestionQuery[];
+    };
+  };
+};
+
+export type CollaborationQuestionsResponse = {
+  data: {
+    collaborationQuestions: {
+      data: QuestionQuery[];
     };
   };
 };
@@ -53,8 +93,6 @@ export type Project = {
   author: { data: UserQuery };
   team: { data: UserQuery[] };
   updates: Update[];
-  collaboration: { description: string };
-  questions: Question[];
   surveyQuestions?: SurveyQuestion[];
   opportunities?: Opportunity[];
 };
@@ -90,6 +128,7 @@ export type Description = {
 };
 
 export type Update = {
+  title: string;
   date: string;
   comment: string;
   theme: string;
@@ -97,16 +136,28 @@ export type Update = {
 };
 
 export type UpdateQuery = {
-  date: string;
-  comment: string;
-  theme: string;
-  author: { data: UserQuery };
+  attributes: {
+    date: string;
+    comment: string;
+    theme: string;
+    author: { data: UserQuery };
+  };
 };
 
-export type Question = {
-  title: string;
-  description: string;
-  authors: { data: UserQuery[] };
+export type QuestionQuery = {
+  attributes: {
+    title: string;
+    description: string;
+    authors: { data: UserQuery[] };
+  };
+};
+
+export type SurveyQuestionQuery = {
+  attributes: {
+    question: string;
+    responseOptions: { responseOption: string }[];
+    votes: number;
+  };
 };
 
 export type SurveyQuestion = {
@@ -115,8 +166,6 @@ export type SurveyQuestion = {
   votes: number;
 };
 
-export type Opportunity = {
-  title: string;
-  description: string;
-  email: string;
+export type OpportunityQuery = {
+  attributes: { title: string; description: string; email: string; expense: string };
 };

@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "survey_questions",
+  "info": {
+    "singularName": "survey-question",
+    "pluralName": "survey-questions",
+    "displayName": "SurveyQuestion",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "question": {
+      "type": "text",
+      "required": true
+    },
+    "responseOptions": {
+      "type": "component",
+      "repeatable": true,
+      "component": "response-options.response-options",
+      "required": true
+    },
+    "votes": {
+      "type": "biginteger",
+      "required": true
+    },
+    "project": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::project.project"
+    }
+  }
+}

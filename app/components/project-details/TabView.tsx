@@ -9,7 +9,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import triggerAnalyticsEvent from '@/analytics/analytics';
-import { Project, ProjectUpdate } from '@/common/types';
+import { Project } from '@/common/types';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
 import { UpdatesTab } from '../updates/UpdatesTab';
@@ -65,15 +65,17 @@ const CustomTab = styled((props: TabProps) => <Tab disableRipple {...props} />)(
 }));
 
 interface BasicTabsProps {
-  updates: ProjectUpdate[];
   project: Project;
   activeTab: number;
   setActiveTab: (tab: number) => void;
   projectName: string;
 }
 
-export default function BasicTabs(props: BasicTabsProps) {
-  const { updates, project, activeTab, setActiveTab, projectName } = props;
+export default function TabView(props: BasicTabsProps) {
+  const { project, activeTab, setActiveTab, projectName } = props;
+  const { opportunities, questions, collaborationQuestions, updates } = project;
+  const collaborationActivities = opportunities.length + questions.length + collaborationQuestions.length;
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     switch (newValue) {
       case 0:
@@ -102,7 +104,7 @@ export default function BasicTabs(props: BasicTabsProps) {
             label={
               <Stack direction="row" spacing={1}>
                 <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
-                  3
+                  {collaborationActivities}
                 </Typography>
                 <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
                   Zusammenarbeit

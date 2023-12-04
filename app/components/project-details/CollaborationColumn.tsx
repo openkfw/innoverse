@@ -1,17 +1,15 @@
 import { Grid, Typography } from '@mui/material';
 
-import { ProjectCollaboration } from '@/common/types';
-
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 interface CollaborationProps {
-  collaboration: ProjectCollaboration;
   setActiveTab: (tab: number) => void;
   projectName: string;
 }
 
 const CollaborationColumn = (props: CollaborationProps) => {
-  const { collaboration, setActiveTab, projectName } = props;
+  const { setActiveTab, projectName } = props;
+  const description = `Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken`;
 
   const handleCollaborationClick = async (offset: number) => {
     const scroll = () => {
@@ -36,7 +34,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
             Zusammenarbeit
           </Typography>
           <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', mb: '15px', marginTop: 1 }}>
-            {collaboration.description}
+            {description}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             26531 Beteilungen - 91283 Votes

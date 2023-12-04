@@ -9,7 +9,7 @@ import { Project } from '@/common/types';
 
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
-import { QuestionCard } from './QuestionCard';
+import { CollaborationQuestionCard } from './CollaborationQuestionCard';
 import { SurveyCard } from './SurveyCard';
 
 interface CollaborationTabProps {
@@ -28,26 +28,28 @@ export const CollaborationTab = (props: CollaborationTabProps) => {
         <Typography color="primary.main" sx={titleStyles}>
           Opportunities
         </Typography>
-        <Grid container spacing={8} sx={gridStyles}>
-          <Grid item xs={6} sx={{ paddingRight: '100px' }}>
-            <Typography variant="h5" color="secondary.contrastText">
-              Wir suchen Deine Unterstützung beim Thema Midjourney.
-            </Typography>
-            <Typography variant="body1" color="secondary.contrastText">
-              Du kennst Dich mit Midjourney und Co. aus? Dann brauchen wir Dich für einen Workshop mit den
-              Geschäftsbereichen, um das Thema verständlich zu präsentieren und Anwendungsfälle zu brainstormen.
-            </Typography>
-            <Typography variant="overline" color="primary.main">
-              Aufwand: ca. 1 Tag
-            </Typography>
+
+        {project.opportunities.map((o, key) => (
+          <Grid container spacing={8} sx={gridStyles} key={key}>
+            <Grid item xs={6} sx={{ paddingRight: '100px' }}>
+              <Typography variant="h5" color="secondary.contrastText">
+                {o.title}
+              </Typography>
+              <Typography variant="body1" color="secondary.contrastText">
+                {o.description}
+              </Typography>
+              <Typography variant="overline" color="primary.main">
+                Aufwand: {o.expense}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Box sx={joinTeamStyles}>
+                <InteractionButton projectName={projectName} interactionType={InteractionType.APPLY} />
+                <InteractionButton projectName={projectName} interactionType={InteractionType.RECOMMEND} />
+              </Box>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Box sx={joinTeamStyles}>
-              <InteractionButton projectName={projectName} interactionType={InteractionType.APPLY} />
-              <InteractionButton projectName={projectName} interactionType={InteractionType.RECOMMEND} />
-            </Box>
-          </Grid>
-        </Grid>
+        ))}
 
         <Divider textAlign="left" sx={dividerStyles} />
 
@@ -62,16 +64,16 @@ export const CollaborationTab = (props: CollaborationTabProps) => {
           ))}
         </Grid>
 
-        {project.questions.length > 0 && (
+        {project.collaborationQuestions.length > 0 && (
           <>
             <Divider textAlign="left" sx={dividerStyles} />
             <Typography color="primary.main" sx={titleStyles}>
               Hilf uns bei deisen Fragen
             </Typography>
             <Grid container sx={gridStyles} spacing={8}>
-              {project.questions.map((question, i) => (
+              {project.collaborationQuestions.map((question, i) => (
                 <Grid item key={i}>
-                  <QuestionCard projectName={projectName} content={question} />
+                  <CollaborationQuestionCard projectName={projectName} content={question} />
                 </Grid>
               ))}
             </Grid>

@@ -3,7 +3,7 @@ import { StaticImageData } from 'next/image';
 export type User = {
   name: string;
   role: string;
-  avatar: StaticImageData;
+  avatar: string;
   badge?: boolean;
   department?: string;
   points?: number;
@@ -52,7 +52,6 @@ export type Hero = {
 };
 
 export type ProjectCollaboration = {
-  description: string;
   upvotes: number;
   participants: number;
 };
@@ -76,6 +75,8 @@ export type Project = {
   questions: ProjectQuestion[];
   surveyQuestions: SurveyQuestion[];
   author: User;
+  opportunities: Opportunity[];
+  collaborationQuestions: Question[];
 };
 
 export type ProjectDescription = {
@@ -133,10 +134,6 @@ export type ProjectProgression = {
   questions: Question[];
 };
 
-export type Question = {
-  text: string;
-};
-
 export type ProjectsProgression = {
   writeCommentText: string;
   projects: ProjectProgression[];
@@ -165,4 +162,17 @@ export type UserSession = {
   department?: string;
   image: string;
   email?: string;
+};
+
+export type Opportunity = {
+  title: string;
+  description: string;
+  email: string;
+  expense: string;
+};
+
+export type Question = {
+  title: string;
+  description: string;
+  authors: User[];
 };

@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "collaboration_questions",
+  "info": {
+    "singularName": "collaboration-question",
+    "pluralName": "collaboration-questions",
+    "displayName": "CollaborationQuestion",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "project": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::project.project"
+    },
+    "authors": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::inno-user.inno-user",
+      "mappedBy": "collaboration_questions"
+    }
+  }
+}
