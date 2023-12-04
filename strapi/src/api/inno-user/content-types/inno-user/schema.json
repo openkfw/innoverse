@@ -24,7 +24,12 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images", "files", "videos", "audios"]
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     },
     "department": {
       "type": "string"
@@ -36,14 +41,32 @@
       "type": "uid",
       "required": false
     },
-    "provider": {
-      "type": "string"
-    },
     "projects": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "manyToOne",
       "target": "api::project.project",
-      "mappedBy": "team"
+      "inversedBy": "team"
+    },
+    "collaboration_questions": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::collaboration-question.collaboration-question",
+      "inversedBy": "authors"
+    },
+    "questions": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::question.question",
+      "inversedBy": "authors"
+    },
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project",
+      "inversedBy": "team"
+    },
+    "provider": {
+      "type": "string"
     }
   }
 }

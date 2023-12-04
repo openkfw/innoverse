@@ -38,10 +38,10 @@ async function getData() {
       next: { revalidate: 60 * 2 },
     });
 
-    const result = withResponseTransformer(
+    const result = (await withResponseTransformer(
       STRAPI_QUERY.GetProjects,
       await requestProjects.json(),
-    ) as ProjectsQueryResult;
+    )) as ProjectsQueryResult;
 
     // Filter projects which are featured in the main slider
     const featuredProjects = result.projects.filter((project: Project) => project.featured == true) as Project[];

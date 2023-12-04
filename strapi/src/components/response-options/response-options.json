@@ -1,7 +1,8 @@
 {
   "collectionName": "components_response_options_response_options",
   "info": {
-    "displayName": "responseOptions"
+    "displayName": "responseOptions",
+    "description": ""
   },
   "options": {},
   "attributes": {

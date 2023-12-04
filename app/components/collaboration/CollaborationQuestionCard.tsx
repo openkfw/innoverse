@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -21,9 +19,10 @@ interface UpdateCardProps {
   projectName: string;
 }
 
-export const QuestionCard = ({ content, projectName }: UpdateCardProps) => {
+export const CollaborationQuestionCard = ({ content, projectName }: UpdateCardProps) => {
   const { title, description, authors } = content;
-  const [newCommentText] = useState<string>(project_colaboration.writeCommentText);
+  const newCommentText =
+    'Teil deine Ratschläge und Gedanken zu diesem Thema, damit deine Kollegen von deiner Expertise profitieren können.';
   const comments = project_colaboration.projectUpdates[0].comments;
 
   const avatarGroupStyle = {

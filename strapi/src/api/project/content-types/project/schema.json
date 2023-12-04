@@ -25,20 +25,11 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
+      "allowedTypes": ["images", "files", "videos", "audios"]
     },
     "status": {
       "type": "enumeration",
-      "enum": [
-        "Exploration",
-        "Konzeption",
-        "Proof of Concept"
-      ],
+      "enum": ["Exploration", "Konzeption", "Proof of Concept"],
       "required": true,
       "default": "Exploration"
     },
@@ -53,30 +44,6 @@
       "component": "description.description",
       "required": true
     },
-    "updates": {
-      "displayName": "update",
-      "type": "component",
-      "repeatable": true,
-      "component": "update.update",
-      "required": true
-    },
-    "questions": {
-      "displayName": "collaboration",
-      "type": "component",
-      "repeatable": true,
-      "component": "collaboration.collaboration"
-    },
-    "surveyQuestions": {
-      "displayName": "surveyQuestions",
-      "type": "component",
-      "repeatable": true,
-      "component": "survey-questions.survey-questions"
-    },
-    "collaboration": {
-      "type": "component",
-      "repeatable": true,
-      "component": "collaboration.collaboration"
-    },
     "author": {
       "type": "relation",
       "relation": "oneToOne",
@@ -89,17 +56,10 @@
     "shortTitle": {
       "type": "string"
     },
-    "opportunities": {
-      "displayName": "opportunity",
-      "type": "component",
-      "repeatable": true,
-      "component": "opportunity.opportunity"
-    },
     "team": {
       "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::inno-user.inno-user",
-      "inversedBy": "projects"
+      "relation": "oneToMany",
+      "target": "api::inno-user.inno-user"
     }
   }
 }

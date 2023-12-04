@@ -48,11 +48,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
           <Grid item xs={8}>
             <Grid container spacing={2} sx={collaborationWrapperStyles}>
               <Grid item xs={9}>
-                <CollaborationColumn
-                  projectName={project.title}
-                  collaboration={project.collaboration}
-                  setActiveTab={setActiveTab}
-                />
+                <CollaborationColumn projectName={project.title} setActiveTab={setActiveTab} />
               </Grid>
               <Grid item xs={3}>
                 <TeamMembersColumn team={project.team} projectName={project.title} />

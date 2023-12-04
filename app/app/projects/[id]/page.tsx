@@ -29,10 +29,10 @@ async function getData(id: string) {
       }),
       next: { revalidate: 60 * 2 },
     });
-    const resultProject = withResponseTransformer(
+    const resultProject = (await withResponseTransformer(
       STRAPI_QUERY.GetProjectById,
       await requestProject.json(),
-    ) as ProjectByIdQueryResult;
+    )) as ProjectByIdQueryResult;
 
     return {
       project: resultProject.project,
@@ -70,13 +70,7 @@ function ProjectPage({ params }: { params: { id: string } }) {
             <ProjectInfoCard project={project} setActiveTab={setActiveTab} />
           </Box>
           <Box display="flex" justifyContent="center" alignItems="center">
-            <TabView
-              project={project}
-              updates={project.updates}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              projectName={project.title}
-            />
+            <TabView project={project} activeTab={activeTab} setActiveTab={setActiveTab} projectName={project.title} />
           </Box>
         </Stack>
       )}

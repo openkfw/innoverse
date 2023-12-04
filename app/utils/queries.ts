@@ -1,21 +1,38 @@
 import {
+  CollaborationQuestionsResponse,
   CreateInnoUserResponse,
   GetInnoUserResponse,
+  OpportunitiesResponse,
   ProjectData,
   ProjectResponse,
   ProjectsResponse,
-  Question,
+  QuestionsResponse,
   SurveyQuestion,
+  SurveyQuestionsResponse,
   Update,
-  UpdateQuery,
+  UpdatesResponse,
   UserQuery,
 } from '@/common/strapiTypes';
+import { Opportunity, Question, User } from '@/common/types';
+
+import {
+  getCollaborationQuestionsByProjectId,
+  getOpportunitiesByProjectId,
+  getQuestionsByProjectId,
+  getSurveyQuestionsByProjectId,
+  getUpdatesByProjectId,
+} from './requests';
 
 export enum STRAPI_QUERY {
   GetProjects,
   GetProjectById,
   GetInnoUserByEmail,
   CreateInnoUser,
+  GetUpdatesByProjectId,
+  GetOpportunitiesByProjectId,
+  GetQuestionsByProjectId,
+  GetSurveyQuestionsByProjectId,
+  GetCollaborationQuestionsByProjectId,
 }
 
 function formatDate(value: string, locale = 'de-DE') {
@@ -23,6 +40,14 @@ function formatDate(value: string, locale = 'de-DE') {
   const month = date.toLocaleString(locale, { month: 'long' });
   const year = date.toLocaleString(locale, { year: 'numeric' });
   return `${month} ${year}`;
+}
+
+function getCurrentDate(locale = 'de-DE') {
+  const date = new Date();
+  const day = date.toLocaleString(locale, { day: 'numeric' });
+  const month = date.toLocaleString(locale, { month: 'long' });
+  const year = date.toLocaleString(locale, { year: 'numeric' });
+  return `${day}. ${month} ${year}`;
 }
 
 const userQuery = `
@@ -93,6 +118,75 @@ export const GetInnoUserByEmailQuery = `query GetInnoUser($email: String) {
 }
 `;
 
+export const GetUpdatesByProjectIdQuery = `query GetUpdates($projectId: ID) {
+  updates(filters: { project: { id: { eq: $projectId } } }) {
+    data {
+      attributes {
+        date
+        comment
+        theme
+        author {
+          ${userQuery}
+        }
+      }
+    }    
+  }
+}`;
+
+export const GetOpportunitiesByProjectIdQuery = `query GetOpportunities($projectId: ID) {
+  opportunities(filters: { project: { id: { eq: $projectId } } }) {
+    data {
+      attributes {
+        title
+        description 
+        email
+        expense
+      }
+    }    
+  }
+}`;
+
+export const GetSurveyQuestionsByProjectIdQuery = `query GetSurveyQuestions($projectId: ID) {
+  surveyQuestions(filters: { project: { id: { eq: $projectId } } }) {
+    data {
+      attributes {
+        question
+        responseOptions {
+          responseOption
+        } 
+        votes
+      }
+    }    
+  }
+}`;
+
+export const GetQuestionsByProjectIdQuery = `query GetQuestions($projectId: ID) {
+  questions(filters: { project: { id: { eq: $projectId } } }) {
+    data {
+      attributes {
+        title
+        authors {
+          ${userQuery}
+        }
+      }
+    }    
+  }
+}`;
+
+export const GetCollaborationQuestionsByProjectIdQuery = `query GetCollaborationQuestions($projectId: ID) {
+  collaborationQuestions(filters: { project: { id: { eq: $projectId } } }) {
+    data {
+      attributes {
+        title
+        description
+        authors {
+          ${userQuery}
+        }
+      }
+    }    
+  }
+}`;
+
 export const GetProjectsQuery = `query GetProjects {
   projects(sort: "id:asc") {
     data {
@@ -118,14 +212,6 @@ export const GetProjectsQuery = `query GetProjects {
           text
           tags {
             tag
-          }
-        }
-        updates {
-          date
-          comment
-          theme
-          author {
-            ${userQuery}
           }
         }
       }
@@ -163,58 +249,122 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
        team {
         ${userQuery}
        }
-       updates {
-         date
-         comment
-         theme
-         author {
-          ${userQuery}
-         }
-       }
-       collaboration {
-         description
-       }
-       questions {
-        title
-        description
-        authors {
-          ${userQuery}
-        }
-       }
-       surveyQuestions {
-        question
-        responseOptions {
-          responseOption
-        }
-        votes
-       }
-       opportunities {
-        title
-        description 
-        email
-       }
      }
    }
  }
 }`;
 
-export const withResponseTransformer = (
+export const withResponseTransformer = async (
   query: STRAPI_QUERY,
-  data: ProjectsResponse | ProjectResponse | GetInnoUserResponse | CreateInnoUserResponse,
+  data:
+    | ProjectsResponse
+    | ProjectResponse
+    | GetInnoUserResponse
+    | CreateInnoUserResponse
+    | UpdatesResponse
+    | OpportunitiesResponse
+    | QuestionsResponse
+    | CollaborationQuestionsResponse
+    | SurveyQuestionsResponse,
 ) => {
   switch (query) {
     case STRAPI_QUERY.GetProjects:
-      return getStaticBuildFetchProjects(data as ProjectsResponse);
+      return await getStaticBuildFetchProjects(data as ProjectsResponse);
     case STRAPI_QUERY.GetProjectById:
       return getStaticBuildFetchProjectById(data as ProjectResponse);
     case STRAPI_QUERY.GetInnoUserByEmail:
       return getStaticBuildGetInnoUser(data as GetInnoUserResponse);
     case STRAPI_QUERY.CreateInnoUser:
       return getStaticBuildCreateInnoUser(data as CreateInnoUserResponse);
+    case STRAPI_QUERY.GetUpdatesByProjectId:
+      return getStaticBuildFetchUpdatesByProjectId(data as UpdatesResponse);
+    case STRAPI_QUERY.GetOpportunitiesByProjectId:
+      return getStaticBuildFetchOpportunitiesByProjectId(data as OpportunitiesResponse);
+    case STRAPI_QUERY.GetQuestionsByProjectId:
+      return getStaticBuildFetchQuestionsByProjectId(data as QuestionsResponse);
+    case STRAPI_QUERY.GetCollaborationQuestionsByProjectId:
+      return getStaticBuildFetchCollaborationQuestionsByProjectId(data as CollaborationQuestionsResponse);
+    case STRAPI_QUERY.GetSurveyQuestionsByProjectId:
+      return getStaticBuildFetchSurveyQuestionsByProjectId(data as SurveyQuestionsResponse);
     default:
       break;
   }
 };
+
+function getStaticBuildFetchSurveyQuestionsByProjectId(graphqlResponse: SurveyQuestionsResponse) {
+  const surveyQuestions = graphqlResponse.data.surveyQuestions.data;
+  return surveyQuestions.map((s) => {
+    return { ...s.attributes };
+  });
+}
+
+function getStaticBuildFetchCollaborationQuestionsByProjectId(graphqlResponse: CollaborationQuestionsResponse) {
+  const questions = graphqlResponse.data.collaborationQuestions.data;
+
+  const formattedQuestions = questions.map((question) => {
+    const q = question.attributes;
+    return {
+      ...q,
+      authors: q.authors.data.map((a: UserQuery) => {
+        return {
+          ...a.attributes,
+          avatar:
+            a.attributes.avatar.data &&
+            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.attributes.avatar.data.attributes.url}`,
+        } as User;
+      }),
+    };
+  });
+
+  return formattedQuestions as Question[];
+}
+
+function getStaticBuildFetchQuestionsByProjectId(graphqlResponse: QuestionsResponse) {
+  const questions = graphqlResponse.data.questions.data;
+
+  const formattedQuestions = questions.map((question) => {
+    const q = question.attributes;
+    return {
+      ...q,
+      authors: q.authors.data.map((a: UserQuery) => {
+        return {
+          ...a.attributes,
+          avatar:
+            a.attributes.avatar.data &&
+            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.attributes.avatar.data.attributes.url}`,
+        } as User;
+      }),
+    };
+  });
+
+  return formattedQuestions as Question[];
+}
+
+function getStaticBuildFetchUpdatesByProjectId(graphqlResponse: UpdatesResponse) {
+  const updates = graphqlResponse.data.updates.data;
+
+  const formattedUpdates = updates.map((update) => {
+    const u = update.attributes;
+    const author = u.author.data.attributes;
+    return {
+      comment: u.comment,
+      date: u.date || getCurrentDate(),
+      theme: u.theme,
+      author: {
+        name: author.name,
+        avatar: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
+      },
+    };
+  });
+  return formattedUpdates;
+}
+
+function getStaticBuildFetchOpportunitiesByProjectId(graphqlResponse: OpportunitiesResponse) {
+  const opportunities = graphqlResponse.data.opportunities.data;
+  return opportunities.map((o) => {
+    return { ...o.attributes };
+  });
+}
 
 function getStaticBuildCreateInnoUser(graphqlResponse: CreateInnoUserResponse) {
   const user = graphqlResponse.data.createInnoUser.data.attributes;
@@ -236,53 +386,47 @@ function getStaticBuildGetInnoUser(graphqlResponse: GetInnoUserResponse) {
   }
 }
 
-function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
+async function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
   const formattedUpdates: Update[] = [];
-  const formattedProjects = graphqlResponse.data.projects.data.map((project: ProjectData) => {
-    const { title, shortTitle, featured, projectStart, summary, image, status, team, updates, description } =
-      project.attributes;
+  const formattedProjects = await Promise.all(
+    graphqlResponse.data.projects.data.map(async (project: ProjectData) => {
+      const { title, shortTitle, featured, projectStart, summary, image, status, team, description } =
+        project.attributes;
 
-    const formattedUpdate = (updates as unknown as UpdateQuery[]).map((u: UpdateQuery) => {
-      const author = u.author.data.attributes;
-      return {
-        title: title || shortTitle,
-        comment: u.comment,
-        date: u.date,
-        theme: u.theme,
-        author: {
-          name: author.name,
+      const updates = (await getUpdatesByProjectId(project.id)) as Update[];
+
+      const formattedUpdate = updates.map((u) => {
+        u.title = title || shortTitle;
+        return u;
+      });
+
+      const formattedTeam = team.data.map((t: UserQuery) => {
+        return {
+          ...t.attributes,
           avatar:
-            author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
-        },
-      };
-    });
+            t.attributes.avatar.data &&
+            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${t.attributes.avatar.data.attributes.url}`,
+        };
+      });
 
-    const formattedTeam = team.data.map((t: UserQuery) => {
+      formattedUpdates.push(...formattedUpdate);
       return {
-        ...t.attributes,
-        avatar:
-          t.attributes.avatar.data &&
-          `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${t.attributes.avatar.data.attributes.url}`,
+        id: project.id,
+        featured,
+        projectStart: formatDate(projectStart),
+        title,
+        shortTitle,
+        summary,
+        status,
+        team: formattedTeam,
+        description: {
+          ...description,
+          tags: description.tags,
+        },
+        image: image.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
       };
-    });
-
-    formattedUpdates.push(...formattedUpdate);
-    return {
-      id: project.id,
-      featured,
-      projectStart: formatDate(projectStart),
-      title,
-      shortTitle,
-      summary,
-      status,
-      team: formattedTeam,
-      description: {
-        ...description,
-        tags: description.tags,
-      },
-      image: image.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
-    };
-  });
+    }),
+  );
 
   return {
     projects: formattedProjects,
@@ -290,38 +434,20 @@ function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
   };
 }
 
-function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
+async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
   const project = graphqlResponse.data.project.data;
 
-  const {
-    title,
-    shortTitle,
-    summary,
-    image,
-    status,
-    projectStart,
-    collaboration,
-    description,
-    author,
-    team,
-    updates,
-    questions,
-    surveyQuestions,
-    opportunities,
-  } = project.attributes;
+  const { title, shortTitle, summary, image, status, projectStart, description, author, team } = project.attributes;
 
-  const formattedUpdates = (updates as unknown as UpdateQuery[]).map((u: UpdateQuery) => {
-    const author = u.author.data;
-    return {
-      title,
-      comment: u.comment,
-      date: u.date,
-      theme: u.theme,
-      author: {
-        ...author.attributes,
-        avatar: author && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.attributes.avatar.data.attributes.url}`,
-      },
-    };
+  const opportunities = (await getOpportunitiesByProjectId(project.id)) as Opportunity[];
+  const questions = (await getQuestionsByProjectId(project.id)) as Question[];
+  const surveyQuestions = (await getSurveyQuestionsByProjectId(project.id)) as SurveyQuestion[];
+  const collaborationQuestions = (await getCollaborationQuestionsByProjectId(project.id)) as Question[];
+
+  const updates = (await getUpdatesByProjectId(project.id)) as Update[];
+  const formattedUpdates = updates.map((u) => {
+    u.title = title || shortTitle;
+    return u;
   });
 
   const formattedAuthor = {
@@ -339,33 +465,10 @@ function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
     };
   });
 
-  const formattedQuestions = questions.map((q: Question) => {
-    return {
-      ...q,
-      authors: q.authors.data.map((a: UserQuery) => {
-        return {
-          ...a.attributes,
-          avatar:
-            a.attributes.avatar.data &&
-            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.attributes.avatar.data.attributes.url}`,
-        };
-      }),
-    };
-  });
-
   const formattedDescription = {
     ...description,
     tags: description.tags,
   };
-
-  const formattedSurveyQuestions =
-    surveyQuestions &&
-    surveyQuestions.map((q: SurveyQuestion) => {
-      return {
-        ...q,
-        responseOptions: q.responseOptions,
-      };
-    });
 
   return {
     project: {
@@ -375,15 +478,15 @@ function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
       summary,
       status,
       projectStart: formatDate(projectStart),
-      collaboration,
       opportunities,
-      surveyQuestions: formattedSurveyQuestions,
+      surveyQuestions,
       description: formattedDescription,
       author: formattedAuthor,
       team: formattedTeam,
       image: image.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
       updates: formattedUpdates,
-      questions: formattedQuestions,
+      questions,
+      collaborationQuestions,
     },
   };
 }
