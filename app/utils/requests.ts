@@ -36,9 +36,9 @@ async function uploadImage(imageUrl: string, fileName: string) {
     });
 }
 
-export async function createInnoUser(body: UserSession) {
+export async function createInnoUser(body: UserSession, image?: string | null) {
   try {
-    const uploadedImages = body.image ? await uploadImage(body.image, `avatar-${body.name}`) : null;
+    const uploadedImages = image ? await uploadImage(image, `avatar-${body.name}`) : null;
     const uploadedImage = uploadedImages ? uploadedImages[0] : null;
 
     const requestUser = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT}`, {
@@ -53,7 +53,8 @@ export async function createInnoUser(body: UserSession) {
       }),
       next: { revalidate: 60 * 2 },
     });
-    const resultUser = withResponseTransformer(STRAPI_QUERY.CreateInnoUser, await requestUser.json());
+    const jsonResponse = await requestUser.json();
+    const resultUser = withResponseTransformer(STRAPI_QUERY.CreateInnoUser, jsonResponse);
 
     return {
       ...resultUser,
@@ -138,9 +139,9 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
   }
 }
 
-export async function createInnoUserIfNotExist(body: UserSession) {
+export async function createInnoUserIfNotExist(body: UserSession, image?: string | null) {
   if (body.email) {
     const user = await getInnoUserByEmail(body.email);
-    return user ? user : await createInnoUser(body);
+    return user ? user : await createInnoUser(body, image);
   }
 }

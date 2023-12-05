@@ -160,7 +160,7 @@ export type UserSession = {
   name: string;
   role?: string;
   department?: string;
-  image: string;
+  image?: string;
   email?: string;
 };
 

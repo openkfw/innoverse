@@ -44,12 +44,10 @@ const options: NextAuthOptions = {
         const user: UserSession = {
           name: token.name,
           email: token.email,
-          image: token.picture || '',
-          department: '',
           providerId: token.sub,
           provider: token.provider as string,
         };
-        await createInnoUserIfNotExist(user);
+        await createInnoUserIfNotExist(user, token.picture);
       }
       return token;
     },
