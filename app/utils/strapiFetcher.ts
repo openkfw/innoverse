@@ -1,7 +1,7 @@
 import { RequestError } from '../entities/error';
 
 const strapiFetcher = async (query: string, variables?: any) => {
-  const res = await fetch('/api/strapi', {
+  const res = await fetch(process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT as string, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

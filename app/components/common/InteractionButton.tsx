@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';

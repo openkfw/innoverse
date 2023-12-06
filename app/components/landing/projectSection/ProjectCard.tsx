@@ -31,7 +31,6 @@ export default function ProjectCard(props: ProjectCardProps) {
       <CardActionArea href={`/projects/${encodeURIComponent(id)}`}>
         <CardMedia sx={{ height: isWideScreen ? 237 : 175, borderRadius: '8px' }}>
           <Image
-            unoptimized
             src={img}
             width={isWideScreen ? 418 : 500}
             height={isWideScreen ? 237 : 175}

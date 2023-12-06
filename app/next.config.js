@@ -6,6 +6,25 @@ const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   swcMinify: true,
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'localhost',
+        pathname: '/uploads/**',
+        port: '1337',
+      },
+      {
+        protocol: 'https',
+        hostname: '**',
+        port: '',
+      },
+      {
+        hostname: 'secure.gravatar.com',
+        pathname: '/**',
+        port: '',
+      },
+    ],
+  },
   async rewrites() {
     return [
       {
@@ -18,7 +37,6 @@ const nextConfig = {
       },
     ];
   },
-
   async headers() {
     return [
       {

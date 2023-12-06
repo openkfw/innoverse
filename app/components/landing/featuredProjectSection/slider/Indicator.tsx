@@ -1,3 +1,5 @@
+'use client';
+
 import Box from '@mui/material/Box';
 
 import { Project } from '@/common/types';

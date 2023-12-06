@@ -1,5 +1,8 @@
 'use client';
 
+import Image from 'next/image';
+
+import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
@@ -9,32 +12,60 @@ import theme from '@/styles/theme';
 
 import ProjectCarousel from './ProjectCarousel';
 
+import bgBubble from '/public/images/bg-image.png';
+
 export type ProjectProps = {
   projects: Project[];
 };
 
 export const ProjectSection = (props: ProjectProps) => {
   return (
-    <Grid container spacing={5} sx={wrapperStyles}>
-      <Grid item container xs={12} sx={titleContainerStyles}>
-        <Grid item xs={9}>
-          <Typography variant="overline" sx={subtitleStyles}>
-            Aktuelle Pipeline
-          </Typography>
-          <Typography variant="h2" sx={titleStyles}>
-            Innovationsprojekte
-          </Typography>
+    <Box sx={projectSectionStyles}>
+      {/* Right bubble in the background */}
+      <Image
+        src={bgBubble}
+        alt="background-bubble"
+        sizes="33vw"
+        style={{
+          position: 'absolute',
+          width: 570,
+          height: 460,
+          zIndex: 0,
+          opacity: 0.56,
+          right: 0,
+          mixBlendMode: 'lighten',
+          transform: 'translate(50%, -10%)',
+        }}
+      />
+      <Grid container spacing={5} sx={wrapperStyles}>
+        <Grid item container xs={12} sx={titleContainerStyles}>
+          <Grid item xs={9}>
+            <Typography variant="overline" sx={subtitleStyles}>
+              Aktuelle Pipeline
+            </Typography>
+            <Typography variant="h2" sx={titleStyles}>
+              Innovationsprojekte
+            </Typography>
+          </Grid>
+          <Grid item xs={3} sx={buttonContainerStyles}>
+            <CustomButton>Mehr</CustomButton>
+          </Grid>
         </Grid>
-        <Grid item xs={3} sx={buttonContainerStyles}>
-          <CustomButton>Mehr</CustomButton>
-        </Grid>
+        <ProjectCarousel projects={props.projects} />
       </Grid>
-      <ProjectCarousel projects={props.projects} />
-    </Grid>
+    </Box>
   );
 };
 
 // Project Section Styles
+const projectSectionStyles = {
+  position: 'relative',
+  overflowX: 'hidden',
+  [theme.breakpoints.up('sm')]: {
+    paddingLeft: '5%',
+  },
+};
+
 const wrapperStyles = {
   [theme.breakpoints.up('sm')]: {
     margin: 5,
