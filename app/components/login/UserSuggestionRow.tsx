@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import { signIn } from 'next-auth/react';
@@ -43,7 +45,7 @@ export default function UserSuggestionRow(props: UserSuggestionRowProps) {
           <Grid item>
             {image ? (
               <Avatar sx={{ width: 40, height: 40, border: '2px solid white' }}>
-                <Image unoptimized src={image} alt="avatar" fill sizes="33vw" />
+                <Image src={image} alt="avatar" fill sizes="33vw" />
               </Avatar>
             ) : (
               <AvatarInitialsIcon name={name} size={40} sx={{ border: '2px solid white' }} />

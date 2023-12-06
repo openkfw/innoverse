@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';

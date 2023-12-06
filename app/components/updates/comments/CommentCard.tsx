@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
@@ -70,7 +72,7 @@ export const CommentCard = ({ content, sx }: CommentCardProps) => {
         avatar={
           avatar ? (
             <Avatar sx={{ width: 32, height: 32 }}>
-              <Image unoptimized src={avatar} alt="avatar" fill sizes="33vw" />
+              <Image src={avatar} alt="avatar" fill sizes="33vw" />
             </Avatar>
           ) : (
             <AvatarInitialsIcon name={name} size={32} />
@@ -90,7 +92,7 @@ export const CommentCard = ({ content, sx }: CommentCardProps) => {
             <Typography variant="subtitle2" color="secondary.contrastText">
               {name}
             </Typography>
-            {badge && <Image unoptimized src={badgeIcon} alt="badge" />}
+            {badge && <Image src={badgeIcon} alt="badge" />}
             <Typography variant="subtitle2" color="text.secondary">
               {role}
             </Typography>

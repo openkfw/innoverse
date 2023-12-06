@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -36,7 +38,7 @@ function FeedbackSection() {
   }
 
   return (
-    <>
+    <Box sx={feedbackSectionStyles}>
       {!hideButton && (
         <InteractionButton
           onClick={handleOpen}
@@ -72,13 +74,21 @@ function FeedbackSection() {
           />
         </Box>
       </CustomDialog>
-    </>
+    </Box>
   );
 }
 
 export default FeedbackSection;
 
 // Feedback Section Styles
+const feedbackSectionStyles = {
+  width: '100%',
+  marginTop: '-100px',
+  paddingRight: '32px',
+  display: 'flex',
+  justifyContent: 'flex-end',
+};
+
 const feedbackButtonStyles = {
   color: 'black',
   backgroundColor: 'white',

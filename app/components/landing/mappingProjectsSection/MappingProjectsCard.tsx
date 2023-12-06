@@ -1,3 +1,8 @@
+'use client';
+
+import Image from 'next/image';
+
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -12,6 +17,8 @@ import ProofOfConceptIcon from '@/components/icons/ProofOfConceptIcon';
 import { ProjectProps } from '../projectSection/ProjectSection';
 
 import PhaseColumn from './PhaseColumn';
+
+import bgBubble from '/public/images/bg-image.png';
 
 const mappingData = [
   {
@@ -38,42 +45,66 @@ const mappingData = [
 export const MappingProjectsCard = (props: ProjectProps) => {
   const { projects } = props;
   return (
-    <Grid container justifyContent="center">
-      <Grid item xs={10}>
-        <Card
-          sx={{
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            backdropFilter: `blur(20px)`,
-            borderRadius: '24px',
-            border: '1px solid rgba(255, 255, 255, 0.20)',
-            height: '600px',
-            boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
-          }}
-        >
-          <CardHeader
-            sx={{ textAlign: 'left', mt: '30px', ml: '25px', mr: '25px' }}
-            title={<Typography variant="h4">Strategische Innovation @ ***STRING_REMOVED*** </Typography>}
-            action={<CustomButton>Details</CustomButton>}
-          />
+    <Box sx={mappingProjectsCardStyles}>
+      {/* Left bubble in the background */}
+      <Image
+        src={bgBubble}
+        alt="background-bubble"
+        sizes="33vw"
+        style={{
+          position: 'absolute',
+          width: 570,
+          height: 460,
+          zIndex: 0,
+          opacity: 0.9,
+          left: 0,
+          overflowX: 'hidden',
+          mixBlendMode: 'lighten',
+          transform: 'translate(-50%, 20%)',
+        }}
+      />
+      <Grid container justifyContent="center">
+        <Grid item xs={10}>
+          <Card
+            sx={{
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              backdropFilter: `blur(20px)`,
+              borderRadius: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.20)',
+              height: '600px',
+              boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
+            }}
+          >
+            <CardHeader
+              sx={{ textAlign: 'left', mt: '30px', ml: '25px', mr: '25px' }}
+              title={<Typography variant="h4">Strategische Innovation @ ***STRING_REMOVED*** </Typography>}
+              action={<CustomButton>Details</CustomButton>}
+            />
 
-          <CardContent sx={{ ml: '25px', mr: '25px' }}>
-            <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              {mappingData.map((data) => {
-                return (
-                  <PhaseColumn
-                    key={data.title}
-                    title={data.title}
-                    description={data.description}
-                    projects={projects.filter((p) => p.status.replace(/_/g, ' ') === data.title)}
-                    icon={data.icon}
-                    isFirstStep={data?.isFirstStep}
-                  ></PhaseColumn>
-                );
-              })}
-            </Grid>
-          </CardContent>
-        </Card>
+            <CardContent sx={{ ml: '25px', mr: '25px' }}>
+              <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                {mappingData.map((data) => {
+                  return (
+                    <PhaseColumn
+                      key={data.title}
+                      title={data.title}
+                      description={data.description}
+                      projects={projects.filter((p) => p.status.replace(/_/g, ' ') === data.title)}
+                      icon={data.icon}
+                      isFirstStep={data?.isFirstStep}
+                    ></PhaseColumn>
+                  );
+                })}
+              </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
-    </Grid>
+    </Box>
   );
+};
+
+const mappingProjectsCardStyles = {
+  position: 'relative',
+  overflowX: 'hidden',
 };

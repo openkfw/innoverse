@@ -38,7 +38,7 @@ const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, 
     >
       {user.avatar ? (
         <Avatar sx={{ width: size, height: size, border: '2px solid white' }}>
-          <Image unoptimized src={user.avatar} alt="avatar" fill sizes="33vw" />
+          <Image src={user.avatar} alt="avatar" fill sizes="33vw" />
         </Avatar>
       ) : (
         <AvatarInitialsIcon name={user.name} size={size} sx={{ border: '2px solid white' }} />

@@ -1,3 +1,5 @@
+'use client';
+
 import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
 import ArrowRightIcon from '@mui/icons-material/ArrowForward';
 import Grid from '@mui/material/Grid';

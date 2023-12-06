@@ -1,4 +1,7 @@
+'use client';
+
 import { useRef, useState } from 'react';
+import React from 'react';
 import Slider from 'react-slick';
 import Image from 'next/image';
 
@@ -21,8 +24,38 @@ type FeaturedProjectSliderProps = {
   items: Project[];
 };
 
-export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
+type SlideProps = {
+  content: Project;
+};
+
+const Slide = ({ content }: SlideProps) => {
+  return (
+    <Grid container key={content.id} sx={wrapperStyles}>
+      <Grid container item sx={imageContainerStyles}>
+        <Image
+          src={content.image || defaultImage}
+          width={0}
+          height={0}
+          alt="Project"
+          sizes="50vw"
+          className="slider-image"
+          style={{ objectFit: 'contain', objectPosition: 'center' }}
+        />
+      </Grid>
+      <Box sx={smallScreenSliderPill}>
+        <SmallSliderPill itemNumber={(content.id + 1).toString()} title={content.title} />
+      </Box>
+      <Grid item md={4} sx={contentStyles}>
+        <FeaturedProjectContent title={content.title} tags={content.description.tags} summary={content.summary} />
+      </Grid>
+    </Grid>
+  );
+};
+
+const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   const [selectedItem, setSelectedItem] = useState<number>(props.items.length - 1);
+  const [show, setShow] = useState(false);
+
   const slides = props.items;
   const sliderRef = useRef<Slider>(null);
 
@@ -34,7 +67,7 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   const settings = {
-    initialSlide: selectedItem,
+    initialSlide: props.items.length - 1,
     arrows: false,
     dots: true,
     infinite: false,
@@ -60,36 +93,35 @@ export const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   };
 
   return (
-    <Slider {...settings} ref={sliderRef}>
-      {slides.map((el, id) => (
-        <Grid container key={id} sx={wrapperStyles}>
-          <Grid container item sx={imageContainerStyles}>
-            <Image
-              unoptimized
-              src={el.image || defaultImage}
-              width={0}
-              height={0}
-              alt="Project"
-              sizes="50vw"
-              className="slider-image"
-              style={{ objectFit: 'contain', objectPosition: 'center' }}
-            />
-          </Grid>
-
-          <Box sx={smallScreenSliderPill}>
-            <SmallSliderPill itemNumber={(id + 1).toString()} title={el.title} />
-          </Box>
-
-          <Grid item md={4} sx={contentStyles}>
-            <FeaturedProjectContent title={el.title} tags={el.description.tags} summary={el.summary} />
-          </Grid>
-        </Grid>
-      ))}
-    </Slider>
+    <Box sx={featuredProjectSliderStyles}>
+      {!show && <Slide content={slides[props.items.length - 1]} />}
+      <Slider
+        {...settings}
+        ref={sliderRef}
+        onInit={() => {
+          setShow(true);
+        }}
+      >
+        {show && slides.map((content, id) => <Slide content={content} key={id} />)}
+      </Slider>
+    </Box>
   );
 };
 
+export default FeaturedProjectSlider;
+
 // Featured Project Slider Styles
+
+const featuredProjectSliderStyles = {
+  paddingTop: 10,
+  marginRight: '5%',
+  marginBottom: 'min(10%, 229px)',
+  [theme.breakpoints.down('sm')]: {
+    marginRight: 0,
+    marginLeft: 0,
+  },
+};
+
 const wrapperStyles = {
   display: 'flex !important',
   flexWrap: 'noWrap',

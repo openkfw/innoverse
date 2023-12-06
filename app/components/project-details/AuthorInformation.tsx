@@ -29,7 +29,7 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
             <Box>
               {author.avatar ? (
                 <Avatar sx={{ width: 48, height: 48 }}>
-                  <Image unoptimized src={author.avatar} alt="avatar" fill sizes="33vw" />
+                  <Image src={author.avatar} alt="avatar" fill sizes="33vw" />
                 </Avatar>
               ) : (
                 <AvatarInitialsIcon name={author.name} size={48} />
@@ -51,7 +51,7 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
           </Stack>
         </Stack>
         <Stack direction="row" alignItems="center" pb={4} spacing={1} sx={{ m: 0 }} mt={2}>
-          <Image unoptimized src={badgeIcon} alt="badge" />
+          <Image src={badgeIcon} alt="badge" />
           <Typography variant="caption" color="text.primary">
             20 Points
           </Typography>

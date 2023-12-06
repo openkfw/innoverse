@@ -1,5 +1,6 @@
 'use client';
 
+import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
@@ -15,26 +16,36 @@ type NewsProps = {
 
 export const NewsSection = (props: NewsProps) => {
   return (
-    <Grid container spacing={5} sx={wrapperStyles}>
-      <Grid item container xs={12} sx={titleContainerStyles}>
-        <Grid item xs={9}>
-          <Typography variant="overline" sx={subtitleStyles}>
-            Aktuelles aus den Projekten
-          </Typography>
-          <Typography variant="h2" sx={titleStyles}>
-            Innovationsnews
-          </Typography>
+    <Box sx={newsSectionStyles}>
+      <Grid container spacing={5} sx={wrapperStyles}>
+        <Grid item container xs={12} sx={titleContainerStyles}>
+          <Grid item xs={9}>
+            <Typography variant="overline" sx={subtitleStyles}>
+              Aktuelles aus den Projekten
+            </Typography>
+            <Typography variant="h2" sx={titleStyles}>
+              Innovationsnews
+            </Typography>
+          </Grid>
+          <Grid item xs={3} sx={buttonContainerStyles}>
+            <CustomButton>Mehr</CustomButton>
+          </Grid>
         </Grid>
-        <Grid item xs={3} sx={buttonContainerStyles}>
-          <CustomButton>Mehr</CustomButton>
-        </Grid>
+        <NewsCarousel updates={props.updates} />
       </Grid>
-      <NewsCarousel updates={props.updates} />
-    </Grid>
+    </Box>
   );
 };
 
 // News Section Styles
+
+const newsSectionStyles = {
+  overflow: 'hidden',
+  [theme.breakpoints.up('sm')]: {
+    paddingLeft: '5%',
+  },
+};
+
 const wrapperStyles = {
   [theme.breakpoints.up('sm')]: {
     margin: 5,

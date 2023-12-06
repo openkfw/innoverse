@@ -26,7 +26,6 @@ export default function HeroSection(props: HeroSectionProps) {
       <Grid item xs={5}>
         <Box>
           <Image
-            unoptimized
             src={image || defaultImage}
             alt="Project"
             width={0}
@@ -48,7 +47,7 @@ export default function HeroSection(props: HeroSectionProps) {
                   avatar={
                     author.avatar ? (
                       <Avatar sx={avatarStyles}>
-                        <Image unoptimized src={author.avatar} alt="avatar" fill sizes="33vw" />
+                        <Image src={author.avatar} alt="avatar" fill sizes="33vw" />
                       </Avatar>
                     ) : (
                       <AvatarInitialsIcon name={author.name} size={52} />
