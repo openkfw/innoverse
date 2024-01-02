@@ -10,9 +10,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Resource {
+model ProjectComment {
   id    String     @id @default(uuid())
   createdAt DateTime @default(now())
   
-  text String  
+  comment String // text of comment
+  projectId String // commented project
+  author String // id of author
+  upvotedBy String[] // ids of users
+  @@map(name: "project_comments")
+}
+
+model CollaborationComment {
+  id    String     @id @default(uuid())
+  createdAt DateTime @default(now())
+  
+  comment String // text of comment
+  projectId String // commented project
+  questionId String // commented question
+  author String // id of author
+  upvotedBy String[] // ids of users
+  @@map(name: "collaboration_comments")
 }

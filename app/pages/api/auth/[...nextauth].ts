@@ -6,12 +6,7 @@ import GitLabProvider from 'next-auth/providers/gitlab';
 import { UserSession } from '@/common/types';
 import { createInnoUserIfNotExist } from '@/utils/requests';
 
-const PROVIDERS = {
-  GITLAB: 'gitlab',
-  AZURE_AD: 'azure-ad',
-};
-
-const options: NextAuthOptions = {
+export const options: NextAuthOptions = {
   providers: [
     AzureADProvider({
       clientId: process.env.NEXTAUTH_AZURE_CLIENT_ID as string,
@@ -44,7 +39,7 @@ const options: NextAuthOptions = {
         const user: UserSession = {
           name: token.name,
           email: token.email,
-          providerId: token.sub,
+          providerId: token.sub as string,
           provider: token.provider as string,
         };
         await createInnoUserIfNotExist(user, token.picture);
@@ -52,15 +47,14 @@ const options: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      const gitlabId = token.provider == PROVIDERS.GITLAB ? token.sub : null;
-      const azureId = token.provider == PROVIDERS.AZURE_AD ? token.sub : null;
       return {
         ...session,
         user: {
           ...session.user,
+          image: session.user.image,
           id: token.sub,
-          gitlabId,
-          azureId,
+          providerId: token.sub as string,
+          provider: token.provider as string,
         },
         provider: token.provider,
       };

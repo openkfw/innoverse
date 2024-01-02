@@ -72,7 +72,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
             title={<TooltipContent teamMember={teamMember} projectName={projectName} />}
             placement="bottom"
           >
-            <AvatarIcon user={teamMember} key={teamMember.name} index={index} allowAnimation={true} />
+            <AvatarIcon user={teamMember} key={teamMember.name} index={index} allowAnimation />
           </StyledTooltip>
         ))}
       </AvatarGroup>

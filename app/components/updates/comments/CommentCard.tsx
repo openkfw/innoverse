@@ -13,14 +13,14 @@ import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { CommentType } from '@/common/types';
+import { Comment } from '@/common/types';
 import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
 import theme from '@/styles/theme';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
 interface CommentCardProps {
-  content: CommentType;
+  content: Comment;
   sx?: SxProps;
 }
 
@@ -28,7 +28,7 @@ const MAX_TEXT_LENGTH = 300;
 
 export const CommentCard = ({ content, sx }: CommentCardProps) => {
   const { author, comment } = content;
-  const { name, role, avatar, badge } = author;
+  const { name, role, image, badge } = author;
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -70,9 +70,9 @@ export const CommentCard = ({ content, sx }: CommentCardProps) => {
     <Card sx={cardStyle}>
       <CardHeader
         avatar={
-          avatar ? (
+          image ? (
             <Avatar sx={{ width: 32, height: 32 }}>
-              <Image src={avatar} alt="avatar" fill sizes="33vw" />
+              <Image src={image} alt="avatar" fill sizes="33vw" />
             </Avatar>
           ) : (
             <AvatarInitialsIcon name={name} size={32} />

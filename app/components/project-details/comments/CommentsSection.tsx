@@ -6,18 +6,23 @@ import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { CommentType } from '@/common/types';
-import { projects_progression } from '@/repository/mock/project/project-page';
+import { Comment } from '@/common/types';
+import { Project, ProjectQuestion } from '@/common/types';
+import { sortDateByCreatedAt } from '@/utils/helpers';
 
-import { CommentCard } from '../collaboration/comments/CommentCard';
-import WriteCommentCard from '../collaboration/WriteCommentCard';
+import WriteCommentCard from '../../collaboration/WriteCommentCard';
 
-const CommentsSection = () => {
-  const project = projects_progression.projects[0];
-  const [comments] = useState<CommentType[]>(project.comments);
-  const [questions] = useState<string[]>(project.questions);
-  const [newCommentText] = useState<string>(projects_progression.writeCommentText);
-  const projectName = project.projectSummary.projectName;
+import { handleComment } from './actions';
+import { CommentCard } from './CommentCard';
+
+const CommentsSection = ({ project }: { project: Project }) => {
+  const [questions] = useState<ProjectQuestion[]>(project.questions);
+  const [comments, setComments] = useState<Comment[]>(project.comments);
+
+  const handleSendComment = async (comment: string) => {
+    const { data: newComment } = await handleComment({ projectId: project.id, comment: comment });
+    setComments((comments) => sortDateByCreatedAt([...comments, newComment]));
+  };
 
   return (
     <Stack sx={containerStyles} direction="column">
@@ -32,7 +37,7 @@ const CommentsSection = () => {
               <ListItemText
                 primary={
                   <Typography variant="body1" color="text.primary" sx={{ fontWeight: 700 }}>
-                    {question}
+                    {question.title}
                   </Typography>
                 }
               />
@@ -46,10 +51,10 @@ const CommentsSection = () => {
       </Typography>
 
       <Stack sx={{ p: 0 }}>
-        {comments.map((comment) => (
-          <CommentCard content={comment} key={comment.id} />
+        {comments.map((comment, key) => (
+          <CommentCard content={comment} key={key} />
         ))}
-        <WriteCommentCard projectName={projectName} text={newCommentText} sx={{ width: '622px' }} />
+        <WriteCommentCard projectName={project.title} sx={{ width: '622px' }} handleComment={handleSendComment} />
       </Stack>
     </Stack>
   );

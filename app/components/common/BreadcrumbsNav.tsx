@@ -19,7 +19,7 @@ export default function BreadcrumbsNav() {
         Startseite
       </Typography>
     </Link>,
-    <Link key="2" href="" style={{ textDecoration: 'none', pointerEvents: 'none' }} onClick={handleClick}>
+    <Link key="2" href="/" style={{ textDecoration: 'none', pointerEvents: 'none' }} onClick={handleClick}>
       <Typography variant="caption" color="common.white">
         Projekt
       </Typography>

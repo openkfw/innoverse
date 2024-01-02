@@ -1,4 +1,3 @@
-import { addResource } from '../resource';
 import prisma from './prisma';
 
 const client = prisma;
@@ -6,9 +5,9 @@ const client = prisma;
 async function seed() {
   console.log(`Start seeding ...`);
 
-  for (let i = 0; i < 10; i++) {
-    await addResource(client, `Resource ${i + 1}`);
-  }
+  // for (let i = 0; i < 10; i++) {
+  //   await addResource(client, `Resource ${i + 1}`);
+  // }
 
   console.log(`Seeding finished.`);
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
@@ -8,22 +8,22 @@ import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { CommentType } from '@/common/types';
+import { Comment } from '@/common/types';
 import theme from '@/styles/theme';
 
-import { CommentCard } from './CommentCard';
+import { CollaborationCommentCard } from './CollaborationCommentCard';
 
 interface CommentsProps {
-  comments: CommentType[];
+  comments: Comment[];
 }
 
 const MAX_NUM_OF_COMMENTS = 2;
 
-export const Comments = ({ comments }: CommentsProps) => {
+export const CollaborationComments = ({ comments }: CommentsProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const [maxVisibleComments] = useState<CommentType[]>(comments.slice(0, MAX_NUM_OF_COMMENTS));
-  const [remainingComments] = useState<CommentType[]>(comments.slice(MAX_NUM_OF_COMMENTS, comments.length));
-  const [lengthOfNotShownComments] = useState<number>(comments.length - MAX_NUM_OF_COMMENTS);
+  const [maxVisibleComments, setMaxVisibleComments] = useState<Comment[]>();
+  const [remainingComments, setRemainingComments] = useState<Comment[]>();
+  const [lengthOfNotShownComments, setLengthOfNotShownComments] = useState<number>();
 
   const buttonStyle = {
     ml: 6,
@@ -40,19 +40,23 @@ export const Comments = ({ comments }: CommentsProps) => {
     setIsCollapsed(!isCollapsed);
   };
 
+  useEffect(() => {
+    setMaxVisibleComments(comments.slice(0, MAX_NUM_OF_COMMENTS));
+    setRemainingComments(comments.slice(MAX_NUM_OF_COMMENTS, comments.length));
+    setLengthOfNotShownComments(Math.max(comments.length - MAX_NUM_OF_COMMENTS, 0));
+  }, [comments]);
+
   return (
     <Stack justifyContent="center" alignContent="center">
-      {maxVisibleComments.map((comment) => (
-        <CommentCard key={comment.id} content={comment} />
-      ))}
+      {maxVisibleComments?.map((comment, key) => <CollaborationCommentCard key={key} content={comment} />)}
 
       {isCollapsed &&
-        remainingComments.map((comment) => (
-          <Collapse in={isCollapsed} key={comment.id}>
-            <CommentCard content={comment} />
+        remainingComments?.map((comment, key) => (
+          <Collapse in={isCollapsed} key={key}>
+            <CollaborationCommentCard content={comment} />
           </Collapse>
         ))}
-      {!isCollapsed && comments.length != MAX_NUM_OF_COMMENTS && (
+      {!isCollapsed && comments.length > MAX_NUM_OF_COMMENTS && (
         <Button onClick={handleToggle} sx={buttonStyle} startIcon={<AddIcon color="secondary" fontSize="large" />}>
           <Typography
             variant="subtitle2"

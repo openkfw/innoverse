@@ -45,9 +45,9 @@ export default function HeroSection(props: HeroSectionProps) {
               <Box display="flex" flexDirection="column" justifyContent="flex-end" height="100%">
                 <CardHeader
                   avatar={
-                    author.avatar ? (
+                    author.image ? (
                       <Avatar sx={avatarStyles}>
-                        <Image src={author.avatar} alt="avatar" fill sizes="33vw" />
+                        <Image src={author.image} alt="avatar" fill sizes="33vw" />
                       </Avatar>
                     ) : (
                       <AvatarInitialsIcon name={author.name} size={52} />

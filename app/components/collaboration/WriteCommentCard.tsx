@@ -1,56 +1,64 @@
 'use client';
 
-import Image from 'next/image';
+import { useRef } from 'react';
 
-import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 
+import { useUser } from '@/app/user-context';
+
+import AvatarIcon from '../common/AvatarIcon';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
-import avatar from '/public/images/avatarSusan.png';
-
-interface WriteOpinionCardProps {
-  text: string;
+interface WriteCommentCardProps {
   projectName: string;
+  handleComment: (comment: string) => Promise<void>;
   sx?: SxProps;
 }
 
-const WriteCommentCard = ({ text, sx, projectName }: WriteOpinionCardProps) => {
+const WriteCommentCard = ({ sx, projectName, handleComment }: WriteCommentCardProps) => {
+  const { user } = useUser();
+  const commentRef = useRef<HTMLInputElement | null>();
+  const placeholder =
+    'Teil deine Ratschläge und Gedanken zu diesem Thema, damit deine Kollegen von deiner Expertise profitieren können.';
+
+  const handleNewComment = async () => {
+    if (commentRef.current) {
+      await handleComment(commentRef.current.value);
+      commentRef.current.value = '';
+    }
+  };
+
   return (
-    <Stack direction="row" spacing={2}>
-      <Avatar sx={avatarStyles}>
-        <Image src={avatar} alt="avatar" fill sizes="33vw" />
-      </Avatar>
-      <TextField
-        multiline
-        rows={6}
-        placeholder={text}
-        sx={{ ...textFieldStyles, ...sx }}
-        InputProps={{
-          endAdornment: (
-            <InteractionButton
-              projectName={projectName}
-              onClick={() => console.log('pressed')}
-              interactionType={InteractionType.COMMENT_SEND}
-              sx={buttonStyles}
-            />
-          ),
-        }}
-      />
-    </Stack>
+    <>
+      {user && (
+        <Stack direction="row" spacing={3}>
+          <AvatarIcon user={user} size={32} />
+          <TextField
+            inputRef={commentRef}
+            multiline
+            rows={6}
+            placeholder={placeholder}
+            sx={{ ...textFieldStyles, ...sx }}
+            InputProps={{
+              endAdornment: (
+                <InteractionButton
+                  projectName={projectName}
+                  onClick={handleNewComment}
+                  interactionType={InteractionType.COMMENT_SEND}
+                  sx={buttonStyles}
+                />
+              ),
+            }}
+          />
+        </Stack>
+      )}
+    </>
   );
 };
 
 export default WriteCommentCard;
-
-// Write Comment Card Styles
-
-const avatarStyles = {
-  width: 32,
-  height: 32,
-};
 
 const textFieldStyles = {
   borderRadius: '8px',

@@ -6,8 +6,8 @@ declare module 'next-auth' {
    */
   interface Session {
     user: {
-      gitlabId?: string;
-      azureId?: string;
+      providerId: string;
+      provider: string;
       name: string;
       email: string;
       image: string;

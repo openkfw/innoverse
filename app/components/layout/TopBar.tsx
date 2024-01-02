@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -10,6 +9,7 @@ import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
+import { useUser } from '@/app/user-context';
 import theme from '@/styles/theme';
 
 import LoggedInMenu from './LoggedInMenu';
@@ -19,7 +19,7 @@ import logo from '/public/images/logo.svg';
 const pages = ['Projekte', 'Artikel', 'Backstage'];
 
 export default function TopBar() {
-  const { data: session } = useSession();
+  const { user, isLoading } = useUser();
 
   const menuItemStyle = {
     borderRadius: '8px',
@@ -79,7 +79,8 @@ export default function TopBar() {
                   <Typography variant="body2">{page}</Typography>
                 </MenuItem>
               ))}
-              {session && <LoggedInMenu user={session.user} />}
+
+              {(user || isLoading) && <LoggedInMenu user={user} isUserLoading={isLoading} />}
             </Stack>
           </Box>
         </Toolbar>

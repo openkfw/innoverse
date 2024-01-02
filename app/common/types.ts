@@ -2,19 +2,18 @@ import { StaticImageData } from 'next/image';
 
 export type User = {
   name: string;
-  role: string;
-  avatar: string;
-  badge?: boolean;
+  role?: string;
   department?: string;
-  points?: number;
+  image?: string;
+  email?: string;
+  badge?: boolean;
 };
 
-export type CommentType = {
+export type Comment = {
   id: string;
   author: User;
   comment: string;
-  upvotes?: number;
-  downvotes?: number;
+  upvotedBy?: User[];
 };
 
 export type ResponseOption = {
@@ -73,10 +72,11 @@ export type Project = {
   updates: ProjectUpdate[];
   description: ProjectDescription;
   questions: ProjectQuestion[];
+  comments: Comment[];
   surveyQuestions: SurveyQuestion[];
   author: User;
   opportunities: Opportunity[];
-  collaborationQuestions: Question[];
+  collaborationQuestions: CollaborationQuestion[];
 };
 
 export type ProjectDescription = {
@@ -85,8 +85,8 @@ export type ProjectDescription = {
 };
 
 export type ProjectQuestion = {
+  id: string;
   title: string;
-  description: string;
   authors: User[];
 };
 
@@ -130,8 +130,8 @@ export type ProjectProgression = {
   hero: Hero;
   projectSummary: Project;
   projectStatus: ProjectStatus;
-  comments: CommentType[];
-  questions: Question[];
+  comments: Comment[];
+  questions: CollaborationQuestion[];
 };
 
 export type ProjectsProgression = {
@@ -155,13 +155,13 @@ export type MainPageData = {
 };
 
 export type UserSession = {
-  providerId?: string;
-  provider?: string;
+  providerId: string;
+  provider: string;
   name: string;
   role?: string;
   department?: string;
   image?: string;
-  email?: string;
+  email: string;
 };
 
 export type Opportunity = {
@@ -171,8 +171,10 @@ export type Opportunity = {
   expense: string;
 };
 
-export type Question = {
+export type CollaborationQuestion = {
+  id: string;
   title: string;
   description: string;
   authors: User[];
+  comments: Comment[];
 };

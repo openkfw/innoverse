@@ -1,9 +1,10 @@
 import {
+  CollaborationQuestion,
   Opportunity,
   Project,
   ProjectByIdQueryResult,
+  ProjectQuestion,
   ProjectsQueryResult,
-  Question,
   SurveyQuestion,
   UserSession,
 } from '@/common/types';
@@ -12,6 +13,7 @@ import {
   CreateInnoUserQuery,
   GetCollaborationQuestionsByProjectIdQuery,
   GetInnoUserByEmailQuery,
+  GetInnoUserByProviderIdQuery,
   GetOpportunitiesByProjectIdQuery,
   GetProjectByIdQuery,
   GetProjectsQuery,
@@ -66,17 +68,6 @@ export async function createInnoUser(body: UserSession, image?: string | null) {
   }
 }
 
-export async function getInnoUserByEmail(email: string) {
-  try {
-    const requestUser = await strapiFetcher(GetInnoUserByEmailQuery, { email });
-    const resultUser = withResponseTransformer(STRAPI_QUERY.GetInnoUserByEmail, requestUser);
-
-    return resultUser;
-  } catch (err) {
-    console.info(err);
-  }
-}
-
 export async function getProjectById(id: string) {
   try {
     const requestProject = await strapiFetcher(GetProjectByIdQuery, { id });
@@ -88,6 +79,27 @@ export async function getProjectById(id: string) {
     return {
       ...resultProject.project,
     };
+  } catch (err) {
+    console.info(err);
+  }
+}
+
+export async function getInnoUserByEmail(email: string) {
+  try {
+    const requestUser = await strapiFetcher(GetInnoUserByEmailQuery, { email });
+    const resultUser = withResponseTransformer(STRAPI_QUERY.GetInnoUser, requestUser);
+
+    return resultUser;
+  } catch (err) {
+    console.info(err);
+  }
+}
+
+export async function getInnoUserByProviderId(providerId: string) {
+  try {
+    const requestUser = await strapiFetcher(GetInnoUserByProviderIdQuery, { providerId });
+    const resultUser = withResponseTransformer(STRAPI_QUERY.GetInnoUser, requestUser);
+    return resultUser;
   } catch (err) {
     console.info(err);
   }
@@ -134,11 +146,11 @@ export async function getOpportunitiesByProjectId(projectId: string) {
   }
 }
 
-export async function getQuestionsByProjectId(projectId: string) {
+export async function getProjectQuestionsByProjectId(projectId: string) {
   try {
     const res = await strapiFetcher(GetQuestionsByProjectIdQuery, { projectId });
-    const questions = await withResponseTransformer(STRAPI_QUERY.GetQuestionsByProjectId, res);
-    return questions as Question[];
+    const questions = await withResponseTransformer(STRAPI_QUERY.GetProjectQuestionsByProjectId, res);
+    return questions as ProjectQuestion[];
   } catch (err) {
     console.info(err);
   }
@@ -161,7 +173,7 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
       STRAPI_QUERY.GetCollaborationQuestionsByProjectId,
       res,
     );
-    return collaborationQuestions as Question[];
+    return collaborationQuestions as CollaborationQuestion[];
   } catch (err) {
     console.info(err);
   }

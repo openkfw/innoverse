@@ -13,8 +13,8 @@ import Stack from '@mui/material/Stack';
 import triggerAnalyticsEvent from '@/analytics/analytics';
 import { Project } from '@/common/types';
 
+import CommentsSection from './comments/CommentsSection';
 import { AuthorInformation } from './AuthorInformation';
-import CommentsSection from './CommentsSection';
 import { ProjectTags } from './ProjectTags';
 
 import robotic_hand from '/public/images/robotic-hand.png';
@@ -205,7 +205,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
         <ProjectTags tags={project.description.tags} />
         <AuthorInformation projectName={projectName} author={project.author} />
         <Divider sx={{ my: 2, width: '662px' }} />
-        <CommentsSection />
+        <CommentsSection project={project} />
       </Stack>
     </Card>
   );
