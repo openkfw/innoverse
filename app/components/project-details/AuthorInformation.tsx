@@ -27,9 +27,9 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
         <Stack direction="row" justifyContent="space-between">
           <Stack direction="row" spacing={1}>
             <Box>
-              {author.avatar ? (
+              {author.image ? (
                 <Avatar sx={{ width: 48, height: 48 }}>
-                  <Image src={author.avatar} alt="avatar" fill sizes="33vw" />
+                  <Image src={author.image} alt="avatar" fill sizes="33vw" />
                 </Avatar>
               ) : (
                 <AvatarInitialsIcon name={author.name} size={48} />

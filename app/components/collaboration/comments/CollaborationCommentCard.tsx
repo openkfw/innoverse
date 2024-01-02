@@ -11,23 +11,24 @@ import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { CommentType } from '@/common/types';
+import { Comment } from '@/common/types';
 import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
+import { VoteComponent } from '@/components/project-details/comments/VoteComponent';
 import theme from '@/styles/theme';
 
-import { VoteComponent } from '../VoteComponent';
+import { handleCollaborationUpvotedBy, isCollaborationCommentUpvotedBy } from './actions';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
 interface CommentCardProps {
-  content: CommentType;
+  content: Comment;
 }
 
 const MAX_TEXT_LENGTH = 300;
 
-export const CommentCard = ({ content }: CommentCardProps) => {
-  const { author, comment, upvotes } = content;
-  const { name, role, avatar, badge } = author;
+export const CollaborationCommentCard = ({ content }: CommentCardProps) => {
+  const { author, comment, upvotedBy, id } = content;
+  const { name, role, image, badge } = author;
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -46,9 +47,9 @@ export const CommentCard = ({ content }: CommentCardProps) => {
       <CardHeader
         sx={cardHeaderStyles}
         avatar={
-          avatar ? (
+          image ? (
             <Avatar sx={avatarStyles}>
-              <Image src={avatar} alt="avatar" fill sizes="33vw" />
+              <Image src={image} alt="avatar" fill sizes="33vw" />
             </Avatar>
           ) : (
             <AvatarInitialsIcon name={name} size={32} />
@@ -80,7 +81,14 @@ export const CommentCard = ({ content }: CommentCardProps) => {
             )}
           </Box>
 
-          <VoteComponent upvotes={upvotes} />
+          {upvotedBy && (
+            <VoteComponent
+              upvotedBy={upvotedBy}
+              commentId={id}
+              isUpvoted={isCollaborationCommentUpvotedBy}
+              handleUpvoted={handleCollaborationUpvotedBy}
+            />
+          )}
         </Stack>
       </CardContent>
     </Card>

@@ -132,7 +132,7 @@ export default function TabView(props: BasicTabsProps) {
         <ProjectProgress project={project} projectName={projectName} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={1} id="collaboration-tab">
-        <CollaborationTab project={project} projectName={projectName} />
+        <CollaborationTab project={project} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={2} id="tabpanel-0">
         <UpdatesTab updates={updates} />

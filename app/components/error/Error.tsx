@@ -12,10 +12,6 @@ interface ErrorProps {
   body?: JSX.Element;
 }
 
-const defaultProps = {
-  body: null,
-};
-
 const ErrorContainer = styled(Grid)({
   minHeight: '80vh',
 });
@@ -25,7 +21,7 @@ const ContentContainer = styled(Grid)({
 });
 
 const Error = (props: ErrorProps) => {
-  const { status, text, body } = props;
+  const { status, text, body = null } = props;
 
   return (
     <ErrorContainer container item xs={12} alignItems="center" justifyContent="center" direction="column">
@@ -35,7 +31,5 @@ const Error = (props: ErrorProps) => {
     </ErrorContainer>
   );
 };
-
-Error.defaultProps = defaultProps;
 
 export default Error;

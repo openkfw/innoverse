@@ -14,11 +14,10 @@ import { SurveyCard } from './SurveyCard';
 
 interface CollaborationTabProps {
   project: Project;
-  projectName: string;
 }
 
 export const CollaborationTab = (props: CollaborationTabProps) => {
-  const { project, projectName } = props;
+  const { project } = props;
 
   return (
     <Card sx={containerStyles}>
@@ -44,8 +43,8 @@ export const CollaborationTab = (props: CollaborationTabProps) => {
             </Grid>
             <Grid item xs={6}>
               <Box sx={joinTeamStyles}>
-                <InteractionButton projectName={projectName} interactionType={InteractionType.APPLY} />
-                <InteractionButton projectName={projectName} interactionType={InteractionType.RECOMMEND} />
+                <InteractionButton projectName={project.projectName} interactionType={InteractionType.APPLY} />
+                <InteractionButton projectName={project.projectName} interactionType={InteractionType.RECOMMEND} />
               </Box>
             </Grid>
           </Grid>
@@ -73,7 +72,12 @@ export const CollaborationTab = (props: CollaborationTabProps) => {
             <Grid container sx={gridStyles} spacing={8}>
               {project.collaborationQuestions.map((question, i) => (
                 <Grid item key={i}>
-                  <CollaborationQuestionCard projectName={projectName} content={question} />
+                  <CollaborationQuestionCard
+                    projectName={project.projectName}
+                    content={question}
+                    projectId={project.id}
+                    questionId={question.id}
+                  />
                 </Grid>
               ))}
             </Grid>

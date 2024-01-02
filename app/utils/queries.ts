@@ -4,21 +4,24 @@ import {
   GetInnoUserResponse,
   OpportunitiesResponse,
   ProjectData,
+  ProjectQuestionsResponse,
   ProjectResponse,
   ProjectsResponse,
-  QuestionsResponse,
   SurveyQuestion,
   SurveyQuestionsResponse,
   Update,
   UpdatesResponse,
   UserQuery,
 } from '@/common/strapiTypes';
-import { Opportunity, Question, User } from '@/common/types';
+import { CollaborationQuestion, Comment, Opportunity, ProjectQuestion, User } from '@/common/types';
+import { getCollaborationComments } from '@/components/collaboration/comments/actions';
+import { getComments } from '@/components/project-details/comments/actions';
 
+import { getFulfilledResults } from './helpers';
 import {
   getCollaborationQuestionsByProjectId,
   getOpportunitiesByProjectId,
-  getQuestionsByProjectId,
+  getProjectQuestionsByProjectId,
   getSurveyQuestionsByProjectId,
   getUpdatesByProjectId,
 } from './requests';
@@ -26,11 +29,11 @@ import {
 export enum STRAPI_QUERY {
   GetProjects,
   GetProjectById,
-  GetInnoUserByEmail,
+  GetInnoUser,
   CreateInnoUser,
   GetUpdatesByProjectId,
   GetOpportunitiesByProjectId,
-  GetQuestionsByProjectId,
+  GetProjectQuestionsByProjectId,
   GetSurveyQuestionsByProjectId,
   GetCollaborationQuestionsByProjectId,
 }
@@ -118,6 +121,30 @@ export const GetInnoUserByEmailQuery = `query GetInnoUser($email: String) {
 }
 `;
 
+export const GetInnoUserByProviderIdQuery = `query GetInnoUser($providerId: String) {
+  innoUsers(filters: { providerId: { eq: $providerId } }) {
+    data {
+      id
+      attributes {
+        providerId
+        provider
+        name
+        role
+        department
+        email
+        avatar {
+          data {
+            attributes {
+            url
+            }
+          }
+        }
+      }
+    }  
+  }  
+}
+`;
+
 export const GetUpdatesByProjectIdQuery = `query GetUpdates($projectId: ID) {
   updates(filters: { project: { id: { eq: $projectId } } }) {
     data {
@@ -176,7 +203,13 @@ export const GetQuestionsByProjectIdQuery = `query GetQuestions($projectId: ID) 
 export const GetCollaborationQuestionsByProjectIdQuery = `query GetCollaborationQuestions($projectId: ID) {
   collaborationQuestions(filters: { project: { id: { eq: $projectId } } }) {
     data {
+      id
       attributes {
+        project {
+          data {
+            id
+          }
+        }
         title
         description
         authors {
@@ -263,7 +296,7 @@ export const withResponseTransformer = async (
     | CreateInnoUserResponse
     | UpdatesResponse
     | OpportunitiesResponse
-    | QuestionsResponse
+    | ProjectQuestionsResponse
     | CollaborationQuestionsResponse
     | SurveyQuestionsResponse,
 ) => {
@@ -272,7 +305,7 @@ export const withResponseTransformer = async (
       return await getStaticBuildFetchProjects(data as ProjectsResponse);
     case STRAPI_QUERY.GetProjectById:
       return getStaticBuildFetchProjectById(data as ProjectResponse);
-    case STRAPI_QUERY.GetInnoUserByEmail:
+    case STRAPI_QUERY.GetInnoUser:
       return getStaticBuildGetInnoUser(data as GetInnoUserResponse);
     case STRAPI_QUERY.CreateInnoUser:
       return getStaticBuildCreateInnoUser(data as CreateInnoUserResponse);
@@ -280,8 +313,8 @@ export const withResponseTransformer = async (
       return getStaticBuildFetchUpdatesByProjectId(data as UpdatesResponse);
     case STRAPI_QUERY.GetOpportunitiesByProjectId:
       return getStaticBuildFetchOpportunitiesByProjectId(data as OpportunitiesResponse);
-    case STRAPI_QUERY.GetQuestionsByProjectId:
-      return getStaticBuildFetchQuestionsByProjectId(data as QuestionsResponse);
+    case STRAPI_QUERY.GetProjectQuestionsByProjectId:
+      return getStaticBuildFetchQuestionsByProjectId(data as ProjectQuestionsResponse);
     case STRAPI_QUERY.GetCollaborationQuestionsByProjectId:
       return getStaticBuildFetchCollaborationQuestionsByProjectId(data as CollaborationQuestionsResponse);
     case STRAPI_QUERY.GetSurveyQuestionsByProjectId:
@@ -298,38 +331,55 @@ function getStaticBuildFetchSurveyQuestionsByProjectId(graphqlResponse: SurveyQu
   });
 }
 
-function getStaticBuildFetchCollaborationQuestionsByProjectId(graphqlResponse: CollaborationQuestionsResponse) {
+async function getStaticBuildFetchCollaborationQuestionsByProjectId(graphqlResponse: CollaborationQuestionsResponse) {
   const questions = graphqlResponse.data.collaborationQuestions.data;
+  let formattedQuestions: any = [];
+  if (questions.length > 0) {
+    const projectId = questions[0].attributes.project.data.id;
 
-  const formattedQuestions = questions.map((question) => {
-    const q = question.attributes;
-    return {
-      ...q,
-      authors: q.authors.data.map((a: UserQuery) => {
+    formattedQuestions = await Promise.allSettled(
+      questions.map(async (question) => {
+        const q = question.attributes;
+
+        const { data: formattedComments } = await getCollaborationComments({
+          projectId,
+          questionId: question.id,
+        });
+
         return {
-          ...a.attributes,
-          avatar:
-            a.attributes.avatar.data &&
-            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.attributes.avatar.data.attributes.url}`,
-        } as User;
+          id: question.id,
+          title: q.title,
+          description: q.description,
+          comments: formattedComments,
+          authors: q.authors.data.map((a: UserQuery) => {
+            return {
+              ...a.attributes,
+              image:
+                a.attributes.avatar.data &&
+                `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.attributes.avatar.data.attributes.url}`,
+            } as User;
+          }),
+        };
       }),
-    };
-  });
+    ).then((results) => getFulfilledResults(results));
+  }
 
-  return formattedQuestions as Question[];
+  return formattedQuestions as CollaborationQuestion[];
 }
 
-function getStaticBuildFetchQuestionsByProjectId(graphqlResponse: QuestionsResponse) {
+function getStaticBuildFetchQuestionsByProjectId(graphqlResponse: ProjectQuestionsResponse) {
   const questions = graphqlResponse.data.questions.data;
 
   const formattedQuestions = questions.map((question) => {
     const q = question.attributes;
+
     return {
-      ...q,
+      id: question.id,
+      title: q.title,
       authors: q.authors.data.map((a: UserQuery) => {
         return {
           ...a.attributes,
-          avatar:
+          image:
             a.attributes.avatar.data &&
             `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.attributes.avatar.data.attributes.url}`,
         } as User;
@@ -337,7 +387,7 @@ function getStaticBuildFetchQuestionsByProjectId(graphqlResponse: QuestionsRespo
     };
   });
 
-  return formattedQuestions as Question[];
+  return formattedQuestions as ProjectQuestion[];
 }
 
 function getStaticBuildFetchUpdatesByProjectId(graphqlResponse: UpdatesResponse) {
@@ -352,7 +402,7 @@ function getStaticBuildFetchUpdatesByProjectId(graphqlResponse: UpdatesResponse)
       theme: u.theme,
       author: {
         name: author.name,
-        avatar: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
+        image: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
       },
     };
   });
@@ -371,7 +421,7 @@ function getStaticBuildCreateInnoUser(graphqlResponse: CreateInnoUserResponse) {
 
   return {
     ...user,
-    avatar: user.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.avatar.data.attributes.url}`,
+    image: user.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.avatar.data.attributes.url}`,
   };
 }
 
@@ -381,14 +431,14 @@ function getStaticBuildGetInnoUser(graphqlResponse: GetInnoUserResponse) {
 
     return {
       ...user,
-      avatar: user.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.avatar.data.attributes.url}`,
+      image: user.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.avatar.data.attributes.url}`,
     };
   }
 }
 
 async function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
   const formattedUpdates: Update[] = [];
-  const formattedProjects = await Promise.all(
+  const formattedProjects = await Promise.allSettled(
     graphqlResponse.data.projects.data.map(async (project: ProjectData) => {
       const { title, shortTitle, featured, projectStart, summary, image, status, team, description } =
         project.attributes;
@@ -403,7 +453,7 @@ async function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
       const formattedTeam = team.data.map((t: UserQuery) => {
         return {
           ...t.attributes,
-          avatar:
+          image:
             t.attributes.avatar.data &&
             `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${t.attributes.avatar.data.attributes.url}`,
         };
@@ -426,7 +476,7 @@ async function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
         image: image.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
       };
     }),
-  );
+  ).then((results) => getFulfilledResults(results));
 
   return {
     projects: formattedProjects,
@@ -440,9 +490,10 @@ async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) 
   const { title, shortTitle, summary, image, status, projectStart, description, author, team } = project.attributes;
 
   const opportunities = (await getOpportunitiesByProjectId(project.id)) as Opportunity[];
-  const questions = (await getQuestionsByProjectId(project.id)) as Question[];
+  const projectQuestions = (await getProjectQuestionsByProjectId(project.id)) as ProjectQuestion[];
   const surveyQuestions = (await getSurveyQuestionsByProjectId(project.id)) as SurveyQuestion[];
-  const collaborationQuestions = (await getCollaborationQuestionsByProjectId(project.id)) as Question[];
+  const collaborationQuestions = (await getCollaborationQuestionsByProjectId(project.id)) as CollaborationQuestion[];
+  const projectComments = (await getComments({ projectId: project.id })).data as Comment[];
 
   const updates = (await getUpdatesByProjectId(project.id)) as Update[];
   const formattedUpdates = updates.map((u) => {
@@ -452,14 +503,14 @@ async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) 
 
   const formattedAuthor = {
     ...author.data.attributes,
-    avatar:
+    image:
       author.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.data.attributes.avatar.data.attributes.url}`,
   };
 
   const formattedTeam = team.data.map((t: UserQuery) => {
     return {
       ...t.attributes,
-      avatar:
+      image:
         t.attributes.avatar.data &&
         `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${t.attributes.avatar.data.attributes.url}`,
     };
@@ -477,6 +528,7 @@ async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) 
       shortTitle,
       summary,
       status,
+      comments: projectComments,
       projectStart: formatDate(projectStart),
       opportunities,
       surveyQuestions,
@@ -485,7 +537,7 @@ async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) 
       team: formattedTeam,
       image: image.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
       updates: formattedUpdates,
-      questions,
+      questions: projectQuestions,
       collaborationQuestions,
     },
   };

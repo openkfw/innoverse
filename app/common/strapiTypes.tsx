@@ -40,10 +40,10 @@ export type SurveyQuestionsResponse = {
   };
 };
 
-export type QuestionsResponse = {
+export type ProjectQuestionsResponse = {
   data: {
     questions: {
-      data: QuestionQuery[];
+      data: ProjectQuestionQuery[];
     };
   };
 };
@@ -51,7 +51,7 @@ export type QuestionsResponse = {
 export type CollaborationQuestionsResponse = {
   data: {
     collaborationQuestions: {
-      data: QuestionQuery[];
+      data: CollaborationQuestionQuery[];
     };
   };
 };
@@ -118,7 +118,7 @@ export type User = {
   name: string;
   role?: string;
   department?: string;
-  avatar: string;
+  image: string;
   email?: string;
 };
 
@@ -144,11 +144,23 @@ export type UpdateQuery = {
   };
 };
 
-export type QuestionQuery = {
+export type ProjectQuestionQuery = {
+  id: string;
   attributes: {
+    project: { data: { id: string } };
+    title: string;
+    authors: { data: UserQuery[] };
+  };
+};
+
+export type CollaborationQuestionQuery = {
+  id: string;
+  attributes: {
+    project: { data: { id: string } };
     title: string;
     description: string;
     authors: { data: UserQuery[] };
+    comments: CommentQuery[];
   };
 };
 
@@ -168,4 +180,11 @@ export type SurveyQuestion = {
 
 export type OpportunityQuery = {
   attributes: { title: string; description: string; email: string; expense: string };
+};
+
+export type CommentQuery = {
+  id: string;
+  comment: string;
+  author: { data: UserQuery };
+  upvotedBy: { data: UserQuery[] };
 };

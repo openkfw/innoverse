@@ -5,6 +5,7 @@ import { useState } from 'react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
+import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 
@@ -14,7 +15,8 @@ import theme from '@/styles/theme';
 import UserMenu from './UserMenu';
 
 interface LoggedInMenuProps {
-  user: UserSession;
+  user: UserSession | undefined;
+  isUserLoading: boolean;
 }
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -25,7 +27,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-export default function LoggedInMenu({ user }: LoggedInMenuProps) {
+export default function LoggedInMenu({ user, isUserLoading }: LoggedInMenuProps) {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -42,20 +44,31 @@ export default function LoggedInMenu({ user }: LoggedInMenuProps) {
     },
   };
 
+  if (isUserLoading) {
+    return (
+      <IconButton>
+        <CircularProgress size={32} color="secondary" />
+      </IconButton>
+    );
+  }
   return (
     <>
-      <IconButton sx={menuItemStyle} onClick={handleOpenUserMenu}>
-        <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'top', horizontal: 'right' }} variant="dot">
-          {user.image ? (
-            <Avatar sx={{ width: 32, height: 32 }} src={user.image} alt="avatar" />
-          ) : (
-            <Avatar sx={{ width: 32, height: 32 }}>
-              <AccountCircleIcon fontSize="large" sx={{ fill: 'black' }} />
-            </Avatar>
-          )}
-        </StyledBadge>
-      </IconButton>
-      <UserMenu user={user} anchorElUser={anchorElUser} setAnchorElUser={setAnchorElUser} />
+      {user && (
+        <>
+          <IconButton sx={menuItemStyle} onClick={handleOpenUserMenu}>
+            <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'top', horizontal: 'right' }} variant="dot">
+              {user.image ? (
+                <Avatar sx={{ width: 32, height: 32 }} src={user.image} alt="avatar" />
+              ) : (
+                <Avatar sx={{ width: 32, height: 32 }}>
+                  <AccountCircleIcon fontSize="large" sx={{ fill: 'black' }} />
+                </Avatar>
+              )}
+            </StyledBadge>
+          </IconButton>
+          <UserMenu user={user} anchorElUser={anchorElUser} setAnchorElUser={setAnchorElUser} />
+        </>
+      )}
     </>
   );
 }

@@ -1,29 +1,34 @@
+import { useState } from 'react';
+
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { ProjectQuestion } from '@/common/types';
-import { project_colaboration } from '@/repository/mock/project/project-page';
+import { CollaborationQuestion, Comment } from '@/common/types';
+import { sortDateByCreatedAt } from '@/utils/helpers';
 
 import AvatarIcon from '../common/AvatarIcon';
 import { StyledTooltip } from '../common/StyledTooltip';
 import { TooltipContent } from '../project-details/TooltipContent';
 
-import { Comments } from './comments/Comments';
+import { handleCollaborationComment } from './comments/actions';
+import { CollaborationComments } from './comments/CollaborationComments';
 import { ShareOpinionCard } from './ShareOpinionCard';
 import WriteCommentCard from './WriteCommentCard';
 
 interface UpdateCardProps {
-  content: ProjectQuestion;
+  content: CollaborationQuestion;
   projectName: string;
+  projectId: string;
+  questionId: string;
 }
 
-export const CollaborationQuestionCard = ({ content, projectName }: UpdateCardProps) => {
-  const { title, description, authors } = content;
-  const newCommentText =
-    'Teil deine Ratschläge und Gedanken zu diesem Thema, damit deine Kollegen von deiner Expertise profitieren können.';
-  const comments = project_colaboration.projectUpdates[0].comments;
+export const CollaborationQuestionCard = ({ content, projectName, projectId, questionId }: UpdateCardProps) => {
+  const { title, description, authors, comments: projectComments } = content;
+  const [comments, setComments] = useState<Comment[]>(projectComments);
+  const [writeNewComment, setWriteNewComment] = useState(false);
 
   const avatarGroupStyle = {
     display: 'flex',
@@ -35,6 +40,15 @@ export const CollaborationQuestionCard = ({ content, projectName }: UpdateCardPr
       background: 'linear-gradient(84deg, #85898b 0%, #ffffff 100%)',
       color: 'rgba(0, 0, 0, 0.56)',
     },
+  };
+
+  const handleShareOpinion = () => {
+    setWriteNewComment(true);
+  };
+
+  const handleComment = async (comment: string) => {
+    const { data: newComment } = await handleCollaborationComment({ projectId, questionId, comment });
+    setComments((comments) => sortDateByCreatedAt([...comments, newComment]));
   };
 
   return (
@@ -63,7 +77,7 @@ export const CollaborationQuestionCard = ({ content, projectName }: UpdateCardPr
                   title={<TooltipContent projectName={projectName} teamMember={author} />}
                   placement="bottom"
                 >
-                  <AvatarIcon user={author} size={48} index={index} allowAnimation={true} />
+                  <AvatarIcon user={author} size={48} index={index} allowAnimation />
                 </StyledTooltip>
               ))
             ) : (
@@ -78,12 +92,16 @@ export const CollaborationQuestionCard = ({ content, projectName }: UpdateCardPr
       <Grid container item xs={6} spacing={2}>
         <Box sx={{ marginLeft: '-20px' }}>
           {comments.length > 0 ? (
-            <>
-              <ShareOpinionCard projectName={projectName} />
-              <Comments comments={comments} />
-            </>
+            <Stack spacing={3}>
+              {writeNewComment ? (
+                <WriteCommentCard projectName={projectName} handleComment={handleComment} />
+              ) : (
+                <ShareOpinionCard projectName={projectName} handleClick={handleShareOpinion} />
+              )}
+              <CollaborationComments comments={comments} />
+            </Stack>
           ) : (
-            <WriteCommentCard projectName={projectName} text={newCommentText} />
+            <WriteCommentCard projectName={projectName} handleComment={handleComment} />
           )}
         </Box>
       </Grid>
