@@ -20,21 +20,21 @@ First set up the correct env vars:
 
 ```bash
 # from project root
-cp .env.example .en
-cp ./app/.env.example .env # and then fill the missing env vars
-cp ./strapi/.env.example .env # and then fill the missing env vars
+cp .env.example .env
+cp ./app/.env.example ./app/.env # and then fill the missing env vars
+cp ./strapi/.env.example ./strapi/.env # and then fill the missing env vars
 ```
 
 then start the components:
 
 ```bash
-docker-compose -f up docker-compose-strapi.yaml # for starting the project with strapi
+docker-compose -f docker-compose-strapi.yaml up # for starting the project with strapi
 ```
 
 or
 
 ```bash
-docker-compose -f up docker-compose-full.yaml # for starting the project with strapi and umami
+docker-compose -f docker-compose-full.yaml up  # for starting the project with strapi and umami
 ```
 
 > **IMPORTANT:**
