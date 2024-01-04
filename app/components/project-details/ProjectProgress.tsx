@@ -99,7 +99,7 @@ const ProjectTextAnchorMenu = (props: ProjectTextAnchorMenuProps) => {
             return (
               <Collapse in timeout="auto" unmountOnExit key={heading.id}>
                 <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 4 }} onClick={() => props.setHeadingActive(heading.id)}>
+                  <ListItemButton sx={{ ml:3 , pl: 1, mr:3 }} onClick={() => props.setHeadingActive(heading.id)}>
                     <Link
                       color={heading.active ? 'secondary.main' : 'primary.main'}
                       href={`#${heading.id}`}
@@ -114,7 +114,7 @@ const ProjectTextAnchorMenu = (props: ProjectTextAnchorMenuProps) => {
             );
           }
           return (
-            <ListItemButton key={heading.id} onClick={() => props.setHeadingActive(heading.id)}>
+            <ListItemButton sx={{mr:3}} key={heading.id} onClick={() => props.setHeadingActive(heading.id)}>
               <Link
                 color={heading.active ? 'secondary.main' : 'primary.main'}
                 href={`#${heading.id}`}
@@ -179,17 +179,20 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
     <Card sx={wrapperStyles}>
       <Stack sx={contentStyles}>
         <Box sx={{ height: contentSize, overflow: 'hidden' }}>
-          <Box sx={{ ...showMoreButtonStyle, visibility: showMoreButtonVisible ? 'visible' : 'hidden' }}>
-            <IconButton aria-label="delete" sx={{ color: 'rgba(0, 0, 0, 1)' }} onClick={expand}>
-              <ArrowDownwardIcon />
-            </IconButton>
-          </Box>
+          
           <Grid container>
-            <Grid item xs={2}>
+            <Grid item xs={2} sx={{overflowWrap: 'anywhere', hyphens:'auto'}}>
               <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
             </Grid>
 
             <Grid item xs={7}>
+              <Box sx={{ height: contentSize, position: 'absolute', width: '50%' , p: 0, visibility: showMoreButtonVisible ? 'visible' : 'hidden'}}>
+                <Box sx={{ ...showMoreButtonStyle, visibility: showMoreButtonVisible ? 'visible' : 'hidden' }}>
+                  <IconButton aria-label="delete" sx={{ color: 'rgba(0, 0, 0, 1)' }} onClick={expand}>
+                    <ArrowDownwardIcon />
+                  </IconButton>
+                </Box>
+              </Box>
               <ProjectText showMoreButtonVisible={showMoreButtonVisible} text={project.description.text} />
             </Grid>
 
@@ -228,11 +231,11 @@ const contentStyles = {
 
 const showMoreButtonStyle = {
   background: 'linear-gradient(to bottom, rgba(255,0,0,0), rgba(255,255,255,1))',
-  position: 'absolute',
-  bottom: '60%',
+  position: 'relative',
+  top: '67.8%',
   paddingTop: '150px',
   textAlign: 'center',
-  width: '100%',
+  width: '110%',
   borderRadius: '4px',
   ml: '-32px',
 };
@@ -273,13 +276,30 @@ const muiMarkdownOverrides = {
   h1: {
     component: 'h1',
     props: {
-      style: { scrollMargin: '5em' },
+      style: { scrollMargin: '5em', color: 'text.primary' },
     } as React.HTMLProps<HTMLParagraphElement>,
   },
   h2: {
     component: 'h2',
     props: {
-      style: { scrollMargin: '5em' },
+      style: { scrollMargin: '5em' , color: 'text.primary' },
     } as React.HTMLProps<HTMLParagraphElement>,
   },
+  h3: {
+    component: 'h3',
+    props: {
+      style: { scrollMargin: '5em' , color: 'text.primary' },
+    } as React.HTMLProps<HTMLParagraphElement>,
+  },
+  img: {
+    component: 'img',
+    props: {
+      style: {
+          maxWidth: '100%',
+          height: 'auto',
+          padding: '1em',
+          objectFit: 'contain'
+      }
+    } as React.HTMLProps<HTMLImageElement>
+  }
 };
