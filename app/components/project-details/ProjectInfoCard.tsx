@@ -8,6 +8,7 @@ import { Project } from '@/common/types';
 
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
+import { handleFollow, handleLike, handleRemoveFollower, handleRemoveLike } from './likes-follows/actions';
 import CollaborationColumn from './CollaborationColumn';
 import ProjectStageCard from './ProjectStageCard';
 import TeamMembersColumn from './TeamMembersColumn';
@@ -16,12 +17,55 @@ import UpdateCard from './UpdateCard';
 interface ProjectInfoProps {
   project: Project;
   setActiveTab: (tab: number) => void;
+  isLiked: boolean;
+  isFollowed: boolean;
+  setLiked: (i: boolean) => void;
+  setFollowed: (i: boolean) => void;
+  likesAmount: number;
+  followersAmount: number;
+  setLikesAmount: (i: number) => void;
+  setFollowersAmount: (i: number) => void;
 }
 
 const MAX_UPDATES = 1;
 
 export const ProjectInfoCard = (props: ProjectInfoProps) => {
-  const { project, setActiveTab } = props;
+  const {
+    project,
+    setActiveTab,
+    isLiked,
+    isFollowed,
+    setLiked,
+    setFollowed,
+    likesAmount,
+    followersAmount,
+    setLikesAmount,
+    setFollowersAmount,
+  } = props;
+
+  const toggleLike = () => {
+    if (isLiked) {
+      setLiked(false);
+      handleRemoveLike({ projectId: project.id });
+      setLikesAmount(likesAmount - 1);
+    } else {
+      setLiked(true);
+      handleLike({ projectId: project.id });
+      setLikesAmount(likesAmount + 1);
+    }
+  };
+
+  const toggleFollow = () => {
+    if (isFollowed) {
+      setFollowed(false);
+      handleRemoveFollower({ projectId: project.id });
+      setFollowersAmount(followersAmount - 1);
+    } else {
+      setFollowed(true);
+      handleFollow({ projectId: project.id });
+      setFollowersAmount(followersAmount + 1);
+    }
+  };
 
   return (
     <Card sx={cardStyles}>
@@ -34,12 +78,22 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
                 <ProjectStageCard projectStart={project.projectStart} />
               </Grid>
               <Grid item xs={4} sx={interactionStyles}>
-                <InteractionButton projectName={project.projectName} interactionType={InteractionType.LIKE} />
-                <InteractionButton projectName={project.projectName} interactionType={InteractionType.PROJECT_FOLLOW} />
+                <InteractionButton
+                  isSelected={isLiked}
+                  projectName={project.projectName}
+                  interactionType={InteractionType.LIKE}
+                  onClick={() => toggleLike()}
+                />
+                <InteractionButton
+                  isSelected={isFollowed}
+                  projectName={project.projectName}
+                  interactionType={InteractionType.PROJECT_FOLLOW}
+                  onClick={() => toggleFollow()}
+                />
               </Grid>
               <Grid item xs={4}>
                 <Typography variant="caption" color="text.secondary">
-                  153 Likes - 43 Innovaders folgen
+                  {`${likesAmount} Likes - ${followersAmount} Innovaders folgen`}
                 </Typography>
               </Grid>
             </Grid>

@@ -65,8 +65,8 @@ export type Project = {
   summary: string;
   projectStart: string;
   collaboration: ProjectCollaboration;
-  likes: number;
-  followers: number;
+  likes: Like[];
+  followers: Follower[];
   projectName: string;
   team: User[];
   updates: ProjectUpdate[];
@@ -77,6 +77,16 @@ export type Project = {
   author: User;
   opportunities: Opportunity[];
   collaborationQuestions: CollaborationQuestion[];
+};
+
+export type Like = {
+  projectId: string;
+  likedBy: string;
+};
+
+export type Follower = {
+  projectId: string;
+  followedBy: string;
 };
 
 export type ProjectDescription = {
