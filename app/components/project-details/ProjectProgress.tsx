@@ -185,7 +185,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
             </IconButton>
           </Box>
           <Grid container>
-            <Grid item xs={2}>
+            <Grid item xs={2} sx={{overflowWrap: 'anywhere', hyphens:'auto'}}>
               <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
             </Grid>
 
