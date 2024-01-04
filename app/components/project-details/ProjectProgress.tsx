@@ -273,13 +273,19 @@ const muiMarkdownOverrides = {
   h1: {
     component: 'h1',
     props: {
-      style: { scrollMargin: '5em' },
+      style: { scrollMargin: '5em', color: 'text.primary' },
     } as React.HTMLProps<HTMLParagraphElement>,
   },
   h2: {
     component: 'h2',
     props: {
-      style: { scrollMargin: '5em' },
+      style: { scrollMargin: '5em' , color: 'text.primary' },
+    } as React.HTMLProps<HTMLParagraphElement>,
+  },
+  h3: {
+    component: 'h3',
+    props: {
+      style: { scrollMargin: '5em' , color: 'text.primary' },
     } as React.HTMLProps<HTMLParagraphElement>,
   },
 };
