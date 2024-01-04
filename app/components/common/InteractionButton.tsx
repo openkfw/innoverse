@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -28,6 +28,7 @@ interface InteractionButtonProps extends ButtonProps {
   onClick?: () => void;
   onIconClick?: () => void;
   sx?: SxProps;
+  isSelected?: boolean;
 }
 
 export enum InteractionType {
@@ -47,8 +48,13 @@ export enum InteractionType {
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
-  const { interactionType, label, onClick, onIconClick, sx, projectName } = props;
+  const { interactionType, label, onClick, onIconClick, sx, projectName, isSelected = false } = props;
   const [isHovered, setIsHovered] = useState(false);
+  const [clicked, setClicked] = useState(false);
+
+  useEffect(() => {
+    setClicked(isSelected);
+  }, [isSelected]);
 
   const getInteractionIcon = () => {
     if (interactionType === InteractionType.LIKE) return <ThumbUpOutlinedIcon fontSize="small" />;
@@ -80,7 +86,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     }
   };
 
-  const getButtontext = () => {
+  const getButtonText = () => {
     if (label) return label;
     if (interactionType === InteractionType.LIKE) return 'Like';
     if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Projekt folgen';
@@ -97,7 +103,19 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.CLEAR) return 'Entfernen';
   };
 
+  const getButtonTextClicked = () => {
+    if (label) return label;
+    if (interactionType === InteractionType.LIKE) return 'Liked';
+    if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Projekt gefolgt';
+    if (interactionType === InteractionType.USER_FOLLOW) return 'Gefolgt';
+  };
+
+  const getText = () => {
+    return clicked ? getButtonTextClicked() : getButtonText();
+  };
+
   const handleClick = () => {
+    setClicked(!clicked);
     triggerAnalyticsEvent(interactionType.toString(), projectName || 'unknown-project');
     if (onClick !== undefined) onClick();
   };
@@ -112,9 +130,9 @@ export default function InteractionButton(props: InteractionButtonProps) {
       endIcon={getEndIcon()}
       sx={{
         mr: 1,
-        px: getButtontext() === undefined ? 1 : 2,
+        px: getText() === undefined ? 1 : 2,
         py: 1,
-        color: 'rgba(0, 0, 0, 0.56)',
+        color: clicked ? 'secondary.main' : 'rgba(0, 0, 0, 0.56)',
         borderRadius: '48px',
         fontFamily: 'Arial',
         fontSize: '13px',
@@ -133,12 +151,12 @@ export default function InteractionButton(props: InteractionButtonProps) {
           background: 'palette.secondary.main',
         },
         '& .MuiButton-startIcon': {
-          margin: getButtontext() === undefined ? 0 : undefined,
+          margin: getText() === undefined ? 0 : undefined,
         },
         ...sx,
       }}
     >
-      {getButtontext()}
+      {getText()}
     </Button>
   );
 }

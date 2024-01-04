@@ -32,3 +32,21 @@ model CollaborationComment {
   upvotedBy String[] // ids of users
   @@map(name: "collaboration_comments")
 }
+
+model Like {
+  id    String     @id @default(uuid())
+  createdAt DateTime @default(now())
+  
+  projectId String // liked project
+  likedBy String // user id  
+}
+
+
+model Follow {
+  id    String     @id @default(uuid())
+  createdAt DateTime @default(now())
+  
+  projectId String // followed project
+  followedBy String // user id  
+}
+
