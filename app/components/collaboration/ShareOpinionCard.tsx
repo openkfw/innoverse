@@ -4,7 +4,7 @@ import Avatar from '@mui/material/Avatar';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 
-import { useUser } from '@/app/user-context';
+import { useUser } from '@/app/contexts/user-context';
 
 import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';

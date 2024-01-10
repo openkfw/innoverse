@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { useProject } from '@/app/contexts/project-context';
 import { CollaborationQuestion, Comment } from '@/common/types';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 
@@ -27,6 +28,7 @@ interface UpdateCardProps {
 
 export const CollaborationQuestionCard = ({ content, projectName, projectId, questionId }: UpdateCardProps) => {
   const { title, description, authors, comments: projectComments } = content;
+  const { setCollaborationCommentsAmount } = useProject();
   const [comments, setComments] = useState<Comment[]>(projectComments);
   const [writeNewComment, setWriteNewComment] = useState(false);
 
@@ -48,7 +50,9 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
 
   const handleComment = async (comment: string) => {
     const { data: newComment } = await handleCollaborationComment({ projectId, questionId, comment });
-    setComments((comments) => sortDateByCreatedAt([...comments, newComment]));
+    const newComments = sortDateByCreatedAt([...comments, newComment]);
+    setComments(newComments);
+    setCollaborationCommentsAmount(newComments.length);
   };
 
   return (

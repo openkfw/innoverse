@@ -22,10 +22,6 @@
       "component": "response-options.response-options",
       "required": true
     },
-    "votes": {
-      "type": "biginteger",
-      "required": true
-    },
     "project": {
       "type": "relation",
       "relation": "oneToOne",

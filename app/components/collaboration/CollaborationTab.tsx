@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -9,8 +11,8 @@ import { Project } from '@/common/types';
 
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
+import { SurveyCard } from './survey/SurveyCard';
 import { CollaborationQuestionCard } from './CollaborationQuestionCard';
-import { SurveyCard } from './SurveyCard';
 
 interface CollaborationTabProps {
   project: Project;
@@ -18,6 +20,7 @@ interface CollaborationTabProps {
 
 export const CollaborationTab = (props: CollaborationTabProps) => {
   const { project } = props;
+  const [surveyQuestions] = useState(project.surveyQuestions);
 
   return (
     <Card sx={containerStyles}>
@@ -56,9 +59,9 @@ export const CollaborationTab = (props: CollaborationTabProps) => {
           Umfrage
         </Typography>
         <Grid container sx={gridStyles} spacing={8}>
-          {project.surveyQuestions.map((surveyQuestion, i) => (
+          {surveyQuestions.map((surveyQuestion, i) => (
             <Grid item key={i}>
-              <SurveyCard surveyQuestion={surveyQuestion} />
+              <SurveyCard surveyQuestion={surveyQuestion} projectId={project.id} />
             </Grid>
           ))}
         </Grid>

@@ -2,15 +2,21 @@
 
 import { Grid, Typography } from '@mui/material';
 
+import { useProject } from '@/app/contexts/project-context';
+import { Project } from '@/common/types';
+
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 interface CollaborationProps {
   setActiveTab: (tab: number) => void;
-  projectName: string;
+  project: Project;
 }
 
 const CollaborationColumn = (props: CollaborationProps) => {
-  const { setActiveTab, projectName } = props;
+  const { setActiveTab, project } = props;
+  const { projectName } = project;
+  const { surveyVotesAmount, collaborationCommentsAmount } = useProject();
+
   const description = `Dein Feedback ist uns sehr wichtig. Bitte teile uns deine Gedanken, Anregungen und Ideen mit. Gemeinsam können wir großartige Veränderungen bewirken`;
 
   const handleCollaborationClick = async (offset: number) => {
@@ -39,7 +45,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
             {description}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            26531 Beteilungen - 91283 Votes
+            {`${collaborationCommentsAmount} Beteilungen - ${surveyVotesAmount} Votes`}
           </Typography>
         </Grid>
         <Grid item xs={4} sx={{ mt: '15px' }}>

@@ -21,9 +21,14 @@ export type ResponseOption = {
 };
 
 export type SurveyQuestion = {
+  id: string;
   question: string;
   responseOptions: ResponseOption[];
-  votes: number;
+  votes: SurveyVote[];
+};
+
+export type SurveyVote = {
+  votedBy: string;
 };
 
 export type ProjectColaboration = {

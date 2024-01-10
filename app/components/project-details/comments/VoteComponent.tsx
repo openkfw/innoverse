@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import ToggleButton from '@mui/material/ToggleButton';
 import Typography from '@mui/material/Typography';
 
-import { useUser } from '@/app/user-context';
+import { useUser } from '@/app/contexts/user-context';
 import { User } from '@/common/types';
 import { AuthResponse } from '@/utils/auth';
 

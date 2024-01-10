@@ -176,12 +176,12 @@ export const GetOpportunitiesByProjectIdQuery = `query GetOpportunities($project
 export const GetSurveyQuestionsByProjectIdQuery = `query GetSurveyQuestions($projectId: ID) {
   surveyQuestions(filters: { project: { id: { eq: $projectId } } }) {
     data {
+      id
       attributes {
         question
         responseOptions {
           responseOption
         } 
-        votes
       }
     }    
   }
@@ -327,7 +327,7 @@ export const withResponseTransformer = async (
 function getStaticBuildFetchSurveyQuestionsByProjectId(graphqlResponse: SurveyQuestionsResponse) {
   const surveyQuestions = graphqlResponse.data.surveyQuestions.data;
   return surveyQuestions.map((s) => {
-    return { ...s.attributes };
+    return { id: s.id, ...s.attributes };
   });
 }
 

@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
-import { useUser } from '@/app/user-context';
+import { useUser } from '@/app/contexts/user-context';
 import theme from '@/styles/theme';
 
 import LoggedInMenu from './LoggedInMenu';

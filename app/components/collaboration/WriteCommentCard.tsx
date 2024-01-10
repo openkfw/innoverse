@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 
-import { useUser } from '@/app/user-context';
+import { useUser } from '@/app/contexts/user-context';
 
 import AvatarIcon from '../common/AvatarIcon';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
