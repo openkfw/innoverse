@@ -57,8 +57,7 @@ export async function createInnoUser(body: UserSession, image?: string | null) {
       ...body,
       avatarId: uploadedImage ? uploadedImage.id : null,
     });
-    const jsonResponse = await requestUser.json();
-    const resultUser = withResponseTransformer(STRAPI_QUERY.CreateInnoUser, jsonResponse);
+    const resultUser = withResponseTransformer(STRAPI_QUERY.CreateInnoUser, requestUser);
 
     return {
       ...resultUser,
