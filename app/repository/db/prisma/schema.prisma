@@ -50,3 +50,13 @@ model Follow {
   followedBy String // user id  
 }
 
+model SurveyVote {
+  id    String     @id @default(uuid())
+  createdAt DateTime @default(now())
+  
+  vote String // vote
+  projectId String // project
+  surveyQuestionId String // voted survey question
+  votedBy String // id of author
+  @@map(name: "survey_votes")
+}

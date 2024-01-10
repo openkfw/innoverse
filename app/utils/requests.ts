@@ -8,7 +8,9 @@ import {
   SurveyQuestion,
   UserSession,
 } from '@/common/types';
+import { getSurveyQuestionVotes } from '@/components/collaboration/survey/actions';
 
+import { getFulfilledResults } from './helpers';
 import {
   CreateInnoUserQuery,
   GetCollaborationQuestionsByProjectIdQuery,
@@ -159,8 +161,20 @@ export async function getProjectQuestionsByProjectId(projectId: string) {
 export async function getSurveyQuestionsByProjectId(projectId: string) {
   try {
     const res = await strapiFetcher(GetSurveyQuestionsByProjectIdQuery, { projectId });
-    const surveyQuestions = await withResponseTransformer(STRAPI_QUERY.GetSurveyQuestionsByProjectId, res);
-    return surveyQuestions as SurveyQuestion[];
+    const surveyQuestions = (await withResponseTransformer(
+      STRAPI_QUERY.GetSurveyQuestionsByProjectId,
+      res,
+    )) as SurveyQuestion[];
+
+    const surveyQuestionsVotes = await Promise.allSettled(
+      surveyQuestions.map(async (surveyQuestion) => {
+        const { data: surveyVotes } = await getSurveyQuestionVotes({ surveyQuestionId: surveyQuestion.id });
+        surveyQuestion.votes = surveyVotes;
+        return surveyQuestion;
+      }),
+    ).then((results) => getFulfilledResults(results));
+
+    return surveyQuestionsVotes as SurveyQuestion[];
   } catch (err) {
     console.info(err);
   }

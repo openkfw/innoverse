@@ -1,4 +1,4 @@
-import { Opportunity, PROJECT_PROGRESS } from './types';
+import { Opportunity, PROJECT_PROGRESS, SurveyVote } from './types';
 
 export type ProjectResponse = {
   data: {
@@ -35,6 +35,7 @@ export type OpportunitiesResponse = {
 export type SurveyQuestionsResponse = {
   data: {
     surveyQuestions: {
+      id: string;
       data: SurveyQuestionQuery[];
     };
   };
@@ -165,17 +166,18 @@ export type CollaborationQuestionQuery = {
 };
 
 export type SurveyQuestionQuery = {
+  id: string;
   attributes: {
     question: string;
     responseOptions: { responseOption: string }[];
-    votes: number;
   };
 };
 
 export type SurveyQuestion = {
+  id: string;
   question: string;
   responseOptions: { responseOption: string }[];
-  votes: number;
+  votes: SurveyVote[];
 };
 
 export type OpportunityQuery = {

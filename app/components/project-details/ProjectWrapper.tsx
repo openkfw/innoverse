@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 
+import { ProjectContextProvider } from '@/app/contexts/project-context';
 import { Project } from '@/common/types';
 import { isFollowed, isLiked } from '@/components/project-details/likes-follows/actions';
 
@@ -31,7 +32,7 @@ export const ProjectWrapper = (props: ProjectWrapperProps) => {
   }, [project.id]);
 
   return (
-    <>
+    <ProjectContextProvider projectId={project.id}>
       <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
         <ProjectInfoCard
           project={project}
@@ -49,7 +50,7 @@ export const ProjectWrapper = (props: ProjectWrapperProps) => {
       <Box display="flex" justifyContent="center" alignItems="center">
         <TabView project={project} activeTab={activeTab} setActiveTab={setActiveTab} projectName={project.title} />
       </Box>
-    </>
+    </ProjectContextProvider>
   );
 };
 
