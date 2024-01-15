@@ -129,6 +129,7 @@ export type Description = {
 };
 
 export type Update = {
+  id: string;
   title: string;
   date: string;
   comment: string;
@@ -137,6 +138,7 @@ export type Update = {
 };
 
 export type UpdateQuery = {
+  id: string;
   attributes: {
     date: string;
     comment: string;

@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Chip from '@mui/material/Chip';
@@ -9,6 +10,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import { ProjectUpdate } from '@/common/types';
+import EmojiReactionCard from '@/components/collaboration/emojiReactions/EmojiReactionCard';
 import AvatarIcon from '@/components/common/AvatarIcon';
 import theme from '@/styles/theme';
 
@@ -55,6 +57,12 @@ export default function NewsCard(props: ProjectCardProps) {
           </Grid>
         </Grid>
       </CardContent>
+
+      <Box style={{ flexGrow: '1' }} />
+
+      <CardActions disableSpacing sx={{ m: -1, p: 0, height: 'auto' }}>
+        <EmojiReactionCard update={item} />
+      </CardActions>
     </Card>
   );
 }
@@ -62,7 +70,7 @@ export default function NewsCard(props: ProjectCardProps) {
 // News Card Styles
 const cardStyles = {
   padding: 3,
-  height: '225px',
+  height: '17rem',
   borderRadius: '8px',
   marginRight: '24px',
   [theme.breakpoints.up('sm')]: {
@@ -72,6 +80,8 @@ const cardStyles = {
     maxWidth: '100%',
     width: '100%',
   },
+  display: 'flex',
+  flexDirection: 'column',
 };
 
 const cardHeaderStyles = {

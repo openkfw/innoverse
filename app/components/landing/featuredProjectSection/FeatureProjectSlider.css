@@ -75,3 +75,7 @@
     width: auto;
   }
 }
+
+.slick-list {
+  overflow: visible !important;
+}

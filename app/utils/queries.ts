@@ -148,6 +148,7 @@ export const GetInnoUserByProviderIdQuery = `query GetInnoUser($providerId: Stri
 export const GetUpdatesByProjectIdQuery = `query GetUpdates($projectId: ID) {
   updates(filters: { project: { id: { eq: $projectId } } }) {
     data {
+      id
       attributes {
         date
         comment
@@ -397,6 +398,7 @@ function getStaticBuildFetchUpdatesByProjectId(graphqlResponse: UpdatesResponse)
     const u = update.attributes;
     const author = u.author.data.attributes;
     return {
+      id: update.id,
       comment: u.comment,
       date: u.date || getCurrentDate(),
       theme: u.theme,
