@@ -102,7 +102,7 @@ const wrapper = {
 
 const sliderBox = {
   marginBottom: 4,
-  height: '218px',
+  height: '17rem',
   [theme.breakpoints.down('sm')]: {
     width: 'min(90%, 368px)',
   },
@@ -114,7 +114,7 @@ const sliderBox = {
 };
 
 const cardContainerStyles = {
-  height: '218px',
+  height: '17rem',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -131,6 +131,7 @@ const navigationStyles = {
   alignSelf: 'flex-start',
   width: 'min(85%, 344px)',
   marginLeft: -1,
+  pt: 4,
 };
 
 const buttonStyles = {

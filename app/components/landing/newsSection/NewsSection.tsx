@@ -40,7 +40,8 @@ export const NewsSection = (props: NewsProps) => {
 // News Section Styles
 
 const newsSectionStyles = {
-  overflow: 'hidden',
+  overflowY: 'visible',
+  overflowX: 'clip',
   [theme.breakpoints.up('sm')]: {
     paddingLeft: '5%',
   },
