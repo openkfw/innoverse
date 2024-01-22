@@ -71,7 +71,10 @@ export const handleNewReaction = withAuth(
       } else if (body.operation === 'delete') {
         await removeReaction(dbClient, body.updateId, user.providerId);
       } else {
-        ('ERROR in Handling Reaction, actions.ts');
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          errors: 'The operation method is not allowed',
+        };
       }
     }
     return {

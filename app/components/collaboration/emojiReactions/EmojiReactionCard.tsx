@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -38,14 +40,15 @@ export default function EmojiReactionCard(props: EmojiReactionCardProps) {
       const { data: countOfReactionsByUpdateAndShortcode } = await getCountPerEmojiOnUpdate({
         updateId: props.update.id,
       });
-      setCountingArray(
-        countOfReactionsByUpdateAndShortcode.map(
-          (element: { reactionShortCode: 'string'; _count: { reactionShortCode: number } }) => ({
-            shortCode: element.reactionShortCode || 'XXXX',
-            count: element._count.reactionShortCode || 0,
-          }),
-        ),
-      );
+      countOfReactionsByUpdateAndShortcode &&
+        setCountingArray(
+          countOfReactionsByUpdateAndShortcode.map(
+            (element: { reactionShortCode: 'string'; _count: { reactionShortCode: number } }) => ({
+              shortCode: element.reactionShortCode || 'XXXX',
+              count: element._count.reactionShortCode || 0,
+            }),
+          ),
+        );
     };
 
     fetchReactions();

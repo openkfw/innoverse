@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 
 import { ProjectUpdate } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
+import ErrorPage from '@/components/error/ErrorPage';
 import theme from '@/styles/theme';
 
 import NewsCarousel from './NewsCarousel';
@@ -15,6 +16,10 @@ type NewsProps = {
 };
 
 export const NewsSection = (props: NewsProps) => {
+  if (!props.updates) {
+    return <ErrorPage />;
+  }
+
   return (
     <Box sx={newsSectionStyles}>
       <Grid container spacing={5} sx={wrapperStyles}>
@@ -31,7 +36,7 @@ export const NewsSection = (props: NewsProps) => {
             <CustomButton>Mehr</CustomButton>
           </Grid>
         </Grid>
-        <NewsCarousel updates={props.updates} />
+        {props.updates.length > 0 && <NewsCarousel updates={props.updates} />}
       </Grid>
     </Box>
   );

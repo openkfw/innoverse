@@ -1,14 +1,14 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import IndexPage from '@/app/page';
+import SkeletonIndexPage from '@/app/skeletonIndexPage';
 import CustomDialog from '@/components/common/CustomDialog';
 import SignInOptions from '@/components/login/SignInOptions';
 
 export default function SignIn() {
   return (
     <>
-      <IndexPage />
+      <SkeletonIndexPage />
       <CustomDialog
         open={true}
         title="Log in"
