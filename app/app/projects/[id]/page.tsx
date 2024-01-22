@@ -12,12 +12,13 @@ import { getProjectById } from '@/utils/requests';
 
 async function ProjectPage({ params }: { params: { id: string } }) {
   const project = (await getProjectById(params.id)) as Project;
-  const likes = (await getAllProjectLikes({ projectId: project.id })).data as Like[];
-  const followers = (await getAllProjectFollowers({ projectId: project.id })).data as Follower[];
 
   if (!project) {
     return <ErrorPage />;
   }
+
+  const likes = (await getAllProjectLikes({ projectId: project.id })).data as Like[];
+  const followers = (await getAllProjectFollowers({ projectId: project.id })).data as Follower[];
 
   return (
     <Layout>

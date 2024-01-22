@@ -15,14 +15,11 @@ export interface AuthResponse {
 export function withAuth(func: (user: UserSession, body: any) => Promise<AuthResponse>) {
   return async function (args: any) {
     const session = await getServerSession(options);
+    if (session == undefined) {
+      return { status: StatusCodes.UNAUTHORIZED, errors: 'User is not authenticated' };
+    }
     const sessionUser = session?.user as UserSession;
     await createInnoUserIfNotExist(sessionUser, sessionUser.image);
-    if (session == undefined) {
-      return {
-        status: StatusCodes.UNAUTHORIZED,
-        errors: new Error('User is not authenticated'),
-      };
-    }
     return func(sessionUser, args) as Promise<AuthResponse>;
   };
 }
