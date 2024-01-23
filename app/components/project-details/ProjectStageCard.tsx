@@ -2,35 +2,28 @@
 
 import { useState } from 'react';
 
-import AddIcon from '@mui/icons-material/Add';
-import { Button, Collapse, Grid, Step, StepContent, StepIcon, StepIconProps, StepLabel, Stepper } from '@mui/material';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Collapse from '@mui/material/Collapse';
+import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-const steps = [
-  {
-    label: 'Exploration',
-    description: `***STRING_REMOVED***  richtet ihr eigenes Investitionsverhalten auf Nachhaltigkeit aus. Seit 2006 ist sie Unterzeichnerin der UN Principles for Responsible Investment (PRI). Nachhaltigkeitskriterien w`,
-  },
-  {
-    label: 'Konzeption',
-    description:
-      '***STRING_REMOVED***  richtet ihr eigenes Investitionsverhalten auf Nachhaltigkeit aus. Seit 2006 ist sie Unterzeichnerin der UN Principles for Responsible Investment (PRI). Nachhaltigkeitskriterien w',
-  },
-  {
-    label: 'PoC',
-    description: `Der Vorstand hat uns beauftragt, Anwendungsfälle für Generative Ki in ***STRING_REMOVED***  zu erheben und zu bewerten, sowie parallel die benötigten IT Skills, Tools und Prozesse aufzusetzen.`,
-  },
-];
+import { Project, PROJECT_PROGRESS } from '@/common/types';
+import ContinueIcon from '@/components/icons/ContinueIcon';
+import theme from '@/styles/theme';
+
+import ProgressBar from '../common/ProgressBar';
 
 interface TimingDataProps {
-  projectStart: string;
+  project: Project;
 }
 
+const MAX_TEXT_LENGTH = 20;
+
 const ProjectStageCard = (props: TimingDataProps) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const { projectStart } = props;
+  const { project } = props;
+  const [isCollapsed, setIsCollapsed] = useState(project.summary.length <= MAX_TEXT_LENGTH);
 
   const handleToggle = () => {
     setIsCollapsed(!isCollapsed);
@@ -38,90 +31,99 @@ const ProjectStageCard = (props: TimingDataProps) => {
 
   return (
     <>
-      <Typography variant="overline" sx={{ textAlign: 'center', color: 'primary.light' }}>
+      <Typography variant="overline" sx={titleStyles}>
         Projekt Info & Status
       </Typography>
-      <Card sx={cardStyles}>
-        <CardContent>
-          <Stepper nonLinear activeStep={2} orientation="vertical">
-            {steps.map((step, index) => (
-              <Step sx={{ color: 'secondary' }} key={step.label}>
-                <StepLabel StepIconComponent={CustomStepIcon}>
-                  <Grid container>
-                    <Grid item xs={4}>
-                      <Typography variant="subtitle1" sx={{ color: 'text.primary' }}>
-                        {step.label}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={8}>
-                      {index == 2 ? (
-                        <Typography
-                          variant="subtitle1"
-                          sx={{ color: 'text.primary', display: 'flex', flexDirection: 'row-reverse' }}
-                        >
-                          {projectStart}
-                        </Typography>
-                      ) : null}
-                    </Grid>
-                  </Grid>
-                </StepLabel>
-                <StepContent>
-                  {!isCollapsed ? (
-                    <>
-                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
-                        {step.description.slice(0, 120)}
-                      </Typography>
-                      <Button
-                        onClick={handleToggle}
-                        variant="outlined"
-                        sx={buttonStyles}
-                        startIcon={<AddIcon color="secondary" fontSize="small" />}
-                      >
-                        <Typography variant="subtitle2">weiterlesen</Typography>
-                      </Button>
-                    </>
-                  ) : (
-                    <Collapse in={isCollapsed}>
-                      <Typography variant="body1" sx={{ color: 'text.primary' }}>
-                        {step.description}
-                      </Typography>
-                    </Collapse>
-                  )}
-                </StepContent>
-              </Step>
-            ))}
-          </Stepper>
+      <Card sx={cardStyles} elevation={0}>
+        <CardContent sx={cardContentStyles}>
+          <ProgressBar active={PROJECT_PROGRESS.EXPLORATION} />
+
+          <Grid sx={descriptionWrapperStyles}>
+            <Typography variant="body1" color="text.primary">
+              {project.title}
+            </Typography>
+            {!isCollapsed ? (
+              <>
+                <Typography sx={descriptionStyles}>{project.summary.slice(0, MAX_TEXT_LENGTH)}</Typography>
+                <Button onClick={handleToggle} sx={buttonStyles} startIcon={<ContinueIcon />}>
+                  <Typography sx={buttonTextStyles}>Weiter lesen</Typography>
+                </Button>
+              </>
+            ) : (
+              <Collapse in={isCollapsed}>
+                <Typography sx={descriptionStyles}>{project.summary}</Typography>
+              </Collapse>
+            )}
+          </Grid>
         </CardContent>
       </Card>
     </>
   );
 };
 
-const CustomStepIcon = (props: StepIconProps) => {
-  return <StepIcon {...props} style={{ color: '#A4B419' }} />;
-};
-
 export default ProjectStageCard;
 
 // Project stage card Styles
+const titleStyles = {
+  textAlign: 'center',
+  color: 'primary.light',
+  [theme.breakpoints.down('md')]: {
+    display: 'none',
+  },
+};
 
 const cardStyles = {
-  backgroundColor: '#F0EEE1',
-  borderRadius: '24px',
-  width: '350px',
-  height: '370px',
-  marginTop: 1,
+  border: '1px solid rgba(0, 90, 140, 0.10)',
+  background: 'rgba(240, 238, 225, 0.10)',
+  borderRadius: '8px',
+  width: '100%',
+  height: '209px',
+  display: 'flex',
+  flexDirection: 'column',
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    height: '411px',
+  },
+};
+
+const cardContentStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%',
+};
+
+const descriptionWrapperStyles = {
+  flex: 1,
+  marginTop: 2,
+};
+
+const descriptionStyles = {
+  fontSize: '14px',
+  color: 'text.primary',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  [theme.breakpoints.down('md')]: {
+    WebkitLineClamp: 10,
+  },
 };
 
 const buttonStyles = {
-  border: 'none',
+  marginTop: 2,
   background: 'none',
-  '&:hover': {
-    border: 'none',
-    background: 'none',
-  },
-  '&:active': {
-    border: 'none',
-    background: 'none',
-  },
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: 1,
+  padding: '8px 16px',
+  borderRadius: '48px',
+  border: '1px solid rgba(0, 0, 0, 0.10)',
+  backdropFilter: 'blur(24px)',
+  maxWidth: 'fit-content',
+};
+
+const buttonTextStyles = {
+  color: 'rgba(0, 0, 0, 0.56)',
 };

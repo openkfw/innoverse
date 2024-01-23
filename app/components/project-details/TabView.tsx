@@ -74,7 +74,7 @@ interface BasicTabsProps {
 export default function TabView(props: BasicTabsProps) {
   const { project, activeTab, setActiveTab, projectName } = props;
   const { opportunities, questions, collaborationQuestions, updates } = project;
-  const collaborationActivities = opportunities.length + questions.length + collaborationQuestions.length;
+  const collaborationActivities = opportunities?.length + questions?.length + collaborationQuestions?.length;
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     switch (newValue) {
@@ -128,13 +128,13 @@ export default function TabView(props: BasicTabsProps) {
           />
         </CustomTabs>
       </Box>
-      <CustomTabPanel value={activeTab} index={0} id="tabpanel-0">
+      <CustomTabPanel value={activeTab} index={0} id="project-progress-tab">
         <ProjectProgress project={project} projectName={projectName} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={1} id="collaboration-tab">
         <CollaborationTab project={project} />
       </CustomTabPanel>
-      <CustomTabPanel value={activeTab} index={2} id="tabpanel-0">
+      <CustomTabPanel value={activeTab} index={2} id="updates-tab">
         <UpdatesTab updates={updates} />
       </CustomTabPanel>
     </Container>

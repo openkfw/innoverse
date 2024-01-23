@@ -1,18 +1,22 @@
-import { Divider } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
+import theme from '@/styles/theme';
 
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 import { handleFollow, handleLike, handleRemoveFollower, handleRemoveLike } from './likes-follows/actions';
 import CollaborationColumn from './CollaborationColumn';
+import { ProjectInfoCardSmall } from './ProjectInfoCardSmall';
 import ProjectStageCard from './ProjectStageCard';
 import TeamMembersColumn from './TeamMembersColumn';
 import UpdateCard from './UpdateCard';
+
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 interface ProjectInfoProps {
   project: Project;
@@ -27,9 +31,8 @@ interface ProjectInfoProps {
   setFollowersAmount: (i: number) => void;
 }
 
-const MAX_UPDATES = 1;
-
 export const ProjectInfoCard = (props: ProjectInfoProps) => {
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const {
     project,
     setActiveTab,
@@ -43,129 +46,166 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
     setFollowersAmount,
   } = props;
 
-  const toggleLike = () => {
-    if (isLiked) {
-      setLiked(false);
-      handleRemoveLike({ projectId: project.id });
-      setLikesAmount(likesAmount - 1);
-    } else {
-      setLiked(true);
-      handleLike({ projectId: project.id });
-      setLikesAmount(likesAmount + 1);
+  // Interaction buttons
+  const interactionButtons = () => {
+    function toggleLike() {
+      if (isLiked) {
+        setLiked(false);
+        handleRemoveLike({ projectId: project.id });
+        setLikesAmount(likesAmount - 1);
+      } else {
+        setLiked(true);
+        handleLike({ projectId: project.id });
+        setLikesAmount(likesAmount + 1);
+      }
     }
-  };
 
-  const toggleFollow = () => {
-    if (isFollowed) {
-      setFollowed(false);
-      handleRemoveFollower({ projectId: project.id });
-      setFollowersAmount(followersAmount - 1);
-    } else {
-      setFollowed(true);
-      handleFollow({ projectId: project.id });
-      setFollowersAmount(followersAmount + 1);
+    function toggleFollow() {
+      if (isFollowed) {
+        setFollowed(false);
+        handleRemoveFollower({ projectId: project.id });
+        setFollowersAmount(followersAmount - 1);
+      } else {
+        setFollowed(true);
+        handleFollow({ projectId: project.id });
+        setFollowersAmount(followersAmount + 1);
+      }
     }
+
+    return (
+      <Grid item sx={interactionStyles}>
+        <InteractionButton
+          isSelected={isLiked}
+          projectName={project.projectName}
+          interactionType={InteractionType.LIKE}
+          onClick={toggleLike}
+          label={likesAmount.toString()}
+          sx={interactionButtonStyles}
+        />
+        <InteractionButton
+          isSelected={isFollowed}
+          projectName={project.projectName}
+          interactionType={InteractionType.PROJECT_FOLLOW}
+          onClick={toggleFollow}
+          sx={interactionButtonStyles}
+        />
+      </Grid>
+    );
   };
 
   return (
-    <Card sx={cardStyles}>
-      <CardContent sx={cardContentStyles}>
-        <Grid container spacing={2} sx={containerStyles}>
-          {/* First Column - Project Info */}
-          <Grid item xs={4}>
-            <Grid container direction="column" spacing={1}>
-              <Grid item xs={4}>
-                <ProjectStageCard projectStart={project.projectStart} />
-              </Grid>
-              <Grid item xs={4} sx={interactionStyles}>
-                <InteractionButton
-                  isSelected={isLiked}
-                  projectName={project.projectName}
-                  interactionType={InteractionType.LIKE}
-                  onClick={() => toggleLike()}
-                />
-                <InteractionButton
-                  isSelected={isFollowed}
-                  projectName={project.projectName}
-                  interactionType={InteractionType.PROJECT_FOLLOW}
-                  onClick={() => toggleFollow()}
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <Typography variant="caption" color="text.secondary">
-                  {`${likesAmount} Likes - ${followersAmount} Innovaders folgen`}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          {/* Second Column - Collaboration and Updates */}
-          <Grid item xs={8}>
-            <Grid container spacing={2} sx={collaborationWrapperStyles}>
-              <Grid item xs={9}>
-                <CollaborationColumn project={project} setActiveTab={setActiveTab} />
-              </Grid>
-              <Grid item xs={3}>
-                <TeamMembersColumn team={project.team} projectName={project.title} />
+    <Box sx={wrapperStyles}>
+      {interactionButtons()}
+
+      <Card sx={cardStyles}>
+        <CardContent sx={cardContentStyles}>
+          {isSmallScreen ? (
+            <ProjectInfoCardSmall project={project} setActiveTab={setActiveTab} />
+          ) : (
+            <Grid container sx={containerStyles}>
+              <Grid item sx={firstRowStyles}>
+                <Grid sx={projectStageCardStyles}>
+                  <ProjectStageCard project={project} />
+                </Grid>
+                <Grid sx={teamMembersColumnStyles}>
+                  <TeamMembersColumn team={project.team} projectName={project.title} />
+                </Grid>
               </Grid>
 
-              <Grid item xs={12}>
-                <Divider sx={dividerStyles} />
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="overline" sx={latestUpdatesStyles}>
-                  Neuesten updates ({Math.min(project.updates.length, MAX_UPDATES)} von {project.updates.length})
-                </Typography>
-              </Grid>
-              <Grid item container xs={12} spacing={2}>
-                {project.updates.slice(0, MAX_UPDATES).map((update, key) => (
-                  <Grid key={key} item xs={4}>
-                    <UpdateCard update={update} />
-                  </Grid>
-                ))}
+              <Grid item sx={secondRowStyles}>
+                <Grid sx={collaborationColumnStyles}>
+                  <CollaborationColumn setActiveTab={setActiveTab} project={project} />
+                </Grid>
+                <Grid item sx={updateCardStyles}>
+                  <UpdateCard updates={project?.updates} setActiveTab={setActiveTab} />
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
+          )}
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 
 // Project Info Card Styles
+const wrapperStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  width: '85%',
+  [theme.breakpoints.down('sm')]: {
+    width: '90%',
+  },
+};
 
 const cardStyles = {
   borderRadius: '24px',
-  width: '1280px',
+  width: '100%',
+  margin: '0 8px',
   boxShadow:
     '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
 };
 
 const cardContentStyles = {
   margin: '56px 64px',
+  [theme.breakpoints.down('md')]: {
+    margin: '24px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    margin: '8px',
+  },
 };
 
 const containerStyles = {
   display: 'flex',
-  justifyContent: 'space-between',
+  flexDirection: 'column',
+  gap: 5,
 };
+
+const firstRowStyles = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: 3,
+};
+
+const projectStageCardStyles = {
+  width: '100%',
+};
+
+const teamMembersColumnStyles = {};
+
+const secondRowStyles = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: 3,
+};
+
+const collaborationColumnStyles = {
+  width: '100%',
+};
+
+const updateCardStyles = {};
 
 const interactionStyles = {
-  marginTop: 2,
+  alignSelf: 'flex-end',
+  marginBottom: '40px',
+  marginRight: '64px',
+  [theme.breakpoints.down('sm')]: {
+    marginRight: 0,
+  },
 };
 
-const dividerStyles = {
-  height: '1px',
-  marginTop: '20px',
-  marginBottom: '20px',
-  background: 'rgba(0, 90, 140, 0.20)',
-};
+const interactionButtonStyles = {
+  color: 'common.white',
+  borderRadius: '50px',
+  border: '2px solid rgba(255, 255, 255, 0.40)',
+  boxShadow: '0px 12px 32px 0px rgba(0, 0, 0, 0.25), 0px 4px 8px 0px rgba(0, 0, 0, 0.10)',
+  backdropFilter: 'blur(24px)',
 
-const latestUpdatesStyles = {
-  textAlign: 'center',
-  color: 'primary.light',
-  marginBottom: '25px',
-};
-
-const collaborationWrapperStyles = {
-  marginLeft: '10px',
+  ':hover': {
+    border: '2px solid rgba(255, 255, 255, 0.40)',
+  },
 };

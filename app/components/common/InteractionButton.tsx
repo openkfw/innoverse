@@ -35,6 +35,7 @@ export enum InteractionType {
   LIKE = 'like',
   PROJECT_FOLLOW = 'project-follow',
   USER_FOLLOW = 'user-follow',
+  USER_FOLLOW_ICON = 'user-follow_icon',
   COLLABORATION = 'collaboration',
   COMMENT = 'comment',
   COMMENT_SEND = 'comment-send',
@@ -57,9 +58,10 @@ export default function InteractionButton(props: InteractionButtonProps) {
   }, [isSelected]);
 
   const getInteractionIcon = () => {
-    if (interactionType === InteractionType.LIKE) return <ThumbUpOutlinedIcon fontSize="small" />;
-    if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddOutlinedIcon fontSize="small" />;
+    if (interactionType === InteractionType.LIKE) return;
+    if (interactionType === InteractionType.PROJECT_FOLLOW) return;
     if (interactionType === InteractionType.USER_FOLLOW) return <PersonAddIcon fontSize="small" />;
+    if (interactionType === InteractionType.USER_FOLLOW_ICON) return <PersonAddIcon fontSize="small" />;
     if (interactionType === InteractionType.COLLABORATION) return <PeopleOutlineOutlinedIcon fontSize="small" />;
     if (interactionType === InteractionType.COMMENT) return <ChatIcon color={isHovered ? 'white' : 'black'} />;
     if (interactionType === InteractionType.COMMENT_SEND) return <SendIcon fontSize="small" />;
@@ -77,13 +79,14 @@ export default function InteractionButton(props: InteractionButtonProps) {
   }
 
   const getEndIcon = () => {
-    if (interactionType === InteractionType.FEEDBACK) {
+    if (interactionType === InteractionType.LIKE) return <ThumbUpOutlinedIcon fontSize="small" />;
+    if (interactionType === InteractionType.FEEDBACK)
       return (
         <Box onClick={handleIconClick}>
           <CloseIcon color="black" />
         </Box>
       );
-    }
+    if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddOutlinedIcon fontSize="small" />;
   };
 
   const getButtonText = () => {
@@ -91,6 +94,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.LIKE) return 'Like';
     if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Projekt folgen';
     if (interactionType === InteractionType.USER_FOLLOW) return 'Folgen';
+    if (interactionType === InteractionType.USER_FOLLOW_ICON) return;
     if (interactionType === InteractionType.COLLABORATION) return 'Hilf uns!';
     if (interactionType === InteractionType.COMMENT_SEND) return 'Senden';
     if (interactionType === InteractionType.SHARE_OPINION) return 'Teile Deine Erfahrung';
