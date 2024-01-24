@@ -16,7 +16,7 @@ import LoggedInMenu from './LoggedInMenu';
 
 import logo from '/public/images/logo.svg';
 
-const pages = ['Projekte', 'Artikel', 'Backstage'];
+const pages = ['Initiativen', 'News', 'Backstage'];
 
 export default function TopBar() {
   const { user, isLoading } = useUser();

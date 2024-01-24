@@ -19,7 +19,7 @@ interface TimingDataProps {
   project: Project;
 }
 
-const MAX_TEXT_LENGTH = 20;
+const MAX_TEXT_LENGTH = 200;
 
 const ProjectStageCard = (props: TimingDataProps) => {
   const { project } = props;
@@ -39,9 +39,6 @@ const ProjectStageCard = (props: TimingDataProps) => {
           <ProgressBar active={PROJECT_PROGRESS.EXPLORATION} />
 
           <Grid sx={descriptionWrapperStyles}>
-            <Typography variant="body1" color="text.primary">
-              {project.title}
-            </Typography>
             {!isCollapsed ? (
               <>
                 <Typography sx={descriptionStyles}>{project.summary.slice(0, MAX_TEXT_LENGTH)}</Typography>
