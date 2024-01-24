@@ -57,7 +57,7 @@ const UpdateCard = (props: UpdateCardProps) => {
   return (
     <>
       <Typography variant="overline" sx={titleStyles}>
-        Neuesten updates
+        Neueste Updates
       </Typography>
 
       <Card sx={cardStyles} elevation={0}>
