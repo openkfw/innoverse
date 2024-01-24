@@ -26,7 +26,7 @@ export const NewsSection = (props: NewsProps) => {
         <Grid item container xs={12} sx={titleContainerStyles}>
           <Grid item xs={9}>
             <Typography variant="overline" sx={subtitleStyles}>
-              Aktuelles aus den Projekten
+              Aktuelles aus den Initiativen
             </Typography>
             <Typography variant="h2" sx={titleStyles}>
               Innovationsnews

@@ -13,7 +13,7 @@ const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: st
   return (
     <Box sx={wrapperStyles}>
       <Typography variant="overline" sx={featuredTypographyStyles}>
-        Featured project
+        Featured
       </Typography>
       <Typography sx={titleStyles} variant="h2">
         {title}

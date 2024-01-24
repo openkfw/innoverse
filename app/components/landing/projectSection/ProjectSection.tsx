@@ -44,7 +44,7 @@ export const ProjectSection = (props: ProjectProps) => {
               Aktuelle Pipeline
             </Typography>
             <Typography variant="h2" sx={titleStyles}>
-              Innovationsprojekte
+              Innovationsinitiativen
             </Typography>
           </Grid>
           <Grid item xs={3} sx={buttonContainerStyles}>

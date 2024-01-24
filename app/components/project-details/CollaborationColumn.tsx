@@ -73,8 +73,8 @@ const CollaborationColumn = (props: CollaborationProps) => {
         <CardContent sx={cardContentStyles}>
           <Section
             icon={<JoinInIcon />}
-            title="Mach mit"
-            subtitle={`${collaborationQuestions.length} Fragen`}
+            title="Hilf dem Team mit Deinem Wissen"
+            subtitle={`${collaborationQuestions.length} Frage(n) brauchen Deinen Input`}
             offset={-325}
             buttonText="Zu den Fragen"
             handleCollaborationClick={handleCollaborationClick}
@@ -82,7 +82,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
           <Section
             icon={<CurrentPollsIcon />}
             title="Aktuelle Umfragen"
-            subtitle={`${surveyQuestions.length} Umfragen offen`}
+            subtitle={`${surveyQuestions.length} Umfrage(n) offen`}
             offset={75}
             buttonText="Abstimmen"
             handleCollaborationClick={handleCollaborationClick}
@@ -91,7 +91,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
           <Section
             icon={<SupportTheTeamIcon />}
             title="Unterstütze das Team"
-            subtitle={`${opportunities.length} Arbeitsbereiche offen`}
+            subtitle={`${opportunities.length} Anfragen warten aktuell auf Dich`}
             offset={75}
             buttonText="Teilnehmen"
             handleCollaborationClick={handleCollaborationClick}

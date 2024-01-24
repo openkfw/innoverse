@@ -32,7 +32,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
   return (
     <>
       <Typography variant="overline" sx={titleStyles}>
-        Projekt Info & Status
+        Info & Status der Initiative
       </Typography>
       <Card sx={cardStyles} elevation={0}>
         <CardContent sx={cardContentStyles}>
@@ -46,7 +46,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
               <>
                 <Typography sx={descriptionStyles}>{project.summary.slice(0, MAX_TEXT_LENGTH)}</Typography>
                 <Button onClick={handleToggle} sx={buttonStyles} startIcon={<ContinueIcon />}>
-                  <Typography sx={buttonTextStyles}>Weiter lesen</Typography>
+                  <Typography sx={buttonTextStyles}>Weiterlesen</Typography>
                 </Button>
               </>
             ) : (

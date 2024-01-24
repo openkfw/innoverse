@@ -51,7 +51,7 @@ function FeedbackSection() {
         open={open}
         handleClose={handleClose}
         title="Send feedback"
-        subtitle="Erzählen Sie von Ihren Erfahrungen mit der neuen Innovationsplattform!"
+        subtitle="Erzählen Sie von Ihren Erfahrungen mit ***STRING_REMOVED***  Innovationsplattform!"
       >
         <Box sx={bodyStyles}>
           <Rating
@@ -67,7 +67,7 @@ function FeedbackSection() {
             rows={6}
             multiline
             sx={textFieldStyles}
-            placeholder="Das Feedback ist anonym. Du kannst hier dein Feedback eingeben."
+            placeholder="Das Feedback ist anonym. Du kannst hier Dein Feedback eingeben."
             InputProps={{
               endAdornment: <InteractionButton interactionType={InteractionType.COMMENT_SEND} sx={buttonStyles} />,
             }}

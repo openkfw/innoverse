@@ -95,7 +95,7 @@ export default function TabView(props: BasicTabsProps) {
           <CustomTab
             label={
               <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
-                Projektverlauf
+                Inno-Infos
               </Typography>
             }
             {...a11yProps(0)}
