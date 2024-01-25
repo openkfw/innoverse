@@ -13,8 +13,7 @@ interface UpdatesTabProps {
 }
 
 function getYear(date: string) {
-  const [, , year] = date.split(' ');
-  return year;
+  return new Date(date).getFullYear().toString();
 }
 
 export const UpdatesTab = (props: UpdatesTabProps) => {
