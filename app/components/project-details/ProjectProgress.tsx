@@ -309,4 +309,11 @@ const muiMarkdownOverrides = {
       },
     } as React.HTMLProps<HTMLImageElement>,
   },
+  //If there is nothing but text in the description, it will be a span component.
+  span: {
+    component: 'p',
+    props: {
+      style: { color: 'text.primary' },
+    } as React.HTMLProps<HTMLParagraphElement>,
+  },
 };
