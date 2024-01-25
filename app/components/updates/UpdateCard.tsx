@@ -12,11 +12,18 @@ interface UpdateCardProps {
   divider: boolean;
 }
 
+function getDay(date: string) {
+  return new Date(date).getDate().toString();
+}
+
+function getMonth(date: string) {
+  return new Date(date).toLocaleString('de-DE', { month: 'short' });
+}
+
 export const UpdateCard = ({ content, divider }: UpdateCardProps) => {
   const { id, comment, author, date, projectStart } = content;
   const commentContent = { id, author, comment };
-  const [day, month] = date.split(' ');
-  const dayMonth = `${day} ${month}`;
+  const dayMonth = `${getDay(date)} ${getMonth(date)}`;
 
   return (
     <Grid container>
@@ -39,7 +46,6 @@ export const UpdateCard = ({ content, divider }: UpdateCardProps) => {
 };
 
 // Update Card Styles
-
 const projectStartStyles = {
   mt: 1,
   p: 1,
