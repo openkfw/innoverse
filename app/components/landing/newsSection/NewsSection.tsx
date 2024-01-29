@@ -37,7 +37,7 @@ export const NewsSection = (props: NewsProps) => {
           </Grid>
           <Grid item xs={3} sx={buttonContainerStyles}>
             <Link href="news">
-              <CustomButton onClick={() => router.push('news')}>See more News</CustomButton>
+              <CustomButton onClick={() => router.push('news')}>Mehr News</CustomButton>
             </Link>
           </Grid>
         </Grid>

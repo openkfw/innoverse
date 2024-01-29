@@ -47,7 +47,7 @@ export default function ProjectsInput(props: NewsFilterProps) {
   return (
     <Box sx={{ m: 3 }}>
       <FormControl component="fieldset" variant="standard">
-        <FormLabel component="legend">Projects</FormLabel>
+        <FormLabel component="legend">Initiativen</FormLabel>
         <FormGroup>
           {projects.map((title, key) => (
             <FormControlLabel

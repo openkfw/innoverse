@@ -52,13 +52,15 @@ export default function NewsCard(props: ProjectCardProps) {
     <Card sx={cardStyles}>
       <CardHeader
         sx={cardHeaderStyles}
-        avatar={<AvatarIcon user={author} size={24} />}
+        avatar={author && <AvatarIcon user={author} size={24} />}
         title={
           <Grid container justifyContent="space-between">
             <Grid item>
-              <Typography variant="caption" sx={{ color: 'text.primary' }}>
-                {author.name}
-              </Typography>
+              {author && (
+                <Typography variant="caption" sx={{ color: 'text.primary' }}>
+                  {author.name}
+                </Typography>
+              )}
             </Grid>
             <Grid item>
               <Typography variant="caption" sx={{ color: 'secondary.contrastText' }}>
@@ -76,12 +78,16 @@ export default function NewsCard(props: ProjectCardProps) {
         </Box>
         <Grid container direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1 }}>
           <Grid item>
-            <Link href={`/projects/${projectId}`} style={{ ...linkStyle }}>
-              <Stack direction="row" alignItems="center">
-                <ArrowForwardIcon sx={{ fontSize: '14px', color: 'secondary.main' }} />
-                <Typography variant="subtitle2">{title}</Typography>
-              </Stack>
-            </Link>
+            {projectId ? (
+              <Link href={`/projects/${projectId}`} style={{ ...linkStyle }}>
+                <Stack direction="row" alignItems="center">
+                  <ArrowForwardIcon sx={{ fontSize: '14px', color: 'secondary.main' }} />
+                  <Typography variant="subtitle2">{title}</Typography>
+                </Stack>
+              </Link>
+            ) : (
+              <Stack direction="row" alignItems="center" />
+            )}
           </Grid>
 
           <Grid item>

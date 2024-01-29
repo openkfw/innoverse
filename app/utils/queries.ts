@@ -452,21 +452,24 @@ function getStaticBuildFetchUpdates(graphqlResponse: UpdatesResponse) {
 
   const formattedUpdates = updates.map((update) => {
     const u = update.attributes;
-    const author = u.author.data.attributes;
-    const projectId = update.attributes.project.data.id;
-    const title = update.attributes.project.data.attributes.title;
+    const author = u.author.data;
+    const project = u.project;
 
     return {
       id: update.id,
-      projectId,
-      title,
+      projectId: project.data ? project.data.id : null,
+      title: project.data ? project.data.attributes.title : '',
       comment: u.comment,
       date: u.date || new Date(),
       topic: u.topic,
-      author: {
-        name: author.name,
-        image: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
-      },
+      author: author
+        ? {
+            name: author.attributes.name,
+            image:
+              author.attributes.avatar.data &&
+              `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.attributes.avatar.data.attributes.url}`,
+          }
+        : null,
     };
   });
   return formattedUpdates;
