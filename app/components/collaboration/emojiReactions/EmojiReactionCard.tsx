@@ -1,15 +1,12 @@
 'use client';
 
-import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import AddReactionOutlinedIcon from '@mui/icons-material/AddReactionOutlined';
 import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-
-import { ProjectUpdate } from '@/common/types';
 
 import {
   getAllReactionsForUpdate,
@@ -21,38 +18,38 @@ import EmojiPickerCard from './EmojiPicker';
 import { CountReaction, Emoji, Reaction } from './emojiReactionTypes';
 
 interface EmojiReactionCardProps {
-  update: ProjectUpdate;
+  updateId: string;
 }
 
-export default function EmojiReactionCard(props: EmojiReactionCardProps) {
+export default function EmojiReactionCard({ updateId }: EmojiReactionCardProps) {
   const [isEmojiPickerClicked, setEmojiPickerClicked] = useState(false);
   const [reactionsArray, setReactionsArray] = useState<Reaction[]>([]);
   const [countingArray, setCountingArray] = useState<CountReaction[]>([]);
   const [userReaction, setUserReaction] = useState<Reaction>();
   const [reactionChange, setReactionChange] = useState(false);
 
-  useEffect(() => {
-    const fetchReactions = async () => {
-      const { data: reactionsServerResponseData } = await getAllReactionsForUpdate({ updateId: props.update.id });
-      setReactionsArray(reactionsServerResponseData);
-      const { data: userReactionFromServer } = await getReactionForUpdateAndUser({ updateId: props.update.id });
-      setUserReaction(userReactionFromServer);
-      const { data: countOfReactionsByUpdateAndShortcode } = await getCountPerEmojiOnUpdate({
-        updateId: props.update.id,
-      });
-      countOfReactionsByUpdateAndShortcode &&
-        setCountingArray(
-          countOfReactionsByUpdateAndShortcode.map(
-            (element: { reactionShortCode: 'string'; _count: { reactionShortCode: number } }) => ({
-              shortCode: element.reactionShortCode || 'XXXX',
-              count: element._count.reactionShortCode || 0,
-            }),
-          ),
-        );
-    };
+  const fetchReactions = useCallback(async () => {
+    const { data: reactionsServerResponseData } = await getAllReactionsForUpdate({ updateId });
+    setReactionsArray(reactionsServerResponseData);
+    const { data: userReactionFromServer } = await getReactionForUpdateAndUser({ updateId });
+    setUserReaction(userReactionFromServer);
+    const { data: countOfReactionsByUpdateAndShortcode } = await getCountPerEmojiOnUpdate({
+      updateId,
+    });
+    countOfReactionsByUpdateAndShortcode &&
+      setCountingArray(
+        countOfReactionsByUpdateAndShortcode.map(
+          (element: { reactionShortCode: 'string'; _count: { reactionShortCode: number } }) => ({
+            shortCode: element.reactionShortCode || 'XXXX',
+            count: element._count.reactionShortCode || 0,
+          }),
+        ),
+      );
+  }, [reactionChange, updateId]);
 
+  useEffect(() => {
     fetchReactions();
-  }, [props.update.id, reactionChange]);
+  }, [fetchReactions]);
 
   const topReactions = useMemo(() => {
     return (
@@ -86,7 +83,7 @@ export default function EmojiReactionCard(props: EmojiReactionCardProps) {
                   if (item) {
                     handleReactionClick({
                       emoji: { shortCode: item.reactedWith.shortCode, nativeSymbol: item.reactedWith.nativeSymbol },
-                      updateId: props.update.id,
+                      updateId,
                       setReactionChange,
                       userReaction,
                     });
@@ -116,7 +113,7 @@ export default function EmojiReactionCard(props: EmojiReactionCardProps) {
       <EmojiPickerCard
         isEmojiPickerClicked={isEmojiPickerClicked}
         setEmojiPickerClicked={setEmojiPickerClicked}
-        updateId={props.update.id}
+        updateId={updateId}
         setReactionChange={setReactionChange}
         userReaction={userReaction}
       />
@@ -182,8 +179,8 @@ const activeReactionCardButtonStyles = {
   borderRadius: '4px',
   borderWidth: 'thin',
   borderColor: 'secondary.main',
-  m: '.3em',
-  p: '.8em',
+  m: '.2em',
+  p: '.3em',
 };
 
 const addNewReactionButtonStyles = {
@@ -202,8 +199,5 @@ const addNewReactionButtonStyles = {
 };
 
 const addNewReactionIconStyles = {
-  fontSize: '32px',
-  '&:hover': {
-    fontSize: '35px',
-  },
+  fontSize: 24,
 };

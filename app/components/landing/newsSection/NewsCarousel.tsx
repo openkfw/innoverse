@@ -1,4 +1,5 @@
 'use client';
+
 import { SetStateAction, useRef, useState } from 'react';
 import Slider from 'react-slick';
 
@@ -66,8 +67,8 @@ export default function NewsCarousel(props: NewsSliderProps) {
     <Grid container item xs={12} spacing={2} onMouseDown={handleMouseDown} sx={wrapper}>
       <Box sx={sliderBox}>
         <Slider {...settings} ref={sliderRef}>
-          {slides.map((item, key) => (
-            <Grid item xs={11} key={key} sx={cardContainerStyles}>
+          {slides.map((item) => (
+            <Grid item xs={11} key={item.id} sx={cardContainerStyles}>
               <NewsCard item={item} />
             </Grid>
           ))}

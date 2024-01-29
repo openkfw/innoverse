@@ -28,6 +28,8 @@ import {
 
 export enum STRAPI_QUERY {
   GetProjects,
+  GetUpdates,
+  GetUpdatesFilter,
   GetProjectById,
   GetInnoUser,
   CreateInnoUser,
@@ -43,14 +45,6 @@ function formatDate(value: string, locale = 'de-DE') {
   const month = date.toLocaleString(locale, { month: 'long' });
   const year = date.toLocaleString(locale, { year: 'numeric' });
   return `${month} ${year}`;
-}
-
-function getCurrentDate(locale = 'de-DE') {
-  const date = new Date();
-  const day = date.toLocaleString(locale, { day: 'numeric' });
-  const month = date.toLocaleString(locale, { month: 'long' });
-  const year = date.toLocaleString(locale, { year: 'numeric' });
-  return `${day}. ${month} ${year}`;
 }
 
 const userQuery = `
@@ -145,6 +139,58 @@ export const GetInnoUserByProviderIdQuery = `query GetInnoUser($providerId: Stri
 }
 `;
 
+export const GetUpdatesQuery = `query GetUpdates($page: Int, $pageSize: Int) {
+  updates(pagination: { page: $page, pageSize: $pageSize }) {
+    data {
+      id
+      attributes {
+        date
+        comment
+        topic
+        author {
+          ${userQuery}
+        }
+        project {
+          data {
+            id
+            attributes {
+              title
+            }
+          }
+        }
+      }
+    }    
+  }
+}`;
+
+export const GetUpdatesFilterQuery = (
+  filterParams: string,
+  filter: string,
+  sort: string,
+) => `query GetUpdatesFilter${filterParams} {
+  updates (sort: "date:${sort}", ${filter})  {
+    data {
+      id
+      attributes {
+        date
+        comment
+        topic
+        author {
+          ${userQuery}
+        }
+        project {
+          data {
+            id
+            attributes {
+              title
+            }
+          }
+        }
+      }
+    }    
+  }
+}`;
+
 export const GetUpdatesByProjectIdQuery = `query GetUpdates($projectId: ID) {
   updates(filters: { project: { id: { eq: $projectId } } }) {
     data {
@@ -152,9 +198,17 @@ export const GetUpdatesByProjectIdQuery = `query GetUpdates($projectId: ID) {
       attributes {
         date
         comment
-        theme
+        topic
         author {
           ${userQuery}
+        }
+        project {
+          data {
+            id
+            attributes {
+              title
+            }
+          }
         }
       }
     }    
@@ -304,6 +358,8 @@ export const withResponseTransformer = async (
   switch (query) {
     case STRAPI_QUERY.GetProjects:
       return await getStaticBuildFetchProjects(data as ProjectsResponse);
+    case STRAPI_QUERY.GetUpdates:
+      return getStaticBuildFetchUpdates(data as UpdatesResponse);
     case STRAPI_QUERY.GetProjectById:
       return getStaticBuildFetchProjectById(data as ProjectResponse);
     case STRAPI_QUERY.GetInnoUser:
@@ -311,7 +367,7 @@ export const withResponseTransformer = async (
     case STRAPI_QUERY.CreateInnoUser:
       return getStaticBuildCreateInnoUser(data as CreateInnoUserResponse);
     case STRAPI_QUERY.GetUpdatesByProjectId:
-      return getStaticBuildFetchUpdatesByProjectId(data as UpdatesResponse);
+      return getStaticBuildFetchUpdates(data as UpdatesResponse);
     case STRAPI_QUERY.GetOpportunitiesByProjectId:
       return getStaticBuildFetchOpportunitiesByProjectId(data as OpportunitiesResponse);
     case STRAPI_QUERY.GetProjectQuestionsByProjectId:
@@ -391,17 +447,22 @@ function getStaticBuildFetchQuestionsByProjectId(graphqlResponse: ProjectQuestio
   return formattedQuestions as ProjectQuestion[];
 }
 
-function getStaticBuildFetchUpdatesByProjectId(graphqlResponse: UpdatesResponse) {
+function getStaticBuildFetchUpdates(graphqlResponse: UpdatesResponse) {
   const updates = graphqlResponse.data.updates.data;
 
   const formattedUpdates = updates.map((update) => {
     const u = update.attributes;
     const author = u.author.data.attributes;
+    const projectId = update.attributes.project.data.id;
+    const title = update.attributes.project.data.attributes.title;
+
     return {
       id: update.id,
+      projectId,
+      title,
       comment: u.comment,
-      date: u.date || getCurrentDate(),
-      theme: u.theme,
+      date: u.date || new Date(),
+      topic: u.topic,
       author: {
         name: author.name,
         image: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,

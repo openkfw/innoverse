@@ -13,6 +13,7 @@ import { ProjectUpdate } from '@/common/types';
 import EmojiReactionCard from '@/components/collaboration/emojiReactions/EmojiReactionCard';
 import AvatarIcon from '@/components/common/AvatarIcon';
 import theme from '@/styles/theme';
+import { formatDate } from '@/utils/helpers';
 
 interface ProjectCardProps {
   item: ProjectUpdate;
@@ -20,7 +21,7 @@ interface ProjectCardProps {
 
 export default function NewsCard(props: ProjectCardProps) {
   const { item } = props;
-  const { title, comment, author, theme, date } = item;
+  const { title, comment, author, topic, date } = item;
 
   return (
     <Card sx={cardStyles}>
@@ -47,12 +48,12 @@ export default function NewsCard(props: ProjectCardProps) {
 
         <Grid container direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1 }}>
           <Grid item>
-            <Chip label={theme} size="small" variant="filled" color="secondary" sx={chipStyles} />
+            {topic && <Chip label={topic} size="small" variant="filled" color="secondary" sx={chipStyles} />}
           </Grid>
 
           <Grid item>
             <Typography variant="caption" sx={{ color: 'secondary.contrastText' }}>
-              {date}
+              {formatDate(date)}
             </Typography>
           </Grid>
         </Grid>
@@ -61,7 +62,7 @@ export default function NewsCard(props: ProjectCardProps) {
       <Box style={{ flexGrow: '1' }} />
 
       <CardActions disableSpacing sx={{ m: -1, p: 0, height: 'auto' }}>
-        <EmojiReactionCard update={item} />
+        <EmojiReactionCard updateId={item.id} />
       </CardActions>
     </Card>
   );
