@@ -25,7 +25,7 @@ async function ProjectPage({ params }: { params: { id: string } }) {
       {project && (
         <Stack spacing={8} useFlexGap>
           <Container maxWidth="lg" sx={{ pb: 5 }}>
-            <BreadcrumbsNav />
+            <BreadcrumbsNav activePage="Projekt" />
             <HeroSection project={project} />
           </Container>
           <ProjectWrapper project={{ ...project, likes, followers }} />

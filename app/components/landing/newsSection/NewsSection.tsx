@@ -1,5 +1,8 @@
 'use client';
 
+import Link from 'next/link';
+import router from 'next/router';
+
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -33,7 +36,9 @@ export const NewsSection = (props: NewsProps) => {
             </Typography>
           </Grid>
           <Grid item xs={3} sx={buttonContainerStyles}>
-            <CustomButton>Mehr</CustomButton>
+            <Link href="news">
+              <CustomButton onClick={() => router.push('news')}>See more News</CustomButton>
+            </Link>
           </Grid>
         </Grid>
         {props.updates.length > 0 && <NewsCarousel updates={props.updates} />}

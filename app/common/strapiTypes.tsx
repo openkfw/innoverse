@@ -133,8 +133,9 @@ export type Update = {
   title: string;
   date: string;
   comment: string;
-  theme: string;
+  topic: string;
   author: User;
+  projectId: string;
 };
 
 export type UpdateQuery = {
@@ -142,8 +143,9 @@ export type UpdateQuery = {
   attributes: {
     date: string;
     comment: string;
-    theme: string;
+    topic: string;
     author: { data: UserQuery };
+    project: { data: { id: string; attributes: { title: string } } };
   };
 };
 

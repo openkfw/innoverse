@@ -110,8 +110,9 @@ export type ProjectUpdate = {
   title: string;
   author: User;
   comment: string;
-  theme: string;
+  topic: string;
   date: string;
+  projectId: string;
   projectStart?: boolean;
 };
 
@@ -192,4 +193,19 @@ export type CollaborationQuestion = {
   description: string;
   authors: User[];
   comments: Comment[];
+};
+
+export type Filters = {
+  resultsPerPage: number;
+  projects: string[];
+  topics: string[];
+};
+
+export interface NewsFilterProps {
+  filters: Filters;
+  setFilters: (filters: Filters) => void;
+}
+
+export type AmountOfNews = {
+  [key: string]: number;
 };

@@ -16,7 +16,7 @@
       "type": "text",
       "required": true
     },
-    "theme": {
+    "topic": {
       "type": "string"
     },
     "date": {

@@ -1,5 +1,6 @@
 import {
   CollaborationQuestion,
+  Filters,
   Opportunity,
   Project,
   ProjectByIdQueryResult,
@@ -9,6 +10,7 @@ import {
   UserSession,
 } from '@/common/types';
 import { getSurveyQuestionVotes } from '@/components/collaboration/survey/actions';
+import { SortValues } from '@/components/newsPage/News';
 
 import { getFulfilledResults } from './helpers';
 import {
@@ -22,6 +24,8 @@ import {
   GetQuestionsByProjectIdQuery,
   GetSurveyQuestionsByProjectIdQuery,
   GetUpdatesByProjectIdQuery,
+  GetUpdatesFilterQuery,
+  GetUpdatesQuery,
   STRAPI_QUERY,
   withResponseTransformer,
 } from './queries';
@@ -122,6 +126,55 @@ export async function getFeaturedProjects() {
       projects: result.projects,
       updates: result.updates,
     };
+  } catch (err) {
+    console.info(err);
+  }
+}
+
+export async function getProjectsUpdates(page?: number, pageSize?: number) {
+  try {
+    const requestProjects = await strapiFetcher(GetUpdatesQuery, { page, pageSize });
+    const result = await withResponseTransformer(STRAPI_QUERY.GetUpdates, requestProjects);
+    return result;
+  } catch (err) {
+    console.info(err);
+  }
+}
+
+export async function getProjectsUpdatesFilter(sort: SortValues, filters: Filters, page?: number, pageSize?: number) {
+  try {
+    const { projects, topics } = filters;
+    const variables = {
+      projects,
+      topics,
+      page,
+      pageSize,
+    };
+
+    let filter = '';
+    let filterParams = '';
+
+    // Concat the filter strings (passed to Strapi query) based on the current filters
+    if (projects.length && topics.length) {
+      filterParams += '$projects: [String], $topics: [String]';
+      filter += 'filters: { project: { title: { in: $projects } }, and: { topic: { in: $topics } }} ';
+    } else if (projects.length) {
+      filterParams += '$projects: [String]';
+      filter += 'filters: { project: { title: { in: $projects } }} ';
+    } else if (topics.length) {
+      filterParams += '$topics: [String]';
+      filter += 'filters: { topic: { in: $topics }} ';
+    }
+    filterParams += '$page: Int, $pageSize: Int';
+    filter += 'pagination: { page: $page, pageSize: $pageSize }';
+
+    if (filterParams.length) {
+      filterParams = `(${filterParams})`;
+    }
+
+    const requestProjects = await strapiFetcher(GetUpdatesFilterQuery(filterParams, filter, sort), variables);
+    const result = await withResponseTransformer(STRAPI_QUERY.GetUpdates, requestProjects);
+    return result;
   } catch (err) {
     console.info(err);
   }

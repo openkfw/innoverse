@@ -19,7 +19,10 @@ export function withAuth(func: (user: UserSession, body: any) => Promise<AuthRes
       return { status: StatusCodes.UNAUTHORIZED, errors: 'User is not authenticated' };
     }
     const sessionUser = session?.user as UserSession;
-    await createInnoUserIfNotExist(sessionUser, sessionUser.image);
-    return func(sessionUser, args) as Promise<AuthResponse>;
+    if (sessionUser) {
+      await createInnoUserIfNotExist(sessionUser, sessionUser.image);
+      return func(sessionUser, args) as Promise<AuthResponse>;
+    }
+    return { status: StatusCodes.UNAUTHORIZED, errors: 'User is not authenticated' };
   };
 }

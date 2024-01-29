@@ -1,8 +1,8 @@
 // @ts-nocheck
 
-import palette from './palette';
-
 import { Components, Theme } from '@mui/material/styles';
+
+import palette from './palette';
 
 const components: Components<Omit<Theme, 'components'>> = {
   MuiCssBaseline: {
@@ -95,6 +95,45 @@ const components: Components<Omit<Theme, 'components'>> = {
       },
       outlined: {
         borderColor: palette.common?.white,
+      },
+    },
+  },
+  MuiCheckbox: {
+    styleOverrides: {
+      root: {
+        color: palette.common?.white,
+        '&.Mui-checked': {
+          color: palette.secondary.main,
+        },
+      },
+    },
+  },
+  MuiRadio: {
+    styleOverrides: {
+      root: {
+        color: palette.common?.white,
+        '&.Mui-checked': {
+          color: palette.secondary.main,
+        },
+      },
+    },
+  },
+  MuiFormLabel: {
+    styleOverrides: {
+      root: {
+        color: palette.common?.white,
+        fontFamily: '***FONT_REMOVED***',
+        fontSize: '14px',
+        '&.Mui-focused': {
+          color: palette.common?.white,
+        },
+      },
+    },
+  },
+  MuiFormControlLabel: {
+    styleOverrides: {
+      label: {
+        fontSize: '0.875rem',
       },
     },
   },

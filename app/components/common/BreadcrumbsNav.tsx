@@ -8,7 +8,11 @@ import Typography from '@mui/material/Typography';
 
 import ChevronRightIcon from '../icons/ChevronRightIcon';
 
-export default function BreadcrumbsNav() {
+type BreadcrumbsNavProps = {
+  activePage: string;
+};
+
+export default function BreadcrumbsNav({ activePage }: BreadcrumbsNavProps) {
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
   };
@@ -21,7 +25,7 @@ export default function BreadcrumbsNav() {
     </Link>,
     <Link key="2" href="/" style={{ textDecoration: 'none', pointerEvents: 'none' }} onClick={handleClick}>
       <Typography variant="caption" color="common.white">
-        Projekt
+        {activePage}
       </Typography>
     </Link>,
   ];

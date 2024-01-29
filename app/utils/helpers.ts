@@ -9,3 +9,11 @@ export function assertFullfilledPromise(item: any) {
 export function getFulfilledResults(results: any) {
   return results.filter(assertFullfilledPromise).map((res: any) => res.value);
 }
+
+export function formatDate(dateString: string, locale = 'de-DE') {
+  const date = new Date(dateString);
+  const day = date.toLocaleString(locale, { day: 'numeric' });
+  const month = date.toLocaleString(locale, { month: 'long' });
+  const year = date.toLocaleString(locale, { year: 'numeric' });
+  return `${day}. ${month} ${year}`;
+}
