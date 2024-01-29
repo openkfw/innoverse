@@ -57,7 +57,7 @@ export default function TopicInput(props: NewsFilterProps) {
     <Box sx={{ m: 3 }}>
       {topics && (
         <FormControl component="fieldset" variant="standard">
-          <FormLabel component="legend">Topic</FormLabel>
+          <FormLabel component="legend">Themen</FormLabel>
           <FormGroup>
             {topics.slice(0, MAX_AMOUNT).map((topic, key) => (
               <FormControlLabel
@@ -68,7 +68,7 @@ export default function TopicInput(props: NewsFilterProps) {
             ))}
             {topics.length > MAX_AMOUNT && !expanded && (
               <Typography onClick={handleExpandClick} color="secondary" sx={{ textDecoration: 'underline' }}>
-                Show more
+                Mehr anzeigen
               </Typography>
             )}
             <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -81,7 +81,7 @@ export default function TopicInput(props: NewsFilterProps) {
               ))}
               {topics.length > MAX_AMOUNT && expanded && (
                 <Typography onClick={handleExpandClick} color="secondary" sx={{ textDecoration: 'underline' }}>
-                  Show less
+                  Weniger anzeigen
                 </Typography>
               )}
             </Collapse>
