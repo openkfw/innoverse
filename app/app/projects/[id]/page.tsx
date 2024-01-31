@@ -24,7 +24,7 @@ async function ProjectPage({ params }: { params: { id: string } }) {
     <Layout>
       {project && (
         <Stack spacing={8} useFlexGap>
-          <Container maxWidth="lg" sx={{ pb: 5 }}>
+          <Container maxWidth="lg" sx={containerStyles}>
             <BreadcrumbsNav activePage="Projekt" />
             <HeroSection project={project} />
           </Container>
@@ -36,3 +36,9 @@ async function ProjectPage({ params }: { params: { id: string } }) {
 }
 
 export default ProjectPage;
+
+// Page Styles
+const containerStyles = {
+  paddingLeft: 0,
+  paddingRight: 0,
+};

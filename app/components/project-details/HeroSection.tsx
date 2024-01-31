@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 
 import Avatar from '@mui/material/Avatar';
@@ -8,6 +9,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
+import theme from '@/styles/theme';
 
 import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 import ProgressBar from '../common/ProgressBar';
@@ -23,8 +25,8 @@ export default function HeroSection(props: HeroSectionProps) {
 
   return (
     <Grid container sx={containerStyles}>
-      <Grid item xs={5}>
-        <Box>
+      <Grid item xs={12} md={5}>
+        <Box sx={imageWrapperStyles}>
           <Image
             src={image || defaultImage}
             alt="Project"
@@ -35,7 +37,7 @@ export default function HeroSection(props: HeroSectionProps) {
           />
         </Box>
       </Grid>
-      <Grid item xs={7}>
+      <Grid item xs={12} md={7}>
         <Card sx={cardStyles}>
           <Typography variant="h2" sx={cardTitleStyles}>
             {title}
@@ -77,20 +79,48 @@ export default function HeroSection(props: HeroSectionProps) {
 }
 
 // Hero section styles
-
-const backgroundImageStyles = {
-  width: 720,
-  height: 380,
-};
-
 const containerStyles = {
-  position: 'relative',
+  justifyContent: 'center',
   justifyItems: 'center',
   alignItems: 'center',
+  margin: 0,
+  padding: 0,
+
+  [theme.breakpoints.down('md')]: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+};
+
+const imageWrapperStyles = {
+  width: 661,
+  height: 378,
+
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  margin: 0,
+  padding: 0,
+
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    height: 'unset',
+  },
+};
+
+const backgroundImageStyles = {
+  width: '100vw',
+  height: 'auto',
+  maxWidth: 661,
+  maxHeight: 378,
+
+  [theme.breakpoints.down('md')]: {
+    margin: 0,
+    padding: 0,
+  },
 };
 
 const cardStyles = {
-  ml: '10%',
   padding: '32px 24px',
   borderRadius: '16px',
   border: '1px solid rgba(255, 255, 255, 0.20)',
@@ -102,16 +132,43 @@ const cardStyles = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
+  marginLeft: '97px',
+  [theme.breakpoints.down('lg')]: {
+    marginLeft: '-97px',
+  },
+  [theme.breakpoints.down('md')]: {
+    marginLeft: 0,
+    marginTop: '-40px',
+    width: '100%',
+    height: 'unset',
+    backgroundColor: 'rgba(255, 255, 255, 0.10)',
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    marginRight: 4,
+    marginTop: '-40px',
+    height: 'unset',
+    backgroundColor: 'rgba(255, 255, 255, 0.10)',
+  },
 };
 
 const cardTitleStyles = {
   fontSize: '48px',
+
+  [theme.breakpoints.down('md')]: {
+    fontSize: '23px',
+  },
 };
 
 const cardBodyStyles = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'flex-end',
+
+  [theme.breakpoints.down('md')]: {
+    alignItems: 'flex-start',
+    flexDirection: 'column',
+  },
 };
 
 const avatarContainerStyles = {
@@ -127,6 +184,7 @@ const avatarStyles = {
 const cardHeaderStyles = {
   paddingBottom: 0,
   paddingLeft: 0,
+  lineHeight: 1,
 };
 
 const statusContainerStyles = {
@@ -137,4 +195,8 @@ const statusContainerStyles = {
 
 const statusStyles = {
   textAlign: 'flex-start',
+
+  [theme.breakpoints.down('md')]: {
+    marginTop: '10px',
+  },
 };
