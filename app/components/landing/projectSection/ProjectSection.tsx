@@ -37,22 +37,24 @@ export const ProjectSection = (props: ProjectProps) => {
           transform: 'translate(50%, -10%)',
         }}
       />
-      <Grid container spacing={5} sx={wrapperStyles}>
-        <Grid item container xs={12} sx={titleContainerStyles}>
-          <Grid item xs={9}>
-            <Typography variant="overline" sx={subtitleStyles}>
-              Aktuelle Pipeline
-            </Typography>
-            <Typography variant="h2" sx={titleStyles}>
-              Innovationsinitiativen
-            </Typography>
+      <div id="initiativen">
+        <Grid container spacing={5} sx={wrapperStyles}>
+          <Grid item container xs={12} sx={titleContainerStyles}>
+            <Grid item xs={9}>
+              <Typography variant="overline" sx={subtitleStyles}>
+                Aktuelle Pipeline
+              </Typography>
+              <Typography variant="h2" sx={titleStyles}>
+                Innovationsinitiativen
+              </Typography>
+            </Grid>
+            <Grid item xs={3} sx={buttonContainerStyles}>
+              <CustomButton>Mehr</CustomButton>
+            </Grid>
           </Grid>
-          <Grid item xs={3} sx={buttonContainerStyles}>
-            <CustomButton>Mehr</CustomButton>
-          </Grid>
+          <ProjectCarousel projects={props.projects} />
         </Grid>
-        <ProjectCarousel projects={props.projects} />
-      </Grid>
+      </div>
     </Box>
   );
 };
