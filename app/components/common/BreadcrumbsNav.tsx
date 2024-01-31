@@ -6,6 +6,8 @@ import Box from '@mui/material/Box';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Typography from '@mui/material/Typography';
 
+import theme from '@/styles/theme';
+
 import ChevronRightIcon from '../icons/ChevronRightIcon';
 
 type BreadcrumbsNavProps = {
@@ -56,7 +58,10 @@ const typographyStyles = {
 
 const breadcrumbsStyles = {
   marginTop: '32px',
-  marginBottom: '45.95px',
+  marginBottom: '30px',
+  [theme.breakpoints.down('sm')]: {
+    margin: '32px 16px 20px 16px',
+  },
 };
 
 const iconContainerStyles = {
