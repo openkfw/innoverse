@@ -16,7 +16,16 @@ import LoggedInMenu from './LoggedInMenu';
 
 import logo from '/public/images/logo.svg';
 
-const pages = ['Initiativen', 'News', 'Backstage'];
+type Headers = {
+  text: string;
+  link?: string;
+};
+
+const pages: Headers[] = [
+  { text: 'Initiativen', link: '/#initiativen' },
+  { text: 'News', link: '/news' },
+  { text: 'Backstage' },
+];
 
 export default function TopBar() {
   const { user, isLoading } = useUser();
@@ -75,8 +84,16 @@ export default function TopBar() {
 
             <Stack direction="row" spacing={3}>
               {pages.map((page) => (
-                <MenuItem key={page} sx={menuItemStyle}>
-                  <Typography variant="body2">{page}</Typography>
+                <MenuItem key={page.text} sx={page.link ? menuItemStyle : null}>
+                  <Typography variant="body2" color="rgba(155,155,155,1)">
+                    {page.link ? (
+                      <Link style={{ textDecoration: 'none', color: 'white' }} href={page.link}>
+                        {page.text}
+                      </Link>
+                    ) : (
+                      page.text
+                    )}
+                  </Typography>
                 </MenuItem>
               ))}
 

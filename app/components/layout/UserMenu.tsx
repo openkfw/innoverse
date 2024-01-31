@@ -42,12 +42,12 @@ export default function UserMenu(props: UserMenuProps) {
         {user.email}
       </Typography>
       <Divider sx={{ mx: 2, my: 1 }} />
-      <MenuItem>
+      <MenuItem disabled>
         <Typography variant="body2" color="text.primary">
           Profil
         </Typography>
       </MenuItem>
-      <MenuItem>
+      <MenuItem disabled>
         <Typography variant="body2" color="text.primary">
           Notification
         </Typography>
