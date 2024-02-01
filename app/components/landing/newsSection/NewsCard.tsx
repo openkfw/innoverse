@@ -27,11 +27,13 @@ export default function NewsCard(props: ProjectCardProps) {
     <Card sx={cardStyles}>
       <CardHeader
         sx={cardHeaderStyles}
-        avatar={<AvatarIcon user={author} size={24} />}
+        avatar={author && <AvatarIcon user={author} size={24} />}
         title={
-          <Typography variant="caption" sx={{ color: 'text.primary' }}>
-            {author.name}
-          </Typography>
+          author && (
+            <Typography variant="caption" sx={{ color: 'text.primary' }}>
+              {author.name}
+            </Typography>
+          )
         }
       />
 

@@ -28,7 +28,6 @@ const MAX_TEXT_LENGTH = 300;
 
 export const CommentCard = ({ content }: CommentCardProps) => {
   const { author, comment, upvotedBy, id } = content;
-  const { name, role, image, badge } = author;
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleToggle = () => {
@@ -43,29 +42,31 @@ export const CommentCard = ({ content }: CommentCardProps) => {
 
   return (
     <Card sx={cardStyle}>
-      <CardHeader
-        sx={cardHeaderStyles}
-        avatar={
-          image ? (
-            <Avatar sx={avatarStyles}>
-              <Image src={image} alt="avatar" fill sizes="33vw" />
-            </Avatar>
-          ) : (
-            <AvatarInitialsIcon name={name} size={32} />
-          )
-        }
-        title={
-          <Stack direction="row" spacing={1} sx={cardHeaderTitleStyles}>
-            <Typography variant="subtitle2" color="secondary.contrastText">
-              {name}
-            </Typography>
-            {badge && <Image src={badgeIcon} alt="badge" />}
-            <Typography variant="subtitle2" color="text.secondary">
-              {role}
-            </Typography>
-          </Stack>
-        }
-      />
+      {author && (
+        <CardHeader
+          sx={cardHeaderStyles}
+          avatar={
+            author.image ? (
+              <Avatar sx={avatarStyles}>
+                <Image src={author.image} alt="avatar" fill sizes="33vw" />
+              </Avatar>
+            ) : (
+              <AvatarInitialsIcon name={author.name} size={32} />
+            )
+          }
+          title={
+            <Stack direction="row" spacing={1} sx={cardHeaderTitleStyles}>
+              <Typography variant="subtitle2" color="secondary.contrastText">
+                {author.name}
+              </Typography>
+              {author.badge && <Image src={badgeIcon} alt="badge" />}
+              <Typography variant="subtitle2" color="text.secondary">
+                {author.role}
+              </Typography>
+            </Stack>
+          }
+        />
+      )}
       <CardContent sx={cardContentStyles}>
         <Stack direction="column" spacing={2}>
           <Box sx={{ ...commentContainerStyles, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
