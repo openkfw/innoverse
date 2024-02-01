@@ -37,7 +37,7 @@ export default function HeroSection(props: HeroSectionProps) {
           />
         </Box>
       </Grid>
-      <Grid item xs={12} md={7}>
+      <Grid item xs={12} md={7} sx={{ mx: 2 }}>
         <Card sx={cardStyles}>
           <Typography variant="h2" sx={cardTitleStyles}>
             {title}
@@ -85,7 +85,6 @@ const containerStyles = {
   alignItems: 'center',
   margin: 0,
   padding: 0,
-
   [theme.breakpoints.down('md')]: {
     display: 'flex',
     flexDirection: 'column',
@@ -95,13 +94,11 @@ const containerStyles = {
 const imageWrapperStyles = {
   width: 661,
   height: 378,
-
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   margin: 0,
   padding: 0,
-
   [theme.breakpoints.down('md')]: {
     width: '100%',
     height: 'unset',
@@ -113,11 +110,8 @@ const backgroundImageStyles = {
   height: 'auto',
   maxWidth: 661,
   maxHeight: 378,
-
-  [theme.breakpoints.down('md')]: {
-    margin: 0,
-    padding: 0,
-  },
+  margin: 0,
+  padding: 0,
 };
 
 const cardStyles = {
@@ -145,7 +139,6 @@ const cardStyles = {
   },
   [theme.breakpoints.down('sm')]: {
     width: '100%',
-    marginRight: 4,
     marginTop: '-40px',
     height: 'unset',
     backgroundColor: 'rgba(255, 255, 255, 0.10)',
