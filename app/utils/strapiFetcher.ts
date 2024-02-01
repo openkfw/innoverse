@@ -14,15 +14,6 @@ const strapiFetcher = async (query: string, variables?: any) => {
     next: { revalidate: 60 * 2 },
   });
 
-  console.log(
-    'res',
-    res,
-    JSON.stringify({
-      query: query,
-      variables: variables,
-    }),
-  );
-
   // If the status code is not in the range 200-299,
   // we still try to parse and throw it.
   if (!res.ok) {
