@@ -32,6 +32,7 @@ export default function TopBar() {
 
   const menuItemStyle = {
     borderRadius: '8px',
+    minHeight: '100% !important',
     ':hover': {
       backgroundColor: 'rgba(255, 255, 255, 0.08)',
     },
@@ -83,19 +84,21 @@ export default function TopBar() {
             </Box>
 
             <Stack direction="row" spacing={3}>
-              {pages.map((page) => (
-                <MenuItem key={page.text} sx={page.link ? menuItemStyle : null}>
-                  <Typography variant="body2" color="rgba(155,155,155,1)">
-                    {page.link ? (
-                      <Link style={{ textDecoration: 'none', color: 'white' }} href={page.link}>
-                        {page.text}
-                      </Link>
-                    ) : (
-                      page.text
-                    )}
-                  </Typography>
-                </MenuItem>
-              ))}
+              {pages.map((page) =>
+                page.link ? (
+                  <Link key={page.text} style={{ textDecoration: 'none', color: 'white' }} href={page.link}>
+                    <MenuItem sx={menuItemStyle}>
+                      <Typography variant="body2">{page.text}</Typography>
+                    </MenuItem>
+                  </Link>
+                ) : (
+                  <MenuItem key={page.text} sx={{ borderRadius: '8px' }}>
+                    <Typography variant="body2" color="rgba(155,155,155,1)">
+                      {page.text}
+                    </Typography>
+                  </MenuItem>
+                ),
+              )}
 
               {(user || isLoading) && <LoggedInMenu user={user} isUserLoading={isLoading} />}
             </Stack>
