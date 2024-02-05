@@ -1,7 +1,9 @@
-import { Box, useMediaQuery } from '@mui/material';
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
@@ -73,7 +75,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
     }
 
     return (
-      <Grid item sx={interactionStyles}>
+      <Stack direction="row" spacing={1} sx={interactionStyles}>
         <InteractionButton
           isSelected={isLiked}
           projectName={project.projectName}
@@ -89,7 +91,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
           onClick={toggleFollow}
           sx={interactionButtonStyles}
         />
-      </Grid>
+      </Stack>
     );
   };
 

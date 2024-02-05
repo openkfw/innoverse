@@ -69,7 +69,6 @@ export default function EmojiReactionCard({ updateId }: EmojiReactionCardProps) 
         container
         direction="row"
         sx={{
-          mt: 1,
           alignItems: 'center',
         }}
       >
@@ -186,7 +185,7 @@ const activeReactionCardButtonStyles = {
 const addNewReactionButtonStyles = {
   height: '1.6em',
   minWidth: '.1em',
-  width: '3rem',
+  width: '1rem',
   bgcolor: 'background.paper',
   mr: '.3em',
   p: '1em',
