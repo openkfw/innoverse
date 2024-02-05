@@ -12,8 +12,7 @@ import CustomButton from '@/components/common/CustomButton';
 import theme from '@/styles/theme';
 
 import ArrowControllers from '../../landing/projectSection/ArrowControllers';
-
-import NewsCard from './NewsCard';
+import NewsCard from '../../newsPage/NewsCard';
 
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
@@ -71,7 +70,7 @@ export default function NewsCarousel(props: NewsSliderProps) {
             .sort((a, b) => b.date.localeCompare(a.date))
             .map((item, key) => (
               <Grid item xs={11} key={key} sx={cardContainerStyles}>
-                <NewsCard item={item} />
+                <NewsCard update={item} noClamp />
               </Grid>
             ))}
         </Slider>
@@ -134,7 +133,6 @@ const navigationStyles = {
   alignSelf: 'flex-start',
   width: 'min(85%, 344px)',
   marginLeft: -1,
-  pt: 4,
 };
 
 const buttonStyles = {

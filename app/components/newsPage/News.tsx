@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Filters, ProjectUpdate } from '@/common/types';
+import theme from '@/styles/theme';
 import { getProjectsUpdatesFilter } from '@/utils/requests';
 
 import NewsCard from './NewsCard';
@@ -94,11 +95,19 @@ export const News = (props: NewsProps) => {
         }
       >
         <Stack spacing={2} direction="column" justifyContent="flex-end" alignItems="flex-end">
-          {scrollData && scrollData.map((update) => <NewsCard key={update.id} update={update} />)}
+          {scrollData && scrollData.map((update) => <NewsCard key={update.id} update={update} sx={cardStyles} />)}
         </Stack>
       </InfiniteScroll>
     </Box>
   );
+};
+
+const cardStyles = {
+  paddingX: '99px',
+  paddingY: 4,
+  [theme.breakpoints.up('sm')]: {
+    width: '100%',
+  },
 };
 
 const buttonStyle = {

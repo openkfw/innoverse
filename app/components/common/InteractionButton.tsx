@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import BookmarkAddedOutlinedIcon from '@mui/icons-material/BookmarkAddedOutlined';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
@@ -57,9 +58,14 @@ export default function InteractionButton(props: InteractionButtonProps) {
     setClicked(isSelected);
   }, [isSelected]);
 
+  const getSelectedInteractionIcon = () => {
+    if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddedOutlinedIcon fontSize="small" />;
+    if (interactionType === InteractionType.USER_FOLLOW_ICON) return <PersonAddIcon fontSize="small" />;
+    if (interactionType === InteractionType.USER_FOLLOW) return <PersonAddIcon fontSize="small" />;
+  };
+
   const getInteractionIcon = () => {
     if (interactionType === InteractionType.LIKE) return;
-    if (interactionType === InteractionType.PROJECT_FOLLOW) return;
     if (interactionType === InteractionType.USER_FOLLOW) return <PersonAddIcon fontSize="small" />;
     if (interactionType === InteractionType.USER_FOLLOW_ICON) return <PersonAddIcon fontSize="small" />;
     if (interactionType === InteractionType.COLLABORATION) return <PeopleOutlineOutlinedIcon fontSize="small" />;
@@ -71,6 +77,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.RECOMMEND) return <RecommendIcon color={isHovered ? 'white' : 'black'} />;
     if (interactionType === InteractionType.LOG_IN) return <PersonIcon fontSize="small" />;
     if (interactionType === InteractionType.CLEAR) return <ClearIcon fontSize="small" />;
+    if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddOutlinedIcon fontSize="small" />;
   };
 
   function handleIconClick(e: React.MouseEvent) {
@@ -86,13 +93,12 @@ export default function InteractionButton(props: InteractionButtonProps) {
           <CloseIcon color="black" />
         </Box>
       );
-    if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddOutlinedIcon fontSize="small" />;
   };
 
   const getButtonText = () => {
     if (label) return label;
     if (interactionType === InteractionType.LIKE) return 'Like';
-    if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Projekt folgen';
+    if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Folgen';
     if (interactionType === InteractionType.USER_FOLLOW) return 'Folgen';
     if (interactionType === InteractionType.USER_FOLLOW_ICON) return;
     if (interactionType === InteractionType.COLLABORATION) return 'Hilf uns!';
@@ -110,8 +116,13 @@ export default function InteractionButton(props: InteractionButtonProps) {
   const getButtonTextClicked = () => {
     if (label) return label;
     if (interactionType === InteractionType.LIKE) return 'Liked';
-    if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Projekt gefolgt';
-    if (interactionType === InteractionType.USER_FOLLOW) return 'Gefolgt';
+    if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Entfolgen';
+    if (interactionType === InteractionType.USER_FOLLOW) return 'Entfolgen';
+    if (interactionType === InteractionType.SHARE_OPINION) return 'Teile Deine Erfahrung';
+    if (interactionType === InteractionType.ADD_INSIGHTS) return 'Teile Deine Erfahrung';
+    if (interactionType === InteractionType.APPLY) return 'Ich bin dabei';
+    if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
+    if (interactionType === InteractionType.FEEDBACK) return 'FEEDBACK';
   };
 
   const getText = () => {
@@ -130,10 +141,9 @@ export default function InteractionButton(props: InteractionButtonProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       variant="outlined"
-      startIcon={getInteractionIcon()}
+      startIcon={isSelected ? getSelectedInteractionIcon() : getInteractionIcon()}
       endIcon={getEndIcon()}
       sx={{
-        mr: 1,
         px: getText() === undefined ? 1 : 2,
         py: 1,
         color: clicked ? 'secondary.main' : 'rgba(0, 0, 0, 0.56)',
@@ -142,7 +152,8 @@ export default function InteractionButton(props: InteractionButtonProps) {
         fontSize: '13px',
         fontWeight: '700',
         lineHeight: '19px',
-        border: ' 1px solid rgba(0, 0, 0, 0.10)',
+        border: '1px solid',
+        borderColor: clicked ? 'secondary.main' : 'rgba(0, 0, 0, 0.10)',
         background: 'rgba(255, 255, 255, 0.10)',
         minWidth: 0,
         height: '35px',
@@ -152,7 +163,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
         },
         '&:active': {
           border: '1px solid rgba(255, 255, 255, 0.40)',
-          background: 'palette.secondary.main',
+          background: 'secondary.main',
         },
         '& .MuiButton-startIcon': {
           margin: getText() === undefined ? 0 : undefined,
