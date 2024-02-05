@@ -14,6 +14,7 @@ services:
     ports:
       - 5432:5432
     restart: on-failure
+    network_mode: host
 
   strapi:
     container_name: strapi
@@ -21,7 +22,7 @@ services:
     restart: unless-stopped
     env_file: ./strapi/.env
     environment:
-      DATABASE_HOST: database
+      DATABASE_HOST: 127.0.0.1
       NODE_ENV: ${NODE_ENV}
     volumes:
       - ./strapi/config:/opt/app/config
@@ -34,3 +35,4 @@ services:
       - "1337:1337"
     depends_on:
       - database
+    network_mode: host

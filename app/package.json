@@ -48,6 +48,7 @@
     "react-toastify": "^10.0.3",
     "slick-carousel": "^1.8.1",
     "swr": "^2.2.4",
+    "web-push": "^3.6.6",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -58,6 +59,7 @@
     "@types/react-dom": "18.2.7",
     "@types/react-show-more-text": "^1.4.4",
     "@types/react-slick": "^0.23.10",
+    "@types/web-push": "^3.6.3",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.12",

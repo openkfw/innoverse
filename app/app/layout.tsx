@@ -1,4 +1,5 @@
 'use client';
+
 import React from 'react';
 import type { Metadata } from 'next';
 import Script from 'next/script';
@@ -7,13 +8,14 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 import theme from '../styles/theme';
 
-import { UserContextProvider } from './contexts/user-context';
+import { NotificationContextProvider } from './contexts/notification-context';
 import { SWRProvider } from './swr-provider';
 import ThemeRegistry from './ThemeRegistry';
+import { UserContextProvider } from './contexts/user-context';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const metadata: Metadata = {
-  title: 'InnoPlatte',
+  title: 'InnoBuddy',
   viewport: { width: 'device-width', initialScale: 1 },
   themeColor: theme.palette.primary.main,
 };
@@ -37,7 +39,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SessionProvider>
             <SWRProvider>
               <UserContextProvider>
-                <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+                <NotificationContextProvider>
+                  <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+                </NotificationContextProvider>
               </UserContextProvider>
             </SWRProvider>
           </SessionProvider>
