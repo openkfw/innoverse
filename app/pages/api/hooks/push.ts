@@ -27,8 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { event, model, entry } = bodySchema.parse(body);
 
   if (method !== 'POST') return res.status(StatusCodes.METHOD_NOT_ALLOWED);
-  if (authorization !== process.env.STRAPI_PUSH_NOTIFICATION_SECRET)
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' });
+  if (authorization !== process.env.STRAPI_PUSH_NOTIFICATION_SECRET) return res.status(StatusCodes.UNAUTHORIZED);
 
   //TODO: Rules should be defined in an external file
   if ((event === 'entry.publish' || event === 'entry.update') && model === 'project') {

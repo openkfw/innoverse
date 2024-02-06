@@ -35,7 +35,7 @@ export const sendPushNotification = async (
   for (const subscription of subscriptions) {
     try {
       const res = await webpush.sendNotification(subscription, payload, options);
-      console.log('Send PushNotification to user: ', userId, ' with payload: ', JSON.stringify(res));
+      console.info('Send PushNotification to user: ', userId, ' with payload: ', JSON.stringify(res));
     } catch (e) {
       const error = <WebPushError>e;
       // subscription has expired or is no longer valid

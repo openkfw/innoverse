@@ -19,7 +19,6 @@ export const requestPushNotificationPermission = async () => {
 
 export const getPushNotificationSubscriptions = async () => {
   return await navigator.serviceWorker.ready.then(async (registration) => {
-    console.log('Registration', registration);
     return await registration.pushManager.getSubscription();
   });
 };
@@ -72,8 +71,9 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
       }
       await subscribeToWebPush(JSON.stringify(subscription));
     };
+
     try {
-      if (!initialized.current) {
+      if (!initialized.current && user && !isLoading) {
         initialized.current = true;
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker
@@ -81,9 +81,7 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
               scope: '/',
             })
             .then(() => {
-              user && !isLoading
-                ? registerNotifications().then(() => console.info('Push Notifications registered'))
-                : null;
+              registerNotifications().then(() => console.info('Push Notifications registered'));
             });
         }
       }
