@@ -18,8 +18,7 @@ interface CollaborationTabProps {
   project: Project;
 }
 
-export const CollaborationTab = (props: CollaborationTabProps) => {
-  const { project } = props;
+export const CollaborationTab = ({ project }: CollaborationTabProps) => {
   const [surveyQuestions] = useState(project.surveyQuestions);
 
   return (
