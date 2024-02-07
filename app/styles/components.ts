@@ -3,6 +3,7 @@
 import { Components, Theme } from '@mui/material/styles';
 
 import palette from './palette';
+import theme from './theme';
 
 const components: Components<Omit<Theme, 'components'>> = {
   MuiCssBaseline: {
@@ -133,7 +134,9 @@ const components: Components<Omit<Theme, 'components'>> = {
   MuiFormControlLabel: {
     styleOverrides: {
       label: {
-        fontSize: '0.875rem',
+        '@media (min-width: 900px)': {
+          fontSize: '0.875rem',
+        },
       },
     },
   },
@@ -141,6 +144,63 @@ const components: Components<Omit<Theme, 'components'>> = {
     defaultProps: {
       variantMapping: {
         link: 'p',
+      },
+    },
+  },
+  MuiInputLabel: {
+    styleOverrides: {
+      root: {
+        color: palette.common?.black,
+      },
+    },
+  },
+  MuiInputLabel: {
+    styleOverrides: {
+      formControl: {
+        color: palette.common?.black,
+      },
+    },
+  },
+  MuiMenuItem: {
+    styleOverrides: {
+      root: {
+        color: palette.common?.black,
+      },
+    },
+  },
+  MuiButtonBase: {
+    styleOverrides: {
+      root: {
+        color: palette.text?.primary,
+        MuiMenuItem: {
+          styleOverrides: {
+            root: { color: palette.text?.primary },
+          },
+        },
+      },
+    },
+  },
+  MuiPickersToolbar: {
+    styleOverrides: {
+      root: {
+        backgroundColor: palette.primary.light,
+        '.MuiTypography-root': {
+          color: palette.common.white,
+        },
+      },
+    },
+  },
+  MuiPickersCalendarHeader: {
+    styleOverrides: {
+      labelContainer: {
+        color: palette.text?.primary,
+      },
+    },
+  },
+  MuiPickersYear: {
+    styleOverrides: {
+      yearButton: {
+        color: palette.text?.primary,
       },
     },
   },

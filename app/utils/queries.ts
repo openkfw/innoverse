@@ -1,6 +1,7 @@
 import {
   CollaborationQuestionsResponse,
   CreateInnoUserResponse,
+  CreateProjectUpdateResponse,
   GetInnoUserResponse,
   OpportunitiesResponse,
   ProjectData,
@@ -38,6 +39,7 @@ export enum STRAPI_QUERY {
   GetProjectQuestionsByProjectId,
   GetSurveyQuestionsByProjectId,
   GetCollaborationQuestionsByProjectId,
+  CreateProjectUpdate,
 }
 
 function formatDate(value: string, locale = 'de-DE') {
@@ -49,6 +51,7 @@ function formatDate(value: string, locale = 'de-DE') {
 
 const userQuery = `
   data {
+    id
     attributes {
       providerId
       provider
@@ -139,8 +142,8 @@ export const GetInnoUserByProviderIdQuery = `query GetInnoUser($providerId: Stri
 }
 `;
 
-export const GetUpdatesQuery = `query GetUpdates($page: Int, $pageSize: Int) {
-  updates(pagination: { page: $page, pageSize: $pageSize }) {
+export const GetUpdatesQuery = `query GetUpdates {
+  updates(sort: "date:desc", pagination: { limit: 100 }) {
     data {
       id
       attributes {
@@ -192,7 +195,7 @@ export const GetUpdatesFilterQuery = (
 }`;
 
 export const GetUpdatesByProjectIdQuery = `query GetUpdates($projectId: ID) {
-  updates(filters: { project: { id: { eq: $projectId } } }) {
+  updates(sort: "date:desc", filters: { project: { id: { eq: $projectId } } }) {
     data {
       id
       attributes {
@@ -342,6 +345,31 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
  }
 }`;
 
+export const CreateProjectUpdateQuery = `mutation PostProjectUpdate($projectId: ID!, $comment: String, $authorId: ID!, $date: Date) {
+  createUpdate(data: { project: $projectId, comment: $comment, author: $authorId, date: $date }) {
+    data {
+      id
+      attributes {
+        comment
+        topic
+        date
+        author {
+          ${userQuery}
+        }
+        project {
+          data {
+            id
+            attributes {
+              title
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`;
+
 export const withResponseTransformer = async (
   query: STRAPI_QUERY,
   data:
@@ -353,7 +381,8 @@ export const withResponseTransformer = async (
     | OpportunitiesResponse
     | ProjectQuestionsResponse
     | CollaborationQuestionsResponse
-    | SurveyQuestionsResponse,
+    | SurveyQuestionsResponse
+    | CreateProjectUpdateResponse,
 ) => {
   switch (query) {
     case STRAPI_QUERY.GetProjects:
@@ -376,10 +405,26 @@ export const withResponseTransformer = async (
       return getStaticBuildFetchCollaborationQuestionsByProjectId(data as CollaborationQuestionsResponse);
     case STRAPI_QUERY.GetSurveyQuestionsByProjectId:
       return getStaticBuildFetchSurveyQuestionsByProjectId(data as SurveyQuestionsResponse);
+    case STRAPI_QUERY.CreateProjectUpdate:
+      return getStaticBuildCreateProjectUpdate(data as CreateProjectUpdateResponse);
     default:
       break;
   }
 };
+
+function getStaticBuildCreateProjectUpdate(graphqlResponse: CreateProjectUpdateResponse) {
+  if (graphqlResponse && graphqlResponse.data) {
+    const update = graphqlResponse.data.createUpdate.data;
+    const author = update.attributes.author.data.attributes;
+    return {
+      ...update.attributes,
+      author: {
+        ...author,
+        avatar: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
+      },
+    };
+  }
+}
 
 function getStaticBuildFetchSurveyQuestionsByProjectId(graphqlResponse: SurveyQuestionsResponse) {
   const surveyQuestions = graphqlResponse.data.surveyQuestions.data;
@@ -410,6 +455,7 @@ async function getStaticBuildFetchCollaborationQuestionsByProjectId(graphqlRespo
           comments: formattedComments,
           authors: q.authors.data.map((a: UserQuery) => {
             return {
+              id: a.id,
               ...a.attributes,
               image:
                 a.attributes.avatar.data &&
@@ -435,6 +481,7 @@ function getStaticBuildFetchQuestionsByProjectId(graphqlResponse: ProjectQuestio
       title: q.title,
       authors: q.authors.data.map((a: UserQuery) => {
         return {
+          id: a.id,
           ...a.attributes,
           image:
             a.attributes.avatar.data &&
@@ -483,22 +530,27 @@ function getStaticBuildFetchOpportunitiesByProjectId(graphqlResponse: Opportunit
 }
 
 function getStaticBuildCreateInnoUser(graphqlResponse: CreateInnoUserResponse) {
-  const user = graphqlResponse.data.createInnoUser.data.attributes;
-
-  return {
-    ...user,
-    image: user.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.avatar.data.attributes.url}`,
-  };
-}
-
-function getStaticBuildGetInnoUser(graphqlResponse: GetInnoUserResponse) {
-  if (graphqlResponse.data.innoUsers.data.length) {
-    const user = graphqlResponse.data.innoUsers.data[0].attributes;
+  if (graphqlResponse.data) {
+    const user = graphqlResponse.data.createInnoUser.data.attributes;
 
     return {
       ...user,
       image: user.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.avatar.data.attributes.url}`,
     };
+  }
+}
+
+function getStaticBuildGetInnoUser(graphqlResponse: GetInnoUserResponse) {
+  if (graphqlResponse.data.innoUsers.data.length) {
+    const user = graphqlResponse.data.innoUsers.data[0];
+
+    return {
+      id: user.id,
+      ...user.attributes,
+      image:
+        user.attributes.avatar.data &&
+        `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.attributes.avatar.data.attributes.url}`,
+    } as User;
   }
 }
 

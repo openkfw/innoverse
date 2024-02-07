@@ -36,7 +36,7 @@ export default function ArrowControllers(props: ArrowControllersProps) {
   };
 
   return (
-    <Grid container p={0} spacing={0}>
+    <Grid container p={0} spacing={0} sx={{ width: '50%' }}>
       <Grid item>
         <IconButton disabled={currentSlide == 0} onClick={prev} sx={iconStyles}>
           <ArrowLeftIcon style={{ fontSize: 40 }} />

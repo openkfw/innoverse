@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import router from 'next/router';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -37,7 +36,7 @@ export const NewsSection = (props: NewsProps) => {
           </Grid>
           <Grid item xs={3} sx={buttonContainerStyles}>
             <Link href="news">
-              <CustomButton onClick={() => router.push('news')}>Mehr News</CustomButton>
+              <CustomButton>Mehr News</CustomButton>
             </Link>
           </Grid>
         </Grid>
