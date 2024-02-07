@@ -73,6 +73,14 @@ export type CreateInnoUserResponse = {
   };
 };
 
+export type CreateProjectUpdateResponse = {
+  data: {
+    createUpdate: {
+      data: UpdateQuery;
+    };
+  };
+};
+
 export type UserQueryResult = {
   user: any;
 };
@@ -107,6 +115,7 @@ export type ImageType = {
 };
 
 export type UserQuery = {
+  id: string;
   attributes: {
     name: string;
     role?: string;
@@ -116,6 +125,7 @@ export type UserQuery = {
 };
 
 export type User = {
+  id?: string;
   name: string;
   role?: string;
   department?: string;

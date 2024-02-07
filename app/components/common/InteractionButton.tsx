@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import AddIcon from '@mui/icons-material/Add';
 import BookmarkAddedOutlinedIcon from '@mui/icons-material/BookmarkAddedOutlined';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -47,6 +48,7 @@ export enum InteractionType {
   FEEDBACK = 'feedback',
   LOG_IN = 'log-in',
   CLEAR = 'clear',
+  ADD_UPDATE = 'add-update',
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
@@ -87,6 +89,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
 
   const getEndIcon = () => {
     if (interactionType === InteractionType.LIKE) return <ThumbUpOutlinedIcon fontSize="small" />;
+    if (interactionType === InteractionType.ADD_UPDATE) return <AddIcon fontSize="small" />;
     if (interactionType === InteractionType.FEEDBACK)
       return (
         <Box onClick={handleIconClick}>
@@ -111,11 +114,13 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.FEEDBACK) return 'FEEDBACK';
     if (interactionType === InteractionType.LOG_IN) return 'Log in';
     if (interactionType === InteractionType.CLEAR) return 'Entfernen';
+    if (interactionType === InteractionType.ADD_UPDATE) return 'Neuigkeit hinzufügen';
   };
 
   const getButtonTextClicked = () => {
     if (label) return label;
     if (interactionType === InteractionType.LIKE) return 'Liked';
+    if (interactionType === InteractionType.ADD_UPDATE) return 'Neuigkeit hinzufügen';
     if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Entfolgen';
     if (interactionType === InteractionType.USER_FOLLOW) return 'Entfolgen';
     if (interactionType === InteractionType.SHARE_OPINION) return 'Teile Deine Erfahrung';
@@ -147,13 +152,12 @@ export default function InteractionButton(props: InteractionButtonProps) {
         px: getText() === undefined ? 1 : 2,
         py: 1,
         color: clicked ? 'secondary.main' : 'rgba(0, 0, 0, 0.56)',
-        borderRadius: '48px',
         fontFamily: 'Arial',
         fontSize: '13px',
         fontWeight: '700',
         lineHeight: '19px',
         border: '1px solid',
-        borderColor: clicked ? 'secondary.main' : 'rgba(0, 0, 0, 0.10)',
+        borderColor: isSelected ? 'secondary.main' : 'rgba(0, 0, 0, 0.10)',
         background: 'rgba(255, 255, 255, 0.10)',
         minWidth: 0,
         height: '35px',
@@ -175,3 +179,17 @@ export default function InteractionButton(props: InteractionButtonProps) {
     </Button>
   );
 }
+
+export const interactionButtonStyles = {
+  color: 'common.white',
+  borderRadius: '50px',
+  border: '2px solid rgba(255, 255, 255, 0.40)',
+  boxShadow: '0px 12px 32px 0px rgba(0, 0, 0, 0.25), 0px 4px 8px 0px rgba(0, 0, 0, 0.10)',
+  backdropFilter: 'blur(24px)',
+  ':hover': {
+    border: '2px solid rgba(255, 255, 255, 0.40)',
+  },
+  fontSize: '20px',
+  fontFamily: '***FONT_REMOVED***',
+  fontWeight: 700,
+};

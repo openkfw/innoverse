@@ -2,6 +2,7 @@
 
 import { SetStateAction, useRef, useState } from 'react';
 import Slider from 'react-slick';
+import Link from 'next/link';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -84,7 +85,9 @@ export default function NewsCarousel(props: NewsSliderProps) {
           nextSlide={() => sliderRef?.current?.slickNext()}
         />
         <Box sx={buttonStyles}>
-          <CustomButton>Mehr</CustomButton>
+          <Link href="news">
+            <CustomButton>Mehr News</CustomButton>
+          </Link>
         </Box>
       </Box>
     </Grid>

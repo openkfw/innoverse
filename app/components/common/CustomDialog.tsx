@@ -59,7 +59,7 @@ const CustomDialog: FC<CustomDialogProps> = ({
     >
       {closeIcon && (
         <DialogActions sx={dialogActionsStyle}>
-          <IconButton onClick={handleClose} sx={iconButtonStyle}>
+          <IconButton onClick={handleClose} sx={closeIconButtonStyle}>
             <CloseIcon />
           </IconButton>
         </DialogActions>
@@ -89,7 +89,7 @@ const paperPropsStyle = {
   marginTop: -95,
 };
 
-const iconButtonStyle = {
+export const closeIconButtonStyle = {
   width: 48,
   height: 48,
   borderRadius: 48,

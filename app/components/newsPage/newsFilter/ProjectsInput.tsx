@@ -9,15 +9,13 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import FormLabel from '@mui/material/FormLabel';
 
-import { AmountOfNews, NewsFilterProps } from '@/common/types';
-
-import { getUpdatesProjects, mapUpdatesProjects } from './actions';
+import { useNewsFilter } from '@/app/contexts/news-filter-context';
+import { NewsFilterProps } from '@/common/types';
 
 export default function ProjectsInput(props: NewsFilterProps) {
   const { setFilters, filters } = props;
+  const { projects, amountOfNewsProject } = useNewsFilter();
   const [values, setValues] = useState(filters.projects);
-  const [projects, setProjects] = useState<string[]>([]);
-  const [amountOfNews, setAmountOfNews] = useState<AmountOfNews>({});
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
@@ -35,15 +33,6 @@ export default function ProjectsInput(props: NewsFilterProps) {
     setFilters({ ...filters, projects: values });
   }, [values]);
 
-  useEffect(() => {
-    const setFilterProjects = async () => {
-      const projects = await getUpdatesProjects();
-      setAmountOfNews(await mapUpdatesProjects());
-      setProjects(projects);
-    };
-    setFilterProjects();
-  }, []);
-
   return (
     <Box sx={{ m: 3 }}>
       <FormControl component="fieldset" variant="standard">
@@ -53,7 +42,7 @@ export default function ProjectsInput(props: NewsFilterProps) {
             <FormControlLabel
               key={key}
               control={<Checkbox checked={values.includes(title) || false} onChange={handleChange} name={title} />}
-              label={`${title} (${amountOfNews[title]})`}
+              label={`${title} (${amountOfNewsProject[title]})`}
             />
           ))}
         </FormGroup>

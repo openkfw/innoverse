@@ -28,14 +28,14 @@ async function NewsPage() {
             mixBlendMode: 'plus-lighter',
           }}
         />
-        <Container maxWidth="lg" sx={{ pb: 5 }}>
+        <Container>
           <BreadcrumbsNav activePage="News" />
           <Grid container sx={containerStyles}>
             <Card sx={cardStyles}>
               <Typography variant="h2" sx={cardTitleStyles}>
                 News
               </Typography>
-              <Typography variant="body2" sx={{ fontSize: '24px', mt: 1 }}>
+              <Typography variant="body2" sx={{ mt: 1, fontSize: { lg: 24, sm: 22, xs: 16 } }}>
                 Die Neuigkeiten im Überblick: Aktuelle Nachrichten zu unseren Projekten auf der Innovationsplattform
               </Typography>
             </Card>
@@ -56,6 +56,7 @@ const cardStyles = {
   backdropFilter: 'blur(20px)',
   width: 620,
   height: 200,
+  ml: { lg: -4, md: -4, sm: 0 },
 };
 
 const cardTitleStyles = {

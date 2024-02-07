@@ -26,19 +26,19 @@ export const UpdateCard = ({ content, divider }: UpdateCardProps) => {
   const dayMonth = `${getDay(date)} ${getMonth(date)}`;
 
   return (
-    <Grid container>
-      <Grid container item xs={3} justifyContent="flex-start" alignItems="center" direction="column">
+    <Grid container item>
+      <Grid container item xs={4} justifyContent="center">
         <DateField date={dayMonth} divider={divider} />
-
-        {projectStart && (
-          <Box sx={projectStartStyles}>
-            <Typography variant="subtitle2" color="primary.main">
-              Project Kickoff
-            </Typography>
-          </Box>
-        )}
       </Grid>
-      <Grid container item xs={7}>
+      {projectStart && (
+        <Box sx={projectStartStyles}>
+          <Typography variant="subtitle2" color="primary.main">
+            Project Kickoff
+          </Typography>
+        </Box>
+      )}
+
+      <Grid container item xs={8}>
         <CommentCard content={commentContent} sx={commentCardStyles} />
       </Grid>
     </Grid>

@@ -8,7 +8,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
-import InteractionButton, { InteractionType } from '../common/InteractionButton';
+import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
 
 import { handleFollow, handleLike, handleRemoveFollower, handleRemoveLike } from './likes-follows/actions';
 import CollaborationColumn from './CollaborationColumn';
@@ -197,17 +197,5 @@ const interactionStyles = {
   marginRight: '64px',
   [theme.breakpoints.down('sm')]: {
     marginRight: 0,
-  },
-};
-
-const interactionButtonStyles = {
-  color: 'common.white',
-  borderRadius: '50px',
-  border: '2px solid rgba(255, 255, 255, 0.40)',
-  boxShadow: '0px 12px 32px 0px rgba(0, 0, 0, 0.25), 0px 4px 8px 0px rgba(0, 0, 0, 0.10)',
-  backdropFilter: 'blur(24px)',
-
-  ':hover': {
-    border: '2px solid rgba(255, 255, 255, 0.40)',
   },
 };

@@ -11,18 +11,16 @@ import FormGroup from '@mui/material/FormGroup';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
 
-import { AmountOfNews, NewsFilterProps } from '@/common/types';
-
-import { getUpdatesTopics, mapUpdatesTopics } from './actions';
+import { useNewsFilter } from '@/app/contexts/news-filter-context';
+import { NewsFilterProps } from '@/common/types';
 
 const MAX_AMOUNT = 3;
 
 export default function TopicInput(props: NewsFilterProps) {
   const { filters, setFilters } = props;
-  const [topics, setTopics] = useState<string[]>([]);
+  const { topics, amountOfNewsTopic } = useNewsFilter();
   const [values, setValues] = useState(filters.projects);
   const [expanded, setExpanded] = useState(false);
-  const [amountOfNews, setAmountOfNews] = useState<AmountOfNews>({});
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -44,15 +42,6 @@ export default function TopicInput(props: NewsFilterProps) {
     setFilters({ ...filters, topics: values });
   }, [values]);
 
-  useEffect(() => {
-    const setFilterTopics = async () => {
-      const topics = await getUpdatesTopics();
-      setAmountOfNews(await mapUpdatesTopics());
-      setTopics(topics);
-    };
-    setFilterTopics();
-  }, []);
-
   return (
     <Box sx={{ m: 3 }}>
       {topics && (
@@ -63,7 +52,7 @@ export default function TopicInput(props: NewsFilterProps) {
               <FormControlLabel
                 key={key}
                 control={<Checkbox checked={values.includes(topic) || false} onChange={handleChange} name={topic} />}
-                label={`${topic} (${amountOfNews[topic]})`}
+                label={`${topic} (${amountOfNewsTopic[topic]})`}
               />
             ))}
             {topics.length > MAX_AMOUNT && !expanded && (
@@ -76,7 +65,7 @@ export default function TopicInput(props: NewsFilterProps) {
                 <FormControlLabel
                   key={key}
                   control={<Checkbox checked={values.includes(topic) || false} onChange={handleChange} name={topic} />}
-                  label={`${topic} (${amountOfNews[topic]})`}
+                  label={`${topic} (${amountOfNewsTopic[topic]})`}
                 />
               ))}
               {topics.length > MAX_AMOUNT && expanded && (

@@ -3,22 +3,23 @@
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import FilterListIcon from '@mui/icons-material/FilterList';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { SxProps } from '@mui/system';
 
-import { Filters, ProjectUpdate } from '@/common/types';
+import { useNewsFilter } from '@/app/contexts/news-filter-context';
+import { ProjectUpdate } from '@/common/types';
 import theme from '@/styles/theme';
 import { getProjectsUpdatesFilter } from '@/utils/requests';
 
 import NewsCard from './NewsCard';
 
-type NewsProps = {
-  filters: Filters;
-};
+interface NewsProps {
+  updateAdded: boolean;
+  sx?: SxProps;
+}
 
 export enum SortValues {
   DESC = 'desc',
@@ -26,59 +27,40 @@ export enum SortValues {
 }
 
 export const News = (props: NewsProps) => {
-  const { filters } = props;
-  const [sort, setSort] = useState<SortValues>(SortValues.DESC);
+  const { updateAdded, sx } = props;
+  const { news, setNews, refetchNews, filters, sort } = useNewsFilter();
   const [hasMoreValue, setHasMoreValue] = useState(true);
-  const [scrollData, setScrollData] = useState<ProjectUpdate[]>([]);
   const [index, setIndex] = useState(1);
-
-  const sortNews = () => {
-    if (sort === SortValues.ASC) {
-      setSort(SortValues.DESC);
-      return;
-    }
-    setSort(SortValues.ASC);
-  };
 
   const loadScrollData = async () => {
     const data = (await getProjectsUpdatesFilter(sort, filters, index, filters.resultsPerPage)) as ProjectUpdate[];
-    setScrollData((prevItems) => [...prevItems, ...data]);
+    setNews((prevItems: ProjectUpdate[]) => [...prevItems, ...data]);
     data.length > 0 ? setHasMoreValue(true) : setHasMoreValue(false);
     setIndex((prevIndex) => prevIndex + 1);
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = (await getProjectsUpdatesFilter(sort, filters, 1, filters.resultsPerPage)) as ProjectUpdate[];
-      setScrollData([...data]);
+      refetchNews();
       setIndex(2);
     };
     fetchData();
   }, [filters, sort]);
 
-  return (
-    <Box sx={{ width: '100%' }}>
-      <Box display="flex" justifyContent="flex-end">
-        <Button
-          variant="text"
-          startIcon={<FilterListIcon sx={{ color: 'secondary.main' }} />}
-          sx={buttonStyle}
-          onClick={sortNews}
-        >
-          {sort === SortValues.DESC ? (
-            <Typography variant="subtitle1" color="secondary.main">
-              Neueste zuerst
-            </Typography>
-          ) : (
-            <Typography variant="subtitle1" color="secondary.main">
-              Älteste zuerst
-            </Typography>
-          )}
-        </Button>
-      </Box>
+  useEffect(() => {
+    const fetchData = async () => {
+      refetchNews();
+      setIndex(2);
+    };
+    if (updateAdded) {
+      fetchData();
+    }
+  }, [updateAdded]);
 
+  return (
+    <Box sx={{ width: '100%', ...sx }}>
       <InfiniteScroll
-        dataLength={scrollData.length}
+        dataLength={news.length}
         next={loadScrollData}
         hasMore={hasMoreValue}
         scrollThreshold={0.5}
@@ -95,7 +77,7 @@ export const News = (props: NewsProps) => {
         }
       >
         <Stack spacing={2} direction="column" justifyContent="flex-end" alignItems="flex-end">
-          {scrollData && scrollData.map((update) => <NewsCard key={update.id} update={update} sx={cardStyles} />)}
+          {news && news.map((update, key) => <NewsCard key={key} update={update} sx={cardStyles} />)}
         </Stack>
       </InfiniteScroll>
     </Box>
@@ -105,14 +87,10 @@ export const News = (props: NewsProps) => {
 const cardStyles = {
   paddingX: '99px',
   paddingY: 4,
+  [theme.breakpoints.down('md')]: {
+    p: 3,
+  },
   [theme.breakpoints.up('sm')]: {
     width: '100%',
-  },
-};
-
-const buttonStyle = {
-  backgroundColor: 'transparent',
-  ':hover': {
-    backgroundColor: 'transparent',
   },
 };

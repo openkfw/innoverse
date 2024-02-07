@@ -8,7 +8,7 @@ interface YearFieldProps {
 
 export const YearField = ({ year }: YearFieldProps) => {
   return (
-    <Grid container item mb={1} xs={3} justifyContent="center">
+    <Grid container item mb={1} xs={4} justifyContent="center">
       <Box sx={wrapperStyles}>
         <Typography variant="subtitle2" color="primary.main">
           {year}
