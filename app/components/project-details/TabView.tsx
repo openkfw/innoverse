@@ -28,7 +28,7 @@ function CustomTabPanel(props: TabPanelProps) {
 
   return (
     <div role="tabpanel" hidden={value !== index} id={id} aria-labelledby={`tab-${id}`} {...other}>
-      {value === index && <Box sx={{ paddingTop: 3 }}>{children}</Box>}
+      <Box sx={{ paddingTop: 3 }}>{children}</Box>
     </div>
   );
 }
