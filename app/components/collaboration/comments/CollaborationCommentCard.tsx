@@ -73,7 +73,6 @@ export const CollaborationCommentCard = ({ content }: CommentCardProps) => {
             <Typography variant="body1" sx={commentStyles}>
               {comment}
             </Typography>
-
             {!isCollapsed && (
               <Typography variant="subtitle2" onClick={handleToggle} sx={buttonOverlayStyle}>
                 ... alles anzeigen
@@ -137,6 +136,7 @@ const commentContainerStyles = {
   overflow: 'hidden',
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
+  whiteSpace: 'pre-wrap',
 };
 
 const commentStyles = {
