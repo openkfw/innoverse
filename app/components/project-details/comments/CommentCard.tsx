@@ -137,6 +137,7 @@ const commentContainerStyles = {
   overflow: 'hidden',
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
+  whiteSpace: 'pre-wrap',
 };
 
 const commentStyles = {
