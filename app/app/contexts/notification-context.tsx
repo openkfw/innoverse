@@ -2,8 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useRef } from 'react';
 
-import { useUser } from '@/app/user-context';
 import { subscribeToWebPush } from '@/utils/notification/pushNotification';
+
+import { useUser } from './user-context';
 
 interface NotificationContextInterface {
   showNotification: (title: string, options: NotificationOptions | undefined) => Promise<Notification>;

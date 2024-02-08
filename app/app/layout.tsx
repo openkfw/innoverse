@@ -9,9 +9,9 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import theme from '../styles/theme';
 
 import { NotificationContextProvider } from './contexts/notification-context';
+import { UserContextProvider } from './contexts/user-context';
 import { SWRProvider } from './swr-provider';
 import ThemeRegistry from './ThemeRegistry';
-import { UserContextProvider } from './contexts/user-context';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const metadata: Metadata = {
