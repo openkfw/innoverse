@@ -48,9 +48,6 @@ export const ProjectSection = (props: ProjectProps) => {
                 Innovationsinitiativen
               </Typography>
             </Grid>
-            <Grid item xs={3} sx={buttonContainerStyles}>
-              <CustomButton>Mehr</CustomButton>
-            </Grid>
           </Grid>
           <ProjectCarousel projects={props.projects} />
         </Grid>
@@ -89,12 +86,6 @@ const titleContainerStyles = {
   },
 };
 
-const buttonContainerStyles = {
-  marginTop: 6,
-  [theme.breakpoints.down('sm')]: {
-    display: 'none',
-  },
-};
 
 const titleStyles = {
   [theme.breakpoints.down('sm')]: {

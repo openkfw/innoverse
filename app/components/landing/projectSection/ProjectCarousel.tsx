@@ -89,9 +89,6 @@ export default function ProjectCarousel(props: ProjectProps) {
           prevSlide={() => sliderRef?.current?.slickPrev()}
           nextSlide={() => sliderRef?.current?.slickNext()}
         />
-        <Box sx={buttonStyles}>
-          <CustomButton>Mehr</CustomButton>
-        </Box>
       </Box>
     </Grid>
   );
@@ -136,10 +133,4 @@ const navigationStyles = {
   alignItems: 'center',
   width: 'min(85%, 344px)',
   marginLeft: -1,
-};
-
-const buttonStyles = {
-  [theme.breakpoints.up('sm')]: {
-    display: 'none',
-  },
 };

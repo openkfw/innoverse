@@ -78,7 +78,6 @@ export const MappingProjectsCard = (props: ProjectProps) => {
             <CardHeader
               sx={{ textAlign: 'left', mt: '30px', ml: '25px', mr: '25px' }}
               title={<Typography variant="h4">Strategische Innovation @ ***STRING_REMOVED*** </Typography>}
-              action={<CustomButton>Details</CustomButton>}
             />
 
             <CardContent sx={{ ml: '25px', mr: '25px' }}>
