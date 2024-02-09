@@ -31,10 +31,10 @@ export default function ProjectCarousel(props: ProjectProps) {
       const endX = moveEvent.pageX;
       const distance = endX - startX;
       if (sliderRef.current) {
-        if (distance > 100) {
+        if (distance > 75) {
           sliderRef.current.slickPrev();
           document.removeEventListener('mousemove', mouseMoveHandler);
-        } else if (distance < -100) {
+        } else if (distance < -75) {
           sliderRef.current.slickNext();
           document.removeEventListener('mousemove', mouseMoveHandler);
         }
@@ -54,7 +54,7 @@ export default function ProjectCarousel(props: ProjectProps) {
     infinite: false,
     speed: 500,
     slidesToShow: 1,
-    slidesToScroll: 1,
+    slidesToScroll: 2,
     vertical: false,
     beforeChange: (current: number, next: SetStateAction<number>) => setCurrentSlide(next),
     variableWidth: isWideScreen,
