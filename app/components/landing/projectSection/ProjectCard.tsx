@@ -1,7 +1,8 @@
 import * as React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
-import { CardActionArea, useMediaQuery } from '@mui/material';
+import { useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -28,7 +29,7 @@ export default function ProjectCard(props: ProjectCardProps) {
 
   return (
     <Card sx={{ ...cardStyles, height: isWideScreen ? 490 : 440 }}>
-      <CardActionArea href={`/projects/${encodeURIComponent(id)}`}>
+      <Box sx={cardWrapperStyles}>
         <CardMedia sx={{ height: isWideScreen ? 237 : 175, borderRadius: '8px' }}>
           <Image
             src={img}
@@ -49,15 +50,23 @@ export default function ProjectCard(props: ProjectCardProps) {
             <VisibleContributors contributors={contributors} />
 
             <Typography variant="h5" sx={titleStyles}>
-              {title}
+              <Link href={`/projects/${encodeURIComponent(id)}`} style={linkStyles}>
+                {title}
+              </Link>
             </Typography>
 
             {isWideScreen ? (
-              <Typography variant="subtitle1" sx={{ ...descriptionStyles, WebkitLineClamp: title.length > 50 ? 1 : 2 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 50 ? 1 : 2 }}
+              >
                 {summary}
               </Typography>
             ) : (
-              <Typography variant="subtitle1" sx={{ ...descriptionStyles, WebkitLineClamp: title.length > 20 ? 2 : 3 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 20 ? 2 : 3 }}
+              >
                 {summary}
               </Typography>
             )}
@@ -67,7 +76,7 @@ export default function ProjectCard(props: ProjectCardProps) {
             </Box>
           </Box>
         </CardContent>
-      </CardActionArea>
+      </Box>
     </Card>
   );
 }
@@ -84,6 +93,12 @@ const cardStyles = {
     maxWidth: '100%',
   },
 };
+
+const cardWrapperStyles = {
+  flex: 1,
+  width: '100%',
+};
+
 const cardContentStyles = {
   padding: 3,
   height: '100%',
@@ -94,6 +109,14 @@ const titleStyles = {
   overflow: 'hidden',
   WebkitLineClamp: 2,
   WebkitBoxOrient: 'vertical',
+  width: 'fit-content',
+  color: 'secondary.main',
+};
+
+const linkStyles = {
+  textDecoration: 'none',
+  cursor: 'pointer',
+  color: 'inherit',
 };
 
 const descriptionStyles = {

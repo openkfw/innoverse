@@ -20,7 +20,7 @@ const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: st
       </Typography>
       <Box>
         <List aria-label="tags" sx={listStyles}>
-          {tags.map((el, id) => (
+          {tags?.map((el, id) => (
             <ListItem key={id} sx={listItemStyles}>
               <CustomChip label={el.tag} />
             </ListItem>
