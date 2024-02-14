@@ -3,15 +3,15 @@
 import type { ProjectComment } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 
-import { UserSession } from '@/common/types';
+import { Comment, UserSession } from '@/common/types';
 import {
   addComment,
   getCommentUpvotedBy,
   getProjectComments,
   handleCommentUpvotedBy,
 } from '@/repository/db/project_comment';
-import { withAuth } from '@/utils/auth';
-import { getFulfilledResults, sortDateByCreatedAt } from '@/utils/helpers';
+import { AuthResponse, withAuth } from '@/utils/auth';
+import { getFulfilledPromiseResults, getFulfilledResults, sortDateByCreatedAt } from '@/utils/helpers';
 import { getInnoUserByProviderId } from '@/utils/requests';
 import { validateParams } from '@/utils/validationHelper';
 
@@ -23,13 +23,16 @@ export const handleComment = withAuth(async (user: UserSession, body: { projectI
   const validatedParams = validateParams(handleCommentSchema, body);
   if (validatedParams.status === StatusCodes.OK) {
     const newComment = await addComment(dbClient, body.projectId, user.providerId, body.comment);
+
     return {
       status: StatusCodes.OK,
       data: {
         ...newComment,
         author: user,
         upvotedBy: [],
-      },
+        responseCount: 0,
+        questionId: '',
+      } as Comment,
     };
   }
   return {
@@ -38,7 +41,7 @@ export const handleComment = withAuth(async (user: UserSession, body: { projectI
   };
 });
 
-export const getComments = async (body: { projectId: string }) => {
+export const getComments = async (body: { projectId: string }): Promise<AuthResponse<Comment[]>> => {
   const validatedParams = validateParams(getCommentsSchema, body);
   if (validatedParams.status === StatusCodes.OK) {
     const result = await getProjectComments(dbClient, body.projectId);
@@ -46,15 +49,14 @@ export const getComments = async (body: { projectId: string }) => {
     const comments = await Promise.allSettled(
       (sortDateByCreatedAt(result) as ProjectComment[]).map(async (comment) => {
         const author = await getInnoUserByProviderId(comment.author);
-        const upvotes = await Promise.allSettled(
-          comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote)),
-        ).then((results) => getFulfilledResults(results));
+        const getUpvotes = comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote));
+        const upvotes = await getFulfilledPromiseResults(getUpvotes);
 
         return {
           ...comment,
           upvotedBy: upvotes,
           author,
-        };
+        } as Comment;
       }),
     ).then((results) => getFulfilledResults(results));
 

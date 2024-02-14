@@ -25,22 +25,23 @@ const WriteCommentCard = ({ sx, projectName, handleComment }: WriteCommentCardPr
 
   const handleNewComment = async () => {
     if (commentRef.current) {
-      await handleComment(commentRef.current.value);
+      const value = commentRef.current.value;
       commentRef.current.value = '';
+      await handleComment(value);
     }
   };
 
   return (
     <>
       {user && (
-        <Stack direction="row" spacing={3}>
+        <Stack direction="row" spacing={3} sx={sx}>
           <AvatarIcon user={user} size={32} />
           <TextField
             inputRef={commentRef}
             multiline
             rows={6}
             placeholder={placeholder}
-            sx={{ ...textFieldStyles, ...sx }}
+            sx={textFieldStyles}
             InputProps={{
               endAdornment: (
                 <InteractionButton

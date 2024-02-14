@@ -20,7 +20,7 @@ import theme from '@/styles/theme';
 import badgeIcon from '/public/images/icons/badge.svg';
 
 interface CommentCardProps {
-  content: Comment;
+  content: Pick<Comment, 'author' | 'comment'>;
   sx?: SxProps;
 }
 

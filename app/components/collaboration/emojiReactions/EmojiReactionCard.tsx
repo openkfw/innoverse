@@ -30,16 +30,17 @@ export default function EmojiReactionCard({ updateId }: EmojiReactionCardProps) 
 
   const fetchReactions = useCallback(async () => {
     const { data: reactionsServerResponseData } = await getAllReactionsForUpdate({ updateId });
-    setReactionsArray(reactionsServerResponseData);
+    setReactionsArray(reactionsServerResponseData ?? []);
     const { data: userReactionFromServer } = await getReactionForUpdateAndUser({ updateId });
-    setUserReaction(userReactionFromServer);
+    setUserReaction(userReactionFromServer ?? undefined);
     const { data: countOfReactionsByUpdateAndShortcode } = await getCountPerEmojiOnUpdate({
       updateId,
     });
+
     countOfReactionsByUpdateAndShortcode &&
       setCountingArray(
-        countOfReactionsByUpdateAndShortcode.map(
-          (element: { reactionShortCode: 'string'; _count: { reactionShortCode: number } }) => ({
+        countOfReactionsByUpdateAndShortcode?.map(
+          (element: { reactionShortCode: string; _count: { reactionShortCode: number } }) => ({
             shortCode: element.reactionShortCode || 'XXXX',
             count: element._count.reactionShortCode || 0,
           }),

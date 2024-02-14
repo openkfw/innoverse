@@ -26,13 +26,27 @@ model CollaborationComment {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  comment    String // text of comment
-  projectId  String // commented project
-  questionId String // commented question
-  author     String // id of author
-  upvotedBy  String[] // ids of users
+  comment             String // text of comment
+  projectId           String // commented project
+  questionId          String // commented question
+  author              String // id of author
+  upvotedBy           String[] // ids of users
+  responses           CollaborationCommentResponse[] @relation("Response") // responses to the comment
 
   @@map(name: "collaboration_comments")
+}
+
+model CollaborationCommentResponse {
+  id        String @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  response    String // text of response
+  author      String // id of the author
+  upvotedBy   String[] // ids of users
+  commentId   String // id of comment this responds to to
+  comment     CollaborationComment @relation("Response", fields: [commentId], references: [id]) // comment this responds to
+
+  @@map("collaboration_comments_responses")
 }
 
 model Like {
@@ -60,7 +74,7 @@ model UserReactionOnUpdate {
   reactionShortCode String // foreign key field referencing Reaction model
   reactedWith       Reaction @relation(fields: [reactionShortCode], references: [shortCode])
 
-  @@id(name:"compositeID",[reactedBy, updateId])
+  @@id(name: "compositeID", [reactedBy, updateId])
 }
 
 model Reaction {
@@ -70,12 +84,13 @@ model Reaction {
 }
 
 model SurveyVote {
-  id    String     @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  
-  vote String // vote
-  projectId String // project
+
+  vote             String // vote
+  projectId        String // project
   surveyQuestionId String // voted survey question
-  votedBy String // id of author
+  votedBy          String // id of author
+
   @@map(name: "survey_votes")
 }

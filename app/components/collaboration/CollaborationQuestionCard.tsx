@@ -50,6 +50,7 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
 
   const handleComment = async (comment: string) => {
     const { data: newComment } = await handleCollaborationComment({ projectId, questionId, comment });
+    if (!newComment) return;
     const newComments = sortDateByCreatedAt([...comments, newComment]);
     setComments(newComments);
     setCollaborationCommentsAmount(newComments.length);

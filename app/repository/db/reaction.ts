@@ -61,22 +61,19 @@ export async function getUpdateAndUserReaction(client: PrismaClient, updateId: s
 }
 
 export async function findReactionsByUpdate(client: PrismaClient, updateId: string, limit?: number) {
-  const query: any = {
+  return await client.userReactionOnUpdate.findMany({
     where: {
       updateId: updateId,
     },
     include: {
       reactedWith: true,
     },
-  };
-
-  if (limit) query.take = limit;
-
-  return client.userReactionOnUpdate.findMany(query);
+    take: limit,
+  });
 }
 
 export async function countNumberOfReactionsOnUpdatePerEmoji(client: PrismaClient, updateId: string) {
-  const query: any = {
+  return client.userReactionOnUpdate.groupBy({
     by: ['reactionShortCode'],
     _count: {
       reactionShortCode: true,
@@ -89,7 +86,5 @@ export async function countNumberOfReactionsOnUpdatePerEmoji(client: PrismaClien
     where: {
       updateId: updateId,
     },
-  };
-
-  return client.userReactionOnUpdate.groupBy(query);
+  });
 }

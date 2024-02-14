@@ -77,7 +77,7 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
     const formData = {
       comment,
       projectId,
-      date: date.format('YYYY-MM-DD'),
+      date: dayjs(date.format('YYYY-MM-DD')),
     };
 
     const res = await handleProjectUpdate(formData);
