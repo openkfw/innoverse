@@ -107,10 +107,10 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
             <Grid container sx={containerStyles}>
               <Grid item sx={firstRowStyles}>
                 <Grid sx={projectStageCardStyles}>
-                  <ProjectStageCard project={project} />
+                  <ProjectStageCard setActiveTab={setActiveTab} project={project} />
                 </Grid>
                 <Grid sx={teamMembersColumnStyles}>
-                  <TeamMembersColumn team={project.team} projectName={project.title} />
+                 <TeamMembersColumn team={project.team} projectName={project.title} />
                 </Grid>
               </Grid>
 
@@ -174,9 +174,12 @@ const firstRowStyles = {
 
 const projectStageCardStyles = {
   width: '100%',
+  alignSelf: 'flex-start',
 };
 
-const teamMembersColumnStyles = {};
+const teamMembersColumnStyles = {
+  alignSelf: 'flex-start',
+};
 
 const secondRowStyles = {
   display: 'flex',

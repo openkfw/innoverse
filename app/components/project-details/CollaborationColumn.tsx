@@ -49,10 +49,9 @@ const CollaborationColumn = (props: CollaborationProps) => {
   const { project, setActiveTab } = props;
   const { surveyQuestions, opportunities, collaborationQuestions } = project;
 
-  const handleCollaborationClick = async (offset: number) => {
+  function handleCollaborationClick(offset: number) {
     const scroll = () => {
       const section = document.getElementById('collaboration-tab')?.offsetTop;
-
       if (section) {
         window.scrollTo({
           top: section - offset,
@@ -60,9 +59,10 @@ const CollaborationColumn = (props: CollaborationProps) => {
         });
       }
     };
-    await setActiveTab(1);
-    scroll();
-  };
+
+    setActiveTab(1);
+    setTimeout(scroll, 0);
+  }
 
   return (
     <>
