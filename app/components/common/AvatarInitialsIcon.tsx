@@ -24,6 +24,7 @@ const AvatarInitialsIcon = (props: AvatarInitialsIcon) => {
     width: size,
     height: size,
     p: 0.6,
+    fontSize: `${size * 0.025}rem`,
     ...sx,
   };
 
