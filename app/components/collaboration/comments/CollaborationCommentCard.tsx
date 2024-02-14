@@ -13,21 +13,19 @@ import Typography from '@mui/material/Typography';
 
 import { Comment } from '@/common/types';
 import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
-import { VoteComponent } from '@/components/project-details/comments/VoteComponent';
 import theme from '@/styles/theme';
-
-import { handleCollaborationUpvotedBy, isCollaborationCommentUpvotedBy } from './actions';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
 interface CommentCardProps {
-  content: Comment;
+  content: Pick<Comment, 'author' | 'comment'>;
+  voteComponent?: React.JSX.Element;
 }
 
 const MAX_TEXT_LENGTH = 300;
 
-export const CollaborationCommentCard = ({ content }: CommentCardProps) => {
-  const { author, comment, upvotedBy, id } = content;
+export const CollaborationCommentCard = ({ content, voteComponent }: CommentCardProps) => {
+  const { author, comment } = content;
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleToggle = () => {
@@ -80,14 +78,7 @@ export const CollaborationCommentCard = ({ content }: CommentCardProps) => {
             )}
           </Box>
 
-          {upvotedBy && (
-            <VoteComponent
-              upvotedBy={upvotedBy}
-              commentId={id}
-              isUpvoted={isCollaborationCommentUpvotedBy}
-              handleUpvoted={handleCollaborationUpvotedBy}
-            />
-          )}
+          {voteComponent}
         </Stack>
       </CardContent>
     </Card>

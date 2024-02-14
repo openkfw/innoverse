@@ -14,7 +14,7 @@ import {
   UpdatesResponse,
   UserQuery,
 } from '@/common/strapiTypes';
-import { CollaborationQuestion, Comment, Opportunity, ProjectQuestion, User } from '@/common/types';
+import { CollaborationQuestion, Opportunity, ProjectQuestion, User } from '@/common/types';
 import { getCollaborationComments } from '@/components/collaboration/comments/actions';
 import { getComments } from '@/components/project-details/comments/actions';
 
@@ -611,7 +611,7 @@ async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) 
   const projectQuestions = (await getProjectQuestionsByProjectId(project.id)) as ProjectQuestion[];
   const surveyQuestions = (await getSurveyQuestionsByProjectId(project.id)) as SurveyQuestion[];
   const collaborationQuestions = (await getCollaborationQuestionsByProjectId(project.id)) as CollaborationQuestion[];
-  const projectComments = (await getComments({ projectId: project.id })).data as Comment[];
+  const projectComments = (await getComments({ projectId: project.id })).data;
 
   const updates = (await getUpdatesByProjectId(project.id)) as Update[];
   const formattedUpdates = updates.map((u) => {

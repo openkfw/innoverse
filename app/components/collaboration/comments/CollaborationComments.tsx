@@ -1,20 +1,34 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import AddIcon from '@mui/icons-material/Add';
-import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 
-import { Comment } from '@/common/types';
-import theme from '@/styles/theme';
+import { Comment, CommentResponse } from '@/common/types';
+import { TransparentButton } from '@/components/common/TransparentButton';
+import { CommentVoteComponent } from '@/components/project-details/comments/VoteComponent';
 
+import WriteCommentCard from '../WriteCommentCard';
+
+import {
+  getCollaborationCommentResponses,
+  handleCollaborationCommentResponse,
+  handleCollaborationResponseUpvotedBy,
+  handleCollaborationUpvotedBy,
+  isCollaborationCommentUpvotedBy,
+  isCollaborationResponseUpvotedBy,
+} from './actions';
 import { CollaborationCommentCard } from './CollaborationCommentCard';
 
 interface CommentsProps {
   comments: Comment[];
+}
+
+interface CollaborationCommentThreadProps {
+  comment: Comment;
+  openResponseInput: boolean;
+  setOpenResponseInput: (open: boolean) => void;
 }
 
 const MAX_NUM_OF_COMMENTS = 2;
@@ -25,16 +39,10 @@ export const CollaborationComments = ({ comments }: CommentsProps) => {
   const [remainingComments, setRemainingComments] = useState<Comment[]>();
   const [lengthOfNotShownComments, setLengthOfNotShownComments] = useState<number>();
 
-  const buttonStyle = {
-    ml: 6,
-    width: 300,
-    background: 'transparent',
-    color: theme.palette.secondary.main,
-    ':hover': {
-      background: 'transparent',
-      color: theme.palette.secondary.main,
-    },
-  };
+  const [commentThreadContext, setCommentThreadContext] = useState<{ isOpen: boolean; commentId: string }>({
+    isOpen: false,
+    commentId: '',
+  });
 
   const handleToggle = () => {
     setIsCollapsed(!isCollapsed);
@@ -48,27 +56,116 @@ export const CollaborationComments = ({ comments }: CommentsProps) => {
 
   return (
     <Stack justifyContent="center" alignContent="center">
-      {maxVisibleComments?.map((comment, key) => <CollaborationCommentCard key={key} content={comment} />)}
+      {maxVisibleComments?.map((comment, key) => (
+        <CollaborationCommentThread
+          key={key}
+          comment={comment}
+          setOpenResponseInput={(isOpen) => setCommentThreadContext({ isOpen, commentId: comment.id })}
+          openResponseInput={commentThreadContext.isOpen && commentThreadContext.commentId == comment.id}
+        />
+      ))}
 
       {isCollapsed &&
         remainingComments?.map((comment, key) => (
           <Collapse in={isCollapsed} key={key}>
-            <CollaborationCommentCard content={comment} />
+            <CollaborationCommentThread
+              comment={comment}
+              setOpenResponseInput={(isOpen) => setCommentThreadContext({ isOpen, commentId: comment.id })}
+              openResponseInput={commentThreadContext.isOpen && commentThreadContext.commentId == comment.id}
+            />
           </Collapse>
         ))}
       {!isCollapsed && comments.length > MAX_NUM_OF_COMMENTS && (
-        <Button onClick={handleToggle} sx={buttonStyle} startIcon={<AddIcon color="secondary" fontSize="large" />}>
-          <Typography
-            variant="subtitle2"
-            sx={{
-              fontSize: '14px',
-              fontWeight: '500',
-            }}
-          >
-            weitere Rückmeldungen anzeigen ({lengthOfNotShownComments})
-          </Typography>
-        </Button>
+        <TransparentButton onClick={handleToggle}>
+          weitere Rückmeldungen anzeigen ({lengthOfNotShownComments})
+        </TransparentButton>
       )}
+    </Stack>
+  );
+};
+
+const CollaborationCommentThread = ({
+  comment,
+  openResponseInput,
+  setOpenResponseInput,
+}: CollaborationCommentThreadProps) => {
+  const [displayResponses, setDisplayResponses] = useState(false);
+  const [responses, setResponses] = useState([] as CommentResponse[]);
+
+  useEffect(
+    function loadResponseseIfDisplayingThem() {
+      async function loadResponses() {
+        const loadingResult = await getCollaborationCommentResponses({ comment });
+        setResponses(loadingResult.data ?? []);
+      }
+
+      if (displayResponses) {
+        loadResponses();
+        setDisplayResponses(true);
+      }
+    },
+    [comment, displayResponses],
+  );
+
+  const handleResponse = async (response: string) => {
+    const result = await handleCollaborationCommentResponse({
+      comment: comment,
+      response: response,
+    });
+
+    const commentResponse = result.data as CommentResponse;
+
+    setDisplayResponses(true);
+    setOpenResponseInput(false);
+    setResponses((old) => [...old, commentResponse]);
+  };
+
+  return (
+    <Stack>
+      <CollaborationCommentCard
+        content={comment}
+        voteComponent={
+          <CommentVoteComponent
+            commentId={comment.id}
+            handleUpvote={handleCollaborationUpvotedBy}
+            isUpvoted={isCollaborationCommentUpvotedBy}
+            upvotedBy={comment.upvotedBy}
+            handleClickOnResponse={() => setOpenResponseInput(true)}
+          />
+        }
+      />
+
+      {!displayResponses && comment.responseCount > 0 && (
+        <TransparentButton onClick={() => setDisplayResponses(true)}>
+          Kommentare anzeigen ({comment.responseCount})
+        </TransparentButton>
+      )}
+
+      {openResponseInput && (
+        <WriteCommentCard
+          sx={{ paddingBottom: '2em', marginLeft: '3em' }}
+          projectName=""
+          handleComment={handleResponse}
+        />
+      )}
+
+      <Stack sx={{ paddingLeft: '3em' }}>
+        {responses.map((response, key) => (
+          <div key={key}>
+            <CollaborationCommentCard
+              content={{ ...response, comment: response.response }}
+              voteComponent={
+                <CommentVoteComponent
+                  commentId={response.id}
+                  handleUpvote={handleCollaborationResponseUpvotedBy}
+                  isUpvoted={isCollaborationResponseUpvotedBy}
+                  upvotedBy={response.upvotedBy}
+                />
+              }
+            />
+          </div>
+        ))}
+      </Stack>
     </Stack>
   );
 };

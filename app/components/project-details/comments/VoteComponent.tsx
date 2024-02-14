@@ -12,49 +12,88 @@ import { AuthResponse } from '@/utils/auth';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
 import ReplyIcon from '../../icons/ReplyIcon';
 
-interface VoteComponentProps {
-  upvotedBy: User[];
+interface CommentVoteComponentProps {
   commentId: string;
-  isUpvoted: (body: { commentId: string }) => Promise<AuthResponse>;
-  handleUpvoted: (body: { commentId: string }) => Promise<AuthResponse>;
+  upvotedBy: User[];
+  isUpvoted: ({ commentId }: { commentId: string }) => Promise<AuthResponse<boolean>>;
+  handleUpvote: ({ commentId }: { commentId: string }) => Promise<unknown>;
+  handleClickOnResponse?: () => void;
 }
 
-export const VoteComponent = (props: VoteComponentProps) => {
-  const { upvotedBy, commentId, isUpvoted, handleUpvoted } = props;
-  const [upvotes, setUpvotes] = useState<number>(upvotedBy.length);
-  const [upvoted, setUpvoted] = useState<boolean>();
+export const CommentVoteComponent = ({
+  commentId,
+  upvotedBy,
+  isUpvoted,
+  handleUpvote,
+  handleClickOnResponse,
+}: CommentVoteComponentProps) => {
+  const checkIfCommentIsUpvoted = async () => {
+    const response = await isUpvoted({ commentId });
+    return response.data ?? false;
+  };
+
+  const upvoteComment = async () => {
+    await handleUpvote({ commentId });
+  };
+
+  return (
+    <VoteComponent
+      upvoteCount={upvotedBy.length}
+      isUpvoted={checkIfCommentIsUpvoted}
+      handleUpvote={upvoteComment}
+      handleClickOnResponse={handleClickOnResponse}
+    />
+  );
+};
+
+interface VoteComponentProps {
+  isUpvoted: () => Promise<boolean>;
+  upvoteCount: number;
+  handleUpvote: () => void;
+  handleClickOnResponse?: () => void;
+}
+
+export const VoteComponent = ({ isUpvoted, upvoteCount, handleUpvote, handleClickOnResponse }: VoteComponentProps) => {
+  const [upvotes, setUpvotes] = useState<number>(upvoteCount);
+  const [upvoted, setUpvoted] = useState<boolean>(false);
 
   const { user } = useUser();
 
   useEffect(() => {
     const setCommentUpvoted = async () => {
-      const { data: upvotedUser } = await isUpvoted({ commentId });
-      setUpvoted(upvotedUser);
+      const upvotedByUser = await isUpvoted();
+      setUpvoted(upvotedByUser);
     };
     setCommentUpvoted();
-  }, [user, upvotedBy, isUpvoted, commentId]);
+  }, [user, isUpvoted]);
 
-  const handleClick = async () => {
-    await handleUpvoted({ commentId });
-    setUpvoted(!upvoted);
+  const handleClickOnUpvote = () => {
+    if (handleUpvote) {
+      handleUpvote();
+    }
+
+    setUpvoted((upvoted) => !upvoted);
+
     if (upvoted) {
-      setUpvotes(upvotes - 1);
+      setUpvotes((upvotes) => upvotes - 1);
       return;
     }
-    setUpvotes(upvotes + 1);
+
+    setUpvotes((upvotes) => upvotes + 1);
   };
 
   return (
     <Stack direction="row" spacing={1}>
-      <ToggleButton value="up" sx={buttonStyle} onClick={handleClick}>
+      <ToggleButton value="up" onClick={handleClickOnUpvote} sx={buttonStyle}>
         <ArrowUpIcon color={upvoted ? 'green' : 'black'} /> {upvotes}
       </ToggleButton>
-
-      <Button variant="outlined" startIcon={<ReplyIcon />} sx={buttonStyle}>
-        <Typography variant="subtitle2" sx={typographyStyles}>
-          antworten
-        </Typography>
-      </Button>
+      {handleClickOnResponse && (
+        <Button variant="outlined" onClick={handleClickOnResponse} startIcon={<ReplyIcon />} sx={buttonStyle}>
+          <Typography variant="subtitle2" sx={typographyStyles}>
+            antworten
+          </Typography>
+        </Button>
+      )}
     </Stack>
   );
 };

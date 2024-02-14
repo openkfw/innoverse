@@ -14,7 +14,20 @@ export type Comment = {
   id: string;
   author: User;
   comment: string;
-  upvotedBy?: User[];
+  upvotedBy: User[];
+  responseCount: number;
+  projectId: string;
+  questionId: string;
+  createdAt: Date;
+};
+
+export type CommentResponse = {
+  id: string;
+  author: User;
+  response: string;
+  createdAt: Date;
+  upvotedBy: User[];
+  comment: Comment;
 };
 
 export type ResponseOption = {

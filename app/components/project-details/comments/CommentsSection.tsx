@@ -21,6 +21,7 @@ const CommentsSection = ({ project }: { project: Project }) => {
 
   const handleSendComment = async (comment: string) => {
     const { data: newComment } = await handleComment({ projectId: project.id, comment: comment });
+    if (!newComment) return;
     setComments((comments) => sortDateByCreatedAt([...comments, newComment]));
   };
 

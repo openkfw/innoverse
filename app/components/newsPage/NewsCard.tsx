@@ -46,7 +46,8 @@ export default function NewsCard(props: ProjectCardProps) {
 
   useEffect(() => {
     const setProjectInteraction = async () => {
-      setIsProjectFollowed((await isFollowed({ projectId })).data);
+      const projectIsFollowed = (await isFollowed({ projectId })).data;
+      setIsProjectFollowed(projectIsFollowed ?? false);
     };
     setProjectInteraction();
   }, [projectId]);

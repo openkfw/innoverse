@@ -69,7 +69,7 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
           <>
             <Divider textAlign="left" sx={dividerStyles} />
             <Typography color="primary.main" sx={titleStyles}>
-              Hilf uns bei deisen Fragen
+              Hilf uns bei diesen Fragen
             </Typography>
             <Grid container sx={gridStyles} spacing={8}>
               {project.collaborationQuestions.map((question, i) => (

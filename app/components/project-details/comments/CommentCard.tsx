@@ -16,7 +16,7 @@ import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
 import theme from '@/styles/theme';
 
 import { handleUpvotedBy, isCommentUpvotedBy } from './actions';
-import { VoteComponent } from './VoteComponent';
+import { CommentVoteComponent } from './VoteComponent';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
@@ -82,11 +82,12 @@ export const CommentCard = ({ content }: CommentCardProps) => {
           </Box>
 
           {upvotedBy && (
-            <VoteComponent
-              upvotedBy={upvotedBy}
+            <CommentVoteComponent
               commentId={id}
+              upvotedBy={upvotedBy}
+              handleUpvote={handleUpvotedBy}
               isUpvoted={isCommentUpvotedBy}
-              handleUpvoted={handleUpvotedBy}
+              handleClickOnResponse={() => {}}
             />
           )}
         </Stack>

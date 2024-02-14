@@ -1,3 +1,5 @@
+import { SurveyVote } from '@prisma/client';
+
 import {
   CollaborationQuestion,
   Filters,
@@ -5,14 +7,15 @@ import {
   Project,
   ProjectByIdQueryResult,
   ProjectQuestion,
-  ProjectUpdate,
   ProjectsQueryResult,
+  ProjectUpdate,
   SurveyQuestion,
   User,
   UserSession,
 } from '@/common/types';
 import { getSurveyQuestionVotes } from '@/components/collaboration/survey/actions';
 import { UpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
+import { SortValues } from '@/components/newsPage/News';
 
 import { getFulfilledResults } from './helpers';
 import {
@@ -33,7 +36,6 @@ import {
   withResponseTransformer,
 } from './queries';
 import strapiFetcher from './strapiFetcher';
-import { SortValues } from '@/components/newsPage/News';
 
 async function uploadImage(imageUrl: string, fileName: string) {
   return fetch(imageUrl)
@@ -234,7 +236,7 @@ export async function getSurveyQuestionsByProjectId(projectId: string) {
     const surveyQuestionsVotes = await Promise.allSettled(
       surveyQuestions.map(async (surveyQuestion) => {
         const { data: surveyVotes } = await getSurveyQuestionVotes({ surveyQuestionId: surveyQuestion.id });
-        surveyQuestion.votes = surveyVotes;
+        surveyQuestion.votes = surveyVotes?.map((vote) => ({ votedBy: vote.votedBy?.id }) as SurveyVote) ?? [];
         return surveyQuestion;
       }),
     ).then((results) => getFulfilledResults(results));
@@ -265,7 +267,7 @@ export async function createInnoUserIfNotExist(body: UserSession, image?: string
   }
 }
 
-export async function createProjectUpdate(body: UpdateFormData) {
+export async function createProjectUpdate(body: Omit<UpdateFormData, 'author'>) {
   try {
     const requestUpdate = await strapiFetcher(CreateProjectUpdateQuery, body);
     const resultUpdate = await withResponseTransformer(STRAPI_QUERY.CreateProjectUpdate, requestUpdate);
