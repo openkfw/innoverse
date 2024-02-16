@@ -52,7 +52,7 @@ async function uploadImage(imageUrl: string, fileName: string) {
       return fetch(`${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+          Authorization: `Bearer ${process.env.STRAPI_TOKEN}`,
         },
         body: formData,
       })
