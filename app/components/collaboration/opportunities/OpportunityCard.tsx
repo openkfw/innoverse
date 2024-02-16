@@ -24,13 +24,13 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
   const handleOpportunityApply = async () => {
     await handleApplyForOpportunity({ opportunityId: opportunity.id });
     const { data } = await hasAppliedForOpportunity({ opportunityId: opportunity.id });
-    setHasApplied(data);
+    setHasApplied(data ?? false);
   };
 
   useEffect(() => {
     const getAppliedForOpportunity = async () => {
       const { data } = await hasAppliedForOpportunity({ opportunityId: opportunity.id });
-      setHasApplied(data);
+      setHasApplied(data ?? false);
     };
     getAppliedForOpportunity();
   }, []);
