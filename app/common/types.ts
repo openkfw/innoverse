@@ -195,10 +195,12 @@ export type UserSession = {
 };
 
 export type Opportunity = {
+  id: string;
   title: string;
   description: string;
-  email: string;
+  contactPerson: User;
   expense: string;
+  participants: User[];
 };
 
 export type CollaborationQuestion = {

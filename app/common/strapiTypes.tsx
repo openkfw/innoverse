@@ -32,6 +32,14 @@ export type OpportunitiesResponse = {
   };
 };
 
+export type UpdateOportunityParticipantsResponse = {
+  data: {
+    updateOpportunityParticipants: {
+      data: OpportunityQuery;
+    };
+  };
+};
+
 export type SurveyQuestionsResponse = {
   data: {
     surveyQuestions: {
@@ -77,6 +85,14 @@ export type CreateProjectUpdateResponse = {
   data: {
     createUpdate: {
       data: UpdateQuery;
+    };
+  };
+};
+
+export type UpdateOpportunityResponse = {
+  data: {
+    updateOpportunity: {
+      data: OpportunityQuery;
     };
   };
 };
@@ -195,7 +211,14 @@ export type SurveyQuestion = {
 };
 
 export type OpportunityQuery = {
-  attributes: { title: string; description: string; email: string; expense: string };
+  id: string;
+  attributes: {
+    title: string;
+    description: string;
+    contactPerson: { data: UserQuery };
+    expense: string;
+    participants: { data: UserQuery[] };
+  };
 };
 
 export type CommentQuery = {
