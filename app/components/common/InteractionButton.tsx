@@ -133,6 +133,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
     if (interactionType === InteractionType.FEEDBACK) return 'FEEDBACK';
     if (interactionType === InteractionType.OPPORTUNITY_APPLY) return 'Angewandt';
+    else return getButtonText();
   };
 
   const getText = () => {
