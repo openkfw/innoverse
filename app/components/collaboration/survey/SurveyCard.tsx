@@ -121,7 +121,7 @@ export const SurveyCard = ({ projectId, surveyQuestion }: SurveyCardProps) => {
       </Grid>
 
       <Grid container direction="row" item xs={6} spacing={2} sx={{ justifyContent: 'space-evenly' }}>
-        <Grid item sx={{ ml: '4px' }}>
+        <Grid item>
           <StyledToggleButtonGroup exclusive orientation="vertical" size="small" onChange={handleVote}>
             {responseOptions.map((response, key) => {
               return (

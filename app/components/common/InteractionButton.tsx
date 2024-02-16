@@ -22,6 +22,7 @@ import ApplyIcon from '@/components/icons/ApplyIcon';
 import ChatIcon from '@/components/icons/ChatIcon';
 import CloseIcon from '@/components/icons/CloseIcon';
 import RecommendIcon from '@/components/icons/RecommendIcon';
+import palette from '@/styles/palette';
 
 interface InteractionButtonProps extends ButtonProps {
   interactionType: InteractionType;
@@ -31,6 +32,7 @@ interface InteractionButtonProps extends ButtonProps {
   onIconClick?: () => void;
   sx?: SxProps;
   isSelected?: boolean;
+  disabled?: boolean;
 }
 
 export enum InteractionType {
@@ -43,7 +45,7 @@ export enum InteractionType {
   COMMENT_SEND = 'comment-send',
   SHARE_OPINION = 'share-opinion',
   ADD_INSIGHTS = 'add-insights',
-  APPLY = 'apply',
+  OPPORTUNITY_APPLY = 'opportunity-apply',
   RECOMMEND = 'recommend',
   FEEDBACK = 'feedback',
   LOG_IN = 'log-in',
@@ -52,7 +54,7 @@ export enum InteractionType {
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
-  const { interactionType, label, onClick, onIconClick, sx, projectName, isSelected = false } = props;
+  const { interactionType, label, onClick, onIconClick, sx, projectName, isSelected = false, disabled = false } = props;
   const [isHovered, setIsHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
 
@@ -64,6 +66,9 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddedOutlinedIcon fontSize="small" />;
     if (interactionType === InteractionType.USER_FOLLOW_ICON) return <PersonAddIcon fontSize="small" />;
     if (interactionType === InteractionType.USER_FOLLOW) return <PersonAddIcon fontSize="small" />;
+    else {
+      return getInteractionIcon();
+    }
   };
 
   const getInteractionIcon = () => {
@@ -71,12 +76,12 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.USER_FOLLOW) return <PersonAddIcon fontSize="small" />;
     if (interactionType === InteractionType.USER_FOLLOW_ICON) return <PersonAddIcon fontSize="small" />;
     if (interactionType === InteractionType.COLLABORATION) return <PeopleOutlineOutlinedIcon fontSize="small" />;
-    if (interactionType === InteractionType.COMMENT) return <ChatIcon color={isHovered ? 'white' : 'black'} />;
+    if (interactionType === InteractionType.COMMENT) return <ChatIcon color={getIconColor()} />;
     if (interactionType === InteractionType.COMMENT_SEND) return <SendIcon fontSize="small" />;
     if (interactionType === InteractionType.SHARE_OPINION) return <EditIcon fontSize="small" />;
     if (interactionType === InteractionType.ADD_INSIGHTS) return <FormatAlignLeftOutlinedIcon fontSize="small" />;
-    if (interactionType === InteractionType.APPLY) return <ApplyIcon color={isHovered ? 'white' : 'black'} />;
-    if (interactionType === InteractionType.RECOMMEND) return <RecommendIcon color={isHovered ? 'white' : 'black'} />;
+    if (interactionType === InteractionType.OPPORTUNITY_APPLY) return <ApplyIcon color={getIconColor()} />;
+    if (interactionType === InteractionType.RECOMMEND) return <RecommendIcon color={getIconColor()} />;
     if (interactionType === InteractionType.LOG_IN) return <PersonIcon fontSize="small" />;
     if (interactionType === InteractionType.CLEAR) return <ClearIcon fontSize="small" />;
     if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddOutlinedIcon fontSize="small" />;
@@ -109,7 +114,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.SHARE_OPINION) return 'Teile Deine Erfahrung';
     if (interactionType === InteractionType.COMMENT) return;
     if (interactionType === InteractionType.ADD_INSIGHTS) return 'Teile Deine Erfahrung';
-    if (interactionType === InteractionType.APPLY) return 'Ich bin dabei';
+    if (interactionType === InteractionType.OPPORTUNITY_APPLY) return 'Ich bin dabei';
     if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
     if (interactionType === InteractionType.FEEDBACK) return 'FEEDBACK';
     if (interactionType === InteractionType.LOG_IN) return 'Log in';
@@ -125,9 +130,9 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.USER_FOLLOW) return 'Entfolgen';
     if (interactionType === InteractionType.SHARE_OPINION) return 'Teile Deine Erfahrung';
     if (interactionType === InteractionType.ADD_INSIGHTS) return 'Teile Deine Erfahrung';
-    if (interactionType === InteractionType.APPLY) return 'Ich bin dabei';
     if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
     if (interactionType === InteractionType.FEEDBACK) return 'FEEDBACK';
+    if (interactionType === InteractionType.OPPORTUNITY_APPLY) return 'Angewandt';
   };
 
   const getText = () => {
@@ -140,8 +145,22 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (onClick !== undefined) onClick();
   };
 
+  const getIconColor = () => {
+    if (disabled) {
+      return 'grey';
+    }
+    if (isSelected) {
+      return palette.secondary?.main;
+    }
+    if (isHovered) {
+      return 'white';
+    }
+    return 'black';
+  };
+
   return (
     <Button
+      disabled={disabled}
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

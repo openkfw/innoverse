@@ -21,7 +21,9 @@ import {
   GetCollaborationQuestionsByProjectIdQuery,
   GetInnoUserByEmailQuery,
   GetInnoUserByProviderIdQuery,
+  GetOpportunitiesByIdQuery,
   GetOpportunitiesByProjectIdQuery,
+  GetOpportunityParticipantQuery,
   GetProjectByIdQuery,
   GetProjectsQuery,
   GetQuestionsByProjectIdQuery,
@@ -30,6 +32,7 @@ import {
   GetUpdatesFilterQuery,
   GetUpdatesQuery,
   STRAPI_QUERY,
+  UpdateOpportunityParticipantsQuery,
   withResponseTransformer,
 } from './queries';
 import strapiFetcher from './strapiFetcher';
@@ -105,8 +108,8 @@ export async function getInnoUserByEmail(email: string) {
 export async function getInnoUserByProviderId(providerId: string) {
   try {
     const requestUser = await strapiFetcher(GetInnoUserByProviderIdQuery, { providerId });
-    const resultUser = await withResponseTransformer(STRAPI_QUERY.GetInnoUser, requestUser);
-    return resultUser as unknown as User;
+    const resultUser = (await withResponseTransformer(STRAPI_QUERY.GetInnoUser, requestUser)) as unknown as User;
+    return resultUser;
   } catch (err) {
     console.info(err);
   }
@@ -207,7 +210,20 @@ export async function getOpportunitiesByProjectId(projectId: string) {
   try {
     const res = await strapiFetcher(GetOpportunitiesByProjectIdQuery, { projectId });
     const opportunities = await withResponseTransformer(STRAPI_QUERY.GetOpportunitiesByProjectId, res);
-    return opportunities as Opportunity[];
+    return opportunities as unknown as Opportunity[];
+  } catch (err) {
+    console.info(err);
+  }
+}
+
+export async function getOpportunityById(projectId: string) {
+  try {
+    const res = await strapiFetcher(GetOpportunitiesByIdQuery, { projectId });
+    const opportunities = (await withResponseTransformer(
+      STRAPI_QUERY.GetOpportunitiesId,
+      res,
+    )) as unknown as Opportunity[];
+    return opportunities[0];
   } catch (err) {
     console.info(err);
   }
@@ -271,6 +287,26 @@ export async function createProjectUpdate(body: UpdateFormData) {
     const resultUpdate = await withResponseTransformer(STRAPI_QUERY.CreateProjectUpdate, requestUpdate);
 
     return resultUpdate;
+  } catch (err) {
+    console.info(err);
+  }
+}
+
+export async function getOpportunityAndUserParticipant(body: { opportunityId: string; userId: string }) {
+  try {
+    const requestGet = await strapiFetcher(GetOpportunityParticipantQuery, body);
+    const resultGet = await withResponseTransformer(STRAPI_QUERY.GetOpportunityParticipant, requestGet);
+    return resultGet;
+  } catch (err) {
+    console.info(err);
+  }
+}
+
+export async function handleOpportunityAppliedBy(body: { opportunityId: string; userId: string }) {
+  try {
+    const requestGet = await strapiFetcher(UpdateOpportunityParticipantsQuery, body);
+    const resultGet = await withResponseTransformer(STRAPI_QUERY.UpdateOpportunityParticipants, requestGet);
+    return resultGet;
   } catch (err) {
     console.info(err);
   }

@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 
 import CustomToast from '../common/CustomToast';
-import InteractionButton, { interactionButtonStyles,InteractionType } from '../common/InteractionButton';
+import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
 import AddUpdateDialog from '../newsPage/addUpdate/AddUpdateDialog';
 
 interface AddUpdateCardProps {
