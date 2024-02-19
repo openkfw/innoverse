@@ -786,6 +786,8 @@ async function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
 async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
   const project = graphqlResponse.data.project.data;
 
+  if (!project) throw new Error('Project not found');
+
   const { title, shortTitle, summary, image, status, projectStart, description, author, team } = project.attributes;
 
   const opportunities = (await getOpportunitiesByProjectId(project.id)) as Opportunity[];
@@ -799,11 +801,13 @@ async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) 
     u.title = title || shortTitle;
     return u;
   });
+  if (!author.data) throw new Error('Project has no author');
 
   const formattedAuthor = {
     ...author.data.attributes,
     image:
-      author.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.data.attributes.avatar.data.attributes.url}`,
+      author.data.attributes.avatar.data &&
+      `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.data.attributes.avatar.data.attributes.url}`,
   };
 
   const formattedTeam = team.data.map((t: UserQuery) => {
