@@ -1,3 +1,4 @@
+import { Link } from '@mui/material';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -6,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import { Tag } from '@/common/types';
 import CustomChip from '@/components/common/CustomChip';
 import theme from '@/styles/theme';
-import { Link } from '@mui/material';
 
 const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: string; projectId: string }) => {
   const { title, tags, summary, projectId } = props;
