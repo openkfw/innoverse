@@ -6,18 +6,21 @@ import Typography from '@mui/material/Typography';
 import { Tag } from '@/common/types';
 import CustomChip from '@/components/common/CustomChip';
 import theme from '@/styles/theme';
+import { Link } from '@mui/material';
 
-const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: string }) => {
-  const { title, tags, summary } = props;
+const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: string; projectId: string }) => {
+  const { title, tags, summary, projectId } = props;
 
   return (
     <Box sx={wrapperStyles}>
       <Typography variant="overline" sx={featuredTypographyStyles}>
         Featured
       </Typography>
-      <Typography sx={titleStyles} variant="h2">
-        {title}
-      </Typography>
+      <Link href={`/projects/${projectId}`} style={{ ...linkStyle }}>
+        <Typography sx={titleStyles} variant="h2">
+          {title}
+        </Typography>
+      </Link>
       <Box>
         <List aria-label="tags" sx={listStyles}>
           {tags?.map((el, id) => (
@@ -88,4 +91,8 @@ const descriptionStyles = {
   [theme.breakpoints.down('sm')]: {
     marginTop: 2,
   },
+};
+
+const linkStyle = {
+  textDecoration: 'none',
 };
