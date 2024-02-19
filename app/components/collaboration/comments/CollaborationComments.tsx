@@ -9,7 +9,7 @@ import { Comment, CommentResponse } from '@/common/types';
 import { TransparentButton } from '@/components/common/TransparentButton';
 import { CommentVoteComponent } from '@/components/project-details/comments/VoteComponent';
 
-import WriteCommentCard from '../WriteCommentCard';
+import WriteCommentCard from '../writeComment/WriteCommentCard';
 
 import {
   getCollaborationCommentResponses,

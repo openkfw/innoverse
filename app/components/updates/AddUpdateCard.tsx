@@ -19,7 +19,12 @@ export const AddUpdateCard = (props: AddUpdateCardProps) => {
   const { projectId, setUpdateAdded } = props;
   const [addUpdateDialogOpen, setAddUpdateDialogOpen] = useState(false);
 
-  const defaultFormValues = { comment: '', date: dayjs(new Date()), author: '', projectId };
+  const defaultFormValues = {
+    comment: '',
+    date: dayjs(new Date()),
+    author: '',
+    projectId,
+  };
 
   return (
     <>

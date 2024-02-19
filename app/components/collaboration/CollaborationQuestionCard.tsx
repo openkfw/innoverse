@@ -16,8 +16,8 @@ import { TooltipContent } from '../project-details/TooltipContent';
 
 import { handleCollaborationComment } from './comments/actions';
 import { CollaborationComments } from './comments/CollaborationComments';
+import WriteCommentCard from './writeComment/WriteCommentCard';
 import { ShareOpinionCard } from './ShareOpinionCard';
-import WriteCommentCard from './WriteCommentCard';
 
 interface UpdateCardProps {
   content: CollaborationQuestion;

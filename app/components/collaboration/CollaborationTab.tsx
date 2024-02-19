@@ -29,11 +29,12 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
           Opportunities
         </Typography>
 
-        {project.opportunities.map((opportunity, key) => (
-          <Grid container spacing={8} sx={gridStyles} key={key}>
-            <OpportunityCard opportunity={opportunity} projectName={project.title} />
-          </Grid>
-        ))}
+        {project.opportunities &&
+          project.opportunities.map((opportunity, key) => (
+            <Grid container spacing={8} sx={gridStyles} key={key}>
+              <OpportunityCard opportunity={opportunity} projectName={project.title} />
+            </Grid>
+          ))}
 
         <Divider textAlign="left" sx={dividerStyles} />
 

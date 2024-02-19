@@ -110,7 +110,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
                   <ProjectStageCard setActiveTab={setActiveTab} project={project} />
                 </Grid>
                 <Grid sx={teamMembersColumnStyles}>
-                 <TeamMembersColumn team={project.team} projectName={project.title} />
+                  <TeamMembersColumn team={project.team} projectName={project.title} />
                 </Grid>
               </Grid>
 

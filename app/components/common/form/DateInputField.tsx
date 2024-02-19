@@ -6,9 +6,16 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { FormInputProps } from '@/common/formTypes';
 
-import { inputStyle } from './AddUpdateForm';
+import { inputStyle } from './formStyle';
 
-export const DateInputField = ({ name, control, label, readOnly = false, disableFuture = false }: FormInputProps) => {
+export const DateInputField = ({
+  name,
+  control,
+  label,
+  readOnly = false,
+  disableFuture = false,
+  sx,
+}: FormInputProps) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Controller
@@ -18,7 +25,7 @@ export const DateInputField = ({ name, control, label, readOnly = false, disable
           <DatePicker
             {...field}
             label={label}
-            sx={inputStyle}
+            sx={{ ...inputStyle, ...sx }}
             readOnly={readOnly}
             disableFuture={disableFuture}
             slotProps={{

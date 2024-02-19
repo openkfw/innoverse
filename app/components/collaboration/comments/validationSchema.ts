@@ -4,7 +4,7 @@ export const handleCollaborationCommentSchema = z
   .object({
     projectId: z.string(),
     questionId: z.string(),
-    comment: z.string(),
+    comment: z.string().min(1),
   })
   .required();
 
