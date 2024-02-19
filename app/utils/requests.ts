@@ -39,6 +39,8 @@ import {
   withResponseTransformer,
 } from './queries';
 import strapiFetcher from './strapiFetcher';
+import { InnoPlatformError, strapiError } from './errors';
+import logger from './logger';
 
 async function uploadImage(imageUrl: string, fileName: string) {
   return fetch(imageUrl)
@@ -76,7 +78,8 @@ export async function createInnoUser(body: UserSession, image?: string | null) {
 
     return resultUser;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Create Inno User', err as Error, body.name);
+    logger.error(error);
   }
 }
 
@@ -92,7 +95,8 @@ export async function getProjectById(id: string) {
       ...resultProject.project,
     };
   } catch (err) {
-    console.info(err);
+    const e: InnoPlatformError = strapiError('Getting Project by ID', err as Error, id);
+    logger.error(e);
   }
 }
 
@@ -103,7 +107,8 @@ export async function getInnoUserByEmail(email: string) {
 
     return resultUser;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting Inno user by email', err as Error, email);
+    logger.error(error);
   }
 }
 
@@ -113,7 +118,8 @@ export async function getInnoUserByProviderId(providerId: string) {
     const resultUser = (await withResponseTransformer(STRAPI_QUERY.GetInnoUser, requestUser)) as unknown as User;
     return resultUser;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting Inno user by providerId', err as Error, providerId);
+    logger.error(error);
   }
 }
 
@@ -134,7 +140,8 @@ export async function getFeaturedProjects() {
       updates: result.updates,
     };
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting All featured projects', err as Error);
+    logger.error(error);
   }
 }
 
@@ -155,7 +162,8 @@ export async function getProjectsUpdates() {
     const result = await withResponseTransformer(STRAPI_QUERY.GetUpdates, requestProjects);
     return result;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all project updates', err as Error);
+    logger.error(error);
   }
 }
 
@@ -194,7 +202,8 @@ export async function getProjectsUpdatesFilter(sort: SortValues, filters: Filter
     const result = await withResponseTransformer(STRAPI_QUERY.GetUpdates, requestProjects);
     return result;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all project updates with filter', err as Error);
+    logger.error(error);
   }
 }
 
@@ -204,7 +213,8 @@ export async function getUpdatesByProjectId(projectId: string) {
     const updates = await withResponseTransformer(STRAPI_QUERY.GetUpdatesByProjectId, res);
     return updates as ProjectUpdate[];
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all project updates', err as Error, projectId);
+    logger.error(error);
   }
 }
 
@@ -227,7 +237,8 @@ export async function getOpportunityById(projectId: string) {
     )) as unknown as Opportunity[];
     return opportunities[0];
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all project opportunities', err as Error, projectId);
+    logger.error(error);
   }
 }
 
@@ -237,7 +248,8 @@ export async function getProjectQuestionsByProjectId(projectId: string) {
     const questions = await withResponseTransformer(STRAPI_QUERY.GetProjectQuestionsByProjectId, res);
     return questions as ProjectQuestion[];
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all project questions', err as Error, projectId);
+    logger.error(error);
   }
 }
 
@@ -259,7 +271,8 @@ export async function getSurveyQuestionsByProjectId(projectId: string) {
 
     return surveyQuestionsVotes as SurveyQuestion[];
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all survey questions', err as Error, projectId);
+    logger.error(error);
   }
 }
 
@@ -272,14 +285,20 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
     );
     return collaborationQuestions as CollaborationQuestion[];
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all collaboration questions', err as Error, projectId);
+    logger.error(error);
   }
 }
 
 export async function createInnoUserIfNotExist(body: UserSession, image?: string | null) {
-  if (body.email) {
-    const user = await getInnoUserByEmail(body.email);
-    return user ? user : await createInnoUser(body, image);
+  try {
+    if (body.email) {
+      const user = await getInnoUserByEmail(body.email);
+      return user ? user : await createInnoUser(body, image);
+    }
+  } catch (err) {
+    const error = strapiError('Trying to create a InnoUser if it does not exist', err as Error, body.name);
+    logger.error(error);
   }
 }
 
