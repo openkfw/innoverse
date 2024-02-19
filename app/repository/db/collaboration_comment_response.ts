@@ -1,7 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 
-import { Comment } from '@/common/types';
-
 export async function getCollaborationCommentResponsesByCommentId(client: PrismaClient, commentId: string) {
   return client.collaborationCommentResponse.findMany({
     where: {

@@ -2,6 +2,7 @@ import {
   CollaborationQuestionsResponse,
   CreateInnoUserResponse,
   CreateProjectUpdateResponse,
+  GetEventsResponse,
   GetInnoUserResponse,
   OpportunitiesResponse,
   OpportunityQuery,
@@ -17,7 +18,7 @@ import {
   UpdatesResponse,
   UserQuery,
 } from '@/common/strapiTypes';
-import { CollaborationQuestion, Opportunity, ProjectQuestion, User } from '@/common/types';
+import { CollaborationQuestion, Event, Opportunity, ProjectQuestion, User } from '@/common/types';
 import { getCollaborationComments } from '@/components/collaboration/comments/actions';
 import { getComments } from '@/components/project-details/comments/actions';
 
@@ -33,7 +34,6 @@ import {
 export enum STRAPI_QUERY {
   GetProjects,
   GetUpdates,
-  GetUpdatesFilter,
   GetProjectById,
   GetInnoUser,
   CreateInnoUser,
@@ -44,6 +44,7 @@ export enum STRAPI_QUERY {
   GetSurveyQuestionsByProjectId,
   GetCollaborationQuestionsByProjectId,
   CreateProjectUpdate,
+  GetEvents,
   CreateOpportunityParticipant,
   GetOpportunityParticipant,
   UpdateOpportunityParticipants,
@@ -146,6 +147,34 @@ export const GetInnoUserByProviderIdQuery = `query GetInnoUser($providerId: Stri
       }
     }  
   }  
+}
+`;
+
+export const GetEventsQuery = `query GetEvents($today: Date) {
+  events(filters: {date: {gte: $today}}, sort: "date:asc") {
+    data {
+      id
+      attributes {
+        title
+        date
+        start_time
+      	end_time
+        type
+        description
+        location
+        author {
+          ${userQuery}
+        }
+        image {
+          data {
+            attributes {
+              url
+            }
+          }
+        }
+      }
+    }
+  }
 }
 `;
 
@@ -469,22 +498,57 @@ query UpdateOpportunity($opportunityId: ID!, $userId: ID!) {
   }
 }`;
 
-export const withResponseTransformer = async (
-  query: STRAPI_QUERY,
-  data:
-    | ProjectsResponse
-    | ProjectResponse
-    | GetInnoUserResponse
-    | CreateInnoUserResponse
-    | UpdatesResponse
-    | OpportunitiesResponse
-    | ProjectQuestionsResponse
-    | CollaborationQuestionsResponse
-    | SurveyQuestionsResponse
-    | CreateProjectUpdateResponse
-    | UpdateOpportunityResponse
-    | UpdateOportunityParticipantsResponse,
-) => {
+type ResponseType<T extends STRAPI_QUERY> = T extends STRAPI_QUERY.GetProjects
+  ? any
+  : T extends STRAPI_QUERY.GetUpdates
+    ? any
+    : T extends STRAPI_QUERY.GetProjectById
+      ? any
+      : T extends STRAPI_QUERY.GetInnoUser
+        ? any
+        : T extends STRAPI_QUERY.CreateInnoUser
+          ? any
+          : T extends STRAPI_QUERY.GetUpdatesByProjectId
+            ? any
+            : T extends STRAPI_QUERY.GetOpportunitiesByProjectId
+              ? Opportunity[]
+              : T extends STRAPI_QUERY.GetProjectQuestionsByProjectId
+                ? any
+                : T extends STRAPI_QUERY.GetCollaborationQuestionsByProjectId
+                  ? any
+                  : T extends STRAPI_QUERY.GetSurveyQuestionsByProjectId
+                    ? any
+                    : T extends STRAPI_QUERY.GetOpportunitiesId
+                      ? Opportunity[]
+                      : T extends STRAPI_QUERY.CreateProjectUpdate
+                        ? any
+                        : T extends STRAPI_QUERY.GetEvents
+                          ? Event[]
+                          : never;
+
+type ResponseTransformerData =
+  | ProjectsResponse
+  | ProjectResponse
+  | GetInnoUserResponse
+  | CreateInnoUserResponse
+  | UpdatesResponse
+  | OpportunitiesResponse
+  | ProjectQuestionsResponse
+  | CollaborationQuestionsResponse
+  | SurveyQuestionsResponse
+  | CreateProjectUpdateResponse
+  | UpdateOpportunityResponse
+  | UpdateOportunityParticipantsResponse
+  | GetEventsResponse;
+
+export const withResponseTransformer = async <T extends STRAPI_QUERY>(
+  query: T,
+  data: ResponseTransformerData,
+): Promise<ResponseType<T>> => {
+  return withResponseTransformerUntyped(query, data) as ResponseType<T>;
+};
+
+const withResponseTransformerUntyped = async <T extends STRAPI_QUERY>(query: T, data: ResponseTransformerData) => {
   switch (query) {
     case STRAPI_QUERY.GetProjects:
       return await getStaticBuildFetchProjects(data as ProjectsResponse);
@@ -498,7 +562,9 @@ export const withResponseTransformer = async (
       return getStaticBuildCreateInnoUser(data as CreateInnoUserResponse);
     case STRAPI_QUERY.GetUpdatesByProjectId:
       return getStaticBuildFetchUpdates(data as UpdatesResponse);
-    case STRAPI_QUERY.GetOpportunitiesByProjectId || STRAPI_QUERY.GetOpportunitiesId:
+    case STRAPI_QUERY.GetOpportunitiesId:
+      return getStaticBuildFetchOpportunitiesByProjectId(data as OpportunitiesResponse);
+    case STRAPI_QUERY.GetOpportunitiesByProjectId:
       return getStaticBuildFetchOpportunitiesByProjectId(data as OpportunitiesResponse);
     case STRAPI_QUERY.GetProjectQuestionsByProjectId:
       return getStaticBuildFetchQuestionsByProjectId(data as ProjectQuestionsResponse);
@@ -508,6 +574,8 @@ export const withResponseTransformer = async (
       return getStaticBuildFetchSurveyQuestionsByProjectId(data as SurveyQuestionsResponse);
     case STRAPI_QUERY.CreateProjectUpdate:
       return getStaticBuildCreateProjectUpdate(data as CreateProjectUpdateResponse);
+    case STRAPI_QUERY.GetEvents:
+      return getStaticBuildFetchEvents(data as GetEventsResponse);
     case STRAPI_QUERY.CreateOpportunityParticipant:
       return getStaticBuildUpdateOpportunity(data as UpdateOpportunityResponse);
     case STRAPI_QUERY.GetOpportunityParticipant:
@@ -515,9 +583,38 @@ export const withResponseTransformer = async (
     case STRAPI_QUERY.UpdateOpportunityParticipants:
       return getStaticBuildUpdateOpportunityParticipants(data as UpdateOportunityParticipantsResponse);
     default:
+      // Will cause an error at build time if not all cases are covered above
+      exhaustiveMatchingGuard(query);
       break;
   }
 };
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const exhaustiveMatchingGuard = (_: never): never => {
+  throw new Error('This should not be reached');
+};
+
+function getStaticBuildFetchEvents(graphqlResponse: GetEventsResponse) {
+  if (graphqlResponse && graphqlResponse.data) {
+    return graphqlResponse.data.events.data.map((strapiEvent) => {
+      const attributes = strapiEvent.attributes;
+      const user = attributes.author.data;
+      const baseUrl = process.env.NEXT_PUBLIC_STRAPI_ENDPOINT;
+      const imagePath = attributes.image.data?.attributes.url;
+      return {
+        ...strapiEvent,
+        ...attributes,
+        startTime: attributes.start_time,
+        endTime: attributes.end_time,
+        author: {
+          ...user,
+          ...user.attributes,
+        },
+        image: imagePath ? baseUrl + imagePath : null,
+      };
+    });
+  }
+}
 
 function getStaticBuildCreateProjectUpdate(graphqlResponse: CreateProjectUpdateResponse) {
   if (graphqlResponse && graphqlResponse.data) {

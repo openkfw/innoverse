@@ -225,3 +225,16 @@ export interface NewsFilterProps {
 export type AmountOfNews = {
   [key: string]: number;
 };
+
+export type Event = {
+  id: string;
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  type: 'Remote' | 'In_office' | 'Remote_und_In_office';
+  description?: string;
+  location: string;
+  author: User;
+  image?: string;
+};

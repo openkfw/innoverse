@@ -97,6 +97,12 @@ export type UpdateOpportunityResponse = {
   };
 };
 
+export type GetEventsResponse = {
+  data: {
+    events: { data: Event[] };
+  };
+};
+
 export type UserQueryResult = {
   user: any;
 };
@@ -226,4 +232,27 @@ export type CommentQuery = {
   comment: string;
   author: { data: UserQuery };
   upvotedBy: { data: UserQuery[] };
+};
+
+export type Event = {
+  id: string;
+  attributes: {
+    title: string;
+    date: string;
+    start_time: string;
+    end_time: string;
+    type: string;
+    location: string;
+    description?: string;
+    author: {
+      data: UserQuery;
+    };
+    image: {
+      data?: {
+        attributes: {
+          url: string;
+        };
+      };
+    };
+  };
 };

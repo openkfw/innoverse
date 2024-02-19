@@ -24,6 +24,30 @@ export async function addUserReactionOnUpdate(
   });
 }
 
+export async function addUserReactionOnEvent(
+  client: PrismaClient,
+  reactedBy: string,
+  eventId: string,
+  reactionShortCode: string,
+) {
+  return await client.userReactionOnEvent.upsert({
+    where: {
+      compositeID: {
+        reactedBy: reactedBy,
+        eventId: eventId,
+      },
+    },
+    update: {
+      reactionShortCode: reactionShortCode,
+    },
+    create: {
+      reactionShortCode: reactionShortCode,
+      eventId: eventId,
+      reactedBy: reactedBy,
+    },
+  });
+}
+
 export async function addReaction(client: PrismaClient, shortCode: string, nativeSymbol: string) {
   return await client.reaction.upsert({
     where: {
@@ -37,7 +61,7 @@ export async function addReaction(client: PrismaClient, shortCode: string, nativ
   });
 }
 
-export async function removeReaction(client: PrismaClient, updateId: string, reactedBy: string) {
+export async function removeUserReactionOnUpdate(client: PrismaClient, updateId: string, reactedBy: string) {
   return await client.userReactionOnUpdate.delete({
     where: {
       compositeID: {
@@ -48,11 +72,34 @@ export async function removeReaction(client: PrismaClient, updateId: string, rea
   });
 }
 
+export async function removeUserReactionOnEvent(client: PrismaClient, eventId: string, reactedBy: string) {
+  return await client.userReactionOnEvent.delete({
+    where: {
+      compositeID: {
+        reactedBy: reactedBy,
+        eventId: eventId,
+      },
+    },
+  });
+}
+
 export async function getUpdateAndUserReaction(client: PrismaClient, updateId: string, reactedBy: string) {
   return client.userReactionOnUpdate.findFirst({
     where: {
       reactedBy: reactedBy,
       updateId: updateId,
+    },
+    include: {
+      reactedWith: true,
+    },
+  });
+}
+
+export async function getEventAndUserReaction(client: PrismaClient, eventId: string, reactedBy: string) {
+  return client.userReactionOnEvent.findFirst({
+    where: {
+      reactedBy: reactedBy,
+      eventId: eventId,
     },
     include: {
       reactedWith: true,
@@ -72,6 +119,14 @@ export async function findReactionsByUpdate(client: PrismaClient, updateId: stri
   });
 }
 
+export async function getReactionsByShortCodes(client: PrismaClient, shortCodes: string[]) {
+  return client.reaction.findMany({
+    where: {
+      shortCode: { in: shortCodes },
+    },
+  });
+}
+
 export async function countNumberOfReactionsOnUpdatePerEmoji(client: PrismaClient, updateId: string) {
   return client.userReactionOnUpdate.groupBy({
     by: ['reactionShortCode'],
@@ -83,8 +138,27 @@ export async function countNumberOfReactionsOnUpdatePerEmoji(client: PrismaClien
         reactionShortCode: 'desc',
       },
     },
+
     where: {
       updateId: updateId,
+    },
+  });
+}
+
+export async function countNumberOfReactionsOnEventPerEmoji(client: PrismaClient, eventId: string) {
+  return client.userReactionOnEvent.groupBy({
+    by: ['reactionShortCode'],
+    _count: {
+      reactionShortCode: true,
+    },
+    orderBy: {
+      _count: {
+        reactionShortCode: 'desc',
+      },
+    },
+
+    where: {
+      eventId: eventId,
     },
   });
 }

@@ -1,9 +1,9 @@
 import { SurveyVote } from '@prisma/client';
+import dayjs from 'dayjs';
 
 import {
   CollaborationQuestion,
   Filters,
-  Opportunity,
   Project,
   ProjectByIdQueryResult,
   ProjectQuestion,
@@ -17,11 +17,14 @@ import { getSurveyQuestionVotes } from '@/components/collaboration/survey/action
 import { AddUpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
 import { SortValues } from '@/components/newsPage/News';
 
+import { InnoPlatformError, strapiError } from './errors';
 import { getFulfilledResults } from './helpers';
+import logger from './logger';
 import {
   CreateInnoUserQuery,
   CreateProjectUpdateQuery,
   GetCollaborationQuestionsByProjectIdQuery,
+  GetEventsQuery,
   GetInnoUserByEmailQuery,
   GetInnoUserByProviderIdQuery,
   GetOpportunitiesByIdQuery,
@@ -39,8 +42,6 @@ import {
   withResponseTransformer,
 } from './queries';
 import strapiFetcher from './strapiFetcher';
-import { InnoPlatformError, strapiError } from './errors';
-import logger from './logger';
 
 async function uploadImage(imageUrl: string, fileName: string) {
   return fetch(imageUrl)
@@ -119,6 +120,19 @@ export async function getInnoUserByProviderId(providerId: string) {
     return resultUser;
   } catch (err) {
     const error = strapiError('Getting Inno user by providerId', err as Error, providerId);
+    logger.error(error);
+  }
+}
+
+export async function getUpcomingEvents() {
+  try {
+    const today = new Date();
+    const todayString = dayjs(today).format('YYYY-MM-DD');
+    const requestEvents = await strapiFetcher(GetEventsQuery, { today: todayString });
+    const events = await withResponseTransformer(STRAPI_QUERY.GetEvents, requestEvents);
+    return events;
+  } catch (err) {
+    const error = strapiError('Getting upcoming events', err as Error);
     logger.error(error);
   }
 }
@@ -222,19 +236,17 @@ export async function getOpportunitiesByProjectId(projectId: string) {
   try {
     const res = await strapiFetcher(GetOpportunitiesByProjectIdQuery, { projectId });
     const opportunities = await withResponseTransformer(STRAPI_QUERY.GetOpportunitiesByProjectId, res);
-    return opportunities as unknown as Opportunity[];
+    return opportunities;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting project opportunities by project id', err as Error, projectId);
+    logger.error(error);
   }
 }
 
 export async function getOpportunityById(projectId: string) {
   try {
     const res = await strapiFetcher(GetOpportunitiesByIdQuery, { projectId });
-    const opportunities = (await withResponseTransformer(
-      STRAPI_QUERY.GetOpportunitiesId,
-      res,
-    )) as unknown as Opportunity[];
+    const opportunities = await withResponseTransformer(STRAPI_QUERY.GetOpportunitiesId, res);
     return opportunities[0];
   } catch (err) {
     const error = strapiError('Getting all project opportunities', err as Error, projectId);
@@ -306,10 +318,10 @@ export async function createProjectUpdate(body: Omit<AddUpdateFormData, 'author'
   try {
     const requestUpdate = await strapiFetcher(CreateProjectUpdateQuery, body);
     const resultUpdate = await withResponseTransformer(STRAPI_QUERY.CreateProjectUpdate, requestUpdate);
-
     return resultUpdate;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Trying to to create project update', err as Error, body.projectId);
+    logger.error(error);
   }
 }
 
@@ -319,7 +331,12 @@ export async function getOpportunityAndUserParticipant(body: { opportunityId: st
     const resultGet = await withResponseTransformer(STRAPI_QUERY.GetOpportunityParticipant, requestGet);
     return resultGet;
   } catch (err) {
-    console.info(err);
+    const error = strapiError(
+      'Trying to get project opportunity and add participant',
+      err as Error,
+      body.opportunityId,
+    );
+    logger.error(error);
   }
 }
 
@@ -329,6 +346,11 @@ export async function handleOpportunityAppliedBy(body: { opportunityId: string; 
     const resultGet = await withResponseTransformer(STRAPI_QUERY.UpdateOpportunityParticipants, requestGet);
     return resultGet;
   } catch (err) {
-    console.info(err);
+    const error = strapiError(
+      'Trying to get uodate project opportunity participants',
+      err as Error,
+      body.opportunityId,
+    );
+    logger.error(error);
   }
 }

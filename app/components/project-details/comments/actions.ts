@@ -35,8 +35,8 @@ export const handleComment = withAuth(async (user: UserSession, body: { projectI
           responseCount: 0,
           questionId: '',
         } as Comment,
+      };
     }
-  }
     return {
       status: validatedParams.status,
       errors: validatedParams.errors,
