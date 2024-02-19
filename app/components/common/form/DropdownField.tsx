@@ -8,9 +8,9 @@ import Select from '@mui/material/Select';
 
 import { FormInputProps, Option } from '@/common/formTypes';
 
-import { inputStyle } from './AddUpdateForm';
+import { inputStyle } from './formStyle';
 
-export const DropdownField: React.FC<FormInputProps> = ({ name, control, label, options, readOnly = false }) => {
+export const DropdownField: React.FC<FormInputProps> = ({ name, control, label, options, readOnly = false, sx }) => {
   const generateSingleOptions = () => {
     return options?.map((option: Option) => {
       return (
@@ -20,13 +20,21 @@ export const DropdownField: React.FC<FormInputProps> = ({ name, control, label, 
       );
     });
   };
+
   return (
-    <FormControl size="small" sx={inputStyle}>
+    <FormControl size="small" sx={sx}>
       <InputLabel id="select-label">{label}</InputLabel>
       <Controller
         render={({ field, fieldState: { error } }) => (
           <>
-            <Select {...field} labelId="select-label" label={label} readOnly={readOnly} error={!!error}>
+            <Select
+              {...field}
+              labelId="select-label"
+              label={label}
+              readOnly={readOnly}
+              error={!!error}
+              sx={{ ...inputStyle, ...sx }}
+            >
               {generateSingleOptions()}
             </Select>
             <FormHelperText>{error?.message}</FormHelperText>

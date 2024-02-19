@@ -125,13 +125,8 @@ export default function InteractionButton(props: InteractionButtonProps) {
   const getButtonTextClicked = () => {
     if (label) return label;
     if (interactionType === InteractionType.LIKE) return 'Liked';
-    if (interactionType === InteractionType.ADD_UPDATE) return 'Neuigkeit hinzufügen';
     if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Entfolgen';
     if (interactionType === InteractionType.USER_FOLLOW) return 'Entfolgen';
-    if (interactionType === InteractionType.SHARE_OPINION) return 'Teile Deine Erfahrung';
-    if (interactionType === InteractionType.ADD_INSIGHTS) return 'Teile Deine Erfahrung';
-    if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
-    if (interactionType === InteractionType.FEEDBACK) return 'FEEDBACK';
     if (interactionType === InteractionType.OPPORTUNITY_APPLY) return 'Angewandt';
     else return getButtonText();
   };
@@ -161,17 +156,17 @@ export default function InteractionButton(props: InteractionButtonProps) {
 
   return (
     <Button
-      disabled={disabled}
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       variant="outlined"
       startIcon={isSelected ? getSelectedInteractionIcon() : getInteractionIcon()}
       endIcon={getEndIcon()}
+      disabled={disabled}
       sx={{
         px: getText() === undefined ? 1 : 2,
         py: 1,
-        color: clicked ? 'secondary.main' : 'rgba(0, 0, 0, 0.56)',
+        color: isSelected ? 'secondary.main' : 'rgba(0, 0, 0, 0.56)',
         fontFamily: 'Arial',
         fontSize: '13px',
         fontWeight: '700',

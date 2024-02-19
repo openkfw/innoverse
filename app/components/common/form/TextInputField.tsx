@@ -4,9 +4,9 @@ import TextField from '@mui/material/TextField';
 
 import { FormInputProps } from '@/common/formTypes';
 
-import { inputStyle } from './AddUpdateForm';
+import { inputStyle } from './formStyle';
 
-export const MultilineTextInputField = ({ name, control, label, placeholder, readOnly = false }: FormInputProps) => {
+export const TextInputField = ({ name, control, label, readOnly = false, sx }: FormInputProps) => {
   return (
     <Controller
       name={name}
@@ -14,15 +14,11 @@ export const MultilineTextInputField = ({ name, control, label, placeholder, rea
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
-          sx={inputStyle}
-          InputLabelProps={{ shrink: true }}
-          placeholder={placeholder}
+          sx={{ ...inputStyle, ...sx }}
           helperText={error ? error.message : null}
-          multiline
           size="small"
           error={!!error}
           label={label}
-          rows={4}
           InputProps={{
             readOnly,
           }}

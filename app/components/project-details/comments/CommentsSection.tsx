@@ -10,7 +10,7 @@ import { Comment } from '@/common/types';
 import { Project, ProjectQuestion } from '@/common/types';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 
-import WriteCommentCard from '../../collaboration/WriteCommentCard';
+import WriteCommentCard from '../../collaboration/writeComment/WriteCommentCard';
 
 import { handleComment } from './actions';
 import { CommentCard } from './CommentCard';

@@ -7,7 +7,7 @@ import { withAuth } from '@/utils/auth';
 import { createProjectUpdate, getInnoUserByProviderId, getProjects } from '@/utils/requests';
 import { validateParams } from '@/utils/validationHelper';
 
-import { UpdateFormData } from './AddUpdateForm';
+import { AddUpdateFormData } from './AddUpdateForm';
 import { handleProjectUpdateSchema } from './validationSchema';
 
 export const getProjectsOptions = async () => {
@@ -21,7 +21,7 @@ export const getProjectsOptions = async () => {
 };
 
 export const handleProjectUpdate = withAuth(
-  async (user: UserSession, body: Omit<UpdateFormData, 'authorId' | 'author'>) => {
+  async (user: UserSession, body: Omit<AddUpdateFormData, 'authorId' | 'author'>) => {
     const validatedParams = validateParams(handleProjectUpdateSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
       const author = (await getInnoUserByProviderId(user.providerId)) as User;

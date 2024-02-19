@@ -1,2 +1,2 @@
-export const required_field = { message: 'Required field' };
-export const invalid_date = { message: 'Date is invalid' };
+export const required_field = { message: 'Erforderlich' };
+export const invalid_date = { message: 'Datum ist ungültig' };

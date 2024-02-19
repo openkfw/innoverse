@@ -14,7 +14,7 @@ import {
   UserSession,
 } from '@/common/types';
 import { getSurveyQuestionVotes } from '@/components/collaboration/survey/actions';
-import { UpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
+import { AddUpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
 import { SortValues } from '@/components/newsPage/News';
 
 import { getFulfilledResults } from './helpers';
@@ -283,7 +283,7 @@ export async function createInnoUserIfNotExist(body: UserSession, image?: string
   }
 }
 
-export async function createProjectUpdate(body: Omit<UpdateFormData, 'author'>) {
+export async function createProjectUpdate(body: Omit<AddUpdateFormData, 'author'>) {
   try {
     const requestUpdate = await strapiFetcher(CreateProjectUpdateQuery, body);
     const resultUpdate = await withResponseTransformer(STRAPI_QUERY.CreateProjectUpdate, requestUpdate);
