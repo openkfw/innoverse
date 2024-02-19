@@ -10,7 +10,7 @@ import { Comment } from '@/common/types';
 import { Project, ProjectQuestion } from '@/common/types';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 
-import WriteCommentCard from '../../collaboration/WriteCommentCard';
+import WriteCommentCard from '../../collaboration/writeComment/WriteCommentCard';
 
 import { handleComment } from './actions';
 import { CommentCard } from './CommentCard';
@@ -21,6 +21,7 @@ const CommentsSection = ({ project }: { project: Project }) => {
 
   const handleSendComment = async (comment: string) => {
     const { data: newComment } = await handleComment({ projectId: project.id, comment: comment });
+    if (!newComment) return;
     setComments((comments) => sortDateByCreatedAt([...comments, newComment]));
   };
 

@@ -119,7 +119,12 @@ const cardContentStyles = {
   alignItems: 'center',
   width: '100%',
   gap: 1,
-  height: '209px',
+  height: 'fit-content',
+  maxHeight: '209px',
+  [theme.breakpoints.down('md')]: {
+    maxHeight: 'unset',
+    height: '209px',
+  },
 };
 
 const rowStyles = {

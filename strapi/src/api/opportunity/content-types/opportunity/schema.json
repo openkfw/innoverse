@@ -19,10 +19,6 @@
     "description": {
       "type": "text"
     },
-    "email": {
-      "type": "email",
-      "required": true
-    },
     "project": {
       "type": "relation",
       "relation": "oneToOne",
@@ -30,6 +26,17 @@
     },
     "expense": {
       "type": "string"
+    },
+    "contactPerson": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::inno-user.inno-user"
+    },
+    "participants": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::inno-user.inno-user",
+      "inversedBy": "opportunities"
     }
   }
 }

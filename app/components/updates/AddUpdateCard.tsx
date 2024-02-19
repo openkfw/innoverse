@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 
 import CustomToast from '../common/CustomToast';
-import InteractionButton, { interactionButtonStyles,InteractionType } from '../common/InteractionButton';
+import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
 import AddUpdateDialog from '../newsPage/addUpdate/AddUpdateDialog';
 
 interface AddUpdateCardProps {
@@ -19,7 +19,12 @@ export const AddUpdateCard = (props: AddUpdateCardProps) => {
   const { projectId, setUpdateAdded } = props;
   const [addUpdateDialogOpen, setAddUpdateDialogOpen] = useState(false);
 
-  const defaultFormValues = { comment: '', date: dayjs(new Date()), author: '', projectId };
+  const defaultFormValues = {
+    comment: '',
+    date: dayjs(new Date()),
+    author: '',
+    projectId,
+  };
 
   return (
     <>

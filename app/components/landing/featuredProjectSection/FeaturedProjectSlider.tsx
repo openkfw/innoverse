@@ -90,6 +90,7 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
     dotsClass: 'slick-dots slick-thumb',
     rows: 1,
     variableWidth: !isWideScreen,
+    className: 'carouselStyles',
   };
 
   return (

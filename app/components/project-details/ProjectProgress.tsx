@@ -159,6 +159,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
       setShowMoreButtonVisible(false);
       expand();
     }
+
     setHeadings(
       (prev) =>
         prev?.reduce((pV, cV) => {

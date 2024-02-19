@@ -9,8 +9,7 @@ import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
 
-import InteractionButton, { InteractionType } from '../common/InteractionButton';
-
+import OpportunityCard from './opportunities/OpportunityCard';
 import { SurveyCard } from './survey/SurveyCard';
 import { CollaborationQuestionCard } from './CollaborationQuestionCard';
 
@@ -30,27 +29,12 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
           Opportunities
         </Typography>
 
-        {project.opportunities.map((o, key) => (
-          <Grid container spacing={8} sx={gridStyles} key={key}>
-            <Grid item xs={6} sx={{ paddingRight: '100px' }}>
-              <Typography variant="h5" color="secondary.contrastText">
-                {o.title}
-              </Typography>
-              <Typography variant="body1" color="secondary.contrastText">
-                {o.description}
-              </Typography>
-              <Typography variant="overline" color="primary.main">
-                Aufwand: {o.expense}
-              </Typography>
+        {project.opportunities &&
+          project.opportunities.map((opportunity, key) => (
+            <Grid container spacing={8} sx={gridStyles} key={key}>
+              <OpportunityCard opportunity={opportunity} projectName={project.title} />
             </Grid>
-            <Grid item xs={6}>
-              <Box sx={joinTeamStyles}>
-                <InteractionButton projectName={project.projectName} interactionType={InteractionType.APPLY} />
-                <InteractionButton projectName={project.projectName} interactionType={InteractionType.RECOMMEND} />
-              </Box>
-            </Grid>
-          </Grid>
-        ))}
+          ))}
 
         <Divider textAlign="left" sx={dividerStyles} />
 
@@ -69,7 +53,7 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
           <>
             <Divider textAlign="left" sx={dividerStyles} />
             <Typography color="primary.main" sx={titleStyles}>
-              Hilf uns bei deisen Fragen
+              Hilf uns bei diesen Fragen
             </Typography>
             <Grid container sx={gridStyles} spacing={8}>
               {project.collaborationQuestions.map((question, i) => (
@@ -114,15 +98,6 @@ const colorOverlayStyles = {
   background: 'linear-gradient(90deg, rgba(240, 238, 225, 0.00) 10.42%, #F0EEE1 100%)',
   position: 'absolute',
   zIndex: -1,
-};
-
-const joinTeamStyles = {
-  marginLeft: 2,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  justifyContent: 'center',
-  gap: 1,
 };
 
 const gridStyles = {

@@ -20,6 +20,9 @@ export const TooltipContent = (props: TeamMemberProps) => {
         <Typography variant="caption" color="text.secondary">
           {teamMember.role}
         </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {teamMember.email}
+        </Typography>
       </Grid>
       <Grid item>
         <InteractionButton projectName={projectName} interactionType={InteractionType.USER_FOLLOW} />

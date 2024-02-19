@@ -79,3 +79,7 @@
 .slick-list {
   overflow: visible !important;
 }
+
+.carouselStyles .slick-list {
+  overflow: hidden !important;
+}

@@ -1,3 +1,5 @@
+'use server';
+
 import { RequestError } from '../entities/error';
 
 const strapiFetcher = async (query: string, variables?: any) => {
@@ -5,7 +7,7 @@ const strapiFetcher = async (query: string, variables?: any) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+      Authorization: `Bearer ${process.env.STRAPI_TOKEN}`,
     },
     body: JSON.stringify({
       query: query,

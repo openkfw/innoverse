@@ -36,7 +36,7 @@ const UpdateCard = (props: UpdateCardProps) => {
     }
   }
 
-  const handleUpdatesClick = async (offset: number) => {
+  function handleUpdatesClick(offset: number) {
     const scroll = () => {
       const section = document.getElementById('updates-tab')?.offsetTop;
       if (section) {
@@ -46,9 +46,10 @@ const UpdateCard = (props: UpdateCardProps) => {
         });
       }
     };
-    await setActiveTab(2);
-    scroll();
-  };
+
+    setActiveTab(2);
+    setTimeout(scroll, 0);
+  }
 
   if (updates.length === 0) {
     return <></>;

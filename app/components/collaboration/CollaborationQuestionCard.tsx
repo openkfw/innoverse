@@ -16,8 +16,8 @@ import { TooltipContent } from '../project-details/TooltipContent';
 
 import { handleCollaborationComment } from './comments/actions';
 import { CollaborationComments } from './comments/CollaborationComments';
+import WriteCommentCard from './writeComment/WriteCommentCard';
 import { ShareOpinionCard } from './ShareOpinionCard';
-import WriteCommentCard from './WriteCommentCard';
 
 interface UpdateCardProps {
   content: CollaborationQuestion;
@@ -50,6 +50,7 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
 
   const handleComment = async (comment: string) => {
     const { data: newComment } = await handleCollaborationComment({ projectId, questionId, comment });
+    if (!newComment) return;
     const newComments = sortDateByCreatedAt([...comments, newComment]);
     setComments(newComments);
     setCollaborationCommentsAmount(newComments.length);

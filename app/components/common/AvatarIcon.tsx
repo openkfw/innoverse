@@ -3,12 +3,12 @@ import Image from 'next/image';
 
 import Avatar from '@mui/material/Avatar';
 
-import { User } from '@/common/types';
+import { User, UserSession } from '@/common/types';
 
 import AvatarInitialsIcon from './AvatarInitialsIcon';
 
 interface AvatarIconProps {
-  user: User;
+  user: User | UserSession;
   size?: number;
   index?: number;
   allowAnimation?: boolean;
