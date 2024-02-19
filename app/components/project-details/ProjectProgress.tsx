@@ -211,7 +211,6 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
             </Grid>
           </Grid>
         </Box>
-
         <Divider sx={{ width: '662px' }} />
         <ProjectTags tags={project.description.tags} />
         <AuthorInformation projectName={projectName} author={project.author} />

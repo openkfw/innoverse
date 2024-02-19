@@ -10,15 +10,18 @@ import theme from '@/styles/theme';
 
 type TransparenButtonProps = PropsWithChildren & {
   onClick?: () => void;
+  icon?: React.JSX.Element;
   sx?: SxProps;
+  textSx?: SxProps;
 };
 
-export const TransparentButton = ({ onClick, children, sx }: TransparenButtonProps) => {
+export const TransparentButton = ({ onClick, icon, children, sx, textSx }: TransparenButtonProps) => {
   const buttonStyle = {
     width: 300,
     px: 0,
     py: 1,
-    mb: 3,
+    mb: 2,
+    pr: 1,
     background: 'transparent',
     color: theme.palette.secondary.main,
     ':hover': {
@@ -28,19 +31,19 @@ export const TransparentButton = ({ onClick, children, sx }: TransparenButtonPro
     ...sx,
   };
 
+  const textStyle = {
+    fontSize: '14px',
+    fontWeight: '500',
+    ...textSx,
+  };
+
   return (
     <Button
       sx={buttonStyle}
       onClick={() => onClick && onClick()}
-      startIcon={<AddIcon color="secondary" fontSize="large" />}
+      startIcon={icon ? icon : <AddIcon color="secondary" fontSize="large" />}
     >
-      <Typography
-        variant="subtitle2"
-        sx={{
-          fontSize: '14px',
-          fontWeight: '500',
-        }}
-      >
+      <Typography variant="subtitle2" sx={textStyle}>
         {children}
       </Typography>
     </Button>

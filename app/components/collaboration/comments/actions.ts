@@ -158,7 +158,7 @@ export const getCollaborationComments = async (body: { projectId: string; questi
           const getUpvotes = comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote));
           const upvotes = await getFulfilledPromiseResults(getUpvotes);
           const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
-  
+
           return {
             ...comment,
             author: author,

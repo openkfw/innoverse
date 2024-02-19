@@ -77,10 +77,23 @@ model UserReactionOnUpdate {
   @@id(name: "compositeID", [reactedBy, updateId])
 }
 
+model UserReactionOnEvent {
+  createdAt DateTime @default(now())
+  
+  reactedBy String
+  eventId   String
+
+  reactionShortCode String
+  reactedWith       Reaction @relation(fields: [reactionShortCode], references: [shortCode])
+
+  @@id(name: "compositeID", [reactedBy, eventId])
+}
+
 model Reaction {
   shortCode            String                 @id @unique //shortcode of emoji, see unicode 
   nativeSymbol         String //native representation of emoji symbol, see unicode
   UserReactionOnUpdate UserReactionOnUpdate[]
+  UserReactionOnEvent  UserReactionOnEvent[]
 }
 
 model SurveyVote {

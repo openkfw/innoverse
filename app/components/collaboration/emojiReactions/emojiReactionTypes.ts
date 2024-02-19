@@ -7,7 +7,6 @@ export type Reaction = {
   createdAt: Date;
   reactedBy: string;
   reactedWith: Emoji;
-  updateId: string;
 };
 
 export type CountReaction = {

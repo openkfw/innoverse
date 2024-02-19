@@ -1,0 +1,68 @@
+{
+  "collectionName": "events",
+  "info": {
+    "singularName": "event",
+    "pluralName": "events",
+    "displayName": "Event",
+    "description": ""
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": {},
+  "attributes": {
+    "location": { "type": "string", "required": true },
+    "title": { "type": "string", "required": true },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "videos", "audios", "files"]
+    },
+    "date": { "type": "date", "required": true },
+    "author": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::inno-user.inno-user"
+    },
+    "start_time": { "type": "time", "required": true },
+    "end_time": { "type": "time", "required": true },
+    "description": { "type": "richtext" },
+    "type": {
+      "type": "enumeration",
+      "enum": ["Remote", "In-office", "Remote und In-office"],
+      "required": true
+    },
+    "createdAt": { "type": "datetime" },
+    "updatedAt": { "type": "datetime" },
+    "publishedAt": {
+      "type": "datetime",
+      "configurable": false,
+      "writable": true,
+      "visible": false
+    },
+    "createdBy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "admin::user",
+      "configurable": false,
+      "writable": false,
+      "visible": false,
+      "useJoinTable": false,
+      "private": true
+    },
+    "updatedBy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "admin::user",
+      "configurable": false,
+      "writable": false,
+      "visible": false,
+      "useJoinTable": false,
+      "private": true
+    }
+  },
+  "kind": "collectionType",
+  "modelType": "contentType",
+  "modelName": "event",
+  "uid": "api::event.event",
+  "globalId": "Event"
+}
