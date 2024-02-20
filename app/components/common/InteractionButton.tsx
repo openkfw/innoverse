@@ -13,7 +13,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SendIcon from '@mui/icons-material/Send';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
-import { Box } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { SxProps } from '@mui/material/styles';
 
@@ -33,6 +33,7 @@ interface InteractionButtonProps extends ButtonProps {
   sx?: SxProps;
   isSelected?: boolean;
   disabled?: boolean;
+  tooltip?: string;
 }
 
 export enum InteractionType {
@@ -54,7 +55,17 @@ export enum InteractionType {
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
-  const { interactionType, label, onClick, onIconClick, sx, projectName, isSelected = false, disabled = false } = props;
+  const {
+    interactionType,
+    label,
+    onClick,
+    onIconClick,
+    sx,
+    projectName,
+    isSelected = false,
+    disabled = false,
+    tooltip,
+  } = props;
   const [isHovered, setIsHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
 
@@ -154,7 +165,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     return 'black';
   };
 
-  return (
+  const customButton = (
     <Button
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
@@ -193,6 +204,16 @@ export default function InteractionButton(props: InteractionButtonProps) {
       {getText()}
     </Button>
   );
+
+  if (tooltip) {
+    return (
+      <Tooltip title={tooltip}>
+        <span>{customButton}</span>
+      </Tooltip>
+    );
+  }
+
+  return customButton;
 }
 
 export const interactionButtonStyles = {
