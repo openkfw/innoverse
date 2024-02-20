@@ -7,7 +7,6 @@ import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { Project } from '@/common/types';
-import CustomButton from '@/components/common/CustomButton';
 import theme from '@/styles/theme';
 
 import { defaultImage } from '../featuredProjectSection/FeaturedProjectSlider';
