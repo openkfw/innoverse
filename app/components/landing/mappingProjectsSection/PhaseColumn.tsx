@@ -57,7 +57,7 @@ export default function PhaseColumn(props: PhaseColumnProps) {
       </Typography>
       {projects.map((project) => {
         return (
-          <Link href={`/projects/${project.id}`} style={{ ...linkStyle }}>
+          <Link key={project.title} href={`/projects/${project.id}`} style={{ ...linkStyle }}>
             <Typography
               variant="subtitle2"
               key={project.title}
