@@ -160,14 +160,13 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
       expand();
     }
 
-    setHeadings(
-      (prev) =>
-        prev?.reduce((pV, cV) => {
-          if (cV.id === id) cV.active = true;
-          else cV.active = false;
-          pV.push(cV);
-          return pV;
-        }, [] as MarkdownHeading[]),
+    setHeadings((prev) =>
+      prev?.reduce((pV, cV) => {
+        if (cV.id === id) cV.active = true;
+        else cV.active = false;
+        pV.push(cV);
+        return pV;
+      }, [] as MarkdownHeading[]),
     );
   };
 
