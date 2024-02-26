@@ -73,19 +73,15 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
       await subscribeToWebPush(JSON.stringify(subscription));
     };
 
+    const registerServiceWorker = () => navigator.serviceWorker.register('/sw.js', { scope: '/' });
+
     try {
-      if (!initialized.current && user && !isLoading) {
-        initialized.current = true;
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker
-            .register('/sw.js', {
-              scope: '/',
-            })
-            .then(() => {
-              registerNotifications().then(() => console.info('Push Notifications registered'));
-            });
-        }
-      }
+      if (initialized.current || isLoading || !user) return;
+      initialized.current = true;
+      if (!('serviceWorker' in navigator)) return;
+      registerServiceWorker().then(() => {
+        registerNotifications().then(() => console.info('Push Notifications registered'));
+      });
     } catch (error) {
       console.error("Can't register service worker", error);
     }
