@@ -84,9 +84,10 @@
   overflow: hidden !important;
 }
 
-.slick-slide {
+.carouselStyles .slick-slide {
   visibility: hidden;
 }
-.slick-slide.slick-active {
+
+.carouselStyles .slick-slide.slick-active {
   visibility: visible;
 }
