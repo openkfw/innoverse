@@ -92,7 +92,10 @@ export default function TopBar() {
                     </MenuItem>
                   </Link>
                 ) : (
-                  <MenuItem key={page.text} sx={{ borderRadius: '8px' }}>
+                  <MenuItem
+                    key={page.text}
+                    sx={{ borderRadius: '8px', '&:hover': { backgroundColor: 'inherit' }, pointerEvents: 'none' }}
+                  >
                     <Typography variant="body2" color="rgba(155,155,155,1)">
                       {page.text}
                     </Typography>
