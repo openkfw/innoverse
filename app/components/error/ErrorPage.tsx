@@ -4,10 +4,15 @@ import Layout from '../layout/Layout';
 
 import Error from './Error';
 
-const ErrorPage = () => {
+interface ErrorPageProps {
+  message?: string;
+}
+
+const ErrorPage = (props: ErrorPageProps) => {
+  const { message } = props;
   return (
     <Layout>
-      <Error text="Die Daten konnten nicht geladen werden. Versuchen Sie es später erneut." />
+      <Error text={message ? message : 'Die Daten konnten nicht geladen werden.' + 'Versuchen Sie es später erneut.'} />
     </Layout>
   );
 };

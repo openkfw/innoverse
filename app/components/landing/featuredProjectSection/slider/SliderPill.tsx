@@ -33,11 +33,16 @@ const SliderPill = (props: { active: boolean; itemNumber: string; title: string;
     },
     vr: {
       position: 'absolute',
+      bottom: '100%',
       borderLeft: '1px solid white',
-      height: '100px',
+      height: '0px',
       marginLeft: '50%',
-      marginTop: '-100px',
       zIndex: 0,
+      animation: 'grow 1s ease forwards',
+      '@keyframes grow': {
+        from: { height: 0 },
+        to: { height: '200px' },
+      },
     },
   };
 

@@ -1,14 +1,28 @@
 import { z } from 'zod';
 
-export const reactionShema = z
+export const updateReactionShema = z
   .object({
     updateId: z.string(),
+  })
+  .required();
+
+export const eventReactionShema = z
+  .object({
+    eventId: z.string(),
   })
   .required();
 
 export const reactionShemaForUpdate = z
   .object({
     updateId: z.string(),
+    operation: z.string(),
+    emoji: z.object({ shortCode: z.string(), nativeSymbol: z.string() }),
+  })
+  .required();
+
+export const reactionShemaForEvent = z
+  .object({
+    eventId: z.string(),
     operation: z.string(),
     emoji: z.object({ shortCode: z.string(), nativeSymbol: z.string() }),
   })

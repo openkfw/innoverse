@@ -76,7 +76,7 @@ export const CollaborationComments = ({ comments }: CommentsProps) => {
           </Collapse>
         ))}
       {!isCollapsed && comments.length > MAX_NUM_OF_COMMENTS && (
-        <TransparentButton onClick={handleToggle}>
+        <TransparentButton onClick={handleToggle} sx={{ marginLeft: 4 }}>
           weitere Rückmeldungen anzeigen ({lengthOfNotShownComments})
         </TransparentButton>
       )}

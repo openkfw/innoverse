@@ -65,7 +65,7 @@ export const CollaborationCommentCard = ({ content, voteComponent }: CommentCard
           }
         />
       )}
-      <CardContent sx={cardContentStyles}>
+      <CardContent sx={cardContentStyles} style={{ paddingBottom: '1em' }}>
         <Stack direction="column" spacing={2}>
           <Box sx={{ ...commentContainerStyles, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
             <Typography variant="body1" sx={commentStyles}>

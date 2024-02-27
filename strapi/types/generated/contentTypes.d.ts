@@ -719,6 +719,52 @@ export interface ApiCollaborationQuestionCollaborationQuestion
   };
 }
 
+export interface ApiEventEvent extends Schema.CollectionType {
+  collectionName: 'events';
+  info: {
+    singularName: 'event';
+    pluralName: 'events';
+    displayName: 'Event';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    location: Attribute.String & Attribute.Required;
+    title: Attribute.String & Attribute.Required;
+    image: Attribute.Media;
+    date: Attribute.Date & Attribute.Required;
+    author: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'api::inno-user.inno-user'
+    >;
+    start_time: Attribute.Time & Attribute.Required;
+    end_time: Attribute.Time & Attribute.Required;
+    description: Attribute.RichText;
+    type: Attribute.Enumeration<
+      ['Remote', 'In-office', 'Remote und In-office']
+    > &
+      Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiInnoUserInnoUser extends Schema.CollectionType {
   collectionName: 'inno_users';
   info: {
@@ -1024,6 +1070,7 @@ declare module '@strapi/strapi' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::collaboration-question.collaboration-question': ApiCollaborationQuestionCollaborationQuestion;
+      'api::event.event': ApiEventEvent;
       'api::inno-user.inno-user': ApiInnoUserInnoUser;
       'api::opportunity.opportunity': ApiOpportunityOpportunity;
       'api::project.project': ApiProjectProject;

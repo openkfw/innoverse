@@ -56,6 +56,7 @@ const nextConfig = {
       test: /\.md$/,
       use: 'raw-loader',
     });
+    config.resolve.fallback = { fs: false };
     return config;
   },
 };

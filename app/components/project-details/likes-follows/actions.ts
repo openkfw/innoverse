@@ -11,6 +11,8 @@ import {
 } from '@/repository/db/follow';
 import { addLike, deleteProjectAndUserLike, getProjectAndUserLikes, getProjectLikes } from '@/repository/db/like';
 import { withAuth } from '@/utils/auth';
+import { dbError, InnoPlatformError } from '@/utils/errors';
+import logger from '@/utils/logger';
 import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
@@ -18,97 +20,201 @@ import dbClient from '../../../repository/db/prisma/prisma';
 import { followSchema, likeSchema } from './validationSchema';
 
 export const handleLike = withAuth(async (user: UserSession, body: { projectId: string }) => {
-  const validatedParams = validateParams(likeSchema, body);
-  if (validatedParams.status === StatusCodes.OK) {
-    await addLike(dbClient, body.projectId, user.providerId);
-    return { status: StatusCodes.OK };
+  try {
+    const validatedParams = validateParams(likeSchema, body);
+    if (validatedParams.status === StatusCodes.OK) {
+      await addLike(dbClient, body.projectId, user.providerId);
+      return { status: StatusCodes.OK };
+    }
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+      message: validatedParams.message,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Adding a like to a Project ${body.projectId} for user ${user.providerId}`,
+      err as Error,
+      body.projectId,
+    );
+    logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Liking the project failed',
+    };
   }
-  return {
-    status: validatedParams.status,
-    errors: validatedParams.errors,
-  };
 });
 
 export const handleRemoveLike = withAuth(async (user: UserSession, body: { projectId: string }) => {
-  const validatedParams = validateParams(likeSchema, body);
-  if (validatedParams.status === StatusCodes.OK) {
-    await deleteProjectAndUserLike(dbClient, body.projectId, user.providerId);
-    return { status: StatusCodes.OK };
+  try {
+    const validatedParams = validateParams(likeSchema, body);
+    if (validatedParams.status === StatusCodes.OK) {
+      await deleteProjectAndUserLike(dbClient, body.projectId, user.providerId);
+      return { status: StatusCodes.OK };
+    }
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+      message: validatedParams.message,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Removing a like for a Project ${body.projectId} for user ${user.providerId}`,
+      err as Error,
+      body.projectId,
+    );
+    logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Unliking the project failed',
+    };
   }
-  return {
-    status: validatedParams.status,
-    errors: validatedParams.errors,
-  };
 });
 
 export const isLiked = withAuth(async (user: UserSession, body: { projectId: string }) => {
-  const validatedParams = validateParams(likeSchema, body);
-  if (validatedParams.status === StatusCodes.OK) {
-    const result = await getProjectAndUserLikes(dbClient, body.projectId, user.providerId);
-    return { status: StatusCodes.OK, data: result.length > 0 };
+  try {
+    const validatedParams = validateParams(likeSchema, body);
+    if (validatedParams.status === StatusCodes.OK) {
+      const result = await getProjectAndUserLikes(dbClient, body.projectId, user.providerId);
+      return { status: StatusCodes.OK, data: result.length > 0 };
+    }
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+      message: validatedParams.message,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Checking the like for a Project ${body.projectId} for user ${user.providerId}`,
+      err as Error,
+      body.projectId,
+    );
+    logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Checking like of the project failed',
+    };
   }
-  return {
-    status: validatedParams.status,
-    errors: validatedParams.errors,
-  };
 });
 
 export const getAllProjectLikes = async (body: { projectId: string }) => {
-  const validatedParams = validateParams(likeSchema, body);
-  if (validatedParams.status === StatusCodes.OK) {
-    const result = await getProjectLikes(dbClient, body.projectId);
-    return { status: StatusCodes.OK, data: result };
+  try {
+    const validatedParams = validateParams(likeSchema, body);
+    if (validatedParams.status === StatusCodes.OK) {
+      const result = await getProjectLikes(dbClient, body.projectId);
+      return { status: StatusCodes.OK, data: result };
+    }
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+      message: validatedParams.message,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError('Getting Project Likes', err as Error, body.projectId);
+    logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Getting project likes failed',
+    };
   }
-  return {
-    status: validatedParams.status,
-    errors: validatedParams.errors,
-  };
 };
 
 export const getAllProjectFollowers = async (body: { projectId: string }) => {
-  const validatedParams = validateParams(followSchema, body);
-  if (validatedParams.status === StatusCodes.OK) {
-    const result = await getProjectFollowers(dbClient, body.projectId);
-    return { status: StatusCodes.OK, data: result };
+  try {
+    const validatedParams = validateParams(followSchema, body);
+    if (validatedParams.status === StatusCodes.OK) {
+      const result = await getProjectFollowers(dbClient, body.projectId);
+      return { status: StatusCodes.OK, data: result };
+    }
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+      message: validatedParams.message,
+    };
+  } catch (err: any) {
+    const error: InnoPlatformError = dbError('Getting Project followers', err as Error, body.projectId);
+    logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Getting project followers failed',
+    };
   }
-  return {
-    status: validatedParams.status,
-    errors: validatedParams.errors,
-  };
 };
 
 export const handleRemoveFollower = withAuth(async (user: UserSession, body: { projectId: string }) => {
-  const validatedParams = validateParams(followSchema, body);
-  if (validatedParams.status === StatusCodes.OK) {
-    await deleteProjectAndUserFollower(dbClient, body.projectId, user.providerId);
-    return { status: StatusCodes.OK };
+  try {
+    const validatedParams = validateParams(followSchema, body);
+    if (validatedParams.status === StatusCodes.OK) {
+      await deleteProjectAndUserFollower(dbClient, body.projectId, user.providerId);
+      return { status: StatusCodes.OK };
+    }
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+      message: validatedParams.message,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Removing a follower for a Project ${body.projectId} for user ${user.providerId}`,
+      err as Error,
+      body.projectId,
+    );
+    logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Unfollowing the project failed',
+    };
   }
-  return {
-    status: validatedParams.status,
-    errors: validatedParams.errors,
-  };
 });
 
 export const isFollowed = withAuth(async (user: UserSession, body: { projectId: string }) => {
-  const validatedParams = validateParams(followSchema, body);
-  if (validatedParams.status === StatusCodes.OK) {
-    const result = await getProjectAndUserFollowers(dbClient, body.projectId, user.providerId);
-    return { status: StatusCodes.OK, data: result.length > 0 };
+  try {
+    const validatedParams = validateParams(followSchema, body);
+    if (validatedParams.status === StatusCodes.OK) {
+      const result = await getProjectAndUserFollowers(dbClient, body.projectId, user.providerId);
+      return { status: StatusCodes.OK, data: result.length > 0 };
+    }
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+      message: validatedParams.message,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Checking the follow status for a Project ${body.projectId} for user ${user.providerId}`,
+      err as Error,
+      body.projectId,
+    );
+    logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Checking follow status of project failed',
+    };
   }
-  return {
-    status: validatedParams.status,
-    errors: validatedParams.errors,
-  };
 });
 
 export const handleFollow = withAuth(async (user: UserSession, body: { projectId: string }) => {
-  const validatedParams = validateParams(followSchema, body);
-  if (validatedParams.status === StatusCodes.OK) {
-    await addFollower(dbClient, body.projectId, user.providerId);
-    return { status: StatusCodes.OK };
+  try {
+    const validatedParams = validateParams(followSchema, body);
+    if (validatedParams.status === StatusCodes.OK) {
+      await addFollower(dbClient, body.projectId, user.providerId);
+      return { status: StatusCodes.OK };
+    }
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+      message: validatedParams.message,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Adding a follower to a Project ${body.projectId} for user ${user.providerId}`,
+      err as Error,
+      body.projectId,
+    );
+    logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Following the project failed',
+    };
   }
-  return {
-    status: validatedParams.status,
-    errors: validatedParams.errors,
-  };
 });

@@ -14,12 +14,13 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { ProjectUpdate } from '@/common/types';
-import EmojiReactionCard from '@/components/collaboration/emojiReactions/EmojiReactionCard';
 import AvatarIcon from '@/components/common/AvatarIcon';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import { handleFollow, handleRemoveFollower, isFollowed } from '@/components/project-details/likes-follows/actions';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/helpers';
+
+import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/UpdateEmojiReactionCard';
 
 interface ProjectCardProps {
   update: ProjectUpdate;
@@ -106,7 +107,7 @@ export default function NewsCard(props: ProjectCardProps) {
             />
           </Grid>
           <Grid item xs={12}>
-            <EmojiReactionCard updateId={update.id} />
+            <UpdateEmojiReactionCard updateId={update.id} />
           </Grid>
         </Grid>
       </CardActions>

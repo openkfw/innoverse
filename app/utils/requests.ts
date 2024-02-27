@@ -1,9 +1,9 @@
 import { SurveyVote } from '@prisma/client';
+import dayjs from 'dayjs';
 
 import {
   CollaborationQuestion,
   Filters,
-  Opportunity,
   Project,
   ProjectByIdQueryResult,
   ProjectQuestion,
@@ -17,11 +17,14 @@ import { getSurveyQuestionVotes } from '@/components/collaboration/survey/action
 import { AddUpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
 import { SortValues } from '@/components/newsPage/News';
 
+import { InnoPlatformError, strapiError } from './errors';
 import { getFulfilledResults } from './helpers';
+import logger from './logger';
 import {
   CreateInnoUserQuery,
   CreateProjectUpdateQuery,
   GetCollaborationQuestionsByProjectIdQuery,
+  GetEventsQuery,
   GetInnoUserByEmailQuery,
   GetInnoUserByProviderIdQuery,
   GetOpportunitiesByIdQuery,
@@ -76,7 +79,8 @@ export async function createInnoUser(body: UserSession, image?: string | null) {
 
     return resultUser;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Create Inno User', err as Error, body.name);
+    logger.error(error);
   }
 }
 
@@ -92,7 +96,8 @@ export async function getProjectById(id: string) {
       ...resultProject.project,
     };
   } catch (err) {
-    console.info(err);
+    const e: InnoPlatformError = strapiError('Getting Project by ID', err as Error, id);
+    logger.error(e);
   }
 }
 
@@ -103,7 +108,8 @@ export async function getInnoUserByEmail(email: string) {
 
     return resultUser;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting Inno user by email', err as Error, email);
+    logger.error(error);
   }
 }
 
@@ -113,7 +119,21 @@ export async function getInnoUserByProviderId(providerId: string) {
     const resultUser = (await withResponseTransformer(STRAPI_QUERY.GetInnoUser, requestUser)) as unknown as User;
     return resultUser;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting Inno user by providerId', err as Error, providerId);
+    logger.error(error);
+  }
+}
+
+export async function getUpcomingEvents() {
+  try {
+    const today = new Date();
+    const todayString = dayjs(today).format('YYYY-MM-DD');
+    const requestEvents = await strapiFetcher(GetEventsQuery, { today: todayString });
+    const events = await withResponseTransformer(STRAPI_QUERY.GetEvents, requestEvents);
+    return events;
+  } catch (err) {
+    const error = strapiError('Getting upcoming events', err as Error);
+    logger.error(error);
   }
 }
 
@@ -134,7 +154,8 @@ export async function getFeaturedProjects() {
       updates: result.updates,
     };
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting All featured projects', err as Error);
+    logger.error(error);
   }
 }
 
@@ -155,7 +176,8 @@ export async function getProjectsUpdates() {
     const result = await withResponseTransformer(STRAPI_QUERY.GetUpdates, requestProjects);
     return result;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all project updates', err as Error);
+    logger.error(error);
   }
 }
 
@@ -194,7 +216,8 @@ export async function getProjectsUpdatesFilter(sort: SortValues, filters: Filter
     const result = await withResponseTransformer(STRAPI_QUERY.GetUpdates, requestProjects);
     return result;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all project updates with filter', err as Error);
+    logger.error(error);
   }
 }
 
@@ -204,7 +227,8 @@ export async function getUpdatesByProjectId(projectId: string) {
     const updates = await withResponseTransformer(STRAPI_QUERY.GetUpdatesByProjectId, res);
     return updates as ProjectUpdate[];
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all project updates', err as Error, projectId);
+    logger.error(error);
   }
 }
 
@@ -212,22 +236,21 @@ export async function getOpportunitiesByProjectId(projectId: string) {
   try {
     const res = await strapiFetcher(GetOpportunitiesByProjectIdQuery, { projectId });
     const opportunities = await withResponseTransformer(STRAPI_QUERY.GetOpportunitiesByProjectId, res);
-    return opportunities as unknown as Opportunity[];
+    return opportunities;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting project opportunities by project id', err as Error, projectId);
+    logger.error(error);
   }
 }
 
 export async function getOpportunityById(projectId: string) {
   try {
     const res = await strapiFetcher(GetOpportunitiesByIdQuery, { projectId });
-    const opportunities = (await withResponseTransformer(
-      STRAPI_QUERY.GetOpportunitiesId,
-      res,
-    )) as unknown as Opportunity[];
+    const opportunities = await withResponseTransformer(STRAPI_QUERY.GetOpportunitiesId, res);
     return opportunities[0];
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all project opportunities', err as Error, projectId);
+    logger.error(error);
   }
 }
 
@@ -237,7 +260,8 @@ export async function getProjectQuestionsByProjectId(projectId: string) {
     const questions = await withResponseTransformer(STRAPI_QUERY.GetProjectQuestionsByProjectId, res);
     return questions as ProjectQuestion[];
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all project questions', err as Error, projectId);
+    logger.error(error);
   }
 }
 
@@ -259,7 +283,8 @@ export async function getSurveyQuestionsByProjectId(projectId: string) {
 
     return surveyQuestionsVotes as SurveyQuestion[];
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all survey questions', err as Error, projectId);
+    logger.error(error);
   }
 }
 
@@ -272,14 +297,20 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
     );
     return collaborationQuestions as CollaborationQuestion[];
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all collaboration questions', err as Error, projectId);
+    logger.error(error);
   }
 }
 
 export async function createInnoUserIfNotExist(body: UserSession, image?: string | null) {
-  if (body.email) {
-    const user = await getInnoUserByEmail(body.email);
-    return user ? user : await createInnoUser(body, image);
+  try {
+    if (body.email) {
+      const user = await getInnoUserByEmail(body.email);
+      return user ? user : await createInnoUser(body, image);
+    }
+  } catch (err) {
+    const error = strapiError('Trying to create a InnoUser if it does not exist', err as Error, body.name);
+    logger.error(error);
   }
 }
 
@@ -287,10 +318,10 @@ export async function createProjectUpdate(body: Omit<AddUpdateFormData, 'author'
   try {
     const requestUpdate = await strapiFetcher(CreateProjectUpdateQuery, body);
     const resultUpdate = await withResponseTransformer(STRAPI_QUERY.CreateProjectUpdate, requestUpdate);
-
     return resultUpdate;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Trying to to create project update', err as Error, body.projectId);
+    logger.error(error);
   }
 }
 
@@ -300,7 +331,12 @@ export async function getOpportunityAndUserParticipant(body: { opportunityId: st
     const resultGet = await withResponseTransformer(STRAPI_QUERY.GetOpportunityParticipant, requestGet);
     return resultGet;
   } catch (err) {
-    console.info(err);
+    const error = strapiError(
+      'Trying to get project opportunity and add participant',
+      err as Error,
+      body.opportunityId,
+    );
+    logger.error(error);
   }
 }
 
@@ -310,6 +346,11 @@ export async function handleOpportunityAppliedBy(body: { opportunityId: string; 
     const resultGet = await withResponseTransformer(STRAPI_QUERY.UpdateOpportunityParticipants, requestGet);
     return resultGet;
   } catch (err) {
-    console.info(err);
+    const error = strapiError(
+      'Trying to get uodate project opportunity participants',
+      err as Error,
+      body.opportunityId,
+    );
+    logger.error(error);
   }
 }

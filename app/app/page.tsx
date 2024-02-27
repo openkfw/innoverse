@@ -2,6 +2,7 @@ import Stack from '@mui/material/Stack';
 
 import { MainPageData } from '@/common/types';
 import ErrorPage from '@/components/error/ErrorPage';
+import { EventSection } from '@/components/landing/eventsSection/EventsSection';
 import FeaturedProjectSlider from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
 import FeedbackSection from '@/components/landing/feedbackSection/FeedbackSection';
 import { MappingProjectsCard } from '@/components/landing/mappingProjectsSection/MappingProjectsCard';
@@ -32,6 +33,7 @@ async function IndexPage() {
           <NewsSection updates={updates} />
           <BackgroundArrows />
         </div>
+        <EventSection />
         <ProjectSection projects={projects} />
         <MappingProjectsCard projects={projects} />
       </Stack>
