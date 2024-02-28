@@ -1,4 +1,4 @@
-import { Box, Divider, Grid, Typography } from '@mui/material';
+import { Box, Divider, Grid, Link,Typography } from '@mui/material';
 
 interface PhaseColumnProps {
   title: string;
@@ -57,24 +57,30 @@ export default function PhaseColumn(props: PhaseColumnProps) {
       </Typography>
       {projects.map((project) => {
         return (
-          <Typography
-            variant="subtitle2"
-            key={project.title}
-            sx={{
-              cursor: 'pointer',
-              fontFamily: '***FONT_REMOVED***',
-              fontWeight: 700,
-              mb: 1,
-              color: 'primary.contrastText',
-              '&:hover': {
-                color: 'secondary.main',
-              },
-            }}
-          >
-            {project.title}
-          </Typography>
+          <Link key={project.title} href={`/projects/${project.id}`} style={{ ...linkStyle }}>
+            <Typography
+              variant="subtitle2"
+              key={project.title}
+              sx={{
+                cursor: 'pointer',
+                fontFamily: '***FONT_REMOVED***',
+                fontWeight: 700,
+                mb: 1,
+                color: 'primary.contrastText',
+                '&:hover': {
+                  color: 'secondary.main',
+                },
+              }}
+            >
+              {project.title}
+            </Typography>
+          </Link>
         );
       })}
     </Grid>
   );
 }
+
+const linkStyle = {
+  textDecoration: 'none',
+};

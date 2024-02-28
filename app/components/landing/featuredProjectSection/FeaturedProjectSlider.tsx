@@ -80,7 +80,12 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
         <SmallSliderPill itemNumber={(content.id + 1).toString()} title={content.title} />
       </Box>
       <Grid item md={4} sx={contentStyles}>
-        <FeaturedProjectContent title={content.title} tags={content.description.tags} summary={content.summary} />
+        <FeaturedProjectContent
+          title={content.title}
+          tags={content.description.tags}
+          summary={content.summary}
+          projectId={content.id}
+        />
       </Grid>
     </Grid>
   );

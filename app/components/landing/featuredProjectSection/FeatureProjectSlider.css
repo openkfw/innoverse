@@ -87,3 +87,11 @@
   overflow: hidden !important;
   z-index: 1;
 }
+
+.carouselStyles .slick-slide {
+  visibility: hidden;
+}
+
+.carouselStyles .slick-slide.slick-active {
+  visibility: visible;
+}
