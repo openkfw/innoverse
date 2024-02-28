@@ -1,6 +1,10 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+
+import { Alert } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 
 import { subscribeToWebPush } from '@/utils/notification/pushNotification';
 
@@ -60,21 +64,31 @@ const NotificationContext = createContext(contextObject);
 export const NotificationContextProvider = ({ children }: { children: React.ReactNode }) => {
   const initialized = useRef(false);
   const { user, isLoading } = useUser();
+  const [showPushSubscriptionAlert, setShowPushSubscriptionAlert] = useState(false);
 
-  useEffect(() => {
-    const registerNotifications = async () => {
+  const registerNotifications = async () => {
+    try {
       if (!hasPushNotificationPermission()) {
         await requestPushNotificationPermission();
       }
+      setShowPushSubscriptionAlert(false);
       let subscription = await getPushNotificationSubscriptions();
       if (!subscription) {
         subscription = await subscribePushNotification();
       }
       await subscribeToWebPush(JSON.stringify(subscription));
-    };
+    } catch (error) {
+      setShowPushSubscriptionAlert(false);
+    }
+  };
 
-    const registerServiceWorker = () => navigator.serviceWorker.register('/sw.js', { scope: '/' });
+  const registerServiceWorker = () => navigator.serviceWorker.register('/sw.js', { scope: '/' });
 
+  useEffect(() => {
+    setShowPushSubscriptionAlert(!hasPushNotificationPermission());
+  }, []);
+
+  useEffect(() => {
     try {
       if (initialized.current || isLoading || !user) return;
       initialized.current = true;
@@ -87,7 +101,28 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
     }
   }, [user, isLoading]);
 
-  return <NotificationContext.Provider value={contextObject}> {children}</NotificationContext.Provider>;
+  return (
+    <NotificationContext.Provider value={contextObject}>
+      <Box
+        hidden={!showPushSubscriptionAlert || !user}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        bgcolor={'#edf7ed'}
+      >
+        <Alert icon={false} severity="success" style={{ borderRadius: 0 }}>
+          Möchtest du Updates zu Projekten erhalten?
+          <Button variant={'text'} onClick={registerNotifications}>
+            Ja
+          </Button>
+          <Button variant={'text'} onClick={() => setShowPushSubscriptionAlert(false)}>
+            Nein
+          </Button>
+        </Alert>
+      </Box>
+      {children}
+    </NotificationContext.Provider>
+  );
 };
 
 export const useNotification = () => useContext(NotificationContext);
