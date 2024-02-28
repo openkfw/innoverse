@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 
 import CustomDialog from '@/components/common/CustomDialog';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
+import theme from '@/styles/theme';
 
 function FeedbackSection() {
   const [open, setOpen] = useState(false);
@@ -96,6 +97,13 @@ const feedbackButtonStyles = {
   position: 'fixed',
   bottom: 32,
   right: 32,
+
+  [theme.breakpoints.down('sm')]: {
+    right: 'unset',
+    left: 32,
+    bottom: 48,
+    padding: '8px 16px',
+  },
 };
 
 const bodyStyles = {

@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import Stack from '@mui/material/Stack';
 
 import { MainPageData } from '@/common/types';
@@ -28,7 +29,9 @@ async function IndexPage() {
     <Layout>
       <Stack spacing={8} useFlexGap>
         <FeaturedProjectSlider items={sliderContent} />
-        <FeedbackSection />
+        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+          <FeedbackSection />
+        </Box>
         <div style={{ position: 'relative' }}>
           <NewsSection updates={updates} />
           <BackgroundArrows />
