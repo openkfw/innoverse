@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { SxProps } from '@mui/material';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -7,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { Opportunity } from '@/common/types';
 import AvatarIcon from '@/components/common/AvatarIcon';
 import { TooltipContent } from '@/components/project-details/TooltipContent';
+import theme from '@/styles/theme';
 
 import InteractionButton, { InteractionType } from '../../common/InteractionButton';
 import { StyledTooltip } from '../../common/StyledTooltip';
@@ -35,52 +37,65 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
     getAppliedForOpportunity();
   }, []);
 
+  const leftGridStyles: SxProps = {
+    paddingRight: '2em',
+    [theme.breakpoints.down('md')]: {
+      paddingRight: 0,
+      paddingBottom: '2em',
+    },
+  };
+
+  const rightGridStyles: SxProps = {
+    paddingLeft: '2em',
+    [theme.breakpoints.down('md')]: {
+      paddingLeft: 0,
+    },
+  };
+
   return (
-    <Grid container item spacing={5} xs={12}>
-      <Grid
-        container
-        item
-        xs={6}
-        direction="column"
-        spacing={2}
-        sx={{ paddingRight: '100px', alignSelf: 'flex-start' }}
-      >
+    <Grid container item>
+      <Grid container item direction="column" xs={12} md={6} spacing={2} sx={leftGridStyles}>
         <Grid item>
           <Typography variant="h5" color="secondary.contrastText">
             {opportunity.title}
           </Typography>
+        </Grid>
+        <Grid item>
           <Typography variant="body1" color="secondary.contrastText">
             {opportunity.description}
           </Typography>
-          <Typography variant="overline" color="primary.main" display="flex">
+        </Grid>
+        <Grid item>
+          <Typography variant="overline" color="primary.main">
             Aufwand: {opportunity.expense}
           </Typography>
-          {opportunity.contactPerson && (
-            <>
-              <Typography variant="overline" color="primary.main">
-                Contact Person
-              </Typography>
-              {opportunity.contactPerson ? (
-                <Box sx={{ width: '10%' }}>
-                  <StyledTooltip
-                    arrow
-                    title={<TooltipContent projectName={projectName} teamMember={opportunity.contactPerson} />}
-                    placement="bottom"
-                  >
-                    <AvatarIcon user={opportunity.contactPerson} size={48} allowAnimation />
-                  </StyledTooltip>
-                </Box>
-              ) : (
-                <Typography variant="caption" color="text.disabled">
-                  Niemand zugewiesen
-                </Typography>
-              )}
-            </>
-          )}
         </Grid>
+
+        {opportunity.contactPerson && (
+          <Grid item>
+            <Typography variant="overline" color="primary.main">
+              Contact Person
+            </Typography>
+            {opportunity.contactPerson ? (
+              <Box sx={{ width: '10%' }}>
+                <StyledTooltip
+                  arrow
+                  title={<TooltipContent projectName={projectName} teamMember={opportunity.contactPerson} />}
+                  placement="bottom"
+                >
+                  <AvatarIcon user={opportunity.contactPerson} size={48} allowAnimation />
+                </StyledTooltip>
+              </Box>
+            ) : (
+              <Typography variant="caption" color="text.disabled">
+                Niemand zugewiesen
+              </Typography>
+            )}
+          </Grid>
+        )}
       </Grid>
 
-      <Grid container item xs={5} direction="column" spacing={1} ml="4px">
+      <Grid container item direction="column" xs={12} md={6} rowSpacing={1} sx={rightGridStyles}>
         <Grid item>
           <InteractionButton
             isSelected={hasApplied}

@@ -3,6 +3,7 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { Box } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 
@@ -50,23 +51,24 @@ const WriteCommentCard = ({ sx, projectName, handleComment }: WriteCommentCardPr
   return (
     <>
       {user && (
-        <Stack direction="row" spacing={3} sx={sx}>
+        <Stack direction="row" spacing={1} sx={sx}>
           <AvatarIcon user={user} size={32} />
-          <form>
+          <form style={{ width: '100%' }}>
             <MultilineTextInputField
               name={COMMENT}
               control={control}
               placeholder={placeholder}
-              rows={6}
+              rows={4}
               sx={textFieldStyles}
               endAdornment={
-                <InteractionButton
-                  projectName={projectName}
-                  onClick={handleSubmit(onSubmit)}
-                  interactionType={InteractionType.COMMENT_SEND}
-                  sx={buttonStyles}
-                  disabled={!isDirty || !isValid}
-                />
+                <Box sx={buttonWrapperStyles}>
+                  <InteractionButton
+                    projectName={projectName}
+                    onClick={handleSubmit(onSubmit)}
+                    interactionType={InteractionType.COMMENT_SEND}
+                    disabled={!isDirty || !isValid}
+                  />
+                </Box>
               }
             />
           </form>
@@ -79,21 +81,23 @@ const WriteCommentCard = ({ sx, projectName, handleComment }: WriteCommentCardPr
 export default WriteCommentCard;
 
 const textFieldStyles = {
-  borderRadius: '8px',
-  width: 450,
+  width: '100%',
+  maxWidth: '450px',
   '& .MuiInputBase-root': {
     p: '22px 24px',
     color: 'text.primary',
+    display: 'block',
   },
   '& .MuiOutlinedInput-root': {
+    borderRadius: '8px',
     '& fieldset': {
       borderColor: 'text.primary',
     },
   },
 };
 
-const buttonStyles = {
-  bottom: 22,
-  right: 24,
-  position: 'absolute',
+const buttonWrapperStyles: SxProps = {
+  marginLeft: 'auto',
+  width: 'fit-content',
+  marginTop: '0.5em',
 };

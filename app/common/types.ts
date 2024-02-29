@@ -80,7 +80,7 @@ export type Project = {
   shortTitle: string;
   featured: boolean;
   status: PROJECT_PROGRESS;
-  image: string;
+  image?: string;
   summary: string;
   projectStart: string;
   collaboration: ProjectCollaboration;

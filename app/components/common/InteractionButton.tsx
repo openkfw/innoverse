@@ -24,7 +24,7 @@ import CloseIcon from '@/components/icons/CloseIcon';
 import RecommendIcon from '@/components/icons/RecommendIcon';
 import palette from '@/styles/palette';
 
-interface InteractionButtonProps extends ButtonProps {
+export interface InteractionButtonProps extends ButtonProps {
   interactionType: InteractionType;
   projectName?: string;
   label?: string;
@@ -208,7 +208,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
   if (tooltip) {
     return (
       <Tooltip title={tooltip}>
-        <span>{customButton}</span>
+        <span style={{ height: 'fit-content' }}>{customButton}</span>
       </Tooltip>
     );
   }
