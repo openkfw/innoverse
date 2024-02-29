@@ -11,9 +11,10 @@ import { Project, ProjectQuestion } from '@/common/types';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 
 import WriteCommentCard from '../../collaboration/writeComment/WriteCommentCard';
+import { CommentCard } from '../../common/CommentCard';
 
-import { handleComment } from './actions';
-import { CommentCard } from './CommentCard';
+import { handleComment, handleUpvotedBy, isCommentUpvotedBy } from './actions';
+import { CommentVoteComponent } from './VoteComponent';
 
 const CommentsSection = ({ project }: { project: Project }) => {
   const [questions] = useState<ProjectQuestion[]>(project.questions);
@@ -51,11 +52,27 @@ const CommentsSection = ({ project }: { project: Project }) => {
         {comments.length} Kommentare
       </Typography>
 
-      <Stack sx={{ p: 0 }}>
-        {comments.map((comment, key) => (
-          <CommentCard content={comment} key={key} />
+      <Stack spacing={3}>
+        {comments.map((comment, idx) => (
+          <CommentCard
+            key={idx}
+            content={comment}
+            voteComponent={
+              <CommentVoteComponent
+                commentId={comment.id}
+                handleUpvote={handleUpvotedBy}
+                isUpvoted={isCommentUpvotedBy}
+                upvotedBy={comment.upvotedBy}
+                handleClickOnResponse={() => {}}
+              />
+            }
+          />
         ))}
-        <WriteCommentCard projectName={project.title} sx={{ width: '622px' }} handleComment={handleSendComment} />
+        <WriteCommentCard
+          projectName={project.title}
+          sx={{ width: '622px', maxWidth: '100%' }}
+          handleComment={handleSendComment}
+        />
       </Stack>
     </Stack>
   );
@@ -68,7 +85,6 @@ export default CommentsSection;
 const containerStyles = {
   mt: 3,
   ml: 1,
-  width: 622,
 };
 
 const listStyle = {

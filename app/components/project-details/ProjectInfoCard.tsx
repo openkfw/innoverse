@@ -136,7 +136,7 @@ const wrapperStyles = {
   flexDirection: 'column',
   alignItems: 'center',
   width: '85%',
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     width: '90%',
   },
 };

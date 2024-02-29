@@ -1,5 +1,5 @@
 'use client';
-import React, { PropsWithChildren } from 'react';
+import React, { CSSProperties, PropsWithChildren } from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 import { SxProps } from '@mui/material';
@@ -12,16 +12,17 @@ type TransparenButtonProps = PropsWithChildren & {
   onClick?: () => void;
   icon?: React.JSX.Element;
   sx?: SxProps;
+  style?: CSSProperties;
   textSx?: SxProps;
 };
 
-export const TransparentButton = ({ onClick, icon, children, sx, textSx }: TransparenButtonProps) => {
-  const buttonStyle = {
-    width: 300,
-    px: 0,
+export const TransparentButton = ({ onClick, icon, children, sx, textSx, style }: TransparenButtonProps) => {
+  const buttonStyle: SxProps = {
+    width: 'fit-content',
+    px: 2,
     py: 1,
     mb: 2,
-    pr: 1,
+    whiteSpace: 'nowrap',
     background: 'transparent',
     color: theme.palette.secondary.main,
     ':hover': {
@@ -40,6 +41,7 @@ export const TransparentButton = ({ onClick, icon, children, sx, textSx }: Trans
   return (
     <Button
       sx={buttonStyle}
+      style={style}
       onClick={() => onClick && onClick()}
       startIcon={icon ? icon : <AddIcon color="secondary" fontSize="large" />}
     >

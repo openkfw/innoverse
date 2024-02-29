@@ -1,15 +1,15 @@
 import * as React from 'react';
 
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
-import { styled } from '@mui/material/styles';
+import { styled, SxProps } from '@mui/material/styles';
 import Tab, { TabProps } from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import triggerAnalyticsEvent from '@/analytics/analytics';
 import { Project } from '@/common/types';
+import theme from '@/styles/theme';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
 import { UpdatesTab } from '../updates/UpdatesTab';
@@ -42,8 +42,17 @@ function a11yProps(index: number) {
 
 const CustomTabs = styled(Tabs)({
   borderBottom: '1px solid rgba(232, 232, 232, 0.5)',
+  marginLeft: '64px',
+  marginRight: '20px',
   '& .MuiTabs-indicator': {
     backgroundColor: '#FFF',
+  },
+  '& .MuiTabs-scrollButtons': {
+    color: 'white',
+  },
+  [theme.breakpoints.down('md')]: {
+    marginLeft: '20px',
+    marginRight: '20px',
   },
 });
 
@@ -88,46 +97,60 @@ export default function TabView(props: BasicTabsProps) {
     setActiveTab(newValue);
   };
 
+  const containerStyles: SxProps = {
+    width: '85%',
+    maxWidth: '1200px',
+    padding: 0,
+    [theme.breakpoints.down('md')]: {
+      width: '90%',
+    },
+  };
+
   return (
-    <Container maxWidth="lg" style={{ padding: 0, minWidth: '1280px' }}>
-      <Box sx={{ marginLeft: '64px', display: 'inline-flex', borderBottom: '1px', borderColor: 'main' }}>
-        <CustomTabs value={activeTab} onChange={handleChange} aria-label="tab switcher">
-          <CustomTab
-            label={
-              <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
-                Inno-Infos
+    <Box sx={containerStyles}>
+      <CustomTabs
+        value={activeTab}
+        onChange={handleChange}
+        aria-label="tab switcher"
+        variant="scrollable"
+        scrollButtons="auto"
+        allowScrollButtonsMobile
+      >
+        <CustomTab
+          label={
+            <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
+              Inno-Infos
+            </Typography>
+          }
+          {...a11yProps(0)}
+        />
+        <CustomTab
+          label={
+            <Stack direction="row" spacing={1}>
+              <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
+                {collaborationActivities}
               </Typography>
-            }
-            {...a11yProps(0)}
-          />
-          <CustomTab
-            label={
-              <Stack direction="row" spacing={1}>
-                <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
-                  {collaborationActivities}
-                </Typography>
-                <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
-                  Zusammenarbeit
-                </Typography>
-              </Stack>
-            }
-            {...a11yProps(1)}
-          />
-          <CustomTab
-            label={
-              <Stack direction="row" spacing={1}>
-                <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
-                  {updates.length}
-                </Typography>
-                <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
-                  Updates
-                </Typography>
-              </Stack>
-            }
-            {...a11yProps(2)}
-          />
-        </CustomTabs>
-      </Box>
+              <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
+                Zusammenarbeit
+              </Typography>
+            </Stack>
+          }
+          {...a11yProps(1)}
+        />
+        <CustomTab
+          label={
+            <Stack direction="row" spacing={1}>
+              <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
+                {updates.length}
+              </Typography>
+              <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
+                Updates
+              </Typography>
+            </Stack>
+          }
+          {...a11yProps(2)}
+        />
+      </CustomTabs>
       <CustomTabPanel value={activeTab} index={0} id="project-progress-tab">
         <ProjectProgress project={project} projectName={projectName} />
       </CustomTabPanel>
@@ -137,6 +160,6 @@ export default function TabView(props: BasicTabsProps) {
       <CustomTabPanel value={activeTab} index={2} id="updates-tab">
         <UpdatesTab projectId={project.id} />
       </CustomTabPanel>
-    </Container>
+    </Box>
   );
 }

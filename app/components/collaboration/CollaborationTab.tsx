@@ -1,13 +1,14 @@
 import { useState } from 'react';
 
+import { Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
+import theme from '@/styles/theme';
 
 import OpportunityCard from './opportunities/OpportunityCard';
 import { SurveyCard } from './survey/SurveyCard';
@@ -19,56 +20,55 @@ interface CollaborationTabProps {
 
 export const CollaborationTab = ({ project }: CollaborationTabProps) => {
   const [surveyQuestions] = useState(project.surveyQuestions);
-
   return (
     <Card sx={containerStyles}>
       <Box sx={colorOverlayStyles} />
 
-      <CardContent sx={cardContentStyles}>
-        <Typography color="primary.main" sx={titleStyles}>
-          Opportunities
-        </Typography>
+      <CardContent style={{ padding: 0 }}>
+        <Box sx={cardContentStyles}>
+          <Typography color="primary.main" sx={titleStyles}>
+            Opportunities
+          </Typography>
 
-        {project.opportunities &&
-          project.opportunities.map((opportunity, key) => (
-            <Grid container spacing={8} sx={gridStyles} key={key}>
-              <OpportunityCard opportunity={opportunity} projectName={project.title} />
-            </Grid>
-          ))}
+          <Stack sx={gridStyles} spacing={{ xs: 6, md: 10 }}>
+            {project.opportunities &&
+              project.opportunities.map((opportunity, idx) => (
+                <OpportunityCard key={idx} opportunity={opportunity} projectName={project.title} />
+              ))}
+          </Stack>
 
-        <Divider textAlign="left" sx={dividerStyles} />
+          <Divider textAlign="left" sx={{ my: { xs: '48px', md: '88px' } }} />
 
-        <Typography color="primary.main" sx={titleStyles}>
-          Umfrage
-        </Typography>
-        <Grid container sx={gridStyles} spacing={8}>
-          {surveyQuestions.map((surveyQuestion, i) => (
-            <Grid item key={i}>
-              <SurveyCard surveyQuestion={surveyQuestion} projectId={project.id} />
-            </Grid>
-          ))}
-        </Grid>
+          <Typography color="primary.main" sx={titleStyles}>
+            Umfrage
+          </Typography>
 
-        {project.collaborationQuestions.length > 0 && (
-          <>
-            <Divider textAlign="left" sx={dividerStyles} />
-            <Typography color="primary.main" sx={titleStyles}>
-              Hilf uns bei diesen Fragen
-            </Typography>
-            <Grid container sx={gridStyles} spacing={8}>
-              {project.collaborationQuestions.map((question, i) => (
-                <Grid item key={i}>
+          <Stack sx={gridStyles} spacing={20}>
+            {surveyQuestions.map((surveyQuestion, idx) => (
+              <SurveyCard key={idx} surveyQuestion={surveyQuestion} projectId={project.id} />
+            ))}
+          </Stack>
+
+          {project.collaborationQuestions.length > 0 && (
+            <>
+              <Divider textAlign="left" sx={{ my: { xs: '48px', md: '88px' } }} />
+              <Typography color="primary.main" sx={titleStyles}>
+                Hilf uns bei diesen Fragen
+              </Typography>
+              <Stack sx={gridStyles} spacing={{ xs: 6, md: 12 }}>
+                {project.collaborationQuestions.map((question, idx) => (
                   <CollaborationQuestionCard
+                    key={idx}
                     projectName={project.projectName}
                     content={question}
                     projectId={project.id}
                     questionId={question.id}
                   />
-                </Grid>
-              ))}
-            </Grid>
-          </>
-        )}
+                ))}
+              </Stack>
+            </>
+          )}
+        </Box>
       </CardContent>
     </Card>
   );
@@ -86,8 +86,10 @@ const containerStyles = {
 };
 
 const cardContentStyles = {
-  margin: 0,
-  padding: 0,
+  padding: '88px 0',
+  [theme.breakpoints.down('md')]: {
+    padding: '48px 0',
+  },
 };
 
 const colorOverlayStyles = {
@@ -98,24 +100,28 @@ const colorOverlayStyles = {
   background: 'linear-gradient(90deg, rgba(240, 238, 225, 0.00) 10.42%, #F0EEE1 100%)',
   position: 'absolute',
   zIndex: -1,
+  [theme.breakpoints.down('md')]: {
+    display: 'none',
+  },
 };
 
 const gridStyles = {
-  padding: '0 64px 88px 64px',
-};
-
-const dividerStyles = {
-  // margin: 4,
+  paddingX: '64px',
+  width: '100%',
+  [theme.breakpoints.down('md')]: {
+    paddingX: '24px',
+  },
 };
 
 const titleStyles = {
   marginLeft: '64px',
-  marginTop: '88px',
-  marginBottom: '36px',
   fontSize: 12,
   fontStyle: 'normal',
   fontWeight: 400,
   lineHeight: '169%',
   letterSpacing: 1,
   textTransform: 'uppercase',
+  [theme.breakpoints.down('md')]: {
+    marginLeft: '24px',
+  },
 };

@@ -9,6 +9,7 @@ import { Comment, CommentResponse } from '@/common/types';
 import { TransparentButton } from '@/components/common/TransparentButton';
 import { CommentVoteComponent } from '@/components/project-details/comments/VoteComponent';
 
+import { CommentCard } from '../../common/CommentCard';
 import WriteCommentCard from '../writeComment/WriteCommentCard';
 
 import {
@@ -19,7 +20,6 @@ import {
   isCollaborationCommentUpvotedBy,
   isCollaborationResponseUpvotedBy,
 } from './actions';
-import { CollaborationCommentCard } from './CollaborationCommentCard';
 
 interface CommentsProps {
   comments: Comment[];
@@ -55,7 +55,7 @@ export const CollaborationComments = ({ comments }: CommentsProps) => {
   }, [comments]);
 
   return (
-    <Stack justifyContent="center" alignContent="center">
+    <Stack spacing={3} justifyContent="center" alignContent="center">
       {maxVisibleComments?.map((comment, key) => (
         <CollaborationCommentThread
           key={key}
@@ -76,7 +76,7 @@ export const CollaborationComments = ({ comments }: CommentsProps) => {
           </Collapse>
         ))}
       {!isCollapsed && comments.length > MAX_NUM_OF_COMMENTS && (
-        <TransparentButton onClick={handleToggle} sx={{ marginLeft: 4 }}>
+        <TransparentButton onClick={handleToggle} style={{ marginLeft: '1.5em' }}>
           weitere Rückmeldungen anzeigen ({lengthOfNotShownComments})
         </TransparentButton>
       )}
@@ -121,8 +121,8 @@ const CollaborationCommentThread = ({
   };
 
   return (
-    <Stack>
-      <CollaborationCommentCard
+    <Stack spacing={3} className="test">
+      <CommentCard
         content={comment}
         voteComponent={
           <CommentVoteComponent
@@ -136,23 +136,20 @@ const CollaborationCommentThread = ({
       />
 
       {!displayResponses && comment.responseCount > 0 && (
-        <TransparentButton onClick={() => setDisplayResponses(true)}>
+        <TransparentButton onClick={() => setDisplayResponses(true)} style={{ marginTop: '1em', marginLeft: '1.5em' }}>
           Kommentare anzeigen ({comment.responseCount})
         </TransparentButton>
       )}
 
       {openResponseInput && (
-        <WriteCommentCard
-          sx={{ paddingBottom: '2em', marginLeft: '3em' }}
-          projectName=""
-          handleComment={handleResponse}
-        />
+        <WriteCommentCard sx={{ paddingLeft: '2.5em' }} projectName="" handleComment={handleResponse} />
       )}
 
-      <Stack sx={{ paddingLeft: '3em' }}>
-        {responses.map((response, key) => (
-          <div key={key}>
-            <CollaborationCommentCard
+      {responses.length > 0 && (
+        <Stack spacing={3} sx={{ paddingLeft: '2.5em' }}>
+          {responses.map((response, key) => (
+            <CommentCard
+              key={key}
               content={{ ...response, comment: response.response }}
               voteComponent={
                 <CommentVoteComponent
@@ -163,9 +160,9 @@ const CollaborationCommentThread = ({
                 />
               }
             />
-          </div>
-        ))}
-      </Stack>
+          ))}
+        </Stack>
+      )}
     </Stack>
   );
 };

@@ -114,8 +114,6 @@ const sliderBoxStyles = {
 
 const navigationWrapperStyles = {
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
 };
 
 const navigationStyles = {
