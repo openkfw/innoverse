@@ -6,6 +6,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { User } from '@/common/types';
+import { openWebex } from '@/utils/openWebex';
 
 import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 import bull from '../common/bull';
@@ -46,7 +47,12 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
           </Stack>
           <Stack direction="row" spacing={1}>
             <InteractionButton projectName={projectName} interactionType={InteractionType.USER_FOLLOW} />
-            <InteractionButton projectName={projectName} interactionType={InteractionType.COMMENT} />
+            <InteractionButton
+              projectName={projectName}
+              interactionType={InteractionType.COMMENT}
+              tooltip="Chat über Webex"
+              onClick={() => openWebex(author.email)}
+            />
             <InteractionButton projectName={projectName} interactionType={InteractionType.ADD_INSIGHTS} />
           </Stack>
         </Stack>
