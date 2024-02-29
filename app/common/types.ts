@@ -127,7 +127,7 @@ export type ProjectUpdate = {
   topic: string;
   date: string;
   projectId: string;
-  projectStart?: boolean;
+  projectStart?: string;
 };
 
 export type PersonInfo = {
