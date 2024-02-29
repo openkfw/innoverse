@@ -1,4 +1,4 @@
-import { SetStateAction, useRef, useState } from 'react';
+import { SetStateAction, useEffect, useRef, useState } from 'react';
 import Slider, { Settings } from 'react-slick';
 
 import { Box, Grid, useMediaQuery } from '@mui/material';
@@ -9,17 +9,48 @@ import CustomButton from '../common/CustomButton';
 
 import ArrowControllers from './projectSection/ArrowControllers';
 
-interface CarouselProps<T> {
+interface Author {
+  name?: string;
+  image?: string;
+}
+
+interface ProjectUpdate {
+  id: string;
+  projectId?: string;
+  title?: string;
+  comment?: string;
+  date?: string;
+  topic?: string;
+  author?: Author;
+  projectStart?: string;
+}
+
+interface CarouselProps<T extends ProjectUpdate> {
   items: T[];
   renderItem: (item: T, idx: number) => React.JSX.Element;
   moreButton?: React.JSX.Element;
   sliderSettings?: Settings;
 }
 
-export default function Carousel<T>({ items, renderItem, moreButton, sliderSettings }: CarouselProps<T>) {
+export default function Carousel<T extends ProjectUpdate>({
+  items,
+  renderItem,
+  moreButton,
+  sliderSettings,
+}: CarouselProps<T>) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [slides] = useState<T[]>(items);
+  const [slides, setSlides] = useState<T[]>([]);
   const sliderRef = useRef<Slider>(null);
+
+  useEffect(() => {
+    const sortedItems = [...items].sort((a, b) => {
+      const getTime = (item: { projectStart?: string; date?: string }) =>
+        new Date(item.projectStart || item.date || 0).getTime();
+      return getTime(b) - getTime(a);
+    });
+
+    setSlides(sortedItems);
+  }, [items]);
 
   const handleMouseDown = (e: { pageX: number }) => {
     const startX = e.pageX;
