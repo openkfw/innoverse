@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 
 import { Comment } from '@/common/types';
 import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
+import { parseStringForLinks } from '@/components/common/LinkString';
 import theme from '@/styles/theme';
 
 import { handleUpvotedBy, isCommentUpvotedBy } from './actions';
@@ -71,7 +72,7 @@ export const CommentCard = ({ content }: CommentCardProps) => {
         <Stack direction="column" spacing={2}>
           <Box sx={{ ...commentContainerStyles, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
             <Typography variant="body1" sx={commentStyles}>
-              {comment}
+              {parseStringForLinks(comment)}
             </Typography>
 
             {!isCollapsed && (

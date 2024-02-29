@@ -21,6 +21,7 @@ import theme from '@/styles/theme';
 import { formatDate } from '@/utils/helpers';
 
 import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/UpdateEmojiReactionCard';
+import { parseStringForLinks } from '../common/LinkString';
 
 interface ProjectCardProps {
   update: ProjectUpdate;
@@ -75,7 +76,7 @@ export default function NewsCard(props: ProjectCardProps) {
       <CardContent sx={cardContentStyles}>
         <Box sx={titleWrapperStyles}>
           <Typography sx={noClamp ? subtitleStyles : null} color="text.primary" variant="body1">
-            {comment}
+            {parseStringForLinks(comment)}
           </Typography>
         </Box>
       </CardContent>

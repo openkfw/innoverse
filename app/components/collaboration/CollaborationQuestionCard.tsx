@@ -11,6 +11,7 @@ import { CollaborationQuestion, Comment } from '@/common/types';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 
 import AvatarIcon from '../common/AvatarIcon';
+import { parseStringForLinks } from '../common/LinkString';
 import { StyledTooltip } from '../common/StyledTooltip';
 import { TooltipContent } from '../project-details/TooltipContent';
 
@@ -66,7 +67,7 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
         </Grid>
         <Grid item>
           <Typography variant="body1" color="secondary.contrastText">
-            {description}
+            {parseStringForLinks(description)}
           </Typography>
         </Grid>
         <Grid item>

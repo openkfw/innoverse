@@ -13,6 +13,8 @@ import Stack from '@mui/material/Stack';
 import triggerAnalyticsEvent from '@/analytics/analytics';
 import { Project } from '@/common/types';
 
+import { parseStringForLinks } from '../common/LinkString';
+
 import CommentsSection from './comments/CommentsSection';
 import { AuthorInformation } from './AuthorInformation';
 import { ProjectTags } from './ProjectTags';
@@ -66,7 +68,7 @@ const InfoItemRight = ({ title, summary }: InfoItemProps) => {
       </CardMedia>
       <CardContent sx={{ p: '18px' }}>
         <Typography variant="subtitle2" color="text.primary">
-          {summary}
+          {parseStringForLinks(summary)}
         </Typography>
       </CardContent>
     </Card>
