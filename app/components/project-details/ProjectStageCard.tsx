@@ -10,6 +10,7 @@ import { Project, PROJECT_PROGRESS } from '@/common/types';
 import ContinueIcon from '@/components/icons/ContinueIcon';
 import theme from '@/styles/theme';
 
+import { parseStringForLinks } from '../common/LinkString';
 import ProgressBar from '../common/ProgressBar';
 
 interface TimingDataProps {
@@ -47,7 +48,9 @@ const ProjectStageCard = (props: TimingDataProps) => {
           <ProgressBar active={PROJECT_PROGRESS.EXPLORATION} />
 
           <Grid sx={descriptionWrapperStyles}>
-            <Typography sx={descriptionStyles}>{project.summary.slice(0, MAX_TEXT_LENGTH)}</Typography>
+            <Typography sx={descriptionStyles}>
+              {parseStringForLinks(project.summary.slice(0, MAX_TEXT_LENGTH))}
+            </Typography>
             <Button onClick={readMore} sx={buttonStyles} startIcon={<ContinueIcon />}>
               <Typography sx={buttonTextStyles}>Weiterlesen</Typography>
             </Button>

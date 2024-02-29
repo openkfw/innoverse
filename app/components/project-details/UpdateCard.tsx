@@ -9,6 +9,7 @@ import ArrowRightIcon from '@/components/icons/ArrowRightIcon';
 import theme from '@/styles/theme';
 
 import AvatarIcon from '../common/AvatarIcon';
+import { parseStringForLinks } from '../common/LinkString';
 
 interface UpdateCardProps {
   updates: ProjectUpdate[];
@@ -78,7 +79,7 @@ const UpdateCard = (props: UpdateCardProps) => {
             </Grid>
           </Grid>
           <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', marginTop: 1, marginBottom: 1 }}>
-            {update?.comment}
+            {parseStringForLinks(update?.comment)}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             {update?.date}

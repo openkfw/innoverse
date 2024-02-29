@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 
 import { Comment } from '@/common/types';
 import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
+import { parseStringForLinks } from '@/components/common/LinkString';
 import theme from '@/styles/theme';
 
 import badgeIcon from '/public/images/icons/badge.svg';
@@ -69,7 +70,7 @@ export const CollaborationCommentCard = ({ content, voteComponent }: CommentCard
         <Stack direction="column" spacing={2}>
           <Box sx={{ ...commentContainerStyles, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
             <Typography variant="body1" sx={commentStyles}>
-              {comment}
+              {parseStringForLinks(comment)}
             </Typography>
             {!isCollapsed && (
               <Typography variant="subtitle2" onClick={handleToggle} sx={buttonOverlayStyle}>
