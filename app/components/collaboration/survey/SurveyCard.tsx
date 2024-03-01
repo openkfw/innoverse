@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 
 import { useProject } from '@/app/contexts/project-context';
 import { SurveyQuestion } from '@/common/types';
+import { errorMessage } from '@/components/common/CustomToast';
 import theme from '@/styles/theme';
 
 import { getUserVoted, handleSurveyVote } from './actions';
