@@ -5,7 +5,6 @@ import { Box, SxProps, Typography } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
-import CustomToast from '../common/CustomToast';
 import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
 import AddUpdateDialog from '../newsPage/addUpdate/AddUpdateDialog';
 
@@ -46,7 +45,6 @@ export const AddUpdateCard = (props: AddUpdateCardProps) => {
         setUpdateAdded={setUpdateAdded}
         defaultFormValues={defaultFormValues}
       />
-      <CustomToast />
     </Box>
   );
 };

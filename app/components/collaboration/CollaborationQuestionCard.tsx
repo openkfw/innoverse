@@ -13,6 +13,7 @@ import theme from '@/styles/theme';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 
 import AvatarIcon from '../common/AvatarIcon';
+import { errorMessage } from '../common/CustomToast';
 import { parseStringForLinks } from '../common/LinkString';
 import { StyledTooltip } from '../common/StyledTooltip';
 import { TooltipContent } from '../project-details/TooltipContent';
@@ -63,11 +64,20 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
   };
 
   const handleComment = async (comment: string) => {
-    const { data: newComment } = await handleCollaborationComment({ projectId, questionId, comment });
-    if (!newComment) return;
-    const newComments = sortDateByCreatedAt([...comments, newComment]);
-    setComments(newComments);
-    setCollaborationCommentsAmount(newComments.length);
+    try {
+      const { data: newComment } = await handleCollaborationComment({ projectId, questionId, comment });
+      if (!newComment) {
+        console.error('No comment was returned by the server.');
+        errorMessage({ message: 'Failed to post the comment. Please try again.' });
+        return;
+      }
+      const newComments = sortDateByCreatedAt([...comments, newComment]);
+      setComments(newComments);
+      setCollaborationCommentsAmount(newComments.length);
+    } catch (error) {
+      console.error('Failed to submit comment:', error);
+      errorMessage({ message: 'Failed to submit your comment. Please try again.' });
+    }
   };
 
   return (

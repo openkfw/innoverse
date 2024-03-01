@@ -8,6 +8,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 
+import { errorMessage } from '@/components/common/CustomToast';
+
 import { getEmojisByShortCodes } from './actions';
 import EmojiPickerCard from './EmojiPicker';
 import { CountReaction, Emoji, Reaction } from './emojiReactionTypes';
@@ -27,11 +29,13 @@ export function EmojiReactionCard({
   const [topReactionsWithEmojis, setTopReactionsWithEmojis] = useState<{ count: number; emoji: Emoji }[]>();
 
   const handleEmojiReaction = (emoji: Emoji) => {
-    // No Reaction before: Upsert
-    // Reaction with different emoji: Upsert
-    // Removal of emoji reaction: Delete
-    const operation = !userReaction || userReaction.reactedWith.shortCode !== emoji.shortCode ? 'upsert' : 'delete';
-    handleReaction(emoji, operation);
+    try {
+      const operation = !userReaction || userReaction.reactedWith.shortCode !== emoji.shortCode ? 'upsert' : 'delete';
+      handleReaction(emoji, operation);
+    } catch (error) {
+      console.error('Failed to update reaction:', error);
+      errorMessage({ message: 'Updating your reaction failed. Please try again.' });
+    }
   };
 
   const getTopReactions = useCallback(
@@ -41,20 +45,25 @@ export function EmojiReactionCard({
 
   useEffect(() => {
     async function getTopReactionsWithEmojis() {
-      const topReactions = getTopReactions();
-      const shortCodes = topReactions.map((reaction) => reaction.shortCode);
-      const { data: emojis } = await getEmojisByShortCodes({ shortCodes: shortCodes });
+      try {
+        const topReactions = getTopReactions();
+        const shortCodes = topReactions.map((reaction) => reaction.shortCode);
+        const { data: emojis } = await getEmojisByShortCodes({ shortCodes: shortCodes });
 
-      // Match emojis to top reactions
-      const topReactionsWithEmojis = topReactions
-        .map((reaction) => {
-          const emoji = emojis?.find((emoji) => emoji.shortCode === reaction.shortCode);
-          if (!emoji) return null;
-          return { count: reaction.count, emoji: emoji };
-        })
-        .filter((reaction) => reaction !== null) as { count: number; emoji: Emoji }[];
+        // Match emojis to top reactions
+        const topReactionsWithEmojis = topReactions
+          .map((reaction) => {
+            const emoji = emojis?.find((emoji) => emoji.shortCode === reaction.shortCode);
+            if (!emoji) return null;
+            return { count: reaction.count, emoji: emoji };
+          })
+          .filter((reaction) => reaction !== null) as { count: number; emoji: Emoji }[];
 
-      setTopReactionsWithEmojis(topReactionsWithEmojis);
+        setTopReactionsWithEmojis(topReactionsWithEmojis);
+      } catch (error) {
+        console.error('Failed to load emojis:', error);
+        errorMessage({ message: 'Failed to load emojis. Please try again.' });
+      }
     }
 
     getTopReactionsWithEmojis();

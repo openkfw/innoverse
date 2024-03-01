@@ -70,35 +70,36 @@ export const SurveyCard = ({ projectId, surveyQuestion }: SurveyCardProps) => {
   const { setSurveyVotesAmount } = useProject();
 
   const handleVote = async (_event: React.MouseEvent<HTMLElement>, newVote: string) => {
-    await handleSurveyVote({ projectId, surveyQuestionId: surveyQuestion.id, vote: newVote });
+    try {
+      await handleSurveyVote({ projectId, surveyQuestionId: surveyQuestion.id, vote: newVote });
 
-    // If the user already voted and the vote is same, untoggle the vote
-    if (voted && vote === newVote) {
-      setVotes(votes - 1);
-      setSurveyVotesAmount(votes);
-      setVote('');
-      setVoted(false);
-      return;
+      if (voted && vote === newVote) {
+        setVotes((prev) => Math.max(0, prev - 1));
+        setVote('');
+        setVoted(false);
+      } else {
+        if (!voted) setVotes((prev) => prev + 1);
+        setVote(newVote);
+        setVoted(true);
+      }
+    } catch (error) {
+      console.error('Failed to handle vote:', error);
+      errorMessage({ message: 'Failed to submit your vote. Please try again.' });
     }
-    if (voted) {
-      setVotes(votes);
-      setSurveyVotesAmount(votes);
-      setVote(newVote);
-      setVoted(true);
-      return;
-    }
-    setVotes(votes + 1);
     setSurveyVotesAmount(votes);
-    setVote(newVote);
-    setVoted(true);
   };
 
   useEffect(() => {
     const setSurveyVote = async () => {
-      const { data: userVote } = await getUserVoted({ surveyQuestionId: surveyQuestion.id });
-      if (userVote) {
-        setVote(userVote.vote);
-        setVoted(true);
+      try {
+        const { data: userVote } = await getUserVoted({ surveyQuestionId: surveyQuestion.id });
+        if (userVote) {
+          setVote(userVote.vote);
+          setVoted(true);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user vote:', error);
+        errorMessage({ message: 'Failed to load your voting status. Please try again.' });
       }
     };
     setSurveyVote();
@@ -198,3 +199,6 @@ const votesCardStyle: SxProps = {
     marginLeft: 0,
   },
 };
+function errorMessage(arg0: { message: string }) {
+  throw new Error('Function not implemented.');
+}

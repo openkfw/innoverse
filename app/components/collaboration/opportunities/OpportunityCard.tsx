@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import { Opportunity } from '@/common/types';
 import AvatarIcon from '@/components/common/AvatarIcon';
+import { errorMessage } from '@/components/common/CustomToast';
 import { TooltipContent } from '@/components/project-details/TooltipContent';
 import theme from '@/styles/theme';
 
@@ -24,18 +25,28 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
   const [hasApplied, setHasApplied] = useState(false);
 
   const handleOpportunityApply = async () => {
-    await handleApplyForOpportunity({ opportunityId: opportunity.id });
-    const { data } = await hasAppliedForOpportunity({ opportunityId: opportunity.id });
-    setHasApplied(data ?? false);
+    try {
+      await handleApplyForOpportunity({ opportunityId: opportunity.id });
+      const { data } = await hasAppliedForOpportunity({ opportunityId: opportunity.id });
+      setHasApplied(data ?? false);
+    } catch (error) {
+      console.error('Failed to apply for the opportunity:', error);
+      errorMessage({ message: 'Applying for the opportunity failed. Please try again.' });
+    }
   };
 
   useEffect(() => {
     const getAppliedForOpportunity = async () => {
-      const { data } = await hasAppliedForOpportunity({ opportunityId: opportunity.id });
-      setHasApplied(data ?? false);
+      try {
+        const { data } = await hasAppliedForOpportunity({ opportunityId: opportunity.id });
+        setHasApplied(data ?? false);
+      } catch (error) {
+        console.error('Failed to check application status:', error);
+        errorMessage({ message: 'Failed to check if you have already applied. Please try again.' });
+      }
     };
     getAppliedForOpportunity();
-  }, []);
+  }, [opportunity.id]);
 
   const leftGridStyles: SxProps = {
     paddingRight: '2em',

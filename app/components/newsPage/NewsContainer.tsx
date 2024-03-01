@@ -11,7 +11,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { NewsFilterContextProvider, useNewsFilter } from '@/app/contexts/news-filter-context';
 import theme from '@/styles/theme';
 
-import CustomToast from '../common/CustomToast';
 import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
 import SecondaryIconButton from '../common/SecondaryIconButton';
 
@@ -107,7 +106,6 @@ export default function NewsContainer() {
         )}
       </Grid>
       <AddUpdateDialog open={addUpdateDialogOpen} setOpen={setAddUpdateDialogOpen} setUpdateAdded={setUpdateAdded} />
-      <CustomToast />
     </NewsFilterContextProvider>
   );
 }

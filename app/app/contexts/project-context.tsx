@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { Project } from '@/common/types';
+import { errorMessage } from '@/components/common/CustomToast';
 import { getProjectById } from '@/utils/requests';
 
 interface ProjectContextInterface {
@@ -28,15 +29,20 @@ export const ProjectContextProvider = ({ projectId, children }: { projectId: str
 
   useEffect(() => {
     const setData = async () => {
-      const project = (await getProjectById(projectId)) as Project;
-      if (project) {
-        const surveyVotes = project.surveyQuestions.reduce((sum, survey) => sum + survey.votes.length, 0);
-        const collaborationComments = project.collaborationQuestions.reduce(
-          (sum, comment) => sum + comment.comments.length,
-          0,
-        );
-        setSurveyVotesAmount(surveyVotes);
-        setCollaborationCommentsAmount(collaborationComments);
+      try {
+        const project = (await getProjectById(projectId)) as Project;
+        if (project) {
+          const surveyVotes = project.surveyQuestions.reduce((sum, survey) => sum + survey.votes.length, 0);
+          const collaborationComments = project.collaborationQuestions.reduce(
+            (sum, comment) => sum + comment.comments.length,
+            0,
+          );
+          setSurveyVotesAmount(surveyVotes);
+          setCollaborationCommentsAmount(collaborationComments);
+        }
+      } catch (error) {
+        errorMessage({ message: 'Failed to load project details. Please try again.' });
+        console.error('Error fetching project details:', error);
       }
     };
     setData();

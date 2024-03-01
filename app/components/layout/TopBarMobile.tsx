@@ -133,7 +133,7 @@ const listItemStyles = {
 };
 
 const listItemDisabledStyles = {
-  ...listItemStyles, 
-  color: 'rgba(155, 155, 155, 1)', 
-  pointerEvents: 'none', 
+  ...listItemStyles,
+  color: 'rgba(155, 155, 155, 1)',
+  pointerEvents: 'none',
 };
