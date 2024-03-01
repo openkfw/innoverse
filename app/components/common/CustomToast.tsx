@@ -20,11 +20,10 @@ export default function CustomToastContainer() {
   );
 }
 
-// Store the displayed toast messages in a Set
 const displayedToasts = new Set<string>();
 
 // Toast options
-type ToastPosition = "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right";
+type ToastPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
 
 interface ToastOptions {
   message: string;
@@ -32,7 +31,7 @@ interface ToastOptions {
 }
 
 export function errorMessage(props: ToastOptions) {
-  const { message, position = "top-center" } = props;
+  const { message, position = 'top-center' } = props;
   if (message && !displayedToasts.has(message)) {
     toast.error(message, { position, onClose: () => displayedToasts.delete(message) });
     displayedToasts.add(message);
@@ -40,7 +39,7 @@ export function errorMessage(props: ToastOptions) {
 }
 
 export function successMessage(props: ToastOptions) {
-  const { message, position = "top-center" } = props;
+  const { message, position = 'top-center' } = props;
   if (message && !displayedToasts.has(message)) {
     toast.success(message, { position, onClose: () => displayedToasts.delete(message) });
     displayedToasts.add(message);
@@ -48,7 +47,7 @@ export function successMessage(props: ToastOptions) {
 }
 
 export function infoMessage(props: ToastOptions) {
-  const { message, position = "top-center" } = props;
+  const { message, position = 'top-center' } = props;
   if (message && !displayedToasts.has(message)) {
     toast.info(message, { position, onClose: () => displayedToasts.delete(message) });
     displayedToasts.add(message);
