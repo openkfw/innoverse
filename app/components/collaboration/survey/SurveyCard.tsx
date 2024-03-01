@@ -199,6 +199,3 @@ const votesCardStyle: SxProps = {
     marginLeft: 0,
   },
 };
-function errorMessage(arg0: { message: string }) {
-  throw new Error('Function not implemented.');
-}
