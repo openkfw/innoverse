@@ -898,13 +898,16 @@ async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) 
     u.title = title || shortTitle;
     return u;
   });
-  if (!author.data) throw new Error('Project has no author');
 
-  const formattedAuthor = {
-    ...author.data.attributes,
-    image:
-      author.data.attributes.avatar.data &&
-      `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.data.attributes.avatar.data.attributes.url}`,
+  const formatAuthor = () => {
+    if (author && author.data) {
+      return {
+        ...author.data.attributes,
+        image:
+          author.data.attributes.avatar.data &&
+          `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.data.attributes.avatar.data.attributes.url}`,
+      };
+    }
   };
 
   const formattedTeam = team.data.map((t: UserQuery) => {
@@ -933,7 +936,7 @@ async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) 
       opportunities,
       surveyQuestions,
       description: formattedDescription,
-      author: formattedAuthor,
+      author: formatAuthor(),
       team: formattedTeam,
       image: image.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
       updates: formattedUpdates,
