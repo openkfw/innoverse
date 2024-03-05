@@ -43,28 +43,30 @@ export default function HeroSection(props: HeroSectionProps) {
             {title}
           </Typography>
           <Grid container item spacing={0} sx={cardBodyStyles}>
-            <Grid item sx={avatarContainerStyles}>
-              <Box display="flex" flexDirection="column" justifyContent="flex-end" height="100%">
-                <CardHeader
-                  avatar={
-                    author.image ? (
-                      <Avatar sx={avatarStyles}>
-                        <Image src={author.image} alt="avatar" fill sizes="33vw" />
-                      </Avatar>
-                    ) : (
-                      <AvatarInitialsIcon name={author.name} size={52} />
-                    )
-                  }
-                  title={<Typography variant="body2"> {author.name}</Typography>}
-                  subheader={
-                    <Typography variant="caption" sx={{ color: 'common.white' }}>
-                      {author.role}
-                    </Typography>
-                  }
-                  sx={cardHeaderStyles}
-                />
-              </Box>
-            </Grid>
+            {author && (
+              <Grid item sx={avatarContainerStyles}>
+                <Box display="flex" flexDirection="column" justifyContent="flex-end" height="100%">
+                  <CardHeader
+                    avatar={
+                      author.image ? (
+                        <Avatar sx={avatarStyles}>
+                          <Image src={author.image} alt="avatar" fill sizes="33vw" />
+                        </Avatar>
+                      ) : (
+                        <AvatarInitialsIcon name={author.name} size={52} />
+                      )
+                    }
+                    title={<Typography variant="body2"> {author.name}</Typography>}
+                    subheader={
+                      <Typography variant="caption" sx={{ color: 'common.white' }}>
+                        {author.role}
+                      </Typography>
+                    }
+                    sx={cardHeaderStyles}
+                  />
+                </Box>
+              </Grid>
+            )}
             <Grid item sx={statusContainerStyles}>
               <Typography variant="overline" sx={statusStyles}>
                 Status
