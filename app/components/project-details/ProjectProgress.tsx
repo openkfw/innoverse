@@ -247,7 +247,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
         </Box>
         <Divider sx={{ width: { xs: '100%', lg: '75%' } }} />
         <ProjectTags tags={project.description.tags} />
-        <AuthorInformation projectName={projectName} author={project.author} />
+        {project.author && <AuthorInformation projectName={projectName} author={project.author} />}
         <Divider sx={{ my: 2, width: '100%' }} />
         <CommentsSection project={project} />
       </Stack>

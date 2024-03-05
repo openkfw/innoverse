@@ -121,7 +121,7 @@ export type Project = {
   projectStart: string;
   image: ImageType;
   description: Description;
-  author: { data: UserQuery };
+  author?: { data: UserQuery };
   team: { data: UserQuery[] };
   updates: Update[];
   surveyQuestions?: SurveyQuestion[];
