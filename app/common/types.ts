@@ -56,6 +56,7 @@ export enum PROJECT_PROGRESS {
   EXPLORATION = 'Exploration',
   KONZEPTION = 'Konzeption',
   PROOF_OF_CONCEPT = 'Proof_of_Concept',
+  LIVE = 'Live',
 }
 
 export type Hero = {
