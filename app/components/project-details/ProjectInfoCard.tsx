@@ -109,9 +109,11 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
                 <Grid sx={projectStageCardStyles}>
                   <ProjectStageCard setActiveTab={setActiveTab} project={project} />
                 </Grid>
-                <Grid sx={teamMembersColumnStyles}>
-                  <TeamMembersColumn team={project.team} projectName={project.title} />
-                </Grid>
+                {project.team.length ? (
+                  <Grid sx={teamMembersColumnStyles}>
+                    <TeamMembersColumn team={project.team} projectName={project.title} />
+                  </Grid>
+                ) : null}
               </Grid>
 
               <Grid item sx={secondRowStyles}>
