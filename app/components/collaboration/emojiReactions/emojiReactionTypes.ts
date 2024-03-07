@@ -6,10 +6,14 @@ export type Emoji = {
 export type Reaction = {
   createdAt: Date;
   reactedBy: string;
-  reactedWith: Emoji;
+  shortCode: string;
+  nativeSymbol: string;
 };
 
-export type CountReaction = {
+export type ReactionCount = {
   count: number;
-  shortCode: string;
+  emoji: {
+    shortCode: string;
+    nativeSymbol: string;
+  };
 };

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { getCountPerEmojiOnUpdate, getReactionForUpdateAndUser, handleNewReactionOnUpdate } from './actions';
 import { EmojiReactionCard } from './EmojiReactionCard';
-import { CountReaction, Emoji, Reaction } from './emojiReactionTypes';
+import { Emoji, Reaction, ReactionCount } from './emojiReactionTypes';
 
 export interface UpdateEmojiReactionCardProps {
   updateId: string;
@@ -11,13 +11,13 @@ export interface UpdateEmojiReactionCardProps {
 
 export function UpdateEmojiReactionCard({ updateId }: UpdateEmojiReactionCardProps) {
   const [userReaction, setUserReaction] = useState<Reaction>();
-  const [countOfReactionsByShortCode, setCountOfReactionsByShortCode] = useState<CountReaction[]>([]);
+  const [countOfReactions, setCountOfReactions] = useState<ReactionCount[]>([]);
 
   const fetchReactions = useCallback(async () => {
     const { data: userReactionFromServer } = await getReactionForUpdateAndUser({ updateId });
-    const { data: countOfReactionsByUpdateAndShortcode } = await getCountPerEmojiOnUpdate({ updateId });
+    const { data: countOfReactions } = await getCountPerEmojiOnUpdate({ updateId });
     setUserReaction(userReactionFromServer ?? undefined);
-    setCountOfReactionsByShortCode(countOfReactionsByUpdateAndShortcode ?? []);
+    setCountOfReactions(countOfReactions ?? []);
   }, [updateId]);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export function UpdateEmojiReactionCard({ updateId }: UpdateEmojiReactionCardPro
 
   return (
     <EmojiReactionCard
-      countOfReactionsByShortCode={countOfReactionsByShortCode}
+      countOfReactions={countOfReactions}
       userReaction={userReaction}
       handleReaction={handleReaction}
     />

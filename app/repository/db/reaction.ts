@@ -1,164 +1,83 @@
 import { PrismaClient } from '@prisma/client';
 
-export async function addUserReactionOnUpdate(
+export async function addReaction(
   client: PrismaClient,
   reactedBy: string,
-  updateId: string,
-  reactionShortCode: string,
+  objectType: 'UPDATE' | 'EVENT',
+  objectId: string,
+  shortCode: string,
+  nativeSymbol: string,
 ) {
-  return await client.userReactionOnUpdate.upsert({
-    where: {
-      compositeID: {
-        reactedBy: reactedBy,
-        updateId: updateId,
-      },
-    },
-    update: {
-      reactionShortCode: reactionShortCode,
-    },
-    create: {
-      reactionShortCode: reactionShortCode,
-      updateId: updateId,
-      reactedBy: reactedBy,
-    },
-  });
-}
-
-export async function addUserReactionOnEvent(
-  client: PrismaClient,
-  reactedBy: string,
-  eventId: string,
-  reactionShortCode: string,
-) {
-  return await client.userReactionOnEvent.upsert({
-    where: {
-      compositeID: {
-        reactedBy: reactedBy,
-        eventId: eventId,
-      },
-    },
-    update: {
-      reactionShortCode: reactionShortCode,
-    },
-    create: {
-      reactionShortCode: reactionShortCode,
-      eventId: eventId,
-      reactedBy: reactedBy,
-    },
-  });
-}
-
-export async function addReaction(client: PrismaClient, shortCode: string, nativeSymbol: string) {
   return await client.reaction.upsert({
     where: {
-      shortCode: shortCode,
+      reactedBy_objectId_objectType: {
+        reactedBy,
+        objectId,
+        objectType,
+      },
     },
-    update: {},
+    update: {
+      shortCode,
+      nativeSymbol,
+    },
     create: {
-      shortCode: shortCode,
-      nativeSymbol: nativeSymbol,
+      objectId,
+      objectType,
+      reactedBy,
+      shortCode,
+      nativeSymbol,
     },
   });
 }
 
-export async function removeUserReactionOnUpdate(client: PrismaClient, updateId: string, reactedBy: string) {
-  return await client.userReactionOnUpdate.delete({
+export async function removeReaction(
+  client: PrismaClient,
+  reactedBy: string,
+  objectType: 'UPDATE' | 'EVENT',
+  objectId: string,
+) {
+  return await client.reaction.delete({
     where: {
-      compositeID: {
-        reactedBy: reactedBy,
-        updateId: updateId,
+      reactedBy_objectId_objectType: {
+        reactedBy,
+        objectId,
+        objectType,
       },
     },
   });
 }
 
-export async function removeUserReactionOnEvent(client: PrismaClient, eventId: string, reactedBy: string) {
-  return await client.userReactionOnEvent.delete({
+export async function findReaction(
+  client: PrismaClient,
+  reactedBy: string,
+  objectType: 'UPDATE' | 'EVENT',
+  objectId: string,
+) {
+  return await client.reaction.findUnique({
     where: {
-      compositeID: {
-        reactedBy: reactedBy,
-        eventId: eventId,
+      reactedBy_objectId_objectType: {
+        reactedBy,
+        objectId,
+        objectType,
       },
     },
   });
 }
 
-export async function getUpdateAndUserReaction(client: PrismaClient, updateId: string, reactedBy: string) {
-  return client.userReactionOnUpdate.findFirst({
-    where: {
-      reactedBy: reactedBy,
-      updateId: updateId,
-    },
-    include: {
-      reactedWith: true,
-    },
-  });
-}
-
-export async function getEventAndUserReaction(client: PrismaClient, eventId: string, reactedBy: string) {
-  return client.userReactionOnEvent.findFirst({
-    where: {
-      reactedBy: reactedBy,
-      eventId: eventId,
-    },
-    include: {
-      reactedWith: true,
-    },
-  });
-}
-
-export async function findReactionsByUpdate(client: PrismaClient, updateId: string, limit?: number) {
-  return await client.userReactionOnUpdate.findMany({
-    where: {
-      updateId: updateId,
-    },
-    include: {
-      reactedWith: true,
-    },
-    take: limit,
-  });
-}
-
-export async function getReactionsByShortCodes(client: PrismaClient, shortCodes: string[]) {
-  return client.reaction.findMany({
-    where: {
-      shortCode: { in: shortCodes },
-    },
-  });
-}
-
-export async function countNumberOfReactionsOnUpdatePerEmoji(client: PrismaClient, updateId: string) {
-  return client.userReactionOnUpdate.groupBy({
-    by: ['reactionShortCode'],
+export async function countNumberOfReactions(client: PrismaClient, objectType: 'UPDATE' | 'EVENT', objectId: string) {
+  return client.reaction.groupBy({
+    by: ['shortCode', 'nativeSymbol'],
     _count: {
-      reactionShortCode: true,
+      shortCode: true,
     },
     orderBy: {
       _count: {
-        reactionShortCode: 'desc',
+        shortCode: 'desc',
       },
     },
-
     where: {
-      updateId: updateId,
-    },
-  });
-}
-
-export async function countNumberOfReactionsOnEventPerEmoji(client: PrismaClient, eventId: string) {
-  return client.userReactionOnEvent.groupBy({
-    by: ['reactionShortCode'],
-    _count: {
-      reactionShortCode: true,
-    },
-    orderBy: {
-      _count: {
-        reactionShortCode: 'desc',
-      },
-    },
-
-    where: {
-      eventId: eventId,
+      objectId,
+      objectType,
     },
   });
 }
