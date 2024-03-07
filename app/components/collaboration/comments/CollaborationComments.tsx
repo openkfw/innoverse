@@ -6,6 +6,7 @@ import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
 
 import { Comment, CommentResponse } from '@/common/types';
+import { errorMessage } from '@/components/common/CustomToast';
 import { TransparentButton } from '@/components/common/TransparentButton';
 import { CommentVoteComponent } from '@/components/project-details/comments/VoteComponent';
 
@@ -93,10 +94,15 @@ const CollaborationCommentThread = ({
   const [responses, setResponses] = useState([] as CommentResponse[]);
 
   useEffect(
-    function loadResponseseIfDisplayingThem() {
+    function loadResponsesIfDisplayingThem() {
       async function loadResponses() {
-        const loadingResult = await getCollaborationCommentResponses({ comment });
-        setResponses(loadingResult.data ?? []);
+        try {
+          const loadingResult = await getCollaborationCommentResponses({ comment });
+          setResponses(loadingResult.data ?? []);
+        } catch (error) {
+          console.error('Failed to load responses:', error);
+          errorMessage({ message: 'Failed to load comment responses. Please try again.' });
+        }
       }
 
       if (displayResponses) {
@@ -108,16 +114,19 @@ const CollaborationCommentThread = ({
   );
 
   const handleResponse = async (response: string) => {
-    const result = await handleCollaborationCommentResponse({
-      comment: comment,
-      response: response,
-    });
-
-    const commentResponse = result.data as CommentResponse;
-
-    setDisplayResponses(true);
-    setOpenResponseInput(false);
-    setResponses((old) => [...old, commentResponse]);
+    try {
+      const result = await handleCollaborationCommentResponse({
+        comment: comment,
+        response: response,
+      });
+      const commentResponse = result.data as CommentResponse;
+      setDisplayResponses(true);
+      setOpenResponseInput(false);
+      setResponses((old) => [...old, commentResponse]);
+    } catch (error) {
+      console.error('Failed to submit response:', error);
+      errorMessage({ message: 'Submitting your response failed. Please try again.' });
+    }
   };
 
   return (

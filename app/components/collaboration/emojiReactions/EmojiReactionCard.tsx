@@ -8,6 +8,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 
+import { errorMessage } from '@/components/common/CustomToast';
+
 import EmojiPickerCard from './EmojiPicker';
 import { Emoji, Reaction, ReactionCount } from './emojiReactionTypes';
 
@@ -26,11 +28,16 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
   );
 
   const handleEmojiReaction = (emoji: Emoji) => {
-    // No Reaction before: Upsert
-    // Reaction with different emoji: Upsert
-    // Removal of emoji reaction: Delete
-    const operation = !userReaction || userReaction.shortCode !== emoji.shortCode ? 'upsert' : 'delete';
-    handleReaction(emoji, operation);
+    try {
+      // No Reaction before: Upsert
+      // Reaction with different emoji: Upsert
+      // Removal of emoji reaction: Delete
+      const operation = !userReaction || userReaction.shortCode !== emoji.shortCode ? 'upsert' : 'delete';
+      handleReaction(emoji, operation);
+    } catch (error) {
+      console.error('Failed to update reaction:', error);
+      errorMessage({ message: 'Updating your reaction failed. Please try again.' }); // Use your custom error handling here
+    }
   };
 
   return (

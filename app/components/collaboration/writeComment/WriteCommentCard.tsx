@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 
 import { useUser } from '@/app/contexts/user-context';
+import { errorMessage } from '@/components/common/CustomToast';
 
 import AvatarIcon from '../../common/AvatarIcon';
 import { MultilineTextInputField } from '../../common/form/MultilineTextInputField';
@@ -44,8 +45,13 @@ const WriteCommentCard = ({ sx, projectName, handleComment }: WriteCommentCardPr
     'Teil deine Ratschläge und Gedanken zu diesem Thema, damit deine Kollegen von deiner Expertise profitieren können.';
 
   const onSubmit: SubmitHandler<CommentFormValidationSchema> = async (data) => {
-    await handleComment(data.comment);
-    reset();
+    try {
+      await handleComment(data.comment);
+      reset();
+    } catch (error) {
+      console.error('Failed to submit comment:', error);
+      errorMessage({ message: 'Failed to submit your comment. Please try again.' });
+    }
   };
 
   return (

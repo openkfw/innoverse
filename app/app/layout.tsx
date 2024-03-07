@@ -5,6 +5,8 @@ import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
+import CustomToastContainer from '@/components/common/CustomToast';
+
 import theme from '../styles/theme';
 
 import { UserContextProvider } from './contexts/user-context';
@@ -37,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SessionProvider>
             <SWRProvider>
               <UserContextProvider>
+                <CustomToastContainer />
                 <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
               </UserContextProvider>
             </SWRProvider>

@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import { useUser } from '@/app/contexts/user-context';
 import { User } from '@/common/types';
+import { errorMessage } from '@/components/common/CustomToast';
 import { AuthResponse } from '@/utils/auth';
 
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
@@ -33,7 +34,12 @@ export const CommentVoteComponent = ({
   };
 
   const upvoteComment = async () => {
-    await handleUpvote({ commentId });
+    try {
+      await handleUpvote({ commentId });
+    } catch (error) {
+      console.error('Error upvoting comment:', error);
+      errorMessage({ message: 'Failed to upvote comment. Please try again later.' });
+    }
   };
 
   return (
