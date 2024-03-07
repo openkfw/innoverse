@@ -766,6 +766,7 @@ function getStaticBuildFetchUpdates(graphqlResponse: UpdatesResponse) {
       author: author
         ? {
             name: author.attributes.name,
+            email: author.attributes.email,
             image:
               author.attributes.avatar.data &&
               `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.attributes.avatar.data.attributes.url}`,

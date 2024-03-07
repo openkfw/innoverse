@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import { Box, SxProps } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -12,9 +11,13 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Comment } from '@/common/types';
-import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
 import { parseStringForLinks } from '@/components/common/LinkString';
 import theme from '@/styles/theme';
+
+import { TooltipContent } from '../project-details/TooltipContent';
+
+import AvatarIcon from './AvatarIcon';
+import { StyledTooltip } from './StyledTooltip';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
@@ -47,13 +50,11 @@ export const CommentCard = ({ content, voteComponent, sx, headerSx }: CommentCar
         <CardHeader
           sx={{ ...cardHeaderStyles, ...headerSx }}
           avatar={
-            author.image ? (
-              <Avatar sx={avatarStyles}>
-                <Image src={author.image} alt="avatar" fill sizes="33vw" />
-              </Avatar>
-            ) : (
-              <AvatarInitialsIcon name={author.name} size={32} />
-            )
+            <Box>
+              <StyledTooltip arrow key={author.id} title={<TooltipContent teamMember={author} />} placement="bottom">
+                <AvatarIcon user={author} size={48} allowAnimation />
+              </StyledTooltip>
+            </Box>
           }
           title={
             <Stack direction="row" spacing={1} sx={cardHeaderTitleStyles}>
@@ -110,16 +111,12 @@ const cardHeaderStyles = {
   },
 };
 
-const avatarStyles = {
-  width: 32,
-  height: 32,
-};
-
 const cardHeaderTitleStyles = {
   fontSize: 14,
   fontWeight: '500',
   alignItems: 'center',
   justifyItems: 'center',
+  marginLeft: '16px'
 };
 
 const cardContentStyles = {

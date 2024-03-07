@@ -22,15 +22,17 @@ import { formatDate } from '@/utils/helpers';
 
 import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/UpdateEmojiReactionCard';
 import { parseStringForLinks } from '../common/LinkString';
+import { StyledTooltip } from '../common/StyledTooltip';
+import { TooltipContent } from '../project-details/TooltipContent';
 
-interface ProjectCardProps {
+interface NewsCardProps {
   update: ProjectUpdate;
   sx?: any;
   noClamp?: boolean;
 }
 
-export default function NewsCard(props: ProjectCardProps) {
-  const { update, sx, noClamp = false } = props;
+export default function NewsCard(props: NewsCardProps) {
+  const { update, sx, noClamp = false} = props;
   const projectId = update.projectId;
   const { title, comment, author, date } = update;
 
@@ -58,11 +60,19 @@ export default function NewsCard(props: ProjectCardProps) {
     <Card sx={{ ...cardStyles, ...sx }}>
       <CardHeader
         sx={cardHeaderStyles}
-        avatar={author && <AvatarIcon user={author} size={24} />}
+        avatar={
+          author && (
+            <Box>
+              <StyledTooltip arrow key={author.id} title={<TooltipContent teamMember={author} />} placement="bottom">
+                <AvatarIcon user={author} size={24} allowAnimation />
+              </StyledTooltip>
+            </Box>
+          )
+        }
         title={
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             {author && (
-              <Typography variant="subtitle2" color="secondary.contrastText" sx={{ fontSize: '14px' }}>
+              <Typography variant="subtitle2" color="secondary.contrastText" sx={{ fontSize: '14px', ml: '16px' }}>
                 {author.name}
               </Typography>
             )}

@@ -15,6 +15,9 @@ import { openWebex } from '@/utils/openWebex';
 import AvatarIcon from '../common/AvatarIcon';
 import CustomDialog from '../common/CustomDialog';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
+import { StyledTooltip } from '../common/StyledTooltip';
+
+import { TooltipContent } from './TooltipContent';
 
 interface TeamMembersProps {
   team: User[];
@@ -37,14 +40,24 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
           {team.slice(0, maxTeamMembers).map((teamMember, index) => (
             <Box key={index} sx={rowStyles}>
               <Stack sx={boxStyles} direction="row" spacing={1}>
-                <AvatarIcon size={24} user={teamMember} key={teamMember.name} />
-                <Typography variant="subtitle1" sx={teamMemberNameStyles}>
-                  {teamMember.name}
-                </Typography>
+                <Box>
+                  <StyledTooltip
+                    arrow
+                    key={teamMember.id}
+                    title={<TooltipContent projectName={projectName} teamMember={teamMember} />}
+                    placement="bottom"
+                  >
+                    <AvatarIcon user={teamMember} size={24} allowAnimation />
+                  </StyledTooltip>
+                </Box>
+                <Box>
+                  <Typography variant="subtitle1" sx={teamMemberNameStyles}>
+                    {teamMember.name}
+                  </Typography>
+                </Box>
               </Stack>
 
               <Box sx={iconStyles}>
-                <InteractionButton projectName={projectName} interactionType={InteractionType.USER_FOLLOW_ICON} />
                 <InteractionButton
                   projectName={projectName}
                   interactionType={InteractionType.COMMENT}
@@ -68,9 +81,18 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
           {team.map((teamMember, index) => (
             <Stack key={index} sx={rowStyles} spacing={5} direction="row">
               <Stack sx={boxStyles} direction="row" spacing={1}>
-                <AvatarIcon size={48} user={teamMember} key={teamMember.name} />
                 <Box>
-                  <Typography variant="subtitle1" sx={{ color: 'text.primary', lineHeight: 1 }}>
+                  <StyledTooltip
+                    arrow
+                    key={teamMember.id}
+                    title={<TooltipContent projectName={projectName} teamMember={teamMember} />}
+                    placement="bottom"
+                  >
+                    <AvatarIcon user={teamMember} size={48} allowAnimation />
+                  </StyledTooltip>
+                </Box>
+                <Box>
+                  <Typography variant="subtitle1" sx={{ color: 'text.primary', lineHeight: 1, m: '16px' }}>
                     {teamMember.name}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
@@ -80,7 +102,6 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
               </Stack>
 
               <Box>
-                <InteractionButton projectName={projectName} interactionType={InteractionType.USER_FOLLOW} />
                 <InteractionButton projectName={projectName} interactionType={InteractionType.COMMENT} />
               </Box>
             </Stack>
@@ -147,6 +168,7 @@ const teamMemberNameStyles = {
   textOverflow: 'ellipsis',
   maxWidth: '23ch',
   whiteSpace: 'wrap',
+  marginLeft: '16px',
 };
 
 const iconStyles = {

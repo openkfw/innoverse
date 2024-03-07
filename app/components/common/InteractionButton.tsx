@@ -10,7 +10,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import FormatAlignLeftOutlinedIcon from '@mui/icons-material/FormatAlignLeftOutlined';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import PersonIcon from '@mui/icons-material/Person';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SendIcon from '@mui/icons-material/Send';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import { Box, Tooltip } from '@mui/material';
@@ -39,8 +38,6 @@ export interface InteractionButtonProps extends ButtonProps {
 export enum InteractionType {
   LIKE = 'like',
   PROJECT_FOLLOW = 'project-follow',
-  USER_FOLLOW = 'user-follow',
-  USER_FOLLOW_ICON = 'user-follow_icon',
   COLLABORATION = 'collaboration',
   COMMENT = 'comment',
   COMMENT_SEND = 'comment-send',
@@ -75,8 +72,6 @@ export default function InteractionButton(props: InteractionButtonProps) {
 
   const getSelectedInteractionIcon = () => {
     if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddedOutlinedIcon fontSize="small" />;
-    if (interactionType === InteractionType.USER_FOLLOW_ICON) return <PersonAddIcon fontSize="small" />;
-    if (interactionType === InteractionType.USER_FOLLOW) return <PersonAddIcon fontSize="small" />;
     else {
       return getInteractionIcon();
     }
@@ -84,8 +79,6 @@ export default function InteractionButton(props: InteractionButtonProps) {
 
   const getInteractionIcon = () => {
     if (interactionType === InteractionType.LIKE) return;
-    if (interactionType === InteractionType.USER_FOLLOW) return <PersonAddIcon fontSize="small" />;
-    if (interactionType === InteractionType.USER_FOLLOW_ICON) return <PersonAddIcon fontSize="small" />;
     if (interactionType === InteractionType.COLLABORATION) return <PeopleOutlineOutlinedIcon fontSize="small" />;
     if (interactionType === InteractionType.COMMENT) return <ChatIcon color={getIconColor()} />;
     if (interactionType === InteractionType.COMMENT_SEND) return <SendIcon fontSize="small" />;
@@ -118,8 +111,6 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (label) return label;
     if (interactionType === InteractionType.LIKE) return 'Like';
     if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Folgen';
-    if (interactionType === InteractionType.USER_FOLLOW) return 'Folgen';
-    if (interactionType === InteractionType.USER_FOLLOW_ICON) return;
     if (interactionType === InteractionType.COLLABORATION) return 'Hilf uns!';
     if (interactionType === InteractionType.COMMENT_SEND) return 'Senden';
     if (interactionType === InteractionType.SHARE_OPINION) return 'Teile Deine Erfahrung';
@@ -137,7 +128,6 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (label) return label;
     if (interactionType === InteractionType.LIKE) return 'Liked';
     if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Entfolgen';
-    if (interactionType === InteractionType.USER_FOLLOW) return 'Entfolgen';
     if (interactionType === InteractionType.OPPORTUNITY_APPLY) return 'Angewandt';
     else return getButtonText();
   };
