@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { Event } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
+import { errorMessage } from '@/components/common/CustomToast';
 import { getUpcomingEvents } from '@/utils/requests';
 
 import { LandingPageSection } from '../LandingPageSection';
@@ -13,12 +14,17 @@ import { EventCarousel } from './EventCarousel';
 export const EventSection = () => {
   const [events, setEvents] = useState<Event[]>();
 
-  useEffect(function loadEvents() {
-    async function loadEvents() {
-      const events = await getUpcomingEvents();
-      setEvents(events);
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const fetchedEvents = await getUpcomingEvents();
+        setEvents(fetchedEvents);
+      } catch (error) {
+        console.error('Failed to load events:', error);
+        errorMessage({ message: 'Failed to load events. Please try again later.' });
+      }
     }
-    loadEvents();
+    fetchEvents();
   }, []);
 
   return (

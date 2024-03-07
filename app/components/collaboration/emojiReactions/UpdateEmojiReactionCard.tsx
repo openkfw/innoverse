@@ -1,9 +1,11 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 
+import { errorMessage } from '@/components/common/CustomToast';
+
 import { getCountPerEmojiOnUpdate, getReactionForUpdateAndUser, handleNewReactionOnUpdate } from './actions';
 import { EmojiReactionCard } from './EmojiReactionCard';
-import { CountReaction, Emoji, Reaction } from './emojiReactionTypes';
+import { Emoji, Reaction, ReactionCount } from './emojiReactionTypes';
 
 export interface UpdateEmojiReactionCardProps {
   updateId: string;
@@ -11,13 +13,18 @@ export interface UpdateEmojiReactionCardProps {
 
 export function UpdateEmojiReactionCard({ updateId }: UpdateEmojiReactionCardProps) {
   const [userReaction, setUserReaction] = useState<Reaction>();
-  const [countOfReactionsByShortCode, setCountOfReactionsByShortCode] = useState<CountReaction[]>([]);
+  const [countOfReactions, setCountOfReactions] = useState<ReactionCount[]>([]);
 
   const fetchReactions = useCallback(async () => {
-    const { data: userReactionFromServer } = await getReactionForUpdateAndUser({ updateId });
-    const { data: countOfReactionsByUpdateAndShortcode } = await getCountPerEmojiOnUpdate({ updateId });
-    setUserReaction(userReactionFromServer ?? undefined);
-    setCountOfReactionsByShortCode(countOfReactionsByUpdateAndShortcode ?? []);
+    try {
+      const { data: userReactionFromServer } = await getReactionForUpdateAndUser({ updateId });
+      const { data: countOfReactions } = await getCountPerEmojiOnUpdate({ updateId });
+      setUserReaction(userReactionFromServer ?? undefined);
+      setCountOfReactions(countOfReactions ?? []);
+    } catch (error) {
+      console.error('Failed to fetch reactions for the update:', error);
+      errorMessage({ message: 'Failed to load reactions. Please try again later.' });
+    }
   }, [updateId]);
 
   useEffect(() => {
@@ -25,13 +32,18 @@ export function UpdateEmojiReactionCard({ updateId }: UpdateEmojiReactionCardPro
   }, [fetchReactions]);
 
   const handleReaction = async (emoji: Emoji, operation: 'upsert' | 'delete') => {
-    await handleNewReactionOnUpdate({ emoji: emoji, updateId: updateId, operation: operation });
-    await fetchReactions();
+    try {
+      await handleNewReactionOnUpdate({ emoji: emoji, updateId: updateId, operation: operation });
+      await fetchReactions();
+    } catch (error) {
+      console.error('Failed to handle reaction on the update:', error);
+      errorMessage({ message: 'Updating your reaction failed. Please try again.' });
+    }
   };
 
   return (
     <EmojiReactionCard
-      countOfReactionsByShortCode={countOfReactionsByShortCode}
+      countOfReactions={countOfReactions}
       userReaction={userReaction}
       handleReaction={handleReaction}
     />

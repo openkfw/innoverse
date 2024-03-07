@@ -21,6 +21,7 @@ import theme from '@/styles/theme';
 import { formatDate } from '@/utils/helpers';
 
 import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/UpdateEmojiReactionCard';
+import { errorMessage } from '../common/CustomToast';
 import { parseStringForLinks } from '../common/LinkString';
 import { StyledTooltip } from '../common/StyledTooltip';
 import { TooltipContent } from '../project-details/TooltipContent';
@@ -39,19 +40,29 @@ export default function NewsCard(props: NewsCardProps) {
   const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(false);
 
   const toggleFollow = async () => {
-    if (isProjectFollowed) {
-      setIsProjectFollowed(false);
-      await handleRemoveFollower({ projectId });
-    } else {
-      setIsProjectFollowed(true);
-      await handleFollow({ projectId });
+    try {
+      if (isProjectFollowed) {
+        setIsProjectFollowed(false);
+        await handleRemoveFollower({ projectId });
+      } else {
+        setIsProjectFollowed(true);
+        await handleFollow({ projectId });
+      }
+    } catch (error) {
+      console.error('Error toggling follow status:', error);
+      errorMessage({ message: 'Failed to toggle follow status. Please try again later.' });
     }
   };
 
   useEffect(() => {
     const setProjectInteraction = async () => {
-      const projectIsFollowed = (await isFollowed({ projectId })).data;
-      setIsProjectFollowed(projectIsFollowed ?? false);
+      try {
+        const projectIsFollowed = (await isFollowed({ projectId })).data;
+        setIsProjectFollowed(projectIsFollowed ?? false);
+      } catch (error) {
+        console.error('Error fetching follow status:', error);
+        errorMessage({ message: 'Failed to fetch follow status. Please try again later.' });
+      }
     };
     setProjectInteraction();
   }, [projectId]);

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs, { Dayjs } from 'dayjs';
 import { StatusCodes } from 'http-status-codes';
@@ -15,6 +14,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useUser } from '@/app/contexts/user-context';
 import { Option } from '@/common/formTypes';
 import { UserSession } from '@/common/types';
+import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { DropdownField } from '@/components/common/form/DropdownField';
 import { TextInputField } from '@/components/common/form/TextInputField';
 import theme from '@/styles/theme';
@@ -71,10 +71,11 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
 
   const openToast = (success: boolean = true) => {
     if (success) {
-      toast.success('Update was successfully added');
+      successMessage({ message: 'Update was successfully added' });
       return;
+    } else {
+      errorMessage({ message: 'There was an error when adding an update' });
     }
-    toast.error('There was an error when adding an update');
   };
 
   const onSubmit: SubmitHandler<UpdateFormValidationSchema> = async (data) => {

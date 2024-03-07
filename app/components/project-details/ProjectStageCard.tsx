@@ -6,7 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { Project, PROJECT_PROGRESS } from '@/common/types';
+import { Project } from '@/common/types';
 import ContinueIcon from '@/components/icons/ContinueIcon';
 import theme from '@/styles/theme';
 
@@ -45,7 +45,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
       </Typography>
       <Card sx={{ height: project?.team?.length > 2 ? '209px' : 'fit-content', ...cardStyles }} elevation={0}>
         <CardContent sx={cardContentStyles}>
-          <ProgressBar active={PROJECT_PROGRESS.EXPLORATION} />
+          <ProgressBar active={project.status} />
 
           <Grid sx={descriptionWrapperStyles}>
             <Typography sx={descriptionStyles}>

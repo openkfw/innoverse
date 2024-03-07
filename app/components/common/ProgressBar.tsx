@@ -154,6 +154,7 @@ export default function ProgressBar({ active }: ProgressBarProps) {
         label={PROJECT_PROGRESS.PROOF_OF_CONCEPT.replace(/_/g, ' ')}
         active={active == PROJECT_PROGRESS.PROOF_OF_CONCEPT}
       />
+      <Step id="4" label={PROJECT_PROGRESS.LIVE} active={active == PROJECT_PROGRESS.LIVE} />
     </Box>
   );
 }

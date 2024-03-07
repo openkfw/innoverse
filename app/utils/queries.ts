@@ -608,7 +608,7 @@ function getStaticBuildFetchEvents(graphqlResponse: GetEventsResponse) {
         endTime: attributes.end_time,
         author: {
           ...user,
-          ...user.attributes,
+          ...user?.attributes,
         },
         image: imagePath ? baseUrl + imagePath : null,
       };

@@ -246,7 +246,7 @@ export type Event = {
     location: string;
     description?: string;
     author: {
-      data: UserQuery;
+      data?: UserQuery;
     };
     image: {
       data?: {

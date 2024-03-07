@@ -21,10 +21,11 @@ const strapiFetcher = async (query: string, variables?: any) => {
   if (!res.ok) {
     const parsedError: RequestError = await res.json();
     const error: any = new Error('An error occurred while fetching the data.');
-    // Attach extra info to the error object.
 
+    // Attach extra info to the error object.
     error.info = parsedError.info || 'An error occurred while fetching the data.';
     error.status = parsedError.status || res.status;
+    error.errors = parsedError.errors;
 
     throw error;
   }

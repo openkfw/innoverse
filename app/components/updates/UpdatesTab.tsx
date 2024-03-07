@@ -8,6 +8,8 @@ import CardContent from '@mui/material/CardContent';
 import { ProjectUpdate } from '@/common/types';
 import theme from '@/styles/theme';
 
+import { errorMessage } from '../common/CustomToast';
+
 import { getProjectUpdates } from './actions';
 import { AddUpdateCard } from './AddUpdateCard';
 import { ProjectTimeLine } from './ProjectTimeLine';
@@ -25,27 +27,38 @@ export const UpdatesTab = (props: UpdatesTabProps) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    const refetchUpdates = async () => {
-      const { data } = await getProjectUpdates({ projectId });
-      if (data) {
-        setProjectUpdates([...data]);
-      }
-    };
-    if (updateAdded) {
-      refetchUpdates();
-    }
-  }, [projectId, updateAdded]);
-
-  useEffect(() => {
     const fetchUpdates = async () => {
-      const { data } = await getProjectUpdates({ projectId });
-      if (data) {
-        setProjectUpdates([...data]);
+      try {
+        const { data } = await getProjectUpdates({ projectId });
+        if (data) {
+          setProjectUpdates([...data]);
+        }
+      } catch (error) {
+        console.error('Error fetching project updates:', error);
+        errorMessage({ message: 'Failed to fetch project updates. Please try again later.' });
       }
     };
 
     fetchUpdates();
   }, [projectId]);
+
+  useEffect(() => {
+    const refetchUpdates = async () => {
+      try {
+        const { data } = await getProjectUpdates({ projectId });
+        if (data) {
+          setProjectUpdates([...data]);
+        }
+      } catch (error) {
+        console.error('Error refetching project updates:', error);
+        errorMessage({ message: 'Failed to refetch project updates. Please try again later.' });
+      }
+    };
+
+    if (updateAdded) {
+      refetchUpdates();
+    }
+  }, [projectId, updateAdded]);
 
   return (
     <Card sx={cardStyles}>
