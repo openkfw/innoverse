@@ -2,19 +2,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
-import {
-  addReaction,
-  addUserReactionOnEvent,
-  addUserReactionOnUpdate,
-  countNumberOfReactionsOnEventPerEmoji,
-  countNumberOfReactionsOnUpdatePerEmoji,
-  findReactionsByUpdate,
-  getEventAndUserReaction,
-  getReactionsByShortCodes,
-  getUpdateAndUserReaction,
-  removeUserReactionOnEvent,
-  removeUserReactionOnUpdate,
-} from '@/repository/db/reaction';
+import { addReaction, countNumberOfReactions, findReaction, removeReaction } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import logger from '@/utils/logger';
@@ -30,36 +18,11 @@ import {
   updateReactionShema,
 } from './validationSchema';
 
-export const getAllReactionsForUpdate = withAuth(async (user: UserSession, body: { updateId: string }) => {
-  try {
-    const validatedParams = validateParams(updateReactionShema, body);
-    if (validatedParams.status === StatusCodes.OK) {
-      const result = await findReactionsByUpdate(dbClient, body.updateId);
-      return { status: StatusCodes.OK, data: result };
-    }
-    return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
-    };
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Getting all reactions from update ${body.updateId}`,
-      err as Error,
-      body.updateId,
-    );
-    logger.error(error);
-    return {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Getting reactions failed',
-    };
-  }
-});
-
 export const getReactionForUpdateAndUser = withAuth(async (user: UserSession, body: { updateId: string }) => {
   try {
     const validatedParams = validateParams(updateReactionShema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      const result = await getUpdateAndUserReaction(dbClient, body.updateId, user.providerId);
+      const result = await findReaction(dbClient, user.providerId, 'UPDATE', body.updateId);
       return { status: StatusCodes.OK, data: result };
     }
     return {
@@ -83,7 +46,7 @@ export const getReactionForUpdateAndUser = withAuth(async (user: UserSession, bo
 export const getReactionForEventAndUser = withAuth(async (user: UserSession, body: { eventId: string }) => {
   const validatedParams = validateParams(eventReactionShema, body);
   if (validatedParams.status === StatusCodes.OK) {
-    const result = await getEventAndUserReaction(dbClient, body.eventId, user.providerId);
+    const result = await findReaction(dbClient, user.providerId, 'EVENT', body.eventId);
     return { status: StatusCodes.OK, data: result };
   }
   return {
@@ -92,22 +55,17 @@ export const getReactionForEventAndUser = withAuth(async (user: UserSession, bod
   };
 });
 
-export const getEmojisByShortCodes = withAuth(async (user: UserSession, body: { shortCodes: string[] }) => {
-  const result = await getReactionsByShortCodes(dbClient, body.shortCodes);
-  return {
-    status: StatusCodes.OK,
-    data: result as Emoji[],
-  };
-});
-
 export const getCountPerEmojiOnUpdate = withAuth(async (user: UserSession, body: { updateId: string }) => {
   try {
     const validatedParams = validateParams(updateReactionShema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      const reactionCount = await countNumberOfReactionsOnUpdatePerEmoji(dbClient, body.updateId);
+      const reactionCount = await countNumberOfReactions(dbClient, 'UPDATE', body.updateId);
       const result = reactionCount.map((reactionCount) => ({
-        shortCode: reactionCount.reactionShortCode,
-        count: reactionCount._count.reactionShortCode,
+        count: reactionCount._count.shortCode,
+        emoji: {
+          shortCode: reactionCount.shortCode,
+          nativeSymbol: reactionCount.nativeSymbol,
+        },
       }));
       return { status: StatusCodes.OK, data: result };
     }
@@ -133,10 +91,13 @@ export const getCountPerEmojiOnEvent = withAuth(async (user: UserSession, body: 
   try {
     const validatedParams = validateParams(eventReactionShema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      const reactionCount = await countNumberOfReactionsOnEventPerEmoji(dbClient, body.eventId);
+      const reactionCount = await countNumberOfReactions(dbClient, 'EVENT', body.eventId);
       const result = reactionCount.map((reactionCount) => ({
-        shortCode: reactionCount.reactionShortCode,
-        count: reactionCount._count.reactionShortCode,
+        count: reactionCount._count.shortCode,
+        emoji: {
+          shortCode: reactionCount.shortCode,
+          nativeSymbol: reactionCount.nativeSymbol,
+        },
       }));
       return { status: StatusCodes.OK, data: result };
     }
@@ -171,17 +132,19 @@ export const handleNewReactionOnUpdate = withAuth(
       }
 
       if (body.operation === 'delete') {
-        await removeUserReactionOnUpdate(dbClient, body.updateId, user.providerId);
+        await removeReaction(dbClient, user.providerId, 'UPDATE', body.updateId);
         return { status: StatusCodes.OK };
       }
 
-      await addReaction(dbClient, body.emoji.shortCode, body.emoji.nativeSymbol);
-      const resultCreateUserReaction = await addUserReactionOnUpdate(
+      const resultCreateUserReaction = await addReaction(
         dbClient,
         user.providerId,
+        'UPDATE',
         body.updateId,
         body.emoji.shortCode,
+        body.emoji.nativeSymbol,
       );
+
       return { status: StatusCodes.OK, data: resultCreateUserReaction };
     } catch (err) {
       const error: InnoPlatformError = dbError(
@@ -210,17 +173,18 @@ export const handleNewReactionOnEvent = withAuth(
     }
 
     if (body.operation === 'delete') {
-      await removeUserReactionOnEvent(dbClient, body.eventId, user.providerId);
+      await removeReaction(dbClient, user.providerId, 'EVENT', body.eventId);
       return { status: StatusCodes.OK };
     }
 
-    await addReaction(dbClient, body.emoji.shortCode, body.emoji.nativeSymbol);
-    const resultCreateUserReaction = await addUserReactionOnEvent(
+    const resultCreateReaction = await addReaction(
       dbClient,
       user.providerId,
+      'EVENT',
       body.eventId,
       body.emoji.shortCode,
+      body.emoji.nativeSymbol,
     );
-    return { status: StatusCodes.OK, data: resultCreateUserReaction };
+    return { status: StatusCodes.OK, data: resultCreateReaction };
   },
 );

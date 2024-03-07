@@ -5,7 +5,7 @@ import { errorMessage } from '@/components/common/CustomToast';
 
 import { getCountPerEmojiOnEvent, getReactionForEventAndUser, handleNewReactionOnEvent } from './actions';
 import { EmojiReactionCard } from './EmojiReactionCard';
-import { CountReaction, Emoji, Reaction } from './emojiReactionTypes';
+import { Emoji, Reaction, ReactionCount } from './emojiReactionTypes';
 
 export interface EventEmojiReactionCardProps {
   eventId: string;
@@ -13,14 +13,14 @@ export interface EventEmojiReactionCardProps {
 
 export function EventEmojiReactionCard({ eventId }: EventEmojiReactionCardProps) {
   const [userReaction, setUserReaction] = useState<Reaction>();
-  const [countOfReactionsByShortCode, setCountOfReactionsByShortCode] = useState<CountReaction[]>([]);
+  const [countOfReactions, setCountOfReactions] = useState<ReactionCount[]>([]);
 
   const fetchReactions = useCallback(async () => {
     try {
       const { data: userReactionFromServer } = await getReactionForEventAndUser({ eventId });
-      const { data: countOfReactionsByUpdateAndShortcode } = await getCountPerEmojiOnEvent({ eventId });
+      const { data: countOfReactions } = await getCountPerEmojiOnEvent({ eventId });
       setUserReaction(userReactionFromServer ?? undefined);
-      setCountOfReactionsByShortCode(countOfReactionsByUpdateAndShortcode ?? []);
+      setCountOfReactions(countOfReactions ?? []);
     } catch (error) {
       console.error('Failed to fetch reactions:', error);
       errorMessage({ message: 'Failed to load reactions. Please try again.' });
@@ -43,7 +43,7 @@ export function EventEmojiReactionCard({ eventId }: EventEmojiReactionCardProps)
 
   return (
     <EmojiReactionCard
-      countOfReactionsByShortCode={countOfReactionsByShortCode}
+      countOfReactions={countOfReactions}
       userReaction={userReaction}
       handleReaction={handleReaction}
     />
