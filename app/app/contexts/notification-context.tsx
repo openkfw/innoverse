@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import { subscribeToWebPush } from '@/utils/notification/pushNotification';
 
 import { useUser } from './user-context';
+import { PushNotification } from '../../types/notification';
 
 interface NotificationContextInterface {
   showNotification: (title: string, options: NotificationOptions | undefined) => Promise<Notification>;
@@ -62,31 +63,51 @@ const contextObject: NotificationContextInterface = {
 
 const NotificationContext = createContext(contextObject);
 export const NotificationContextProvider = ({ children }: { children: React.ReactNode }) => {
+  const [showPushSubscriptionAlert, setShowPushSubscriptionAlert] = useState(false);
+  const [permissionsDeniedOnUserAction, setPermissionsDeniedOnUserAction] = useState(false);
+
   const initialized = useRef(false);
   const { user, isLoading } = useUser();
-  const [showPushSubscriptionAlert, setShowPushSubscriptionAlert] = useState(false);
 
-  const registerNotifications = async () => {
+  const requestPushNotificationPermissionsIfNotPresent = async () => {
+    if (hasPushNotificationPermission()) {
+      return true;
+    }
+
+    const permissions = await requestPushNotificationPermission();
+    return permissions !== 'denied';
+  };
+
+  const registerNotifications = async ({ triggeredByUserAction }: { triggeredByUserAction: boolean }) => {
     try {
-      if (!hasPushNotificationPermission()) {
-        await requestPushNotificationPermission();
+      const hasPermissions = await requestPushNotificationPermissionsIfNotPresent();
+
+      if (!hasPermissions) {
+        setPermissionsDeniedOnUserAction(triggeredByUserAction);
+        return { success: false };
       }
-      setShowPushSubscriptionAlert(false);
+
       let subscription = await getPushNotificationSubscriptions();
+
       if (!subscription) {
         subscription = await subscribePushNotification();
       }
+
       await subscribeToWebPush(JSON.stringify(subscription));
+      return { success: true };
     } catch (error) {
       setShowPushSubscriptionAlert(false);
+      return { success: false };
     }
   };
 
   const registerServiceWorker = () => navigator.serviceWorker.register('/sw.js', { scope: '/' });
 
   useEffect(() => {
-    setShowPushSubscriptionAlert(!hasPushNotificationPermission());
-  }, []);
+    const hasPermission = hasPushNotificationPermission();
+    const showAlert = !hasPermission && !permissionsDeniedOnUserAction;
+    setShowPushSubscriptionAlert(showAlert);
+  }, [hasPushNotificationPermission, permissionsDeniedOnUserAction]);
 
   useEffect(() => {
     try {
@@ -94,7 +115,13 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
       initialized.current = true;
       if (!('serviceWorker' in navigator)) return;
       registerServiceWorker().then(() => {
-        registerNotifications().then(() => console.info('Push Notifications registered'));
+        registerNotifications({ triggeredByUserAction: false }).then((result) => {
+          if (result.success) {
+            console.info('Push Notifications registered automatically');
+          } else {
+            console.info('Failed to register Push Notifications automatically');
+          }
+        });
       });
     } catch (error) {
       console.error("Can't register service worker", error);
@@ -104,15 +131,15 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
   return (
     <NotificationContext.Provider value={contextObject}>
       <Box
-        hidden={!showPushSubscriptionAlert || !user}
-        display="flex"
+        display={showPushSubscriptionAlert && user ? 'flex' : 'none'}
         alignItems="center"
         justifyContent="center"
         bgcolor={'#edf7ed'}
+        position={'sticky'}
       >
         <Alert icon={false} severity="success" style={{ borderRadius: 0 }}>
           Möchtest du Updates zu Projekten erhalten?
-          <Button variant={'text'} onClick={registerNotifications}>
+          <Button variant={'text'} onClick={() => registerNotifications({ triggeredByUserAction: true })}>
             Ja
           </Button>
           <Button variant={'text'} onClick={() => setShowPushSubscriptionAlert(false)}>
