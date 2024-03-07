@@ -65,35 +65,19 @@ model Follow {
   followedBy String // user id  
 }
 
-model UserReactionOnUpdate {
-  createdAt DateTime @default(now())
-
-  reactedBy String //userID
-  updateId  String //object id that was reacted to 
-
-  reactionShortCode String // foreign key field referencing Reaction model
-  reactedWith       Reaction @relation(fields: [reactionShortCode], references: [shortCode])
-
-  @@id(name: "compositeID", [reactedBy, updateId])
-}
-
-model UserReactionOnEvent {
-  createdAt DateTime @default(now())
-  
-  reactedBy String
-  eventId   String
-
-  reactionShortCode String
-  reactedWith       Reaction @relation(fields: [reactionShortCode], references: [shortCode])
-
-  @@id(name: "compositeID", [reactedBy, eventId])
-}
-
 model Reaction {
-  shortCode            String                 @id @unique //shortcode of emoji, see unicode 
-  nativeSymbol         String //native representation of emoji symbol, see unicode
-  UserReactionOnUpdate UserReactionOnUpdate[]
-  UserReactionOnEvent  UserReactionOnEvent[]
+  id           String @id @default(uuid())
+  createdAt    DateTime @default(now())
+
+  reactedBy    String // user id
+  objectId     String // object id that was reacted to (e.g. id of update or event)
+  objectType   ReactionObjectType // type of object that was reacted to (e.g. update or event)
+ 
+  shortCode    String // shortcode of emoji, see unicode 
+  nativeSymbol String // native representation of emoji symbol, see unicode
+
+  @@unique(fields: [reactedBy, objectId, objectType])
+  @@map("reactions")
 }
 
 model SurveyVote {
@@ -106,4 +90,9 @@ model SurveyVote {
   votedBy          String // id of author
 
   @@map(name: "survey_votes")
+}
+
+enum ReactionObjectType {
+  UPDATE
+  EVENT
 }

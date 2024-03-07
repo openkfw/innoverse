@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import AddReactionOutlinedIcon from '@mui/icons-material/AddReactionOutlined';
 import { Typography } from '@mui/material';
@@ -8,57 +8,30 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 
-import { getEmojisByShortCodes } from './actions';
 import EmojiPickerCard from './EmojiPicker';
-import { CountReaction, Emoji, Reaction } from './emojiReactionTypes';
+import { Emoji, Reaction, ReactionCount } from './emojiReactionTypes';
 
 interface EmojiReactionCardProps {
   userReaction?: Reaction;
-  countOfReactionsByShortCode: CountReaction[];
+  countOfReactions: ReactionCount[];
   handleReaction: (emoji: Emoji, operation: 'upsert' | 'delete') => void;
 }
 
-export function EmojiReactionCard({
-  userReaction,
-  countOfReactionsByShortCode,
-  handleReaction,
-}: EmojiReactionCardProps) {
+export function EmojiReactionCard({ userReaction, countOfReactions, handleReaction }: EmojiReactionCardProps) {
   const [isEmojiPickerClicked, setIsEmojiPickerClicked] = useState(false);
-  const [topReactionsWithEmojis, setTopReactionsWithEmojis] = useState<{ count: number; emoji: Emoji }[]>();
+
+  const topReactions = useMemo(
+    () => countOfReactions.sort((a, b) => b.count - a.count).slice(0, 3),
+    [countOfReactions],
+  );
 
   const handleEmojiReaction = (emoji: Emoji) => {
     // No Reaction before: Upsert
     // Reaction with different emoji: Upsert
     // Removal of emoji reaction: Delete
-    const operation = !userReaction || userReaction.reactedWith.shortCode !== emoji.shortCode ? 'upsert' : 'delete';
+    const operation = !userReaction || userReaction.shortCode !== emoji.shortCode ? 'upsert' : 'delete';
     handleReaction(emoji, operation);
   };
-
-  const getTopReactions = useCallback(
-    () => countOfReactionsByShortCode.sort((a, b) => b.count - a.count).slice(0, 3),
-    [countOfReactionsByShortCode],
-  );
-
-  useEffect(() => {
-    async function getTopReactionsWithEmojis() {
-      const topReactions = getTopReactions();
-      const shortCodes = topReactions.map((reaction) => reaction.shortCode);
-      const { data: emojis } = await getEmojisByShortCodes({ shortCodes: shortCodes });
-
-      // Match emojis to top reactions
-      const topReactionsWithEmojis = topReactions
-        .map((reaction) => {
-          const emoji = emojis?.find((emoji) => emoji.shortCode === reaction.shortCode);
-          if (!emoji) return null;
-          return { count: reaction.count, emoji: emoji };
-        })
-        .filter((reaction) => reaction !== null) as { count: number; emoji: Emoji }[];
-
-      setTopReactionsWithEmojis(topReactionsWithEmojis);
-    }
-
-    getTopReactionsWithEmojis();
-  }, [getTopReactions]);
 
   return (
     <Box>
@@ -69,13 +42,13 @@ export function EmojiReactionCard({
           alignItems: 'center',
         }}
       >
-        {topReactionsWithEmojis?.map((reaction, key) => {
+        {topReactions?.map((reaction, key) => {
           return (
             <Grid item key={key}>
               <Button
                 onClick={() => handleEmojiReaction(reaction.emoji)}
                 sx={
-                  reaction.emoji.nativeSymbol === userReaction?.reactedWith.nativeSymbol
+                  reaction.emoji.nativeSymbol === userReaction?.nativeSymbol
                     ? activeReactionCardButtonStyles
                     : reactionCardButtonStyles
                 }
