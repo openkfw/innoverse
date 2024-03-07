@@ -20,7 +20,7 @@ type Headers = {
 const pages: Headers[] = [
   { text: 'Initiativen', link: '/#initiativen' },
   { text: 'News', link: '/news' },
-  { text: 'Backstage' },
+  { text: 'AI Assistant' },
 ];
 
 export default function TopBarMobile() {
@@ -133,7 +133,7 @@ const listItemStyles = {
 };
 
 const listItemDisabledStyles = {
-  ...listItemStyles, 
-  color: 'rgba(155, 155, 155, 1)', 
-  pointerEvents: 'none', 
+  ...listItemStyles,
+  color: 'rgba(155, 155, 155, 1)',
+  pointerEvents: 'none',
 };
