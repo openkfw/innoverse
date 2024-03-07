@@ -9,7 +9,6 @@ import Button from '@mui/material/Button';
 import { subscribeToWebPush } from '@/utils/notification/pushNotification';
 
 import { useUser } from './user-context';
-import { PushNotification } from '../../types/notification';
 
 interface NotificationContextInterface {
   showNotification: (title: string, options: NotificationOptions | undefined) => Promise<Notification>;
