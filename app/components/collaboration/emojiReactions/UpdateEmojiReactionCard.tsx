@@ -18,9 +18,9 @@ export function UpdateEmojiReactionCard({ updateId }: UpdateEmojiReactionCardPro
   const fetchReactions = useCallback(async () => {
     try {
       const { data: userReactionFromServer } = await getReactionForUpdateAndUser({ updateId });
-    const { data: countOfReactions } = await getCountPerEmojiOnUpdate({ updateId });
-    setUserReaction(userReactionFromServer ?? undefined);
-    setCountOfReactions(countOfReactions ?? []);
+      const { data: countOfReactions } = await getCountPerEmojiOnUpdate({ updateId });
+      setUserReaction(userReactionFromServer ?? undefined);
+      setCountOfReactions(countOfReactions ?? []);
     } catch (error) {
       console.error('Failed to fetch reactions for the update:', error);
       errorMessage({ message: 'Failed to load reactions. Please try again later.' });
