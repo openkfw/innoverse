@@ -1,6 +1,3 @@
-import Image from 'next/image';
-
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -9,7 +6,7 @@ import { User } from '@/common/types';
 import { openWebex } from '@/utils/openWebex';
 
 import AvatarIcon from '../common/AvatarIcon';
-import InteractionButton, { InteractionButtonProps, InteractionType } from '../common/InteractionButton';
+import InteractionButton, { InteractionType } from '../common/InteractionButton';
 import { StyledTooltip } from '../common/StyledTooltip';
 
 import { TooltipContent } from './TooltipContent';
