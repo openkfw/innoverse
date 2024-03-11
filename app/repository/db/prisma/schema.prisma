@@ -31,19 +31,20 @@ model CollaborationComment {
   questionId String // commented question
   author     String // id of author
   upvotedBy  String[] // ids of users
+  responses  CollaborationCommentResponse[] @relation("Response") // responses to the comment
 
   @@map(name: "collaboration_comments")
 }
 
 model CollaborationCommentResponse {
-  id        String @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  response    String // text of response
-  author      String // id of the author
-  upvotedBy   String[] // ids of users
-  commentId   String // id of comment this responds to to
-  comment     CollaborationComment @relation("Response", fields: [commentId], references: [id]) // comment this responds to
+  response  String // text of response
+  author    String // id of the author
+  upvotedBy String[] // ids of users
+  commentId String // id of comment this responds to to
+  comment   CollaborationComment @relation("Response", fields: [commentId], references: [id]) // comment this responds to
 
   @@map("collaboration_comments_responses")
 }
@@ -73,12 +74,12 @@ model PushSubscription {
 }
 
 model Reaction {
-  id           String @id @default(uuid())
-  createdAt    DateTime @default(now())
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
 
-  reactedBy    String // user id
-  objectId     String // object id that was reacted to (e.g. id of update or event)
-  objectType   ReactionObjectType // type of object that was reacted to (e.g. update or event)
+  reactedBy  String // user id
+  objectId   String // object id that was reacted to (e.g. id of update or event)
+  objectType ReactionObjectType // type of object that was reacted to (e.g. update or event)
 
   shortCode    String // shortcode of emoji, see unicode
   nativeSymbol String // native representation of emoji symbol, see unicode
@@ -88,13 +89,14 @@ model Reaction {
 }
 
 model SurveyVote {
-  id    String     @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  
-  vote String // vote
-  projectId String // project
+
+  vote             String // vote
+  projectId        String // project
   surveyQuestionId String // voted survey question
-  votedBy String // id of author
+  votedBy          String // id of author
+
   @@map(name: "survey_votes")
 }
 

@@ -5,6 +5,9 @@ import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
+import { NotificationContextProvider } from '@/app/contexts/notification-context';
+import CustomToastContainer from '@/components/common/CustomToast';
+
 import theme from '../styles/theme';
 
 import { UserContextProvider } from './contexts/user-context';
