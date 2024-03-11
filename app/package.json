@@ -48,6 +48,7 @@
     "react-toastify": "^10.0.3",
     "slick-carousel": "^1.8.1",
     "swr": "^2.2.4",
+    "winston": "^3.11.0",
     "web-push": "^3.6.6",
     "zod": "^3.22.4"
   },

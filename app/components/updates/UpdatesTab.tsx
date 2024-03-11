@@ -1,23 +1,21 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { Stack, SxProps, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Grid from '@mui/material/Grid';
 
 import { ProjectUpdate } from '@/common/types';
+import theme from '@/styles/theme';
+
+import { errorMessage } from '../common/CustomToast';
 
 import { getProjectUpdates } from './actions';
 import { AddUpdateCard } from './AddUpdateCard';
-import { UpdateCard } from './UpdateCard';
-import { YearField } from './YearField';
+import { ProjectTimeLine } from './ProjectTimeLine';
 
 interface UpdatesTabProps {
   projectId: string;
-}
-
-function getYear(date: string) {
-  return new Date(date).getFullYear().toString();
 }
 
 export const UpdatesTab = (props: UpdatesTabProps) => {
@@ -25,72 +23,52 @@ export const UpdatesTab = (props: UpdatesTabProps) => {
   const [updateAdded, setUpdateAdded] = useState<boolean>(false);
   const [projectUpdates, setProjectUpdates] = useState<ProjectUpdate[]>([]);
 
-  const getYears = useCallback(() => {
-    return projectUpdates
-      .map((update) => {
-        return getYear(update.date);
-      })
-      .filter((value, index, array) => array.indexOf(value) === index);
-  }, [projectUpdates]);
-
-  const getDatesByYear = useCallback(
-    () =>
-      getYears().map((uniqueYear) => {
-        return projectUpdates
-          .map((update) => {
-            if (getYear(update.date) == uniqueYear) {
-              return update as ProjectUpdate;
-            }
-          })
-          .filter((item) => item) as ProjectUpdate[];
-      }),
-    [getYears()],
-  );
-
-  useEffect(() => {
-    const refetchUpdates = async () => {
-      const { data } = await getProjectUpdates({ projectId });
-      if (data) {
-        setProjectUpdates([...data]);
-      }
-    };
-    if (updateAdded) {
-      refetchUpdates();
-    }
-  }, [updateAdded]);
+  const isVeryLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     const fetchUpdates = async () => {
-      const { data } = await getProjectUpdates({ projectId });
-      if (data) {
-        setProjectUpdates([...data]);
+      try {
+        const { data } = await getProjectUpdates({ projectId });
+        if (data) {
+          setProjectUpdates([...data]);
+        }
+      } catch (error) {
+        console.error('Error fetching project updates:', error);
+        errorMessage({ message: 'Failed to fetch project updates. Please try again later.' });
       }
     };
 
     fetchUpdates();
-  }, []);
+  }, [projectId]);
+
+  useEffect(() => {
+    const refetchUpdates = async () => {
+      try {
+        const { data } = await getProjectUpdates({ projectId });
+        if (data) {
+          setProjectUpdates([...data]);
+        }
+      } catch (error) {
+        console.error('Error refetching project updates:', error);
+        errorMessage({ message: 'Failed to refetch project updates. Please try again later.' });
+      }
+    };
+
+    if (updateAdded) {
+      refetchUpdates();
+    }
+  }, [projectId, updateAdded]);
 
   return (
     <Card sx={cardStyles}>
       <Box sx={colorOverlayStyles} />
 
       <CardContent sx={cardContentStyles}>
-        <Grid container>
-          <Grid container item xs={8}>
-            {getDatesByYear().map((updates, index) => {
-              const year = getYear(updates[0].date);
-              return (
-                <Grid container key={index}>
-                  <YearField year={year} />
-                  {projectUpdates.map(
-                    (update, i) => update && <UpdateCard key={i} content={update} divider={i !== updates.length - 1} />,
-                  )}
-                </Grid>
-              );
-            })}
-          </Grid>
-          <AddUpdateCard projectId={projectId} setUpdateAdded={setUpdateAdded} />
-        </Grid>
+        <Stack direction={isVeryLargeScreen ? 'row' : 'column'}>
+          <ProjectTimeLine widthOfDateColumn={isSmallScreen ? '83px' : '275px'} projectUpdates={projectUpdates} />
+          <AddUpdateCard sx={updateCardStyles} projectId={projectId} setUpdateAdded={setUpdateAdded} />
+        </Stack>
       </CardContent>
     </Card>
   );
@@ -107,19 +85,41 @@ const cardStyles = {
 };
 
 const colorOverlayStyles = {
-  width: 354,
+  width: '354px',
   height: '100%',
   borderRadius: 'var(--2, 16px) 0px 0px var(--2, 16px)',
   opacity: 0.6,
   background: 'linear-gradient(90deg, rgba(240, 238, 225, 0.00) 10.42%, #F0EEE1 100%)',
   position: 'absolute',
   zIndex: -1,
+  [theme.breakpoints.down('md')]: {
+    display: 'none',
+  },
 };
 
 const cardContentStyles = {
-  my: 11,
-  mx: 6,
+  my: '88px',
+  mx: '64px',
+  [theme.breakpoints.down('md')]: {
+    mx: '24px',
+    my: '48px',
+  },
   '&.MuiCardContent-root': {
     padding: 0,
+  },
+};
+
+const updateCardStyles: SxProps = {
+  marginLeft: '1.5em',
+  width: '270px',
+  [theme.breakpoints.down('lg')]: {
+    marginLeft: '315px',
+  },
+  [theme.breakpoints.down('md')]: {
+    marginLeft: 0,
+    marginTop: 5,
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
   },
 };

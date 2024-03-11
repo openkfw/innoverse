@@ -14,7 +14,20 @@ export type Comment = {
   id: string;
   author: User;
   comment: string;
-  upvotedBy?: User[];
+  upvotedBy: User[];
+  responseCount: number;
+  projectId: string;
+  questionId: string;
+  createdAt: Date;
+};
+
+export type CommentResponse = {
+  id: string;
+  author: User;
+  response: string;
+  createdAt: Date;
+  upvotedBy: User[];
+  comment: Comment;
 };
 
 export type ResponseOption = {
@@ -43,6 +56,7 @@ export enum PROJECT_PROGRESS {
   EXPLORATION = 'Exploration',
   KONZEPTION = 'Konzeption',
   PROOF_OF_CONCEPT = 'Proof_of_Concept',
+  LIVE = 'Live',
 }
 
 export type Hero = {
@@ -67,7 +81,7 @@ export type Project = {
   shortTitle: string;
   featured: boolean;
   status: PROJECT_PROGRESS;
-  image: string;
+  image?: string;
   summary: string;
   projectStart: string;
   collaboration: ProjectCollaboration;
@@ -114,7 +128,7 @@ export type ProjectUpdate = {
   topic: string;
   date: string;
   projectId: string;
-  projectStart?: boolean;
+  projectStart?: string;
 };
 
 export type PersonInfo = {
@@ -182,10 +196,12 @@ export type UserSession = {
 };
 
 export type Opportunity = {
+  id: string;
   title: string;
   description: string;
-  email: string;
+  contactPerson: User;
   expense: string;
+  participants: User[];
 };
 
 export type CollaborationQuestion = {
@@ -209,4 +225,17 @@ export interface NewsFilterProps {
 
 export type AmountOfNews = {
   [key: string]: number;
+};
+
+export type Event = {
+  id: string;
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  type: 'Remote' | 'In_office' | 'Remote_und_In_office';
+  description?: string;
+  location: string;
+  author: User;
+  image?: string;
 };

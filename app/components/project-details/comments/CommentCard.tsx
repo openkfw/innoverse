@@ -13,10 +13,11 @@ import Typography from '@mui/material/Typography';
 
 import { Comment } from '@/common/types';
 import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
+import { parseStringForLinks } from '@/components/common/LinkString';
 import theme from '@/styles/theme';
 
 import { handleUpvotedBy, isCommentUpvotedBy } from './actions';
-import { VoteComponent } from './VoteComponent';
+import { CommentVoteComponent } from './VoteComponent';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
@@ -71,7 +72,7 @@ export const CommentCard = ({ content }: CommentCardProps) => {
         <Stack direction="column" spacing={2}>
           <Box sx={{ ...commentContainerStyles, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
             <Typography variant="body1" sx={commentStyles}>
-              {comment}
+              {parseStringForLinks(comment)}
             </Typography>
 
             {!isCollapsed && (
@@ -82,11 +83,12 @@ export const CommentCard = ({ content }: CommentCardProps) => {
           </Box>
 
           {upvotedBy && (
-            <VoteComponent
-              upvotedBy={upvotedBy}
+            <CommentVoteComponent
               commentId={id}
+              upvotedBy={upvotedBy}
+              handleUpvote={handleUpvotedBy}
               isUpvoted={isCommentUpvotedBy}
-              handleUpvoted={handleUpvotedBy}
+              handleClickOnResponse={() => {}}
             />
           )}
         </Stack>
@@ -137,6 +139,7 @@ const commentContainerStyles = {
   overflow: 'hidden',
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
+  whiteSpace: 'pre-wrap',
 };
 
 const commentStyles = {

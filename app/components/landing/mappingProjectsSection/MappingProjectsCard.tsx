@@ -9,7 +9,6 @@ import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import CustomButton from '@/components/common/CustomButton';
 import ExplorationIcon from '@/components/icons/ExplorationIcon';
 import KonzeptionIcon from '@/components/icons/KonzeptionIcon';
 import ProofOfConceptIcon from '@/components/icons/ProofOfConceptIcon';
@@ -78,7 +77,6 @@ export const MappingProjectsCard = (props: ProjectProps) => {
             <CardHeader
               sx={{ textAlign: 'left', mt: '30px', ml: '25px', mr: '25px' }}
               title={<Typography variant="h4">Strategische Innovation @ ***STRING_REMOVED*** </Typography>}
-              action={<CustomButton>Details</CustomButton>}
             />
 
             <CardContent sx={{ ml: '25px', mr: '25px' }}>

@@ -24,7 +24,7 @@ type Headers = {
 const pages: Headers[] = [
   { text: 'Initiativen', link: '/#initiativen' },
   { text: 'News', link: '/news' },
-  { text: 'Backstage' },
+  { text: 'AI Assistant' },
 ];
 
 export default function TopBar() {
@@ -51,11 +51,6 @@ export default function TopBar() {
         ':hover': {
           backgroundColor: 'rgba(0,0,0,0.2)',
           backdropFilter: `blur(20px)`,
-        },
-
-        // todo - hide until design for smaller screens
-        [theme.breakpoints.down('sm')]: {
-          display: 'none',
         },
       }}
     >
@@ -92,7 +87,10 @@ export default function TopBar() {
                     </MenuItem>
                   </Link>
                 ) : (
-                  <MenuItem key={page.text} sx={{ borderRadius: '8px' }}>
+                  <MenuItem
+                    key={page.text}
+                    sx={{ borderRadius: '8px', '&:hover': { backgroundColor: 'inherit' }, pointerEvents: 'none' }}
+                  >
                     <Typography variant="body2" color="rgba(155,155,155,1)">
                       {page.text}
                     </Typography>

@@ -5,7 +5,7 @@ const strapiFetcher = async (query: string, variables?: any) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`, //TODO: rename to PRIVATE_STRAPI_TOKEN
+      Authorization: `Bearer ${process.env.STRAPI_TOKEN}`,
     },
     body: JSON.stringify({
       query: query,
@@ -19,10 +19,12 @@ const strapiFetcher = async (query: string, variables?: any) => {
   if (!res.ok) {
     const parsedError: RequestError = await res.json();
     const error: any = new Error('An error occurred while fetching the data.');
+
     // Attach extra info to the error object.
 
     error.info = parsedError.info || 'An error occurred while fetching the data.';
     error.status = parsedError.status || res.status;
+    error.errors = parsedError.errors;
 
     throw error;
   }

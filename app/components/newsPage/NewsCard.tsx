@@ -14,12 +14,15 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { ProjectUpdate } from '@/common/types';
-import EmojiReactionCard from '@/components/collaboration/emojiReactions/EmojiReactionCard';
 import AvatarIcon from '@/components/common/AvatarIcon';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import { handleFollow, handleRemoveFollower, isFollowed } from '@/components/project-details/likes-follows/actions';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/helpers';
+
+import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/UpdateEmojiReactionCard';
+import { errorMessage } from '../common/CustomToast';
+import { parseStringForLinks } from '../common/LinkString';
 
 interface ProjectCardProps {
   update: ProjectUpdate;
@@ -35,18 +38,29 @@ export default function NewsCard(props: ProjectCardProps) {
   const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(false);
 
   const toggleFollow = async () => {
-    if (isProjectFollowed) {
-      setIsProjectFollowed(false);
-      await handleRemoveFollower({ projectId });
-    } else {
-      setIsProjectFollowed(true);
-      await handleFollow({ projectId });
+    try {
+      if (isProjectFollowed) {
+        setIsProjectFollowed(false);
+        await handleRemoveFollower({ projectId });
+      } else {
+        setIsProjectFollowed(true);
+        await handleFollow({ projectId });
+      }
+    } catch (error) {
+      console.error('Error toggling follow status:', error);
+      errorMessage({ message: 'Failed to toggle follow status. Please try again later.' });
     }
   };
 
   useEffect(() => {
     const setProjectInteraction = async () => {
-      setIsProjectFollowed((await isFollowed({ projectId })).data);
+      try {
+        const projectIsFollowed = (await isFollowed({ projectId })).data;
+        setIsProjectFollowed(projectIsFollowed ?? false);
+      } catch (error) {
+        console.error('Error fetching follow status:', error);
+        errorMessage({ message: 'Failed to fetch follow status. Please try again later.' });
+      }
     };
     setProjectInteraction();
   }, [projectId]);
@@ -73,7 +87,7 @@ export default function NewsCard(props: ProjectCardProps) {
       <CardContent sx={cardContentStyles}>
         <Box sx={titleWrapperStyles}>
           <Typography sx={noClamp ? subtitleStyles : null} color="text.primary" variant="body1">
-            {comment}
+            {parseStringForLinks(comment)}
           </Typography>
         </Box>
       </CardContent>
@@ -105,7 +119,7 @@ export default function NewsCard(props: ProjectCardProps) {
             />
           </Grid>
           <Grid item xs={12}>
-            <EmojiReactionCard updateId={update.id} />
+            <UpdateEmojiReactionCard updateId={update.id} />
           </Grid>
         </Grid>
       </CardActions>

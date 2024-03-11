@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-import { Box } from '@mui/material';
+import { Box, SxProps } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -13,21 +13,22 @@ import Typography from '@mui/material/Typography';
 
 import { Comment } from '@/common/types';
 import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
-import { VoteComponent } from '@/components/project-details/comments/VoteComponent';
+import { parseStringForLinks } from '@/components/common/LinkString';
 import theme from '@/styles/theme';
-
-import { handleCollaborationUpvotedBy, isCollaborationCommentUpvotedBy } from './actions';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
 interface CommentCardProps {
-  content: Comment;
+  content: Pick<Comment, 'author' | 'comment'>;
+  voteComponent?: React.JSX.Element;
+  sx?: SxProps;
+  headerSx?: SxProps;
 }
 
 const MAX_TEXT_LENGTH = 300;
 
-export const CollaborationCommentCard = ({ content }: CommentCardProps) => {
-  const { author, comment, upvotedBy, id } = content;
+export const CommentCard = ({ content, voteComponent, sx, headerSx }: CommentCardProps) => {
+  const { author, comment } = content;
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleToggle = () => {
@@ -41,10 +42,10 @@ export const CollaborationCommentCard = ({ content }: CommentCardProps) => {
   }, [comment]);
 
   return (
-    <Card sx={cardStyle}>
+    <Card sx={{ ...cardStyle, ...sx }}>
       {author && (
         <CardHeader
-          sx={cardHeaderStyles}
+          sx={{ ...cardHeaderStyles, ...headerSx }}
           avatar={
             author.image ? (
               <Avatar sx={avatarStyles}>
@@ -56,7 +57,7 @@ export const CollaborationCommentCard = ({ content }: CommentCardProps) => {
           }
           title={
             <Stack direction="row" spacing={1} sx={cardHeaderTitleStyles}>
-              <Typography variant="subtitle2" color="secondary.contrastText">
+              <Typography variant="subtitle2" color="primary.dark">
                 {author.name}
               </Typography>
               {author.badge && <Image src={badgeIcon} alt="badge" />}
@@ -67,13 +68,12 @@ export const CollaborationCommentCard = ({ content }: CommentCardProps) => {
           }
         />
       )}
-      <CardContent sx={cardContentStyles}>
+      <CardContent sx={{ ...cardContentStyles }} style={{ paddingBottom: 0 }}>
         <Stack direction="column" spacing={2}>
           <Box sx={{ ...commentContainerStyles, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
             <Typography variant="body1" sx={commentStyles}>
-              {comment}
+              {parseStringForLinks(comment)}
             </Typography>
-
             {!isCollapsed && (
               <Typography variant="subtitle2" onClick={handleToggle} sx={buttonOverlayStyle}>
                 ... alles anzeigen
@@ -81,14 +81,7 @@ export const CollaborationCommentCard = ({ content }: CommentCardProps) => {
             )}
           </Box>
 
-          {upvotedBy && (
-            <VoteComponent
-              upvotedBy={upvotedBy}
-              commentId={id}
-              isUpvoted={isCollaborationCommentUpvotedBy}
-              handleUpvoted={handleCollaborationUpvotedBy}
-            />
-          )}
+          {voteComponent}
         </Stack>
       </CardContent>
     </Card>
@@ -110,8 +103,11 @@ const cardStyle = {
 };
 
 const cardHeaderStyles = {
-  margin: 0,
-  padding: 0,
+  paddingBottom: '11px',
+  paddingTop: 0,
+  '& .MuiCardHeader-avatar': {
+    marginRight: '8px',
+  },
 };
 
 const avatarStyles = {
@@ -127,9 +123,8 @@ const cardHeaderTitleStyles = {
 };
 
 const cardContentStyles = {
-  paddingTop: 0,
-  marginLeft: 6,
-  marginBottom: 1,
+  padding: 0,
+  marginLeft: 5,
 };
 
 const commentContainerStyles = {
@@ -137,11 +132,11 @@ const commentContainerStyles = {
   overflow: 'hidden',
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
+  whiteSpace: 'pre-wrap',
 };
 
 const commentStyles = {
   color: 'secondary.contrastText',
-  marginBottom: '24px',
 };
 
 const buttonOverlayStyle = {

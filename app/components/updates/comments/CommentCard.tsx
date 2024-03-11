@@ -15,12 +15,13 @@ import Typography from '@mui/material/Typography';
 
 import { Comment } from '@/common/types';
 import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
+import { parseStringForLinks } from '@/components/common/LinkString';
 import theme from '@/styles/theme';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
 interface CommentCardProps {
-  content: Comment;
+  content: Pick<Comment, 'author' | 'comment'>;
   sx?: SxProps;
 }
 
@@ -105,13 +106,13 @@ export const CommentCard = ({ content, sx }: CommentCardProps) => {
             {isCollapsed ? (
               <Collapse in={isCollapsed}>
                 <Typography variant="body1" sx={{ color: 'secondary.contrastText' }}>
-                  {comment}
+                  {parseStringForLinks(comment)}
                 </Typography>
               </Collapse>
             ) : (
               <>
                 <Typography variant="body1" sx={{ color: 'secondary.contrastText' }}>
-                  {comment.slice(0, MAX_TEXT_LENGTH)}...
+                  {parseStringForLinks(comment.slice(0, MAX_TEXT_LENGTH))}...
                   <Button size="small" onClick={handleToggle} sx={buttonStyle}>
                     <Typography
                       variant="subtitle2"

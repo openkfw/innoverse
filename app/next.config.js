@@ -56,10 +56,8 @@ const nextConfig = {
       test: /\.md$/,
       use: 'raw-loader',
     });
+    config.resolve.fallback = { fs: false };
     return config;
-  },
-  env: {
-    NEXT_PUBLIC_STRAPI_TOKEN: process.env.NEXT_PUBLIC_STRAPI_TOKEN,
   },
 };
 

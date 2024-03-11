@@ -1,3 +1,4 @@
+import { Link } from '@mui/material';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -7,20 +8,22 @@ import { Tag } from '@/common/types';
 import CustomChip from '@/components/common/CustomChip';
 import theme from '@/styles/theme';
 
-const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: string }) => {
-  const { title, tags, summary } = props;
+const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: string; projectId: string }) => {
+  const { title, tags, summary, projectId } = props;
 
   return (
     <Box sx={wrapperStyles}>
       <Typography variant="overline" sx={featuredTypographyStyles}>
         Featured
       </Typography>
-      <Typography sx={titleStyles} variant="h2">
-        {title}
-      </Typography>
+      <Link href={`/projects/${projectId}`} style={{ ...linkStyle }}>
+        <Typography sx={titleStyles} variant="h2">
+          {title}
+        </Typography>
+      </Link>
       <Box>
         <List aria-label="tags" sx={listStyles}>
-          {tags.map((el, id) => (
+          {tags?.map((el, id) => (
             <ListItem key={id} sx={listItemStyles}>
               <CustomChip label={el.tag} />
             </ListItem>
@@ -88,4 +91,8 @@ const descriptionStyles = {
   [theme.breakpoints.down('sm')]: {
     marginTop: 2,
   },
+};
+
+const linkStyle = {
+  textDecoration: 'none',
 };

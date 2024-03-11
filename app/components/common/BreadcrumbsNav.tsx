@@ -26,7 +26,7 @@ export default function BreadcrumbsNav({ activePage }: BreadcrumbsNavProps) {
       </Typography>
     </Link>,
     <Link key="2" href="/" style={{ textDecoration: 'none', pointerEvents: 'none' }} onClick={handleClick}>
-      <Typography variant="caption" color="common.white">
+      <Typography variant="caption" color="common.white" sx={{ fontSize: '13px' }}>
         {activePage}
       </Typography>
     </Link>,
@@ -50,7 +50,7 @@ export default function BreadcrumbsNav({ activePage }: BreadcrumbsNavProps) {
 // Breadcrumbs Nav Styles
 
 const typographyStyles = {
-  opacity: 0.8,
+  fontSize: '13px',
   ':hover': {
     color: 'secondary.main',
   },
@@ -59,6 +59,7 @@ const typographyStyles = {
 const breadcrumbsStyles = {
   marginTop: '32px',
   marginBottom: '30px',
+
   [theme.breakpoints.down('sm')]: {
     margin: '32px 16px 20px 16px',
   },

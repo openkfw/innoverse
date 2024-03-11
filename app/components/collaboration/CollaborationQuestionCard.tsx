@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { SxProps } from '@mui/material';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -8,16 +9,19 @@ import Typography from '@mui/material/Typography';
 
 import { useProject } from '@/app/contexts/project-context';
 import { CollaborationQuestion, Comment } from '@/common/types';
+import theme from '@/styles/theme';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 
 import AvatarIcon from '../common/AvatarIcon';
+import { errorMessage } from '../common/CustomToast';
+import { parseStringForLinks } from '../common/LinkString';
 import { StyledTooltip } from '../common/StyledTooltip';
 import { TooltipContent } from '../project-details/TooltipContent';
 
 import { handleCollaborationComment } from './comments/actions';
 import { CollaborationComments } from './comments/CollaborationComments';
+import WriteCommentCard from './writeComment/WriteCommentCard';
 import { ShareOpinionCard } from './ShareOpinionCard';
-import WriteCommentCard from './WriteCommentCard';
 
 interface UpdateCardProps {
   content: CollaborationQuestion;
@@ -42,6 +46,17 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
       background: 'linear-gradient(84deg, #85898b 0%, #ffffff 100%)',
       color: 'rgba(0, 0, 0, 0.56)',
     },
+    [theme.breakpoints.down('md')]: {
+      marginBottom: '40px',
+    },
+  };
+
+  const commentWrapperStyle = {
+    marginLeft: '-16px',
+    width: 'calc(100% + 16px)',
+    [theme.breakpoints.down('md')]: {
+      marginLeft: 0,
+    },
   };
 
   const handleShareOpinion = () => {
@@ -49,15 +64,25 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
   };
 
   const handleComment = async (comment: string) => {
-    const { data: newComment } = await handleCollaborationComment({ projectId, questionId, comment });
-    const newComments = sortDateByCreatedAt([...comments, newComment]);
-    setComments(newComments);
-    setCollaborationCommentsAmount(newComments.length);
+    try {
+      const { data: newComment } = await handleCollaborationComment({ projectId, questionId, comment });
+      if (!newComment) {
+        console.error('No comment was returned by the server.');
+        errorMessage({ message: 'Failed to post the comment. Please try again.' });
+        return;
+      }
+      const newComments = sortDateByCreatedAt([...comments, newComment]);
+      setComments(newComments);
+      setCollaborationCommentsAmount(newComments.length);
+    } catch (error) {
+      console.error('Failed to submit comment:', error);
+      errorMessage({ message: 'Failed to submit your comment. Please try again.' });
+    }
   };
 
   return (
-    <Grid container spacing={5}>
-      <Grid container item xs={6} direction="column" spacing={2} sx={{ paddingRight: '100px' }}>
+    <Grid container>
+      <Grid container item xs={12} md={6} direction="column" spacing={2} sx={leftGridStyle}>
         <Grid item>
           <Typography variant="h5" color="secondary.contrastText">
             {title}
@@ -65,7 +90,7 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
         </Grid>
         <Grid item>
           <Typography variant="body1" color="secondary.contrastText">
-            {description}
+            {parseStringForLinks(description)}
           </Typography>
         </Grid>
         <Grid item>
@@ -92,9 +117,8 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
           </AvatarGroup>
         </Grid>
       </Grid>
-
-      <Grid container item xs={6} spacing={2}>
-        <Box sx={{ marginLeft: '-20px' }}>
+      <Grid container item xs={12} md={6}>
+        <Box sx={commentWrapperStyle}>
           {comments.length > 0 ? (
             <Stack spacing={3}>
               {writeNewComment ? (
@@ -105,10 +129,23 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
               <CollaborationComments comments={comments} />
             </Stack>
           ) : (
-            <WriteCommentCard projectName={projectName} handleComment={handleComment} />
+            <WriteCommentCard sx={newCommentStyle} projectName={projectName} handleComment={handleComment} />
           )}
         </Box>
       </Grid>
     </Grid>
   );
+};
+
+const newCommentStyle: SxProps = {
+  [theme.breakpoints.down('md')]: {
+    marginBottom: '2em',
+  },
+};
+
+const leftGridStyle: SxProps = {
+  paddingRight: '2em',
+  [theme.breakpoints.down('md')]: {
+    paddingRight: 0,
+  },
 };

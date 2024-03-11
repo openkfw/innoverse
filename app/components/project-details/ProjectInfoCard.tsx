@@ -107,7 +107,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
             <Grid container sx={containerStyles}>
               <Grid item sx={firstRowStyles}>
                 <Grid sx={projectStageCardStyles}>
-                  <ProjectStageCard project={project} />
+                  <ProjectStageCard setActiveTab={setActiveTab} project={project} />
                 </Grid>
                 <Grid sx={teamMembersColumnStyles}>
                   <TeamMembersColumn team={project.team} projectName={project.title} />
@@ -136,7 +136,7 @@ const wrapperStyles = {
   flexDirection: 'column',
   alignItems: 'center',
   width: '85%',
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     width: '90%',
   },
 };
@@ -174,9 +174,12 @@ const firstRowStyles = {
 
 const projectStageCardStyles = {
   width: '100%',
+  alignSelf: 'flex-start',
 };
 
-const teamMembersColumnStyles = {};
+const teamMembersColumnStyles = {
+  alignSelf: 'flex-start',
+};
 
 const secondRowStyles = {
   display: 'flex',

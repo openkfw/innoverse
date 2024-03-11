@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { SxProps } from '@mui/material';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
@@ -10,6 +11,8 @@ import Typography from '@mui/material/Typography';
 
 import { useProject } from '@/app/contexts/project-context';
 import { SurveyQuestion } from '@/common/types';
+import { errorMessage } from '@/components/common/CustomToast';
+import theme from '@/styles/theme';
 
 import { getUserVoted, handleSurveyVote } from './actions';
 
@@ -20,7 +23,7 @@ interface SurveyCardProps {
 
 const StyledChip = styled(Chip)<{ active: string }>(({ active, theme }) => ({
   display: 'flex',
-  width: '320px',
+  width: '100%',
   height: 'auto',
   justifyContent: 'center',
   alignItems: 'center',
@@ -68,35 +71,36 @@ export const SurveyCard = ({ projectId, surveyQuestion }: SurveyCardProps) => {
   const { setSurveyVotesAmount } = useProject();
 
   const handleVote = async (_event: React.MouseEvent<HTMLElement>, newVote: string) => {
-    await handleSurveyVote({ projectId, surveyQuestionId: surveyQuestion.id, vote: newVote });
+    try {
+      await handleSurveyVote({ projectId, surveyQuestionId: surveyQuestion.id, vote: newVote });
 
-    // If the user already voted and the vote is same, untoggle the vote
-    if (voted && vote === newVote) {
-      setVotes(votes - 1);
-      setSurveyVotesAmount(votes);
-      setVote('');
-      setVoted(false);
-      return;
+      if (voted && vote === newVote) {
+        setVotes((prev) => Math.max(0, prev - 1));
+        setVote('');
+        setVoted(false);
+      } else {
+        if (!voted) setVotes((prev) => prev + 1);
+        setVote(newVote);
+        setVoted(true);
+      }
+    } catch (error) {
+      console.error('Failed to handle vote:', error);
+      errorMessage({ message: 'Failed to submit your vote. Please try again.' });
     }
-    if (voted) {
-      setVotes(votes);
-      setSurveyVotesAmount(votes);
-      setVote(newVote);
-      setVoted(true);
-      return;
-    }
-    setVotes(votes + 1);
     setSurveyVotesAmount(votes);
-    setVote(newVote);
-    setVoted(true);
   };
 
   useEffect(() => {
     const setSurveyVote = async () => {
-      const { data: userVote } = await getUserVoted({ surveyQuestionId: surveyQuestion.id });
-      if (userVote) {
-        setVote(userVote.vote);
-        setVoted(true);
+      try {
+        const { data: userVote } = await getUserVoted({ surveyQuestionId: surveyQuestion.id });
+        if (userVote) {
+          setVote(userVote.vote);
+          setVoted(true);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user vote:', error);
+        errorMessage({ message: 'Failed to load your voting status. Please try again.' });
       }
     };
     setSurveyVote();
@@ -104,15 +108,8 @@ export const SurveyCard = ({ projectId, surveyQuestion }: SurveyCardProps) => {
   }, [votes, setSurveyVotesAmount, surveyQuestion.id]);
 
   return (
-    <Grid container item spacing={5} xs={12}>
-      <Grid
-        container
-        item
-        xs={6}
-        direction="column"
-        spacing={2}
-        sx={{ paddingRight: '100px', alignSelf: 'flex-start' }}
-      >
+    <Grid container item>
+      <Grid container item xs={12} md={6} direction="column" sx={leftGridStyles}>
         <Grid item>
           <Typography variant="h5" color="secondary.contrastText">
             {question}
@@ -120,9 +117,20 @@ export const SurveyCard = ({ projectId, surveyQuestion }: SurveyCardProps) => {
         </Grid>
       </Grid>
 
-      <Grid container direction="row" item xs={6} spacing={2} sx={{ justifyContent: 'space-evenly' }}>
-        <Grid item sx={{ ml: '4px' }}>
-          <StyledToggleButtonGroup exclusive orientation="vertical" size="small" onChange={handleVote}>
+      <Grid item xs={12} md={6} sx={rightGridStyles}>
+        <Box
+          sx={{
+            alignItems: 'center',
+            display: { md: 'block', lg: 'flex' },
+          }}
+        >
+          <StyledToggleButtonGroup
+            exclusive
+            orientation="vertical"
+            size="small"
+            sx={toggleButonStyle}
+            onChange={handleVote}
+          >
             {responseOptions.map((response, key) => {
               return (
                 <ToggleButton value={response.responseOption} key={key}>
@@ -135,9 +143,7 @@ export const SurveyCard = ({ projectId, surveyQuestion }: SurveyCardProps) => {
               );
             })}
           </StyledToggleButtonGroup>
-        </Grid>
-        <Grid item>
-          <Box sx={{ ...votesCardStyle }}>
+          <Box sx={votesCardStyle}>
             <Typography variant="subtitle1" color="primary.main">
               {surveyVotesAmount} Votes
             </Typography>
@@ -145,16 +151,41 @@ export const SurveyCard = ({ projectId, surveyQuestion }: SurveyCardProps) => {
               Um die Ergebnisse zu sehen, bitte gib deine Stimme ab.
             </Typography>
           </Box>
-        </Grid>
+        </Box>
       </Grid>
     </Grid>
   );
 };
 
-const votesCardStyle = {
+const leftGridStyles: SxProps = {
+  paddingRight: '2em',
+  [theme.breakpoints.down('md')]: {
+    paddingRight: 0,
+    paddingBottom: '2em',
+  },
+};
+
+const rightGridStyles: SxProps = {
+  paddingLeft: '2em',
+  [theme.breakpoints.down('md')]: {
+    paddingLeft: 0,
+    flexDirection: 'column',
+  },
+};
+
+const toggleButonStyle = {
+  width: '360px',
+  maxWidth: '100%',
+  paddingRight: '1em',
+  paddingBottom: '1em',
+  [theme.breakpoints.down('md')]: {
+    paddingRight: 0,
+  },
+};
+
+const votesCardStyle: SxProps = {
   width: '172px',
-  height: '120px',
-  display: 'flex',
+  maxWidth: '100%',
   padding: 'var(--2, 16px)',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -163,4 +194,9 @@ const votesCardStyle = {
   flexShrink: 0,
   borderRadius: 'var(--1, 8px)',
   background: 'rgba(0, 90, 140, 0.10)',
+  [theme.breakpoints.down('md')]: {
+    width: '360px',
+    maxWidth: '100%',
+    marginLeft: 0,
+  },
 };

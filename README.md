@@ -28,7 +28,9 @@ cp .env.example .env
 cp ./app/.env.example ./app/.env # and then fill the missing env vars in /app
 cp ./strapi/.env.example ./strapi/.env # and then fill the missing env vars in /strapi
 ```
-Make sure you have three (3) .env files in total. One (1) in project root, one (1) in the /app folder and one (1) in the /strapi folder.
+
+Make sure you have three (3) .env files in total. One (1) in project root, one (1) in the /app folder and one (1) in the
+/strapi folder.
 
 Then start the components:
 
@@ -45,10 +47,12 @@ docker-compose -f docker-compose-full.yaml up  # for starting the project with s
 > **IMPORTANT:**
 > Now you need to generate & set the Strapi API Token
 
-Please go the strapi admin dashboard [http://localhost:1337/admin](http://localhost:1337/admin), create an admin user
-and after login go to the [API Tokens settings Page](http://localhost:1337/admin/settings/api-tokens) and generate a new
-API Token (Token duration - Unlimited, Token type - Full Access) - then copy and save the token, and paste the token in
-the `./app/.env` file under NEXT_PUBLIC_STRAPI_TOKEN
+Please go the strapi admin dashboard [http://localhost:1337/admin](http://localhost:1337/admin) and create an admin
+user. Remember the login information, you might need it again to access the Strapi UI.
+
+Next, after login, go to the [API Tokens settings Page](http://localhost:1337/admin/settings/api-tokens) and generate a
+new API Token (Token duration - Unlimited, Token type - Full Access) - then copy and save the token, and paste the token
+in the `./app/.env` file under STRAPI_TOKEN
 
 ```bash
 cd app
@@ -58,7 +62,8 @@ npm run dev
 now your app should be visible under [http://localhost:3000](http://localhost:3000)
 
 > **Important:**
-> The CMS is not filled with data by default. You can create your own data or opt for importing data from an existing strapi instance - check the docs in [./strapi/README.md](./strapi/README.md##Export&Import)
+> The CMS is not filled with data by default. You can create your own data or opt for importing data from an existing
+> strapi instance - check the docs in [./strapi/README.md](./strapi/README.md##Export&Import)
 
 #### Database: Accessing/Viewing the DB (Prisma Studio)
 

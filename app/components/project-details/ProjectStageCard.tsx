@@ -1,56 +1,59 @@
 'use client';
 
-import { useState } from 'react';
-
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-import { Project, PROJECT_PROGRESS } from '@/common/types';
+import { Project } from '@/common/types';
 import ContinueIcon from '@/components/icons/ContinueIcon';
 import theme from '@/styles/theme';
 
+import { parseStringForLinks } from '../common/LinkString';
 import ProgressBar from '../common/ProgressBar';
 
 interface TimingDataProps {
   project: Project;
+  setActiveTab: (tab: number) => void;
 }
 
 const MAX_TEXT_LENGTH = 200;
 
 const ProjectStageCard = (props: TimingDataProps) => {
-  const { project } = props;
-  const [isCollapsed, setIsCollapsed] = useState(project.summary.length <= MAX_TEXT_LENGTH);
+  const { project, setActiveTab } = props;
 
-  const handleToggle = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+  function readMore() {
+    const scroll = () => {
+      const section = document.getElementById('project-progress-tab')?.offsetTop;
+      if (section) {
+        window.scrollTo({
+          top: section,
+          behavior: 'smooth',
+        });
+      }
+    };
+
+    setActiveTab(0);
+    setTimeout(scroll, 0);
+  }
 
   return (
     <>
       <Typography variant="overline" sx={titleStyles}>
         Info & Status der Initiative
       </Typography>
-      <Card sx={cardStyles} elevation={0}>
+      <Card sx={{ height: project?.team?.length > 2 ? '209px' : 'fit-content', ...cardStyles }} elevation={0}>
         <CardContent sx={cardContentStyles}>
-          <ProgressBar active={PROJECT_PROGRESS.EXPLORATION} />
+          <ProgressBar active={project.status} />
 
           <Grid sx={descriptionWrapperStyles}>
-            {!isCollapsed ? (
-              <>
-                <Typography sx={descriptionStyles}>{project.summary.slice(0, MAX_TEXT_LENGTH)}</Typography>
-                <Button onClick={handleToggle} sx={buttonStyles} startIcon={<ContinueIcon />}>
-                  <Typography sx={buttonTextStyles}>Weiterlesen</Typography>
-                </Button>
-              </>
-            ) : (
-              <Collapse in={isCollapsed}>
-                <Typography sx={descriptionStyles}>{project.summary}</Typography>
-              </Collapse>
-            )}
+            <Typography sx={descriptionStyles}>
+              {parseStringForLinks(project.summary.slice(0, MAX_TEXT_LENGTH))}
+            </Typography>
+            <Button onClick={readMore} sx={buttonStyles} startIcon={<ContinueIcon />}>
+              <Typography sx={buttonTextStyles}>Weiterlesen</Typography>
+            </Button>
           </Grid>
         </CardContent>
       </Card>
@@ -74,7 +77,6 @@ const cardStyles = {
   background: 'rgba(240, 238, 225, 0.10)',
   borderRadius: '8px',
   width: '100%',
-  height: '209px',
   display: 'flex',
   flexDirection: 'column',
   [theme.breakpoints.down('md')]: {

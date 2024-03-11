@@ -10,6 +10,7 @@
   max-width: 806px;
   aspect-ratio: 806/477;
   position: relative;
+  z-index: 1;
 }
 
 .slick-dots.slick-thumb {
@@ -38,7 +39,8 @@
 @media only screen and (min-width: 1536px) {
   .slider-image {
     height: 100%;
-    width: auto;
+    width: 100%;
+    max-width: unset;
   }
 }
 
@@ -47,6 +49,7 @@
   .slider-image {
     height: 100%;
     width: auto;
+    max-width: unset;
   }
 }
 
@@ -78,4 +81,17 @@
 
 .slick-list {
   overflow: visible !important;
+}
+
+.carouselStyles .slick-list {
+  overflow: hidden !important;
+  z-index: 1;
+}
+
+.carouselStyles .slick-slide {
+  visibility: hidden;
+}
+
+.carouselStyles .slick-slide.slick-active {
+  visibility: visible;
 }

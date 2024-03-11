@@ -9,6 +9,7 @@ import ArrowRightIcon from '@/components/icons/ArrowRightIcon';
 import theme from '@/styles/theme';
 
 import AvatarIcon from '../common/AvatarIcon';
+import { parseStringForLinks } from '../common/LinkString';
 
 interface UpdateCardProps {
   updates: ProjectUpdate[];
@@ -36,7 +37,7 @@ const UpdateCard = (props: UpdateCardProps) => {
     }
   }
 
-  const handleUpdatesClick = async (offset: number) => {
+  function handleUpdatesClick(offset: number) {
     const scroll = () => {
       const section = document.getElementById('updates-tab')?.offsetTop;
       if (section) {
@@ -46,9 +47,10 @@ const UpdateCard = (props: UpdateCardProps) => {
         });
       }
     };
-    await setActiveTab(2);
-    scroll();
-  };
+
+    setActiveTab(2);
+    setTimeout(scroll, 0);
+  }
 
   if (updates.length === 0) {
     return <></>;
@@ -77,7 +79,7 @@ const UpdateCard = (props: UpdateCardProps) => {
             </Grid>
           </Grid>
           <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', marginTop: 1, marginBottom: 1 }}>
-            {update?.comment}
+            {parseStringForLinks(update?.comment)}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             {update?.date}

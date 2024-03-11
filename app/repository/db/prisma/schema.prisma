@@ -11,43 +11,57 @@ datasource db {
 }
 
 model ProjectComment {
-  id    String     @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  
-  comment String // text of comment
+
+  comment   String // text of comment
   projectId String // commented project
-  author String // id of author
+  author    String // id of author
   upvotedBy String[] // ids of users
+
   @@map(name: "project_comments")
 }
 
 model CollaborationComment {
-  id    String     @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  
-  comment String // text of comment
-  projectId String // commented project
+
+  comment    String // text of comment
+  projectId  String // commented project
   questionId String // commented question
-  author String // id of author
-  upvotedBy String[] // ids of users
+  author     String // id of author
+  upvotedBy  String[] // ids of users
+
   @@map(name: "collaboration_comments")
 }
 
-model Like {
-  id    String     @id @default(uuid())
+model CollaborationCommentResponse {
+  id        String @id @default(uuid())
   createdAt DateTime @default(now())
-  
-  projectId String // liked project
-  likedBy String // user id  
+
+  response    String // text of response
+  author      String // id of the author
+  upvotedBy   String[] // ids of users
+  commentId   String // id of comment this responds to to
+  comment     CollaborationComment @relation("Response", fields: [commentId], references: [id]) // comment this responds to
+
+  @@map("collaboration_comments_responses")
 }
 
+model Like {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  projectId String // liked project
+  likedBy   String // user id  
+}
 
 model Follow {
-  id    String     @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
   projectId  String // followed project
-  followedBy String // user id
+  followedBy String // user id  
 }
 
 model PushSubscription {
@@ -57,31 +71,34 @@ model PushSubscription {
 
   subscription Json
 }
-model UserReactionOnUpdate {
-  createdAt DateTime @default(now())
-
-  reactedBy String //userID
-  updateId  String //object id that was reacted to
-
-  reactionShortCode String // foreign key field referencing Reaction model
-  reactedWith       Reaction @relation(fields: [reactionShortCode], references: [shortCode])
-
-  @@id(name:"compositeID",[reactedBy, updateId])
-}
 
 model Reaction {
-  shortCode            String                 @id @unique //shortcode of emoji, see unicode
-  nativeSymbol         String //native representation of emoji symbol, see unicode
-  UserReactionOnUpdate UserReactionOnUpdate[]
+  id           String @id @default(uuid())
+  createdAt    DateTime @default(now())
+
+  reactedBy    String // user id
+  objectId     String // object id that was reacted to (e.g. id of update or event)
+  objectType   ReactionObjectType // type of object that was reacted to (e.g. update or event)
+
+  shortCode    String // shortcode of emoji, see unicode
+  nativeSymbol String // native representation of emoji symbol, see unicode
+
+  @@unique(fields: [reactedBy, objectId, objectType])
+  @@map("reactions")
 }
 
 model SurveyVote {
   id    String     @id @default(uuid())
   createdAt DateTime @default(now())
-
+  
   vote String // vote
   projectId String // project
   surveyQuestionId String // voted survey question
   votedBy String // id of author
   @@map(name: "survey_votes")
+}
+
+enum ReactionObjectType {
+  UPDATE
+  EVENT
 }

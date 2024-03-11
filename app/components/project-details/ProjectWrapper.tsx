@@ -25,8 +25,8 @@ export const ProjectWrapper = (props: ProjectWrapperProps) => {
 
   useEffect(() => {
     const setProjectInteraction = async () => {
-      setIsProjectLiked((await isLiked({ projectId: project.id })).data);
-      setIsProjectFollowed((await isFollowed({ projectId: project.id })).data);
+      setIsProjectLiked((await isLiked({ projectId: project.id })).data ?? false);
+      setIsProjectFollowed((await isFollowed({ projectId: project.id })).data ?? false);
     };
     setProjectInteraction();
   }, [project.id]);

@@ -88,7 +88,7 @@ export function ProjectInfoCardSmall(props: ProjectInfoProps) {
       <SLiderNavigation activeIndex={activeIndex} setActiveIndex={setActiveIndex} sliderRef={sliderRef} />
       <Box sx={sliderBoxStyles}>
         <Slider {...settings} ref={sliderRef}>
-          <ProjectStageCard project={project} />
+          <ProjectStageCard setActiveTab={setActiveTab} project={project} />
           <TeamMembersColumn team={project.team} projectName={project.title} />
           <CollaborationColumn setActiveTab={setActiveTab} project={project} />
           <UpdateCard updates={project?.updates} setActiveTab={setActiveTab} />
@@ -114,8 +114,6 @@ const sliderBoxStyles = {
 
 const navigationWrapperStyles = {
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
 };
 
 const navigationStyles = {

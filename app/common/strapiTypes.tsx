@@ -32,6 +32,14 @@ export type OpportunitiesResponse = {
   };
 };
 
+export type UpdateOportunityParticipantsResponse = {
+  data: {
+    updateOpportunityParticipants: {
+      data: OpportunityQuery;
+    };
+  };
+};
+
 export type SurveyQuestionsResponse = {
   data: {
     surveyQuestions: {
@@ -81,6 +89,20 @@ export type CreateProjectUpdateResponse = {
   };
 };
 
+export type UpdateOpportunityResponse = {
+  data: {
+    updateOpportunity: {
+      data: OpportunityQuery;
+    };
+  };
+};
+
+export type GetEventsResponse = {
+  data: {
+    events: { data: Event[] };
+  };
+};
+
 export type UserQueryResult = {
   user: any;
 };
@@ -99,7 +121,7 @@ export type Project = {
   projectStart: string;
   image: ImageType;
   description: Description;
-  author: { data: UserQuery };
+  author?: { data: UserQuery };
   team: { data: UserQuery[] };
   updates: Update[];
   surveyQuestions?: SurveyQuestion[];
@@ -195,7 +217,14 @@ export type SurveyQuestion = {
 };
 
 export type OpportunityQuery = {
-  attributes: { title: string; description: string; email: string; expense: string };
+  id: string;
+  attributes: {
+    title: string;
+    description: string;
+    contactPerson: { data: UserQuery };
+    expense: string;
+    participants: { data: UserQuery[] };
+  };
 };
 
 export type CommentQuery = {
@@ -203,4 +232,27 @@ export type CommentQuery = {
   comment: string;
   author: { data: UserQuery };
   upvotedBy: { data: UserQuery[] };
+};
+
+export type Event = {
+  id: string;
+  attributes: {
+    title: string;
+    date: string;
+    start_time: string;
+    end_time: string;
+    type: string;
+    location: string;
+    description?: string;
+    author: {
+      data?: UserQuery;
+    };
+    image: {
+      data?: {
+        attributes: {
+          url: string;
+        };
+      };
+    };
+  };
 };

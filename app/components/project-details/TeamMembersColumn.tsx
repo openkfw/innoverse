@@ -10,6 +10,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { User } from '@/common/types';
 import theme from '@/styles/theme';
+import { openWebex } from '@/utils/openWebex';
 
 import AvatarIcon from '../common/AvatarIcon';
 import CustomDialog from '../common/CustomDialog';
@@ -44,7 +45,12 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
 
               <Box sx={iconStyles}>
                 <InteractionButton projectName={projectName} interactionType={InteractionType.USER_FOLLOW_ICON} />
-                <InteractionButton projectName={projectName} interactionType={InteractionType.COMMENT} />
+                <InteractionButton
+                  projectName={projectName}
+                  interactionType={InteractionType.COMMENT}
+                  tooltip="Chat über Webex"
+                  onClick={() => openWebex(teamMember.email)}
+                />
               </Box>
             </Box>
           ))}
@@ -119,7 +125,12 @@ const cardContentStyles = {
   alignItems: 'center',
   width: '100%',
   gap: 1,
-  height: '209px',
+  height: 'fit-content',
+  maxHeight: '209px',
+  [theme.breakpoints.down('md')]: {
+    maxHeight: 'unset',
+    height: '209px',
+  },
 };
 
 const rowStyles = {
@@ -142,6 +153,7 @@ const iconStyles = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  gap: 1,
 };
 
 const boxStyles = {

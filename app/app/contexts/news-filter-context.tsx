@@ -3,6 +3,7 @@
 import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AmountOfNews, Filters, ProjectUpdate } from '@/common/types';
+import { errorMessage } from '@/components/common/CustomToast';
 import { SortValues } from '@/components/newsPage/News';
 import { getProjectsUpdates, getProjectsUpdatesFilter } from '@/utils/requests';
 
@@ -89,19 +90,27 @@ export const NewsFilterContextProvider = ({ children }: { children: React.ReactN
   };
 
   const refetchNews = async () => {
-    const updates = (await getProjectsUpdatesFilter(sort, filters, 1, filters.resultsPerPage)) as ProjectUpdate[];
-    const allUpdates = (await getProjectsUpdates()) as ProjectUpdate[];
-    setNews([...updates]);
-    setAllNews([...allUpdates]);
+    try {
+      const updates = (await getProjectsUpdatesFilter(sort, filters, 1, filters.resultsPerPage)) as ProjectUpdate[];
+      const allUpdates = (await getProjectsUpdates()) as ProjectUpdate[];
+      setNews([...updates]);
+      setAllNews([...allUpdates]);
+    } catch (error) {
+      errorMessage({ message: 'Error refetching news. Please check your connection and try again.' });
+      console.error('Error refetching news:', error);
+    }
   };
 
   useEffect(() => {
     const setData = async () => {
-      const updates = (await getProjectsUpdatesFilter(sort, filters, 1, filters.resultsPerPage)) as ProjectUpdate[];
-      const allUpdates = (await getProjectsUpdates()) as ProjectUpdate[];
-      if (updates) {
+      try {
+        const updates = (await getProjectsUpdatesFilter(sort, filters, 1, filters.resultsPerPage)) as ProjectUpdate[];
+        const allUpdates = (await getProjectsUpdates()) as ProjectUpdate[];
         setNews([...updates]);
         setAllNews([...allUpdates]);
+      } catch (error) {
+        errorMessage({ message: 'Error fetching news updates. Please try again later.' });
+        console.error('Error fetching initial news data:', error);
       }
     };
     setData();

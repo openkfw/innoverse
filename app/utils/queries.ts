@@ -2,8 +2,10 @@ import {
   CollaborationQuestionsResponse,
   CreateInnoUserResponse,
   CreateProjectUpdateResponse,
+  GetEventsResponse,
   GetInnoUserResponse,
   OpportunitiesResponse,
+  OpportunityQuery,
   ProjectData,
   ProjectQuestionsResponse,
   ProjectResponse,
@@ -11,10 +13,12 @@ import {
   SurveyQuestion,
   SurveyQuestionsResponse,
   Update,
+  UpdateOportunityParticipantsResponse,
+  UpdateOpportunityResponse,
   UpdatesResponse,
   UserQuery,
 } from '@/common/strapiTypes';
-import { CollaborationQuestion, Comment, Opportunity, ProjectQuestion, User } from '@/common/types';
+import { CollaborationQuestion, Event, Opportunity, ProjectQuestion, User } from '@/common/types';
 import { getCollaborationComments } from '@/components/collaboration/comments/actions';
 import { getComments } from '@/components/project-details/comments/actions';
 
@@ -30,16 +34,20 @@ import {
 export enum STRAPI_QUERY {
   GetProjects,
   GetUpdates,
-  GetUpdatesFilter,
   GetProjectById,
   GetInnoUser,
   CreateInnoUser,
   GetUpdatesByProjectId,
   GetOpportunitiesByProjectId,
+  GetOpportunitiesId,
   GetProjectQuestionsByProjectId,
   GetSurveyQuestionsByProjectId,
   GetCollaborationQuestionsByProjectId,
   CreateProjectUpdate,
+  GetEvents,
+  CreateOpportunityParticipant,
+  GetOpportunityParticipant,
+  UpdateOpportunityParticipants,
 }
 
 function formatDate(value: string, locale = 'de-DE') {
@@ -142,6 +150,34 @@ export const GetInnoUserByProviderIdQuery = `query GetInnoUser($providerId: Stri
 }
 `;
 
+export const GetEventsQuery = `query GetEvents($today: Date) {
+  events(filters: {date: {gte: $today}}, sort: "date:asc") {
+    data {
+      id
+      attributes {
+        title
+        date
+        start_time
+      	end_time
+        type
+        description
+        location
+        author {
+          ${userQuery}
+        }
+        image {
+          data {
+            attributes {
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`;
+
 export const GetUpdatesQuery = `query GetUpdates {
   updates(sort: "date:desc", pagination: { limit: 100 }) {
     data {
@@ -221,11 +257,36 @@ export const GetUpdatesByProjectIdQuery = `query GetUpdates($projectId: ID) {
 export const GetOpportunitiesByProjectIdQuery = `query GetOpportunities($projectId: ID) {
   opportunities(filters: { project: { id: { eq: $projectId } } }) {
     data {
+      id
       attributes {
         title
         description 
-        email
+        contactPerson {
+          ${userQuery}
+        }
         expense
+        participants {
+          ${userQuery}
+        }
+      }
+    }    
+  }
+}`;
+
+export const GetOpportunitiesByIdQuery = `query GetOpportunities($opportunityId: ID) {
+  opportunities(filters: { id: { eq: $opportunityId } }) {
+    data {
+      id
+      attributes {
+        title
+        description 
+        contactPerson {
+          ${userQuery}
+        }
+        expense
+        participants {
+          ${userQuery}
+        }
       }
     }    
   }
@@ -370,20 +431,124 @@ export const CreateProjectUpdateQuery = `mutation PostProjectUpdate($projectId: 
 }
 `;
 
-export const withResponseTransformer = async (
-  query: STRAPI_QUERY,
-  data:
-    | ProjectsResponse
-    | ProjectResponse
-    | GetInnoUserResponse
-    | CreateInnoUserResponse
-    | UpdatesResponse
-    | OpportunitiesResponse
-    | ProjectQuestionsResponse
-    | CollaborationQuestionsResponse
-    | SurveyQuestionsResponse
-    | CreateProjectUpdateResponse,
-) => {
+export const CreateOpportunityParticipantQuery = `
+mutation PostInnoUser($providerId: String, $provider: String, $name: String!, $role: String, $department: String, $email: String, $avatarId: ID) {
+  createInnoUser(data: { providerId: $providerId, provider: $provider,name: $name, role: $role, department: $department, email: $email, avatar: $avatarId}) {
+    data {
+      id
+      attributes {
+        providerId
+        provider
+        name
+        role
+        department
+        email
+        avatar {
+          data {
+            attributes {
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+`;
+
+export const GetOpportunityParticipantQuery = `
+query GetOpportunities($opportunityId: ID, $userId: [ID]) {
+  opportunities(filters: { id: { eq: $opportunityId }, participants: { id: { in: $userId } } }) {
+    data {
+      id
+      attributes {
+        title
+        description 
+        contactPerson {
+          ${userQuery}
+        }
+        expense
+        participants {
+          ${userQuery}
+        }
+      }
+    }    
+  }
+}
+`;
+
+export const UpdateOpportunityParticipantsQuery = `
+query UpdateOpportunity($opportunityId: ID!, $userId: ID!) {
+  updateOpportunityParticipants(id: $opportunityId, participantId: $userId) {
+    data {
+      id
+      attributes {
+        title
+        description 
+        contactPerson {
+          ${userQuery}
+        }
+        expense
+        participants {
+          ${userQuery}
+        }
+      }
+    }    
+  }
+}`;
+
+type ResponseType<T extends STRAPI_QUERY> = T extends STRAPI_QUERY.GetProjects
+  ? any
+  : T extends STRAPI_QUERY.GetUpdates
+    ? any
+    : T extends STRAPI_QUERY.GetProjectById
+      ? any
+      : T extends STRAPI_QUERY.GetInnoUser
+        ? any
+        : T extends STRAPI_QUERY.CreateInnoUser
+          ? any
+          : T extends STRAPI_QUERY.GetUpdatesByProjectId
+            ? any
+            : T extends STRAPI_QUERY.GetOpportunitiesByProjectId
+              ? Opportunity[]
+              : T extends STRAPI_QUERY.GetProjectQuestionsByProjectId
+                ? any
+                : T extends STRAPI_QUERY.GetCollaborationQuestionsByProjectId
+                  ? any
+                  : T extends STRAPI_QUERY.GetSurveyQuestionsByProjectId
+                    ? any
+                    : T extends STRAPI_QUERY.GetOpportunitiesId
+                      ? Opportunity[]
+                      : T extends STRAPI_QUERY.CreateProjectUpdate
+                        ? any
+                        : T extends STRAPI_QUERY.GetEvents
+                          ? Event[]
+                          : never;
+
+type ResponseTransformerData =
+  | ProjectsResponse
+  | ProjectResponse
+  | GetInnoUserResponse
+  | CreateInnoUserResponse
+  | UpdatesResponse
+  | OpportunitiesResponse
+  | ProjectQuestionsResponse
+  | CollaborationQuestionsResponse
+  | SurveyQuestionsResponse
+  | CreateProjectUpdateResponse
+  | UpdateOpportunityResponse
+  | UpdateOportunityParticipantsResponse
+  | GetEventsResponse;
+
+export const withResponseTransformer = async <T extends STRAPI_QUERY>(
+  query: T,
+  data: ResponseTransformerData,
+): Promise<ResponseType<T>> => {
+  return withResponseTransformerUntyped(query, data) as ResponseType<T>;
+};
+
+const withResponseTransformerUntyped = async <T extends STRAPI_QUERY>(query: T, data: ResponseTransformerData) => {
   switch (query) {
     case STRAPI_QUERY.GetProjects:
       return await getStaticBuildFetchProjects(data as ProjectsResponse);
@@ -397,6 +562,8 @@ export const withResponseTransformer = async (
       return getStaticBuildCreateInnoUser(data as CreateInnoUserResponse);
     case STRAPI_QUERY.GetUpdatesByProjectId:
       return getStaticBuildFetchUpdates(data as UpdatesResponse);
+    case STRAPI_QUERY.GetOpportunitiesId:
+      return getStaticBuildFetchOpportunitiesByProjectId(data as OpportunitiesResponse);
     case STRAPI_QUERY.GetOpportunitiesByProjectId:
       return getStaticBuildFetchOpportunitiesByProjectId(data as OpportunitiesResponse);
     case STRAPI_QUERY.GetProjectQuestionsByProjectId:
@@ -407,10 +574,47 @@ export const withResponseTransformer = async (
       return getStaticBuildFetchSurveyQuestionsByProjectId(data as SurveyQuestionsResponse);
     case STRAPI_QUERY.CreateProjectUpdate:
       return getStaticBuildCreateProjectUpdate(data as CreateProjectUpdateResponse);
+    case STRAPI_QUERY.GetEvents:
+      return getStaticBuildFetchEvents(data as GetEventsResponse);
+    case STRAPI_QUERY.CreateOpportunityParticipant:
+      return getStaticBuildUpdateOpportunity(data as UpdateOpportunityResponse);
+    case STRAPI_QUERY.GetOpportunityParticipant:
+      return getStaticBuildGetOpportunityParticipant(data as OpportunitiesResponse);
+    case STRAPI_QUERY.UpdateOpportunityParticipants:
+      return getStaticBuildUpdateOpportunityParticipants(data as UpdateOportunityParticipantsResponse);
     default:
+      // Will cause an error at build time if not all cases are covered above
+      exhaustiveMatchingGuard(query);
       break;
   }
 };
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const exhaustiveMatchingGuard = (_: never): never => {
+  throw new Error('This should not be reached');
+};
+
+function getStaticBuildFetchEvents(graphqlResponse: GetEventsResponse) {
+  if (graphqlResponse && graphqlResponse.data) {
+    return graphqlResponse.data.events.data.map((strapiEvent) => {
+      const attributes = strapiEvent.attributes;
+      const user = attributes.author.data;
+      const baseUrl = process.env.NEXT_PUBLIC_STRAPI_ENDPOINT;
+      const imagePath = attributes.image.data?.attributes.url;
+      return {
+        ...strapiEvent,
+        ...attributes,
+        startTime: attributes.start_time,
+        endTime: attributes.end_time,
+        author: {
+          ...user,
+          ...user?.attributes,
+        },
+        image: imagePath ? baseUrl + imagePath : null,
+      };
+    });
+  }
+}
 
 function getStaticBuildCreateProjectUpdate(graphqlResponse: CreateProjectUpdateResponse) {
   if (graphqlResponse && graphqlResponse.data) {
@@ -423,6 +627,56 @@ function getStaticBuildCreateProjectUpdate(graphqlResponse: CreateProjectUpdateR
         avatar: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
       },
     };
+  }
+}
+
+function mapUpdateOpportunity(opportunity: OpportunityQuery) {
+  const contactPerson = opportunity.attributes.contactPerson.data;
+  const participants = opportunity.attributes.participants.data;
+
+  const mappedOpportunity = {
+    id: opportunity.id,
+    ...opportunity.attributes,
+    contactPerson: contactPerson
+      ? {
+          ...contactPerson.attributes,
+          image:
+            contactPerson.attributes.avatar.data &&
+            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${contactPerson.attributes.avatar.data.attributes.url}`,
+        }
+      : null,
+    participants:
+      participants &&
+      participants.map((participant) => {
+        return {
+          ...participant.attributes,
+          image:
+            participant.attributes.avatar.data &&
+            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${participant.attributes.avatar.data.attributes.url}`,
+        };
+      }),
+  };
+  return mappedOpportunity;
+}
+
+function getStaticBuildGetOpportunityParticipant(graphqlResponse: OpportunitiesResponse) {
+  const opportunity = graphqlResponse.data.opportunities.data[0];
+  if (opportunity) {
+    return mapUpdateOpportunity(opportunity);
+  }
+}
+
+function getStaticBuildUpdateOpportunity(graphqlResponse: UpdateOpportunityResponse) {
+  const opportunity = graphqlResponse.data.updateOpportunity.data;
+  if (opportunity) {
+    return mapUpdateOpportunity(opportunity);
+  }
+}
+
+function getStaticBuildUpdateOpportunityParticipants(graphqlResponse: UpdateOportunityParticipantsResponse) {
+  const opportunity = graphqlResponse.data.updateOpportunityParticipants.data;
+  if (opportunity) {
+    return mapUpdateOpportunity(opportunity);
   }
 }
 
@@ -524,9 +778,33 @@ function getStaticBuildFetchUpdates(graphqlResponse: UpdatesResponse) {
 
 function getStaticBuildFetchOpportunitiesByProjectId(graphqlResponse: OpportunitiesResponse) {
   const opportunities = graphqlResponse.data.opportunities.data;
-  return opportunities.map((o) => {
-    return { ...o.attributes };
-  });
+  if (opportunities && opportunities.length > 0) {
+    return opportunities.map((o) => {
+      const contactPerson = o.attributes.contactPerson.data;
+      const participants = o.attributes.participants.data;
+      return {
+        id: o.id,
+        ...o.attributes,
+        contactPerson: contactPerson
+          ? {
+              ...contactPerson.attributes,
+              image:
+                contactPerson.attributes.avatar.data &&
+                `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${contactPerson.attributes.avatar.data.attributes.url}`,
+            }
+          : null,
+        participants: participants.map((participant) => {
+          return {
+            ...participant.attributes,
+            image:
+              participant.attributes.avatar.data &&
+              `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${participant.attributes.avatar.data.attributes.url}`,
+          };
+        }),
+      };
+    });
+  }
+  return [];
 }
 
 function getStaticBuildCreateInnoUser(graphqlResponse: CreateInnoUserResponse) {
@@ -605,13 +883,15 @@ async function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
 async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
   const project = graphqlResponse.data.project.data;
 
+  if (!project) throw new Error('Project not found');
+
   const { title, shortTitle, summary, image, status, projectStart, description, author, team } = project.attributes;
 
   const opportunities = (await getOpportunitiesByProjectId(project.id)) as Opportunity[];
   const projectQuestions = (await getProjectQuestionsByProjectId(project.id)) as ProjectQuestion[];
   const surveyQuestions = (await getSurveyQuestionsByProjectId(project.id)) as SurveyQuestion[];
   const collaborationQuestions = (await getCollaborationQuestionsByProjectId(project.id)) as CollaborationQuestion[];
-  const projectComments = (await getComments({ projectId: project.id })).data as Comment[];
+  const projectComments = (await getComments({ projectId: project.id })).data;
 
   const updates = (await getUpdatesByProjectId(project.id)) as Update[];
   const formattedUpdates = updates.map((u) => {
@@ -619,10 +899,15 @@ async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) 
     return u;
   });
 
-  const formattedAuthor = {
-    ...author.data.attributes,
-    image:
-      author.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.data.attributes.avatar.data.attributes.url}`,
+  const formatAuthor = () => {
+    if (author && author.data) {
+      return {
+        ...author.data.attributes,
+        image:
+          author.data.attributes.avatar.data &&
+          `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.data.attributes.avatar.data.attributes.url}`,
+      };
+    }
   };
 
   const formattedTeam = team.data.map((t: UserQuery) => {
@@ -651,7 +936,7 @@ async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) 
       opportunities,
       surveyQuestions,
       description: formattedDescription,
-      author: formattedAuthor,
+      author: formatAuthor(),
       team: formattedTeam,
       image: image.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
       updates: formattedUpdates,

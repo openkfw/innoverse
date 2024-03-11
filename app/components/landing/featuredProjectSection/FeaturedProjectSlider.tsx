@@ -5,6 +5,8 @@ import React from 'react';
 import Slider from 'react-slick';
 import Image from 'next/image';
 
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -26,12 +28,42 @@ type FeaturedProjectSliderProps = {
 
 type SlideProps = {
   content: Project;
+  setSelected: (index: number) => void;
+  index: number;
+  totalItems: number;
 };
 
-const Slide = ({ content }: SlideProps) => {
+const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const isLastSlide = index === totalItems - 1;
+  const isFirstSlide = index === 0;
+
+  const NextArrow = () =>
+    isHovered &&
+    !isLastSlide && (
+      <Box sx={{ ...arrowStyle, right: 10 }} onClick={() => setSelected(index + 1)}>
+        <ArrowForwardIosIcon fontSize="large" />
+      </Box>
+    );
+
+  const PrevArrow = () =>
+    isHovered &&
+    !isFirstSlide && (
+      <Box sx={{ ...arrowStyle, left: 10 }} onClick={() => setSelected(index - 1)}>
+        <ArrowBackIosNewIcon fontSize="large" />
+      </Box>
+    );
+
   return (
     <Grid container key={content.id} sx={wrapperStyles}>
-      <Grid container item sx={imageContainerStyles}>
+      <Grid
+        container
+        item
+        sx={imageContainerStyles}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <Image
           src={content.image || defaultImage}
           width={0}
@@ -41,12 +73,19 @@ const Slide = ({ content }: SlideProps) => {
           className="slider-image"
           style={{ objectFit: 'contain', objectPosition: 'center' }}
         />
+        <PrevArrow />
+        <NextArrow />
       </Grid>
       <Box sx={smallScreenSliderPill}>
         <SmallSliderPill itemNumber={(content.id + 1).toString()} title={content.title} />
       </Box>
       <Grid item md={4} sx={contentStyles}>
-        <FeaturedProjectContent title={content.title} tags={content.description.tags} summary={content.summary} />
+        <FeaturedProjectContent
+          title={content.title}
+          tags={content.description.tags}
+          summary={content.summary}
+          projectId={content.id}
+        />
       </Grid>
     </Grid>
   );
@@ -58,20 +97,36 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
 
   const slides = props.items;
   const sliderRef = useRef<Slider>(null);
-
-  const setSelected = (index: number) => {
-    sliderRef?.current?.slickGoTo(index);
-    setSelectedItem(index);
-  };
-
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
+
+  function moveIndicator(newIndex: number) {
+    const slider = document.querySelectorAll('.slick-dots.slick-thumb')[0] as HTMLElement;
+    const old = Number(slider.style.translate.split('px')[0]);
+    const diff = Math.abs(selectedItem - newIndex);
+    const moveByPx = diff * 150;
+
+    if (selectedItem > newIndex) {
+      slider.style.translate = `${old + moveByPx}px`;
+    }
+    if (selectedItem < newIndex) {
+      slider.style.translate = `${old - moveByPx}px`;
+    }
+  }
+
+  function setSelected(index: number) {
+    if (index >= 0 && index < props.items.length) {
+      sliderRef?.current?.slickGoTo(index);
+      setSelectedItem(index);
+      moveIndicator(index);
+    }
+  }
 
   const settings = {
     initialSlide: props.items.length - 1,
     arrows: false,
     dots: true,
     infinite: false,
-    speed: 750,
+    speed: 600,
     slidesToShow: 1,
     slidesToScroll: 1,
     vertical: false,
@@ -82,7 +137,6 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
           index={index}
           isSelected={selectedItem == index}
           setSelectedItem={setSelected}
-          selectedItem={selectedItem}
           slide={slides[index]}
         />
       );
@@ -90,11 +144,19 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
     dotsClass: 'slick-dots slick-thumb',
     rows: 1,
     variableWidth: !isWideScreen,
+    className: 'carouselStyles',
   };
 
   return (
     <Box sx={featuredProjectSliderStyles}>
-      {!show && <Slide content={slides[props.items.length - 1]} />}
+      {!show && (
+        <Slide
+          content={slides[props.items.length - 1]}
+          index={selectedItem}
+          setSelected={setSelected}
+          totalItems={props.items.length}
+        />
+      )}
       <Slider
         {...settings}
         ref={sliderRef}
@@ -102,7 +164,16 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
           setShow(true);
         }}
       >
-        {show && slides.map((content, id) => <Slide content={content} key={id} />)}
+        {show &&
+          slides.map((content, id) => (
+            <Slide
+              content={content}
+              key={id}
+              index={selectedItem}
+              setSelected={setSelected}
+              totalItems={props.items.length}
+            />
+          ))}
       </Slider>
     </Box>
   );
@@ -127,6 +198,7 @@ const wrapperStyles = {
   flexWrap: 'noWrap',
   gap: theme.spacing(2),
   maxWidth: '1500px',
+  zIndex: 10,
 
   [theme.breakpoints.up('xl')]: {
     justifyContent: 'flex-start',
@@ -154,6 +226,7 @@ const imageContainerStyles = {
   height: '509px',
   flexGrow: { xs: 0, sm: 7 },
   maxWidth: { xs: 'none', sm: `${(7 / 12) * 100}%` },
+  position: 'relative',
 
   [theme.breakpoints.up('xl')]: {
     display: 'flex',
@@ -178,6 +251,18 @@ const smallScreenSliderPill = {
   marginBottom: 4,
 
   [theme.breakpoints.up('sm')]: {
+    display: 'none',
+  },
+};
+
+const arrowStyle = {
+  zIndex: 100,
+  position: 'absolute',
+  cursor: 'pointer',
+  top: '50%',
+  transform: 'translateY(-50%)',
+
+  [theme.breakpoints.down('sm')]: {
     display: 'none',
   },
 };

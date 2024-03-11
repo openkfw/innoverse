@@ -67,6 +67,12 @@
     },
     "provider": {
       "type": "string"
+    },
+    "opportunities": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::opportunity.opportunity",
+      "mappedBy": "participants"
     }
   }
 }

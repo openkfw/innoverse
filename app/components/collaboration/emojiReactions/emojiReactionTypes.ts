@@ -1,19 +1,19 @@
-import { DateTime } from 'next-auth/providers/kakao';
-
 export type Emoji = {
   nativeSymbol: string;
   shortCode: string;
 };
 
 export type Reaction = {
-  createdAt: DateTime;
-  id: string;
+  createdAt: Date;
   reactedBy: string;
-  reactedWith: Emoji;
-  updateId: string;
+  shortCode: string;
+  nativeSymbol: string;
 };
 
-export type CountReaction = {
+export type ReactionCount = {
   count: number;
-  shortCode: string;
+  emoji: {
+    shortCode: string;
+    nativeSymbol: string;
+  };
 };

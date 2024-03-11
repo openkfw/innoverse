@@ -20,8 +20,9 @@ export const ShareOpinionCard = ({ projectName, handleClick }: ShareOpinionCardP
   return (
     <>
       {user && (
-        <Card sx={{ background: 'transparent', boxShadow: 'none', '.MuiCardHeader-root': { pl: 0 } }}>
+        <Card sx={cardStyles}>
           <CardHeader
+            sx={cardHeaderStyles}
             avatar={
               user.image ? (
                 <Avatar sx={avatarStyles}>
@@ -43,6 +44,19 @@ export const ShareOpinionCard = ({ projectName, handleClick }: ShareOpinionCardP
       )}
     </>
   );
+};
+
+const cardStyles = {
+  background: 'transparent',
+  boxShadow: 'none',
+  '.MuiCardHeader-root': { pl: 0 },
+};
+
+const cardHeaderStyles = {
+  padding: 0,
+  '& .MuiCardHeader-avatar': {
+    marginRight: '8px',
+  },
 };
 
 const avatarStyles = {

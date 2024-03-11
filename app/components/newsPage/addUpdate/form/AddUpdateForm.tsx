@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs, { Dayjs } from 'dayjs';
 import { StatusCodes } from 'http-status-codes';
@@ -15,14 +14,16 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useUser } from '@/app/contexts/user-context';
 import { Option } from '@/common/formTypes';
 import { UserSession } from '@/common/types';
+import { errorMessage, successMessage } from '@/components/common/CustomToast';
+import { DropdownField } from '@/components/common/form/DropdownField';
+import { TextInputField } from '@/components/common/form/TextInputField';
 import theme from '@/styles/theme';
 
+import { DateInputField } from '../../../common/form/DateInputField';
+import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
+
 import { getProjectsOptions, handleProjectUpdate } from './actions';
-import { DateInputField } from './DateInputField';
-import { DropdownField } from './DropdownField';
 import formFieldNames from './formFields';
-import { MultilineTextInputField } from './MultilineTextInputField';
-import { TextInputField } from './TextInputField';
 import { formValidationSchema, UpdateFormValidationSchema } from './validationSchema';
 
 export interface UpdateFormData {
@@ -31,6 +32,10 @@ export interface UpdateFormData {
   author: string;
   projectId: string;
   authorId?: string;
+}
+
+export interface AddUpdateFormData extends Omit<UpdateFormData, 'date'> {
+  date: string;
 }
 
 const defaultValues = {
@@ -66,10 +71,11 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
 
   const openToast = (success: boolean = true) => {
     if (success) {
-      toast.success('Update was successfully added');
+      successMessage({ message: 'Update was successfully added' });
       return;
+    } else {
+      errorMessage({ message: 'There was an error when adding an update' });
     }
-    toast.error('There was an error when adding an update');
   };
 
   const onSubmit: SubmitHandler<UpdateFormValidationSchema> = async (data) => {
@@ -105,18 +111,29 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
     <>
       <Stack spacing={2} sx={formStyles} direction="column">
         <Stack spacing={2} direction={isSmallScreen ? 'column' : 'row'}>
-          <TextInputField name={AUTHOR} control={control} label="Author" readOnly />
-          <DropdownField name={PROJECT_ID} control={control} label="Projekt" options={projectOptions} />
+          <TextInputField name={AUTHOR} control={control} label="Author" readOnly sx={inputStyle} />
+          {projectOptions.length > 0 && (
+            <DropdownField
+              name={PROJECT_ID}
+              control={control}
+              label="Projekt"
+              options={projectOptions}
+              sx={inputStyle}
+            />
+          )}
         </Stack>
-        <Stack spacing={2} direction={isSmallScreen ? 'column' : 'row'}>
-          <DateInputField name={DATE} control={control} label="Datum" disableFuture />
-          <MultilineTextInputField
-            name={COMMENT}
-            control={control}
-            label="Kommentar"
-            placeholder="Geben Sie hier Ihren Kommentar ein"
-          />
-        </Stack>
+        <form>
+          <Stack spacing={2} direction={isSmallScreen ? 'column' : 'row'}>
+            <DateInputField name={DATE} control={control} label="Datum" disableFuture sx={inputStyle} />
+            <MultilineTextInputField
+              name={COMMENT}
+              control={control}
+              label="Kommentar"
+              placeholder="Geben Sie hier Ihren Kommentar ein"
+              sx={inputStyle}
+            />
+          </Stack>
+        </form>
 
         <Box display="flex" justifyContent="flex-end">
           <Button
@@ -134,18 +151,10 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
   );
 }
 
-export const inputStyle = {
+const inputStyle = {
   width: '100%',
   [theme.breakpoints.up('sm')]: {
     width: '50%',
-  },
-  '& .MuiFormLabel-root': {
-    color: 'primary.main',
-    fontFamily: '***FONT_REMOVED***',
-    fontSize: '14px',
-    '&.Mui-focused': {
-      color: 'primary.main',
-    },
   },
 };
 

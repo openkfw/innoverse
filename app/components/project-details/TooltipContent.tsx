@@ -1,6 +1,7 @@
 import { Grid, Typography } from '@mui/material';
 
 import { User } from '@/common/types';
+import { openWebex } from '@/utils/openWebex';
 
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
@@ -20,10 +21,19 @@ export const TooltipContent = (props: TeamMemberProps) => {
         <Typography variant="caption" color="text.secondary">
           {teamMember.role}
         </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {teamMember.email}
+        </Typography>
       </Grid>
       <Grid item>
         <InteractionButton projectName={projectName} interactionType={InteractionType.USER_FOLLOW} />
-        <InteractionButton projectName={projectName} interactionType={InteractionType.COMMENT} />
+        <InteractionButton
+          projectName={projectName}
+          interactionType={InteractionType.COMMENT}
+          tooltip="Chat über Webex"
+          onClick={() => openWebex(teamMember.email)}
+          sx={{ marginLeft: 1 }}
+        />
       </Grid>
     </Grid>
   );

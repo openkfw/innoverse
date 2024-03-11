@@ -1,5 +1,4 @@
 'use client';
-
 import React from 'react';
 import type { Metadata } from 'next';
 import Script from 'next/script';
@@ -8,7 +7,6 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 import theme from '../styles/theme';
 
-import { NotificationContextProvider } from './contexts/notification-context';
 import { UserContextProvider } from './contexts/user-context';
 import { SWRProvider } from './swr-provider';
 import ThemeRegistry from './ThemeRegistry';
@@ -40,8 +38,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <SWRProvider>
               <UserContextProvider>
                 <NotificationContextProvider>
+                  <CustomToastContainer />
                   <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
                 </NotificationContextProvider>
+                <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
               </UserContextProvider>
             </SWRProvider>
           </SessionProvider>
