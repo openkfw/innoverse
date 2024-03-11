@@ -71,4 +71,29 @@ now your app should be visible under [http://localhost:3000](http://localhost:30
 
 - Run `npm run prisma studio` to run the database browser and check the database.
 
+### Push Notifications
+
+#### Platform Setup
+
+- Generate following ENV variables `NEXT_PUBLIC_VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`
+  via `npx web-push generate-vapid-keys`
+- Add the contact email to the `VAPID_ADMIN_EMAIL` environment variable in format "mailto:your_email"
+- Set the `STRAPI_PUSH_NOTIFICATION_SECRET` environment variable to a secret string
+
+#### CMS Setup
+
+- Go to the CMS > Settings > Webhooks > Create a new Webhook
+- Add a meaningful name
+- Add the URL of the push notifications
+  - For local development: `http://host.docker.internal:3000/api/hooks/push`
+  - For production: `https://${YOUR-DOMAIN}/api/hooks/push`
+- Add the header `Authorization`, the value should be the value of the environment
+  variable `STRAPI_PUSH_NOTIFICATION_SECRET`
+- Add the events you want to listen to (for now only `entry.publish` will be handled by the endpoint)
+
+> **Important:**
+> For local development, the `http://host.docker.internal:3000/api/hooks/push` URL is used to access the platform!
+> This means your docker-compose file should use `network_mode: host` for strapi and db services. (This might also
+> include some changes in your `.env` file configuration i.e. the database/strapi host has to be set to `127.0.0.1`)
+
 YOU MADE IT! (locally)

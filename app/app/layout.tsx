@@ -5,6 +5,7 @@ import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
+import { NotificationContextProvider } from '@/app/contexts/notification-context';
 import CustomToastContainer from '@/components/common/CustomToast';
 
 import theme from '../styles/theme';
@@ -15,7 +16,7 @@ import ThemeRegistry from './ThemeRegistry';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const metadata: Metadata = {
-  title: 'InnoPlatte',
+  title: 'InnoBuddy',
   viewport: { width: 'device-width', initialScale: 1 },
   themeColor: theme.palette.primary.main,
 };
@@ -39,7 +40,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SessionProvider>
             <SWRProvider>
               <UserContextProvider>
-                <CustomToastContainer />
+                <NotificationContextProvider>
+                  <CustomToastContainer />
+                  <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+                </NotificationContextProvider>
                 <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
               </UserContextProvider>
             </SWRProvider>
