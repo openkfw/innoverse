@@ -20,7 +20,7 @@ type Headers = {
 const pages: Headers[] = [
   { text: 'Initiativen', link: '/#initiativen' },
   { text: 'News', link: '/news' },
-  { text: 'Backstage' },
+  { text: 'AI Assistant' },
 ];
 
 export default function TopBarMobile() {
