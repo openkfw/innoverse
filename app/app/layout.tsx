@@ -44,7 +44,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <CustomToastContainer />
                   <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
                 </NotificationContextProvider>
-                <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
               </UserContextProvider>
             </SWRProvider>
           </SessionProvider>
