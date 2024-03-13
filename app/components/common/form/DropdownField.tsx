@@ -1,3 +1,4 @@
+import React from 'react';
 import { Controller } from 'react-hook-form';
 
 import FormControl from '@mui/material/FormControl';
@@ -10,7 +11,17 @@ import { FormInputProps, Option } from '@/common/formTypes';
 
 import { inputStyle } from './formStyle';
 
-export const DropdownField: React.FC<FormInputProps> = ({ name, control, label, options, readOnly = false, sx }) => {
+type DropdownFieldProps = FormInputProps & { startAdornment: React.ReactNode };
+
+export const DropdownField = ({
+  name,
+  control,
+  label,
+  options,
+  readOnly = false,
+  startAdornment,
+  sx,
+}: DropdownFieldProps) => {
   const generateSingleOptions = () => {
     return options?.map((option: Option) => {
       return (
@@ -22,7 +33,7 @@ export const DropdownField: React.FC<FormInputProps> = ({ name, control, label, 
   };
 
   return (
-    <FormControl size="small" sx={sx}>
+    <FormControl size="medium" sx={sx}>
       <InputLabel id="select-label">{label}</InputLabel>
       <Controller
         render={({ field, fieldState: { error } }) => (
@@ -33,6 +44,7 @@ export const DropdownField: React.FC<FormInputProps> = ({ name, control, label, 
               label={label}
               readOnly={readOnly}
               error={!!error}
+              startAdornment={startAdornment}
               sx={{ ...inputStyle, ...sx }}
             >
               {generateSingleOptions()}

@@ -6,18 +6,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs, { Dayjs } from 'dayjs';
 import { StatusCodes } from 'http-status-codes';
 
+import { CircularProgress } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { useUser } from '@/app/contexts/user-context';
 import { Option } from '@/common/formTypes';
-import { UserSession } from '@/common/types';
 import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { DropdownField } from '@/components/common/form/DropdownField';
-import { TextInputField } from '@/components/common/form/TextInputField';
-import theme from '@/styles/theme';
 
 import { DateInputField } from '../../../common/form/DateInputField';
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
@@ -29,7 +25,6 @@ import { formValidationSchema, UpdateFormValidationSchema } from './validationSc
 export interface UpdateFormData {
   comment: string;
   date: Dayjs;
-  author: string;
   projectId: string;
   authorId?: string;
 }
@@ -41,11 +36,10 @@ export interface AddUpdateFormData extends Omit<UpdateFormData, 'date'> {
 const defaultValues = {
   comment: '',
   date: dayjs(new Date()),
-  author: '',
   projectId: '',
 };
 
-const { PROJECT_ID, AUTHOR, DATE, COMMENT } = formFieldNames;
+const { PROJECT_ID, DATE, COMMENT } = formFieldNames;
 
 interface AddUpdateFormProps {
   setUpdateAdded: (added: boolean) => void;
@@ -57,7 +51,6 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
   const {
     handleSubmit,
     control,
-    setValue,
     formState: { isDirty, isValid },
   } = useForm<UpdateFormData>({
     defaultValues: defaultFormValues || defaultValues,
@@ -65,9 +58,7 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
     mode: 'all',
   });
 
-  const [projectOptions, setProjectOptions] = useState<Option[]>([]);
-  const { user } = useUser();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const [projectOptions, setProjectOptions] = useState<Option[]>();
 
   const openToast = (success: boolean = true) => {
     if (success) {
@@ -86,8 +77,8 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
       date: date.format('YYYY-MM-DD'),
     };
 
-    const res = await handleProjectUpdate(formData);
-    if (res.status === StatusCodes.OK) {
+    const response = await handleProjectUpdate(formData);
+    if (response.status === StatusCodes.OK) {
       setUpdateAdded(true);
       openToast();
       handleClose();
@@ -100,40 +91,48 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
     const setValues = async () => {
       const options = await getProjectsOptions();
       setProjectOptions(options);
-      setValue('author', (user as UserSession).name);
       setUpdateAdded(false);
     };
 
     setValues();
-  }, []);
+  }, [setUpdateAdded]);
 
   return (
     <>
       <Stack spacing={2} sx={formStyles} direction="column">
-        <Stack spacing={2} direction={isSmallScreen ? 'column' : 'row'}>
-          <TextInputField name={AUTHOR} control={control} label="Author" readOnly sx={inputStyle} />
-          {projectOptions.length > 0 && (
-            <DropdownField
-              name={PROJECT_ID}
-              control={control}
-              label="Projekt"
-              options={projectOptions}
-              sx={inputStyle}
-            />
-          )}
-        </Stack>
         <form>
-          <Stack spacing={2} direction={isSmallScreen ? 'column' : 'row'}>
-            <DateInputField name={DATE} control={control} label="Datum" disableFuture sx={inputStyle} />
-            <MultilineTextInputField
-              name={COMMENT}
-              control={control}
-              label="Kommentar"
-              placeholder="Geben Sie hier Ihren Kommentar ein"
-              sx={inputStyle}
-            />
-          </Stack>
+          <MultilineTextInputField
+            name={COMMENT}
+            control={control}
+            label="Update"
+            placeholder="Geben Sie hier das Update ein"
+            sx={{ width: '100%' }}
+          />
         </form>
+        <Stack spacing={2} direction={{ sm: 'column', md: 'row' }}>
+          <DateInputField
+            name={DATE}
+            control={control}
+            label="Datum"
+            disableFuture
+            sx={{ ...inputStyle, maxWidth: '180px', mb: 2 }}
+          />
+          <DropdownField
+            name={PROJECT_ID}
+            control={control}
+            label="Initiative"
+            options={projectOptions}
+            readOnly={!!!projectOptions}
+            startAdornment={
+              !!!projectOptions && (
+                <Box sx={{ pt: 1 }}>
+                  <CircularProgress size={20} />
+                </Box>
+              )
+            }
+            sx={inputStyle}
+          />
+        </Stack>
 
         <Box display="flex" justifyContent="flex-end">
           <Button
@@ -153,8 +152,8 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
 
 const inputStyle = {
   width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    width: '50%',
+  '& .MuiInputLabel-root': {
+    color: 'primary.main',
   },
 };
 
