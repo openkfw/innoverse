@@ -1,3 +1,5 @@
+'use server';
+
 import { RequestError } from '../entities/error';
 
 const strapiFetcher = async (query: string, variables?: any) => {
