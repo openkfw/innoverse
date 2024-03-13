@@ -1,3 +1,5 @@
+import { SxProps } from '@mui/material';
+
 export const sortDateByCreatedAt = <T>(array: T[]): T[] => {
   return array.sort((d1: any, d2: any) => d1.createdAt.getTime() - d2.createdAt.getTime());
 };
@@ -15,6 +17,10 @@ export function getFulfilledResults<T>(results: PromiseSettledResult<T>[]) {
 export function getFulfilledPromiseResults<T>(promises: Promise<T>[]) {
   return Promise.allSettled(promises).then((results) => getFulfilledResults(results));
 }
+
+export const mergeStyles = (primary: SxProps | undefined, overrides: SxProps | undefined): SxProps => {
+  return [primary, ...(Array.isArray(overrides) ? overrides : [overrides])];
+};
 
 export function formatDate(dateString: string, locale = 'de-DE') {
   const date = new Date(dateString);

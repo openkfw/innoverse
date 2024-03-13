@@ -33,6 +33,7 @@ export default function ProjectCarousel({ projects }: ProjectProps) {
           />
         </Grid>
       )}
+      sx={{ zIndex: 1 }}
     />
   );
 }
@@ -43,6 +44,7 @@ const cardContainerStyles = {
   alignItems: 'center',
   margin: 0,
   padding: 0,
+  zIndex: -1,
   [theme.breakpoints.down('sm')]: {
     marginLeft: '3px',
   },

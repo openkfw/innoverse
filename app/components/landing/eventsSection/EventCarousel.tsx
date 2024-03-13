@@ -18,6 +18,7 @@ export const EventCarousel = ({ events }: EventCarouselProps) => {
         slidesToScroll: 1,
         rows: 1,
       }}
+      sx={{ zIndex: 2 }}
     />
   );
 };

@@ -24,6 +24,7 @@ import Stack from '@mui/material/Stack';
 import triggerAnalyticsEvent from '@/analytics/analytics';
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
+import { mergeStyles } from '@/utils/helpers';
 
 import { parseStringForLinks } from '../common/LinkString';
 
@@ -158,7 +159,7 @@ interface ShowMoreButtonProps {
 const ShowMoreButton = ({ contentSize, isVisible, onClick, sx }: ShowMoreButtonProps) => {
   const visibilityStyle = isVisible ? 'visible' : 'hidden';
   return (
-    <Box sx={[...(Array.isArray(sx) ? sx : [sx]), showMoreButtonWrapperStyle(contentSize, visibilityStyle)]}>
+    <Box sx={mergeStyles(sx, showMoreButtonWrapperStyle(contentSize, visibilityStyle))}>
       <Box sx={{ ...showMoreButtonStyle, visibility: visibilityStyle }}>
         <IconButton aria-label="delete" sx={{ color: 'rgba(0, 0, 0, 1)' }} onClick={onClick}>
           <ArrowDownwardIcon />
