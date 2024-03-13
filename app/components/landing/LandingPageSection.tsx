@@ -12,7 +12,6 @@ type LandingPageSectionProps = PropsWithChildren & {
   subtitle: string;
   beforeContent?: React.JSX.Element;
   topRightMenu?: React.JSX.Element;
-  sx?: SxProps;
 };
 
 export const LandingPageSection = ({
@@ -21,11 +20,10 @@ export const LandingPageSection = ({
   subtitle,
   topRightMenu,
   beforeContent,
-  sx,
   children,
 }: LandingPageSectionProps) => {
   return (
-    <Box sx={[sectionStyles, ...(Array.isArray(sx) ? sx : [sx])]}>
+    <Box sx={sectionStyles}>
       {beforeContent}
       <div id={id}>
         <Grid container spacing={5} sx={wrapperStyles}>
@@ -49,9 +47,9 @@ export const LandingPageSection = ({
   );
 };
 
-const sectionStyles = {
+const sectionStyles: SxProps = {
   position: 'relative',
-  overflowX: 'hidden',
+  overflowX: 'clip',
   [theme.breakpoints.up('sm')]: {
     paddingLeft: '5%',
   },

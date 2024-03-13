@@ -1,9 +1,10 @@
 import { SetStateAction, useEffect, useRef, useState } from 'react';
 import Slider, { Settings } from 'react-slick';
 
-import { Box, Grid, useMediaQuery } from '@mui/material';
+import { Box, Grid, SxProps, useMediaQuery } from '@mui/material';
 
 import theme from '@/styles/theme';
+import { mergeStyles } from '@/utils/helpers';
 
 import CustomButton from '../common/CustomButton';
 
@@ -30,6 +31,7 @@ interface CarouselProps<T extends ProjectUpdate> {
   renderItem: (item: T, idx: number) => React.JSX.Element;
   moreButton?: React.JSX.Element;
   sliderSettings?: Settings;
+  sx?: SxProps;
 }
 
 export default function Carousel<T extends ProjectUpdate>({
@@ -37,6 +39,7 @@ export default function Carousel<T extends ProjectUpdate>({
   renderItem,
   moreButton,
   sliderSettings,
+  sx,
 }: CarouselProps<T>) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slides, setSlides] = useState<T[]>([]);
@@ -88,7 +91,7 @@ export default function Carousel<T extends ProjectUpdate>({
   };
 
   return (
-    <Grid container item xs={12} spacing={2} onMouseDown={handleMouseDown} sx={wrapper}>
+    <Grid container item xs={12} spacing={2} onMouseDown={handleMouseDown} sx={mergeStyles(wrapper, sx)}>
       <Box sx={sliderBox}>
         <Slider {...settings} ref={sliderRef}>
           {slides.map((item, idx) => renderItem(item, idx))}
@@ -136,6 +139,7 @@ const navigationStyles = {
   alignItems: 'center',
   width: 'min(85%, 344px)',
   marginLeft: -1,
+  zIndex: -1,
 };
 
 const buttonStyles = {
