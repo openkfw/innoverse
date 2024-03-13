@@ -124,11 +124,10 @@ export async function getInnoUserByProviderId(providerId: string) {
   }
 }
 
-export async function getUpcomingEvents() {
+export async function getEvents(startingFrom: Date) {
   try {
-    const today = new Date();
-    const todayString = dayjs(today).format('YYYY-MM-DD');
-    const requestEvents = await strapiFetcher(GetEventsQuery, { today: todayString });
+    const dateFromString = dayjs(startingFrom).format('YYYY-MM-DD');
+    const requestEvents = await strapiFetcher(GetEventsQuery, { startingFrom: dateFromString });
     const events = await withResponseTransformer(STRAPI_QUERY.GetEvents, requestEvents);
     return events;
   } catch (err) {

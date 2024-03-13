@@ -150,8 +150,8 @@ export const GetInnoUserByProviderIdQuery = `query GetInnoUser($providerId: Stri
 }
 `;
 
-export const GetEventsQuery = `query GetEvents($today: Date) {
-  events(filters: {date: {gte: $today}}, sort: "date:asc") {
+export const GetEventsQuery = `query GetEvents($startingFrom: Date) {
+  events(filters: {date: {gte: $startingFrom}}, sort: "date:asc") {
     data {
       id
       attributes {
