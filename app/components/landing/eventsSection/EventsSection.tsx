@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 
 import { Event } from '@/common/types';
-import CustomButton from '@/components/common/CustomButton';
 import { errorMessage } from '@/components/common/CustomToast';
 import { getUpcomingEvents } from '@/utils/requests';
 
@@ -30,12 +29,7 @@ export const EventSection = () => {
   return (
     <>
       {events && events.length > 0 && (
-        <LandingPageSection
-          id="events"
-          title="Events"
-          subtitle="Aktuelle Events"
-          topRightMenu={<CustomButton>Mehr Events</CustomButton>}
-        >
+        <LandingPageSection id="events" title="Events" subtitle="Aktuelle Events">
           <EventCarousel events={events} />
         </LandingPageSection>
       )}

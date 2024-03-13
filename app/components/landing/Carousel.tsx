@@ -6,8 +6,6 @@ import { Box, Grid, SxProps, useMediaQuery } from '@mui/material';
 import theme from '@/styles/theme';
 import { mergeStyles } from '@/utils/helpers';
 
-import CustomButton from '../common/CustomButton';
-
 import ArrowControllers from './projectSection/ArrowControllers';
 
 interface Author {
@@ -105,7 +103,7 @@ export default function Carousel<T extends ProjectUpdate>({
           prevSlide={() => sliderRef?.current?.slickPrev()}
           nextSlide={() => sliderRef?.current?.slickNext()}
         />
-        <Box sx={buttonStyles}>{moreButton ?? <CustomButton>Mehr</CustomButton>}</Box>
+        <Box sx={buttonStyles}>{moreButton}</Box>
       </Box>
     </Grid>
   );
@@ -127,6 +125,7 @@ const sliderBox = {
     width: 'min(90%, 368px)',
   },
   [theme.breakpoints.up('sm')]: {
+    width: '100%',
     '& .slick-list': {
       overflow: 'visible',
     },
