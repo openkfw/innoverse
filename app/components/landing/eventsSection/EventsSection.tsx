@@ -3,12 +3,11 @@
 import { useEffect, useState } from 'react';
 
 import { Event } from '@/common/types';
-import CustomButton from '@/components/common/CustomButton';
 import { errorMessage } from '@/components/common/CustomToast';
-import { getUpcomingEvents } from '@/utils/requests';
 
 import { LandingPageSection } from '../LandingPageSection';
 
+import { getUpcomingEvents } from './actions';
 import { EventCarousel } from './EventCarousel';
 
 export const EventSection = () => {
@@ -17,8 +16,8 @@ export const EventSection = () => {
   useEffect(() => {
     async function fetchEvents() {
       try {
-        const fetchedEvents = await getUpcomingEvents();
-        setEvents(fetchedEvents);
+        const response = await getUpcomingEvents();
+        setEvents(response.data);
       } catch (error) {
         console.error('Failed to load events:', error);
         errorMessage({ message: 'Failed to load events. Please try again later.' });
@@ -30,12 +29,7 @@ export const EventSection = () => {
   return (
     <>
       {events && events.length > 0 && (
-        <LandingPageSection
-          id="events"
-          title="Events"
-          subtitle="Aktuelle Events"
-          topRightMenu={<CustomButton>Mehr Events</CustomButton>}
-        >
+        <LandingPageSection id="events" title="Events" subtitle="Aktuelle Events">
           <EventCarousel events={events} />
         </LandingPageSection>
       )}
