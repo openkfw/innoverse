@@ -52,7 +52,7 @@ export const CommentCard = ({ content, voteComponent, sx, headerSx }: CommentCar
           avatar={
             <Box>
               <StyledTooltip arrow key={author.id} title={<TooltipContent teamMember={author} />} placement="bottom">
-                <AvatarIcon user={author} size={48} allowAnimation />
+                <AvatarIcon user={author} size={48} allowAnimation disableTransition/>
               </StyledTooltip>
             </Box>
           }

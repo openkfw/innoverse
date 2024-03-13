@@ -34,10 +34,10 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
             </StyledTooltip>
           </Box>
           <Box>
-            <Typography variant="subtitle1" color="text.primary" sx={{ m: '16px' }}>
+            <Typography variant="subtitle1" color="text.primary" sx={{ ml: '16px' }}>
               {author.name}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" color="text.secondary" sx={{ ml: '16px' }}>
               {author.role}
             </Typography>
           </Box>

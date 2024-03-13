@@ -92,10 +92,10 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
                   </StyledTooltip>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle1" sx={{ color: 'text.primary', lineHeight: 1, m: '16px' }}>
+                  <Typography variant="subtitle1" sx={{ color: 'text.primary', lineHeight: 1, ml: '16px' }}>
                     {teamMember.name}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color="text.secondary" sx={{ mlÍ: '16px' }}>
                     {teamMember.role}
                   </Typography>
                 </Box>

@@ -12,6 +12,7 @@ interface AvatarIconProps {
   size?: number;
   index?: number;
   allowAnimation?: boolean;
+  disableTransition?: boolean;
 }
 
 const hoverStyle: CSSProperties = {
@@ -21,7 +22,7 @@ const hoverStyle: CSSProperties = {
 };
 
 const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, ref: LegacyRef<HTMLDivElement>) {
-  const { user, size = 40, index, allowAnimation = false, ...restProps } = props;
+  const { user, size = 40, index, allowAnimation = false, disableTransition = false, ...restProps } = props;
   const appliedStyle = allowAnimation ? { ...hoverStyle, zIndex: index } : { zIndex: index };
 
   return (
@@ -30,10 +31,10 @@ const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, 
       ref={ref}
       style={appliedStyle}
       onMouseOverCapture={(e) => {
-        if (allowAnimation) e.currentTarget.style.transform = 'translateX(-8px)';
+        if (allowAnimation && !disableTransition) e.currentTarget.style.transform = 'translateX(-8px)';
       }}
       onMouseOutCapture={(e) => {
-        if (allowAnimation) e.currentTarget.style.transform = 'translateX(0px)';
+        if (allowAnimation && !disableTransition) e.currentTarget.style.transform = 'translateX(0px)';
       }}
     >
       {user.image ? (
