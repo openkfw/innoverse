@@ -76,7 +76,7 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
         justifyContent="center"
         bgcolor={'#edf7ed'}
         position={'fixed'}
-        sx={{ mt: '64px', width: '100%', zIndex: 1 }}
+        sx={{ mt: '64px', width: '100%', zIndex: 5 }}
       >
         <Alert icon={false} severity="success" style={{ borderRadius: 0 }} sx={{ backgroundColor: 'transparent' }}>
           Möchtest du Push-Benachrichtigungen zu Projekten erhalten?
