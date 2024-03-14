@@ -1,11 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { Alert } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
+import { useSessionItem } from '@/app/contexts/helpers';
+import { errorMessage } from '@/components/common/CustomToast';
 import { subscribeToWebPush } from '@/utils/notification/pushNotification';
 
 import { useUser } from './user-context';
@@ -61,87 +63,27 @@ const contextObject: NotificationContextInterface = {
 };
 
 const NotificationContext = createContext(contextObject);
+
 export const NotificationContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [showPushSubscriptionAlert, setShowPushSubscriptionAlert] = useState(false);
-  const [permissionsDeniedOnUserAction, setPermissionsDeniedOnUserAction] = useState(false);
-
-  const initialized = useRef(false);
-  const { user, isLoading } = useUser();
-
-  const requestPushNotificationPermissionsIfNotPresent = async () => {
-    if (hasPushNotificationPermission()) {
-      return true;
-    }
-
-    const permissions = await requestPushNotificationPermission();
-    return permissions !== 'denied';
-  };
-
-  const registerNotifications = async ({ triggeredByUserAction }: { triggeredByUserAction: boolean }) => {
-    try {
-      const hasPermissions = await requestPushNotificationPermissionsIfNotPresent();
-
-      if (!hasPermissions) {
-        setPermissionsDeniedOnUserAction(triggeredByUserAction);
-        return { success: false };
-      }
-
-      let subscription = await getPushNotificationSubscriptions();
-
-      if (!subscription) {
-        subscription = await subscribePushNotification();
-      }
-
-      await subscribeToWebPush(JSON.stringify(subscription));
-      return { success: true };
-    } catch (error) {
-      setShowPushSubscriptionAlert(false);
-      return { success: false };
-    }
-  };
-
-  const registerServiceWorker = () => navigator.serviceWorker.register('/sw.js', { scope: '/' });
-
-  useEffect(() => {
-    const hasPermission = hasPushNotificationPermission();
-    const showAlert = !hasPermission && !permissionsDeniedOnUserAction;
-    setShowPushSubscriptionAlert(showAlert);
-  }, [hasPushNotificationPermission, permissionsDeniedOnUserAction]);
-
-  useEffect(() => {
-    try {
-      if (initialized.current || isLoading || !user) return;
-      initialized.current = true;
-      if (!('serviceWorker' in navigator)) return;
-      registerServiceWorker().then(() => {
-        registerNotifications({ triggeredByUserAction: false }).then((result) => {
-          if (result.success) {
-            console.info('Push Notifications registered automatically');
-          } else {
-            console.info('Failed to register Push Notifications automatically');
-          }
-        });
-      });
-    } catch (error) {
-      console.error("Can't register service worker", error);
-    }
-  }, [user, isLoading]);
+  const { showPushSubscriptionAlert, hidePushSubscriptionAlert, registerPushNotifications } =
+    useNotificationContextProvider();
 
   return (
     <NotificationContext.Provider value={contextObject}>
       <Box
-        display={showPushSubscriptionAlert && user ? 'flex' : 'none'}
+        display={showPushSubscriptionAlert ? 'flex' : 'none'}
         alignItems="center"
         justifyContent="center"
         bgcolor={'#edf7ed'}
-        position={'sticky'}
+        position={'fixed'}
+        sx={{ mt: '64px', width: '100%', zIndex: 1 }}
       >
-        <Alert icon={false} severity="success" style={{ borderRadius: 0 }}>
-          Möchtest du Updates zu Projekten erhalten?
-          <Button variant={'text'} onClick={() => registerNotifications({ triggeredByUserAction: true })}>
+        <Alert icon={false} severity="success" style={{ borderRadius: 0 }} sx={{ backgroundColor: 'transparent' }}>
+          Möchtest du Push-Benachrichtigungen zu Projekten erhalten?
+          <Button variant={'text'} onClick={registerPushNotifications} sx={{ ml: 2 }}>
             Ja
           </Button>
-          <Button variant={'text'} onClick={() => setShowPushSubscriptionAlert(false)}>
+          <Button variant={'text'} onClick={hidePushSubscriptionAlert}>
             Nein
           </Button>
         </Alert>
@@ -150,5 +92,110 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
     </NotificationContext.Provider>
   );
 };
+
+function useNotificationContextProvider() {
+  const [showPushSubscriptionAlert, setShowPushSubscriptionAlert] = useState(false);
+  const disableAlertSessionItem = useSessionItem<true>('disable-push-subscription-alert');
+
+  const initialized = useRef(false);
+  const { user, isLoading } = useUser();
+
+  const showAlert = useCallback(() => {
+    setShowPushSubscriptionAlert(true);
+  }, []);
+
+  const hideAlert = useCallback(
+    ({ persistInSessionStorage }: { persistInSessionStorage: boolean }) => {
+      setShowPushSubscriptionAlert(false);
+
+      if (persistInSessionStorage) {
+        disableAlertSessionItem.set(true);
+      }
+    },
+    [disableAlertSessionItem],
+  );
+
+  const handleError = useCallback(
+    ({ triggeredByUserGesture, error }: { triggeredByUserGesture: boolean; error?: unknown }) => {
+      const reason = error ? 'exception occurred' : 'not permitted';
+      const message = `Failed to enable push notifications (reason: ${reason}, triggered by user gesture: ${triggeredByUserGesture})`;
+
+      if (error) {
+        console.error(message, error);
+      } else {
+        console.info(message);
+      }
+
+      if (triggeredByUserGesture) {
+        errorMessage({ message: 'Fehler beim Einrichten der Push-Benachrichtigungen' });
+      } else {
+        showAlert();
+      }
+    },
+    [showAlert],
+  );
+
+  const registerNotifications = useCallback(
+    async ({ triggeredByUserGesture }: { triggeredByUserGesture: boolean }) => {
+      try {
+        const promptResult = await requestPushNotificationPermissionsIfNotPresent();
+
+        if (!promptResult.permitted) {
+          handleError({ triggeredByUserGesture });
+          return;
+        }
+
+        let subscription = await getPushNotificationSubscriptions();
+
+        if (!subscription) {
+          subscription = await subscribePushNotification();
+        }
+
+        await subscribeToWebPush(JSON.stringify(subscription));
+
+        console.info(`Enabled push notifications (triggered by user gesture: ${triggeredByUserGesture})`);
+        hideAlert({ persistInSessionStorage: false });
+      } catch (error) {
+        handleError({ triggeredByUserGesture, error });
+      }
+    },
+    [hideAlert, handleError],
+  );
+
+  const requestPushNotificationPermissionsIfNotPresent = async () => {
+    if (hasPushNotificationPermission()) {
+      return { permitted: true };
+    }
+
+    const permissions = await requestPushNotificationPermission();
+    return { permitted: permissions !== 'denied' };
+  };
+
+  const registerServiceWorker = () => navigator.serviceWorker.register('/sw.js', { scope: '/' });
+
+  useEffect(
+    function initializeServiceWorker() {
+      try {
+        if (initialized.current || isLoading || !user) return;
+
+        initialized.current = true;
+        if (!('serviceWorker' in navigator)) return;
+
+        registerServiceWorker().then(() => {
+          registerNotifications({ triggeredByUserGesture: false });
+        });
+      } catch (error) {
+        console.error("Can't register service worker", error);
+      }
+    },
+    [user, isLoading, disableAlertSessionItem.value, registerNotifications],
+  );
+
+  return {
+    showPushSubscriptionAlert: showPushSubscriptionAlert && user && !disableAlertSessionItem.value,
+    hidePushSubscriptionAlert: () => hideAlert({ persistInSessionStorage: true }),
+    registerPushNotifications: () => registerNotifications({ triggeredByUserGesture: true }),
+  };
+}
 
 export const useNotification = () => useContext(NotificationContext);
