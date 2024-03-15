@@ -139,6 +139,19 @@ export async function getEvents(startingFrom: Date) {
 // As this is used in the "Main" Page no ISR here. Fetch data from Endpoint via fetch
 // Revalidate the cache every 2 mins.
 // Use fetch here as we want to revalidate the data from the CMS.
+export async function getMainPageData() {
+  const today = new Date();
+  const events = await getEvents(today);
+  const featuredProjects = await getFeaturedProjects();
+
+  return {
+    events: events ?? [],
+    projects: featuredProjects?.projects,
+    sliderContent: featuredProjects?.sliderContent,
+    updates: featuredProjects?.updates,
+  };
+}
+
 export async function getFeaturedProjects() {
   try {
     const requestProjects = await strapiFetcher(GetProjectsQuery);

@@ -171,18 +171,12 @@ export type ProjectsProgression = {
 };
 
 export type ProjectsQueryResult = {
-  projects: any;
-  updates: any;
+  projects: Project[];
+  updates: ProjectUpdate[];
 };
 
 export type ProjectByIdQueryResult = {
   project: any;
-};
-
-export type MainPageData = {
-  sliderContent: Project[];
-  projects: Project[];
-  updates: ProjectUpdate[];
 };
 
 export type UserSession = {

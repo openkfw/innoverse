@@ -36,7 +36,7 @@ export default function NewsCarousel({ updates }: NewsSliderProps) {
           <CustomButton>Mehr News</CustomButton>
         </Link>
       }
-      sx={{ zIndex: 3 }}
+      sx={{ zIndex: 3, minHeight: '272px' }}
     />
   );
 }
