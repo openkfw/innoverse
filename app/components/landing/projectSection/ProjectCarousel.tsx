@@ -33,7 +33,7 @@ export default function ProjectCarousel({ projects }: ProjectProps) {
           />
         </Grid>
       )}
-      sx={{ zIndex: 1 }}
+      sx={{ zIndex: 1, minHeight: '490px' }}
     />
   );
 }
