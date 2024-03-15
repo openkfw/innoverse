@@ -33,14 +33,14 @@ export const AuthorInformation = (props: AuthorInformationProps) => {
               <AvatarIcon user={author} size={48} allowAnimation />
             </StyledTooltip>
           </Box>
-          <Box>
-            <Typography variant="subtitle1" color="text.primary" sx={{ ml: '16px' }}>
+          <Stack>
+            <Typography variant="body2" color="text.primary" sx={{ ml: '16px' }}>
               {author.name}
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ ml: '16px' }}>
               {author.role}
             </Typography>
-          </Box>
+          </Stack>
         </Stack>
         <Stack direction="row" alignItems="center" pb={2} spacing={1} sx={{ m: 0 }} mt={2}>
           <Typography variant="caption" color="text.primary">
