@@ -8,14 +8,12 @@ import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import theme from '@/styles/theme';
 
 import ProjectsInput from './ProjectsInput';
-import ResultsPerPageRadio from './ResultsPerPageInput';
 import TopicInput from './TopicInput';
 
 export default function NewsFilter() {
   const { filters, setFilters } = useNewsFilter();
   return (
     <Card sx={cardStyles}>
-      <ResultsPerPageRadio filters={filters} setFilters={setFilters} />
       <ProjectsInput filters={filters} setFilters={setFilters} />
       <TopicInput filters={filters} setFilters={setFilters} />
     </Card>

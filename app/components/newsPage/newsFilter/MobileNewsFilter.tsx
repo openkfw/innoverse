@@ -16,7 +16,6 @@ import theme from '@/styles/theme';
 
 import ApplyFilterButton, { APPLY_BUTTON } from './ApplyFilterButton';
 import ProjectsInput from './ProjectsInput';
-import ResultsPerPageRadio from './ResultsPerPageInput';
 import TopicInput from './TopicInput';
 
 interface MobileNewsFilterProps {
@@ -68,7 +67,6 @@ export default function MobileNewsFilter(props: MobileNewsFilterProps) {
         <Box sx={drawerBoxStyle}>
           <Typography variant="overline">Filtern</Typography>
           <Card sx={cardStyles}>
-            <ResultsPerPageRadio filters={newFilters} setFilters={setNewFilters} />
             <ProjectsInput filters={newFilters} setFilters={setNewFilters} />
             <TopicInput filters={newFilters} setFilters={setNewFilters} />
           </Card>
