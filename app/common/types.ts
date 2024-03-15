@@ -201,6 +201,7 @@ export type Opportunity = {
 export type CollaborationQuestion = {
   id: string;
   title: string;
+  isPlatformFeedback: boolean;
   description: string;
   authors: User[];
   comments: Comment[];

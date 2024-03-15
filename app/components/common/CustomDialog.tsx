@@ -1,8 +1,8 @@
 'use client';
 
-import { FC, ReactNode } from 'react';
-import React from 'react';
+import React, { FC, ReactNode } from 'react';
 
+import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -11,7 +11,6 @@ import IconButton from '@mui/material/IconButton';
 import Slide from '@mui/material/Slide';
 import { SxProps } from '@mui/material/styles';
 import { TransitionProps } from '@mui/material/transitions';
-import Typography from '@mui/material/Typography';
 
 import CloseIcon from '@/components/icons/CloseIcon';
 
@@ -19,8 +18,8 @@ interface CustomDialogProps {
   children: ReactNode;
   open: boolean;
   handleClose?: () => void;
-  title?: string;
-  subtitle?: string;
+  title?: ReactNode;
+  subtitle?: ReactNode;
   closeIcon?: boolean;
   sx?: SxProps;
 }
@@ -66,13 +65,9 @@ const CustomDialog: FC<CustomDialogProps> = ({
       )}
 
       <DialogTitle sx={dialogTitleStyle}>
-        <Typography variant="caption" sx={titleStyles} component="div">
-          {title}
-        </Typography>
+        <Box>{title}</Box>
 
-        <Typography variant="subtitle1" sx={subtitleStyles} component="div">
-          {subtitle}
-        </Typography>
+        <Box>{subtitle}</Box>
       </DialogTitle>
 
       <DialogContent sx={dialogContentStyle}>{children}</DialogContent>
@@ -125,16 +120,4 @@ const dialogContentStyle = {
   borderBottomRightRadius: '16px',
   border: 'none',
   outline: 'none',
-};
-
-const titleStyles = {
-  textTransform: 'uppercase',
-  color: 'primary.light',
-  marginTop: 1,
-};
-
-const subtitleStyles = {
-  color: 'text.primary',
-  fontWeight: '700',
-  marginTop: 1,
 };

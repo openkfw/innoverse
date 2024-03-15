@@ -97,6 +97,19 @@ export type UpdateOpportunityResponse = {
   };
 };
 
+export type GetPlatformFeedbackCollaborationQuestionResponse = {
+  data: {
+    collaborationQuestions: {
+      data: {
+        id: string;
+        attributes: {
+          project: { data: { id: string } };
+        };
+      }[];
+    };
+  };
+};
+
 export type GetEventsResponse = {
   data: {
     events: { data: Event[] };
@@ -197,6 +210,7 @@ export type CollaborationQuestionQuery = {
     project: { data: { id: string } };
     title: string;
     description: string;
+    isPlatformFeedback: boolean;
     authors: { data: UserQuery[] };
     comments: CommentQuery[];
   };

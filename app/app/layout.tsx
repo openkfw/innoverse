@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
@@ -7,8 +7,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 import { NotificationContextProvider } from '@/app/contexts/notification-context';
 import CustomToastContainer from '@/components/common/CustomToast';
-
-import theme from '../styles/theme';
+import theme from '@/styles/theme';
 
 import { UserContextProvider } from './contexts/user-context';
 import { SWRProvider } from './swr-provider';
@@ -39,16 +38,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ApolloProvider client={client}>
           <SessionProvider>
             <SWRProvider>
-              <UserContextProvider>
-                <NotificationContextProvider>
-                  <CustomToastContainer />
-                  <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
-                </NotificationContextProvider>
-              </UserContextProvider>
+              <UserContextProvider>{children}</UserContextProvider>
             </SWRProvider>
           </SessionProvider>
         </ApolloProvider>
       </body>
     </html>
+  );
+}
+
+export function AppLayout({ children }: PropsWithChildren) {
+  return (
+    <NotificationContextProvider>
+      <CustomToastContainer />
+      <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+    </NotificationContextProvider>
+  );
+}
+
+export function BasicAppLayout({ children }: PropsWithChildren) {
+  return (
+    <>
+      <CustomToastContainer />
+      <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+    </>
   );
 }
