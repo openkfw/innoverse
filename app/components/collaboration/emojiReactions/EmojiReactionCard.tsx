@@ -71,7 +71,11 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
         })}
 
         <Grid item>
-          <Button sx={addNewReactionButtonStyles} onClick={() => setIsEmojiPickerClicked((isClicked) => !isClicked)}  aria-label="Add new reaction">
+          <Button
+            sx={addNewReactionButtonStyles}
+            onClick={() => setIsEmojiPickerClicked((isClicked) => !isClicked)}
+            aria-label="Add new reaction"
+          >
             <AddReactionOutlinedIcon sx={addNewReactionIconStyles} />
           </Button>
         </Grid>

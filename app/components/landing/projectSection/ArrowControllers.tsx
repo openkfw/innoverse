@@ -43,7 +43,7 @@ export default function ArrowControllers(props: ArrowControllersProps) {
         </IconButton>
       </Grid>
       <Grid item>
-        <IconButton disabled={currentSlide == slidesLength} onClick={next} sx={iconStyles} aria-label="Next Slide" >
+        <IconButton disabled={currentSlide == slidesLength} onClick={next} sx={iconStyles} aria-label="Next Slide">
           <ArrowRightIcon style={{ fontSize: 40 }} />
         </IconButton>
       </Grid>

@@ -1,4 +1,3 @@
-
 import { ReactNode, SyntheticEvent } from 'react';
 
 import Box from '@mui/material/Box';
