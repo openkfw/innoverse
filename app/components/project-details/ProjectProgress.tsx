@@ -77,7 +77,7 @@ const InfoItemRight = ({ title, summary }: InfoItemProps) => {
       <Divider sx={dividerStyle} />
 
       <CardMedia sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Image src={robotic_hand} alt="image" width={235} height={130} />
+        <Image src={robotic_hand} alt="image" width={235} height={132} />
       </CardMedia>
       <CardContent sx={{ p: '18px' }}>
         <Typography variant="subtitle2" color="text.primary">

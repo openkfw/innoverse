@@ -36,6 +36,7 @@ export default function HeroSection(props: HeroSectionProps) {
             height={0}
             sizes="50vw"
             style={backgroundImageStyles}
+            priority
           />
         </Box>
       </Grid>

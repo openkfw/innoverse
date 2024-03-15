@@ -78,6 +78,7 @@ export default function TopBar() {
               </Link>
             </Box>
 
+            <nav>
             <Stack direction="row" spacing={3}>
               {pages.map((page) =>
                 page.link ? (
@@ -100,6 +101,8 @@ export default function TopBar() {
 
               {(user || isLoading) && <LoggedInMenu user={user} isUserLoading={isLoading} />}
             </Stack>
+</nav>
+
           </Box>
         </Toolbar>
       </Container>

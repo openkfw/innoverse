@@ -44,6 +44,7 @@ export default function TopBarMobile() {
         },
       }}
     >
+      <nav>
       <List sx={listStyles}>
         <ListItem sx={{ ...listItemStyles, marginBottom: 2 }}>
           <Avatar /> <Typography variant="body1"> {user?.name}</Typography>
@@ -65,6 +66,7 @@ export default function TopBarMobile() {
           ),
         )}
       </List>
+      </nav>
 
       <div>
         <FeedbackSection />
@@ -89,7 +91,7 @@ export default function TopBarMobile() {
           </Link>
         </Box>
 
-        <IconButton onClick={handleMenuToggle} style={{ color: 'white' }}>
+        <IconButton onClick={handleMenuToggle} style={{ color: 'white' }}  aria-label={menuOpen ? 'Close menu' : 'Open menu'}>
           {menuOpen ? <CloseIcon /> : <MenuIcon />}
         </IconButton>
       </Box>

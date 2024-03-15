@@ -1,4 +1,5 @@
-import * as React from 'react';
+
+import { ReactNode, SyntheticEvent } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -17,7 +18,7 @@ import { UpdatesTab } from '../updates/UpdatesTab';
 import { ProjectProgress } from './ProjectProgress';
 
 interface TabPanelProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   id: string;
   index: number;
   value: number;
@@ -31,13 +32,6 @@ function CustomTabPanel(props: TabPanelProps) {
       <Box sx={{ paddingTop: 3 }}>{children}</Box>
     </div>
   );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
 }
 
 const CustomTabs = styled(Tabs)({
@@ -85,7 +79,7 @@ export default function TabView(props: BasicTabsProps) {
   const { opportunities, questions, collaborationQuestions, updates } = project;
   const collaborationActivities = opportunities?.length + questions?.length + collaborationQuestions?.length;
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (event: SyntheticEvent, newValue: number) => {
     switch (newValue) {
       case 0:
         triggerAnalyticsEvent('tab-projektverlauf-clicked', projectName);
@@ -122,7 +116,8 @@ export default function TabView(props: BasicTabsProps) {
               Inno-Infos
             </Typography>
           }
-          {...a11yProps(0)}
+          id="tab-project-progress"
+          aria-controls="project-progress-tab"
         />
         <CustomTab
           label={
@@ -135,7 +130,8 @@ export default function TabView(props: BasicTabsProps) {
               </Typography>
             </Stack>
           }
-          {...a11yProps(1)}
+          id="tab-collaboration"
+          aria-controls="collaboration-tab"
         />
         <CustomTab
           label={
@@ -148,7 +144,8 @@ export default function TabView(props: BasicTabsProps) {
               </Typography>
             </Stack>
           }
-          {...a11yProps(2)}
+          id="tab-updates"
+          aria-controls="updates-tab"
         />
       </CustomTabs>
       <CustomTabPanel value={activeTab} index={0} id="project-progress-tab">
