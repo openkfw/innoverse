@@ -4,6 +4,7 @@ import {
   CreateProjectUpdateResponse,
   GetEventsResponse,
   GetInnoUserResponse,
+  GetPlatformFeedbackCollaborationQuestionResponse,
   OpportunitiesResponse,
   OpportunityQuery,
   ProjectData,
@@ -48,6 +49,7 @@ export enum STRAPI_QUERY {
   CreateOpportunityParticipant,
   GetOpportunityParticipant,
   UpdateOpportunityParticipants,
+  GetPlatformFeedbackCollaborationQuestion,
 }
 
 function formatDate(value: string, locale = 'de-DE') {
@@ -329,7 +331,8 @@ export const GetCollaborationQuestionsByProjectIdQuery = `query GetCollaboration
             id
           }
         }
-        title
+        title,
+        isPlatformFeedback,
         description
         authors {
           ${userQuery}
@@ -498,6 +501,23 @@ query UpdateOpportunity($opportunityId: ID!, $userId: ID!) {
   }
 }`;
 
+export const GetPlatformFeedbackCollaborationQuestion = `query GetPlatformFeedbackCollaborationQuestion{
+  collaborationQuestions(filters:{isPlatformFeedback:{eq:true}}) {
+    data {
+      id,
+       attributes {
+        project {
+          data {
+            id
+          }
+        }
+      }
+     
+    }
+  }
+}
+`;
+
 type ResponseType<T extends STRAPI_QUERY> = T extends STRAPI_QUERY.GetProjects
   ? any
   : T extends STRAPI_QUERY.GetUpdates
@@ -523,8 +543,10 @@ type ResponseType<T extends STRAPI_QUERY> = T extends STRAPI_QUERY.GetProjects
                       : T extends STRAPI_QUERY.CreateProjectUpdate
                         ? any
                         : T extends STRAPI_QUERY.GetEvents
-                          ? Event[]
-                          : never;
+                          ? any
+                          : T extends STRAPI_QUERY.GetPlatformFeedbackCollaborationQuestion
+                            ? Event[]
+                            : never;
 
 type ResponseTransformerData =
   | ProjectsResponse
@@ -539,7 +561,8 @@ type ResponseTransformerData =
   | CreateProjectUpdateResponse
   | UpdateOpportunityResponse
   | UpdateOportunityParticipantsResponse
-  | GetEventsResponse;
+  | GetEventsResponse
+  | GetPlatformFeedbackCollaborationQuestionResponse;
 
 export const withResponseTransformer = async <T extends STRAPI_QUERY>(
   query: T,
@@ -582,6 +605,10 @@ const withResponseTransformerUntyped = async <T extends STRAPI_QUERY>(query: T, 
       return getStaticBuildGetOpportunityParticipant(data as OpportunitiesResponse);
     case STRAPI_QUERY.UpdateOpportunityParticipants:
       return getStaticBuildUpdateOpportunityParticipants(data as UpdateOportunityParticipantsResponse);
+    case STRAPI_QUERY.GetPlatformFeedbackCollaborationQuestion:
+      return getStaticBuildFetchPlatformFeedbackCollaborationQuestion(
+        data as GetPlatformFeedbackCollaborationQuestionResponse,
+      );
     default:
       // Will cause an error at build time if not all cases are covered above
       exhaustiveMatchingGuard(query);
@@ -593,6 +620,31 @@ const withResponseTransformerUntyped = async <T extends STRAPI_QUERY>(query: T, 
 const exhaustiveMatchingGuard = (_: never): never => {
   throw new Error('This should not be reached');
 };
+
+function getStaticBuildFetchPlatformFeedbackCollaborationQuestion(
+  graphqlResponse: GetPlatformFeedbackCollaborationQuestionResponse,
+) {
+  if (graphqlResponse && graphqlResponse.data) {
+    if (
+      graphqlResponse.data.collaborationQuestions.data.length > 1 ||
+      graphqlResponse.data.collaborationQuestions.data.length === 0
+    ) {
+      throw new Error('More than one or none platform feedback question found');
+    }
+    const {
+      id: collaborationQuestionId,
+      attributes: {
+        project: {
+          data: { id: projectId },
+        },
+      },
+    } = graphqlResponse.data.collaborationQuestions.data[0];
+    return {
+      collaborationQuestionId,
+      projectId,
+    };
+  }
+}
 
 function getStaticBuildFetchEvents(graphqlResponse: GetEventsResponse) {
   if (graphqlResponse && graphqlResponse.data) {
@@ -705,6 +757,7 @@ async function getStaticBuildFetchCollaborationQuestionsByProjectId(graphqlRespo
         return {
           id: question.id,
           title: q.title,
+          isPlatformFeedback: q.isPlatformFeedback,
           description: q.description,
           comments: formattedComments,
           authors: q.authors.data.map((a: UserQuery) => {

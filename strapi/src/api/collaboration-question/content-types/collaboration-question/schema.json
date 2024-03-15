@@ -30,6 +30,11 @@
       "relation": "manyToMany",
       "target": "api::inno-user.inno-user",
       "mappedBy": "collaboration_questions"
+    },
+    "isPlatformFeedback": {
+      "type": "boolean",
+      "default": false,
+      "required": true
     }
   }
 }

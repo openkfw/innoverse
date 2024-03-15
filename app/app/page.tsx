@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import Stack from '@mui/material/Stack';
 
+import CustomToast from '@/components/common/CustomToast';
 import ErrorPage from '@/components/error/ErrorPage';
 import { EventSection } from '@/components/landing/eventsSection/EventsSection';
 import FeaturedProjectSlider from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
@@ -39,6 +40,7 @@ async function IndexPage() {
         <ProjectSection projects={projects} />
         <MappingProjectsCard projects={projects} />
       </Stack>
+      <CustomToast />
     </Layout>
   );
 }
