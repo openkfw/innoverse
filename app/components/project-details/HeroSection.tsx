@@ -1,7 +1,6 @@
 'use client';
 import Image from 'next/image';
 
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -11,9 +10,12 @@ import Typography from '@mui/material/Typography';
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
-import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
+import AvatarIcon from '../common/AvatarIcon';
 import ProgressBar from '../common/ProgressBar';
+import { StyledTooltip } from '../common/StyledTooltip';
 import { defaultImage } from '../landing/featuredProjectSection/FeaturedProjectSlider';
+
+import { TooltipContent } from './TooltipContent';
 
 interface HeroSectionProps {
   project: Project;
@@ -48,17 +50,24 @@ export default function HeroSection(props: HeroSectionProps) {
                 <Box display="flex" flexDirection="column" justifyContent="flex-end" height="100%">
                   <CardHeader
                     avatar={
-                      author.image ? (
-                        <Avatar sx={avatarStyles}>
-                          <Image src={author.image} alt="avatar" fill sizes="33vw" />
-                        </Avatar>
-                      ) : (
-                        <AvatarInitialsIcon name={author.name} size={52} />
-                      )
+                      <Box>
+                        <StyledTooltip
+                          arrow
+                          key={author.id}
+                          title={<TooltipContent projectName={project.projectName} teamMember={author} />}
+                          placement="bottom"
+                        >
+                          <AvatarIcon user={author} size={48} allowAnimation />
+                        </StyledTooltip>
+                      </Box>
                     }
-                    title={<Typography variant="body2"> {author.name}</Typography>}
+                    title={
+                      <Typography variant="body2" sx={{ ml: '8px' }}>
+                        {author.name}
+                      </Typography>
+                    }
                     subheader={
-                      <Typography variant="caption" sx={{ color: 'common.white' }}>
+                      <Typography variant="caption" sx={{ color: 'common.white', ml: '8px' }}>
                         {author.role}
                       </Typography>
                     }
@@ -169,11 +178,6 @@ const cardBodyStyles = {
 const avatarContainerStyles = {
   padding: 0,
   margin: 0,
-};
-
-const avatarStyles = {
-  width: 52,
-  height: 52,
 };
 
 const cardHeaderStyles = {

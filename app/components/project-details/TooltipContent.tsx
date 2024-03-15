@@ -7,7 +7,7 @@ import InteractionButton, { InteractionType } from '../common/InteractionButton'
 
 interface TeamMemberProps {
   teamMember: User;
-  projectName: string;
+  projectName?: string;
 }
 
 export const TooltipContent = (props: TeamMemberProps) => {
@@ -26,7 +26,6 @@ export const TooltipContent = (props: TeamMemberProps) => {
         </Typography>
       </Grid>
       <Grid item>
-        <InteractionButton projectName={projectName} interactionType={InteractionType.USER_FOLLOW} />
         <InteractionButton
           projectName={projectName}
           interactionType={InteractionType.COMMENT}

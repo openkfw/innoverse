@@ -10,6 +10,9 @@ import theme from '@/styles/theme';
 
 import AvatarIcon from '../common/AvatarIcon';
 import { parseStringForLinks } from '../common/LinkString';
+import { StyledTooltip } from '../common/StyledTooltip';
+
+import { TooltipContent } from './TooltipContent';
 
 interface UpdateCardProps {
   updates: ProjectUpdate[];
@@ -66,7 +69,16 @@ const UpdateCard = (props: UpdateCardProps) => {
         <CardContent>
           <Grid container alignItems="center">
             <Grid item>
-              <AvatarIcon user={update?.author} size={24} />
+              <Box>
+                <StyledTooltip
+                  arrow
+                  key={update?.id}
+                  title={<TooltipContent teamMember={update?.author} />}
+                  placement="bottom"
+                >
+                  <AvatarIcon user={update?.author} size={24} allowAnimation index={100}/>
+                </StyledTooltip>
+              </Box>
             </Grid>
             <Grid item sx={authorStyles}>
               <Typography variant="caption" sx={{ color: 'text.primary', fontSize: 16 }}>
@@ -131,7 +143,7 @@ const cardStyles = {
 };
 
 const authorStyles = {
-  marginLeft: 1,
+  marginLeft: '20px',
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',

@@ -142,6 +142,7 @@ export type UserQuery = {
     name: string;
     role?: string;
     department?: string;
+    email?: string;
     avatar: ImageType;
   };
 };
