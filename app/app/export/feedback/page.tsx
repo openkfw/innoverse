@@ -9,7 +9,6 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 import { getFeedback } from '@/app/export/feedback/actions';
-import { BasicAppLayout } from '@/app/layout';
 
 const ExportFeedbackPage = () => {
   const [username, setUsername] = useState('');
@@ -37,40 +36,38 @@ const ExportFeedbackPage = () => {
   };
 
   return (
-    <BasicAppLayout>
-      <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        sx={{
-          minHeight: '100vh',
-        }}
-      >
-        <Grid item xs={3}>
-          <Stack spacing={3}>
-            <Typography variant="h4">Export Feedback</Typography>
-            <TextField
-              inputProps={{ style: { color: 'white' } }}
-              label="Username"
-              value={username}
-              onChange={handleUsernameChange}
-            />
-            <TextField
-              inputProps={{ style: { color: 'white' } }}
-              label="Password"
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-            />
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
-              Download Feedback
-            </Button>
-          </Stack>
-        </Grid>
+    <Grid
+      container
+      spacing={0}
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{
+        minHeight: '100vh',
+      }}
+    >
+      <Grid item xs={3}>
+        <Stack spacing={3}>
+          <Typography variant="h4">Export Feedback</Typography>
+          <TextField
+            inputProps={{ style: { color: 'white' } }}
+            label="Username"
+            value={username}
+            onChange={handleUsernameChange}
+          />
+          <TextField
+            inputProps={{ style: { color: 'white' } }}
+            label="Password"
+            type="password"
+            value={password}
+            onChange={handlePasswordChange}
+          />
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
+            Download Feedback
+          </Button>
+        </Stack>
       </Grid>
-    </BasicAppLayout>
+    </Grid>
   );
 };
 

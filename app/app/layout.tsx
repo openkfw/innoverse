@@ -38,7 +38,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ApolloProvider client={client}>
           <SessionProvider>
             <SWRProvider>
-              <UserContextProvider>{children}</UserContextProvider>
+              <UserContextProvider>
+                <CustomToastContainer />
+                <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+              </UserContextProvider>
             </SWRProvider>
           </SessionProvider>
         </ApolloProvider>
@@ -48,19 +51,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 
 export function AppLayout({ children }: PropsWithChildren) {
-  return (
-    <NotificationContextProvider>
-      <CustomToastContainer />
-      <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
-    </NotificationContextProvider>
-  );
-}
-
-export function BasicAppLayout({ children }: PropsWithChildren) {
-  return (
-    <>
-      <CustomToastContainer />
-      <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
-    </>
-  );
+  return <NotificationContextProvider>{children}</NotificationContextProvider>;
 }
