@@ -33,7 +33,7 @@ interface NewsCardProps {
 }
 
 export default function NewsCard(props: NewsCardProps) {
-  const { update, sx, noClamp = false} = props;
+  const { update, sx, noClamp = false } = props;
   const projectId = update.projectId;
   const { title, comment, author, date } = update;
 

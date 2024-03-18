@@ -1,10 +1,16 @@
 self.addEventListener('push', function (event) {
-  const { title, body, icon } = event.data.json();
+  const { title, body, icon, url } = event.data.json();
   const promiseChain = self.registration.showNotification(title || 'New Notification', {
     body,
+    data: url,
     icon: icon || `/logo192.png`,
   });
   event.waitUntil(promiseChain);
+});
+
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data));
 });
 
 // Update the subscription if it expires
