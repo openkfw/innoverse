@@ -15,7 +15,7 @@ webpush.setVapidDetails(
 );
 
 export const sendPushNotification = async (subscription: WebPushSubscription, pushNotification: PushNotification) => {
-  const { type, userId, topic, title, body, urgency, icon, ttl } = pushNotification;
+  const { type, userId, topic, title, body, urgency, icon, ttl, url } = pushNotification;
   if (type !== 'push') {
     console.error('Can not send push notification, type is not push notification!');
   }
@@ -23,6 +23,7 @@ export const sendPushNotification = async (subscription: WebPushSubscription, pu
     title,
     body,
     icon,
+    url,
   });
   const options = {
     TTL: ttl || 60,

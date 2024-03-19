@@ -10,6 +10,7 @@ export interface PushNotification extends Notification {
   topic: string;
   urgency?: 'normal' | 'very-low' | 'low' | 'high';
   ttl?: number;
+  url?: string;
 }
 
 export interface EmailNotification extends Notification {

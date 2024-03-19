@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { StatusCodes } from 'http-status-codes';
+import { PushSubscription as WebPushSubscription } from 'web-push';
 import { literal, number, object, string, z } from 'zod';
 
+import { getProjectFollowers } from '@/repository/db/follow';
+import { getPushSubscriptionsForUser } from '@/repository/db/push_subscriptions';
 import { PushNotification } from '@/types/notification';
 import { evalPushNotificationRules } from '@/utils/notification/notificationResolver';
 import { sendPushNotification } from '@/utils/notification/pushNotification';
