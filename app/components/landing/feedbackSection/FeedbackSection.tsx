@@ -1,19 +1,26 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { StatusCodes } from 'http-status-codes';
 
+import { FormGroup, Stack } from '@mui/material';
 import Box from '@mui/material/Box';
-import Rating from '@mui/material/Rating';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 import CustomDialog from '@/components/common/CustomDialog';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
+import { saveFeedback } from '@/components/landing/feedbackSection/actions';
 import theme from '@/styles/theme';
 
 function FeedbackSection() {
-  const [open, setOpen] = useState(false);
-  const [rating, setRating] = useState<number | null>(3);
+  const [open, openDialog] = useState(false);
   const [hideButton, setHideButton] = useState(true);
+  const [showFeedbackOnProjectPage, setShowFeedbackOnProjectPage] = useState(false);
+  const [feedbackText, setFeedbackText] = useState('');
 
   useEffect(() => {
     const navigationEntries = window.performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
@@ -26,17 +33,28 @@ function FeedbackSection() {
   }, []);
 
   function handleOpen() {
-    setOpen(true);
+    openDialog(true);
   }
 
   function handleClose() {
-    setOpen(false);
+    openDialog(false);
   }
 
   function hideFeedbackButton() {
     sessionStorage.setItem('feedbackClosed', 'true');
     setHideButton(true);
   }
+
+  const submitFeedback = async () => {
+    const result = await saveFeedback({ feedback: feedbackText, showOnProjectPage: showFeedbackOnProjectPage });
+    if (result.status === StatusCodes.OK) {
+      toast.success('Danke für Dein Feedback');
+      handleClose();
+      hideFeedbackButton();
+    } else {
+      toast.error('Feedback konnte nicht gespeichert werden! Versuche es später erneut.');
+    }
+  };
 
   return (
     <Box sx={feedbackSectionStyles}>
@@ -51,29 +69,67 @@ function FeedbackSection() {
       <CustomDialog
         open={open}
         handleClose={handleClose}
-        title="Send feedback"
-        subtitle="Erzählen Sie von Ihren Erfahrungen mit ***STRING_REMOVED***  Innovationsplattform!"
+        title={
+          <Typography variant="caption" sx={titleStyles} component="div">
+            Gib uns Feedback
+          </Typography>
+        }
+        subtitle={
+          <Typography variant="subtitle1" sx={subtitleStyles} component="div">
+            Dein Feedback ist wichtig! Teile uns deine Erfahrungen mit der neuen Innovationsplattform mit, um sie zu
+            verbessern und zu optimieren. Jegliches Feedback ist willkommen!
+          </Typography>
+        }
       >
         <Box sx={bodyStyles}>
-          <Rating
-            name="simple-controlled"
-            value={rating}
-            onChange={(_, newValue) => {
-              setRating(newValue !== null ? newValue : 0);
-            }}
-            sx={{ maxWidth: 140 }}
-          />
-
           <TextField
+            onChange={(e) => setFeedbackText(e.target.value)}
             rows={6}
             multiline
             sx={textFieldStyles}
-            placeholder="Das Feedback ist anonym. Du kannst hier Dein Feedback eingeben."
-            InputProps={{
-              endAdornment: <InteractionButton interactionType={InteractionType.COMMENT_SEND} sx={buttonStyles} />,
-            }}
+            placeholder="Du kannst hier Dein Feedback eingeben."
           />
         </Box>
+        <FormGroup>
+          <Typography color={'text.primary'} fontSize={'12px'}>
+            Dein Feedback wird an die Administrator:innen der{' '}
+            <Typography component="span" fontSize={'12px'} color={'text.secondary'}>
+              Projektseite &quot;InnoPlattform&quot;
+            </Typography>{' '}
+            gesendet. Deine Daten (Name) werden mitgesendet.
+          </Typography>
+          <Stack direction={'row'} sx={{ mt: 1 }}>
+            <FormControlLabel
+              value="end"
+              control={
+                <Checkbox
+                  checked={showFeedbackOnProjectPage}
+                  onChange={() => setShowFeedbackOnProjectPage((prev) => !prev)}
+                  sx={{
+                    borderColor: 'black',
+                    color: 'text.primary',
+                    '&.Mui-checked': {
+                      color: '#99A815',
+                    },
+                  }}
+                />
+              }
+              label={
+                <Typography color={'text.primary'} fontSize={'12px'}>
+                  Ich möchte mein Feedback zusätzlich auch auf der Projektseite anzeigen lassen.
+                </Typography>
+              }
+              labelPlacement="end"
+              sx={{ flexGrow: 1 }}
+            />
+            <InteractionButton
+              onClick={() => submitFeedback()}
+              interactionType={InteractionType.COMMENT_SEND}
+              sx={buttonStyles}
+              disabled={!feedbackText.length}
+            />
+          </Stack>
+        </FormGroup>
       </CustomDialog>
     </Box>
   );
@@ -93,7 +149,7 @@ const feedbackSectionStyles = {
 const feedbackButtonStyles = {
   color: 'black',
   backgroundColor: 'white',
-  zIndex: 2,
+  zIndex: 5,
   position: 'fixed',
   bottom: 32,
   right: 32,
@@ -113,6 +169,7 @@ const bodyStyles = {
   paddingTop: 3,
   marginTop: 2,
   width: 'min(760px,80vw)',
+  maxWidth: '100%',
 };
 
 const textFieldStyles = {
@@ -132,7 +189,22 @@ const textFieldStyles = {
 };
 
 const buttonStyles = {
-  bottom: 22,
-  right: 24,
-  position: 'absolute',
+  mt: 1.5,
+};
+
+const titleStyles = {
+  textTransform: 'uppercase',
+  fontWeight: '400',
+  color: 'primary.light',
+  marginTop: 1,
+  fontSize: '12px',
+};
+
+const subtitleStyles = {
+  color: 'secondary.main',
+  fontWeight: '400',
+  marginTop: 1,
+  fontSize: '16px',
+  maxWidth: '700px',
+  wordWrap: 'break-word',
 };

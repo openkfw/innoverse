@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
@@ -34,10 +34,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SessionProvider>
             <SWRProvider>
               <UserContextProvider>
-                <NotificationContextProvider>
-                  <CustomToastContainer />
-                  <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
-                </NotificationContextProvider>
+                <CustomToastContainer />
+                <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
               </UserContextProvider>
             </SWRProvider>
           </SessionProvider>
@@ -45,4 +43,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </body>
     </html>
   );
+}
+
+export function AppLayout({ children }: PropsWithChildren) {
+  return <NotificationContextProvider>{children}</NotificationContextProvider>;
 }

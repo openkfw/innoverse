@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { Alert } from '@mui/material';
+import { Alert, SxProps } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
@@ -78,12 +78,17 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
         position={'fixed'}
         sx={{ mt: '64px', width: '100%', zIndex: 5 }}
       >
-        <Alert icon={false} severity="success" style={{ borderRadius: 0 }} sx={{ backgroundColor: 'transparent' }}>
+        <Alert
+          icon={false}
+          severity="success"
+          style={{ borderRadius: 0 }}
+          sx={{ backgroundColor: 'transparent', fontSize: '16px' }}
+        >
           Möchtest du Push-Benachrichtigungen zu Projekten erhalten?
-          <Button variant={'text'} onClick={registerPushNotifications} sx={{ ml: 2 }}>
+          <Button variant={'text'} onClick={registerPushNotifications} sx={{ ...buttonStyle, ml: 2 }}>
             Ja
           </Button>
-          <Button variant={'text'} onClick={hidePushSubscriptionAlert}>
+          <Button variant={'text'} onClick={hidePushSubscriptionAlert} sx={buttonStyle}>
             Nein
           </Button>
         </Alert>
@@ -199,3 +204,16 @@ function useNotificationContextProvider() {
 }
 
 export const useNotification = () => useContext(NotificationContext);
+
+const buttonStyle: SxProps = {
+  backgroundColor: 'transparent',
+  color: 'primary.main',
+  '&:hover': {
+    backgroundColor: 'rgba(25, 118, 210, 0.04)',
+    color: 'primary.main',
+  },
+  '&:active': {
+    backgroundColor: 'transparent',
+    color: 'primary.main',
+  },
+};

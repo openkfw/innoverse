@@ -15,6 +15,7 @@ export async function addCollaborationComment(
   questionId: string,
   author: string,
   comment: string,
+  visible: boolean = true,
 ) {
   return client.collaborationComment.create({
     data: {
@@ -22,6 +23,7 @@ export async function addCollaborationComment(
       questionId,
       author,
       comment,
+      visible,
     },
   });
 }

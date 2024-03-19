@@ -31,6 +31,7 @@ model CollaborationComment {
   questionId String // commented question
   author     String // id of author
   upvotedBy  String[] // ids of users
+  visible    Boolean                        @default(true) // visibility of the comment (default: true) only used for the platform feedback (can only be false on the platform feedback)
   responses  CollaborationCommentResponse[] @relation("Response") // responses to the comment
 
   @@map(name: "collaboration_comments")
