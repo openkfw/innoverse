@@ -46,6 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         urgency: 'normal',
         icon: '/favicon.ico',
         ttl: 60,
+        url: `/projects/${entry.id.toString()}`,
       };
       // Fire and forget
       sendPushNotification(pushSubscriptions, notification);

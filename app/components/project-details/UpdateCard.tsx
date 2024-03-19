@@ -76,7 +76,7 @@ const UpdateCard = (props: UpdateCardProps) => {
                   title={<TooltipContent teamMember={update?.author} />}
                   placement="bottom"
                 >
-                  <AvatarIcon user={update?.author} size={24} allowAnimation index={100}/>
+                  <AvatarIcon user={update?.author} size={24} allowAnimation index={100} />
                 </StyledTooltip>
               </Box>
             </Grid>
