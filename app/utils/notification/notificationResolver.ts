@@ -12,7 +12,7 @@ type Resolver = {
       {
         subscriptions: WebPushSubscription[];
         userId: string;
-        notification: { topic: NotificationTopic; body: string };
+        notification: { topic: NotificationTopic; body: string; url?: string };
       }[]
     >;
     shouldNotify: () => boolean;
@@ -26,7 +26,7 @@ type NotificationResolverResult =
         {
           subscriptions: WebPushSubscription[];
           userId: string;
-          notification: { topic: NotificationTopic; body: string };
+          notification: { topic: NotificationTopic; body: string; url?: string };
         }[]
       >;
     }
@@ -99,6 +99,7 @@ export const evalPushNotificationRules = async (
             notification: {
               topic: 'project',
               body: 'Ein Projekt, dem du folgst, wurde kürzlich aktualisiert.',
+              url: `/projects/${entry.id}`,
             },
           };
         }),
