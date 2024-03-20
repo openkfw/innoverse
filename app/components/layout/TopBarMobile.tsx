@@ -50,27 +50,29 @@ export default function TopBarMobile() {
         },
       }}
     >
-      <List sx={listStyles}>
-        <ListItem sx={{ ...listItemStyles, marginBottom: 2 }}>
-          <Avatar /> <Typography variant="body1"> {user?.name}</Typography>
-        </ListItem>
-        {pages.map((page) =>
-          page.link ? (
-            <Link
-              key={page.text}
-              href={page.link}
-              style={{ textDecoration: 'none', color: 'common.white' }}
-              onClick={handleMenuToggle}
-            >
-              <ListItem sx={listItemStyles}>{page.text}</ListItem>
-            </Link>
-          ) : (
-            <ListItem key={page.text} sx={listItemDisabledStyles}>
-              {page.text}
-            </ListItem>
-          ),
-        )}
-      </List>
+      <nav>
+        <List sx={listStyles}>
+          <ListItem sx={{ ...listItemStyles, marginBottom: 2 }}>
+            <Avatar /> <Typography variant="body1"> {user?.name}</Typography>
+          </ListItem>
+          {pages.map((page) =>
+            page.link ? (
+              <Link
+                key={page.text}
+                href={page.link}
+                style={{ textDecoration: 'none', color: 'common.white' }}
+                onClick={handleMenuToggle}
+              >
+                <ListItem sx={listItemStyles}>{page.text}</ListItem>
+              </Link>
+            ) : (
+              <ListItem key={page.text} sx={listItemDisabledStyles}>
+                {page.text}
+              </ListItem>
+            ),
+          )}
+        </List>
+      </nav>
 
       <div>
         <FeedbackSection />
@@ -95,7 +97,11 @@ export default function TopBarMobile() {
           </Link>
         </Box>
 
-        <IconButton onClick={handleMenuToggle} style={{ color: 'white' }}>
+        <IconButton
+          onClick={handleMenuToggle}
+          style={{ color: 'white' }}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+        >
           {menuOpen ? <CloseIcon /> : <MenuIcon />}
         </IconButton>
       </Box>

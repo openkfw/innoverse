@@ -78,28 +78,30 @@ export default function TopBar() {
               </Link>
             </Box>
 
-            <Stack direction="row" spacing={3}>
-              {pages.map((page) =>
-                page.link ? (
-                  <Link key={page.text} style={{ textDecoration: 'none', color: 'white' }} href={page.link}>
-                    <MenuItem sx={menuItemStyle}>
-                      <Typography variant="body2">{page.text}</Typography>
+            <nav>
+              <Stack direction="row" spacing={3}>
+                {pages.map((page) =>
+                  page.link ? (
+                    <Link key={page.text} style={{ textDecoration: 'none', color: 'white' }} href={page.link}>
+                      <MenuItem sx={menuItemStyle}>
+                        <Typography variant="body2">{page.text}</Typography>
+                      </MenuItem>
+                    </Link>
+                  ) : (
+                    <MenuItem
+                      key={page.text}
+                      sx={{ borderRadius: '8px', '&:hover': { backgroundColor: 'inherit' }, pointerEvents: 'none' }}
+                    >
+                      <Typography variant="body2" color="rgba(155,155,155,1)">
+                        {page.text}
+                      </Typography>
                     </MenuItem>
-                  </Link>
-                ) : (
-                  <MenuItem
-                    key={page.text}
-                    sx={{ borderRadius: '8px', '&:hover': { backgroundColor: 'inherit' }, pointerEvents: 'none' }}
-                  >
-                    <Typography variant="body2" color="rgba(155,155,155,1)">
-                      {page.text}
-                    </Typography>
-                  </MenuItem>
-                ),
-              )}
+                  ),
+                )}
 
-              {(user || isLoading) && <LoggedInMenu user={user} isUserLoading={isLoading} />}
-            </Stack>
+                {(user || isLoading) && <LoggedInMenu user={user} isUserLoading={isLoading} />}
+              </Stack>
+            </nav>
           </Box>
         </Toolbar>
       </Container>

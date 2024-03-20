@@ -60,6 +60,7 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
                     ? activeReactionCardButtonStyles
                     : reactionCardButtonStyles
                 }
+                aria-label="React with emoji"
               >
                 {reaction.emoji.nativeSymbol || 'X'}
                 <Typography variant="caption" sx={{ color: 'text.primary' }}>
@@ -71,7 +72,11 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
         })}
 
         <Grid item>
-          <Button sx={addNewReactionButtonStyles} onClick={() => setIsEmojiPickerClicked((isClicked) => !isClicked)}>
+          <Button
+            sx={addNewReactionButtonStyles}
+            onClick={() => setIsEmojiPickerClicked((isClicked) => !isClicked)}
+            aria-label="Add new reaction"
+          >
             <AddReactionOutlinedIcon sx={{ fontSize: 24 }} />
           </Button>
         </Grid>

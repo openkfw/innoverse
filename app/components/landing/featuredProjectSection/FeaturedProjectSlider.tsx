@@ -64,7 +64,7 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
   };
 
   return (
-    <Grid container key={content.id} sx={wrapperStyles}>
+    <Grid container key={content?.id} sx={wrapperStyles}>
       <Grid
         container
         item
@@ -73,26 +73,27 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
         onMouseLeave={() => setIsHovered(false)}
       >
         <Image
-          src={content.image || defaultImage}
+          src={content?.image || defaultImage}
           width={0}
           height={0}
           alt="Project"
           sizes="50vw"
           className="slider-image"
           style={{ objectFit: 'contain', objectPosition: 'center' }}
+          priority
         />
         <PrevArrow />
         <NextArrow />
       </Grid>
       <Box sx={smallScreenSliderPill}>
-        <SmallSliderPill itemNumber={(content.id + 1).toString()} title={content.title} />
+        <SmallSliderPill itemNumber={(content?.id + 1).toString()} title={content?.title} />
       </Box>
       <Grid item md={4} sx={contentStyles}>
         <FeaturedProjectContent
-          title={content.title}
-          tags={content.description.tags}
-          summary={content.summary}
-          projectId={content.id}
+          title={content?.title}
+          tags={content?.description?.tags}
+          summary={content?.summary}
+          projectId={content?.id}
         />
       </Grid>
     </Grid>
