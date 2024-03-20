@@ -5,7 +5,7 @@ import dbClient from '@/repository/db/prisma/prisma';
 import { getAllPushSubscriptions, getPushSubscriptionsForUser } from '@/repository/db/push_subscriptions';
 import logger from '@/utils/logger';
 
-type NotificationTopic = 'project' | 'opportunity' | 'collaboration-question' | 'survey-question' | 'event';
+type NotificationTopic = 'project' | 'opportunity' | 'collaboration-question' | 'survey-question' | 'event' | 'update';
 type Resolver = {
   [key: string]: {
     buildPushNotifications: () => Promise<
@@ -43,20 +43,23 @@ const shouldNotifyResolver = (event: string, model: string): boolean => {
     ['collaboration-question']: false,
     ['survey-question']: false,
     ['event']: false,
+    ['update']: true, // a create equals a publish for this model
   };
   resolvers['entry.update'] = {
     ['project']: false,
     ['opportunity']: false,
     ['collaboration-question']: false,
     ['survey-question']: false,
-    ['event']: true,
+    ['event']: false,
+    ['update']: true, // an update equals a update & publish for this model
   };
   resolvers['entry.delete'] = {
     ['project']: false,
     ['opportunity']: false,
     ['collaboration-question']: false,
     ['survey-question']: false,
-    ['event']: true,
+    ['event']: false,
+    ['update']: false,
   };
   resolvers['entry.publish'] = {
     ['project']: true,
@@ -64,13 +67,15 @@ const shouldNotifyResolver = (event: string, model: string): boolean => {
     ['collaboration-question']: true,
     ['survey-question']: true,
     ['event']: true,
+    ['update']: true, // no publish event for this model but set to true just in case
   };
   resolvers['entry.unpublish'] = {
     ['project']: false,
     ['opportunity']: false,
     ['collaboration-question']: false,
     ['survey-question']: false,
-    ['event']: false,
+    ['event']: true,
+    ['update']: false, // no un-publish event for this model but set to false just in case
   };
 
   if (resolvers[event][model]) {
@@ -174,6 +179,22 @@ export const evalPushNotificationRules = async (
           notification: {
             topic: 'event',
             body: `Ein neues Event wurde kürzlich hinzugefügt.`,
+          },
+        };
+      });
+    },
+    shouldNotify: () => shouldNotifyResolver(event, model),
+  };
+  resolvers['update'] = {
+    buildPushNotifications: async () => {
+      const allSubscriptions = await getAllPushSubscriptions(dbClient);
+      return allSubscriptions.map((subscription) => {
+        return {
+          subscriptions: subscription.subscriptions,
+          userId: subscription.userId,
+          notification: {
+            topic: 'update',
+            body: `Ein neues Update wurde hinzugefügt.`,
           },
         };
       });

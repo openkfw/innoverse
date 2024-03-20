@@ -40,10 +40,7 @@ export const sendPushNotification = async (subscription: WebPushSubscription, pu
     // subscription has expired or is no longer valid
     // remove it from the database
     if (error.statusCode === 410) {
-      logger.info(
-        'Push Subscription has expired or is no longer valid, removing it from the database. User: ',
-        userId,
-      );
+      logger.info('Push Subscription has expired or is no longer valid, removing it from the database. User: ', userId);
       await removeExpiredPushSubscriptions(userId, subscription);
     }
   }
