@@ -1,6 +1,5 @@
 'use client';
 import React, { PropsWithChildren } from 'react';
-import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
@@ -22,12 +21,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <title>InnoBuddy</title>
         <meta name="description" content="***STRING_REMOVED***  Innovation Platform" />
-        {process.env.NEXT_PUBLIC_UMAMI_URL && process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
-          <Script
-            src={`${process.env.NEXT_PUBLIC_UMAMI_URL}/script.js`}
-            data-website-id={`${process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}`}
-          />
-        )}
       </head>
       <body>
         <ApolloProvider client={client}>
