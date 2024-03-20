@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-import { SxProps } from '@mui/material';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { useProject } from '@/app/contexts/project-context';

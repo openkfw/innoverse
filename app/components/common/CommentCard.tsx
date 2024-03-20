@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-import { Box, SxProps } from '@mui/material';
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { Comment } from '@/common/types';

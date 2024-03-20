@@ -1,7 +1,7 @@
 'use client';
 
-import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import { PROJECT_PROGRESS } from '@/common/types';
 

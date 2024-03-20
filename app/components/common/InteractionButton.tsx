@@ -12,9 +12,10 @@ import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined
 import PersonIcon from '@mui/icons-material/Person';
 import SendIcon from '@mui/icons-material/Send';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
-import { Box, Tooltip } from '@mui/material';
+import Box from '@mui/material/Box';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { SxProps } from '@mui/material/styles';
+import Tooltip from '@mui/material/Tooltip';
 
 import triggerAnalyticsEvent from '@/analytics/analytics';
 import ApplyIcon from '@/components/icons/ApplyIcon';

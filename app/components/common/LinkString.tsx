@@ -1,4 +1,4 @@
-import { Link } from '@mui/material';
+import Link from '@mui/material/Link';
 
 export const parseStringForLinks = (text: string): React.ReactNode | string => {
   const urlRegex = /((?:https?:\/\/)?(?:www\.)?[^\s]+\.[^\s]+)/g;

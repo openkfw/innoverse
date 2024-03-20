@@ -6,7 +6,12 @@ import { signIn } from 'next-auth/react';
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import ClearIcon from '@mui/icons-material/Clear';
-import { Avatar, Box, Divider, Grid, IconButton, Typography } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 
 import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 import CustomDialog from '../common/CustomDialog';

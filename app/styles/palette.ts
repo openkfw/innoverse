@@ -1,4 +1,4 @@
-import { PaletteOptions, SimplePaletteColorOptions } from '@mui/material';
+import { PaletteOptions, SimplePaletteColorOptions } from '@mui/material/styles';
 
 interface DefaultPaletteOptions extends PaletteOptions {
   primary?: SimplePaletteColorOptions;

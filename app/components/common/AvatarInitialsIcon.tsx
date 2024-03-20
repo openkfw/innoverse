@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { SxProps } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
+import { SxProps } from '@mui/material/styles';
 
 interface AvatarInitialsIcon {
   name: string;

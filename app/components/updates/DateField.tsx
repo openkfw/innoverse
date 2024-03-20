@@ -1,9 +1,9 @@
 import { PropsWithChildren } from 'react';
 
-import { SxProps } from '@mui/material';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import theme from '@/styles/theme';

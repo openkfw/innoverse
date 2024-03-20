@@ -41,21 +41,27 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
   const isLastSlide = index === totalItems - 1;
   const isFirstSlide = index === 0;
 
-  const NextArrow = () =>
-    isHovered &&
-    !isLastSlide && (
-      <Box sx={{ ...arrowStyle, right: 10 }} onClick={() => setSelected(index + 1)}>
-        <ArrowForwardIosIcon fontSize="large" />
-      </Box>
-    );
+  const NextArrow = () => {
+    if (isHovered && !isLastSlide) {
+      return (
+        <Box sx={{ ...arrowStyle, right: 10 }} onClick={() => setSelected(index + 1)}>
+          <ArrowForwardIosIcon fontSize="large" />
+        </Box>
+      );
+    }
+    return <></>;
+  };
 
-  const PrevArrow = () =>
-    isHovered &&
-    !isFirstSlide && (
-      <Box sx={{ ...arrowStyle, left: 10 }} onClick={() => setSelected(index - 1)}>
-        <ArrowBackIosNewIcon fontSize="large" />
-      </Box>
-    );
+  const PrevArrow = () => {
+    if (isHovered && !isFirstSlide) {
+      return (
+        <Box sx={{ ...arrowStyle, left: 10 }} onClick={() => setSelected(index - 1)}>
+          <ArrowBackIosNewIcon fontSize="large" />
+        </Box>
+      );
+    }
+    return <></>;
+  };
 
   return (
     <Grid container key={content.id} sx={wrapperStyles}>
