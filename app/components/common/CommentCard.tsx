@@ -141,10 +141,10 @@ const buttonOverlayStyle = {
   bottom: '0',
   right: '0',
   background: '#ffffff',
-  color: theme.palette.secondary.main,
+  color: theme.palette.primary.main,
   ':hover': {
     background: '#ffffff',
-    color: theme.palette.secondary.main,
+    color: theme.palette.primary.main,
   },
   fontSize: '14px',
   fontWeight: '500',

@@ -1,4 +1,4 @@
-const Icon = ({ color = '#A4B419', width = 34, height = 34 }) => (
+const Icon = ({ color = '#57D96D', width = 34, height = 34 }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox={`0 0 ${width} ${height}`} fill="none">
     <path
       d="M30.3333 0.333374H3.66665C1.83331 0.333374 0.333313 1.83337 0.333313 3.66671V33.6667L6.99998 27H30.3333C32.1666 27 33.6666 25.5 33.6666 23.6667V3.66671C33.6666 1.83337 32.1666 0.333374 30.3333 0.333374ZM30.3333 23.6667H5.61665L3.66665 25.6167V3.66671H30.3333V23.6667Z"

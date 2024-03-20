@@ -86,6 +86,7 @@ const cardStyles = {
   display: 'flex',
   borderRadius: 4,
   marginRight: '24px',
+  background: 'linear-gradient(0deg, rgba(240, 238, 225, 0.30) 0%, rgba(240, 238, 225, 0.30) 100%), #FFF',
   [theme.breakpoints.up('sm')]: {
     width: 466,
   },
@@ -110,7 +111,7 @@ const titleStyles = {
   WebkitLineClamp: 2,
   WebkitBoxOrient: 'vertical',
   width: 'fit-content',
-  color: 'secondary.main',
+  color: 'primary.main',
 };
 
 const linkStyles = {

@@ -50,7 +50,7 @@ export const EventCard = ({ event }: EventCardProps) => {
               </Typography>
             </Stack>
             <Stack direction={'column'} marginLeft={'0.5em'} flexGrow={'1'}>
-              <EventTimeDate event={event} sx={subtitleStyles}/>
+              <EventTimeDate event={event} sx={subtitleStyles} />
               <Typography variant="subtitle1" sx={subtitleStyles}>
                 {event.location}
               </Typography>
@@ -163,7 +163,7 @@ const titleImageStyles: React.CSSProperties = {
 };
 
 const dateStyles = {
-  color: 'secondary.main',
+  color: 'primary.main',
   fontSize: '48px',
 };
 

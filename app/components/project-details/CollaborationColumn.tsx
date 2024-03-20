@@ -39,8 +39,10 @@ const Section = ({ icon, title, subtitle, offset, buttonText, handleCollaboratio
       </Grid>
     </Box>
     <Button sx={forwardButtonStyles} onClick={() => handleCollaborationClick(offset)}>
-      <ArrowForwardOutlined sx={{ color: 'secondary.main' }} />
-      <Typography variant="subtitle2">{buttonText}</Typography>
+      <ArrowForwardOutlined sx={{ color: 'primary.main' }} />
+      <Typography variant="subtitle2" color="primary.main">
+        {buttonText}
+      </Typography>
     </Button>
   </Grid>
 );
