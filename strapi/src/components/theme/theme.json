@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_theme_themes",
+  "info": {
+    "displayName": "Theme",
+    "icon": "layer"
+  },
+  "options": {},
+  "attributes": {
+    "theme": {
+      "type": "string"
+    }
+  }
+}

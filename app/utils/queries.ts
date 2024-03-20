@@ -2,6 +2,7 @@ import {
   CollaborationQuestionsResponse,
   CreateInnoUserResponse,
   CreateProjectUpdateResponse,
+  EventCountResponse,
   GetEventsResponse,
   GetInnoUserResponse,
   GetPlatformFeedbackCollaborationQuestionResponse,
@@ -49,6 +50,7 @@ export enum STRAPI_QUERY {
   CreateOpportunityParticipant,
   GetOpportunityParticipant,
   UpdateOpportunityParticipants,
+  GetEventCount,
   GetPlatformFeedbackCollaborationQuestion,
 }
 
@@ -149,34 +151,6 @@ export const GetInnoUserByProviderIdQuery = `query GetInnoUser($providerId: Stri
       }
     }  
   }  
-}
-`;
-
-export const GetEventsQuery = `query GetEvents($startingFrom: Date) {
-  events(filters: {date: {gte: $startingFrom}}, sort: "date:asc") {
-    data {
-      id
-      attributes {
-        title
-        date
-        start_time
-      	end_time
-        type
-        description
-        location
-        author {
-          ${userQuery}
-        }
-        image {
-          data {
-            attributes {
-              url
-            }
-          }
-        }
-      }
-    }
-  }
 }
 `;
 
@@ -404,9 +378,98 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
        team {
         ${userQuery}
        }
+      }
      }
    }
  }
+`;
+
+export const GetFutureEventCountQuery = `
+query getEventCount($projectId: ID!,$currentDate: DateTime){
+  events(
+    filters: { project: { id: { eq: $projectId } }, startTime: { gte: $currentDate }})
+   {
+    meta {
+      pagination {
+        total
+      }
+    }
+  }
+}
+`;
+
+export const GetUpcomingEventsQuery = `query GetUpcomingEvents($today: DateTime) {
+  events(filters: {startTime: {gte: $today}}, sort: "startTime:asc") {
+    data {
+      id
+      attributes {
+        title
+        startTime
+      	endTime
+        type
+        description
+        location
+        author {
+          ${userQuery}
+        }
+        Themes {
+          theme
+        }
+        image {
+          data {
+            attributes {
+              url
+            }
+          }
+        }
+        project {
+          data {
+            id
+          }
+        }
+      }
+    }
+  }
+}
+`;
+
+export const GetAllEventsFilterQuery = (filterParams: string, filter: string) =>
+  `
+query getAllProjectEvents${filterParams}{
+  events(
+    ${filter}
+    )
+   {
+    data {
+      id
+      attributes {
+        title
+        startTime
+      	endTime
+        type
+        description
+        location
+        author {
+          ${userQuery}
+        }
+        Themes {
+          theme
+        }
+        image {
+          data {
+            attributes {
+              url
+            }
+          }
+        }
+        project {
+          data {
+            id
+          }
+        }
+      }
+    }
+  }
 }`;
 
 export const CreateProjectUpdateQuery = `mutation PostProjectUpdate($projectId: ID!, $comment: String, $authorId: ID!, $date: Date) {
@@ -561,6 +624,7 @@ type ResponseTransformerData =
   | CreateProjectUpdateResponse
   | UpdateOpportunityResponse
   | UpdateOportunityParticipantsResponse
+  | EventCountResponse
   | GetEventsResponse
   | GetPlatformFeedbackCollaborationQuestionResponse;
 
@@ -595,6 +659,8 @@ const withResponseTransformerUntyped = async <T extends STRAPI_QUERY>(query: T, 
       return getStaticBuildFetchCollaborationQuestionsByProjectId(data as CollaborationQuestionsResponse);
     case STRAPI_QUERY.GetSurveyQuestionsByProjectId:
       return getStaticBuildFetchSurveyQuestionsByProjectId(data as SurveyQuestionsResponse);
+    case STRAPI_QUERY.GetEventCount:
+      return getStaticBuildFetchEventCount(data as EventCountResponse);
     case STRAPI_QUERY.CreateProjectUpdate:
       return getStaticBuildCreateProjectUpdate(data as CreateProjectUpdateResponse);
     case STRAPI_QUERY.GetEvents:
@@ -621,6 +687,10 @@ const exhaustiveMatchingGuard = (_: never): never => {
   throw new Error('This should not be reached');
 };
 
+function getStaticBuildFetchEventCount(graphqlResponse: EventCountResponse) {
+  const EventCount = graphqlResponse.data.events.meta.pagination.total;
+  return EventCount;
+}
 function getStaticBuildFetchPlatformFeedbackCollaborationQuestion(
   graphqlResponse: GetPlatformFeedbackCollaborationQuestionResponse,
 ) {
@@ -653,16 +723,19 @@ function getStaticBuildFetchEvents(graphqlResponse: GetEventsResponse) {
       const user = attributes.author.data;
       const baseUrl = process.env.NEXT_PUBLIC_STRAPI_ENDPOINT;
       const imagePath = attributes.image.data?.attributes.url;
+      const projectId = attributes.project.data?.id;
       return {
         ...strapiEvent,
         ...attributes,
-        startTime: attributes.start_time,
-        endTime: attributes.end_time,
+        startTime: attributes.startTime,
+        endTime: attributes.endTime,
         author: {
           ...user,
           ...user?.attributes,
         },
         image: imagePath ? baseUrl + imagePath : null,
+        themes: attributes.Themes.map((t) => t.theme),
+        projectId,
       };
     });
   }

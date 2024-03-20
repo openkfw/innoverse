@@ -94,7 +94,7 @@ const UpdateCard = (props: UpdateCardProps) => {
             {parseStringForLinks(update?.comment)}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {update?.date}
+            {update?.date.toString()}
           </Typography>
 
           <Box sx={footerStyles}>

@@ -97,6 +97,7 @@ export type Project = {
   author: User;
   opportunities: Opportunity[];
   collaborationQuestions: CollaborationQuestion[];
+  events: Event[];
 };
 
 export type Like = {
@@ -225,12 +226,13 @@ export type AmountOfNews = {
 export type Event = {
   id: string;
   title: string;
-  date: string;
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime: Date;
   type: 'Remote' | 'In_office' | 'Remote_und_In_office';
   description?: string;
   location: string;
   author: User;
   image?: string;
+  themes: string[];
+  projectId: string;
 };

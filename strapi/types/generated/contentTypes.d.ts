@@ -731,24 +731,6 @@ export interface ApiEventEvent extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    location: Attribute.String & Attribute.Required;
-    title: Attribute.String & Attribute.Required;
-    image: Attribute.Media;
-    date: Attribute.Date & Attribute.Required;
-    author: Attribute.Relation<
-      'api::event.event',
-      'oneToOne',
-      'api::inno-user.inno-user'
-    >;
-    start_time: Attribute.Time & Attribute.Required;
-    end_time: Attribute.Time & Attribute.Required;
-    description: Attribute.RichText;
-    type: Attribute.Enumeration<
-      ['Remote', 'In-office', 'Remote und In-office']
-    > &
-      Attribute.Required;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::event.event',
@@ -762,6 +744,29 @@ export interface ApiEventEvent extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    location: Attribute.String & Attribute.Required;
+    title: Attribute.String & Attribute.Required;
+    image: Attribute.Media;
+    startTime: Attribute.DateTime & Attribute.Required;
+    author: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'api::inno-user.inno-user'
+    >;
+    description: Attribute.RichText;
+    type: Attribute.Enumeration<
+      ['Remote', 'In-office', 'Remote und In-office']
+    > &
+      Attribute.Required;
+    project: Attribute.Relation<
+      'api::event.event',
+      'manyToOne',
+      'api::project.project'
+    >;
+    endTime: Attribute.DateTime;
+    Themes: Attribute.Component<'theme.theme', true>;
   };
 }
 
@@ -910,6 +915,11 @@ export interface ApiProjectProject extends Schema.CollectionType {
       'api::project.project',
       'oneToMany',
       'api::inno-user.inno-user'
+    >;
+    events: Attribute.Relation<
+      'api::project.project',
+      'oneToMany',
+      'api::event.event'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

@@ -62,6 +62,17 @@ export interface TagsTags extends Schema.Component {
   };
 }
 
+export interface ThemeTheme extends Schema.Component {
+  collectionName: 'components_theme_themes';
+  info: {
+    displayName: 'Theme';
+    icon: 'layer';
+  };
+  attributes: {
+    theme: Attribute.String;
+  };
+}
+
 export interface UserAuthor extends Schema.Component {
   collectionName: 'components_user_authors';
   info: {
@@ -84,6 +95,7 @@ declare module '@strapi/strapi' {
       'response-options.response-options': ResponseOptionsResponseOptions;
       'slider-text.slider-text': SliderTextSliderText;
       'tags.tags': TagsTags;
+      'theme.theme': ThemeTheme;
       'user.author': UserAuthor;
     }
   }

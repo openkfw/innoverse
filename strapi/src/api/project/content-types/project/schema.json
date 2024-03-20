@@ -70,6 +70,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::inno-user.inno-user"
+    },
+    "events": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::event.event",
+      "mappedBy": "project"
     }
   }
 }
