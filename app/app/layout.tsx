@@ -1,6 +1,6 @@
 'use client';
 import React, { PropsWithChildren } from 'react';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
