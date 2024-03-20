@@ -9,30 +9,6 @@
   "options": { "draftAndPublish": true },
   "pluginOptions": {},
   "attributes": {
-    "location": { "type": "string", "required": true },
-    "title": { "type": "string", "required": true },
-    "image": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": ["images", "videos", "audios", "files"]
-    },
-    "date": { "type": "date", "required": true },
-    "author": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::inno-user.inno-user"
-    },
-    "start_time": { "type": "time", "required": true },
-    "end_time": { "type": "time", "required": true },
-    "description": { "type": "richtext" },
-    "type": {
-      "type": "enumeration",
-      "enum": ["Remote", "In-office", "Remote und In-office"],
-      "required": true
-    },
-    "createdAt": { "type": "datetime" },
-    "updatedAt": { "type": "datetime" },
     "publishedAt": {
       "type": "datetime",
       "configurable": false,
@@ -58,6 +34,40 @@
       "visible": false,
       "useJoinTable": false,
       "private": true
+    },
+    "createdAt": { "type": "datetime" },
+    "updatedAt": { "type": "datetime" },
+    "location": { "type": "string", "required": true },
+    "title": { "type": "string", "required": true },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "videos", "audios", "files"]
+    },
+    "startTime": { "type": "datetime", "required": true },
+    "endTime": { "type": "datetime" },
+    "author": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::inno-user.inno-user"
+    },
+    "description": { "type": "richtext" },
+    "type": {
+      "type": "enumeration",
+      "enum": ["Remote", "In-office", "Remote und In-office"],
+      "required": true
+    },
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project",
+      "inversedBy": "events"
+    },
+    "Themes": {
+      "type": "component",
+      "repeatable": true,
+      "component": "theme.theme"
     }
   },
   "kind": "collectionType",

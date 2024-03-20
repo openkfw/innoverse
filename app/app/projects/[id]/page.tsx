@@ -38,7 +38,13 @@ async function ProjectPage({ params }: { params: { id: string } }) {
             <BreadcrumbsNav activePage="Projekt" />
             <HeroSection project={project} />
           </Container>
-          <ProjectWrapper project={{ ...project, likes, followers }} />
+          <ProjectWrapper
+            project={{
+              ...project,
+              likes,
+              followers,
+            }}
+          />
         </Stack>
       )}
     </Layout>

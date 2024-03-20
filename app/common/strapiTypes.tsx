@@ -112,7 +112,7 @@ export type GetPlatformFeedbackCollaborationQuestionResponse = {
 
 export type GetEventsResponse = {
   data: {
-    events: { data: Event[] };
+    events: { data: EventQuery[] };
   };
 };
 
@@ -139,6 +139,7 @@ export type Project = {
   updates: Update[];
   surveyQuestions?: SurveyQuestion[];
   opportunities?: Opportunity[];
+  events: { data: EventQuery[] };
 };
 
 export type ImageType = {
@@ -249,24 +250,43 @@ export type CommentQuery = {
   upvotedBy: { data: UserQuery[] };
 };
 
-export type Event = {
+export type EventCountResponse = {
+  data: { events: EventCountQuery };
+};
+
+export type EventCountQuery = {
+  meta: { pagination: { total: number } };
+};
+
+export type EventsResponse = {
+  data: { events: { data: EventQuery[] } };
+};
+
+export type EventQuery = {
   id: string;
   attributes: {
-    title: string;
-    date: string;
-    start_time: string;
-    end_time: string;
-    type: string;
-    location: string;
-    description?: string;
-    author: {
-      data?: UserQuery;
-    };
     image: {
       data?: {
         attributes: {
           url: string;
         };
+      };
+    };
+    startTime: Date;
+    endTime: Date;
+    location: string;
+    type: string;
+    title: string;
+    description: string;
+    Themes: {
+      theme: string;
+    }[];
+    author: {
+      data?: UserQuery;
+    };
+    project: {
+      data?: {
+        id: string;
       };
     };
   };

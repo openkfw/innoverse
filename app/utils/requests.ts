@@ -1,8 +1,10 @@
+'use server';
 import { SurveyVote } from '@prisma/client';
 import dayjs from 'dayjs';
 
 import {
   CollaborationQuestion,
+  Event,
   Filters,
   Project,
   ProjectByIdQueryResult,
@@ -23,8 +25,9 @@ import logger from './logger';
 import {
   CreateInnoUserQuery,
   CreateProjectUpdateQuery,
+  GetAllEventsFilterQuery,
   GetCollaborationQuestionsByProjectIdQuery,
-  GetEventsQuery,
+  GetFutureEventCountQuery,
   GetInnoUserByEmailQuery,
   GetInnoUserByProviderIdQuery,
   GetOpportunitiesByIdQuery,
@@ -34,6 +37,7 @@ import {
   GetProjectsQuery,
   GetQuestionsByProjectIdQuery,
   GetSurveyQuestionsByProjectIdQuery,
+  GetUpcomingEventsQuery,
   GetUpdatesByProjectIdQuery,
   GetUpdatesFilterQuery,
   GetUpdatesQuery,
@@ -127,7 +131,7 @@ export async function getInnoUserByProviderId(providerId: string) {
 export async function getEvents(startingFrom: Date) {
   try {
     const dateFromString = dayjs(startingFrom).format('YYYY-MM-DD');
-    const requestEvents = await strapiFetcher(GetEventsQuery, { startingFrom: dateFromString });
+    const requestEvents = await strapiFetcher(GetUpcomingEventsQuery, { startingFrom: dateFromString });
     const events = await withResponseTransformer(STRAPI_QUERY.GetEvents, requestEvents);
     return events;
   } catch (err) {
@@ -363,6 +367,79 @@ export async function handleOpportunityAppliedBy(body: { opportunityId: string; 
       err as Error,
       body.opportunityId,
     );
+    logger.error(error);
+  }
+}
+
+export async function getCountOfFutureEvents(projectId: string) {
+  try {
+    const result = await strapiFetcher(GetFutureEventCountQuery, { projectId, currentDate: new Date() });
+    const EventCount = await withResponseTransformer(STRAPI_QUERY.GetEventCount, result);
+    return EventCount as number;
+  } catch (err) {
+    const error = strapiError('Getting count of future events', err as Error);
+    logger.error(error);
+  }
+}
+
+export async function getUpcomingEvents() {
+  try {
+    const today = new Date();
+    const requestEvents = await strapiFetcher(GetUpcomingEventsQuery, { today: today });
+    const events = await withResponseTransformer(STRAPI_QUERY.GetEvents, requestEvents);
+    return events;
+  } catch (err) {
+    const error = strapiError('Getting upcoming events', err as Error);
+    logger.error(error);
+  }
+}
+
+export async function getEventsFilter(
+  projectId: string,
+  amountOfEventsPerPage: number,
+  currentPage: number,
+  timeframe?: 'past' | 'future' | 'all',
+) {
+  try {
+    const variables = {
+      projectId,
+      currentPage,
+      amountOfEventsPerPage,
+      timeframe,
+    };
+
+    let filter = '';
+    let filterParams = '';
+
+    if (timeframe === 'all') {
+      filterParams += '$projectId: ID!';
+      filter += 'filters: { project: { id: { eq: $projectId } } }';
+    }
+
+    if (timeframe === 'future') {
+      filterParams += '$projectId: ID!, $currentDate: DateTime';
+      filter += 'filters: {project: { id: { eq: $projectId } }and: { startTime: { gte: $currentDate } }}';
+    }
+
+    if (timeframe === 'past') {
+      filterParams += '$projectId: ID!, $currentDate: DateTime';
+      filter += 'filters: {project: { id: { eq: $projectId } }and: { startTime: { lt: $currentDate } }}';
+    }
+
+    filterParams += ',$currentPage: Int, $amountOfEventsPerPage: Int';
+    filter += 'pagination: { page: $currentPage, pageSize: $amountOfEventsPerPage },';
+
+    if (filterParams.length) {
+      filterParams = `(${filterParams})`;
+    }
+
+    const result = await strapiFetcher(GetAllEventsFilterQuery(filterParams, filter), variables);
+
+    const formattedResult = (await withResponseTransformer(STRAPI_QUERY.GetEvents, result)) as Event[];
+
+    return formattedResult;
+  } catch (err) {
+    const error = strapiError('Getting all events', err as Error);
     logger.error(error);
   }
 }

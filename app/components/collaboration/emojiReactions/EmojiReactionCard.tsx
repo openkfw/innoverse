@@ -17,6 +17,7 @@ interface EmojiReactionCardProps {
   userReaction?: Reaction;
   countOfReactions: ReactionCount[];
   handleReaction: (emoji: Emoji, operation: 'upsert' | 'delete') => void;
+  isEventCard?: boolean;
 }
 
 export function EmojiReactionCard({ userReaction, countOfReactions, handleReaction }: EmojiReactionCardProps) {
@@ -76,7 +77,7 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
             onClick={() => setIsEmojiPickerClicked((isClicked) => !isClicked)}
             aria-label="Add new reaction"
           >
-            <AddReactionOutlinedIcon sx={addNewReactionIconStyles} />
+            <AddReactionOutlinedIcon sx={{ fontSize: 24 }} />
           </Button>
         </Grid>
       </Grid>
@@ -119,17 +120,13 @@ const addNewReactionButtonStyles = {
   height: '1.6em',
   minWidth: '.1em',
   width: '1rem',
-  bgcolor: 'background.paper',
+  bgcolor: 'rgba(0, 0, 0, 0)',
   mr: '.3em',
   p: '1em',
   borderRadius: '4px',
   color: 'text.primary',
   '&:hover': {
     color: 'secondary.main',
-    bgcolor: 'background.paper',
+    bgcolor: 'rgba(0, 0, 0, 0)',
   },
-};
-
-const addNewReactionIconStyles = {
-  fontSize: 24,
 };
