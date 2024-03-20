@@ -38,7 +38,7 @@ export default function ApplyFilterButton(props: ApplyFilterButtonProps) {
             backgroundColor: 'secondary.main',
             ...buttonStyle,
           }}
-          endIcon={<CheckIcon />}
+          endIcon={<CheckIcon sx={{ color: 'text.primary' }} />}
           onClick={onClick}
         >
           <Typography variant="subtitle1" sx={typographyStyle}>
@@ -64,6 +64,7 @@ const buttonStyle = {
 
 const typographyStyle = {
   fontSize: '20px',
+  color: 'text.primary',
 };
 
 const disabledButtonStyle = {

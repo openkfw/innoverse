@@ -59,7 +59,7 @@ const CustomDialog: FC<CustomDialogProps> = ({
       {closeIcon && (
         <DialogActions sx={dialogActionsStyle}>
           <IconButton onClick={handleClose} sx={closeIconButtonStyle}>
-            <CloseIcon />
+            <CloseIcon color="#41484C" />
           </IconButton>
         </DialogActions>
       )}
@@ -88,12 +88,18 @@ export const closeIconButtonStyle = {
   width: 48,
   height: 48,
   borderRadius: 48,
-  border: '2px solid #FFF',
-  backgroundColor: '#99A815',
+  border: '2px solid #D4FCCA',
+  backgroundColor: '#B7F9AA',
   backdropFilter: 'blur(24px)',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+
+  ':hover': {
+    border: '2px solid #B7F9AA',
+    backgroundColor: '#94EB90',
+    boxShadow: '0px 12px 32px 0px rgba(0, 0, 0, 0.25), 0px 4px 8px 0px rgba(0, 0, 0, 0.10)',
+  },
 };
 
 const dialogTitleStyle = {

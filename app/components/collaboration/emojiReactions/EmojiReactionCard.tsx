@@ -102,13 +102,13 @@ const activeReactionCardButtonStyles = {
   height: '1.6em',
   minWidth: '.1em',
   width: '3rem',
-  bgcolor: 'success.light',
+  bgcolor: 'inherit',
   borderStyle: 'solid',
   borderRadius: '4px',
   borderWidth: 'thin',
-  borderColor: 'secondary.main',
-  m: '.2em',
-  p: '.3em',
+  borderColor: '#E7E6E2',
+  m: '.3em',
+  p: '1em',
 };
 
 const addNewReactionButtonStyles = {
@@ -121,7 +121,7 @@ const addNewReactionButtonStyles = {
   borderRadius: '4px',
   color: 'text.primary',
   '&:hover': {
-    color: 'secondary.main',
-    bgcolor: 'rgba(0, 0, 0, 0)',
+    color: 'text.primary',
+    bgcolor: 'secondary.main',
   },
 };
