@@ -1,4 +1,4 @@
-import { ReactNode, SyntheticEvent } from 'react';
+import { ReactNode, SyntheticEvent, useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -79,7 +79,7 @@ export default function TabView(props: BasicTabsProps) {
   const { project, activeTab, setActiveTab, projectName } = props;
   const { opportunities, questions, collaborationQuestions, updates } = project;
   const collaborationActivities = opportunities.length + questions.length + collaborationQuestions.length;
-  const [futureEventCount, setFutureEventCount] = React.useState<number>(0);
+  const [futureEventCount, setFutureEventCount] = useState<number>(0);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     switch (newValue) {
@@ -95,7 +95,7 @@ export default function TabView(props: BasicTabsProps) {
     setActiveTab(newValue);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const getFutureEventCount = async () => {
       const { data: result } = await countFutureEventsForProject({ projectId: project.id });
       if (result) {
@@ -172,7 +172,8 @@ export default function TabView(props: BasicTabsProps) {
               </Typography>
             </Stack>
           }
-          {...a11yProps(3)}
+          id="tab-events"
+          aria-controls="events-tab"
         />
       </CustomTabs>
       <CustomTabPanel value={activeTab} index={0} id="project-progress-tab">
@@ -184,7 +185,7 @@ export default function TabView(props: BasicTabsProps) {
       <CustomTabPanel value={activeTab} index={2} id="updates-tab">
         <UpdatesTab projectId={project.id} />
       </CustomTabPanel>
-      <CustomTabPanel value={activeTab} index={3} id="tabpanel-0">
+      <CustomTabPanel value={activeTab} index={3} id="events-tab">
         <EventsTab projectId={project.id} />
       </CustomTabPanel>
     </Box>
