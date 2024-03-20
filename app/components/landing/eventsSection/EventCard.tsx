@@ -8,11 +8,9 @@ import { Box, Card, CardActions, CardContent, CardHeader, Grid, Stack, Typograph
 
 import { Event } from '@/common/types';
 import { EventEmojiReactionCard } from '@/components/collaboration/emojiReactions/EventEmojiReactionCard';
-import { TransparentButton } from '@/components/common/TransparentButton';
+import EventTimeDate from '@/components/project-details/events/EventTimeDate';
+import IcsDownload from '@/components/project-details/events/IcsDownload';
 import theme from '@/styles/theme';
-
-import addToCalendarIcon from '/public/images/icons/addToCalendar.svg';
-
 dayjs.extend(customParseFormat);
 
 interface EventCardProps {
@@ -20,9 +18,7 @@ interface EventCardProps {
 }
 
 export const EventCard = ({ event }: EventCardProps) => {
-  const startTime = dayjs(event.startTime, 'HH:mm:ss.SSS');
-  const endTime = dayjs(event.endTime, 'HH:mm:ss.SSS');
-  const date = dayjs(event.date, 'YYYY-MM-DD');
+  const date = dayjs(event.startTime, 'YYYY-MM-DDTHH:mm:ss.SSS');
 
   const defaultImage = '/images/energy_01.png';
 
@@ -54,9 +50,7 @@ export const EventCard = ({ event }: EventCardProps) => {
               </Typography>
             </Stack>
             <Stack direction={'column'} marginLeft={'0.5em'} flexGrow={'1'}>
-              <Typography variant="subtitle1" sx={subtitleStyles}>
-                {startTime.format('HH:mm')} - {endTime.format('HH:mm')}
-              </Typography>
+              <EventTimeDate event={event} sx={subtitleStyles}/>
               <Typography variant="subtitle1" sx={subtitleStyles}>
                 {event.location}
               </Typography>
@@ -64,14 +58,7 @@ export const EventCard = ({ event }: EventCardProps) => {
                 {renderEventType(event)}
               </Typography>
             </Stack>
-            <TransparentButton sx={buttonStyles} textSx={iconTextStyles} icon={<></>}>
-              <Image
-                style={{ marginLeft: 'auto', marginRight: 'auto' }}
-                src={addToCalendarIcon}
-                alt="Add to calendar"
-              />
-              Eintragen
-            </TransparentButton>
+            <IcsDownload event={event} />
           </Stack>
         }
       />
@@ -94,7 +81,7 @@ export const EventCard = ({ event }: EventCardProps) => {
       <CardActions sx={cardActionsStyles}>
         <Grid container direction="row" justifyContent="space-between" alignItems="center">
           <Grid item xs={7} sx={{ marginBottom: '0.5em' }}>
-            <Link href={'#'} style={linkStyle}>
+            <Link href={`/projects/${encodeURIComponent(event.projectId)}`} style={linkStyle}>
               <Stack direction="row" alignItems="center">
                 <ArrowForwardIcon sx={{ fontSize: '14px', color: 'secondary.main' }} />
                 <Typography variant="subtitle2" sx={{ fontSize: '14px' }} noWrap>
@@ -175,11 +162,6 @@ const titleImageStyles: React.CSSProperties = {
   height: '200px',
 };
 
-const iconTextStyles = {
-  color: 'text.primary',
-  fontSize: '10px',
-};
-
 const dateStyles = {
   color: 'secondary.main',
   fontSize: '48px',
@@ -190,12 +172,6 @@ const captionStyles = {
   fontSize: '12px',
   textAlign: 'center',
   color: 'text.primary',
-};
-
-const buttonStyles = {
-  width: 'fit',
-  marginTop: 'auto',
-  marginBottom: 'auto',
 };
 
 const subtitleStyles = {
