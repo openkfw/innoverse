@@ -1,8 +1,10 @@
 'use client';
 import { PropsWithChildren } from 'react';
 
-import { Box, Grid, Typography } from '@mui/material';
-import { SxProps } from '@mui/material';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import { SxProps } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
 import theme from '@/styles/theme';
 

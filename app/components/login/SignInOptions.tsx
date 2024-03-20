@@ -5,7 +5,7 @@ import React from 'react';
 import { getProviders } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
 
-import { Collapse } from '@mui/material';
+import Collapse from '@mui/material/Collapse';
 
 import { errorMessage } from '../common/CustomToast';
 

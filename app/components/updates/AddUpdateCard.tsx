@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 
-import { Box, SxProps, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import { SxProps } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
 import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
 import AddUpdateDialog from '../newsPage/addUpdate/AddUpdateDialog';

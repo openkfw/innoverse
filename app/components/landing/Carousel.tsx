@@ -1,7 +1,10 @@
 import { SetStateAction, useEffect, useRef, useState } from 'react';
 import Slider, { Settings } from 'react-slick';
 
-import { Box, Grid, SxProps, useMediaQuery } from '@mui/material';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import { SxProps } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import theme from '@/styles/theme';
 import { mergeStyles } from '@/utils/helpers';

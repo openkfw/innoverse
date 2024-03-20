@@ -3,10 +3,10 @@
 import { useMemo, useState } from 'react';
 
 import AddReactionOutlinedIcon from '@mui/icons-material/AddReactionOutlined';
-import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 import { errorMessage } from '@/components/common/CustomToast';
 

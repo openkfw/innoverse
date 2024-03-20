@@ -1,4 +1,4 @@
-import { SxProps } from '@mui/material';
+import { SxProps } from '@mui/material/styles';
 
 export const sortDateByCreatedAt = <T>(array: T[]): T[] => {
   return array.sort((d1: any, d2: any) => d1.createdAt.getTime() - d2.createdAt.getTime());

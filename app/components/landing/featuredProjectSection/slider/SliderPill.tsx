@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 
-import { SxProps } from '@mui/material';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 const PillBox = ({ children, sx }: { children: ReactNode; sx?: SxProps }) => {

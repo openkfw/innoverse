@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 
-import { Box, Stack, SxProps } from '@mui/material';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import { SxProps } from '@mui/material/styles';
 
 import { ProjectUpdate } from '@/common/types';
 import theme from '@/styles/theme';
