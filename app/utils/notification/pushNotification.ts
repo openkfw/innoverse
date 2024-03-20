@@ -1,12 +1,14 @@
 'use server';
 
 import webpush, { PushSubscription as WebPushSubscription, WebPushError } from 'web-push';
-import { PushNotification } from '@/types/notification';
 
-import { createPushSubscriptionForUser, removePushSubscriptionForUser } from '@/repository/db/push_subscriptions';
-import dbClient from '../../repository/db/prisma/prisma';
-import { withAuth } from '@/utils/auth';
 import { UserSession } from '@/common/types';
+import { createPushSubscriptionForUser, removePushSubscriptionForUser } from '@/repository/db/push_subscriptions';
+import { PushNotification } from '@/types/notification';
+import { withAuth } from '@/utils/auth';
+
+import dbClient from '../../repository/db/prisma/prisma';
+import logger from '../logger';
 
 webpush.setVapidDetails(
   process.env.VAPID_ADMIN_EMAIL || 'admin@localhost',
@@ -38,7 +40,7 @@ export const sendPushNotification = async (subscription: WebPushSubscription, pu
     // subscription has expired or is no longer valid
     // remove it from the database
     if (error.statusCode === 410) {
-      console.info(
+      logger.info(
         'Push Subscription has expired or is no longer valid, removing it from the database. User: ',
         userId,
       );

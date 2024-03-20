@@ -42,7 +42,7 @@ const shouldNotifyResolver = (event: string, model: string): boolean => {
     ['opportunity']: false,
     ['collaboration-question']: false,
     ['survey-question']: false,
-    ['event']: true,
+    ['event']: false,
   };
   resolvers['entry.update'] = {
     ['project']: false,
@@ -118,7 +118,7 @@ export const evalPushNotificationRules = async (
             userId: followedBy,
             notification: {
               topic: 'opportunity',
-              body: 'Eine neue Opportunity wurde kürzlich bei einem Projekt dem du folgst hinzugefügt.',
+              body: 'Eine neue Opportunity wurde kürzlich zu einem Projekt dem du folgst hinzugefügt.',
             },
           };
         }),
@@ -156,7 +156,7 @@ export const evalPushNotificationRules = async (
             userId: followedBy,
             notification: {
               topic: 'survey-question',
-              body: 'Eine neue Umfrage wurde kürzlich bei einem Projekt dem du folgst hinzugefügt.',
+              body: 'Eine neue Umfrage wurde kürzlich zu einem Projekt dem du folgst hinzugefügt.',
             },
           };
         }),
@@ -173,7 +173,7 @@ export const evalPushNotificationRules = async (
           userId: subscription.userId,
           notification: {
             topic: 'event',
-            body: `A new event has been created.`,
+            body: `Ein neues Event wurde kürzlich hinzugefügt.`,
           },
         };
       });
