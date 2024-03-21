@@ -3,11 +3,13 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import Box from '@mui/material/Box';
+import CloseIcon from '@mui/icons-material/Close';
+import { Divider } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 
 import { useUser } from '@/app/contexts/user-context';
+import CustomButton from '@/components/common/CustomButton';
 import { errorMessage } from '@/components/common/CustomToast';
 
 import AvatarIcon from '../../common/AvatarIcon';
@@ -19,7 +21,12 @@ import { CommentFormValidationSchema, formValidationSchema } from './validationS
 
 interface WriteCommentCardProps {
   projectName: string;
-  handleComment: (comment: string) => Promise<void>;
+  onSubmit: (comment: string) => Promise<void>;
+  onDiscard?: ({ isDirty }: { isDirty: boolean }) => void;
+  submitButton?: React.ReactNode;
+  defaultValues?: {
+    comment: string;
+  };
   sx?: SxProps;
 }
 
@@ -28,9 +35,15 @@ interface CommentFormData {
 }
 
 const { COMMENT } = formFieldNames;
-const defaultValues = { [formFieldNames.COMMENT]: '' };
 
-const WriteCommentCard = ({ sx, projectName, handleComment }: WriteCommentCardProps) => {
+const WriteCommentCard = ({
+  projectName,
+  onSubmit,
+  onDiscard,
+  submitButton,
+  defaultValues,
+  sx,
+}: WriteCommentCardProps) => {
   const { user } = useUser();
   const {
     handleSubmit,
@@ -38,20 +51,27 @@ const WriteCommentCard = ({ sx, projectName, handleComment }: WriteCommentCardPr
     reset,
     formState: { isDirty, isValid },
   } = useForm<CommentFormData>({
-    defaultValues,
+    defaultValues: {
+      [formFieldNames.COMMENT]: defaultValues?.comment ?? '',
+    },
     resolver: zodResolver(formValidationSchema),
   });
+
   const placeholder =
     'Teil deine Ratschläge und Gedanken zu diesem Thema, damit deine Kollegen von deiner Expertise profitieren können.';
 
-  const onSubmit: SubmitHandler<CommentFormValidationSchema> = async (data) => {
+  const submit: SubmitHandler<CommentFormValidationSchema> = async (data) => {
     try {
-      await handleComment(data.comment);
+      await onSubmit(data.comment);
       reset();
     } catch (error) {
       console.error('Failed to submit comment:', error);
       errorMessage({ message: 'Failed to submit your comment. Please try again.' });
     }
+  };
+
+  const discard = () => {
+    onDiscard && onDiscard({ isDirty });
   };
 
   return (
@@ -66,22 +86,42 @@ const WriteCommentCard = ({ sx, projectName, handleComment }: WriteCommentCardPr
               placeholder={placeholder}
               rows={4}
               sx={textFieldStyles}
-              endAdornment={
-                <Box sx={buttonWrapperStyles}>
-                  <InteractionButton
-                    projectName={projectName}
-                    onClick={handleSubmit(onSubmit)}
-                    interactionType={InteractionType.COMMENT_SEND}
-                    disabled={!isDirty || !isValid}
-                  />
-                </Box>
-              }
+              endAdornment={<EndAdornment />}
             />
           </form>
         </Stack>
       )}
     </>
   );
+
+  function EndAdornment() {
+    return (
+      <>
+        {onDiscard && <Divider sx={{ pt: 1, mb: 2 }} />}
+        <Stack direction={'row'} flexWrap={'wrap'} spacing={1} rowGap={1} sx={buttonWrapperStyles}>
+          {onDiscard && (
+            <CustomButton
+              themeVariant="secondary"
+              startIcon={<CloseIcon sx={{ ml: 1 }} />}
+              endIcon={<></>}
+              onClick={discard}
+            >
+              Verwerfen
+            </CustomButton>
+          )}
+          <div onClick={handleSubmit(submit)}>
+            {submitButton ?? (
+              <InteractionButton
+                projectName={projectName}
+                interactionType={InteractionType.COMMENT_SEND}
+                disabled={!isDirty || !isValid}
+              />
+            )}
+          </div>
+        </Stack>
+      </>
+    );
+  }
 };
 
 export default WriteCommentCard;
@@ -103,7 +143,5 @@ const textFieldStyles = {
 };
 
 const buttonWrapperStyles: SxProps = {
-  marginLeft: 'auto',
-  width: 'fit-content',
-  marginTop: '0.5em',
+  justifyContent: 'end',
 };

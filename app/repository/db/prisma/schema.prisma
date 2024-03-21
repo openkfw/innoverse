@@ -41,11 +41,11 @@ model CollaborationCommentResponse {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  response  String // text of response
-  author    String // id of the author
-  upvotedBy String[] // ids of users
-  commentId String // id of comment this responds to to
-  comment   CollaborationComment @relation("Response", fields: [commentId], references: [id]) // comment this responds to
+  response    String // text of response
+  author      String // id of the author
+  upvotedBy   String[] // ids of users
+  commentId   String // id of comment this responds to to
+  comment     CollaborationComment @relation("Response", fields: [commentId], references: [id], onDelete: Cascade) // comment this responds to
 
   @@map("collaboration_comments_responses")
 }

@@ -2,25 +2,13 @@
 import { SurveyVote } from '@prisma/client';
 import dayjs from 'dayjs';
 
-import {
-  CollaborationQuestion,
-  Event,
-  Filters,
-  Project,
-  ProjectByIdQueryResult,
-  ProjectQuestion,
-  ProjectsQueryResult,
-  ProjectUpdate,
-  SurveyQuestion,
-  User,
-  UserSession,
-} from '@/common/types';
+import { Filters, UserSession, Event } from '@/common/types';
 import { getSurveyQuestionVotes } from '@/components/collaboration/survey/actions';
 import { AddUpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
 import { SortValues } from '@/components/newsPage/News';
 
 import { InnoPlatformError, strapiError } from './errors';
-import { getFulfilledResults } from './helpers';
+import { getPromiseResults } from './helpers';
 import logger from './logger';
 import {
   CreateInnoUserQuery,
@@ -75,11 +63,11 @@ export async function createInnoUser(body: UserSession, image?: string | null) {
     const uploadedImages = image ? await uploadImage(image, `avatar-${body.name}`) : null;
     const uploadedImage = uploadedImages ? uploadedImages[0] : null;
 
-    const requestUser = await strapiFetcher(CreateInnoUserQuery, {
+    const response = await strapiFetcher(CreateInnoUserQuery, {
       ...body,
       avatarId: uploadedImage ? uploadedImage.id : null,
     });
-    const resultUser = await withResponseTransformer(STRAPI_QUERY.CreateInnoUser, requestUser);
+    const resultUser = await withResponseTransformer(STRAPI_QUERY.CreateInnoUser, response);
 
     return resultUser;
   } catch (err) {
@@ -90,15 +78,9 @@ export async function createInnoUser(body: UserSession, image?: string | null) {
 
 export async function getProjectById(id: string) {
   try {
-    const requestProject = await strapiFetcher(GetProjectByIdQuery, { id });
-    const resultProject = (await withResponseTransformer(
-      STRAPI_QUERY.GetProjectById,
-      requestProject,
-    )) as ProjectByIdQueryResult;
-
-    return {
-      ...resultProject.project,
-    };
+    const response = await strapiFetcher(GetProjectByIdQuery, { id });
+    const project = await withResponseTransformer(STRAPI_QUERY.GetProjectById, response);
+    return project;
   } catch (err) {
     const e: InnoPlatformError = strapiError('Getting Project by ID', err as Error, id);
     logger.error(e);
@@ -107,10 +89,9 @@ export async function getProjectById(id: string) {
 
 export async function getInnoUserByEmail(email: string) {
   try {
-    const requestUser = await strapiFetcher(GetInnoUserByEmailQuery, { email });
-    const resultUser = await withResponseTransformer(STRAPI_QUERY.GetInnoUser, requestUser);
-
-    return resultUser;
+    const response = await strapiFetcher(GetInnoUserByEmailQuery, { email });
+    const user = await withResponseTransformer(STRAPI_QUERY.GetInnoUser, response);
+    return user;
   } catch (err) {
     const error = strapiError('Getting Inno user by email', err as Error, email);
     logger.error(error);
@@ -119,12 +100,13 @@ export async function getInnoUserByEmail(email: string) {
 
 export async function getInnoUserByProviderId(providerId: string) {
   try {
-    const requestUser = await strapiFetcher(GetInnoUserByProviderIdQuery, { providerId });
-    const resultUser = (await withResponseTransformer(STRAPI_QUERY.GetInnoUser, requestUser)) as unknown as User;
-    return resultUser;
+    const response = await strapiFetcher(GetInnoUserByProviderIdQuery, { providerId });
+    const user = await withResponseTransformer(STRAPI_QUERY.GetInnoUser, response);
+    return user;
   } catch (err) {
     const error = strapiError('Getting Inno user by providerId', err as Error, providerId);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -158,11 +140,11 @@ export async function getMainPageData() {
 
 export async function getDataWithFeaturedFiltering() {
   try {
-    const requestProjects = await strapiFetcher(GetProjectsQuery);
-    const result = (await withResponseTransformer(STRAPI_QUERY.GetProjects, requestProjects)) as ProjectsQueryResult;
+    const response = await strapiFetcher(GetProjectsQuery);
+    const result = await withResponseTransformer(STRAPI_QUERY.GetProjects, response);
 
     // Filter projects which are featured
-    const featuredProjects = result.projects.filter((project: Project) => project.featured == true) as Project[];
+    const featuredProjects = result.projects.filter((project) => project.featured);
 
     return {
       sliderContent: featuredProjects,
@@ -177,9 +159,8 @@ export async function getDataWithFeaturedFiltering() {
 
 export async function getProjects() {
   try {
-    const requestProjects = await strapiFetcher(GetProjectsQuery);
-    const result = (await withResponseTransformer(STRAPI_QUERY.GetProjects, requestProjects)) as ProjectsQueryResult;
-
+    const response = await strapiFetcher(GetProjectsQuery);
+    const result = await withResponseTransformer(STRAPI_QUERY.GetProjects, response);
     return result.projects;
   } catch (err) {
     console.info(err);
@@ -188,9 +169,9 @@ export async function getProjects() {
 
 export async function getProjectsUpdates() {
   try {
-    const requestProjects = await strapiFetcher(GetUpdatesQuery);
-    const result = await withResponseTransformer(STRAPI_QUERY.GetUpdates, requestProjects);
-    return result;
+    const response = await strapiFetcher(GetUpdatesQuery);
+    const updates = await withResponseTransformer(STRAPI_QUERY.GetUpdates, response);
+    return updates;
   } catch (err) {
     const error = strapiError('Getting all project updates', err as Error);
     logger.error(error);
@@ -228,8 +209,8 @@ export async function getProjectsUpdatesFilter(sort: SortValues, filters: Filter
       filterParams = `(${filterParams})`;
     }
 
-    const requestProjects = await strapiFetcher(GetUpdatesFilterQuery(filterParams, filter, sort), variables);
-    const result = await withResponseTransformer(STRAPI_QUERY.GetUpdates, requestProjects);
+    const response = await strapiFetcher(GetUpdatesFilterQuery(filterParams, filter, sort), variables);
+    const result = await withResponseTransformer(STRAPI_QUERY.GetUpdates, response);
     return result;
   } catch (err) {
     const error = strapiError('Getting all project updates with filter', err as Error);
@@ -239,9 +220,9 @@ export async function getProjectsUpdatesFilter(sort: SortValues, filters: Filter
 
 export async function getUpdatesByProjectId(projectId: string) {
   try {
-    const res = await strapiFetcher(GetUpdatesByProjectIdQuery, { projectId });
-    const updates = await withResponseTransformer(STRAPI_QUERY.GetUpdatesByProjectId, res);
-    return updates as ProjectUpdate[];
+    const response = await strapiFetcher(GetUpdatesByProjectIdQuery, { projectId });
+    const updates = await withResponseTransformer(STRAPI_QUERY.GetUpdates, response);
+    return updates;
   } catch (err) {
     const error = strapiError('Getting all project updates', err as Error, projectId);
     logger.error(error);
@@ -250,8 +231,8 @@ export async function getUpdatesByProjectId(projectId: string) {
 
 export async function getOpportunitiesByProjectId(projectId: string) {
   try {
-    const res = await strapiFetcher(GetOpportunitiesByProjectIdQuery, { projectId });
-    const opportunities = await withResponseTransformer(STRAPI_QUERY.GetOpportunitiesByProjectId, res);
+    const response = await strapiFetcher(GetOpportunitiesByProjectIdQuery, { projectId });
+    const opportunities = await withResponseTransformer(STRAPI_QUERY.GetOpportunitiesByProjectId, response);
     return opportunities;
   } catch (err) {
     const error = strapiError('Getting project opportunities by project id', err as Error, projectId);
@@ -261,8 +242,8 @@ export async function getOpportunitiesByProjectId(projectId: string) {
 
 export async function getOpportunityById(projectId: string) {
   try {
-    const res = await strapiFetcher(GetOpportunitiesByIdQuery, { projectId });
-    const opportunities = await withResponseTransformer(STRAPI_QUERY.GetOpportunitiesId, res);
+    const response = await strapiFetcher(GetOpportunitiesByIdQuery, { projectId });
+    const opportunities = await withResponseTransformer(STRAPI_QUERY.GetOpportunitiesByProjectId, response);
     return opportunities[0];
   } catch (err) {
     const error = strapiError('Getting all project opportunities', err as Error, projectId);
@@ -272,9 +253,9 @@ export async function getOpportunityById(projectId: string) {
 
 export async function getProjectQuestionsByProjectId(projectId: string) {
   try {
-    const res = await strapiFetcher(GetQuestionsByProjectIdQuery, { projectId });
-    const questions = await withResponseTransformer(STRAPI_QUERY.GetProjectQuestionsByProjectId, res);
-    return questions as ProjectQuestion[];
+    const response = await strapiFetcher(GetQuestionsByProjectIdQuery, { projectId });
+    const questions = await withResponseTransformer(STRAPI_QUERY.GetProjectQuestionsByProjectId, response);
+    return questions;
   } catch (err) {
     const error = strapiError('Getting all project questions', err as Error, projectId);
     logger.error(error);
@@ -283,21 +264,17 @@ export async function getProjectQuestionsByProjectId(projectId: string) {
 
 export async function getSurveyQuestionsByProjectId(projectId: string) {
   try {
-    const res = await strapiFetcher(GetSurveyQuestionsByProjectIdQuery, { projectId });
-    const surveyQuestions = (await withResponseTransformer(
-      STRAPI_QUERY.GetSurveyQuestionsByProjectId,
-      res,
-    )) as SurveyQuestion[];
+    const response = await strapiFetcher(GetSurveyQuestionsByProjectIdQuery, { projectId });
+    const surveyQuestions = await withResponseTransformer(STRAPI_QUERY.GetSurveyQuestionsByProjectId, response);
 
-    const surveyQuestionsVotes = await Promise.allSettled(
-      surveyQuestions.map(async (surveyQuestion) => {
-        const { data: surveyVotes } = await getSurveyQuestionVotes({ surveyQuestionId: surveyQuestion.id });
-        surveyQuestion.votes = surveyVotes?.map((vote) => ({ votedBy: vote.votedBy?.id }) as SurveyVote) ?? [];
-        return surveyQuestion;
-      }),
-    ).then((results) => getFulfilledResults(results));
+    const getVotes = surveyQuestions.map(async (surveyQuestion) => {
+      const { data: surveyVotes } = await getSurveyQuestionVotes({ surveyQuestionId: surveyQuestion.id });
+      surveyQuestion.votes = surveyVotes?.map((vote) => ({ votedBy: vote.votedBy?.id }) as SurveyVote) ?? [];
+      return surveyQuestion;
+    });
 
-    return surveyQuestionsVotes as SurveyQuestion[];
+    const surveyQuestionsWithVotes = await getPromiseResults(getVotes);
+    return surveyQuestionsWithVotes;
   } catch (err) {
     const error = strapiError('Getting all survey questions', err as Error, projectId);
     logger.error(error);
@@ -306,12 +283,12 @@ export async function getSurveyQuestionsByProjectId(projectId: string) {
 
 export async function getCollaborationQuestionsByProjectId(projectId: string) {
   try {
-    const res = await strapiFetcher(GetCollaborationQuestionsByProjectIdQuery, { projectId });
+    const response = await strapiFetcher(GetCollaborationQuestionsByProjectIdQuery, { projectId });
     const collaborationQuestions = await withResponseTransformer(
       STRAPI_QUERY.GetCollaborationQuestionsByProjectId,
-      res,
+      response,
     );
-    return collaborationQuestions as CollaborationQuestion[];
+    return collaborationQuestions;
   } catch (err) {
     const error = strapiError('Getting all collaboration questions', err as Error, projectId);
     logger.error(error);
@@ -332,8 +309,8 @@ export async function createInnoUserIfNotExist(body: UserSession, image?: string
 
 export async function createProjectUpdate(body: Omit<AddUpdateFormData, 'author'>) {
   try {
-    const requestUpdate = await strapiFetcher(CreateProjectUpdateQuery, body);
-    const resultUpdate = await withResponseTransformer(STRAPI_QUERY.CreateProjectUpdate, requestUpdate);
+    const response = await strapiFetcher(CreateProjectUpdateQuery, body);
+    const resultUpdate = await withResponseTransformer(STRAPI_QUERY.CreateProjectUpdate, response);
     return resultUpdate;
   } catch (err) {
     const error = strapiError('Trying to to create project update', err as Error, body.projectId);
@@ -343,9 +320,9 @@ export async function createProjectUpdate(body: Omit<AddUpdateFormData, 'author'
 
 export async function getOpportunityAndUserParticipant(body: { opportunityId: string; userId: string }) {
   try {
-    const requestGet = await strapiFetcher(GetOpportunityParticipantQuery, body);
-    const resultGet = await withResponseTransformer(STRAPI_QUERY.GetOpportunityParticipant, requestGet);
-    return resultGet;
+    const response = await strapiFetcher(GetOpportunityParticipantQuery, body);
+    const opportunity = await withResponseTransformer(STRAPI_QUERY.GetOpportunityParticipant, response);
+    return opportunity;
   } catch (err) {
     const error = strapiError(
       'Trying to get project opportunity and add participant',
@@ -358,9 +335,9 @@ export async function getOpportunityAndUserParticipant(body: { opportunityId: st
 
 export async function handleOpportunityAppliedBy(body: { opportunityId: string; userId: string }) {
   try {
-    const requestGet = await strapiFetcher(UpdateOpportunityParticipantsQuery, body);
-    const resultGet = await withResponseTransformer(STRAPI_QUERY.UpdateOpportunityParticipants, requestGet);
-    return resultGet;
+    const response = await strapiFetcher(UpdateOpportunityParticipantsQuery, body);
+    const opportunity = await withResponseTransformer(STRAPI_QUERY.UpdateOpportunityParticipants, response);
+    return opportunity;
   } catch (err) {
     const error = strapiError(
       'Trying to get uodate project opportunity participants',

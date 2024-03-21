@@ -1,5 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 
+export async function getCollaborationCommentById(client: PrismaClient, commentId: string) {
+  return client.collaborationComment.findFirst({
+    where: {
+      id: commentId,
+    },
+  });
+}
+
 export async function getCollaborationQuestionComments(client: PrismaClient, projectId: string, questionId: string) {
   return client.collaborationComment.findMany({
     where: {
@@ -28,6 +36,25 @@ export async function addCollaborationComment(
   });
 }
 
+export async function updateCollaborationComment(client: PrismaClient, commentId: string, updatedText: string) {
+  return client.collaborationComment.update({
+    where: {
+      id: commentId,
+    },
+    data: {
+      comment: updatedText,
+    },
+  });
+}
+
+export async function deleteCollaborationComment(client: PrismaClient, commentId: string) {
+  return client.collaborationComment.delete({
+    where: {
+      id: commentId,
+    },
+  });
+}
+
 export async function getCollaborationCommentUpvotedBy(client: PrismaClient, commentId: string, upvotedBy: string) {
   return client.collaborationComment.findMany({
     where: {
@@ -37,7 +64,7 @@ export async function getCollaborationCommentUpvotedBy(client: PrismaClient, com
   });
 }
 
-export async function handleCollaborationCommentUpvotedBy(client: PrismaClient, commentId: string, upvotedBy: string) {
+export async function handleCollaborationCommentUpvote(client: PrismaClient, commentId: string, upvotedBy: string) {
   return client.$transaction(async (tx) => {
     const result = await tx.collaborationComment.findFirst({
       where: { id: commentId },

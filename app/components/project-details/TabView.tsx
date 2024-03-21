@@ -12,6 +12,7 @@ import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
+import { CommentContextProvider } from '../common/comments/comment-context';
 import { UpdatesTab } from '../updates/UpdatesTab';
 
 import { countFutureEventsForProject } from './events/actions';
@@ -29,9 +30,11 @@ function CustomTabPanel(props: TabPanelProps) {
   const { children, value, id, index, ...other } = props;
 
   return (
-    <div role="tabpanel" hidden={value !== index} id={id} aria-labelledby={`tab-${id}`} {...other}>
-      <Box sx={{ paddingTop: 3 }}>{children}</Box>
-    </div>
+    <CommentContextProvider>
+      <div role="tabpanel" hidden={value !== index} id={id} aria-labelledby={`tab-${id}`} {...other}>
+        <Box sx={{ paddingTop: 3 }}>{children}</Box>
+      </div>
+    </CommentContextProvider>
   );
 }
 

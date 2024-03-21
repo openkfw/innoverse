@@ -156,8 +156,10 @@ export type UserQuery = {
     name: string;
     role?: string;
     department?: string;
+    avatar?: ImageType;
+    providerId?: string;
+    provider?: string;
     email?: string;
-    avatar: ImageType;
   };
 };
 
@@ -172,7 +174,7 @@ export type User = {
 
 export type Description = {
   text: string;
-  tags: { tag: string };
+  tags: { tag: string }[];
 };
 
 export type Update = {
@@ -237,7 +239,7 @@ export type OpportunityQuery = {
   attributes: {
     title: string;
     description: string;
-    contactPerson: { data: UserQuery };
+    contactPerson: { data?: UserQuery };
     expense: string;
     participants: { data: UserQuery[] };
   };
@@ -265,13 +267,7 @@ export type EventsResponse = {
 export type EventQuery = {
   id: string;
   attributes: {
-    image: {
-      data?: {
-        attributes: {
-          url: string;
-        };
-      };
-    };
+    image?: ImageType;
     startTime: Date;
     endTime: Date;
     location: string;
@@ -285,7 +281,7 @@ export type EventQuery = {
       data?: UserQuery;
     };
     project: {
-      data?: {
+      data: {
         id: string;
       };
     };

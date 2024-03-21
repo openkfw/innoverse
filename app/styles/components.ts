@@ -3,7 +3,6 @@
 import { Components, Theme } from '@mui/material/styles';
 
 import palette from './palette';
-import theme from './theme';
 
 const components: Components<Omit<Theme, 'components'>> = {
   MuiCssBaseline: {

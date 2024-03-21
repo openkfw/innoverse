@@ -10,6 +10,8 @@ import Typography from '@mui/material/Typography';
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
+import { UnsavedCommentChangesDialog } from '../common/comments/UnsavedChangesDialog';
+
 import OpportunityCard from './opportunities/OpportunityCard';
 import { SurveyCard } from './survey/SurveyCard';
 import { CollaborationQuestionCard } from './CollaborationQuestionCard';
@@ -20,6 +22,7 @@ interface CollaborationTabProps {
 
 export const CollaborationTab = ({ project }: CollaborationTabProps) => {
   const [surveyQuestions] = useState(project.surveyQuestions);
+
   return (
     <Card sx={containerStyles}>
       <Box sx={colorOverlayStyles} />
@@ -70,6 +73,8 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
           )}
         </Box>
       </CardContent>
+
+      <UnsavedCommentChangesDialog />
     </Card>
   );
 };

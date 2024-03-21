@@ -1,5 +1,4 @@
 'use server';
-import type { SurveyVote } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
@@ -22,7 +21,7 @@ export const getSurveyQuestionVotes = async (body: { surveyQuestionId: string })
     if (validatedParams.status === StatusCodes.OK) {
       const result = await getSurveyVotes(dbClient, body.surveyQuestionId);
       const surveyVotes = await Promise.allSettled(
-        (sortDateByCreatedAt(result) as SurveyVote[]).map(async (surveyVote) => {
+        sortDateByCreatedAt(result).map(async (surveyVote) => {
           const votedBy = await getInnoUserByProviderId(surveyVote.votedBy);
 
           return {

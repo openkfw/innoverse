@@ -11,7 +11,7 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { Comment } from '@/common/types';
+import { User } from '@/common/types';
 import { parseStringForLinks } from '@/components/common/LinkString';
 import theme from '@/styles/theme';
 
@@ -22,17 +22,17 @@ import { StyledTooltip } from './StyledTooltip';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
-interface CommentCardProps {
-  content: Pick<Comment, 'author' | 'comment'>;
-  voteComponent?: React.JSX.Element;
+interface TextCardProps {
+  content: { author?: User; text: string };
+  footer?: React.ReactNode;
   sx?: SxProps;
   headerSx?: SxProps;
 }
 
 const MAX_TEXT_LENGTH = 300;
 
-export const CommentCard = ({ content, voteComponent, sx, headerSx }: CommentCardProps) => {
-  const { author, comment } = content;
+export const TextCard = ({ content, footer, sx, headerSx }: TextCardProps) => {
+  const { author, text } = content;
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleToggle = () => {
@@ -40,10 +40,10 @@ export const CommentCard = ({ content, voteComponent, sx, headerSx }: CommentCar
   };
 
   useEffect(() => {
-    if (comment.length <= MAX_TEXT_LENGTH) {
+    if (text.length <= MAX_TEXT_LENGTH) {
       setIsCollapsed(true);
     }
-  }, [comment]);
+  }, [text]);
 
   return (
     <Card sx={{ ...cardStyle, ...sx }}>
@@ -72,9 +72,9 @@ export const CommentCard = ({ content, voteComponent, sx, headerSx }: CommentCar
       )}
       <CardContent sx={{ ...cardContentStyles }} style={{ paddingBottom: 0 }}>
         <Stack direction="column" spacing={2}>
-          <Box sx={{ ...commentContainerStyles, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
-            <Typography variant="body1" sx={commentStyles}>
-              {parseStringForLinks(comment)}
+          <Box sx={{ ...textContainerStyle, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
+            <Typography variant="body1" sx={textStyle}>
+              {parseStringForLinks(text)}
             </Typography>
             {!isCollapsed && (
               <Typography variant="subtitle2" onClick={handleToggle} sx={buttonOverlayStyle}>
@@ -82,15 +82,14 @@ export const CommentCard = ({ content, voteComponent, sx, headerSx }: CommentCar
               </Typography>
             )}
           </Box>
-
-          {voteComponent}
+          {footer}
         </Stack>
       </CardContent>
     </Card>
   );
 };
 
-// Comment Card Styles
+// Text Card Styles
 
 const cardStyle = {
   background: 'transparent',
@@ -125,7 +124,7 @@ const cardContentStyles = {
   marginLeft: 5,
 };
 
-const commentContainerStyles = {
+const textContainerStyle = {
   position: 'relative',
   overflow: 'hidden',
   display: '-webkit-box',
@@ -133,7 +132,7 @@ const commentContainerStyles = {
   whiteSpace: 'pre-wrap',
 };
 
-const commentStyles = {
+const textStyle = {
   color: 'secondary.contrastText',
 };
 
