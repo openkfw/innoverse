@@ -1,5 +1,6 @@
 import Stack from '@mui/material/Stack';
 
+import { MainPageData } from '@/common/types';
 import ErrorPage from '@/components/error/ErrorPage';
 import { EventSection } from '@/components/landing/eventsSection/EventsSection';
 import FeaturedProjectSlider from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
@@ -8,7 +9,7 @@ import Layout from '@/components/layout/Layout';
 import { getMainPageData } from '@/utils/requests';
 
 async function SkeletonIndexPage() {
-  const data = await getMainPageData();
+  const data = (await getMainPageData()) as MainPageData;
   const sliderContent = data?.sliderContent;
 
   if (!sliderContent) {

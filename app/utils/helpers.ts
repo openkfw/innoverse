@@ -1,21 +1,18 @@
 import { SxProps } from '@mui/material/styles';
 
-export const sortDateByCreatedAt = <T>(array: T[]): T[] => {
-  return array.sort((d1: any, d2: any) => d1.createdAt.getTime() - d2.createdAt.getTime());
+export const sortDateByCreatedAt = <T extends { createdAt: Date }>(array: T[]): T[] => {
+  return array.sort((d1: T, d2: T) => d1.createdAt.getTime() - d2.createdAt.getTime());
 };
-
-export function assertFullfilledPromise<T>(item: PromiseSettledResult<T>) {
-  return item.status === 'fulfilled';
-}
 
 export function getFulfilledResults<T>(results: PromiseSettledResult<T>[]) {
   return results
-    .filter(assertFullfilledPromise)
-    .map((result: PromiseSettledResult<T>) => (result as PromiseFulfilledResult<T>).value);
+    .filter((result): result is PromiseFulfilledResult<T> => result.status === 'fulfilled')
+    .map((result) => result.value);
 }
 
-export function getFulfilledPromiseResults<T>(promises: Promise<T>[]) {
-  return Promise.allSettled(promises).then((results) => getFulfilledResults(results));
+export async function getPromiseResults<T>(promises: Promise<T>[]) {
+  const results = await Promise.allSettled(promises);
+  return getFulfilledResults(results);
 }
 
 export const mergeStyles = (primary: SxProps | undefined, overrides: SxProps | undefined): SxProps => {

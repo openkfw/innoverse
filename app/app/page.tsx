@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
+import { MainPageData } from '@/common/types';
 import CustomToast from '@/components/common/CustomToast';
 import ErrorPage from '@/components/error/ErrorPage';
 import { EventSection } from '@/components/landing/eventsSection/EventsSection';
@@ -15,7 +16,7 @@ import { getMainPageData } from '@/utils/requests';
 
 async function IndexPage() {
   // As the page is not staticaly generated and no ISR is used here fetch is required
-  const data = await getMainPageData();
+  const data = (await getMainPageData()) as MainPageData;
   const sliderContent = data.sliderContent;
   const projects = data.projects;
   const updates = data.updates;

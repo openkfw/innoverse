@@ -1,7 +1,7 @@
 import winston from 'winston';
 const { combine, colorize, printf } = winston.format;
 
-let date = new Date().toISOString();
+const date = new Date().toISOString();
 
 const logFormat = printf(function (info) {
   return info.stack ? getErrorLog(info) : `${date} [${info.level}] ${info.message}`;

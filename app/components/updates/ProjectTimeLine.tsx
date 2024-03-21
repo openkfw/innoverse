@@ -7,7 +7,7 @@ import { SxProps } from '@mui/material/styles';
 import { ProjectUpdate } from '@/common/types';
 import theme from '@/styles/theme';
 
-import { CommentCard } from '../common/CommentCard';
+import { TextCard } from '../common/TextCard';
 
 import { ProjectTimeLineDate } from './ProjectTimeLineDate';
 import { YearField } from './YearField';
@@ -21,7 +21,32 @@ interface ProjectTimeLineProps {
   widthOfDateColumn?: React.CSSProperties['width'];
 }
 
+interface useProjectTimeLineProps {
+  projectUpdates: ProjectUpdate[];
+}
+
 export const ProjectTimeLine = ({ projectUpdates, widthOfDateColumn }: ProjectTimeLineProps) => {
+  const { updatesByYear } = useProjectTimeLine({ projectUpdates });
+
+  return (
+    <div>
+      {updatesByYear.map(({ year, updates }, idx) => {
+        const isLastYear = idx === updatesByYear.length - 1;
+        return (
+          <ProjectYearTimeline
+            widthOfDateColumn={widthOfDateColumn}
+            key={idx}
+            year={year}
+            projectUpdates={updates}
+            isLastYear={isLastYear}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+function useProjectTimeLine({ projectUpdates }: useProjectTimeLineProps) {
   const getYears = useCallback(() => {
     return (
       projectUpdates
@@ -49,24 +74,10 @@ export const ProjectTimeLine = ({ projectUpdates, widthOfDateColumn }: ProjectTi
     [getYears, getUpdatesForYear],
   );
 
-  const updatesByYear = getUpdatesByYear();
-  return (
-    <div>
-      {updatesByYear.map(({ year, updates }, idx) => {
-        const isLastYear = idx === updatesByYear.length - 1;
-        return (
-          <ProjectYearTimeline
-            widthOfDateColumn={widthOfDateColumn}
-            key={idx}
-            year={year}
-            projectUpdates={updates}
-            isLastYear={isLastYear}
-          />
-        );
-      })}
-    </div>
-  );
-};
+  return {
+    updatesByYear: getUpdatesByYear(),
+  };
+}
 
 interface ProjectYearTimelineProps {
   year: string;
@@ -88,10 +99,10 @@ const ProjectYearTimeline = ({ year, projectUpdates, isLastYear, widthOfDateColu
               showDivider={!isLastYear || idx < projectUpdates.length - 1}
             />
           </Box>
-          <CommentCard
+          <TextCard
             sx={updateCommentCardStyles}
             headerSx={updateCommentCardHeaderStyles}
-            content={{ author: update.author, comment: update.comment }}
+            content={{ author: update.author, text: update.comment }}
           />
         </Stack>
       ))}

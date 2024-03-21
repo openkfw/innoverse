@@ -1,10 +1,36 @@
 import { z } from 'zod';
 
-export const handleCollaborationCommentSchema = z
+export const getCollaborationCommentsSchema = z
+  .object({
+    projectId: z.string(),
+    questionId: z.string(),
+  })
+  .required();
+
+export const addCollaborationCommentSchema = z
   .object({
     projectId: z.string(),
     questionId: z.string(),
     comment: z.string().min(1),
+  })
+  .required();
+
+export const deleteCollaborationCommentSchema = z
+  .object({
+    commentId: z.string(),
+  })
+  .required();
+
+export const updateCollaborationCommentSchema = z
+  .object({
+    commentId: z.string(),
+    updatedText: z.string(),
+  })
+  .required();
+
+export const collaborationCommentUpvotedBySchema = z
+  .object({
+    commentId: z.string(),
   })
   .required();
 
@@ -18,7 +44,7 @@ export const getCollaborationCommentResponsesSchema = z
   })
   .required();
 
-export const handleCollaborationCommentResponseSchema = z
+export const addCollaborationCommentResponseSchema = z
   .object({
     comment: z
       .object({
@@ -29,21 +55,21 @@ export const handleCollaborationCommentResponseSchema = z
   })
   .required();
 
-export const getCollaborationCommentsSchema = z
+export const deleteCollaborationCommentResponseSchema = z
   .object({
-    projectId: z.string(),
-    questionId: z.string(),
+    responseId: z.string(),
   })
   .required();
 
-export const collaborationCommentUpvotedBySchema = z
+export const updateCollaborationCommentResponseSchema = z
   .object({
-    commentId: z.string(),
+    responseId: z.string(),
+    updatedText: z.string(),
   })
   .required();
 
 export const collaborationCommentResponseUpvotedBySchema = z
   .object({
-    commentId: z.string(),
+    responseId: z.string(),
   })
   .required();

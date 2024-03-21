@@ -1,9 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 
-export async function getProjectComments(client: PrismaClient, projectId: string) {
+export async function getComments(client: PrismaClient, projectId: string) {
   return client.projectComment.findMany({
     where: {
       projectId,
+    },
+  });
+}
+
+export async function getCommentbyId(client: PrismaClient, commentId: string) {
+  return client.projectComment.findFirst({
+    where: {
+      id: commentId,
     },
   });
 }
@@ -14,6 +22,25 @@ export async function addComment(client: PrismaClient, projectId: string, author
       projectId,
       author,
       comment,
+    },
+  });
+}
+
+export async function updateComment(client: PrismaClient, commentId: string, updatedText: string) {
+  return client.projectComment.update({
+    where: {
+      id: commentId,
+    },
+    data: {
+      comment: updatedText,
+    },
+  });
+}
+
+export async function deleteComment(client: PrismaClient, commentId: string) {
+  return client.projectComment.delete({
+    where: {
+      id: commentId,
     },
   });
 }
