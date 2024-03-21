@@ -111,7 +111,7 @@ const UpdateCard = (props: UpdateCardProps) => {
               <Box onClick={showPrevious} sx={iconStyles}>
                 <ArrowLeftIcon disabled={previousDisabled} />
               </Box>
-              <Typography color="text.secondary">{progress}</Typography>
+              <Typography color="#6D767D">{progress}</Typography>
               <Box onClick={showNext} sx={iconStyles}>
                 <ArrowRightIcon disabled={nextDisabled} />
               </Box>
