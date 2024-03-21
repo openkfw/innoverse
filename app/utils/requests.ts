@@ -146,17 +146,17 @@ export async function getEvents(startingFrom: Date) {
 export async function getMainPageData() {
   const today = new Date();
   const events = await getEvents(today);
-  const featuredProjects = await getFeaturedProjects();
+  const data = await getDataWithFeaturedFiltering();
 
   return {
     events: events ?? [],
-    projects: featuredProjects?.projects,
-    sliderContent: featuredProjects?.sliderContent,
-    updates: featuredProjects?.updates,
+    projects: data?.projects,
+    sliderContent: data?.sliderContent,
+    updates: data?.updates,
   };
 }
 
-export async function getFeaturedProjects() {
+export async function getDataWithFeaturedFiltering() {
   try {
     const requestProjects = await strapiFetcher(GetProjectsQuery);
     const result = (await withResponseTransformer(STRAPI_QUERY.GetProjects, requestProjects)) as ProjectsQueryResult;
