@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useRef, useState } from 'react';
+import { SetStateAction, useRef, useState } from 'react';
 import Slider, { Settings } from 'react-slick';
 
 import Box from '@mui/material/Box';
@@ -43,18 +43,8 @@ export default function Carousel<T extends ProjectUpdate>({
   sx,
 }: CarouselProps<T>) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [slides, setSlides] = useState<T[]>([]);
   const sliderRef = useRef<Slider>(null);
 
-  useEffect(() => {
-    const sortedItems = [...items].sort((a, b) => {
-      const getTime = (item: { projectStart?: string; date?: string }) =>
-        new Date(item.projectStart || item.date || 0).getTime();
-      return getTime(b) - getTime(a);
-    });
-
-    setSlides(sortedItems);
-  }, [items]);
 
   const handleMouseDown = (e: { pageX: number }) => {
     const startX = e.pageX;
@@ -95,14 +85,14 @@ export default function Carousel<T extends ProjectUpdate>({
     <Grid container item xs={12} spacing={2} onMouseDown={handleMouseDown} sx={mergeStyles(wrapper, sx)}>
       <Box sx={sliderBox}>
         <Slider {...settings} ref={sliderRef}>
-          {slides.map((item, idx) => renderItem(item, idx))}
+          {items.map((item, idx) => renderItem(item, idx))}
         </Slider>
       </Box>
 
       <Box sx={navigationStyles}>
         <ArrowControllers
           currentSlide={currentSlide}
-          slidesLength={slides.length - 1}
+          slidesLength={items.length - 1}
           prevSlide={() => sliderRef?.current?.slickPrev()}
           nextSlide={() => sliderRef?.current?.slickNext()}
         />

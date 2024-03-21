@@ -317,7 +317,7 @@ export const GetCollaborationQuestionsByProjectIdQuery = `query GetCollaboration
 }`;
 
 export const GetProjectsQuery = `query GetProjects {
-  projects(sort: "id:asc") {
+  projects(sort: "updatedAt:desc", pagination: { limit: 80 }) {
     data {
       id
       attributes {
