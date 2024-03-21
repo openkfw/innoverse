@@ -13,7 +13,8 @@ import MuiMarkdown, { getOverrides, Overrides } from 'mui-markdown';
 
 import { ArrowUpward } from '@mui/icons-material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { IconButton, SxProps } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import { SxProps } from '@mui/material/styles';
 
 import theme from '@/styles/theme';
 import { mergeStyles } from '@/utils/helpers';

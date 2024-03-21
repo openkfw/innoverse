@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { SxProps } from '@mui/material';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { Event } from '../../../common/types';
