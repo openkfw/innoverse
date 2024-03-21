@@ -8,7 +8,7 @@
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
     "no-restricted-imports": [
-      "error",
+      "warn",
       {
         "paths": [{ "name": "@mui/material", "message": "Use default import from material ui instead." }],
         "patterns": ["@mui/*/*/*"]

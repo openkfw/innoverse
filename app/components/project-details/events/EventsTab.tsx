@@ -2,11 +2,15 @@ import { useEffect, useMemo, useState } from 'react';
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { Button, CircularProgress, Link, Stack, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 import { Event } from '@/common/types';
 
