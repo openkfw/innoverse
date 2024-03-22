@@ -29,7 +29,7 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
 
       <CardContent style={{ padding: 0 }}>
         <Box sx={cardContentStyles}>
-          <Typography color="primary.main" sx={titleStyles}>
+          <Typography color="primary.main" sx={titleStyles} id="opportunities-section">
             Opportunities
           </Typography>
 
@@ -42,7 +42,7 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
 
           <Divider textAlign="left" sx={{ my: { xs: '48px', md: '88px' } }} />
 
-          <Typography color="primary.main" sx={titleStyles}>
+          <Typography color="primary.main" sx={titleStyles} id="surveys-section">
             Umfrage
           </Typography>
 
@@ -55,7 +55,7 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
           {project.collaborationQuestions.length > 0 && (
             <>
               <Divider textAlign="left" sx={{ my: { xs: '48px', md: '88px' } }} />
-              <Typography color="primary.main" sx={titleStyles}>
+              <Typography color="primary.main" sx={titleStyles} id="collaboration-questions-section">
                 Hilf uns bei diesen Fragen
               </Typography>
               <Stack sx={gridStyles} spacing={{ xs: 6, md: 12 }}>
