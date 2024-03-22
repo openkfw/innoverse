@@ -1,0 +1,4 @@
+# For development purposes, all content is disallowed to be crawled
+
+User-agent: *
+Disallow: /
