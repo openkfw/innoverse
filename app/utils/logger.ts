@@ -1,14 +1,12 @@
 import winston from 'winston';
-const { combine, colorize, printf } = winston.format;
-
-const date = new Date().toISOString();
+const { combine, colorize, printf, timestamp } = winston.format;
 
 const logFormat = printf(function (info) {
-  return info.stack ? getErrorLog(info) : `${date} [${info.level}] ${info.message}`;
+  return info.stack ? getErrorLog(info) : `${info.timestamp} [${info.level}] ${info.message}`;
 });
 
 const getErrorLog = (info: winston.Logform.TransformableInfo) => {
-  let logMessage = `${date} [${info.level}]: ${info.name}`;
+  let logMessage = `${info.timestamp} [${info.level}]: ${info.name}`;
 
   logMessage += `\n\tmessage: ${info.message}`;
   if (info.resource) {
@@ -20,7 +18,13 @@ const getErrorLog = (info: winston.Logform.TransformableInfo) => {
 
 const logger = winston.createLogger({
   level: 'info',
-  format: combine(colorize(), logFormat),
+  format: combine(
+    colorize(),
+    timestamp({
+      format: new Date().toISOString(),
+    }),
+    logFormat,
+  ),
   transports: [new winston.transports.Console()],
 });
 
