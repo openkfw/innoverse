@@ -36,7 +36,6 @@ type SlideProps = {
 const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
-
   const isLastSlide = index === totalItems - 1;
   const isFirstSlide = index === 0;
 

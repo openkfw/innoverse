@@ -45,7 +45,6 @@ export default function Carousel<T extends ProjectUpdate>({
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef<Slider>(null);
 
-
   const handleMouseDown = (e: { pageX: number }) => {
     const startX = e.pageX;
     const mouseMoveHandler = (moveEvent: { pageX: number }) => {
