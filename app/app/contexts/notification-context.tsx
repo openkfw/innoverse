@@ -2,13 +2,10 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import { SxProps } from '@mui/material/styles';
+import { Box } from '@mui/material';
 
 import { useSessionItem } from '@/app/contexts/helpers';
-import { errorMessage } from '@/components/common/CustomToast';
+import { NotificationBanner } from '@/components/notifications/NotificationBanner';
 import { subscribeToWebPush } from '@/utils/notification/pushNotification';
 
 import { useUser } from './user-context';
@@ -66,33 +63,21 @@ const contextObject: NotificationContextInterface = {
 const NotificationContext = createContext(contextObject);
 
 export const NotificationContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const { showPushSubscriptionAlert, hidePushSubscriptionAlert, registerPushNotifications } =
+  const { showPushSubscriptionAlert, hidePushSubscriptionAlert, registerPushNotifications, showManualSteps } =
     useNotificationContextProvider();
-
   return (
     <NotificationContext.Provider value={contextObject}>
       <Box
         display={showPushSubscriptionAlert ? 'flex' : 'none'}
-        alignItems="center"
-        justifyContent="center"
-        bgcolor={'#edf7ed'}
-        position={'fixed'}
-        sx={{ mt: '64px', width: '100%', zIndex: 5 }}
+        style={{
+          justifyContent: 'flex-end',
+        }}
       >
-        <Alert
-          icon={false}
-          severity="success"
-          style={{ borderRadius: 0 }}
-          sx={{ backgroundColor: 'transparent', fontSize: '16px' }}
-        >
-          Möchtest du Push-Benachrichtigungen zu Projekten erhalten?
-          <Button variant={'text'} onClick={registerPushNotifications} sx={{ ...buttonStyle, ml: 2 }}>
-            Ja
-          </Button>
-          <Button variant={'text'} onClick={hidePushSubscriptionAlert} sx={buttonStyle}>
-            Nein
-          </Button>
-        </Alert>
+        <NotificationBanner
+          showManualSteps={showManualSteps}
+          registerPushNotifications={() => registerPushNotifications()}
+          hidePushSubscriptionAlert={() => hidePushSubscriptionAlert()}
+        />
       </Box>
       {children}
     </NotificationContext.Provider>
@@ -100,26 +85,19 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
 };
 
 function useNotificationContextProvider() {
-  const [showPushSubscriptionAlert, setShowPushSubscriptionAlert] = useState(false);
-  const disableAlertSessionItem = useSessionItem<true>('disable-push-subscription-alert');
+  const [manualSteps, setShowManualSteps] = useState(false);
+  const enableAlertSessionItem = useSessionItem<boolean>('enable-push-subscription-alert');
 
   const initialized = useRef(false);
   const { user, isLoading } = useUser();
 
   const showAlert = useCallback(() => {
-    setShowPushSubscriptionAlert(true);
+    enableAlertSessionItem.set(true);
   }, []);
 
-  const hideAlert = useCallback(
-    ({ persistInSessionStorage }: { persistInSessionStorage: boolean }) => {
-      setShowPushSubscriptionAlert(false);
-
-      if (persistInSessionStorage) {
-        disableAlertSessionItem.set(true);
-      }
-    },
-    [disableAlertSessionItem],
-  );
+  const hideAlert = useCallback(() => {
+    enableAlertSessionItem.set(false);
+  }, [enableAlertSessionItem]);
 
   const handleError = useCallback(
     ({ triggeredByUserGesture, error }: { triggeredByUserGesture: boolean; error?: unknown }) => {
@@ -133,7 +111,7 @@ function useNotificationContextProvider() {
       }
 
       if (triggeredByUserGesture) {
-        errorMessage({ message: 'Fehler beim Einrichten der Push-Benachrichtigungen' });
+        setShowManualSteps(true);
       } else {
         showAlert();
       }
@@ -160,7 +138,7 @@ function useNotificationContextProvider() {
         await subscribeToWebPush(JSON.stringify(subscription));
 
         console.info(`Enabled push notifications (triggered by user gesture: ${triggeredByUserGesture})`);
-        hideAlert({ persistInSessionStorage: false });
+        hideAlert();
       } catch (error) {
         handleError({ triggeredByUserGesture, error });
       }
@@ -179,6 +157,13 @@ function useNotificationContextProvider() {
 
   const registerServiceWorker = () => navigator.serviceWorker.register('/sw.js', { scope: '/' });
 
+  useEffect(() => {
+    const trigger = setTimeout(() => {
+      showAlert();
+    }, 5 * 1000);
+    return () => clearTimeout(trigger);
+  }, []);
+
   useEffect(
     function initializeServiceWorker() {
       try {
@@ -187,34 +172,20 @@ function useNotificationContextProvider() {
         initialized.current = true;
         if (!('serviceWorker' in navigator)) return;
 
-        registerServiceWorker().then(() => {
-          registerNotifications({ triggeredByUserGesture: false });
-        });
+        registerServiceWorker().then(() => console.log('Service worker registered'));
       } catch (error) {
         console.error("Can't register service worker", error);
       }
     },
-    [user, isLoading, disableAlertSessionItem.value, registerNotifications],
+    [user, isLoading, enableAlertSessionItem.value, registerNotifications],
   );
 
   return {
-    showPushSubscriptionAlert: showPushSubscriptionAlert && user && !disableAlertSessionItem.value,
-    hidePushSubscriptionAlert: () => hideAlert({ persistInSessionStorage: true }),
+    showPushSubscriptionAlert: user && enableAlertSessionItem.value,
+    hidePushSubscriptionAlert: () => hideAlert(),
     registerPushNotifications: () => registerNotifications({ triggeredByUserGesture: true }),
+    showManualSteps: manualSteps,
   };
 }
 
 export const useNotification = () => useContext(NotificationContext);
-
-const buttonStyle: SxProps = {
-  backgroundColor: 'transparent',
-  color: 'primary.main',
-  '&:hover': {
-    backgroundColor: 'rgba(25, 118, 210, 0.04)',
-    color: 'primary.main',
-  },
-  '&:active': {
-    backgroundColor: 'transparent',
-    color: 'primary.main',
-  },
-};
