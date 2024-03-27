@@ -39,11 +39,14 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
   const isLastSlide = index === totalItems - 1;
   const isFirstSlide = index === 0;
 
-
   const NextArrow = () => {
     if ((isHovered || !isWideScreen) && !isLastSlide) {
       return (
-        <Box sx={{ ...arrowStyle, right: !isWideScreen? 0: 10 }} onClick={() => setSelected(index + 1)} onTouchEnd={() => setSelected(index + 1)}        >
+        <Box
+          sx={{ ...arrowStyle, right: !isWideScreen ? 2 : 10 }}
+          onClick={() => setSelected(index + 1)}
+          onTouchEnd={() => setSelected(index + 1)}
+        >
           <ArrowForwardIosIcon fontSize="large" />
         </Box>
       );
@@ -55,7 +58,11 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
   const PrevArrow = () => {
     if ((isHovered || !isWideScreen) && !isFirstSlide) {
       return (
-        <Box sx={{ ...arrowStyle, left: !isWideScreen? 0:10 }} onClick={() => setSelected(index - 1)} onTouchEnd={() => setSelected(index - 1)}        >
+        <Box
+          sx={{ ...arrowStyle, left: !isWideScreen ? 2 : 10 }}
+          onClick={() => setSelected(index - 1)}
+          onTouchEnd={() => setSelected(index - 1)}
+        >
           <ArrowBackIosNewIcon fontSize="large" />
         </Box>
       );
@@ -121,12 +128,11 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
 
   function setSelected(index: number) {
     if (index >= 0 && index < slides.length) {
-      setTimeout(() => sliderRef.current?.slickGoTo(index), 10) 
+      sliderRef.current?.slickGoTo(index);
       setSelectedItem(index);
       moveIndicator(index);
     }
   }
-
 
   const settings = {
     initialSlide: slides.length - 1,
@@ -154,7 +160,6 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
     className: 'carouselStyles',
     beforeChange: (oldIndex: number, newIndex: number) => {
       setSelectedItem(newIndex);
-
     },
   };
 
