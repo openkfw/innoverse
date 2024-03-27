@@ -21,6 +21,7 @@ const bodySchema = z.object({
   entry: object({ id: string().or(number()) }),
 });
 
+//For information about how the rules work & the challenges head to: ***URL_REMOVED***
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method, body, headers } = req;
   const { authorization } = headerSchema.parse(headers);
