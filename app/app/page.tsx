@@ -22,6 +22,8 @@ async function IndexPage() {
   const updates = data.updates;
   const events = data.events;
 
+  console.log(data);
+
   if (!sliderContent || !projects || !updates) {
     return <ErrorPage />;
   }
@@ -39,7 +41,9 @@ async function IndexPage() {
         </div>
         <EventSection events={events} />
         <ProjectSection projects={projects} />
-        <MappingProjectsCard projects={projects} />
+        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+          <MappingProjectsCard projects={projects} />
+        </Box>
       </Stack>
       <CustomToast />
     </Layout>
