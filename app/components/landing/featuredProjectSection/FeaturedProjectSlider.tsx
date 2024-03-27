@@ -263,7 +263,7 @@ const contentStyles = {
 };
 
 const arrowStyle = {
-  zIndex: 10000,
+  zIndex: 100,
   position: 'absolute',
   cursor: 'pointer',
   top: '50%',

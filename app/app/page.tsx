@@ -22,8 +22,6 @@ async function IndexPage() {
   const updates = data.updates;
   const events = data.events;
 
-  console.log(data);
-
   if (!sliderContent || !projects || !updates) {
     return <ErrorPage />;
   }
