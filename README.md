@@ -85,11 +85,11 @@ now your app should be visible under [http://localhost:3000](http://localhost:30
 - Go to the CMS > Settings > Webhooks > Create a new Webhook
 - Add a meaningful name
 - Add the URL of the push notifications
-  - For local development: `http://host.docker.internal:3000/api/hooks/push`
-  - For production: `https://${YOUR-DOMAIN}/api/hooks/push`
+    - For local development: `http://host.docker.internal:3000/api/hooks/push`
+    - For production: `https://${YOUR-DOMAIN}/api/hooks/push`
 - Add the header `Authorization`, the value should be the value of the environment
   variable `STRAPI_PUSH_NOTIFICATION_SECRET`
-- Add the events you want to listen to (for now only `entry.publish` will be handled by the endpoint)
+- Add all the events to the webhook
 
 > **Important:**
 > For local development, the `http://host.docker.internal:3000/api/hooks/push` URL is used to access the platform!
