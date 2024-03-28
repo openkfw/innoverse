@@ -29,6 +29,7 @@ const palette: DefaultPaletteOptions = {
   action: {
     active: '#0000008F',
     disabledBackground: '#F5F5F5',
+    hover: '#B7F9AA',
   },
   background: {
     default: '#0067A0',

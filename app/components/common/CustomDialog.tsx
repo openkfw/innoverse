@@ -89,14 +89,15 @@ export const closeIconButtonStyle = {
   height: 48,
   borderRadius: 48,
   border: '2px solid #D4FCCA',
-  backgroundColor: '#B7F9AA',
+  backgroundColor: 'action.hover',
   backdropFilter: 'blur(24px)',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
 
   ':hover': {
-    border: '2px solid #B7F9AA',
+    border: '2px solid',
+    borderColor: 'action.hover',
     backgroundColor: '#94EB90',
     boxShadow: '0px 12px 32px 0px rgba(0, 0, 0, 0.25), 0px 4px 8px 0px rgba(0, 0, 0, 0.10)',
   },
