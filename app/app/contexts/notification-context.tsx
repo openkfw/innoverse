@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
 
 import { useSessionItem } from '@/app/contexts/helpers';
 import { NotificationBanner } from '@/components/notifications/NotificationBanner';

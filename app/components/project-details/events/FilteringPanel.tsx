@@ -1,7 +1,6 @@
 import React, { SetStateAction, useEffect, useMemo } from 'react';
 
 import SearchIcon from '@mui/icons-material/Search';
-import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
@@ -11,6 +10,7 @@ import FormLabel from '@mui/material/FormLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 import { Event } from '@/common/types';
 

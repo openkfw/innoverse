@@ -1,4 +1,5 @@
-import { ClickAwayListener, Popper } from '@mui/material';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Popper from '@mui/material/Popper';
 import Stack from '@mui/material/Stack';
 
 import DeleteFilledIcon from '../../../icons/DeleteFilled';

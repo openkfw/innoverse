@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useMediaQuery } from '@mui/material';
 import Stack from '@mui/material/Stack';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import theme from '@/styles/theme';
 

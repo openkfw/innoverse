@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
-import { SxProps, ToggleButton } from '@mui/material';
+import { SxProps } from '@mui/material/styles';
+import ToggleButton from '@mui/material/ToggleButton';
 
 import ArrowUpIcon from '@/components/icons/ArrowUpIcon';
 

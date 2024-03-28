@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 
-import { SxProps } from '@mui/material';
+import { SxProps } from '@mui/material/styles';
 
 import { Comment } from '@/common/types';
 import { useCommentInteractions, useCommentState } from '@/components/common/comments/comment-context';
