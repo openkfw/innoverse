@@ -138,8 +138,10 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
     initialSlide: slides.length - 1,
     arrows: false,
     dots: true,
-    infinite: false,
+    infinite: true,
     speed: 600,
+    autoplay: true,
+    autoplaySpeed: 7000,
     slidesToShow: 1,
     slidesToScroll: 1,
     vertical: false,
@@ -158,8 +160,9 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
     rows: 1,
     variableWidth: !isWideScreen,
     className: 'carouselStyles',
-    beforeChange: (oldIndex: number, newIndex: number) => {
-      setSelectedItem(newIndex);
+    beforeChange: (_current: number, next: number) => {
+      setSelectedItem(next);
+      moveIndicator(next);
     },
   };
 
