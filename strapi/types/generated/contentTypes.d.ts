@@ -749,7 +749,7 @@ export interface ApiEventEvent extends Schema.CollectionType {
       Attribute.Private;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    location: Attribute.String & Attribute.Required;
+    location: Attribute.String;
     title: Attribute.String & Attribute.Required;
     image: Attribute.Media;
     startTime: Attribute.DateTime & Attribute.Required;
@@ -762,8 +762,7 @@ export interface ApiEventEvent extends Schema.CollectionType {
     description: Attribute.RichText;
     type: Attribute.Enumeration<
       ['Remote', 'In-office', 'Remote und In-office']
-    > &
-      Attribute.Required;
+    >;
     project: Attribute.Relation<
       'api::event.event',
       'manyToOne',
