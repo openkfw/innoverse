@@ -1,5 +1,5 @@
-import { SxProps } from '@mui/material';
 import Chip from '@mui/material/Chip';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 type CustomChipProps = {

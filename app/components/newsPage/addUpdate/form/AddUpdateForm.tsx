@@ -6,9 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs, { Dayjs } from 'dayjs';
 import { StatusCodes } from 'http-status-codes';
 
-import { CircularProgress } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 
 import { Option } from '@/common/formTypes';
@@ -60,15 +60,6 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
 
   const [projectOptions, setProjectOptions] = useState<Option[]>();
 
-  const openToast = (success: boolean = true) => {
-    if (success) {
-      successMessage({ message: 'Update was successfully added' });
-      return;
-    } else {
-      errorMessage({ message: 'There was an error when adding an update' });
-    }
-  };
-
   const onSubmit: SubmitHandler<UpdateFormValidationSchema> = async (data) => {
     const { comment, projectId, date } = data;
     const formData = {
@@ -80,10 +71,10 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
     const response = await handleProjectUpdate(formData);
     if (response.status === StatusCodes.OK) {
       setUpdateAdded(true);
-      openToast();
+      successMessage({ message: 'Update was successfully created' });
       handleClose();
     } else {
-      openToast(false);
+      errorMessage({ message: 'There was an error when adding an update' });
     }
   };
 

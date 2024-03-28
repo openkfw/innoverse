@@ -4,22 +4,20 @@ import Image from 'next/image';
 import MuiMarkdown, { getOverrides, Overrides } from 'mui-markdown';
 
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import {
-  Box,
-  Collapse,
-  Divider,
-  Grid,
-  IconButton,
-  Link,
-  List,
-  ListItemButton,
-  SxProps,
-  Typography,
-} from '@mui/material';
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
+import Collapse from '@mui/material/Collapse';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
 import Stack from '@mui/material/Stack';
+import { SxProps } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
 import triggerAnalyticsEvent from '@/analytics/analytics';
 import { Project } from '@/common/types';
@@ -77,7 +75,7 @@ const InfoItemRight = ({ title, summary }: InfoItemProps) => {
       <Divider sx={dividerStyle} />
 
       <CardMedia sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Image src={robotic_hand} alt="image" width={235} height={130} />
+        <Image src={robotic_hand} alt="image" width={235} height={132} />
       </CardMedia>
       <CardContent sx={{ p: '18px' }}>
         <Typography variant="subtitle2" color="text.primary">

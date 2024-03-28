@@ -1,14 +1,16 @@
 'use server';
 
-import type { ProjectComment } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 
 import { Comment, UserSession } from '@/common/types';
 import {
   addComment,
+  deleteComment,
+  getCommentbyId,
+  getComments,
   getCommentUpvotedBy,
-  getProjectComments,
   handleCommentUpvotedBy,
+  updateComment,
 } from '@/repository/db/project_comment';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
@@ -19,9 +21,15 @@ import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
 
-import { commentUpvotedBySchema, getCommentsSchema, handleCommentSchema } from './validationSchema';
+import {
+  commentUpvotedBySchema,
+  deleteCommentSchema,
+  getCommentsSchema,
+  handleCommentSchema,
+  updateCommentSchema,
+} from './validationSchema';
 
-export const handleComment = withAuth(async (user: UserSession, body: { projectId: string; comment: string }) => {
+export const addProjectComment = withAuth(async (user: UserSession, body: { projectId: string; comment: string }) => {
   try {
     const validatedParams = validateParams(handleCommentSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
@@ -56,14 +64,14 @@ export const handleComment = withAuth(async (user: UserSession, body: { projectI
   }
 });
 
-export const getComments = async (body: { projectId: string }) => {
+export const getProjectComments = async (body: { projectId: string }) => {
   try {
     const validatedParams = validateParams(getCommentsSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      const result = await getProjectComments(dbClient, body.projectId);
+      const result = await getComments(dbClient, body.projectId);
 
       const comments = await Promise.allSettled(
-        (sortDateByCreatedAt(result) as ProjectComment[]).map(async (comment) => {
+        sortDateByCreatedAt(result).map(async (comment) => {
           const author = await getInnoUserByProviderId(comment.author);
           const upvotes = await Promise.allSettled(
             comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote)),
@@ -97,7 +105,7 @@ export const getComments = async (body: { projectId: string }) => {
   }
 };
 
-export const isCommentUpvotedBy = withAuth(async (user: UserSession, body: { commentId: string }) => {
+export const isProjectCommentUpvotedBy = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
     const validatedParams = validateParams(commentUpvotedBySchema, body);
     if (validatedParams.status === StatusCodes.OK) {
@@ -126,13 +134,14 @@ export const isCommentUpvotedBy = withAuth(async (user: UserSession, body: { com
   }
 });
 
-export const handleUpvotedBy = withAuth(async (user: UserSession, body: { commentId: string }) => {
+export const handleProjectCommentUpvoteBy = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
     const validatedParams = validateParams(commentUpvotedBySchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      await handleCommentUpvotedBy(dbClient, body.commentId, user.providerId);
+      const updatedComment = await handleCommentUpvotedBy(dbClient, body.commentId, user.providerId);
       return {
         status: StatusCodes.OK,
+        upvotedBy: updatedComment?.upvotedBy,
       };
     }
     return {
@@ -153,3 +162,74 @@ export const handleUpvotedBy = withAuth(async (user: UserSession, body: { commen
     };
   }
 });
+
+export const deleteProjectComment = withAuth(async (user: UserSession, body: { commentId: string }) => {
+  const validatedParams = validateParams(deleteCommentSchema, body);
+
+  if (validatedParams.status !== StatusCodes.OK) {
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+      message: validatedParams.message,
+    };
+  }
+
+  const comment = await getCommentbyId(dbClient, body.commentId);
+
+  if (comment === null) {
+    return {
+      status: StatusCodes.BAD_REQUEST,
+      message: 'No comment with the specified ID exists',
+    };
+  }
+
+  if (comment.author !== user.providerId) {
+    return {
+      status: StatusCodes.BAD_REQUEST,
+      message: 'A comment can only be deleted by its author',
+    };
+  }
+
+  await deleteComment(dbClient, body.commentId);
+
+  return {
+    status: StatusCodes.OK,
+  };
+});
+
+export const updateProjectComment = withAuth(
+  async (user: UserSession, body: { commentId: string; updatedText: string }) => {
+    const validatedParams = validateParams(updateCommentSchema, body);
+
+    if (validatedParams.status !== StatusCodes.OK) {
+      return {
+        status: validatedParams.status,
+        errors: validatedParams.errors,
+        message: validatedParams.message,
+      };
+    }
+
+    const comment = await getCommentbyId(dbClient, body.commentId);
+
+    if (comment === null) {
+      return {
+        status: StatusCodes.BAD_REQUEST,
+        message: 'No comment with the specified ID exists',
+      };
+    }
+
+    if (comment.author !== user.providerId) {
+      return {
+        status: StatusCodes.BAD_REQUEST,
+        message: 'A comment can only be edited by its author',
+      };
+    }
+
+    const updatedComment = await updateComment(dbClient, body.commentId, body.updatedText);
+
+    return {
+      status: StatusCodes.OK,
+      comment: updatedComment,
+    };
+  },
+);

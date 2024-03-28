@@ -1,6 +1,8 @@
-import { Chip, styled, SxProps, ToggleButtonGroup } from '@mui/material';
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import { styled, SxProps } from '@mui/material/styles';
 import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
 import { ResponseOption } from '@/common/types';

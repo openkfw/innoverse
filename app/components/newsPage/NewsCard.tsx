@@ -108,8 +108,8 @@ export default function NewsCard(props: NewsCardProps) {
             {projectId ? (
               <Link href={`/projects/${projectId}`} style={{ ...linkStyle }}>
                 <Stack direction="row" alignItems="center">
-                  <ArrowForwardIcon sx={{ fontSize: '14px', color: 'secondary.main' }} />
-                  <Typography variant="subtitle2" sx={{ fontSize: '14px' }} noWrap>
+                  <ArrowForwardIcon sx={{ fontSize: '14px', color: 'primary.main' }} />
+                  <Typography variant="subtitle2" sx={{ fontSize: '14px', color: 'primary.main' }} noWrap>
                     {title}
                   </Typography>
                 </Stack>
@@ -144,6 +144,7 @@ const cardStyles = {
   borderRadius: '8px',
   marginRight: 3,
   height: '100%',
+  background: 'linear-gradient(0deg, rgba(240, 238, 225, 0.30) 0%, rgba(240, 238, 225, 0.30) 100%), #FFF',
   [theme.breakpoints.up('sm')]: {
     width: '368px',
   },

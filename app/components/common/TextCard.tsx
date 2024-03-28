@@ -3,32 +3,36 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-import { Box } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { Comment } from '@/common/types';
-import AvatarInitialsIcon from '@/components/common/AvatarInitialsIcon';
+import { User } from '@/common/types';
 import { parseStringForLinks } from '@/components/common/LinkString';
 import theme from '@/styles/theme';
 
-import { handleUpvotedBy, isCommentUpvotedBy } from './actions';
-import { CommentVoteComponent } from './VoteComponent';
+import { TooltipContent } from '../project-details/TooltipContent';
+
+import AvatarIcon from './AvatarIcon';
+import { StyledTooltip } from './StyledTooltip';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
-interface CommentCardProps {
-  content: Comment;
+interface TextCardProps {
+  content: { author?: User; text: string };
+  footer?: React.ReactNode;
+  sx?: SxProps;
+  headerSx?: SxProps;
 }
 
 const MAX_TEXT_LENGTH = 300;
 
-export const CommentCard = ({ content }: CommentCardProps) => {
-  const { author, comment, upvotedBy, id } = content;
+export const TextCard = ({ content, footer, sx, headerSx }: TextCardProps) => {
+  const { author, text } = content;
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleToggle = () => {
@@ -36,28 +40,26 @@ export const CommentCard = ({ content }: CommentCardProps) => {
   };
 
   useEffect(() => {
-    if (comment.length <= MAX_TEXT_LENGTH) {
+    if (text.length <= MAX_TEXT_LENGTH) {
       setIsCollapsed(true);
     }
-  }, [comment]);
+  }, [text]);
 
   return (
-    <Card sx={cardStyle}>
+    <Card sx={{ ...cardStyle, ...sx }}>
       {author && (
         <CardHeader
-          sx={cardHeaderStyles}
+          sx={{ ...cardHeaderStyles, ...headerSx }}
           avatar={
-            author.image ? (
-              <Avatar sx={avatarStyles}>
-                <Image src={author.image} alt="avatar" fill sizes="33vw" />
-              </Avatar>
-            ) : (
-              <AvatarInitialsIcon name={author.name} size={32} />
-            )
+            <Box>
+              <StyledTooltip arrow key={author.id} title={<TooltipContent teamMember={author} />} placement="bottom">
+                <AvatarIcon user={author} size={32} allowAnimation disableTransition />
+              </StyledTooltip>
+            </Box>
           }
           title={
             <Stack direction="row" spacing={1} sx={cardHeaderTitleStyles}>
-              <Typography variant="subtitle2" color="secondary.contrastText">
+              <Typography variant="subtitle2" color="primary.dark">
                 {author.name}
               </Typography>
               {author.badge && <Image src={badgeIcon} alt="badge" />}
@@ -68,36 +70,26 @@ export const CommentCard = ({ content }: CommentCardProps) => {
           }
         />
       )}
-      <CardContent sx={cardContentStyles}>
+      <CardContent sx={{ ...cardContentStyles }} style={{ paddingBottom: 0 }}>
         <Stack direction="column" spacing={2}>
-          <Box sx={{ ...commentContainerStyles, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
-            <Typography variant="body1" sx={commentStyles}>
-              {parseStringForLinks(comment)}
+          <Box sx={{ ...textContainerStyle, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
+            <Typography variant="body1" sx={textStyle}>
+              {parseStringForLinks(text)}
             </Typography>
-
             {!isCollapsed && (
               <Typography variant="subtitle2" onClick={handleToggle} sx={buttonOverlayStyle}>
                 ... alles anzeigen
               </Typography>
             )}
           </Box>
-
-          {upvotedBy && (
-            <CommentVoteComponent
-              commentId={id}
-              upvotedBy={upvotedBy}
-              handleUpvote={handleUpvotedBy}
-              isUpvoted={isCommentUpvotedBy}
-              handleClickOnResponse={() => {}}
-            />
-          )}
+          {footer}
         </Stack>
       </CardContent>
     </Card>
   );
 };
 
-// Comment Card Styles
+// Text Card Styles
 
 const cardStyle = {
   background: 'transparent',
@@ -112,13 +104,11 @@ const cardStyle = {
 };
 
 const cardHeaderStyles = {
-  margin: 0,
-  padding: 0,
-};
-
-const avatarStyles = {
-  width: 32,
-  height: 32,
+  paddingBottom: '11px',
+  paddingTop: 0,
+  '& .MuiCardHeader-avatar': {
+    marginRight: '8px',
+  },
 };
 
 const cardHeaderTitleStyles = {
@@ -126,15 +116,15 @@ const cardHeaderTitleStyles = {
   fontWeight: '500',
   alignItems: 'center',
   justifyItems: 'center',
+  marginLeft: '16px',
 };
 
 const cardContentStyles = {
-  paddingTop: 0,
-  marginLeft: 6,
-  marginBottom: 1,
+  padding: 0,
+  marginLeft: 5,
 };
 
-const commentContainerStyles = {
+const textContainerStyle = {
   position: 'relative',
   overflow: 'hidden',
   display: '-webkit-box',
@@ -142,9 +132,8 @@ const commentContainerStyles = {
   whiteSpace: 'pre-wrap',
 };
 
-const commentStyles = {
+const textStyle = {
   color: 'secondary.contrastText',
-  marginBottom: '24px',
 };
 
 const buttonOverlayStyle = {
@@ -152,10 +141,10 @@ const buttonOverlayStyle = {
   bottom: '0',
   right: '0',
   background: '#ffffff',
-  color: theme.palette.secondary.main,
+  color: theme.palette.primary.main,
   ':hover': {
     background: '#ffffff',
-    color: theme.palette.secondary.main,
+    color: theme.palette.primary.main,
   },
   fontSize: '14px',
   fontWeight: '500',

@@ -2,9 +2,10 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { Alert, SxProps } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { SxProps } from '@mui/material/styles';
 
 import { useSessionItem } from '@/app/contexts/helpers';
 import { errorMessage } from '@/components/common/CustomToast';

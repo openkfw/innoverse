@@ -4,6 +4,8 @@ import { StatusCodes } from 'http-status-codes';
 
 import { Project, User, UserSession } from '@/common/types';
 import { withAuth } from '@/utils/auth';
+import { InnoPlatformError, strapiError } from '@/utils/errors';
+import logger from '@/utils/logger';
 import { createProjectUpdate, getInnoUserByProviderId, getProjects } from '@/utils/requests';
 import { validateParams } from '@/utils/validationHelper';
 
@@ -35,14 +37,22 @@ export const handleProjectUpdate = withAuth(
           },
         };
       }
+      const error: InnoPlatformError = strapiError(
+        `Creating a project update by user ${user.providerId}`,
+        new Error('InnoUser does not exist'),
+        body.projectId,
+      );
+      logger.error(error);
       return {
         status: StatusCodes.INTERNAL_SERVER_ERROR,
         errors: 'Creating a project update failed',
       };
     }
+
     return {
       status: validatedParams.status,
       errors: validatedParams.errors,
+      message: validatedParams.message,
     };
   },
 );

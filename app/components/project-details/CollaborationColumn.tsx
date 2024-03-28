@@ -1,7 +1,12 @@
 'use client';
 
 import { ArrowForwardOutlined } from '@mui/icons-material';
-import { Box, Button, Card, CardContent, Grid, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
@@ -19,13 +24,13 @@ interface SectionProps {
   icon: React.ReactNode;
   title: string;
   subtitle: string;
-  offset: number;
+  sectionId: string;
   buttonText: string;
-  handleCollaborationClick: (offset: number) => void;
+  handleCollaborationClick: (sectionId: string) => void;
   borders?: boolean;
 }
 
-const Section = ({ icon, title, subtitle, offset, buttonText, handleCollaborationClick, borders }: SectionProps) => (
+const Section = ({ icon, title, subtitle, sectionId, buttonText, handleCollaborationClick, borders }: SectionProps) => (
   <Grid sx={{ ...rowStyles, ...(borders ? withBorders : {}) }}>
     <Box sx={sectionStyles}>
       {icon}
@@ -38,9 +43,11 @@ const Section = ({ icon, title, subtitle, offset, buttonText, handleCollaboratio
         </Typography>
       </Grid>
     </Box>
-    <Button sx={forwardButtonStyles} onClick={() => handleCollaborationClick(offset)}>
-      <ArrowForwardOutlined sx={{ color: 'secondary.main' }} />
-      <Typography variant="subtitle2">{buttonText}</Typography>
+    <Button sx={forwardButtonStyles} onClick={() => handleCollaborationClick(sectionId)}>
+      <ArrowForwardOutlined sx={{ color: 'primary.main' }} />
+      <Typography variant="subtitle2" color="primary.main">
+        {buttonText}
+      </Typography>
     </Button>
   </Grid>
 );
@@ -49,19 +56,18 @@ const CollaborationColumn = (props: CollaborationProps) => {
   const { project, setActiveTab } = props;
   const { surveyQuestions, opportunities, collaborationQuestions } = project;
 
-  function handleCollaborationClick(offset: number) {
-    const scroll = () => {
-      const section = document.getElementById('collaboration-tab')?.offsetTop;
+  function handleCollaborationClick(sectionId: string) {
+    setActiveTab(1);
+
+    setTimeout(() => {
+      const section = document.getElementById(sectionId);
       if (section) {
         window.scrollTo({
-          top: section - offset,
+          top: section.getBoundingClientRect().top + window.scrollY - 70,
           behavior: 'smooth',
         });
       }
-    };
-
-    setActiveTab(1);
-    setTimeout(scroll, 0);
+    }, 100);
   }
 
   return (
@@ -75,7 +81,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
             icon={<JoinInIcon />}
             title="Hilf dem Team mit Deinem Wissen"
             subtitle={`${collaborationQuestions.length} Frage(n) brauchen Deinen Input`}
-            offset={-325}
+            sectionId="collaboration-questions-section"
             buttonText="Zu den Fragen"
             handleCollaborationClick={handleCollaborationClick}
           />
@@ -83,7 +89,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
             icon={<CurrentPollsIcon />}
             title="Aktuelle Umfragen"
             subtitle={`${surveyQuestions.length} Umfrage(n) offen`}
-            offset={75}
+            sectionId="surveys-section"
             buttonText="Abstimmen"
             handleCollaborationClick={handleCollaborationClick}
             borders={true}
@@ -92,7 +98,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
             icon={<SupportTheTeamIcon />}
             title="Unterstütze das Team"
             subtitle={`${opportunities.length} Anfragen warten aktuell auf Dich`}
-            offset={75}
+            sectionId="opportunities-section"
             buttonText="Teilnehmen"
             handleCollaborationClick={handleCollaborationClick}
           />

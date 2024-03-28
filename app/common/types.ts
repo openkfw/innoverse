@@ -8,6 +8,7 @@ export type User = {
   image?: string;
   email?: string;
   badge?: boolean;
+  providerId?: string;
 };
 
 export type Comment = {
@@ -97,6 +98,22 @@ export type Project = {
   author: User;
   opportunities: Opportunity[];
   collaborationQuestions: CollaborationQuestion[];
+  events: Event[];
+};
+
+export type BasicProject = {
+  id: string;
+  title: string;
+  shortTitle: string;
+  featured: boolean;
+  status: PROJECT_PROGRESS;
+  image?: string;
+  summary: string;
+  projectStart: string;
+  team: User[];
+  updates: ProjectUpdate[];
+  description: ProjectDescription;
+  author?: User;
 };
 
 export type Like = {
@@ -171,12 +188,35 @@ export type ProjectsProgression = {
 };
 
 export type ProjectsQueryResult = {
-  projects: Project[];
+  projects: BasicProject[];
   updates: ProjectUpdate[];
 };
 
 export type ProjectByIdQueryResult = {
-  project: any;
+  id: string;
+  title: string;
+  shortTitle: string;
+  featured: boolean;
+  status: PROJECT_PROGRESS;
+  image?: string;
+  summary: string;
+  projectStart: string;
+  team: User[];
+  updates: ProjectUpdate[];
+  description: ProjectDescription;
+  questions: ProjectQuestion[];
+  comments: Comment[] | undefined;
+  surveyQuestions: SurveyQuestion[];
+  author?: User;
+  opportunities: Opportunity[];
+  collaborationQuestions: CollaborationQuestion[];
+};
+
+export type MainPageData = {
+  sliderContent: Project[];
+  projects: Project[];
+  updates: ProjectUpdate[];
+  events: Event[];
 };
 
 export type UserSession = {
@@ -193,7 +233,7 @@ export type Opportunity = {
   id: string;
   title: string;
   description: string;
-  contactPerson: User;
+  contactPerson?: User;
   expense: string;
   participants: User[];
 };
@@ -225,12 +265,13 @@ export type AmountOfNews = {
 export type Event = {
   id: string;
   title: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  type: 'Remote' | 'In_office' | 'Remote_und_In_office';
+  startTime: Date;
+  endTime: Date;
+  type: string;
   description?: string;
   location: string;
-  author: User;
+  author?: User;
   image?: string;
+  themes: string[];
+  projectId: string;
 };

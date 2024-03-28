@@ -1,5 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 
+export async function getCollaborationCommentResponseById(client: PrismaClient, responseId: string) {
+  return client.collaborationCommentResponse.findFirst({
+    where: {
+      id: responseId,
+    },
+  });
+}
+
 export async function getCollaborationCommentResponsesByCommentId(client: PrismaClient, commentId: string) {
   return client.collaborationCommentResponse.findMany({
     where: {
@@ -31,14 +39,37 @@ export async function addCollaborationCommentResponse(
   });
 }
 
+export async function updateCollaborationCommentResponse(
+  client: PrismaClient,
+  responseId: string,
+  updatedText: string,
+) {
+  return client.collaborationCommentResponse.update({
+    where: {
+      id: responseId,
+    },
+    data: {
+      response: updatedText,
+    },
+  });
+}
+
+export async function deleteCollaborationCommentResponse(client: PrismaClient, responseId: string) {
+  return client.collaborationCommentResponse.delete({
+    where: {
+      id: responseId,
+    },
+  });
+}
+
 export async function getCollaborationCommentResponseUpvotedBy(
   client: PrismaClient,
-  commentId: string,
+  responseId: string,
   upvotedBy: string,
 ) {
   return client.collaborationCommentResponse.findMany({
     where: {
-      id: commentId,
+      id: responseId,
       upvotedBy: { has: upvotedBy },
     },
   });
@@ -46,12 +77,12 @@ export async function getCollaborationCommentResponseUpvotedBy(
 
 export async function handleCollaborationCommentResponseUpvotedBy(
   client: PrismaClient,
-  commentId: string,
+  responseId: string,
   upvotedBy: string,
 ) {
   return client.$transaction(async (tx) => {
     const result = await tx.collaborationCommentResponse.findFirst({
-      where: { id: commentId },
+      where: { id: responseId },
       select: {
         upvotedBy: true,
       },
@@ -61,7 +92,7 @@ export async function handleCollaborationCommentResponseUpvotedBy(
     if (result?.upvotedBy.includes(upvotedBy)) {
       return tx.collaborationCommentResponse.update({
         where: {
-          id: commentId,
+          id: responseId,
         },
         data: {
           upvotedBy: upvotes,
@@ -72,7 +103,7 @@ export async function handleCollaborationCommentResponseUpvotedBy(
     if (result) {
       return tx.collaborationCommentResponse.update({
         where: {
-          id: commentId,
+          id: responseId,
         },
         data: {
           upvotedBy: { push: upvotedBy },

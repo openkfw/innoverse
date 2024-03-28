@@ -114,8 +114,8 @@ const buttonStyle = {
   lineHeight: '19px',
   background: 'rgba(255, 255, 255, 0.10)',
   height: '32px',
-  '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.10)' },
-  '&:active': { backgroundColor: 'rgba(0, 0, 0, 0.10)' },
+  '&:hover': { backgroundColor: 'secondary.main', borderColor: '#D4FCCA' },
+  '&:active': { backgroundColor: 'secondary.main' },
 };
 
 const typographyStyles = {

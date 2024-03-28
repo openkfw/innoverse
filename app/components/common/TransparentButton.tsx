@@ -2,8 +2,8 @@
 import React, { CSSProperties, PropsWithChildren } from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
-import { SxProps } from '@mui/material';
 import Button from '@mui/material/Button';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import theme from '@/styles/theme';

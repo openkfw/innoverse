@@ -1,4 +1,8 @@
-import { Box, Divider, Grid, Link, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 
 interface PhaseColumnProps {
   title: string;

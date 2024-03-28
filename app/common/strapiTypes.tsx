@@ -112,7 +112,7 @@ export type GetPlatformFeedbackCollaborationQuestionResponse = {
 
 export type GetEventsResponse = {
   data: {
-    events: { data: Event[] };
+    events: { data: EventQuery[] };
   };
 };
 
@@ -139,6 +139,7 @@ export type Project = {
   updates: Update[];
   surveyQuestions?: SurveyQuestion[];
   opportunities?: Opportunity[];
+  events: { data: EventQuery[] };
 };
 
 export type ImageType = {
@@ -155,8 +156,10 @@ export type UserQuery = {
     name: string;
     role?: string;
     department?: string;
+    avatar?: ImageType;
+    providerId?: string;
+    provider?: string;
     email?: string;
-    avatar: ImageType;
   };
 };
 
@@ -171,7 +174,7 @@ export type User = {
 
 export type Description = {
   text: string;
-  tags: { tag: string };
+  tags: { tag: string }[];
 };
 
 export type Update = {
@@ -236,7 +239,7 @@ export type OpportunityQuery = {
   attributes: {
     title: string;
     description: string;
-    contactPerson: { data: UserQuery };
+    contactPerson: { data?: UserQuery };
     expense: string;
     participants: { data: UserQuery[] };
   };
@@ -249,24 +252,37 @@ export type CommentQuery = {
   upvotedBy: { data: UserQuery[] };
 };
 
-export type Event = {
+export type EventCountResponse = {
+  data: { events: EventCountQuery };
+};
+
+export type EventCountQuery = {
+  meta: { pagination: { total: number } };
+};
+
+export type EventsResponse = {
+  data: { events: { data: EventQuery[] } };
+};
+
+export type EventQuery = {
   id: string;
   attributes: {
-    title: string;
-    date: string;
-    start_time: string;
-    end_time: string;
-    type: string;
+    image?: ImageType;
+    startTime: Date;
+    endTime: Date;
     location: string;
-    description?: string;
+    type: string;
+    title: string;
+    description: string;
+    Themes: {
+      theme: string;
+    }[];
     author: {
       data?: UserQuery;
     };
-    image: {
-      data?: {
-        attributes: {
-          url: string;
-        };
+    project: {
+      data: {
+        id: string;
       };
     };
   };

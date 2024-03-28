@@ -60,7 +60,7 @@ export default function MobileNewsFilter(props: MobileNewsFilterProps) {
       >
         <Box mr="15px" display="flex" justifyContent="flex-end" alignItems="flex-end">
           <IconButton onClick={toggleDrawer(false)} sx={closeIconButtonStyle}>
-            <CloseIcon />
+            <CloseIcon color={theme.palette.text.primary} />
           </IconButton>
         </Box>
 
@@ -95,7 +95,7 @@ const drawerBoxStyle = {
   mb: 0,
   borderRadius: '16px 16px 0 0',
   border: '1px solid rgba(0, 90, 140, 0.20)',
-  backgroundColor: 'primary.main',
+  backgroundColor: 'primary.light',
   boxShadow:
     '0px 6px 6px -3px rgba(0, 0, 0, 0.05), 0px 10px 22px 1px rgba(0, 0, 0, 0.14), 0px 4px 26px 3px rgba(0, 0, 0, 0.12)',
 };

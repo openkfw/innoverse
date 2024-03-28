@@ -3,10 +3,10 @@
 import { useMemo, useState } from 'react';
 
 import AddReactionOutlinedIcon from '@mui/icons-material/AddReactionOutlined';
-import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 import { errorMessage } from '@/components/common/CustomToast';
 
@@ -17,6 +17,7 @@ interface EmojiReactionCardProps {
   userReaction?: Reaction;
   countOfReactions: ReactionCount[];
   handleReaction: (emoji: Emoji, operation: 'upsert' | 'delete') => void;
+  isEventCard?: boolean;
 }
 
 export function EmojiReactionCard({ userReaction, countOfReactions, handleReaction }: EmojiReactionCardProps) {
@@ -59,6 +60,7 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
                     ? activeReactionCardButtonStyles
                     : reactionCardButtonStyles
                 }
+                aria-label="React with emoji"
               >
                 {reaction.emoji.nativeSymbol || 'X'}
                 <Typography variant="caption" sx={{ color: 'text.primary' }}>
@@ -70,8 +72,12 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
         })}
 
         <Grid item>
-          <Button sx={addNewReactionButtonStyles} onClick={() => setIsEmojiPickerClicked((isClicked) => !isClicked)}>
-            <AddReactionOutlinedIcon sx={addNewReactionIconStyles} />
+          <Button
+            sx={addNewReactionButtonStyles}
+            onClick={() => setIsEmojiPickerClicked((isClicked) => !isClicked)}
+            aria-label="Add new reaction"
+          >
+            <AddReactionOutlinedIcon sx={{ fontSize: 24 }} />
           </Button>
         </Grid>
       </Grid>
@@ -101,30 +107,26 @@ const activeReactionCardButtonStyles = {
   height: '1.6em',
   minWidth: '.1em',
   width: '3rem',
-  bgcolor: 'success.light',
+  bgcolor: 'inherit',
   borderStyle: 'solid',
   borderRadius: '4px',
   borderWidth: 'thin',
-  borderColor: 'secondary.main',
-  m: '.2em',
-  p: '.3em',
+  borderColor: '#E7E6E2',
+  m: '.3em',
+  p: '1em',
 };
 
 const addNewReactionButtonStyles = {
   height: '1.6em',
   minWidth: '.1em',
   width: '1rem',
-  bgcolor: 'background.paper',
+  bgcolor: 'rgba(0, 0, 0, 0)',
   mr: '.3em',
   p: '1em',
   borderRadius: '4px',
   color: 'text.primary',
   '&:hover': {
-    color: 'secondary.main',
-    bgcolor: 'background.paper',
+    color: 'text.primary',
+    bgcolor: 'secondary.main',
   },
-};
-
-const addNewReactionIconStyles = {
-  fontSize: 24,
 };

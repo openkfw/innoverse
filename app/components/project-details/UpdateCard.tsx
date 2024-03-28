@@ -1,6 +1,11 @@
 import { useState } from 'react';
 
-import { Box, Button, Card, CardContent, Grid, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 import { ProjectUpdate } from '@/common/types';
 import AllUpdatesIcon from '@/components/icons/AllUpdatesIcon';
@@ -94,7 +99,7 @@ const UpdateCard = (props: UpdateCardProps) => {
             {parseStringForLinks(update?.comment)}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {update?.date}
+            {update?.date.toString()}
           </Typography>
 
           <Box sx={footerStyles}>
@@ -106,7 +111,7 @@ const UpdateCard = (props: UpdateCardProps) => {
               <Box onClick={showPrevious} sx={iconStyles}>
                 <ArrowLeftIcon disabled={previousDisabled} />
               </Box>
-              <Typography color="text.secondary">{progress}</Typography>
+              <Typography color="#6D767D">{progress}</Typography>
               <Box onClick={showNext} sx={iconStyles}>
                 <ArrowRightIcon disabled={nextDisabled} />
               </Box>

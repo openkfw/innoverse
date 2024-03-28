@@ -1,14 +1,16 @@
 import { useState } from 'react';
 
-import { Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
+
+import { UnsavedCommentChangesDialog } from '../common/comments/UnsavedChangesDialog';
 
 import OpportunityCard from './opportunities/OpportunityCard';
 import { SurveyCard } from './survey/SurveyCard';
@@ -20,13 +22,14 @@ interface CollaborationTabProps {
 
 export const CollaborationTab = ({ project }: CollaborationTabProps) => {
   const [surveyQuestions] = useState(project.surveyQuestions);
+
   return (
     <Card sx={containerStyles}>
       <Box sx={colorOverlayStyles} />
 
       <CardContent style={{ padding: 0 }}>
         <Box sx={cardContentStyles}>
-          <Typography color="primary.main" sx={titleStyles}>
+          <Typography color="primary.main" sx={titleStyles} id="opportunities-section">
             Opportunities
           </Typography>
 
@@ -39,7 +42,7 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
 
           <Divider textAlign="left" sx={{ my: { xs: '48px', md: '88px' } }} />
 
-          <Typography color="primary.main" sx={titleStyles}>
+          <Typography color="primary.main" sx={titleStyles} id="surveys-section">
             Umfrage
           </Typography>
 
@@ -52,7 +55,7 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
           {project.collaborationQuestions.length > 0 && (
             <>
               <Divider textAlign="left" sx={{ my: { xs: '48px', md: '88px' } }} />
-              <Typography color="primary.main" sx={titleStyles}>
+              <Typography color="primary.main" sx={titleStyles} id="collaboration-questions-section">
                 Hilf uns bei diesen Fragen
               </Typography>
               <Stack sx={gridStyles} spacing={{ xs: 6, md: 12 }}>
@@ -70,6 +73,8 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
           )}
         </Box>
       </CardContent>
+
+      <UnsavedCommentChangesDialog />
     </Card>
   );
 };

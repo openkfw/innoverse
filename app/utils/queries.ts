@@ -2,9 +2,11 @@ import {
   CollaborationQuestionsResponse,
   CreateInnoUserResponse,
   CreateProjectUpdateResponse,
+  EventCountResponse,
   GetEventsResponse,
   GetInnoUserResponse,
   GetPlatformFeedbackCollaborationQuestionResponse,
+  ImageType,
   OpportunitiesResponse,
   OpportunityQuery,
   ProjectData,
@@ -16,14 +18,25 @@ import {
   Update,
   UpdateOportunityParticipantsResponse,
   UpdateOpportunityResponse,
+  UpdateQuery,
   UpdatesResponse,
   UserQuery,
 } from '@/common/strapiTypes';
-import { CollaborationQuestion, Event, Opportunity, ProjectQuestion, User } from '@/common/types';
-import { getCollaborationComments } from '@/components/collaboration/comments/actions';
-import { getComments } from '@/components/project-details/comments/actions';
+import {
+  BasicProject,
+  CollaborationQuestion,
+  Event,
+  Opportunity,
+  ProjectByIdQueryResult,
+  ProjectQuestion,
+  ProjectsQueryResult,
+  ProjectUpdate,
+  User,
+} from '@/common/types';
+import { getProjectCollaborationComments } from '@/components/collaboration/comments/actions';
+import { getProjectComments } from '@/components/project-details/comments/actions';
 
-import { getFulfilledResults } from './helpers';
+import { getPromiseResults } from './helpers';
 import {
   getCollaborationQuestionsByProjectId,
   getOpportunitiesByProjectId,
@@ -49,6 +62,7 @@ export enum STRAPI_QUERY {
   CreateOpportunityParticipant,
   GetOpportunityParticipant,
   UpdateOpportunityParticipants,
+  GetEventCount,
   GetPlatformFeedbackCollaborationQuestion,
 }
 
@@ -343,7 +357,7 @@ export const GetCollaborationQuestionsByProjectIdQuery = `query GetCollaboration
 }`;
 
 export const GetProjectsQuery = `query GetProjects {
-  projects(sort: "id:asc") {
+  projects(sort: "updatedAt:desc", pagination: { limit: 80 }) {
     data {
       id
       attributes {
@@ -407,6 +421,94 @@ export const GetProjectByIdQuery = `query GetProjectById($id: ID!) {
      }
    }
  }
+}`;
+
+export const GetFutureEventCountQuery = `
+query getEventCount($projectId: ID!,$currentDate: DateTime){
+  events(
+    filters: { project: { id: { eq: $projectId } }, startTime: { gte: $currentDate }})
+   {
+    meta {
+      pagination {
+        total
+      }
+    }
+  }
+}
+`;
+
+export const GetUpcomingEventsQuery = `query GetUpcomingEvents($today: DateTime) {
+  events(filters: {startTime: {gte: $today}}, sort: "startTime:asc") {
+    data {
+      id
+      attributes {
+        title
+        startTime
+      	endTime
+        type
+        description
+        location
+        author {
+          ${userQuery}
+        }
+        Themes {
+          theme
+        }
+        image {
+          data {
+            attributes {
+              url
+            }
+          }
+        }
+        project {
+          data {
+            id
+          }
+        }
+      }
+    }
+  }
+}
+`;
+
+export const GetAllEventsFilterQuery = (filterParams: string, filter: string) =>
+  `
+query getAllProjectEvents${filterParams}{
+  events(
+    ${filter}
+    )
+   {
+    data {
+      id
+      attributes {
+        title
+        startTime
+      	endTime
+        type
+        description
+        location
+        author {
+          ${userQuery}
+        }
+        Themes {
+          theme
+        }
+        image {
+          data {
+            attributes {
+              url
+            }
+          }
+        }
+        project {
+          data {
+            id
+          }
+        }
+      }
+    }
+  }
 }`;
 
 export const CreateProjectUpdateQuery = `mutation PostProjectUpdate($projectId: ID!, $comment: String, $authorId: ID!, $date: Date) {
@@ -518,484 +620,293 @@ export const GetPlatformFeedbackCollaborationQuestion = `query GetPlatformFeedba
 }
 `;
 
-type ResponseType<T extends STRAPI_QUERY> = T extends STRAPI_QUERY.GetProjects
-  ? any
-  : T extends STRAPI_QUERY.GetUpdates
-    ? any
-    : T extends STRAPI_QUERY.GetProjectById
-      ? any
-      : T extends STRAPI_QUERY.GetInnoUser
-        ? any
-        : T extends STRAPI_QUERY.CreateInnoUser
-          ? any
-          : T extends STRAPI_QUERY.GetUpdatesByProjectId
-            ? any
-            : T extends STRAPI_QUERY.GetOpportunitiesByProjectId
-              ? Opportunity[]
-              : T extends STRAPI_QUERY.GetProjectQuestionsByProjectId
-                ? any
-                : T extends STRAPI_QUERY.GetCollaborationQuestionsByProjectId
-                  ? any
-                  : T extends STRAPI_QUERY.GetSurveyQuestionsByProjectId
-                    ? any
-                    : T extends STRAPI_QUERY.GetOpportunitiesId
-                      ? Opportunity[]
-                      : T extends STRAPI_QUERY.CreateProjectUpdate
-                        ? any
-                        : T extends STRAPI_QUERY.GetEvents
-                          ? any
-                          : T extends STRAPI_QUERY.GetPlatformFeedbackCollaborationQuestion
-                            ? Event[]
-                            : never;
-
-type ResponseTransformerData =
-  | ProjectsResponse
-  | ProjectResponse
-  | GetInnoUserResponse
-  | CreateInnoUserResponse
-  | UpdatesResponse
-  | OpportunitiesResponse
-  | ProjectQuestionsResponse
-  | CollaborationQuestionsResponse
-  | SurveyQuestionsResponse
-  | CreateProjectUpdateResponse
-  | UpdateOpportunityResponse
-  | UpdateOportunityParticipantsResponse
-  | GetEventsResponse
-  | GetPlatformFeedbackCollaborationQuestionResponse;
-
-export const withResponseTransformer = async <T extends STRAPI_QUERY>(
-  query: T,
-  data: ResponseTransformerData,
-): Promise<ResponseType<T>> => {
-  return withResponseTransformerUntyped(query, data) as ResponseType<T>;
+// This map defines which methods perform the transformation for each STRAPI_QUERY-type
+const responseTransformers = {
+  [STRAPI_QUERY.GetProjects]: getStaticBuildFetchProjects,
+  [STRAPI_QUERY.GetUpdates]: getStaticBuildFetchUpdates,
+  [STRAPI_QUERY.GetProjectById]: getStaticBuildFetchProjectById,
+  [STRAPI_QUERY.GetInnoUser]: getStaticBuildGetInnoUser,
+  [STRAPI_QUERY.CreateInnoUser]: getStaticBuildCreateInnoUser,
+  [STRAPI_QUERY.GetOpportunitiesByProjectId]: getStaticBuildFetchOpportunitiesByProjectId,
+  [STRAPI_QUERY.GetProjectQuestionsByProjectId]: getStaticBuildFetchQuestionsByProjectId,
+  [STRAPI_QUERY.GetCollaborationQuestionsByProjectId]: getStaticBuildFetchCollaborationQuestionsByProjectId,
+  [STRAPI_QUERY.GetSurveyQuestionsByProjectId]: getStaticBuildFetchSurveyQuestionsByProjectId,
+  [STRAPI_QUERY.CreateProjectUpdate]: getStaticBuildCreateProjectUpdate,
+  [STRAPI_QUERY.GetEvents]: getStaticBuildFetchEvents,
+  [STRAPI_QUERY.CreateOpportunityParticipant]: getStaticBuildUpdateOpportunity,
+  [STRAPI_QUERY.GetOpportunityParticipant]: getStaticBuildGetOpportunityParticipant,
+  [STRAPI_QUERY.UpdateOpportunityParticipants]: getStaticBuildUpdateOpportunityParticipants,
+  [STRAPI_QUERY.GetPlatformFeedbackCollaborationQuestion]: getStaticBuildGetPlatformFeedbackCollaborationQuestion,
+  [STRAPI_QUERY.GetEventCount]: getStaticBuildFetchEventCount,
 };
 
-const withResponseTransformerUntyped = async <T extends STRAPI_QUERY>(query: T, data: ResponseTransformerData) => {
-  switch (query) {
-    case STRAPI_QUERY.GetProjects:
-      return await getStaticBuildFetchProjects(data as ProjectsResponse);
-    case STRAPI_QUERY.GetUpdates:
-      return getStaticBuildFetchUpdates(data as UpdatesResponse);
-    case STRAPI_QUERY.GetProjectById:
-      return getStaticBuildFetchProjectById(data as ProjectResponse);
-    case STRAPI_QUERY.GetInnoUser:
-      return getStaticBuildGetInnoUser(data as GetInnoUserResponse);
-    case STRAPI_QUERY.CreateInnoUser:
-      return getStaticBuildCreateInnoUser(data as CreateInnoUserResponse);
-    case STRAPI_QUERY.GetUpdatesByProjectId:
-      return getStaticBuildFetchUpdates(data as UpdatesResponse);
-    case STRAPI_QUERY.GetOpportunitiesId:
-      return getStaticBuildFetchOpportunitiesByProjectId(data as OpportunitiesResponse);
-    case STRAPI_QUERY.GetOpportunitiesByProjectId:
-      return getStaticBuildFetchOpportunitiesByProjectId(data as OpportunitiesResponse);
-    case STRAPI_QUERY.GetProjectQuestionsByProjectId:
-      return getStaticBuildFetchQuestionsByProjectId(data as ProjectQuestionsResponse);
-    case STRAPI_QUERY.GetCollaborationQuestionsByProjectId:
-      return getStaticBuildFetchCollaborationQuestionsByProjectId(data as CollaborationQuestionsResponse);
-    case STRAPI_QUERY.GetSurveyQuestionsByProjectId:
-      return getStaticBuildFetchSurveyQuestionsByProjectId(data as SurveyQuestionsResponse);
-    case STRAPI_QUERY.CreateProjectUpdate:
-      return getStaticBuildCreateProjectUpdate(data as CreateProjectUpdateResponse);
-    case STRAPI_QUERY.GetEvents:
-      return getStaticBuildFetchEvents(data as GetEventsResponse);
-    case STRAPI_QUERY.CreateOpportunityParticipant:
-      return getStaticBuildUpdateOpportunity(data as UpdateOpportunityResponse);
-    case STRAPI_QUERY.GetOpportunityParticipant:
-      return getStaticBuildGetOpportunityParticipant(data as OpportunitiesResponse);
-    case STRAPI_QUERY.UpdateOpportunityParticipants:
-      return getStaticBuildUpdateOpportunityParticipants(data as UpdateOportunityParticipantsResponse);
-    case STRAPI_QUERY.GetPlatformFeedbackCollaborationQuestion:
-      return getStaticBuildFetchPlatformFeedbackCollaborationQuestion(
-        data as GetPlatformFeedbackCollaborationQuestionResponse,
-      );
-    default:
-      // Will cause an error at build time if not all cases are covered above
-      exhaustiveMatchingGuard(query);
-      break;
-  }
+// This type generates the type of the first ('data') parameter of the tranformer method
+// as well as its return type
+type TransformerMethodTypes = {
+  [K in keyof typeof responseTransformers]: {
+    data: Parameters<(typeof responseTransformers)[K]>[0];
+    result: ReturnType<(typeof responseTransformers)[K]>;
+  };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const exhaustiveMatchingGuard = (_: never): never => {
-  throw new Error('This should not be reached');
-};
+export async function withResponseTransformer<K extends keyof TransformerMethodTypes>(
+  transformerType: K,
+  data: TransformerMethodTypes[K]['data'],
+): Promise<TransformerMethodTypes[K]['result']> {
+  // Get transformer method from map
+  const transformer = responseTransformers[transformerType] as (
+    data: TransformerMethodTypes[K]['data'],
+  ) => TransformerMethodTypes[K]['result'];
+  // Call transformer method
+  return await transformer(data);
+}
 
-function getStaticBuildFetchPlatformFeedbackCollaborationQuestion(
+function getStaticBuildFetchEventCount(graphqlResponse: EventCountResponse) {
+  const EventCount = graphqlResponse.data.events.meta.pagination.total;
+  return EventCount;
+}
+
+function getStaticBuildGetPlatformFeedbackCollaborationQuestion(
   graphqlResponse: GetPlatformFeedbackCollaborationQuestionResponse,
-) {
-  if (graphqlResponse && graphqlResponse.data) {
-    if (
-      graphqlResponse.data.collaborationQuestions.data.length > 1 ||
-      graphqlResponse.data.collaborationQuestions.data.length === 0
-    ) {
-      throw new Error('More than one or none platform feedback question found');
-    }
-    const {
-      id: collaborationQuestionId,
-      attributes: {
-        project: {
-          data: { id: projectId },
-        },
-      },
-    } = graphqlResponse.data.collaborationQuestions.data[0];
+): { collaborationQuestionId: string; projectId: string } {
+  const question = graphqlResponse.data.collaborationQuestions.data[0];
+  return {
+    collaborationQuestionId: question.id,
+    projectId: question.attributes.project.data.id,
+  };
+}
+
+function getStaticBuildFetchEvents(graphqlResponse: GetEventsResponse): Event[] {
+  return graphqlResponse.data.events.data.map((strapiEvent) => {
+    const attributes = strapiEvent.attributes;
+    const author = attributes.author.data;
+    const projectId = attributes.project.data.id;
     return {
-      collaborationQuestionId,
+      ...strapiEvent,
+      ...attributes,
+      startTime: attributes.startTime,
+      endTime: attributes.endTime,
+      author: author && mapToUser(author),
+      image: mapToImageUrl(attributes.image),
+      themes: attributes.Themes.map((t) => t.theme),
       projectId,
     };
-  }
-}
-
-function getStaticBuildFetchEvents(graphqlResponse: GetEventsResponse) {
-  if (graphqlResponse && graphqlResponse.data) {
-    return graphqlResponse.data.events.data.map((strapiEvent) => {
-      const attributes = strapiEvent.attributes;
-      const user = attributes.author.data;
-      const baseUrl = process.env.NEXT_PUBLIC_STRAPI_ENDPOINT;
-      const imagePath = attributes.image.data?.attributes.url;
-      return {
-        ...strapiEvent,
-        ...attributes,
-        startTime: attributes.start_time,
-        endTime: attributes.end_time,
-        author: {
-          ...user,
-          ...user?.attributes,
-        },
-        image: imagePath ? baseUrl + imagePath : null,
-      };
-    });
-  }
-}
-
-function getStaticBuildCreateProjectUpdate(graphqlResponse: CreateProjectUpdateResponse) {
-  if (graphqlResponse && graphqlResponse.data) {
-    const update = graphqlResponse.data.createUpdate.data;
-    const author = update.attributes.author.data.attributes;
-    return {
-      ...update.attributes,
-      author: {
-        ...author,
-        avatar: author.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.avatar.data.attributes.url}`,
-      },
-    };
-  }
-}
-
-function mapUpdateOpportunity(opportunity: OpportunityQuery) {
-  const contactPerson = opportunity.attributes.contactPerson.data;
-  const participants = opportunity.attributes.participants.data;
-
-  const mappedOpportunity = {
-    id: opportunity.id,
-    ...opportunity.attributes,
-    contactPerson: contactPerson
-      ? {
-          ...contactPerson.attributes,
-          image:
-            contactPerson.attributes.avatar.data &&
-            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${contactPerson.attributes.avatar.data.attributes.url}`,
-        }
-      : null,
-    participants:
-      participants &&
-      participants.map((participant) => {
-        return {
-          ...participant.attributes,
-          image:
-            participant.attributes.avatar.data &&
-            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${participant.attributes.avatar.data.attributes.url}`,
-        };
-      }),
-  };
-  return mappedOpportunity;
-}
-
-function getStaticBuildGetOpportunityParticipant(graphqlResponse: OpportunitiesResponse) {
-  const opportunity = graphqlResponse.data.opportunities.data[0];
-  if (opportunity) {
-    return mapUpdateOpportunity(opportunity);
-  }
-}
-
-function getStaticBuildUpdateOpportunity(graphqlResponse: UpdateOpportunityResponse) {
-  const opportunity = graphqlResponse.data.updateOpportunity.data;
-  if (opportunity) {
-    return mapUpdateOpportunity(opportunity);
-  }
-}
-
-function getStaticBuildUpdateOpportunityParticipants(graphqlResponse: UpdateOportunityParticipantsResponse) {
-  const opportunity = graphqlResponse.data.updateOpportunityParticipants.data;
-  if (opportunity) {
-    return mapUpdateOpportunity(opportunity);
-  }
-}
-
-function getStaticBuildFetchSurveyQuestionsByProjectId(graphqlResponse: SurveyQuestionsResponse) {
-  const surveyQuestions = graphqlResponse.data.surveyQuestions.data;
-  return surveyQuestions.map((s) => {
-    return { id: s.id, ...s.attributes };
   });
 }
 
-async function getStaticBuildFetchCollaborationQuestionsByProjectId(graphqlResponse: CollaborationQuestionsResponse) {
-  const questions = graphqlResponse.data.collaborationQuestions.data;
-  let formattedQuestions: any = [];
-  if (questions.length > 0) {
-    const projectId = questions[0].attributes.project.data.id;
-
-    formattedQuestions = await Promise.allSettled(
-      questions.map(async (question) => {
-        const q = question.attributes;
-
-        const { data: formattedComments } = await getCollaborationComments({
-          projectId,
-          questionId: question.id,
-        });
-
-        return {
-          id: question.id,
-          title: q.title,
-          isPlatformFeedback: q.isPlatformFeedback,
-          description: q.description,
-          comments: formattedComments,
-          authors: q.authors.data.map((a: UserQuery) => {
-            return {
-              id: a.id,
-              ...a.attributes,
-              image:
-                a.attributes.avatar.data &&
-                `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.attributes.avatar.data.attributes.url}`,
-            } as User;
-          }),
-        };
-      }),
-    ).then((results) => getFulfilledResults(results));
-  }
-
-  return formattedQuestions as CollaborationQuestion[];
+function getStaticBuildCreateProjectUpdate(graphqlResponse: CreateProjectUpdateResponse): ProjectUpdate {
+  const update = graphqlResponse.data.createUpdate.data;
+  return mapToProjectUpdate(update);
 }
 
-function getStaticBuildFetchQuestionsByProjectId(graphqlResponse: ProjectQuestionsResponse) {
+function getStaticBuildGetOpportunityParticipant(graphqlResponse: OpportunitiesResponse): Opportunity | undefined {
+  const opportunities = graphqlResponse.data.opportunities.data;
+  if (opportunities.length <= 0) {
+    return undefined;
+  }
+  const opportunity = opportunities[0];
+  return mapToOpportunity(opportunity);
+}
+
+function getStaticBuildUpdateOpportunity(graphqlResponse: UpdateOpportunityResponse): Opportunity {
+  const opportunity = graphqlResponse.data.updateOpportunity.data;
+  return mapToOpportunity(opportunity);
+}
+
+function getStaticBuildUpdateOpportunityParticipants(
+  graphqlResponse: UpdateOportunityParticipantsResponse,
+): Opportunity {
+  const opportunity = graphqlResponse.data.updateOpportunityParticipants.data;
+  return mapToOpportunity(opportunity);
+}
+
+function getStaticBuildFetchSurveyQuestionsByProjectId(graphqlResponse: SurveyQuestionsResponse): SurveyQuestion[] {
+  const surveyQuestions = graphqlResponse.data.surveyQuestions.data;
+  return surveyQuestions.map((s) => {
+    return { id: s.id, ...s.attributes, votes: [] };
+  });
+}
+
+async function getStaticBuildFetchCollaborationQuestionsByProjectId(
+  graphqlResponse: CollaborationQuestionsResponse,
+): Promise<CollaborationQuestion[]> {
+  const questions = graphqlResponse.data.collaborationQuestions.data;
+
+  if (questions.length <= 0) {
+    return [];
+  }
+
+  const projectId = questions[0].attributes.project.data.id;
+  const getQuestions = questions.map(async (question) => {
+    const q = question.attributes;
+
+    const { data: comments } = await getProjectCollaborationComments({
+      projectId,
+      questionId: question.id,
+    });
+
+    return {
+      id: question.id,
+      title: q.title,
+      isPlatformFeedback: q.isPlatformFeedback,
+      description: q.description,
+      comments: comments ?? [],
+      authors: q.authors.data.map(mapToUser),
+    };
+  });
+
+  return await getPromiseResults(getQuestions);
+}
+
+function getStaticBuildFetchQuestionsByProjectId(graphqlResponse: ProjectQuestionsResponse): ProjectQuestion[] {
   const questions = graphqlResponse.data.questions.data;
 
-  const formattedQuestions = questions.map((question) => {
+  return questions.map((question) => {
     const q = question.attributes;
 
     return {
       id: question.id,
       title: q.title,
-      authors: q.authors.data.map((a: UserQuery) => {
-        return {
-          id: a.id,
-          ...a.attributes,
-          image:
-            a.attributes.avatar.data &&
-            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${a.attributes.avatar.data.attributes.url}`,
-        } as User;
-      }),
+      authors: q.authors.data.map(mapToUser),
     };
   });
-
-  return formattedQuestions as ProjectQuestion[];
 }
 
-function getStaticBuildFetchUpdates(graphqlResponse: UpdatesResponse) {
+function getStaticBuildFetchUpdates(graphqlResponse: UpdatesResponse): ProjectUpdate[] {
   const updates = graphqlResponse.data.updates.data;
+  return updates.map(mapToProjectUpdate);
+}
 
-  const formattedUpdates = updates.map((update) => {
-    const u = update.attributes;
-    const author = u.author.data;
-    const project = u.project;
+function getStaticBuildFetchOpportunitiesByProjectId(graphqlResponse: OpportunitiesResponse): Opportunity[] {
+  const opportunities = graphqlResponse.data.opportunities.data;
+
+  return opportunities.map((o) => {
+    const contactPerson = o.attributes.contactPerson.data;
+    const participants = o.attributes.participants.data;
 
     return {
-      id: update.id,
-      projectId: project.data ? project.data.id : null,
-      title: project.data ? project.data.attributes.title : '',
-      comment: u.comment,
-      date: u.date || new Date(),
-      topic: u.topic,
-      author: author
-        ? {
-            name: author.attributes.name,
-            email: author.attributes.email,
-            image:
-              author.attributes.avatar.data &&
-              `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.attributes.avatar.data.attributes.url}`,
-          }
-        : null,
+      id: o.id,
+      ...o.attributes,
+      contactPerson: contactPerson ? mapToUser(contactPerson) : undefined,
+      participants: participants.map(mapToUser),
     };
   });
-  return formattedUpdates;
 }
 
-function getStaticBuildFetchOpportunitiesByProjectId(graphqlResponse: OpportunitiesResponse) {
-  const opportunities = graphqlResponse.data.opportunities.data;
-  if (opportunities && opportunities.length > 0) {
-    return opportunities.map((o) => {
-      const contactPerson = o.attributes.contactPerson.data;
-      const participants = o.attributes.participants.data;
-      return {
-        id: o.id,
-        ...o.attributes,
-        contactPerson: contactPerson
-          ? {
-              ...contactPerson.attributes,
-              image:
-                contactPerson.attributes.avatar.data &&
-                `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${contactPerson.attributes.avatar.data.attributes.url}`,
-            }
-          : null,
-        participants: participants.map((participant) => {
-          return {
-            ...participant.attributes,
-            image:
-              participant.attributes.avatar.data &&
-              `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${participant.attributes.avatar.data.attributes.url}`,
-          };
-        }),
-      };
-    });
-  }
-  return [];
+function getStaticBuildCreateInnoUser(graphqlResponse: CreateInnoUserResponse): User {
+  const user = graphqlResponse.data.createInnoUser;
+  return mapToUser(user.data);
 }
 
-function getStaticBuildCreateInnoUser(graphqlResponse: CreateInnoUserResponse) {
-  if (graphqlResponse.data) {
-    const user = graphqlResponse.data.createInnoUser.data.attributes;
-
-    return {
-      ...user,
-      image: user.avatar.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.avatar.data.attributes.url}`,
-    };
-  }
+function getStaticBuildGetInnoUser(graphqlResponse: GetInnoUserResponse): User {
+  const user = graphqlResponse.data.innoUsers.data[0];
+  return mapToUser(user);
 }
 
-function getStaticBuildGetInnoUser(graphqlResponse: GetInnoUserResponse) {
-  if (graphqlResponse.data.innoUsers.data.length) {
-    const user = graphqlResponse.data.innoUsers.data[0];
+async function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse): Promise<ProjectsQueryResult> {
+  const allProjectUpdates: ProjectUpdate[] = [];
 
-    return {
-      id: user.id,
-      ...user.attributes,
-      image:
-        user.attributes.avatar.data &&
-        `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${user.attributes.avatar.data.attributes.url}`,
-    } as User;
-  }
-}
+  const getProjects = graphqlResponse.data.projects.data.map(async (project: ProjectData) => {
+    const { title, shortTitle } = project.attributes;
 
-async function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse) {
-  const formattedUpdates: Update[] = [];
-  const formattedProjects = await Promise.allSettled(
-    graphqlResponse.data.projects.data.map(async (project: ProjectData) => {
-      const { title, shortTitle, featured, projectStart, summary, image, status, team, description } =
-        project.attributes;
+    const updates = await getUpdatesByProjectId(project.id);
+    updates?.forEach((update) => (update.title = title || shortTitle));
+    allProjectUpdates.push(...(updates || []));
 
-      const updates = (await getUpdatesByProjectId(project.id)) as Update[];
+    const basicProject = mapToBasicProject(project);
+    return basicProject;
+  });
 
-      const formattedUpdate = updates.map((u) => {
-        u.title = title || shortTitle;
-        return u;
-      });
-
-      const formattedTeam = team.data.map((t: UserQuery) => {
-        return {
-          ...t.attributes,
-          image:
-            t.attributes.avatar.data &&
-            `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${t.attributes.avatar.data.attributes.url}`,
-        };
-      });
-
-      formattedUpdates.push(...formattedUpdate);
-      return {
-        id: project.id,
-        featured,
-        projectStart: formatDate(projectStart),
-        title,
-        shortTitle,
-        summary,
-        status,
-        team: formattedTeam,
-        description: {
-          ...description,
-          tags: description.tags,
-        },
-        image: image.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
-      };
-    }),
-  ).then((results) => getFulfilledResults(results));
+  const projects = await getPromiseResults(getProjects);
 
   return {
-    projects: formattedProjects,
-    updates: formattedUpdates,
+    projects: projects,
+    updates: allProjectUpdates,
   };
 }
 
-async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse) {
+async function getStaticBuildFetchProjectById(graphqlResponse: ProjectResponse): Promise<ProjectByIdQueryResult> {
   const project = graphqlResponse.data.project.data;
 
   if (!project) throw new Error('Project not found');
 
-  const { title, shortTitle, summary, image, status, projectStart, description, author, team } = project.attributes;
+  const { title, shortTitle } = project.attributes;
 
   const opportunities = (await getOpportunitiesByProjectId(project.id)) as Opportunity[];
   const projectQuestions = (await getProjectQuestionsByProjectId(project.id)) as ProjectQuestion[];
   const surveyQuestions = (await getSurveyQuestionsByProjectId(project.id)) as SurveyQuestion[];
   const collaborationQuestions = (await getCollaborationQuestionsByProjectId(project.id)) as CollaborationQuestion[];
-  const projectComments = (await getComments({ projectId: project.id })).data;
+  const projectComments = (await getProjectComments({ projectId: project.id })).data;
 
   const updates = (await getUpdatesByProjectId(project.id)) as Update[];
-  const formattedUpdates = updates.map((u) => {
-    u.title = title || shortTitle;
-    return u;
-  });
+  updates.forEach((update) => (update.title = title || shortTitle));
 
-  const formatAuthor = () => {
-    if (author && author.data) {
-      return {
-        ...author.data.attributes,
-        image:
-          author.data.attributes.avatar.data &&
-          `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${author.data.attributes.avatar.data.attributes.url}`,
-      };
-    }
-  };
-
-  const formattedTeam = team.data.map((t: UserQuery) => {
-    return {
-      ...t.attributes,
-      image:
-        t.attributes.avatar.data &&
-        `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${t.attributes.avatar.data.attributes.url}`,
-    };
-  });
-
-  const formattedDescription = {
-    ...description,
-    tags: description.tags,
-  };
+  const basicProject = mapToBasicProject(project);
 
   return {
-    project: {
-      id: project.id,
-      title,
-      shortTitle,
-      summary,
-      status,
-      comments: projectComments,
-      projectStart: formatDate(projectStart),
-      opportunities,
-      surveyQuestions,
-      description: formattedDescription,
-      author: formatAuthor(),
-      team: formattedTeam,
-      image: image.data && `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`,
-      updates: formattedUpdates,
-      questions: projectQuestions,
-      collaborationQuestions,
-    },
+    ...basicProject,
+    opportunities,
+    questions: projectQuestions,
+    surveyQuestions,
+    collaborationQuestions,
+    comments: projectComments || [],
+    updates,
   };
+}
+
+function mapToBasicProject(project: ProjectData): BasicProject {
+  const { image, projectStart, description, author, team, ...other } = project.attributes;
+
+  return {
+    id: project.id,
+    ...other,
+    projectStart: formatDate(projectStart),
+    description: description,
+    author: author ? mapToUser(author.data) : undefined,
+    team: team.data.map(mapToUser),
+    image: mapToImageUrl(image),
+  };
+}
+
+function mapToOpportunity(opportunityQuery: OpportunityQuery): Opportunity {
+  const attributes = opportunityQuery.attributes;
+  const contactPerson = attributes.contactPerson.data;
+  const participants = attributes.participants.data;
+  return {
+    id: opportunityQuery.id,
+    ...attributes,
+    contactPerson: contactPerson && mapToUser(contactPerson),
+    participants: participants && participants.map(mapToUser),
+  };
+}
+
+function mapToProjectUpdate(updateQuery: UpdateQuery): ProjectUpdate {
+  const attributes = updateQuery.attributes;
+  const author = attributes.author.data;
+  const project = attributes.project;
+
+  return {
+    id: updateQuery.id,
+    projectId: project.data ? project.data.id : '',
+    title: project.data ? project.data.attributes.title : '',
+    comment: attributes.comment,
+    date: attributes.date,
+    topic: attributes.topic,
+    author: mapToUser(author),
+  };
+}
+
+function mapToUser(userQuery: UserQuery): User {
+  const attributes = userQuery.attributes;
+
+  return {
+    id: userQuery.id,
+    ...attributes,
+    image: mapToImageUrl(attributes.avatar),
+  };
+}
+
+function mapToImageUrl(image: ImageType | undefined): string | undefined {
+  if (!image?.data) return undefined;
+  return `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`;
 }

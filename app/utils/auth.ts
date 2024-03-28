@@ -4,8 +4,8 @@ import { StatusCodes } from 'http-status-codes';
 import { UserSession } from '@/common/types';
 import { options } from '@/pages/api/auth/[...nextauth]';
 
-import { createInnoUserIfNotExist } from './requests';
 import logger from './logger';
+import { createInnoUserIfNotExist } from './requests';
 
 export interface AuthResponse<TArgs> {
   status: StatusCodes;

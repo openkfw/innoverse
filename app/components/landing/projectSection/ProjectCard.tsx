@@ -2,12 +2,12 @@ import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import ProgressBar from '@/components/common/ProgressBar';
 import VisibleContributors from '@/components/project-details/VisibleContributors';
@@ -86,6 +86,7 @@ const cardStyles = {
   display: 'flex',
   borderRadius: 4,
   marginRight: '24px',
+  background: 'linear-gradient(0deg, rgba(240, 238, 225, 0.30) 0%, rgba(240, 238, 225, 0.30) 100%), #FFF',
   [theme.breakpoints.up('sm')]: {
     width: 466,
   },
@@ -110,7 +111,7 @@ const titleStyles = {
   WebkitLineClamp: 2,
   WebkitBoxOrient: 'vertical',
   width: 'fit-content',
-  color: 'secondary.main',
+  color: 'primary.main',
 };
 
 const linkStyles = {

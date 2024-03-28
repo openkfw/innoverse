@@ -18,3 +18,16 @@ export const commentUpvotedBySchema = z
     commentId: z.string(),
   })
   .required();
+
+export const updateCommentSchema = z
+  .object({
+    commentId: z.string(),
+    updatedText: z.string(),
+  })
+  .required();
+
+export const deleteCommentSchema = z
+  .object({
+    commentId: z.string(),
+  })
+  .required();

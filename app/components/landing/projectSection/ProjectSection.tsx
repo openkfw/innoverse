@@ -23,21 +23,21 @@ export const ProjectSection = ({ projects }: ProjectProps) => {
       title="Innovationsinitativen"
       subtitle="Aktuelle Pipeline"
       beforeContent={
-        <Image
-          src={bgBubble}
-          alt="background-bubble"
-          sizes="33vw"
+        <div
           style={{
             position: 'absolute',
-            width: 570,
-            height: 460,
+            right: '0',
             zIndex: 0,
-            opacity: 0.56,
-            right: 0,
-            mixBlendMode: 'lighten',
             transform: 'translate(50%, -10%)',
+            width: '33vw',
+            height: '0',
+            paddingBottom: 'calc(33vw * 535 / 677)',
+            opacity: 0.56,
+            mixBlendMode: 'lighten',
           }}
-        />
+        >
+          <Image src={bgBubble} alt="background bubble" layout="fill" objectFit="cover" />
+        </div>
       }
     >
       <ProjectCarousel projects={projects} />

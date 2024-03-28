@@ -1,4 +1,4 @@
-import { PaletteOptions, SimplePaletteColorOptions } from '@mui/material';
+import { PaletteOptions, SimplePaletteColorOptions } from '@mui/material/styles';
 
 interface DefaultPaletteOptions extends PaletteOptions {
   primary?: SimplePaletteColorOptions;
@@ -7,19 +7,19 @@ interface DefaultPaletteOptions extends PaletteOptions {
 
 const palette: DefaultPaletteOptions = {
   primary: {
-    main: '#0067A0',
+    main: '#266446',
     dark: '#004267',
     light: '#005A8C',
     contrastText: '#FFFFFF',
   },
   secondary: {
-    main: '#A4B419',
+    main: '#57D96D',
     light: '#879900',
     dark: '#5E7200',
     contrastText: '#000',
   },
   text: {
-    primary: '#5A6166',
+    primary: '#2D3134',
     secondary: '#507666',
     disabled: '#BDC0C2',
   },
@@ -29,6 +29,7 @@ const palette: DefaultPaletteOptions = {
   action: {
     active: '#0000008F',
     disabledBackground: '#F5F5F5',
+    hover: '#B7F9AA',
   },
   background: {
     default: '#0067A0',

@@ -38,12 +38,12 @@ export default function ArrowControllers(props: ArrowControllersProps) {
   return (
     <Grid container p={0} spacing={0} sx={{ width: '50%' }}>
       <Grid item>
-        <IconButton disabled={currentSlide == 0} onClick={prev} sx={iconStyles}>
+        <IconButton disabled={currentSlide == 0} onClick={prev} sx={iconStyles} aria-label="Previous Slide">
           <ArrowLeftIcon style={{ fontSize: 40 }} />
         </IconButton>
       </Grid>
       <Grid item>
-        <IconButton disabled={currentSlide == slidesLength} onClick={next} sx={iconStyles}>
+        <IconButton disabled={currentSlide == slidesLength} onClick={next} sx={iconStyles} aria-label="Next Slide">
           <ArrowRightIcon style={{ fontSize: 40 }} />
         </IconButton>
       </Grid>

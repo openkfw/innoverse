@@ -1,7 +1,7 @@
 'use client';
 
-import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import { PROJECT_PROGRESS } from '@/common/types';
 
@@ -34,7 +34,7 @@ function ActiveStepLabel({ label }: ProgressStepLabelProps) {
           style={{
             width: 24,
             height: 24,
-            background: 'rgba(0, 0, 0, 0.25)',
+            background: '#2D3134CC',
             borderRadius: 100,
             display: 'flex',
             justifyContent: 'center',
@@ -71,7 +71,7 @@ function StepLabel({ label }: ProgressStepLabelProps) {
         style={{
           width: 24,
           height: 24,
-          background: 'rgba(0, 0, 0, 0.25)',
+          background: '#2D3134CC',
           borderRadius: 100,
           display: 'flex',
           justifyContent: 'center',

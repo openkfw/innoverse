@@ -4,7 +4,13 @@ import Link from 'next/link';
 
 import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Avatar, Box, Drawer, IconButton, List, ListItem, Typography } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Typography from '@mui/material/Typography';
 
 import { useUser } from '@/app/contexts/user-context';
 
@@ -44,27 +50,29 @@ export default function TopBarMobile() {
         },
       }}
     >
-      <List sx={listStyles}>
-        <ListItem sx={{ ...listItemStyles, marginBottom: 2 }}>
-          <Avatar /> <Typography variant="body1"> {user?.name}</Typography>
-        </ListItem>
-        {pages.map((page) =>
-          page.link ? (
-            <Link
-              key={page.text}
-              href={page.link}
-              style={{ textDecoration: 'none', color: 'common.white' }}
-              onClick={handleMenuToggle}
-            >
-              <ListItem sx={listItemStyles}>{page.text}</ListItem>
-            </Link>
-          ) : (
-            <ListItem key={page.text} sx={listItemDisabledStyles}>
-              {page.text}
-            </ListItem>
-          ),
-        )}
-      </List>
+      <nav>
+        <List sx={listStyles}>
+          <ListItem sx={{ ...listItemStyles, marginBottom: 2 }}>
+            <Avatar /> <Typography variant="body1"> {user?.name}</Typography>
+          </ListItem>
+          {pages.map((page) =>
+            page.link ? (
+              <Link
+                key={page.text}
+                href={page.link}
+                style={{ textDecoration: 'none', color: 'common.white' }}
+                onClick={handleMenuToggle}
+              >
+                <ListItem sx={listItemStyles}>{page.text}</ListItem>
+              </Link>
+            ) : (
+              <ListItem key={page.text} sx={listItemDisabledStyles}>
+                {page.text}
+              </ListItem>
+            ),
+          )}
+        </List>
+      </nav>
 
       <div>
         <FeedbackSection />
@@ -89,7 +97,11 @@ export default function TopBarMobile() {
           </Link>
         </Box>
 
-        <IconButton onClick={handleMenuToggle} style={{ color: 'white' }}>
+        <IconButton
+          onClick={handleMenuToggle}
+          style={{ color: 'white' }}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+        >
           {menuOpen ? <CloseIcon /> : <MenuIcon />}
         </IconButton>
       </Box>

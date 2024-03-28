@@ -10,6 +10,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 
 import { NewsFilterProps } from '@/common/types';
+import theme from '@/styles/theme';
 
 export default function ResultsPerPageRadio(props: NewsFilterProps) {
   const { filters, setFilters } = props;
@@ -38,10 +39,21 @@ export default function ResultsPerPageRadio(props: NewsFilterProps) {
           onChange={handleChange}
         >
           {controlLabels.map((controlLabel, key) => (
-            <FormControlLabel key={key} value={controlLabel.value} control={<Radio />} label={controlLabel.label} />
+            <FormControlLabel
+              color="red"
+              key={key}
+              value={controlLabel.value}
+              control={<Radio sx={radioStyles} />}
+              label={controlLabel.label}
+            />
           ))}
         </RadioGroup>
       </FormControl>
     </Box>
   );
 }
+
+// Results Per Page Input Styles
+const radioStyles = {
+  '&.Mui-checked': { color: theme.palette.secondary.main },
+};

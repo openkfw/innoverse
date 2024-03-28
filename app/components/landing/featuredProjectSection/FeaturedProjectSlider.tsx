@@ -39,24 +39,31 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
   const isLastSlide = index === totalItems - 1;
   const isFirstSlide = index === 0;
 
-  const NextArrow = () =>
-    isHovered &&
-    !isLastSlide && (
-      <Box sx={{ ...arrowStyle, right: 10 }} onClick={() => setSelected(index + 1)}>
-        <ArrowForwardIosIcon fontSize="large" />
-      </Box>
-    );
+  const NextArrow = () => {
+    if (isHovered && !isLastSlide) {
+      return (
+        <Box sx={{ ...arrowStyle, right: 10 }} onClick={() => setSelected(index + 1)}>
+          <ArrowForwardIosIcon fontSize="large" />
+        </Box>
+      );
+    }
+    return <></>;
+  };
+  if (!content) return <></>;
 
-  const PrevArrow = () =>
-    isHovered &&
-    !isFirstSlide && (
-      <Box sx={{ ...arrowStyle, left: 10 }} onClick={() => setSelected(index - 1)}>
-        <ArrowBackIosNewIcon fontSize="large" />
-      </Box>
-    );
+  const PrevArrow = () => {
+    if (isHovered && !isFirstSlide) {
+      return (
+        <Box sx={{ ...arrowStyle, left: 10 }} onClick={() => setSelected(index - 1)}>
+          <ArrowBackIosNewIcon fontSize="large" />
+        </Box>
+      );
+    }
+    return <></>;
+  };
 
   return (
-    <Grid container key={content.id} sx={wrapperStyles}>
+    <Grid container key={content?.id} sx={wrapperStyles}>
       <Grid
         container
         item
@@ -65,26 +72,27 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
         onMouseLeave={() => setIsHovered(false)}
       >
         <Image
-          src={content.image || defaultImage}
+          src={content?.image || defaultImage}
           width={0}
           height={0}
           alt="Project"
           sizes="50vw"
           className="slider-image"
           style={{ objectFit: 'contain', objectPosition: 'center' }}
+          priority
         />
         <PrevArrow />
         <NextArrow />
       </Grid>
       <Box sx={smallScreenSliderPill}>
-        <SmallSliderPill itemNumber={(content.id + 1).toString()} title={content.title} />
+        <SmallSliderPill itemNumber={(content?.id + 1).toString()} title={content?.title} />
       </Box>
       <Grid item md={4} sx={contentStyles}>
         <FeaturedProjectContent
-          title={content.title}
-          tags={content.description.tags}
-          summary={content.summary}
-          projectId={content.id}
+          title={content?.title}
+          tags={content?.description?.tags}
+          summary={content?.summary}
+          projectId={content?.id}
         />
       </Grid>
     </Grid>
@@ -125,8 +133,10 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
     initialSlide: props.items.length - 1,
     arrows: false,
     dots: true,
-    infinite: false,
+    infinite: true,
     speed: 600,
+    autoplay: true,
+    autoplaySpeed: 7000,
     slidesToShow: 1,
     slidesToScroll: 1,
     vertical: false,
@@ -145,6 +155,10 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
     rows: 1,
     variableWidth: !isWideScreen,
     className: 'carouselStyles',
+    beforeChange: (_current: number, next: number) => {
+      setSelectedItem(next);
+      moveIndicator(next);
+    },
   };
 
   return (

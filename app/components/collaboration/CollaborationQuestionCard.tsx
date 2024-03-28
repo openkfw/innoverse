@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-import { SxProps } from '@mui/material';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { useProject } from '@/app/contexts/project-context';
@@ -18,7 +18,7 @@ import { parseStringForLinks } from '../common/LinkString';
 import { StyledTooltip } from '../common/StyledTooltip';
 import { TooltipContent } from '../project-details/TooltipContent';
 
-import { handleCollaborationComment } from './comments/actions';
+import { addProjectCollaborationComment } from './comments/actions';
 import { CollaborationComments } from './comments/CollaborationComments';
 import WriteCommentCard from './writeComment/WriteCommentCard';
 import { ShareOpinionCard } from './ShareOpinionCard';
@@ -63,9 +63,13 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
     setWriteNewComment(true);
   };
 
+  const handleDeleteComment = (comment: Comment) => {
+    setComments((old) => old.filter((c) => c.id !== comment.id));
+  };
+
   const handleComment = async (comment: string) => {
     try {
-      const { data: newComment } = await handleCollaborationComment({ projectId, questionId, comment });
+      const { data: newComment } = await addProjectCollaborationComment({ projectId, questionId, comment });
       if (!newComment) {
         console.error('No comment was returned by the server.');
         errorMessage({ message: 'Failed to post the comment. Please try again.' });
@@ -122,14 +126,18 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
           {comments.length > 0 ? (
             <Stack spacing={3}>
               {writeNewComment ? (
-                <WriteCommentCard projectName={projectName} handleComment={handleComment} />
+                <WriteCommentCard projectName={projectName} onSubmit={handleComment} />
               ) : (
                 <ShareOpinionCard projectName={projectName} handleClick={handleShareOpinion} />
               )}
-              <CollaborationComments comments={comments} />
+              <CollaborationComments
+                comments={comments}
+                projectName={projectName}
+                onDeleteComment={handleDeleteComment}
+              />
             </Stack>
           ) : (
-            <WriteCommentCard sx={newCommentStyle} projectName={projectName} handleComment={handleComment} />
+            <WriteCommentCard sx={newCommentStyle} projectName={projectName} onSubmit={handleComment} />
           )}
         </Box>
       </Grid>
