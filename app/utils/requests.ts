@@ -117,7 +117,7 @@ export async function getEvents(startingFrom: Date) {
     const events = await withResponseTransformer(STRAPI_QUERY.GetEvents, requestEvents);
     return events;
   } catch (err) {
-    const error = strapiError('Getting upcoming events', err as Error);
+    const error = strapiError('Getting events', err as Error);
     logger.error(error);
   }
 }
@@ -126,8 +126,7 @@ export async function getEvents(startingFrom: Date) {
 // Revalidate the cache every 2 mins.
 // Use fetch here as we want to revalidate the data from the CMS.
 export async function getMainPageData() {
-  const today = new Date();
-  const events = await getEvents(today);
+  const events = await getUpcomingEvents();
   const data = await getDataWithFeaturedFiltering();
 
   return {
@@ -383,6 +382,7 @@ export async function getEventsFilter(
       currentPage,
       amountOfEventsPerPage,
       timeframe,
+      currentDate: new Date(),
     };
 
     let filter = '';

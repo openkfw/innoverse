@@ -47,7 +47,7 @@ export const EventCard = ({ event }: EventCardProps) => {
       <CardHeader
         sx={cardHeaderStyles}
         title={
-          <Stack direction="row" alignItems="center" justifyContent={'start'}>
+          <Stack direction="row" alignItems="center" justifyContent="start">
             <Stack direction="column">
               <Typography variant="h2" sx={dateStyles}>
                 {date.format('DD')}
@@ -56,14 +56,18 @@ export const EventCard = ({ event }: EventCardProps) => {
                 {date.format('MMM')}
               </Typography>
             </Stack>
-            <Stack direction={'column'} marginLeft={'0.5em'} flexGrow={'1'}>
+            <Stack direction="column" marginLeft="0.5em">
               <EventTimeDate event={event} sx={subtitleStyles} />
-              <Typography variant="subtitle1" sx={subtitleStyles}>
-                {event.location}
-              </Typography>
-              <Typography variant="subtitle1" sx={subtitleStyles}>
-                {renderEventType(event)}
-              </Typography>
+              {event.location && (
+                <Typography variant="subtitle1" sx={subtitleStyles}>
+                  {event.location}
+                </Typography>
+              )}
+              {event.type && (
+                <Typography variant="subtitle1" sx={subtitleStyles}>
+                  {renderEventType(event)}
+                </Typography>
+              )}
             </Stack>
             <IcsDownload event={event} />
           </Stack>

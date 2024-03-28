@@ -22,15 +22,15 @@ const EventCardHeader = (props: EventCardHeaderProps) => {
   const startMonth = new Date(event.startTime).toLocaleString('DE', { month: 'short' });
 
   return (
-    <Grid container direction={'row'}>
+    <Grid container direction="row">
       <Grid item xs={4}>
-        <Grid container direction={'column'}>
-          <Grid item alignSelf={'center'}>
-            <Typography variant="h3" color={time === 'future' ? 'secondary' : 'text.primary'} mt={-1.75}>
+        <Grid container direction="column">
+          <Grid item alignSelf="center">
+            <Typography variant="h2" color={time === 'future' ? 'secondary' : 'text.primary'} mt={-1.75}>
               {startDay}
             </Typography>
           </Grid>
-          <Grid item alignSelf={'center'}>
+          <Grid item alignSelf="center">
             <Typography variant="subtitle2" color="black" mt={-1.5}>
               {startMonth.toUpperCase()}
             </Typography>
@@ -38,24 +38,28 @@ const EventCardHeader = (props: EventCardHeaderProps) => {
         </Grid>
       </Grid>
 
-      <Grid item alignItems={'start'} xs={7}>
-        <Grid container direction={'column'} ml={1}>
-          <Grid container direction={'row'}></Grid>
+      <Grid item alignItems="start" xs={7}>
+        <Grid container direction="column" ml={1}>
+          <Grid container direction="row"></Grid>
           <Grid item>
             <Box sx={{ display: 'flex', alignContent: 'space-evenly' }}>
               <EventTimeDate event={event} />
             </Box>
           </Grid>
-          <Grid item>
-            <Typography variant="subtitle2" color="text.primary" sx={{ fontSize: '.8em', color: 'black' }}>
-              {event.location}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="subtitle2" color="text.primary" sx={{ fontSize: '.8em', color: 'black' }}>
-              {event.type ? event.type.replaceAll('_', ' ') : ''}
-            </Typography>
-          </Grid>
+          {event.location && (
+            <Grid item>
+              <Typography variant="subtitle2" color="text.primary" sx={{ fontSize: '.8em', color: 'black' }}>
+                {event.location}
+              </Typography>
+            </Grid>
+          )}
+          {event.type && (
+            <Grid item>
+              <Typography variant="subtitle2" color="text.primary" sx={{ fontSize: '.8em', color: 'black' }}>
+                {event.type ? event.type.replaceAll('_', ' ') : ''}
+              </Typography>
+            </Grid>
+          )}
         </Grid>
       </Grid>
     </Grid>
