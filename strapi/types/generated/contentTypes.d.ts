@@ -701,6 +701,9 @@ export interface ApiCollaborationQuestionCollaborationQuestion
       'manyToMany',
       'api::inno-user.inno-user'
     >;
+    isPlatformFeedback: Attribute.Boolean &
+      Attribute.Required &
+      Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -750,6 +753,7 @@ export interface ApiEventEvent extends Schema.CollectionType {
     title: Attribute.String & Attribute.Required;
     image: Attribute.Media;
     startTime: Attribute.DateTime & Attribute.Required;
+    endTime: Attribute.DateTime;
     author: Attribute.Relation<
       'api::event.event',
       'oneToOne',
@@ -765,7 +769,6 @@ export interface ApiEventEvent extends Schema.CollectionType {
       'manyToOne',
       'api::project.project'
     >;
-    endTime: Attribute.DateTime;
     Themes: Attribute.Component<'theme.theme', true>;
   };
 }
@@ -897,7 +900,7 @@ export interface ApiProjectProject extends Schema.CollectionType {
       Attribute.DefaultTo<false>;
     image: Attribute.Media;
     status: Attribute.Enumeration<
-      ['Exploration', 'Konzeption', 'Proof of Concept']
+      ['Exploration', 'Konzeption', 'Proof of Concept', 'Live']
     > &
       Attribute.Required &
       Attribute.DefaultTo<'Exploration'>;
