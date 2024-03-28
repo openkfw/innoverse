@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import CloseIcon from '@mui/icons-material/Close';
-import { Divider } from '@mui/material';
+import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 

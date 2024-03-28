@@ -142,6 +142,7 @@ export const EventsTab = (props: EventsTabProps) => {
   useEffect(() => {
     loadScrollData();
     loadScrollDataPast();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   return (

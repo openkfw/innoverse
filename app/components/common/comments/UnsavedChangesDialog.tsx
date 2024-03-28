@@ -1,6 +1,11 @@
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, ClickAwayListener, Dialog, Stack, SxProps, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Dialog from '@mui/material/Dialog';
+import Stack from '@mui/material/Stack';
+import { SxProps } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
 import CustomButton from '../CustomButton';
 

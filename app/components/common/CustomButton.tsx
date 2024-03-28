@@ -1,6 +1,6 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { SxProps } from '@mui/material';
 import Button, { ButtonProps } from '@mui/material/Button';
+import { SxProps } from '@mui/material/styles';
 
 type CustomButtonProps = ButtonProps & {
   themeVariant?: 'primary' | 'secondary';

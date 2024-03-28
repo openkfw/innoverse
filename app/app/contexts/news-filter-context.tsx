@@ -114,6 +114,7 @@ export const NewsFilterContextProvider = ({ children }: { children: React.ReactN
       }
     };
     setData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const contextObject: NewsFilterContextInterface = {

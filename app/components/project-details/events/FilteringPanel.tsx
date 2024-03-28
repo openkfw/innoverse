@@ -1,7 +1,6 @@
 import React, { SetStateAction, useEffect, useMemo } from 'react';
 
 import SearchIcon from '@mui/icons-material/Search';
-import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
@@ -11,6 +10,7 @@ import FormLabel from '@mui/material/FormLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 import { Event } from '@/common/types';
 
@@ -55,6 +55,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
     tempArray.sort((a, b) => b.count - a.count);
 
     return tempArray;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events, currentFilters]);
 
   useEffect(() => {
@@ -68,6 +69,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
     } else {
       handleFilterChange(events);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events]);
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
     const filteredEventsByTheme = filterEventsByTheme(eventsToFilter);
     const filteredEventsBySearch = filterEventsBySearch(filteredEventsByTheme);
     handleFilterChange(filteredEventsBySearch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFilters.pastEventsShown, currentFilters.themes, currentFilters.searchTerm, events, futureEvents]);
 
   const filterEventsByTheme = (eventsToFilter: Event[]) => {
