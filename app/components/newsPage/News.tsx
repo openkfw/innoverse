@@ -6,8 +6,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { SxProps } from '@mui/system';
 
 import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import { ProjectUpdate } from '@/common/types';
@@ -45,6 +45,7 @@ export const News = (props: NewsProps) => {
       setIndex(2);
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, sort]);
 
   useEffect(() => {
@@ -55,6 +56,7 @@ export const News = (props: NewsProps) => {
     if (updateAdded) {
       fetchData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateAdded]);
 
   return (

@@ -131,7 +131,7 @@ export const getAllProjectFollowers = async (body: { projectId: string }) => {
       errors: validatedParams.errors,
       message: validatedParams.message,
     };
-  } catch (err: any) {
+  } catch (err) {
     const error: InnoPlatformError = dbError('Getting Project followers', err as Error, body.projectId);
     logger.error(error);
     return {
