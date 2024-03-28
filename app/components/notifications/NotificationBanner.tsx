@@ -1,9 +1,13 @@
 import React from 'react';
 import Image from 'next/image';
+import { keyframes } from '@emotion/react';
 
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Box, keyframes, Paper, Stack, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 
@@ -53,10 +57,14 @@ const BuildNotificationBanner = (props: BuildNotificationBannerProps) => {
         flexDirection: 'column',
       }}
     >
-      <Stack direction="row" alignItems={'start'} gap={1}>
+      <Stack direction="row" alignItems={'start'} gap={1} style={{ borderRadius: '12px' }}>
         <Box marginLeft={'20px'}>{icon}</Box>
         <Box>
-          <Typography variant={'body1'} color={'primary'} sx={{ fontSize: '16px' }}>
+          <Typography
+            variant={'body1'}
+            color={'text.primary'}
+            sx={{ fontSize: '16px', fontFamily: '***FONT_REMOVED***' }}
+          >
             {text}
           </Typography>
         </Box>
@@ -107,19 +115,19 @@ export const NotificationBanner = (props: NotificationBannerProps) => {
 const simpleNotificationBanner = () => (
   <svg width="463" height="120" viewBox="0 0 463 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g filter="url(#filter0_dd_2478_15114)">
-      <rect x="13" y="9" width="437" height="94" rx="4" fill="#E8E8E8" shape-rendering="crispEdges" />
-      <rect x="12.5" y="8.5" width="438" height="95" rx="4.5" stroke="#CECFD0" shape-rendering="crispEdges" />
+      <rect x="13" y="9" width="437" height="94" rx="12" fill="#E8E8E8" shapeRendering="crispEdges" />
+      <rect x="12.5" y="8.5" width="438" height="95" rx="12" stroke="#CECFD0" shapeRendering="crispEdges" />
       <rect x="29" y="35.5" width="41" height="41" rx="5" fill="url(#paint0_linear_2478_15114)" />
       <g opacity="0.6">
         <path
           d="M390 28.6666C389.267 28.6666 388.667 29.2666 388.667 30C388.667 30.7333 389.267 31.3333 390 31.3333C390.733 31.3333 391.333 30.7333 391.333 30C391.333 29.2666 390.733 28.6666 390 28.6666ZM398 28.6666C397.267 28.6666 396.667 29.2666 396.667 30C396.667 30.7333 397.267 31.3333 398 31.3333C398.733 31.3333 399.333 30.7333 399.333 30C399.333 29.2666 398.733 28.6666 398 28.6666ZM394 28.6666C393.267 28.6666 392.667 29.2666 392.667 30C392.667 30.7333 393.267 31.3333 394 31.3333C394.733 31.3333 395.333 30.7333 395.333 30C395.333 29.2666 394.733 28.6666 394 28.6666Z"
           fill="black"
-          fill-opacity="0.56"
+          fillOpacity="0.56"
         />
         <path
           d="M430.667 26.2734L429.727 25.3334L426 29.06L422.273 25.3334L421.333 26.2734L425.06 30L421.333 33.7267L422.273 34.6667L426 30.94L429.727 34.6667L430.667 33.7267L426.94 30L430.667 26.2734Z"
           fill="black"
-          fill-opacity="0.56"
+          fillOpacity="0.56"
         />
       </g>
       <path
@@ -139,9 +147,9 @@ const simpleNotificationBanner = () => (
         width="463"
         height="120"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feColorMatrix
           in="SourceAlpha"
           type="matrix"
@@ -174,8 +182,8 @@ const simpleNotificationBanner = () => (
         y2="43.5"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#D1D1D1" />
-        <stop offset="1" stop-color="#B0B0B0" />
+        <stop stopColor="#D1D1D1" />
+        <stop offset="1" stopColor="#B0B0B0" />
       </linearGradient>
     </defs>
   </svg>
