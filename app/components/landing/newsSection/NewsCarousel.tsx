@@ -3,6 +3,7 @@
 import Link from 'next/link';
 
 import Grid from '@mui/material/Grid';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { ProjectUpdate } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
@@ -19,12 +20,14 @@ type NewsSliderProps = {
 };
 
 export default function NewsCarousel({ updates }: NewsSliderProps) {
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
     <Carousel
       items={updates}
       sliderSettings={{
         slidesToShow: 1,
-        slidesToScroll: 3,
+        slidesToScroll: isSmallScreen ? 1 : 3,
       }}
       renderItem={(projectUpdate, idx) => (
         <Grid item xs={11} key={idx} sx={cardContainerStyles}>
