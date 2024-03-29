@@ -28,6 +28,15 @@ export const getPushNotificationSubscriptions = async () => {
   });
 };
 
+export const requestPushNotificationPermissionsIfNotPresent = async () => {
+  if (hasPushNotificationPermission()) {
+    return { permitted: true };
+  }
+
+  const permissions = await requestPushNotificationPermission();
+  return { permitted: permissions !== 'denied' };
+};
+
 export const subscribePushNotification = async () => {
   const registration = await navigator.serviceWorker.ready;
   const subscription = await registration.pushManager.subscribe({
@@ -75,8 +84,8 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
       >
         <NotificationBanner
           showManualSteps={showManualSteps}
-          registerPushNotifications={() => registerPushNotifications()}
-          hidePushSubscriptionAlert={() => hidePushSubscriptionAlert()}
+          registerPushNotifications={registerPushNotifications}
+          hidePushSubscriptionAlert={hidePushSubscriptionAlert}
         />
       </Box>
       {children}
@@ -85,24 +94,28 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
 };
 
 function useNotificationContextProvider() {
-  const [manualSteps, setShowManualSteps] = useState(false);
-  const enableAlertSessionItem = useSessionItem<boolean>('enable-push-subscription-alert');
+  const delayBeforeAlertIsDisplayedInSeconds = 5;
 
-  const initialized = useRef(false);
+  const [alertState, setAlertState] = useState<'askEnablePush' | 'showManualSteps' | 'dismissed'>();
+  const hideAlertSessionItem = useSessionItem<boolean>('hide-push-subscription-alert');
+
   const { user, isLoading } = useUser();
+  const initialized = useRef(false);
 
-  const showAlert = useCallback(() => {
-    enableAlertSessionItem.set(true);
-  }, []);
+  const hideAlert = useCallback(
+    ({ rememberAfterPageReload }: { rememberAfterPageReload: boolean }) => {
+      setAlertState('dismissed');
+      if (rememberAfterPageReload) {
+        hideAlertSessionItem.set(true);
+      }
+    },
+    [hideAlertSessionItem],
+  );
 
-  const hideAlert = useCallback(() => {
-    enableAlertSessionItem.set(false);
-  }, [enableAlertSessionItem]);
-
-  const handleError = useCallback(
-    ({ triggeredByUserGesture, error }: { triggeredByUserGesture: boolean; error?: unknown }) => {
+  const registerNotifications = useCallback(async () => {
+    const handleError = (error?: unknown) => {
       const reason = error ? 'exception occurred' : 'not permitted';
-      const message = `Failed to enable push notifications (reason: ${reason}, triggered by user gesture: ${triggeredByUserGesture})`;
+      const message = `Failed to enable push notifications (reason: ${reason})`;
 
       if (error) {
         console.error(message, error);
@@ -110,59 +123,46 @@ function useNotificationContextProvider() {
         console.info(message);
       }
 
-      if (triggeredByUserGesture) {
-        setShowManualSteps(true);
-      } else {
-        showAlert();
+      setAlertState('showManualSteps');
+    };
+
+    try {
+      console.log('Enabling push notifications ...');
+
+      setAlertState('dismissed');
+      const promptResult = await requestPushNotificationPermissionsIfNotPresent();
+
+      if (!promptResult.permitted) {
+        handleError();
+        return;
       }
-    },
-    [showAlert],
-  );
 
-  const registerNotifications = useCallback(
-    async ({ triggeredByUserGesture }: { triggeredByUserGesture: boolean }) => {
-      try {
-        const promptResult = await requestPushNotificationPermissionsIfNotPresent();
+      let subscription = await getPushNotificationSubscriptions();
 
-        if (!promptResult.permitted) {
-          handleError({ triggeredByUserGesture });
-          return;
-        }
-
-        let subscription = await getPushNotificationSubscriptions();
-
-        if (!subscription) {
-          subscription = await subscribePushNotification();
-        }
-
-        await subscribeToWebPush(JSON.stringify(subscription));
-
-        console.info(`Enabled push notifications (triggered by user gesture: ${triggeredByUserGesture})`);
-        hideAlert();
-      } catch (error) {
-        handleError({ triggeredByUserGesture, error });
+      if (!subscription) {
+        subscription = await subscribePushNotification();
       }
-    },
-    [hideAlert, handleError],
-  );
 
-  const requestPushNotificationPermissionsIfNotPresent = async () => {
-    if (hasPushNotificationPermission()) {
-      return { permitted: true };
+      await subscribeToWebPush(JSON.stringify(subscription));
+
+      console.info('Enabled push notifications');
+      hideAlertSessionItem.set(true);
+    } catch (error) {
+      handleError(error);
     }
-
-    const permissions = await requestPushNotificationPermission();
-    return { permitted: permissions !== 'denied' };
-  };
+  }, [hideAlertSessionItem]);
 
   const registerServiceWorker = () => navigator.serviceWorker.register('/sw.js', { scope: '/' });
 
-  useEffect(() => {
-    const trigger = setTimeout(() => {
-      showAlert();
-    }, 5 * 1000);
-    return () => clearTimeout(trigger);
-  }, []);
+  useEffect(function onFirstLoadDisplayAlertAfterDelay() {
+    const isFirstLoad = alertState === undefined;
+    if (isFirstLoad) {
+      const timeoutId = setTimeout(() => {
+        setAlertState('askEnablePush');
+      }, delayBeforeAlertIsDisplayedInSeconds * 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  });
 
   useEffect(
     function initializeServiceWorker() {
@@ -177,14 +177,15 @@ function useNotificationContextProvider() {
         console.error("Can't register service worker", error);
       }
     },
-    [user, isLoading, enableAlertSessionItem.value, registerNotifications],
+    [isLoading, user],
   );
 
   return {
-    showPushSubscriptionAlert: user && enableAlertSessionItem.value,
-    hidePushSubscriptionAlert: () => hideAlert(),
-    registerPushNotifications: () => registerNotifications({ triggeredByUserGesture: true }),
-    showManualSteps: manualSteps,
+    showPushSubscriptionAlert:
+      user && !hideAlertSessionItem.value && alertState !== undefined && alertState !== 'dismissed',
+    hidePushSubscriptionAlert: hideAlert,
+    registerPushNotifications: registerNotifications,
+    showManualSteps: alertState === 'showManualSteps',
   };
 }
 

@@ -13,7 +13,7 @@ import InteractionButton, { InteractionType } from '@/components/common/Interact
 
 interface NotificationBannerProps {
   registerPushNotifications: () => void;
-  hidePushSubscriptionAlert: () => void;
+  hidePushSubscriptionAlert: ({ rememberAfterPageReload }: { rememberAfterPageReload: boolean }) => void;
   showManualSteps: boolean;
 }
 
@@ -85,8 +85,8 @@ export const NotificationBanner = (props: NotificationBannerProps) => {
   const { registerPushNotifications, hidePushSubscriptionAlert, showManualSteps } = props;
   return showManualSteps
     ? BuildNotificationBanner({
-        dismissAction: hidePushSubscriptionAlert,
-        action: hidePushSubscriptionAlert,
+        dismissAction: () => hidePushSubscriptionAlert({ rememberAfterPageReload: false }),
+        action: registerPushNotifications,
         text: 'Dein Browser verhindert die Aktivierung von Benachrichtigungen. Bitte gehe zu den Einstellungen, um die Aktivierung zu ermöglichen um Benachrichtigungen zu erhalten: Settings → Cookies and site permissions → Notifications',
         dismissText: 'Später erinnern',
         okText: 'Erledigt',
@@ -101,7 +101,7 @@ export const NotificationBanner = (props: NotificationBannerProps) => {
         ),
       })
     : BuildNotificationBanner({
-        dismissAction: hidePushSubscriptionAlert,
+        dismissAction: () => hidePushSubscriptionAlert({ rememberAfterPageReload: true }),
         action: registerPushNotifications,
         text: 'Dürfen wir dir Benachrichtigungen senden?',
         dismissText: 'Nein',
