@@ -46,7 +46,7 @@ const shouldNotifyResolver = (event: string, model: string): boolean => {
     ['update']: true, // a create equals a publish for this model
   };
   resolvers['entry.update'] = {
-    ['project']: false,
+    ['project']: true,
     ['opportunity']: false,
     ['collaboration-question']: false,
     ['survey-question']: false,

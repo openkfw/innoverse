@@ -1,5 +1,11 @@
 import { PrismaClient, PushSubscription } from '@prisma/client';
+import { JsonValue } from '@prisma/client/runtime/library';
 import webpush, { PushSubscription as WebPushSubscription } from 'web-push';
+
+const parsePrismaJsonValue = <T>(jsonValue: JsonValue) => {
+  const json = jsonValue?.toString();
+  return json ? (JSON.parse(json) as T) : undefined;
+};
 
 export const getPushSubscriptionsForUser = async (
   client: PrismaClient,
@@ -14,8 +20,8 @@ export const getPushSubscriptionsForUser = async (
   });
 
   return pushSubscriptions
-    .filter((el) => el.subscription !== undefined)
-    .map((pushSubscription) => JSON.parse(pushSubscription?.subscription) as WebPushSubscription);
+    .map((el) => parsePrismaJsonValue<WebPushSubscription>(el.subscription))
+    .filter((subscription): subscription is WebPushSubscription => subscription !== undefined);
 };
 
 export const getAllPushSubscriptions = async (
@@ -27,14 +33,15 @@ export const getAllPushSubscriptions = async (
   }[]
 > => {
   const pushSubscriptions = await client.pushSubscription.findMany();
-  return pushSubscriptions
-    .filter((el) => el.subscription !== undefined)
-    .map((pushSubscription) => {
-      return {
-        userId: pushSubscription.userId,
-        subscriptions: [JSON.parse(pushSubscription?.subscription)] as WebPushSubscription[],
-      };
-    });
+
+  return pushSubscriptions.map((pushSubscription) => {
+    const subscription = parsePrismaJsonValue<WebPushSubscription>(pushSubscription.subscription);
+    const subscriptions = subscription ? [subscription] : [];
+    return {
+      userId: pushSubscription.userId,
+      subscriptions: subscriptions,
+    };
+  });
 };
 
 export const createPushSubscriptionForUser = async (
