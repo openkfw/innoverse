@@ -15,7 +15,26 @@ export const getPushSubscriptionsForUser = async (
 
   return pushSubscriptions
     .filter((el) => el.subscription !== undefined)
-    .map((pushSubscription) => JSON.parse(JSON.stringify(pushSubscription?.subscription)) as WebPushSubscription);
+    .map((pushSubscription) => JSON.parse(pushSubscription?.subscription) as WebPushSubscription);
+};
+
+export const getAllPushSubscriptions = async (
+  client: PrismaClient,
+): Promise<
+  {
+    userId: string;
+    subscriptions: WebPushSubscription[];
+  }[]
+> => {
+  const pushSubscriptions = await client.pushSubscription.findMany();
+  return pushSubscriptions
+    .filter((el) => el.subscription !== undefined)
+    .map((pushSubscription) => {
+      return {
+        userId: pushSubscription.userId,
+        subscriptions: [JSON.parse(pushSubscription?.subscription)] as WebPushSubscription[],
+      };
+    });
 };
 
 export const createPushSubscriptionForUser = async (
@@ -26,7 +45,7 @@ export const createPushSubscriptionForUser = async (
   client.pushSubscription.create({
     data: {
       userId,
-      subscription,
+      subscription: JSON.stringify(subscription),
     },
   });
 

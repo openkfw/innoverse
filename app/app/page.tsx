@@ -39,7 +39,9 @@ async function IndexPage() {
         </div>
         <EventSection events={events} />
         <ProjectSection projects={projects} />
-        <MappingProjectsCard projects={projects} />
+        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+          <MappingProjectsCard projects={projects} />
+        </Box>
       </Stack>
       <CustomToast />
     </Layout>

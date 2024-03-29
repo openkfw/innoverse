@@ -71,7 +71,7 @@ model PushSubscription {
   userId    String
   createdAt DateTime @default(now())
 
-  subscription Json
+  subscription String
 }
 
 model Reaction {

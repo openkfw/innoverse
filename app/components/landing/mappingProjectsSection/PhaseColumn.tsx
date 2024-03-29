@@ -1,14 +1,18 @@
+import { ReactElement } from 'react';
+
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 
+import { Project } from '@/common/types';
+
 interface PhaseColumnProps {
   title: string;
   description: string;
-  projects: any[];
-  icon: any;
+  projects: Project[];
+  icon: ReactElement;
   isFirstStep: boolean | undefined;
 }
 

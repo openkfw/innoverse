@@ -55,6 +55,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
     tempArray.sort((a, b) => b.count - a.count);
 
     return tempArray;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events, currentFilters]);
 
   useEffect(() => {
@@ -68,6 +69,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
     } else {
       handleFilterChange(events);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events]);
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
     const filteredEventsByTheme = filterEventsByTheme(eventsToFilter);
     const filteredEventsBySearch = filterEventsBySearch(filteredEventsByTheme);
     handleFilterChange(filteredEventsBySearch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFilters.pastEventsShown, currentFilters.themes, currentFilters.searchTerm, events, futureEvents]);
 
   const filterEventsByTheme = (eventsToFilter: Event[]) => {

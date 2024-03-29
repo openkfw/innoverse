@@ -11,6 +11,7 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
+import { SxProps, Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { ProjectUpdate } from '@/common/types';
@@ -28,7 +29,7 @@ import { TooltipContent } from '../project-details/TooltipContent';
 
 interface NewsCardProps {
   update: ProjectUpdate;
-  sx?: any;
+  sx?: SxProps;
   noClamp?: boolean;
 }
 
@@ -68,7 +69,7 @@ export default function NewsCard(props: NewsCardProps) {
   }, [projectId]);
 
   return (
-    <Card sx={{ ...cardStyles, ...sx }}>
+    <Card sx={{ ...cardStyles, ...sx } as SxProps<Theme>}>
       <CardHeader
         sx={cardHeaderStyles}
         avatar={
@@ -139,8 +140,8 @@ export default function NewsCard(props: NewsCardProps) {
 
 // News Card Styles
 const cardStyles = {
-  paddingX: 3,
-  paddingY: 4,
+  px: 3,
+  py: 4,
   borderRadius: '8px',
   marginRight: 3,
   height: '100%',

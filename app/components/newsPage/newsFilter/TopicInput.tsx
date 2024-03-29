@@ -40,6 +40,7 @@ export default function TopicInput(props: NewsFilterProps) {
 
   useEffect(() => {
     setFilters({ ...filters, topics: values });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
 
   return (

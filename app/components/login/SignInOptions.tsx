@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import React from 'react';
-import { getProviders } from 'next-auth/react';
+import { BuiltInProviderType } from 'next-auth/providers/index';
+import { ClientSafeProvider, getProviders, LiteralUnion } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
 
 import Collapse from '@mui/material/Collapse';
@@ -13,7 +14,10 @@ import LoginProviderRow from './LoginProviderRow';
 import UserSuggestionRow from './UserSuggestionRow';
 
 export default function SignInOptions() {
-  const [signInProviders, setSignInProviders] = useState<any>();
+  const [signInProviders, setSignInProviders] = useState<Record<
+    LiteralUnion<BuiltInProviderType, string>,
+    ClientSafeProvider
+  > | null>(null);
   const [open, setOpen] = React.useState(false);
   const [userSuggested, setUserSuggested] = React.useState(true);
   const { session } = parseCookies();
@@ -59,7 +63,9 @@ export default function SignInOptions() {
   };
 
   const getProvider = () => {
-    return Object.values(signInProviders).find((provider: any) => provider.id === getCookieData()?.provider) as {
+    if (!signInProviders) return { name: '', id: '' };
+
+    return Object.values(signInProviders).find((provider) => provider.id === getCookieData()?.provider) as {
       name: string;
       id: string;
     };
@@ -80,9 +86,7 @@ export default function SignInOptions() {
       )}
       <Collapse in={open || !session} unmountOnExit>
         {signInProviders &&
-          Object.values(signInProviders).map((provider: any) => (
-            <LoginProviderRow key={provider.id} provider={provider} />
-          ))}
+          Object.values(signInProviders).map((provider) => <LoginProviderRow key={provider.id} provider={provider} />)}
       </Collapse>
     </>
   );

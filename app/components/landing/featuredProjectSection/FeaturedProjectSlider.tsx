@@ -16,7 +16,6 @@ import theme from '@/styles/theme';
 
 import FeaturedProjectContent from './slider/FeaturedProjectContent';
 import Indicator from './slider/Indicator';
-import SmallSliderPill from './slider/SmallSliderPill';
 
 import './FeatureProjectSlider.css';
 
@@ -35,14 +34,19 @@ type SlideProps = {
 
 const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   const isLastSlide = index === totalItems - 1;
   const isFirstSlide = index === 0;
 
   const NextArrow = () => {
-    if (isHovered && !isLastSlide) {
+    if ((isHovered || !isWideScreen) && !isLastSlide) {
       return (
-        <Box sx={{ ...arrowStyle, right: 10 }} onClick={() => setSelected(index + 1)}>
+        <Box
+          sx={{ ...arrowStyle, right: !isWideScreen ? 2 : 10 }}
+          onClick={() => setSelected(index + 1)}
+          onTouchEnd={() => setSelected(index + 1)}
+        >
           <ArrowForwardIosIcon fontSize="large" />
         </Box>
       );
@@ -52,9 +56,13 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
   if (!content) return <></>;
 
   const PrevArrow = () => {
-    if (isHovered && !isFirstSlide) {
+    if ((isHovered || !isWideScreen) && !isFirstSlide) {
       return (
-        <Box sx={{ ...arrowStyle, left: 10 }} onClick={() => setSelected(index - 1)}>
+        <Box
+          sx={{ ...arrowStyle, left: !isWideScreen ? 2 : 10 }}
+          onClick={() => setSelected(index - 1)}
+          onTouchEnd={() => setSelected(index - 1)}
+        >
           <ArrowBackIosNewIcon fontSize="large" />
         </Box>
       );
@@ -84,9 +92,6 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
         <PrevArrow />
         <NextArrow />
       </Grid>
-      <Box sx={smallScreenSliderPill}>
-        <SmallSliderPill itemNumber={(content?.id + 1).toString()} title={content?.title} />
-      </Box>
       <Grid item md={4} sx={contentStyles}>
         <FeaturedProjectContent
           title={content?.title}
@@ -100,10 +105,10 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
 };
 
 const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
-  const [selectedItem, setSelectedItem] = useState<number>(props.items.length - 1);
+  const slides = props.items;
+  const [selectedItem, setSelectedItem] = useState<number>(slides.length - 1);
   const [show, setShow] = useState(false);
 
-  const slides = props.items;
   const sliderRef = useRef<Slider>(null);
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
@@ -122,19 +127,21 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   }
 
   function setSelected(index: number) {
-    if (index >= 0 && index < props.items.length) {
-      sliderRef?.current?.slickGoTo(index);
+    if (index >= 0 && index < slides.length) {
+      sliderRef.current?.slickGoTo(index);
       setSelectedItem(index);
       moveIndicator(index);
     }
   }
 
   const settings = {
-    initialSlide: props.items.length - 1,
+    initialSlide: slides.length - 1,
     arrows: false,
     dots: true,
-    infinite: false,
+    infinite: true,
     speed: 600,
+    autoplay: true,
+    autoplaySpeed: 7000,
     slidesToShow: 1,
     slidesToScroll: 1,
     vertical: false,
@@ -153,16 +160,20 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
     rows: 1,
     variableWidth: !isWideScreen,
     className: 'carouselStyles',
+    beforeChange: (_current: number, next: number) => {
+      setSelectedItem(next);
+      moveIndicator(next);
+    },
   };
 
   return (
     <Box sx={featuredProjectSliderStyles}>
       {!show && (
         <Slide
-          content={slides[props.items.length - 1]}
+          content={slides[slides.length - 1]}
           index={selectedItem}
           setSelected={setSelected}
-          totalItems={props.items.length}
+          totalItems={slides.length}
         />
       )}
       <Slider
@@ -179,7 +190,7 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
               key={id}
               index={selectedItem}
               setSelected={setSelected}
-              totalItems={props.items.length}
+              totalItems={slides.length}
             />
           ))}
       </Slider>
@@ -254,23 +265,10 @@ const contentStyles = {
   maxWidth: { xs: 'none', sm: `${(6 / 12) * 100}%`, md: `${(4 / 12) * 100}%` },
 };
 
-const smallScreenSliderPill = {
-  marginTop: '21px',
-  marginBottom: 4,
-
-  [theme.breakpoints.up('sm')]: {
-    display: 'none',
-  },
-};
-
 const arrowStyle = {
   zIndex: 100,
   position: 'absolute',
   cursor: 'pointer',
   top: '50%',
   transform: 'translateY(-50%)',
-
-  [theme.breakpoints.down('sm')]: {
-    display: 'none',
-  },
 };

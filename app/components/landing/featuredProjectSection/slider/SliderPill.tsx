@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -17,17 +17,9 @@ const PillBox = ({ children, sx }: { children: ReactNode; sx?: SxProps }) => {
   return <Box sx={style}>{children}</Box>;
 };
 
-const SliderPill = (props: { active: boolean; itemNumber: string; title: string; projectStart: string }) => {
-  const { active, itemNumber, title, projectStart } = props;
-
+const ActiveSliderPill = (props: { itemNumber: string; title: string; projectStart: string }) => {
+  const { itemNumber, title, projectStart } = props;
   const styles = {
-    elementWrap: {
-      border: '0.50px white solid',
-      px: '10px',
-      py: '1px',
-      display: 'flex',
-      alignItems: 'center',
-    },
     activeContainer: {
       position: 'relative',
     },
@@ -47,40 +39,64 @@ const SliderPill = (props: { active: boolean; itemNumber: string; title: string;
   };
 
   return (
-    <>
-      {active ? (
-        <Stack sx={styles.activeContainer}>
-          <Box sx={styles.vr} />
-          <Stack direction="row">
-            <Stack>
-              <PillBox sx={{ pl: '13px', pr: '24px' }}>
-                <Typography variant="overline">Project #{itemNumber}</Typography>
-              </PillBox>
-              <PillBox sx={{ pl: '13px', pr: '24px' }}>
-                <Typography variant="overline">{projectStart}</Typography>
-              </PillBox>
-            </Stack>
-            <PillBox sx={{ px: '32px' }}>
-              <Typography variant="h4" sx={{ wordWrap: 'break-word' }}>
-                {title}
-              </Typography>
-            </PillBox>
-          </Stack>
-        </Stack>
-      ) : (
-        <Stack direction="row">
-          <PillBox sx={{ px: '7px' }}>
-            <Typography variant="overline">#{itemNumber}</Typography>
+    <Stack sx={styles.activeContainer}>
+      <Box sx={styles.vr} />
+      <Stack direction="row">
+        <Stack>
+          <PillBox sx={{ pl: '13px', pr: '24px' }}>
+            <Typography variant="overline">Project #{itemNumber}</Typography>
           </PillBox>
-          <PillBox sx={{ px: '17px' }}>
-            <Typography variant="h6" noWrap>
-              {title}
-            </Typography>
+          <PillBox sx={{ pl: '13px', pr: '24px', borderTop: 0 }}>
+            <Typography variant="overline">{projectStart}</Typography>
           </PillBox>
         </Stack>
-      )}
-    </>
+        <PillBox sx={{ px: '32px', borderLeft: 0 }}>
+          <Typography variant="h4" sx={{ wordWrap: 'break-word' }}>
+            {title}
+          </Typography>
+        </PillBox>
+      </Stack>
+    </Stack>
   );
+};
+
+const NonActiveSliderPill = (props: { itemNumber: string; title: string; projectStart: string }) => {
+  const { itemNumber, title } = props;
+  const [hover, setHover] = useState<boolean>(false);
+
+  const pillBoxStyle = {
+    ...{ px: '7px' },
+    ...(hover && {
+      borderColor: 'action.hover',
+      '& .MuiTypography-root': {
+        color: 'action.hover',
+      },
+    }),
+  };
+
+  return (
+    <Stack
+      direction="row"
+      onMouseEnter={() => {
+        setHover(true);
+      }}
+      onMouseLeave={() => setHover(false)}
+    >
+      <PillBox sx={pillBoxStyle}>
+        <Typography variant="overline">#{itemNumber}</Typography>
+      </PillBox>
+      <PillBox sx={pillBoxStyle}>
+        <Typography variant="h6" noWrap>
+          {title}
+        </Typography>
+      </PillBox>
+    </Stack>
+  );
+};
+
+const SliderPill = (props: { active: boolean; itemNumber: string; title: string; projectStart: string }) => {
+  const { active } = props;
+  return <>{active ? <ActiveSliderPill {...props} /> : <NonActiveSliderPill {...props} />}</>;
 };
 
 export default SliderPill;

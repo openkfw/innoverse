@@ -1,6 +1,7 @@
 'use client';
 
 import Grid from '@mui/material/Grid';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import theme from '@/styles/theme';
 
@@ -14,12 +15,14 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 
 export default function ProjectCarousel({ projects }: ProjectProps) {
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
     <Carousel
       items={projects}
       sliderSettings={{
         slidesToShow: 1,
-        slidesToScroll: 2,
+        slidesToScroll: isSmallScreen ? 1 : 2,
       }}
       renderItem={(project) => (
         <Grid item key={project.id} sx={cardContainerStyles}>

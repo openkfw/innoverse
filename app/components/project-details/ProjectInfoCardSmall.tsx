@@ -1,4 +1,4 @@
-import { SetStateAction, useRef, useState } from 'react';
+import { MutableRefObject, useRef, useState } from 'react';
 import Slider from 'react-slick';
 
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
@@ -22,20 +22,22 @@ interface ProjectInfoProps {
 interface SliderNavigationProps {
   activeIndex: number;
   setActiveIndex: (index: number) => void;
-  sliderRef: any;
+  sliderRef: MutableRefObject<Slider | null>;
 }
 
-const SLiderNavigation = (props: SliderNavigationProps) => {
+const SliderNavigation = (props: SliderNavigationProps) => {
   const { sliderRef, activeIndex } = props;
-  const navRef = useRef<any>(null);
+  const navRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: string) => {
     const scrollAmount = direction === 'left' ? -150 : 150;
-    navRef.current.scrollLeft += scrollAmount;
+    if (navRef.current) {
+      navRef.current.scrollLeft += scrollAmount;
+    }
   };
 
   const swipe = (index: number) => {
-    if (sliderRef?.current) {
+    if (sliderRef.current) {
       sliderRef.current.slickGoTo(index);
     }
   };
@@ -47,7 +49,7 @@ const SLiderNavigation = (props: SliderNavigationProps) => {
       </IconButton>
 
       <Box ref={navRef} style={navigationStyles}>
-        {['Info & Status der Initiative', 'Unser Team', 'Zusammenarbeit', 'Neueste Updates'].map((item, index) => (
+        {['Info', 'Team', 'Zusammenarbeit', 'Updates'].map((item, index) => (
           <Typography
             key={index}
             variant="overline"
@@ -67,7 +69,7 @@ const SLiderNavigation = (props: SliderNavigationProps) => {
 };
 
 export function ProjectInfoCardSmall(props: ProjectInfoProps) {
-  const sliderRef = useRef<any>(null);
+  const sliderRef = useRef<Slider | null>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const { project, setActiveTab } = props;
@@ -82,12 +84,12 @@ export function ProjectInfoCardSmall(props: ProjectInfoProps) {
     vertical: false,
     variableWidth: false,
     rows: 1,
-    beforeChange: (_: any, next: SetStateAction<number>) => setActiveIndex(next),
+    beforeChange: (_: number, next: number) => setActiveIndex(next),
   };
 
   return (
     <>
-      <SLiderNavigation activeIndex={activeIndex} setActiveIndex={setActiveIndex} sliderRef={sliderRef} />
+      <SliderNavigation activeIndex={activeIndex} setActiveIndex={setActiveIndex} sliderRef={sliderRef} />
       <Box sx={sliderBoxStyles}>
         <Slider {...settings} ref={sliderRef}>
           <ProjectStageCard setActiveTab={setActiveTab} project={project} />

@@ -31,6 +31,7 @@ export default function ProjectsInput(props: NewsFilterProps) {
 
   useEffect(() => {
     setFilters({ ...filters, projects: values });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
 
   return (

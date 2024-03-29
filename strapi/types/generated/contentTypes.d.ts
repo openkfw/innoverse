@@ -701,6 +701,9 @@ export interface ApiCollaborationQuestionCollaborationQuestion
       'manyToMany',
       'api::inno-user.inno-user'
     >;
+    isPlatformFeedback: Attribute.Boolean &
+      Attribute.Required &
+      Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -746,10 +749,11 @@ export interface ApiEventEvent extends Schema.CollectionType {
       Attribute.Private;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    location: Attribute.String & Attribute.Required;
+    location: Attribute.String;
     title: Attribute.String & Attribute.Required;
     image: Attribute.Media;
     startTime: Attribute.DateTime & Attribute.Required;
+    endTime: Attribute.DateTime;
     author: Attribute.Relation<
       'api::event.event',
       'oneToOne',
@@ -758,14 +762,12 @@ export interface ApiEventEvent extends Schema.CollectionType {
     description: Attribute.RichText;
     type: Attribute.Enumeration<
       ['Remote', 'In-office', 'Remote und In-office']
-    > &
-      Attribute.Required;
+    >;
     project: Attribute.Relation<
       'api::event.event',
       'manyToOne',
       'api::project.project'
     >;
-    endTime: Attribute.DateTime;
     Themes: Attribute.Component<'theme.theme', true>;
   };
 }
@@ -897,7 +899,7 @@ export interface ApiProjectProject extends Schema.CollectionType {
       Attribute.DefaultTo<false>;
     image: Attribute.Media;
     status: Attribute.Enumeration<
-      ['Exploration', 'Konzeption', 'Proof of Concept']
+      ['Exploration', 'Konzeption', 'Proof of Concept', 'Live']
     > &
       Attribute.Required &
       Attribute.DefaultTo<'Exploration'>;
