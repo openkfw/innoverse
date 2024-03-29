@@ -1,7 +1,6 @@
 import { PropsWithChildren, RefObject } from 'react';
 
-import Button from '@mui/material/Button';
-import { ButtonProps } from '@mui/material/Button';
+import Button, { ButtonProps } from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 type CustomIconButtonProps = PropsWithChildren & ButtonProps & { buttonRef?: RefObject<HTMLButtonElement> };

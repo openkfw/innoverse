@@ -2,13 +2,10 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import { SxProps } from '@mui/material/styles';
 
 import { useSessionItem } from '@/app/contexts/helpers';
-import { errorMessage } from '@/components/common/CustomToast';
+import { NotificationBanner } from '@/components/notifications/NotificationBanner';
 import { subscribeToWebPush } from '@/utils/notification/pushNotification';
 
 import { useUser } from './user-context';
@@ -29,6 +26,15 @@ export const getPushNotificationSubscriptions = async () => {
   return await navigator.serviceWorker.ready.then(async (registration) => {
     return await registration.pushManager.getSubscription();
   });
+};
+
+export const requestPushNotificationPermissionsIfNotPresent = async () => {
+  if (hasPushNotificationPermission()) {
+    return { permitted: true };
+  }
+
+  const permissions = await requestPushNotificationPermission();
+  return { permitted: permissions !== 'denied' };
 };
 
 export const subscribePushNotification = async () => {
@@ -66,33 +72,21 @@ const contextObject: NotificationContextInterface = {
 const NotificationContext = createContext(contextObject);
 
 export const NotificationContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const { showPushSubscriptionAlert, hidePushSubscriptionAlert, registerPushNotifications } =
+  const { showPushSubscriptionAlert, hidePushSubscriptionAlert, registerPushNotifications, showManualSteps } =
     useNotificationContextProvider();
-
   return (
     <NotificationContext.Provider value={contextObject}>
       <Box
         display={showPushSubscriptionAlert ? 'flex' : 'none'}
-        alignItems="center"
-        justifyContent="center"
-        bgcolor={'#edf7ed'}
-        position={'fixed'}
-        sx={{ mt: '64px', width: '100%', zIndex: 5 }}
+        style={{
+          justifyContent: 'flex-end',
+        }}
       >
-        <Alert
-          icon={false}
-          severity="success"
-          style={{ borderRadius: 0 }}
-          sx={{ backgroundColor: 'transparent', fontSize: '16px' }}
-        >
-          Möchtest du Push-Benachrichtigungen zu Projekten erhalten?
-          <Button variant={'text'} onClick={registerPushNotifications} sx={{ ...buttonStyle, ml: 2 }}>
-            Ja
-          </Button>
-          <Button variant={'text'} onClick={hidePushSubscriptionAlert} sx={buttonStyle}>
-            Nein
-          </Button>
-        </Alert>
+        <NotificationBanner
+          showManualSteps={showManualSteps}
+          registerPushNotifications={registerPushNotifications}
+          hidePushSubscriptionAlert={hidePushSubscriptionAlert}
+        />
       </Box>
       {children}
     </NotificationContext.Provider>
@@ -100,31 +94,28 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
 };
 
 function useNotificationContextProvider() {
-  const [showPushSubscriptionAlert, setShowPushSubscriptionAlert] = useState(false);
-  const disableAlertSessionItem = useSessionItem<true>('disable-push-subscription-alert');
+  const delayBeforeAlertIsDisplayedInSeconds = 5;
 
-  const initialized = useRef(false);
+  const [alertState, setAlertState] = useState<'askEnablePush' | 'showManualSteps' | 'dismissed'>();
+  const hideAlertSessionItem = useSessionItem<boolean>('hide-push-subscription-alert');
+
   const { user, isLoading } = useUser();
-
-  const showAlert = useCallback(() => {
-    setShowPushSubscriptionAlert(true);
-  }, []);
+  const initialized = useRef(false);
 
   const hideAlert = useCallback(
-    ({ persistInSessionStorage }: { persistInSessionStorage: boolean }) => {
-      setShowPushSubscriptionAlert(false);
-
-      if (persistInSessionStorage) {
-        disableAlertSessionItem.set(true);
+    ({ rememberAfterPageReload }: { rememberAfterPageReload: boolean }) => {
+      setAlertState('dismissed');
+      if (rememberAfterPageReload) {
+        hideAlertSessionItem.set(true);
       }
     },
-    [disableAlertSessionItem],
+    [hideAlertSessionItem],
   );
 
-  const handleError = useCallback(
-    ({ triggeredByUserGesture, error }: { triggeredByUserGesture: boolean; error?: unknown }) => {
+  const registerNotifications = useCallback(async () => {
+    const handleError = (error?: unknown) => {
       const reason = error ? 'exception occurred' : 'not permitted';
-      const message = `Failed to enable push notifications (reason: ${reason}, triggered by user gesture: ${triggeredByUserGesture})`;
+      const message = `Failed to enable push notifications (reason: ${reason})`;
 
       if (error) {
         console.error(message, error);
@@ -132,52 +123,46 @@ function useNotificationContextProvider() {
         console.info(message);
       }
 
-      if (triggeredByUserGesture) {
-        errorMessage({ message: 'Fehler beim Einrichten der Push-Benachrichtigungen' });
-      } else {
-        showAlert();
+      setAlertState('showManualSteps');
+    };
+
+    try {
+      console.log('Enabling push notifications ...');
+
+      setAlertState('dismissed');
+      const promptResult = await requestPushNotificationPermissionsIfNotPresent();
+
+      if (!promptResult.permitted) {
+        handleError();
+        return;
       }
-    },
-    [showAlert],
-  );
 
-  const registerNotifications = useCallback(
-    async ({ triggeredByUserGesture }: { triggeredByUserGesture: boolean }) => {
-      try {
-        const promptResult = await requestPushNotificationPermissionsIfNotPresent();
+      let subscription = await getPushNotificationSubscriptions();
 
-        if (!promptResult.permitted) {
-          handleError({ triggeredByUserGesture });
-          return;
-        }
-
-        let subscription = await getPushNotificationSubscriptions();
-
-        if (!subscription) {
-          subscription = await subscribePushNotification();
-        }
-
-        await subscribeToWebPush(JSON.stringify(subscription));
-
-        console.info(`Enabled push notifications (triggered by user gesture: ${triggeredByUserGesture})`);
-        hideAlert({ persistInSessionStorage: false });
-      } catch (error) {
-        handleError({ triggeredByUserGesture, error });
+      if (!subscription) {
+        subscription = await subscribePushNotification();
       }
-    },
-    [hideAlert, handleError],
-  );
 
-  const requestPushNotificationPermissionsIfNotPresent = async () => {
-    if (hasPushNotificationPermission()) {
-      return { permitted: true };
+      await subscribeToWebPush(JSON.stringify(subscription));
+
+      console.info('Enabled push notifications');
+      hideAlertSessionItem.set(true);
+    } catch (error) {
+      handleError(error);
     }
-
-    const permissions = await requestPushNotificationPermission();
-    return { permitted: permissions !== 'denied' };
-  };
+  }, [hideAlertSessionItem]);
 
   const registerServiceWorker = () => navigator.serviceWorker.register('/sw.js', { scope: '/' });
+
+  useEffect(function onFirstLoadDisplayAlertAfterDelay() {
+    const isFirstLoad = alertState === undefined;
+    if (isFirstLoad) {
+      const timeoutId = setTimeout(() => {
+        setAlertState('askEnablePush');
+      }, delayBeforeAlertIsDisplayedInSeconds * 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  });
 
   useEffect(
     function initializeServiceWorker() {
@@ -187,34 +172,21 @@ function useNotificationContextProvider() {
         initialized.current = true;
         if (!('serviceWorker' in navigator)) return;
 
-        registerServiceWorker().then(() => {
-          registerNotifications({ triggeredByUserGesture: false });
-        });
+        registerServiceWorker().then(() => console.log('Service worker registered'));
       } catch (error) {
         console.error("Can't register service worker", error);
       }
     },
-    [user, isLoading, disableAlertSessionItem.value, registerNotifications],
+    [isLoading, user],
   );
 
   return {
-    showPushSubscriptionAlert: showPushSubscriptionAlert && user && !disableAlertSessionItem.value,
-    hidePushSubscriptionAlert: () => hideAlert({ persistInSessionStorage: true }),
-    registerPushNotifications: () => registerNotifications({ triggeredByUserGesture: true }),
+    showPushSubscriptionAlert:
+      user && !hideAlertSessionItem.value && alertState !== undefined && alertState !== 'dismissed',
+    hidePushSubscriptionAlert: hideAlert,
+    registerPushNotifications: registerNotifications,
+    showManualSteps: alertState === 'showManualSteps',
   };
 }
 
 export const useNotification = () => useContext(NotificationContext);
-
-const buttonStyle: SxProps = {
-  backgroundColor: 'transparent',
-  color: 'primary.main',
-  '&:hover': {
-    backgroundColor: 'rgba(25, 118, 210, 0.04)',
-    color: 'primary.main',
-  },
-  '&:active': {
-    backgroundColor: 'transparent',
-    color: 'primary.main',
-  },
-};

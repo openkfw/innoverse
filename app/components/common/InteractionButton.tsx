@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import BookmarkAddedOutlinedIcon from '@mui/icons-material/BookmarkAddedOutlined';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import FormatAlignLeftOutlinedIcon from '@mui/icons-material/FormatAlignLeftOutlined';
@@ -50,6 +51,8 @@ export enum InteractionType {
   LOG_IN = 'log-in',
   CLEAR = 'clear',
   ADD_UPDATE = 'add-update',
+  OK = 'ok',
+  DISMISS = 'dismiss',
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
@@ -90,6 +93,8 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.LOG_IN) return <PersonIcon fontSize="small" />;
     if (interactionType === InteractionType.CLEAR) return <ClearIcon fontSize="small" />;
     if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddOutlinedIcon fontSize="small" />;
+    if (interactionType === InteractionType.OK) return <CheckOutlinedIcon fontSize="small" />;
+    if (interactionType === InteractionType.DISMISS) return;
   };
 
   function handleIconClick(e: React.MouseEvent) {
