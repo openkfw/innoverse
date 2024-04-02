@@ -147,6 +147,9 @@ const body = {
   },
   button: {
     fontFamily: '***FONT_REMOVED***',
+    fontSize: '14px',
+    fontStyle: 'normal',
+    fontWeight: '500',
     textTransform: 'none' as const,
   },
 };

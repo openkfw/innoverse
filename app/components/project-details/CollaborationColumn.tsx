@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
@@ -33,19 +34,19 @@ interface SectionProps {
 const Section = ({ icon, title, subtitle, sectionId, buttonText, handleCollaborationClick, borders }: SectionProps) => (
   <Grid sx={{ ...rowStyles, ...(borders ? withBorders : {}) }}>
     <Box sx={sectionStyles}>
-      {icon}
+      <Box>{icon}</Box>
       <Grid sx={textStyles}>
-        <Typography variant="h6" color="text.primary">
+        <Typography variant="body1" color="text.primary" sx={sectionTitleStyles}>
           {title}
         </Typography>
-        <Typography variant="body1" color="text.primary">
+        <Typography variant="body1" color="text.primary" sx={sectionSubtitleStyles}>
           {subtitle}
         </Typography>
       </Grid>
     </Box>
     <Button sx={forwardButtonStyles} onClick={() => handleCollaborationClick(sectionId)}>
-      <ArrowForwardOutlined sx={{ color: 'primary.main' }} />
-      <Typography variant="subtitle2" color="primary.main">
+      <ArrowForwardOutlined sx={{ color: 'primary.main', fontSize: '18px' }} />
+      <Typography variant="button" color="primary.main">
         {buttonText}
       </Typography>
     </Button>
@@ -119,6 +120,25 @@ const titleStyles = {
   },
 };
 
+const sectionTitleStyles = {
+  fontWeight: '700',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  fontFamily: 'PFCentroSansProReg',
+  color: 'text.primary',
+};
+
+const sectionSubtitleStyles = {
+  display: '-webkit-box',
+  WebkitLineClamp: 1,
+  WebkitBoxOrient: 'vertical',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+};
+
 const cardStyles = {
   background: 'inherit',
   borderRadius: '8px',
@@ -139,18 +159,29 @@ const cardContentStyles = {
   justifyContent: 'space-between',
   alignItems: 'center',
   minHeight: '250px',
+  paddingTop: 1,
+  paddingLeft: 0,
+  [theme.breakpoints.down('md')]: {
+    paddingLeft: 1,
+    marginTop: 3,
+  },
 };
 
 const rowStyles = {
   display: 'flex',
   alignItems: 'center',
   width: '100%',
+  py: '15px',
   flex: 1,
-
+  ':first-child': {
+    pt: 0,
+  },
+  ':last-child': {
+    pb: 0,
+  },
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
     alignItems: 'unset',
-    padding: '8px 0',
   },
 };
 
@@ -171,23 +202,20 @@ const textStyles = {
   flex: 1,
 };
 
-const forwardButtonStyles = {
+const forwardButtonStyles: SxProps = {
   display: 'flex',
-  justifyContent: 'center',
-  alignItemd: 'center',
-  gap: '4px',
-  padding: '8px 16px',
+  alignSelf: 'flex-start',
   height: 'fit-content',
-
+  width: 'fit-content',
+  padding: '8px 16px',
   margin: 0,
+  gap: '4px',
+  color: 'primary.main',
   background: 'none',
   outline: 'none',
-  width: 'fit-content',
-  color: 'primary.main',
   '&:hover': {
     backgroundColor: 'rgba(0, 0, 0, 0.04)',
   },
-
   [theme.breakpoints.down('md')]: {
     alignSelf: 'flex-end',
   },

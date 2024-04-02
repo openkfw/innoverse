@@ -3,7 +3,7 @@
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
@@ -46,15 +46,16 @@ const ProjectStageCard = (props: TimingDataProps) => {
       <Card sx={{ height: project?.team?.length > 2 ? '209px' : 'fit-content', ...cardStyles }} elevation={0}>
         <CardContent sx={cardContentStyles}>
           <ProgressBar active={project.status} />
-
-          <Grid sx={descriptionWrapperStyles}>
-            <Typography sx={descriptionStyles}>
+          <Stack sx={descriptionWrapperStyles}>
+            <Typography variant="body1" sx={descriptionStyles}>
               {parseStringForLinks(project.summary.slice(0, MAX_TEXT_LENGTH))}
             </Typography>
             <Button onClick={readMore} sx={buttonStyles} startIcon={<ContinueIcon />}>
-              <Typography sx={buttonTextStyles}>Weiterlesen</Typography>
+              <Typography variant="button" sx={buttonTextStyles}>
+                Weiterlesen
+              </Typography>
             </Button>
-          </Grid>
+          </Stack>
         </CardContent>
       </Card>
     </>
@@ -79,6 +80,7 @@ const cardStyles = {
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
+  mt: 1,
   [theme.breakpoints.down('md')]: {
     width: '100%',
     height: '411px',
@@ -97,13 +99,13 @@ const descriptionWrapperStyles = {
 };
 
 const descriptionStyles = {
-  fontSize: '14px',
   color: 'text.primary',
   display: '-webkit-box',
-  WebkitLineClamp: 2,
+  WebkitLineClamp: 3,
   WebkitBoxOrient: 'vertical',
   textOverflow: 'ellipsis',
   overflow: 'hidden',
+  flexGrow: 1,
   [theme.breakpoints.down('md')]: {
     WebkitLineClamp: 10,
   },
@@ -113,10 +115,10 @@ const buttonStyles = {
   marginTop: 2,
   background: 'none',
   display: 'flex',
+
   justifyContent: 'center',
   alignItems: 'center',
-  gap: 1,
-  padding: '8px 16px',
+  padding: '5px 18px',
   borderRadius: '48px',
   border: '1px solid rgba(0, 0, 0, 0.10)',
   backdropFilter: 'blur(24px)',

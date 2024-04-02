@@ -138,6 +138,7 @@ const wrapperStyles = {
   flexDirection: 'column',
   alignItems: 'center',
   width: '85%',
+  maxWidth: '1600px',
   [theme.breakpoints.down('md')]: {
     width: '90%',
   },
@@ -152,7 +153,7 @@ const cardStyles = {
 };
 
 const cardContentStyles = {
-  margin: '56px 64px',
+  margin: '56px 64px 48px 64px',
   [theme.breakpoints.down('md')]: {
     margin: '24px',
   },
@@ -194,7 +195,9 @@ const collaborationColumnStyles = {
   width: '100%',
 };
 
-const updateCardStyles = {};
+const updateCardStyles = {
+  alignSelf: 'flex-start',
+};
 
 const interactionStyles = {
   alignSelf: 'flex-end',

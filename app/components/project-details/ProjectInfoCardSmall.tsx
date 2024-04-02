@@ -138,6 +138,7 @@ const navigationItemStyles = {
   borderRadius: '48px',
   display: 'flex',
   padding: '0px 16px',
+  alignSelf: 'center',
   ':hover': {
     backgroundColor: '#EBEBEB',
     cursor: 'pointer',

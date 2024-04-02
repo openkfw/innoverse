@@ -50,8 +50,8 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
                     <AvatarIcon user={teamMember} size={24} allowAnimation />
                   </StyledTooltip>
                 </Box>
-                <Box>
-                  <Typography variant="subtitle1" sx={teamMemberNameStyles}>
+                <Box sx={{ paddingLeft: '16px', ml: '8px' }}>
+                  <Typography variant="subtitle2" sx={teamMemberNameStyles}>
                     {teamMember.name}
                   </Typography>
                 </Box>
@@ -70,7 +70,9 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
 
           {team.length > maxTeamMembers && (
             <Button onClick={() => setOpen(true)} sx={showAllButtonStyles}>
-              <Typography color="action.active">Show all</Typography>
+              <Typography variant="button" color="action.active">
+                Alle anzeigen
+              </Typography>
             </Button>
           )}
         </CardContent>
@@ -130,7 +132,7 @@ const cardStyles = {
   borderRadius: '8px',
   background: 'rgba(240, 238, 225, 0.10)',
   border: '1px solid rgba(0, 90, 140, 0.10)',
-  margin: 0,
+  mt: 1,
   padding: 0,
   width: '369px',
   [theme.breakpoints.down('md')]: {
@@ -163,12 +165,12 @@ const rowStyles = {
 
 const teamMemberNameStyles = {
   color: 'text.primary',
+  fontSize: '14px',
   lineHeight: 1,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  maxWidth: '23ch',
   whiteSpace: 'wrap',
-  marginLeft: '16px',
+  maxWidth: '23ch',
 };
 
 const iconStyles = {
@@ -179,7 +181,6 @@ const iconStyles = {
 };
 
 const boxStyles = {
-  marginLeft: 1,
   flex: 1,
   display: 'flex',
   justifyContent: 'flex-start',
@@ -190,6 +191,7 @@ const showAllButtonStyles = {
   backgroundColor: 'inherit',
   borderRadius: '48px',
   border: '1px solid rgba(0, 0, 0, 0.10)',
+  padding: '5px 18px',
   backdropFilter: 'blur(24px)',
   '&:hover': {
     color: 'action.active',

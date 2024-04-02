@@ -51,7 +51,7 @@ function ActiveStepLabel({ label }: ProgressStepLabelProps) {
           </svg>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="body1" sx={{ fontSize: 14 }}>
+          <Typography variant="body1" sx={{ fontSize: 14, fontFamily: 'PFCentroSansProMed' }}>
             {label}
           </Typography>
         </Box>
