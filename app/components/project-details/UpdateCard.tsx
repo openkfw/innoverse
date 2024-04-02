@@ -73,27 +73,25 @@ const UpdateCard = (props: UpdateCardProps) => {
       <Card sx={cardStyles} elevation={0}>
         <CardContent>
           <Grid container alignItems="center">
-            <Grid item>
-              <Box>
-                <StyledTooltip
-                  arrow
-                  key={update?.id}
-                  title={<TooltipContent teamMember={update?.author} />}
-                  placement="bottom"
-                >
-                  <AvatarIcon user={update?.author} size={24} allowAnimation index={100} />
-                </StyledTooltip>
-              </Box>
-            </Grid>
-            <Grid item sx={authorStyles}>
-              <Typography variant="caption" sx={{ color: 'text.primary', fontSize: 16 }}>
+            <Box>
+              <StyledTooltip
+                arrow
+                key={update?.id}
+                title={<TooltipContent teamMember={update?.author} />}
+                placement="bottom"
+              >
+                <AvatarIcon user={update?.author} size={24} allowAnimation index={100} />
+              </StyledTooltip>
+            </Box>
+            <Box sx={{ paddingLeft: '16px', ml: '8px' }}>
+              <Typography variant="subtitle2" sx={authorNameStyles}>
                 {update?.author?.name}
               </Typography>
 
-              <Typography variant="subtitle2" color="text.secondary">
+              <Typography variant="subtitle2" sx={authorRoleStyles}>
                 {update?.author?.role}
               </Typography>
-            </Grid>
+            </Box>
           </Grid>
           <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', marginTop: 1, marginBottom: 1 }}>
             {parseStringForLinks(update?.comment)}
@@ -104,14 +102,20 @@ const UpdateCard = (props: UpdateCardProps) => {
 
           <Box sx={footerStyles}>
             <Button sx={buttonStyles} startIcon={<AllUpdatesIcon />} onClick={() => handleUpdatesClick(125)}>
-              <Typography sx={typographyStyles}>Alle Updates</Typography>
+              <Typography variant="button" sx={typographyStyles}>
+                Alle Updates
+              </Typography>
             </Button>
 
             <Box sx={navigationStyles}>
               <Box onClick={showPrevious} sx={iconStyles}>
                 <ArrowLeftIcon disabled={previousDisabled} />
               </Box>
-              <Typography color="#6D767D">{progress}</Typography>
+              <Box>
+                <Typography variant="caption" color="#6D767D">
+                  {progress}
+                </Typography>
+              </Box>
               <Box onClick={showNext} sx={iconStyles}>
                 <ArrowRightIcon disabled={nextDisabled} />
               </Box>
@@ -139,20 +143,34 @@ const cardStyles = {
   border: '1px solid rgba(0, 90, 140, 0.10)',
   background: 'rgba(240, 238, 225, 0.10)',
   width: '369px',
+  maxWidth: '100%',
   position: 'relative',
   minHeight: '250px',
+  mt: 1,
   [theme.breakpoints.down('md')]: {
     width: '100%',
     height: '411px',
   },
 };
 
-const authorStyles = {
-  marginLeft: '20px',
-  display: 'flex',
-  justifyContent: 'flex-start',
-  alignItems: 'center',
-  gap: 1,
+const authorNameStyles = {
+  color: 'text.primary',
+  fontSize: '14px',
+  lineHeight: 1,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'wrap',
+  maxWidth: '23ch',
+};
+
+const authorRoleStyles = {
+  color: 'text.secondary',
+  fontSize: '14px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'wrap',
+  maxWidth: '23ch',
+  lineHeight: '150%',
 };
 
 const footerStyles = {
@@ -169,7 +187,7 @@ const footerStyles = {
 const navigationStyles = {
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'flex-end',
+  alignItems: 'center',
   gap: '4px',
   margin: 0,
   padding: 0,
@@ -190,17 +208,12 @@ const buttonStyles = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  gap: '8px',
   borderRadius: '48px',
+  padding: '5px 18px',
   border: '1px solid rgba(0, 0, 0, 0.10)',
   backdropFilter: 'blur(24px)',
 };
 
 const typographyStyles = {
   color: 'rgba(0, 0, 0, 0.56)',
-  fontFamily: 'Arial',
-  fontSize: '13px',
-  fontStyle: 'normal',
-  fontWeight: 700,
-  lineHeight: '19px',
 };

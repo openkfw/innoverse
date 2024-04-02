@@ -2,7 +2,7 @@
 import { SurveyVote } from '@prisma/client';
 import dayjs from 'dayjs';
 
-import { Filters, UserSession, Event } from '@/common/types';
+import { Event, Filters, UserSession } from '@/common/types';
 import { getSurveyQuestionVotes } from '@/components/collaboration/survey/actions';
 import { AddUpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
 import { SortValues } from '@/components/newsPage/News';
