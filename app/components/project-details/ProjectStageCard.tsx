@@ -105,7 +105,7 @@ const descriptionStyles = {
   overflow: 'hidden',
   flexGrow: 1,
   [theme.breakpoints.down('md')]: {
-        WebkitLineClamp: 10,
+    WebkitLineClamp: 10,
   },
 };
 
