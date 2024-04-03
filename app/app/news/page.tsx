@@ -1,5 +1,6 @@
 import Image from 'next/image';
 
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -23,19 +24,21 @@ async function NewsPage() {
           style={{
             position: 'absolute',
             width: '100%',
-            height: 280,
+            height: 264,
             background: `lightgray 50% / cover no-repeat`,
             mixBlendMode: 'plus-lighter',
           }}
         />
         <Container>
-          <BreadcrumbsNav activePage="News" />
+          <Box style={{ position: 'relative' }}>
+            <BreadcrumbsNav activePage="News" />
+          </Box>
           <Grid container sx={containerStyles}>
             <Card sx={cardStyles}>
               <Typography variant="h2" sx={cardTitleStyles}>
                 News
               </Typography>
-              <Typography variant="body2" sx={{ mt: 1, fontSize: { lg: 24, sm: 22, xs: 16 } }}>
+              <Typography variant="body1" sx={{ mt: 1, fontSize: { lg: 24, sm: 22, xs: 16 } }}>
                 Die Neuigkeiten im Überblick: Aktuelle Nachrichten zu unseren Projekten auf der Innovationsplattform
               </Typography>
             </Card>
