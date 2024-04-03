@@ -18,8 +18,6 @@ interface TimingDataProps {
   setActiveTab: (tab: number) => void;
 }
 
-const MAX_TEXT_LENGTH = 200;
-
 const ProjectStageCard = (props: TimingDataProps) => {
   const { project, setActiveTab } = props;
 
@@ -48,7 +46,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
           <ProgressBar active={project.status} />
           <Stack sx={descriptionWrapperStyles}>
             <Typography variant="body1" sx={descriptionStyles}>
-              {parseStringForLinks(project.summary.slice(0, MAX_TEXT_LENGTH))}
+              {parseStringForLinks(project.summary)}
             </Typography>
             <Button onClick={readMore} sx={buttonStyles} startIcon={<ContinueIcon />}>
               <Typography variant="button" sx={buttonTextStyles}>
@@ -107,7 +105,7 @@ const descriptionStyles = {
   overflow: 'hidden',
   flexGrow: 1,
   [theme.breakpoints.down('md')]: {
-    WebkitLineClamp: 10,
+        WebkitLineClamp: 10,
   },
 };
 
