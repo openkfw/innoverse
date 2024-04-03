@@ -20,6 +20,10 @@ export const mergeStyles = (primary: SxProps | undefined, overrides: SxProps | u
 };
 
 export function formatDate(dateString: string, locale = 'de-DE') {
+  if (!dateString || isNaN(new Date(dateString).getTime())) {
+    return null;
+  }
+
   const date = new Date(dateString);
   const day = date.toLocaleString(locale, { day: 'numeric' });
   const month = date.toLocaleString(locale, { month: 'long' });
