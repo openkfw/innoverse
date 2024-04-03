@@ -29,18 +29,14 @@ type SlideProps = {
   content: Project;
   setSelected: (index: number) => void;
   index: number;
-  totalItems: number;
 };
 
-const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
+const Slide = ({ content, index, setSelected }: SlideProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
-  const isLastSlide = index === totalItems - 1;
-  const isFirstSlide = index === 0;
-
   const NextArrow = () => {
-    if ((isHovered || !isWideScreen) && !isLastSlide) {
+    if (isHovered || !isWideScreen) {
       return (
         <Box
           sx={{ ...arrowStyle, right: !isWideScreen ? 2 : 10 }}
@@ -56,7 +52,7 @@ const Slide = ({ content, index, setSelected, totalItems }: SlideProps) => {
   if (!content) return <></>;
 
   const PrevArrow = () => {
-    if ((isHovered || !isWideScreen) && !isFirstSlide) {
+    if (isHovered || !isWideScreen) {
       return (
         <Box
           sx={{ ...arrowStyle, left: !isWideScreen ? 2 : 10 }}
@@ -127,11 +123,15 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   }
 
   function setSelected(index: number) {
-    if (index >= 0 && index < slides.length) {
-      sliderRef.current?.slickGoTo(index);
-      setSelectedItem(index);
-      moveIndicator(index);
+    let newIndex = index;
+    if (index < 0) {
+      newIndex = slides.length - 1;
+    } else if (index >= slides.length) {
+      newIndex = 0;
     }
+    sliderRef.current?.slickGoTo(newIndex);
+    setSelectedItem(newIndex);
+    moveIndicator(newIndex);
   }
 
   const settings = {
@@ -168,14 +168,7 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
 
   return (
     <Box sx={featuredProjectSliderStyles}>
-      {!show && (
-        <Slide
-          content={slides[slides.length - 1]}
-          index={selectedItem}
-          setSelected={setSelected}
-          totalItems={slides.length}
-        />
-      )}
+      {!show && <Slide content={slides[slides.length - 1]} index={selectedItem} setSelected={setSelected} />}
       <Slider
         {...settings}
         ref={sliderRef}
@@ -185,13 +178,7 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
       >
         {show &&
           slides.map((content, id) => (
-            <Slide
-              content={content}
-              key={id}
-              index={selectedItem}
-              setSelected={setSelected}
-              totalItems={slides.length}
-            />
+            <Slide content={content} key={id} index={selectedItem} setSelected={setSelected} />
           ))}
       </Slider>
     </Box>
