@@ -30,17 +30,17 @@ export default function ProjectCard(props: ProjectCardProps) {
   return (
     <Card sx={{ ...cardStyles, height: isWideScreen ? 490 : 440 }}>
       <Box sx={cardWrapperStyles}>
-        <CardMedia sx={{ height: isWideScreen ? 237 : 175, borderRadius: '8px' }}>
+        <CardMedia sx={{ borderRadius: '8px', overflow: 'hidden', padding: '24px' }}>
           <Image
             src={img}
             width={isWideScreen ? 418 : 500}
             height={isWideScreen ? 237 : 175}
             alt="project"
             style={{
+              width: '100%',
+              height: 'auto',
               objectFit: 'cover',
-              margin: isWideScreen ? '24px' : '0px',
-              padding: isWideScreen ? '0px' : '24px',
-              borderRadius: '8px',
+              borderRadius: 0,
             }}
           />
         </CardMedia>
@@ -102,6 +102,7 @@ const cardWrapperStyles = {
 
 const cardContentStyles = {
   padding: 3,
+  paddingTop: 0,
   height: '100%',
 };
 
