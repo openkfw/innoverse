@@ -29,7 +29,7 @@ export const ProjectTimeLine = ({ projectUpdates, widthOfDateColumn }: ProjectTi
   const { updatesByYear } = useProjectTimeLine({ projectUpdates });
 
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       {updatesByYear.map(({ year, updates }, idx) => {
         const isLastYear = idx === updatesByYear.length - 1;
         return (
