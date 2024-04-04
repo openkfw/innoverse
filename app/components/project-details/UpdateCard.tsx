@@ -148,7 +148,7 @@ const cardStyles = {
   maxWidth: '100%',
   position: 'relative',
   minHeight: '250px',
-  mt: 1,
+  mt: 2,
   [theme.breakpoints.down('md')]: {
     width: '100%',
     height: '411px',

@@ -143,13 +143,16 @@ const cardStyles = {
   background: 'inherit',
   borderRadius: '8px',
   margin: 0,
+  mt: 2,
   padding: 0,
   minHeight: '250px',
   border: 'none',
   boxShadow: 'none',
+  overflow: 'visible',
   [theme.breakpoints.down('md')]: {
     width: '100%',
     height: '411px',
+    overflow: 'unset',
   },
 };
 
@@ -161,6 +164,7 @@ const cardContentStyles = {
   minHeight: '250px',
   paddingTop: 1,
   paddingLeft: 0,
+  paddingRight: 0,
   [theme.breakpoints.down('md')]: {
     paddingLeft: 1,
     marginTop: 3,
@@ -172,6 +176,8 @@ const rowStyles = {
   alignItems: 'center',
   width: '100%',
   py: '15px',
+  px: 0,
+  marginRight: 0,
   flex: 1,
   ':first-child': {
     pt: 0,
@@ -209,14 +215,17 @@ const forwardButtonStyles: SxProps = {
   width: 'fit-content',
   padding: '8px 16px',
   margin: 0,
+  marginRight: -2,
   gap: '4px',
   color: 'primary.main',
   background: 'none',
   outline: 'none',
+  zIndex: 1,
   '&:hover': {
     backgroundColor: 'rgba(0, 0, 0, 0.04)',
   },
   [theme.breakpoints.down('md')]: {
     alignSelf: 'flex-end',
+    marginRight: 'unset',
   },
 };
