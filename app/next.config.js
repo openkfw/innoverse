@@ -2,10 +2,15 @@
 
 const withFonts = require('next-fonts');
 
-const nextConfig = {
+const nextConfig = {  
   output: 'standalone',
   reactStrictMode: true,
   swcMinify: true,
+  experimental: {
+    serverActions: {
+      allowedOrigins: ["***URL_REMOVED***"]
+    }
+  },
   images: {
     remotePatterns: [
       {
