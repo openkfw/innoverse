@@ -66,7 +66,7 @@ function NewsContainerReg(props: NewsContainerProps) {
         <InteractionButton
           onClick={handleAddUpdate}
           interactionType={InteractionType.ADD_UPDATE}
-          sx={interactionButtonStyles}
+          sx={{ ...interactionButtonStyles, ...buttonStyles }}
         />
       </Grid>
       <Grid item xs={4} sm={4} md={4} lg={3}>
@@ -109,3 +109,11 @@ export default function NewsContainer() {
     </NewsFilterContextProvider>
   );
 }
+
+// News Container Styles
+const buttonStyles = {
+  px: '24px',
+  py: '8px',
+  height: '48px',
+  border: '2px solid rgba(255, 255, 255, 0.40)',
+};
