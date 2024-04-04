@@ -1,17 +1,6 @@
 version: "3.5"
 
 services:
-  umami:
-    container_name: umami
-    image: ghcr.io/umami-software/umami:postgresql-v2.7.0
-    environment:
-      - DATABASE_URL=${UMAMI_DATABASE_URL}
-    ports:
-      - 3001:3000
-    depends_on:
-      - database
-    restart: on-failure
-
   database:
     container_name: DB
     image: postgres:13
