@@ -143,9 +143,9 @@ export type ProjectUpdate = {
   author: User;
   comment: string;
   topic: string;
-  date: string;
   projectId: string;
   projectStart?: string;
+  updatedAt: string;
 };
 
 export type PersonInfo = {

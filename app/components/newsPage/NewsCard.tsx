@@ -36,7 +36,7 @@ interface NewsCardProps {
 export default function NewsCard(props: NewsCardProps) {
   const { update, sx, noClamp = false } = props;
   const projectId = update.projectId;
-  const { title, comment, author, date } = update;
+  const { title, comment, author, updatedAt } = update;
 
   const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(false);
 
@@ -90,7 +90,7 @@ export default function NewsCard(props: NewsCardProps) {
             )}
 
             <Typography variant="caption" color="secondary.contrastText">
-              {formatDate(date)}
+              {formatDate(updatedAt)}
             </Typography>
           </Stack>
         }

@@ -21,7 +21,7 @@ interface ProjectTimeLineDateProps {
 }
 
 export const ProjectTimeLineDate = ({ update, showDivider, sx }: ProjectTimeLineDateProps) => {
-  const dayMonth = `${getDay(update.date)} ${getMonth(update.date)}`;
+  const dayMonth = `${getDay(update.updatedAt)} ${getMonth(update.updatedAt)}`;
 
   return (
     <Box sx={sx}>

@@ -51,7 +51,7 @@ function useProjectTimeLine({ projectUpdates }: useProjectTimeLineProps) {
     return (
       projectUpdates
         .map((update) => {
-          return getYear(update.date);
+          return getYear(update.updatedAt);
         })
         // Remove duplicates
         .filter((value, index, array) => array.indexOf(value) === index)
@@ -60,7 +60,7 @@ function useProjectTimeLine({ projectUpdates }: useProjectTimeLineProps) {
 
   const getUpdatesForYear = useCallback(
     (year: string) => {
-      return projectUpdates.filter((item) => getYear(item?.date) == year);
+      return projectUpdates.filter((item) => getYear(item?.updatedAt) == year);
     },
     [projectUpdates],
   );

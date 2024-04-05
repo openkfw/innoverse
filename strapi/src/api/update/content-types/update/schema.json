@@ -19,10 +19,6 @@
     "topic": {
       "type": "string"
     },
-    "date": {
-      "type": "date",
-      "required": false
-    },
     "author": {
       "type": "relation",
       "relation": "oneToOne",

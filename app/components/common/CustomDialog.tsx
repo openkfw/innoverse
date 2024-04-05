@@ -106,6 +106,7 @@ export const closeIconButtonStyle = {
 const dialogTitleStyle = {
   paddingBottom: 1,
   margin: 0,
+  color: 'primary.main',
   backgroundColor: 'white',
   borderTopLeftRadius: '16px',
   borderTopRightRadius: '16px',

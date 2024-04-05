@@ -21,7 +21,7 @@ interface ProjectUpdate {
   projectId?: string;
   title?: string;
   comment?: string;
-  date?: string;
+  updatedAt?: string;
   topic?: string;
   author?: Author;
   projectStart?: string;
