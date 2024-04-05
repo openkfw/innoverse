@@ -132,7 +132,7 @@ const cardStyles = {
   borderRadius: '8px',
   background: 'rgba(240, 238, 225, 0.10)',
   border: '1px solid rgba(0, 90, 140, 0.10)',
-  mt: 1,
+  mt: 2,
   padding: 0,
   width: '369px',
   [theme.breakpoints.down('md')]: {

@@ -187,7 +187,7 @@ const teamMembersColumnStyles = {
 const secondRowStyles = {
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   gap: 3,
 };
 

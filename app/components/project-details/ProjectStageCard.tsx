@@ -78,7 +78,7 @@ const cardStyles = {
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  mt: 1,
+  mt: 2,
   [theme.breakpoints.down('md')]: {
     width: '100%',
     height: '411px',
