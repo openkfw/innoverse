@@ -23,6 +23,7 @@ export default [
       },
     },
   },
+  "strapi::logger",
   "strapi::session",
   "strapi::favicon",
   "strapi::public",
