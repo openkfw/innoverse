@@ -195,13 +195,13 @@ export const GetEventsQuery = `query GetEvents($startingFrom: Date) {
 `;
 
 export const GetUpdatesQuery = `query GetUpdates {
-  updates(sort: "date:desc", pagination: { limit: 100 }) {
+  updates(sort: "updatedAt:desc", pagination: { limit: 100 }) {
     data {
       id
       attributes {
-        date
         comment
         topic
+        updatedAt
         author {
           ${userQuery}
         }
@@ -223,13 +223,13 @@ export const GetUpdatesFilterQuery = (
   filter: string,
   sort: string,
 ) => `query GetUpdatesFilter${filterParams} {
-  updates (sort: "date:${sort}", ${filter})  {
+  updates (sort: "updatedAt:${sort}", ${filter})  {
     data {
       id
       attributes {
-        date
         comment
         topic
+        updatedAt
         author {
           ${userQuery}
         }
@@ -247,13 +247,13 @@ export const GetUpdatesFilterQuery = (
 }`;
 
 export const GetUpdatesByProjectIdQuery = `query GetUpdates($projectId: ID) {
-  updates(sort: "date:desc", filters: { project: { id: { eq: $projectId } } }) {
+  updates(sort: "updatedAt:desc", filters: { project: { id: { eq: $projectId } } }) {
     data {
       id
       attributes {
-        date
         comment
         topic
+        updatedAt
         author {
           ${userQuery}
         }
@@ -511,14 +511,14 @@ query getAllProjectEvents${filterParams}{
   }
 }`;
 
-export const CreateProjectUpdateQuery = `mutation PostProjectUpdate($projectId: ID!, $comment: String, $authorId: ID!, $date: Date) {
-  createUpdate(data: { project: $projectId, comment: $comment, author: $authorId, date: $date }) {
+export const CreateProjectUpdateQuery = `mutation PostProjectUpdate($projectId: ID!, $comment: String, $authorId: ID!) {
+  createUpdate(data: { project: $projectId, comment: $comment, author: $authorId }) {
     data {
       id
       attributes {
         comment
         topic
-        date
+        updatedAt
         author {
           ${userQuery}
         }
@@ -890,8 +890,8 @@ function mapToProjectUpdate(updateQuery: UpdateQuery): ProjectUpdate {
     projectId: project.data ? project.data.id : '',
     title: project.data ? project.data.attributes.title : '',
     comment: attributes.comment,
-    date: attributes.date,
     topic: attributes.topic,
+    updatedAt: attributes.updatedAt,
     author: mapToUser(author),
   };
 }

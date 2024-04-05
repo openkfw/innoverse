@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 
 import { Event, Filters, UserSession } from '@/common/types';
 import { getSurveyQuestionVotes } from '@/components/collaboration/survey/actions';
-import { AddUpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
 import { SortValues } from '@/components/newsPage/News';
 
 import { InnoPlatformError, strapiError } from './errors';
@@ -34,6 +33,7 @@ import {
   withResponseTransformer,
 } from './queries';
 import strapiFetcher from './strapiFetcher';
+import { UpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
 
 async function uploadImage(imageUrl: string, fileName: string) {
   return fetch(imageUrl)
@@ -128,12 +128,13 @@ export async function getEvents(startingFrom: Date) {
 export async function getMainPageData() {
   const events = await getUpcomingEvents();
   const data = await getDataWithFeaturedFiltering();
+  const updates = await getProjectsUpdates();
 
   return {
     events: events ?? [],
     projects: data?.projects,
     sliderContent: data?.sliderContent,
-    updates: data?.updates,
+    updates: updates ?? [],
   };
 }
 
@@ -306,7 +307,7 @@ export async function createInnoUserIfNotExist(body: UserSession, image?: string
   }
 }
 
-export async function createProjectUpdate(body: Omit<AddUpdateFormData, 'author'>) {
+export async function createProjectUpdate(body: Omit<UpdateFormData, 'author'>) {
   try {
     const response = await strapiFetcher(CreateProjectUpdateQuery, body);
     const resultUpdate = await withResponseTransformer(STRAPI_QUERY.CreateProjectUpdate, response);

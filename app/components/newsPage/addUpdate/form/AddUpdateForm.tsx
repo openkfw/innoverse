@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import dayjs, { Dayjs } from 'dayjs';
 import { StatusCodes } from 'http-status-codes';
 
 import Box from '@mui/material/Box';
@@ -15,7 +14,6 @@ import { Option } from '@/common/formTypes';
 import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { DropdownField } from '@/components/common/form/DropdownField';
 
-import { DateInputField } from '../../../common/form/DateInputField';
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
 
 import { getProjectsOptions, handleProjectUpdate } from './actions';
@@ -24,22 +22,16 @@ import { formValidationSchema, UpdateFormValidationSchema } from './validationSc
 
 export interface UpdateFormData {
   comment: string;
-  date: Dayjs;
   projectId: string;
   authorId?: string;
 }
 
-export interface AddUpdateFormData extends Omit<UpdateFormData, 'date'> {
-  date: string;
-}
-
 const defaultValues = {
   comment: '',
-  date: dayjs(new Date()),
   projectId: '',
 };
 
-const { PROJECT_ID, DATE, COMMENT } = formFieldNames;
+const { PROJECT_ID, COMMENT } = formFieldNames;
 
 interface AddUpdateFormProps {
   setUpdateAdded: (added: boolean) => void;
@@ -61,11 +53,10 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
   const [projectOptions, setProjectOptions] = useState<Option[]>();
 
   const onSubmit: SubmitHandler<UpdateFormValidationSchema> = async (data) => {
-    const { comment, projectId, date } = data;
+    const { comment, projectId } = data;
     const formData = {
       comment,
       projectId,
-      date: date.format('YYYY-MM-DD'),
     };
 
     const response = await handleProjectUpdate(formData);
@@ -101,13 +92,6 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
           />
         </form>
         <Stack spacing={2} direction={{ sm: 'column', md: 'row' }}>
-          <DateInputField
-            name={DATE}
-            control={control}
-            label="Datum"
-            disableFuture
-            sx={{ ...inputStyle, maxWidth: '180px', mb: 2 }}
-          />
           <DropdownField
             name={PROJECT_ID}
             control={control}

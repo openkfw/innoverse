@@ -12,6 +12,7 @@ import AllUpdatesIcon from '@/components/icons/AllUpdatesIcon';
 import ArrowLeftIcon from '@/components/icons/ArrowLeftIcon';
 import ArrowRightIcon from '@/components/icons/ArrowRightIcon';
 import theme from '@/styles/theme';
+import { formatDate } from '@/utils/helpers';
 
 import AvatarIcon from '../common/AvatarIcon';
 import { parseStringForLinks } from '../common/LinkString';
@@ -96,11 +97,9 @@ const UpdateCard = (props: UpdateCardProps) => {
           <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', marginTop: 1, marginBottom: 1 }}>
             {parseStringForLinks(update?.comment)}
           </Typography>
-          {update?.date && (
-            <Typography variant="caption" color="text.secondary">
-              {update.date.toString()}
-            </Typography>
-          )}
+          <Typography variant="caption" color="text.secondary">
+            {formatDate(update?.updatedAt)}
+          </Typography>
 
           <Box sx={footerStyles}>
             <Button sx={buttonStyles} startIcon={<AllUpdatesIcon />} onClick={() => handleUpdatesClick(125)}>

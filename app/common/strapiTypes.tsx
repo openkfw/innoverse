@@ -180,19 +180,19 @@ export type Description = {
 export type Update = {
   id: string;
   title: string;
-  date: string;
   comment: string;
   topic: string;
   author: User;
   projectId: string;
+  updatedAt: string;
 };
 
 export type UpdateQuery = {
   id: string;
   attributes: {
-    date: string;
     comment: string;
     topic: string;
+    updatedAt: string;
     author: { data: UserQuery };
     project: { data: { id: string; attributes: { title: string } } };
   };

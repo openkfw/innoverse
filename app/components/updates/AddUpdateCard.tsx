@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import dayjs from 'dayjs';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -22,7 +21,6 @@ export const AddUpdateCard = (props: AddUpdateCardProps) => {
 
   const defaultFormValues = {
     comment: '',
-    date: dayjs(new Date()),
     author: '',
     projectId,
   };
