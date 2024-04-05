@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 
+import AddIcon from '@mui/icons-material/Add';
 import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
 
@@ -57,7 +58,11 @@ export const CollaborationComments = ({ projectName, comments, onDeleteComment }
           </Collapse>
         ))}
       {!isCollapsed && comments.length > MAX_NUM_OF_COMMENTS && (
-        <TransparentButton onClick={handleToggle} style={{ marginLeft: '1.5em' }}>
+        <TransparentButton
+          onClick={handleToggle}
+          icon={<AddIcon color="secondary" fontSize="large" />}
+          style={{ marginLeft: '1.5em', marginBottom: 2 }}
+        >
           weitere Rückmeldungen anzeigen ({lengthOfNotShownComments})
         </TransparentButton>
       )}

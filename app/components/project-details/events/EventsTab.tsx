@@ -8,11 +8,11 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Event } from '@/common/types';
+import theme from '@/styles/theme';
 
 import { getAllEventsForProjectFilter } from './actions';
 import EventCard from './EventCard';
@@ -150,13 +150,8 @@ export const EventsTab = (props: EventsTabProps) => {
       <Box sx={colorOverlayStyles} />
 
       <CardContent sx={cardContentStyles}>
-        <Grid container direction="row" spacing={2}>
-          <Grid
-            item
-            xs={3}
-            mb={-250}
-            sx={filteredEvents.length === 0 ? { height: '150em' } : { height: 'auto', minHeight: '150em' }}
-          >
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={'22px'}>
+          <Box sx={{ pb: { xs: 2, md: 0 } }}>
             <FilteringPanel
               events={allEvents}
               futureEvents={futureEvents}
@@ -164,206 +159,180 @@ export const EventsTab = (props: EventsTabProps) => {
               currentFilters={currentFilters}
               setCurrentFilters={setCurrentFilters}
             />
-          </Grid>
-
-          {filteredEvents.length > 0 && filtersApplied && (
-            <Grid item xs={9}>
-              <InfiniteScroll
-                dataLength={filteredEvents.length}
-                next={loadScrollData}
-                hasMore={hasMoreValue}
-                scrollThreshold={0.5}
-                style={{ overflow: 'unset' }}
-                loader={
-                  <Stack key={0} sx={{ mt: 2 }} alignItems="center">
-                    <CircularProgress />
-                  </Stack>
-                }
-                endMessage={
-                  <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 1 }}>
-                    Alle Daten wurden geladen
-                  </Typography>
-                }
-              >
-                {filteredEvents.map((event, index) => {
-                  const key = event.id || index;
-                  return (
-                    <Box key={key} sx={{ paddingBottom: 2 }}>
-                      {index !== 0 && <Grid item xs={3} />}
-                      <EventCard
-                        event={event}
-                        time={futureEvents.find((e) => e.id === event.id) ? 'future' : 'past'}
-                        isEventLast={filteredEvents.length === index}
-                      />
-                    </Box>
-                  );
-                })}
-              </InfiniteScroll>
-            </Grid>
-          )}
-
-          {!filtersApplied && futureEvents.length > 0 && (
-            <Grid item xs={9}>
-              <InfiniteScroll
-                dataLength={futureEvents.length}
-                next={loadScrollData}
-                hasMore={hasMoreValue}
-                scrollThreshold={0.5}
-                style={{ overflow: 'unset' }}
-                loader={
-                  <Stack key={0} sx={{ mt: 2 }} alignItems="center">
-                    <CircularProgress />
-                  </Stack>
-                }
-                endMessage={
-                  !currentFilters.pastEventsShown && (
-                    <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 1 }}>
-                      Alle Daten wurden geladen
-                    </Typography>
-                  )
-                }
-              >
-                {futureEvents.map((event, index) => {
-                  const key = event.id || index;
-                  return (
-                    <Box key={key} sx={{ paddingBottom: 2 }}>
-                      {index !== 0 && <Grid item xs={3} />}
-                      <EventCard event={event} time={'future'} isEventLast={index === futureEvents.length} />
-                    </Box>
-                  );
-                })}
-              </InfiniteScroll>
-            </Grid>
-          )}
-
-          {currentFilters.pastEventsShown && !filtersApplied && pastEvents.length > 0 && (
-            <>
-              {futureEvents.length > 0 && <Grid item xs={3}></Grid>}
-              <Grid item xs={9}>
-                <InfiniteScroll
-                  dataLength={pastEvents.length}
-                  next={loadScrollDataPast}
-                  hasMore={hasMoreValuePast}
-                  scrollThreshold={0.5}
-                  style={{ overflow: 'unset' }}
-                  loader={
-                    <Stack key={0} sx={{ mt: 2 }} alignItems="center">
-                      <CircularProgress />
-                    </Stack>
-                  }
-                  endMessage={
-                    pastEvents.length > 0 && (
-                      <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 1 }}>
+          </Box>
+          {((!filtersApplied && futureEvents.length > 0) ||
+            (filtersApplied && filteredEvents.length > 0) ||
+            (!filtersApplied && currentFilters.pastEventsShown && pastEvents.length > 0)) && (
+            <Box flexGrow={1}>
+              {filteredEvents.length > 0 && filtersApplied && (
+                <Box flexGrow={1}>
+                  <InfiniteScroll
+                    dataLength={filteredEvents.length}
+                    next={loadScrollData}
+                    hasMore={hasMoreValue}
+                    scrollThreshold={0.5}
+                    style={{ overflow: 'unset' }}
+                    loader={
+                      <Stack key={0} sx={{ mt: 2 }} alignItems="center">
+                        <CircularProgress />
+                      </Stack>
+                    }
+                    endMessage={
+                      <Typography color="primary.main" sx={{ textAlign: 'center', mt: 1 }}>
                         Alle Daten wurden geladen
                       </Typography>
-                    )
-                  }
-                >
-                  {pastEvents.map((event, index) => {
-                    const key = event.id || index;
-                    return (
-                      <Box key={key} sx={{ paddingBottom: 2 }}>
-                        <EventCard event={event} time={'past'} isEventLast={index === pastEvents.length} />
-                      </Box>
-                    );
-                  })}
-                </InfiniteScroll>
-              </Grid>
-            </>
+                    }
+                  >
+                    {filteredEvents.map((event, index) => {
+                      const key = event.id || index;
+                      const isFutureEvent = futureEvents.some((e) => e.id === event.id);
+                      return (
+                        <Box key={key} sx={{ paddingBottom: 2 }}>
+                          <EventCard event={event} disabled={!isFutureEvent} />
+                        </Box>
+                      );
+                    })}
+                  </InfiniteScroll>
+                </Box>
+              )}
+
+              {!filtersApplied && futureEvents.length > 0 && (
+                <Box flexGrow={1}>
+                  <InfiniteScroll
+                    dataLength={futureEvents.length}
+                    next={loadScrollData}
+                    hasMore={hasMoreValue}
+                    scrollThreshold={0.5}
+                    style={{ overflow: 'unset' }}
+                    loader={
+                      <Stack key={0} sx={{ mt: 2 }} alignItems="center">
+                        <CircularProgress />
+                      </Stack>
+                    }
+                    endMessage={
+                      !currentFilters.pastEventsShown && (
+                        <Typography color="primary.main" sx={{ textAlign: 'center', mt: 1 }}>
+                          Alle Daten wurden geladen
+                        </Typography>
+                      )
+                    }
+                  >
+                    {futureEvents.map((event, index) => {
+                      const key = event.id || index;
+                      const isFutureEvent = futureEvents.some((e) => e.id === event.id);
+                      return (
+                        <Box key={key} sx={{ paddingBottom: 2 }}>
+                          <EventCard event={event} disabled={!isFutureEvent} />
+                        </Box>
+                      );
+                    })}
+                  </InfiniteScroll>
+                </Box>
+              )}
+
+              {currentFilters.pastEventsShown && !filtersApplied && pastEvents.length > 0 && (
+                <>
+                  {futureEvents.length > 0 && <Grid item xs={3}></Grid>}
+                  <Box flexGrow={1}>
+                    <InfiniteScroll
+                      dataLength={pastEvents.length}
+                      next={loadScrollDataPast}
+                      hasMore={hasMoreValuePast}
+                      scrollThreshold={0.5}
+                      style={{ overflow: 'unset' }}
+                      loader={
+                        <Stack key={0} sx={{ mt: 2 }} alignItems="center">
+                          <CircularProgress />
+                        </Stack>
+                      }
+                      endMessage={
+                        pastEvents.length > 0 && (
+                          <Typography color="primary.main" sx={{ textAlign: 'center', mt: 1 }}>
+                            Alle Daten wurden geladen
+                          </Typography>
+                        )
+                      }
+                    >
+                      {pastEvents.map((event, index) => {
+                        const key = event.id || index;
+                        return (
+                          <Box key={key} sx={{ paddingBottom: 2 }}>
+                            <EventCard event={event} disabled={true} />
+                          </Box>
+                        );
+                      })}
+                    </InfiniteScroll>
+                  </Box>
+                </>
+              )}
+            </Box>
           )}
 
           {/*If the filters don't find anything, display message and reset button*/}
           {filteredEvents.length === 0 && filtersApplied && (
-            <>
-              <Grid
-                item
-                xs={8}
-                sx={{
-                  borderRadius: '12px',
-                  borderColor: 'primary.light',
-                  borderStyle: 'solid',
-                  borderWidth: 'thin',
-                  height: '4em',
-                  marginTop: '2em',
-                }}
-              >
-                <Typography variant="body1" color={'text.primary'}>
-                  Keine Events wurden mit diesen Filtern gefunden.&nbsp;
-                  <Link>
-                    <Button
-                      id="reset_filters"
-                      onClick={clearFilters /*handleFilterChange(futureEvents, clickEvent)*/}
-                      sx={{ padding: 1, marginTop: -0.7 }}
-                    >
-                      Alle Filter zurücksetzen
-                    </Button>
-                  </Link>
-                </Typography>
-              </Grid>
-            </>
+            <EventFilterException
+              text="Keine Events wurden mit diesen Filtern gefunden."
+              action={{
+                text: 'Alle Filter zurücksetzen',
+                onClick: clearFilters,
+              }}
+            />
           )}
           {/*If the events don't exist, display come back later message*/}
           {futureEvents.length === 0 && pastEvents.length === 0 && (
-            <>
-              <Grid
-                item
-                xs={8}
-                sx={{
-                  borderRadius: '12px',
-                  borderColor: 'primary.light',
-                  borderStyle: 'solid',
-                  borderWidth: 'thin',
-                  height: '4em',
-                  marginTop: '2em',
-                }}
-              >
-                <Typography variant="body1" color={'text.primary'}>
-                  Leider gibt es noch keine Events. Bitte schau später noch einmal vorbei.&nbsp;
-                </Typography>
-              </Grid>
-            </>
+            <EventFilterException text="Leider gibt es noch keine Events. Bitte schau später noch einmal vorbei." />
           )}
           {/*If no future events exist, display message and button to enable past events*/}
           {futureEvents.length === 0 && pastEvents.length > 0 && !currentFilters.pastEventsShown && !filtersApplied && (
-            <>
-              <Grid
-                item
-                xs={8}
-                sx={{
-                  borderRadius: '12px',
-                  borderColor: 'primary.light',
-                  borderStyle: 'solid',
-                  borderWidth: 'thin',
-                  height: '4em',
-                  marginTop: '2em',
-                }}
-              >
-                <Typography variant="body1" color={'text.primary'}>
-                  Es gibt zurzeit leider keine Events in der Zukunft.&nbsp;
-                  <Link>
-                    <Button
-                      id="reset_filters"
-                      onClick={() =>
-                        setCurrentFilters((old) => ({
-                          ...old,
-                          pastEventsShown: true,
-                        }))
-                      }
-                      sx={{ padding: 1, marginTop: -0.7 }}
-                    >
-                      Vergangene Events anzeigen
-                    </Button>
-                  </Link>
-                </Typography>
-              </Grid>
-            </>
+            <EventFilterException
+              text="Es gibt zurzeit leider keine Events in der Zukunft."
+              action={{
+                text: 'Alle Filter zurücksetzen',
+                onClick: () => setCurrentFilters((old) => ({ ...old, pastEventsShown: true })),
+              }}
+            />
           )}
 
-          <Grid item xs={7} />
           {/* Pagination Controls here if needed */}
-        </Grid>
+        </Stack>
       </CardContent>
     </Card>
+  );
+};
+
+const EventFilterException = ({ text, action }: { text: string; action?: { text: string; onClick: () => void } }) => {
+  return (
+    <Stack
+      direction={{ xs: 'column', sm: 'row' }}
+      columnGap={2}
+      rowGap={3}
+      sx={{
+        borderRadius: '12px',
+        borderColor: 'primary.light',
+        borderStyle: 'solid',
+        borderWidth: 'thin',
+        marginTop: '2em',
+        px: 2,
+        py: 2,
+        m: 0,
+        alignItems: 'center',
+        height: 'Fit-content',
+      }}
+    >
+      <Typography variant="body1" color={'text.primary'} flexGrow={1}>
+        {text}
+      </Typography>
+
+      {action && (
+        <Button
+          onClick={action.onClick}
+          sx={{ p: 1, minWidth: '160px', width: { xs: '100%', sm: 'auto' }, justifyItems: 'flex-end' }}
+          style={{ margin: 0 }}
+        >
+          {action.text}
+        </Button>
+      )}
+    </Stack>
   );
 };
 
@@ -387,8 +356,10 @@ const colorOverlayStyles = {
 };
 
 const cardContentStyles = {
-  marginTop: 11,
-  marginBottom: 11,
+  margin: '88px 44px 88px 44px',
+  [theme.breakpoints.down('md')]: {
+    margin: '48px 24px 48px 24px',
+  },
   '&.MuiCardContent-root': {
     padding: 0,
   },

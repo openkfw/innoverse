@@ -1,13 +1,13 @@
 import React, { SetStateAction, useEffect, useMemo } from 'react';
 
 import SearchIcon from '@mui/icons-material/Search';
-import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import FormLabel from '@mui/material/FormLabel';
 import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -144,8 +144,8 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
   };
 
   return (
-    <Box sx={filterOptionStyles}>
-      <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
+    <Stack direction={'column'} sx={filterOptionStyles}>
+      <FormControl margin={'normal'} style={{ margin: '10px' }} sx={{ mx: 1 }} component="fieldset" variant="standard">
         <TextField
           id="outlined-basic-search"
           variant="outlined"
@@ -167,7 +167,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
         />
       </FormControl>
 
-      <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
+      <FormControl sx={{ m: 2 }} component="fieldset" variant="standard">
         <FormLabel component="legend">
           <Typography variant="body2" color="text.primary">
             Themen
@@ -209,7 +209,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
         </FormGroup>
       </FormControl>
 
-      <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
+      <FormControl sx={{ mx: 2 }} component="fieldset" variant="standard">
         <FormGroup>
           <FormControlLabel
             control={<Switch onChange={handleFilterClick} />}
@@ -223,7 +223,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
           />
         </FormGroup>
       </FormControl>
-    </Box>
+    </Stack>
   );
 };
 
@@ -235,6 +235,5 @@ const filterOptionStyles = {
   borderStyle: 'solid',
   borderWidth: 'thin',
   padding: '1em',
-  margin: '1em',
   position: 'relative',
 };

@@ -67,9 +67,11 @@ export const UpdatesTab = (props: UpdatesTabProps) => {
       <Box sx={colorOverlayStyles} />
 
       <CardContent sx={cardContentStyles}>
-        <Stack direction={isVeryLargeScreen ? 'row' : 'column'}>
-          <ProjectTimeLine widthOfDateColumn={isSmallScreen ? '83px' : '275px'} projectUpdates={projectUpdates} />
+        <Stack direction={isVeryLargeScreen ? 'row-reverse' : 'column'}>
           <AddUpdateCard sx={updateCardStyles} projectId={projectId} setUpdateAdded={setUpdateAdded} />
+          <Box flexGrow={'1'}>
+            <ProjectTimeLine widthOfDateColumn={isSmallScreen ? '83px' : '273px'} projectUpdates={projectUpdates} />
+          </Box>
         </Stack>
       </CardContent>
     </Card>
@@ -112,14 +114,16 @@ const cardContentStyles = {
 };
 
 const updateCardStyles: SxProps = {
-  marginLeft: '1.5em',
   width: '270px',
+  maxWidth: '100%',
+  marginLeft: '1.5em',
   [theme.breakpoints.down('lg')]: {
-    marginLeft: '315px',
+    marginLeft: '305px',
+    width: '385px',
   },
   [theme.breakpoints.down('md')]: {
     marginLeft: 0,
-    marginTop: 5,
+    marginBottom: 2,
   },
   [theme.breakpoints.down('sm')]: {
     width: '100%',

@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 
+import AddIcon from '@mui/icons-material/Add';
 import Stack from '@mui/material/Stack';
 
 import { Comment, CommentResponse } from '@/common/types';
@@ -38,7 +39,11 @@ export const CollaborationCommentThread = ({
       <CollaborationCommentCard comment={comment} projectName={projectName} onDelete={onDeleteComment} />
 
       {!displayResponses && comment.responseCount > 0 && (
-        <TransparentButton onClick={() => setDisplayResponses(true)} style={{ marginTop: '1em', marginLeft: '1.5em' }}>
+        <TransparentButton
+          onClick={() => setDisplayResponses(true)}
+          icon={<AddIcon color="secondary" fontSize="large" />}
+          style={{ marginTop: '1em', marginLeft: '1.5em', marginBottom: 2 }}
+        >
           Kommentare anzeigen ({comment.responseCount})
         </TransparentButton>
       )}

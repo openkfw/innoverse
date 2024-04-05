@@ -6,6 +6,7 @@ import AddReactionOutlinedIcon from '@mui/icons-material/AddReactionOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { errorMessage } from '@/components/common/CustomToast';
@@ -17,10 +18,10 @@ interface EmojiReactionCardProps {
   userReaction?: Reaction;
   countOfReactions: ReactionCount[];
   handleReaction: (emoji: Emoji, operation: 'upsert' | 'delete') => void;
-  isEventCard?: boolean;
+  sx?: SxProps;
 }
 
-export function EmojiReactionCard({ userReaction, countOfReactions, handleReaction }: EmojiReactionCardProps) {
+export function EmojiReactionCard({ userReaction, countOfReactions, handleReaction, sx }: EmojiReactionCardProps) {
   const [isEmojiPickerClicked, setIsEmojiPickerClicked] = useState(false);
 
   const topReactions = useMemo(
@@ -48,6 +49,7 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
         direction="row"
         sx={{
           alignItems: 'center',
+          ...sx,
         }}
       >
         {topReactions?.map((reaction, key) => {
