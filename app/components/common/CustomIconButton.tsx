@@ -1,18 +1,17 @@
 import { PropsWithChildren, RefObject } from 'react';
 
 import Button, { ButtonProps } from '@mui/material/Button';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-type CustomIconButtonProps = PropsWithChildren & ButtonProps & { buttonRef?: RefObject<HTMLButtonElement> };
+import { mergeStyles } from '../../utils/helpers';
+
+type CustomIconButtonProps = PropsWithChildren &
+  ButtonProps & { sx?: SxProps; buttonRef?: RefObject<HTMLButtonElement> };
 
 export const CustomIconButton = ({ children, sx, buttonRef, ...buttonProps }: CustomIconButtonProps) => {
   return (
-    <Button
-      variant="outlined"
-      sx={[iconButtonStyle, ...(Array.isArray(sx) ? sx : [sx])]}
-      ref={buttonRef}
-      {...buttonProps}
-    >
+    <Button variant="outlined" sx={mergeStyles(iconButtonStyles, sx)} ref={buttonRef} {...buttonProps}>
       <Typography variant="subtitle2" sx={iconButtonTypographyStyle}>
         {children}
       </Typography>
@@ -20,7 +19,7 @@ export const CustomIconButton = ({ children, sx, buttonRef, ...buttonProps }: Cu
   );
 };
 
-const iconButtonStyle = {
+const iconButtonStyles: SxProps = {
   color: 'rgba(0, 0, 0, 0.56)',
   borderRadius: '48px',
   fontSize: '13px',

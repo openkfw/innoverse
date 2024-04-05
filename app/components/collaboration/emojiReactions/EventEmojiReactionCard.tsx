@@ -1,6 +1,8 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 
+import { SxProps } from '@mui/material/styles';
+
 import { errorMessage } from '@/components/common/CustomToast';
 
 import { getCountPerEmojiOnEvent, getReactionForEventAndUser, handleNewReactionOnEvent } from './actions';
@@ -9,9 +11,10 @@ import { Emoji, Reaction, ReactionCount } from './emojiReactionTypes';
 
 export interface EventEmojiReactionCardProps {
   eventId: string;
+  sx?: SxProps;
 }
 
-export function EventEmojiReactionCard({ eventId }: EventEmojiReactionCardProps) {
+export function EventEmojiReactionCard({ eventId, sx }: EventEmojiReactionCardProps) {
   const [userReaction, setUserReaction] = useState<Reaction>();
   const [countOfReactions, setCountOfReactions] = useState<ReactionCount[]>([]);
 
@@ -46,6 +49,7 @@ export function EventEmojiReactionCard({ eventId }: EventEmojiReactionCardProps)
       countOfReactions={countOfReactions}
       userReaction={userReaction}
       handleReaction={handleReaction}
+      sx={sx}
     />
   );
 }

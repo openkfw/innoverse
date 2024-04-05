@@ -20,7 +20,7 @@ interface UnsavedChangesDialogProps {
 export const UnsavedCommentChangesDialog = () => {
   // The 'useUnsavedCommentChangesDialog' hook causes this component to rerender
   // whenever a user initiates/discards an edit or response to a comment. Isolating this into
-  // a separate components can help reduces rerendering overhead.
+  // a separate components can help reduce rerendering overhead.
   const dialog = useUnsavedCommentChangesDialog();
   return dialog;
 };

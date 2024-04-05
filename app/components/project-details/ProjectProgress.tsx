@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import MuiMarkdown, { getOverrides, Overrides } from 'mui-markdown';
 
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -11,7 +10,6 @@ import CardMedia from '@mui/material/CardMedia';
 import Collapse from '@mui/material/Collapse';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -22,8 +20,8 @@ import Typography from '@mui/material/Typography';
 import triggerAnalyticsEvent from '@/analytics/analytics';
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
-import { mergeStyles } from '@/utils/helpers';
 
+import { useExpandableContainer } from '../common/expandableContainer/ExpandableContainer';
 import { parseStringForLinks } from '../common/LinkString';
 
 import CommentsSection from './comments/CommentsSection';
@@ -50,8 +48,8 @@ interface InfoItemProps {
 }
 
 interface ProjectTextProps {
-  showMoreButtonVisible: boolean;
   text: string;
+  sx?: SxProps;
 }
 
 interface ProjectTextAnchorMenuProps {
@@ -59,10 +57,86 @@ interface ProjectTextAnchorMenuProps {
   setHeadingActive: (id: string) => void;
 }
 
-interface ProjectTextProps {
-  showMoreButtonVisible: boolean;
-  text: string;
-}
+export const ProjectProgress = (props: ProjectProgressProps) => {
+  const { project, projectName } = props;
+
+  return (
+    <Card sx={wrapperStyles}>
+      <Stack sx={contentStyles}>
+        <ProjectDescription project={project} />
+        <Divider sx={{ width: { xs: '100%', lg: '70%' } }} />
+        <ProjectTags tags={project.description.tags} />
+        {project.author && <AuthorInformation projectName={projectName} author={project.author} />}
+        <Divider sx={{ my: 2, width: '100%' }} />
+        <CommentsSection project={project} />
+      </Stack>
+    </Card>
+  );
+};
+
+const ProjectDescription = ({ project }: { project: Project }) => {
+  const [headings, setHeadings] = useState<MarkdownHeading[]>([]);
+
+  const container = useExpandableContainer({
+    collapsedHeight: 600,
+    maxExpandedHeight: 800,
+    content: <ProjectText text={project.description.text} sx={{ pr: 2 }} />,
+    onExpand: () => triggerAnalyticsEvent('expand-project-description', project.projectName),
+  });
+
+  const setHeadingActive = (id: string) => {
+    if (container.isOverflowing) {
+      container.expand();
+    }
+
+    setHeadings((prev) =>
+      prev?.reduce((pV, cV) => {
+        if (cV.id === id) cV.active = true;
+        else cV.active = false;
+        pV.push(cV);
+        return pV;
+      }, [] as MarkdownHeading[]),
+    );
+  };
+
+  const generateLinkMarkup = (contentElement: Element | null): MarkdownHeading[] => {
+    if (!contentElement) return [] as MarkdownHeading[];
+    const headings = [...contentElement.querySelectorAll<HTMLElement>('h1, h2')];
+    return headings.map((heading) => ({
+      title: heading.innerText,
+      depth: parseInt(heading.nodeName.replace(/\D/g, '')) || 0,
+      id: heading.getAttribute('id') || '',
+      active: false,
+    }));
+  };
+
+  useEffect(
+    function filterAndSetHeadings() {
+      const renderedMarkdown = document.querySelector<Element>('#main-text');
+      const headingsMarkup = generateLinkMarkup(renderedMarkdown);
+      setHeadings(headingsMarkup);
+    },
+    [project],
+  );
+
+  return (
+    <Grid container direction={'row'}>
+      <Grid item lg={2} md={3} sx={textAnchorMenuStyles} hidden={!headings.length}>
+        <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
+      </Grid>
+
+      <Grid item xs flexGrow={1}>
+        {container.element}
+      </Grid>
+
+      <Grid item md={0} lg={3}>
+        <Box sx={infoItemRightContainerStyles}>
+          <InfoItemRight title={project.title} summary={project.summary} />
+        </Box>
+      </Grid>
+    </Grid>
+  );
+};
 
 const InfoItemRight = ({ title, summary }: InfoItemProps) => {
   return (
@@ -86,16 +160,9 @@ const InfoItemRight = ({ title, summary }: InfoItemProps) => {
   );
 };
 
-const ProjectText = (props: ProjectTextProps) => (
-  <Box
-    id="main-text"
-    sx={{
-      overflowY: props.showMoreButtonVisible ? 'none' : 'scroll',
-      height: '800px',
-      scrollBehavior: 'smooth',
-    }}
-  >
-    <MuiMarkdown overrides={muiMarkdownOverrides as Overrides}>{props.text}</MuiMarkdown>
+const ProjectText = ({ text, sx }: ProjectTextProps) => (
+  <Box id="main-text" sx={sx}>
+    <MuiMarkdown overrides={muiMarkdownOverrides as Overrides}>{text}</MuiMarkdown>
   </Box>
 );
 
@@ -147,113 +214,6 @@ const ProjectTextAnchorMenu = (props: ProjectTextAnchorMenuProps) => {
   );
 };
 
-interface ShowMoreButtonProps {
-  contentSize: string;
-  isVisible: boolean;
-  onClick: () => void;
-  sx?: SxProps;
-}
-
-const ShowMoreButton = ({ contentSize, isVisible, onClick, sx }: ShowMoreButtonProps) => {
-  const visibilityStyle = isVisible ? 'visible' : 'hidden';
-  return (
-    <Box sx={mergeStyles(sx, showMoreButtonWrapperStyle(contentSize, visibilityStyle))}>
-      <Box sx={{ ...showMoreButtonStyle, visibility: visibilityStyle }}>
-        <IconButton aria-label="delete" sx={{ color: 'rgba(0, 0, 0, 1)' }} onClick={onClick}>
-          <ArrowDownwardIcon />
-        </IconButton>
-      </Box>
-    </Box>
-  );
-};
-
-export const ProjectProgress = (props: ProjectProgressProps) => {
-  const { project, projectName } = props;
-  const [contentSize, setContentSize] = useState<string>('600px');
-  const [showMoreButtonVisible, setShowMoreButtonVisible] = useState<boolean>(true);
-  const [headings, setHeadings] = useState<MarkdownHeading[] | undefined>();
-
-  const expand = () => {
-    triggerAnalyticsEvent('expand-project-description', projectName);
-    setContentSize('100%');
-    setShowMoreButtonVisible(false);
-  };
-
-  const generateLinkMarkup = (contentElement: Element | null): MarkdownHeading[] => {
-    if (!contentElement) return [] as MarkdownHeading[];
-    const headings = [...contentElement.querySelectorAll<HTMLElement>('h1, h2')];
-    return headings.map((heading) => ({
-      title: heading.innerText,
-      depth: parseInt(heading.nodeName.replace(/\D/g, '')) || 0,
-      id: heading.getAttribute('id') || '',
-      active: false,
-    }));
-  };
-
-  const setHeadingActive = (id: string) => {
-    if (showMoreButtonVisible) {
-      setShowMoreButtonVisible(false);
-      expand();
-    }
-
-    setHeadings((prev) =>
-      prev?.reduce((pV, cV) => {
-        if (cV.id === id) cV.active = true;
-        else cV.active = false;
-        pV.push(cV);
-        return pV;
-      }, [] as MarkdownHeading[]),
-    );
-  };
-
-  useEffect(() => {
-    const renderedMarkdown = document.querySelector<Element>('#main-text');
-    setHeadings(generateLinkMarkup(renderedMarkdown));
-  }, [project]);
-
-  return (
-    <Card sx={wrapperStyles}>
-      <Stack sx={contentStyles}>
-        <Box sx={{ height: contentSize, overflow: 'hidden' }}>
-          <Grid container>
-            <Grid item xs={0} md={3} lg={2} sx={textAnchorMenuStyles}>
-              <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
-            </Grid>
-
-            <ShowMoreButton
-              contentSize={contentSize}
-              isVisible={showMoreButtonVisible}
-              onClick={expand}
-              sx={{ display: { xs: 'block', lg: 'none' } }}
-            />
-
-            <Grid item xs={12} md={9} lg={7}>
-              <ShowMoreButton
-                contentSize={contentSize}
-                isVisible={showMoreButtonVisible}
-                onClick={expand}
-                sx={{ display: { xs: 'none', lg: 'block' } }}
-              />
-              <ProjectText showMoreButtonVisible={showMoreButtonVisible} text={project.description.text} />
-            </Grid>
-
-            <Grid item xs={3}>
-              <Box sx={infoItemRightContainerStyles}>
-                <InfoItemRight title={project.title} summary={project.summary} />
-              </Box>
-            </Grid>
-          </Grid>
-        </Box>
-        <Divider sx={{ width: { xs: '100%', lg: '75%' } }} />
-        <ProjectTags tags={project.description.tags} />
-        {project.author && <AuthorInformation projectName={projectName} author={project.author} />}
-        <Divider sx={{ my: 2, width: '100%' }} />
-        <CommentsSection project={project} />
-      </Stack>
-    </Card>
-  );
-};
-
 const textAnchorMenuStyles: SxProps = {
   verflowWrap: 'anywhere',
   hyphens: 'auto',
@@ -280,28 +240,6 @@ const contentStyles = {
   },
 };
 
-const showMoreButtonWrapperStyle = (contentSize: string, visibilityStyle: string): SxProps => ({
-  position: 'absolute',
-  width: '55%',
-  p: 0,
-  height: contentSize,
-  visibility: visibilityStyle,
-  [theme.breakpoints.down('lg')]: {
-    width: '100%',
-  },
-});
-
-const showMoreButtonStyle = {
-  background: 'linear-gradient(to bottom, rgba(255,0,0,0), rgba(255,255,255,1))',
-  position: 'relative',
-  top: '67.8%',
-  paddingTop: '150px',
-  textAlign: 'center',
-  width: '100%',
-  borderRadius: '4px',
-  ml: '-32px',
-};
-
 const infoItemRightContainerStyles = {
   marginLeft: '5%',
   marginTop: '25%',
@@ -315,6 +253,7 @@ const infoItemRightStyles = {
   maxWidth: '100%',
   backgroundColor: '#EBF3F7',
   borderRadius: '8px',
+  marginBottom: 1,
 };
 
 const dividerStyle = {

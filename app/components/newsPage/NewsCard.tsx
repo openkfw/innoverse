@@ -1,9 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 
-import ArrowForwardIcon from '@mui/icons-material/ArrowForwardOutlined';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -17,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import { ProjectUpdate } from '@/common/types';
 import AvatarIcon from '@/components/common/AvatarIcon';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
+import { LinkWithArrowLeft } from '@/components/common/LinkWithArrowLeft';
 import { handleFollow, handleRemoveFollower, isFollowed } from '@/components/project-details/likes-follows/actions';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/helpers';
@@ -104,17 +103,10 @@ export default function NewsCard(props: NewsCardProps) {
       </CardContent>
 
       <CardActions sx={cardActionsStyles}>
-        <Grid container direction="row" justifyContent="space-between" alignItems="center">
+        <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={'8px'}>
           <Grid item xs={7}>
             {projectId ? (
-              <Link href={`/projects/${projectId}`} style={{ ...linkStyle }}>
-                <Stack direction="row" alignItems="center">
-                  <ArrowForwardIcon sx={{ fontSize: '14px', color: 'primary.main' }} />
-                  <Typography variant="subtitle2" sx={{ fontSize: '14px', color: 'primary.main' }} noWrap>
-                    {title}
-                  </Typography>
-                </Stack>
-              </Link>
+              <LinkWithArrowLeft title={title} href={`/projects/${projectId}`} />
             ) : (
               <Stack direction="row" alignItems="center" />
             )}
@@ -189,10 +181,6 @@ const subtitleStyles = {
   overflow: 'hidden',
   WebkitBoxOrient: 'vertical',
   WebkitLineClamp: 4,
-};
-
-const linkStyle = {
-  textDecoration: 'none',
 };
 
 const followButtonStyles = {

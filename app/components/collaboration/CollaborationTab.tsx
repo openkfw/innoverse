@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -21,61 +19,83 @@ interface CollaborationTabProps {
 }
 
 export const CollaborationTab = ({ project }: CollaborationTabProps) => {
-  const [surveyQuestions] = useState(project.surveyQuestions);
-
   return (
     <Card sx={containerStyles}>
       <Box sx={colorOverlayStyles} />
 
       <CardContent style={{ padding: 0 }}>
         <Box sx={cardContentStyles}>
-          <Typography color="primary.main" sx={titleStyles} id="opportunities-section">
-            Opportunities
-          </Typography>
-
-          <Stack sx={gridStyles} spacing={{ xs: 6, md: 10 }}>
-            {project.opportunities &&
-              project.opportunities.map((opportunity, idx) => (
-                <OpportunityCard key={idx} opportunity={opportunity} projectName={project.title} />
-              ))}
-          </Stack>
-
-          <Divider textAlign="left" sx={{ my: { xs: '48px', md: '88px' } }} />
-
-          <Typography color="primary.main" sx={titleStyles} id="surveys-section">
-            Umfrage
-          </Typography>
-
-          <Stack sx={gridStyles} spacing={20}>
-            {surveyQuestions.map((surveyQuestion, idx) => (
-              <SurveyCard key={idx} surveyQuestion={surveyQuestion} projectId={project.id} />
-            ))}
-          </Stack>
-
-          {project.collaborationQuestions.length > 0 && (
-            <>
-              <Divider textAlign="left" sx={{ my: { xs: '48px', md: '88px' } }} />
-              <Typography color="primary.main" sx={titleStyles} id="collaboration-questions-section">
-                Hilf uns bei diesen Fragen
-              </Typography>
-              <Stack sx={gridStyles} spacing={{ xs: 6, md: 12 }}>
-                {project.collaborationQuestions.map((question, idx) => (
-                  <CollaborationQuestionCard
-                    key={idx}
-                    projectName={project.projectName}
-                    content={question}
-                    projectId={project.id}
-                    questionId={question.id}
-                  />
-                ))}
-              </Stack>
-            </>
-          )}
+          <OpportunitiesSection project={project} />
+          <SurveyQuestionsSection project={project} />
+          <CollaborationQuestionsSection project={project} />
         </Box>
       </CardContent>
 
       <UnsavedCommentChangesDialog />
     </Card>
+  );
+};
+
+const OpportunitiesSection = ({ project }: { project: Project }) => {
+  if (!project.opportunities.length) return <></>;
+
+  return (
+    <>
+      <Typography color="primary.main" sx={titleStyles} id="opportunities-section">
+        Opportunities
+      </Typography>
+
+      <Stack sx={gridStyles} spacing={{ xs: 6, md: 10 }}>
+        {project.opportunities.map((opportunity, idx) => (
+          <OpportunityCard key={idx} opportunity={opportunity} projectName={project.title} />
+        ))}
+      </Stack>
+
+      <Divider textAlign="left" sx={dividerStyles} />
+    </>
+  );
+};
+
+const SurveyQuestionsSection = ({ project }: { project: Project }) => {
+  if (!project.surveyQuestions.length) return <></>;
+
+  return (
+    <>
+      <Typography color="primary.main" sx={titleStyles} id="surveys-section">
+        Umfrage
+      </Typography>
+
+      <Stack sx={gridStyles} spacing={20}>
+        {project.surveyQuestions.map((surveyQuestion, idx) => (
+          <SurveyCard key={idx} surveyQuestion={surveyQuestion} projectId={project.id} />
+        ))}
+      </Stack>
+
+      <Divider textAlign="left" sx={dividerStyles} />
+    </>
+  );
+};
+
+const CollaborationQuestionsSection = ({ project }: { project: Project }) => {
+  if (!project.collaborationQuestions.length) return <></>;
+
+  return (
+    <>
+      <Typography color="primary.main" sx={titleStyles} id="collaboration-questions-section">
+        Hilf uns bei diesen Fragen
+      </Typography>
+      <Stack sx={gridStyles} spacing={{ xs: 6, md: 12 }}>
+        {project.collaborationQuestions.map((question, idx) => (
+          <CollaborationQuestionCard
+            key={idx}
+            projectName={project.projectName}
+            content={question}
+            projectId={project.id}
+            questionId={question.id}
+          />
+        ))}
+      </Stack>
+    </>
   );
 };
 
@@ -116,6 +136,10 @@ const gridStyles = {
   [theme.breakpoints.down('md')]: {
     paddingX: '24px',
   },
+};
+
+const dividerStyles = {
+  my: { xs: '48px', md: '88px' },
 };
 
 const titleStyles = {
