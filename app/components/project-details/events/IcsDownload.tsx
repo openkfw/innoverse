@@ -22,6 +22,13 @@ const IcsDownload = (props: IcsDownloadProps) => {
       return date.toISOString().replace(/-|:|\.\d+/g, '');
     };
 
+    const formatDescriptionToIcs = (description: string | undefined) => {
+      if (description) {
+        return description.replace(/(?:\r\n|\r|\n)/g, '\\n');
+      }
+      return description;
+    };
+
     return [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
@@ -29,7 +36,7 @@ const IcsDownload = (props: IcsDownloadProps) => {
       `DTSTART:${formatDateToIcs(new Date(event.startTime))}`,
       `DTEND:${formatDateToIcs(new Date(event.endTime))}`,
       `SUMMARY:${event.title}`,
-      `DESCRIPTION:${event.description}`,
+      `DESCRIPTION:${formatDescriptionToIcs(event.description)}`,
       `LOCATION:${event.location}`,
       'END:VEVENT',
       'END:VCALENDAR',
