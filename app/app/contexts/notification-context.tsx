@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 
 import { useSessionItem } from '@/app/contexts/helpers';
 import { NotificationBanner } from '@/components/notifications/NotificationBanner';
+import theme from '@/styles/theme';
 import { subscribeToWebPush } from '@/utils/notification/pushNotification';
 
 import { useUser } from './user-context';
@@ -56,7 +57,6 @@ export const unsubscribePushNotification = async () => {
   return subscription;
 };
 
-// Allows to manually show a notification to the user
 export const showNotification = async (title: string, options: NotificationOptions | undefined) => {
   if (!('Notification' in window)) {
     throw new Error('Notification not supported');
@@ -79,12 +79,7 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
 
   return (
     <NotificationContext.Provider value={contextObject}>
-      <Box
-        display={showPushSubscriptionAlert ? 'flex' : 'none'}
-        style={{
-          justifyContent: 'flex-end',
-        }}
-      >
+      <Box display={showPushSubscriptionAlert ? 'flex' : 'none'} sx={notificationBoxStyles}>
         <NotificationBanner
           showManualSteps={showManualSteps}
           registerPushNotifications={registerPushNotifications}
@@ -201,3 +196,12 @@ function useNotificationContextProvider() {
 }
 
 export const useNotification = () => useContext(NotificationContext);
+
+// Notification Context Styles
+const notificationBoxStyles = {
+  justifyContent: 'flex-end',
+
+  [theme.breakpoints.down('sm')]: {
+    display: 'none',
+  },
+};
