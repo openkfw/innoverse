@@ -22,7 +22,6 @@ import 'slick-carousel/slick/slick-theme.css';
 
 interface ProjectInfoProps {
   project: Project;
-  setActiveTab: (tab: number) => void;
   isLiked: boolean;
   isFollowed: boolean;
   setLiked: (i: boolean) => void;
@@ -37,7 +36,6 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const {
     project,
-    setActiveTab,
     isLiked,
     isFollowed,
     setLiked,
@@ -102,12 +100,12 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
       <Card sx={cardStyles}>
         <CardContent sx={cardContentStyles}>
           {isSmallScreen ? (
-            <ProjectInfoCardSmall project={project} setActiveTab={setActiveTab} />
+            <ProjectInfoCardSmall project={project} />
           ) : (
             <Grid container sx={containerStyles}>
               <Grid item sx={firstRowStyles}>
                 <Grid sx={projectStageCardStyles}>
-                  <ProjectStageCard setActiveTab={setActiveTab} project={project} />
+                  <ProjectStageCard project={project} />
                 </Grid>
                 {project.team.length ? (
                   <Grid sx={teamMembersColumnStyles}>
@@ -118,10 +116,10 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
 
               <Grid item sx={secondRowStyles}>
                 <Grid sx={collaborationColumnStyles}>
-                  <CollaborationColumn setActiveTab={setActiveTab} project={project} />
+                  <CollaborationColumn project={project} />
                 </Grid>
                 <Grid item sx={updateCardStyles}>
-                  <UpdateCard updates={project?.updates} setActiveTab={setActiveTab} />
+                  <UpdateCard updates={project?.updates} />
                 </Grid>
               </Grid>
             </Grid>

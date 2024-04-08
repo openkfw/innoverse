@@ -17,7 +17,6 @@ type ProjectWrapperProps = {
 
 export const ProjectWrapper = (props: ProjectWrapperProps) => {
   const { project } = props;
-  const [activeTab, setActiveTab] = useState(0);
   const [isProjectLiked, setIsProjectLiked] = useState<boolean>(false);
   const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(false);
   const [likesAmount, setLikesAmount] = useState(project.likes.length);
@@ -36,7 +35,6 @@ export const ProjectWrapper = (props: ProjectWrapperProps) => {
       <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
         <ProjectInfoCard
           project={project}
-          setActiveTab={setActiveTab}
           isLiked={isProjectLiked}
           isFollowed={isProjectFollowed}
           setLiked={setIsProjectLiked}
@@ -48,7 +46,7 @@ export const ProjectWrapper = (props: ProjectWrapperProps) => {
         />
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
-        <TabView project={project} activeTab={activeTab} setActiveTab={setActiveTab} projectName={project.title} />
+        <TabView project={project} projectName={project.title} />
       </Box>
     </ProjectContextProvider>
   );

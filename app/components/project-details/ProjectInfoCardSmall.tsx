@@ -16,7 +16,6 @@ import UpdateCard from './UpdateCard';
 
 interface ProjectInfoProps {
   project: Project;
-  setActiveTab: (tab: number) => void;
 }
 
 interface SliderNavigationProps {
@@ -72,7 +71,7 @@ export function ProjectInfoCardSmall(props: ProjectInfoProps) {
   const sliderRef = useRef<Slider | null>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const { project, setActiveTab } = props;
+  const { project } = props;
 
   const settings = {
     arrows: false,
@@ -92,10 +91,10 @@ export function ProjectInfoCardSmall(props: ProjectInfoProps) {
       <SliderNavigation activeIndex={activeIndex} setActiveIndex={setActiveIndex} sliderRef={sliderRef} />
       <Box sx={sliderBoxStyles}>
         <Slider {...settings} ref={sliderRef}>
-          <ProjectStageCard setActiveTab={setActiveTab} project={project} />
+          <ProjectStageCard project={project} />
           <TeamMembersColumn team={project.team} projectName={project.title} />
-          <CollaborationColumn setActiveTab={setActiveTab} project={project} />
-          <UpdateCard updates={project?.updates} setActiveTab={setActiveTab} />
+          <CollaborationColumn project={project} />
+          <UpdateCard updates={project?.updates} />
         </Slider>
       </Box>
     </>

@@ -15,25 +15,28 @@ import ProgressBar from '../common/ProgressBar';
 
 interface TimingDataProps {
   project: Project;
-  setActiveTab: (tab: number) => void;
 }
 
 const ProjectStageCard = (props: TimingDataProps) => {
-  const { project, setActiveTab } = props;
+  const { project } = props;
 
   function readMore() {
-    const scroll = () => {
-      const section = document.getElementById('project-progress-tab')?.offsetTop;
-      if (section) {
-        window.scrollTo({
-          top: section,
-          behavior: 'smooth',
-        });
-      }
-    };
+    const newUrl = `${window.location.pathname}?tab=0`;
+    window.history.pushState({ path: newUrl }, '', newUrl);
 
-    setActiveTab(0);
-    setTimeout(scroll, 0);
+    setTimeout(() => {
+      const scroll = () => {
+        const section = document.getElementById('project-progress-tab')?.offsetTop;
+        if (section) {
+          window.scrollTo({
+            top: section,
+            behavior: 'smooth',
+          });
+        }
+      };
+
+      scroll();
+    }, 100);
   }
 
   return (

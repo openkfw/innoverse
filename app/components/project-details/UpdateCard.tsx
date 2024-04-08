@@ -22,11 +22,10 @@ import { TooltipContent } from './TooltipContent';
 
 interface UpdateCardProps {
   updates: ProjectUpdate[];
-  setActiveTab: (tab: number) => void;
 }
 
 const UpdateCard = (props: UpdateCardProps) => {
-  const { updates, setActiveTab } = props;
+  const { updates } = props;
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const previousDisabled = currentIndex === 0;
@@ -47,18 +46,18 @@ const UpdateCard = (props: UpdateCardProps) => {
   }
 
   function handleUpdatesClick(offset: number) {
-    const scroll = () => {
-      const section = document.getElementById('updates-tab')?.offsetTop;
+    const newUrl = `${window.location.pathname}?tab=2`;
+    window.history.pushState({ path: newUrl }, '', newUrl);
+
+    setTimeout(() => {
+      const section = document.getElementById('updates-tab');
       if (section) {
         window.scrollTo({
-          top: section - offset,
+          top: section.offsetTop - offset,
           behavior: 'smooth',
         });
       }
-    };
-
-    setActiveTab(2);
-    setTimeout(scroll, 0);
+    }, 0);
   }
 
   if (updates.length === 0) {

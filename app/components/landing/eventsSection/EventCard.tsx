@@ -43,7 +43,7 @@ export const EventCard = ({ event }: EventCardProps) => {
 
       <CardActions sx={cardActionsStyles}>
         <Stack direction="column" spacing={'8px'}>
-          <LinkWithArrowLeft title="Mehr Details" href={`/projects/${encodeURIComponent(event.projectId)}`} />
+          <LinkWithArrowLeft title="Mehr Details" href={`/projects/${encodeURIComponent(event.projectId)}?tab=3`} />
           <EventEmojiReactionCard eventId={event.id} />
         </Stack>
       </CardActions>

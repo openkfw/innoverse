@@ -1,4 +1,5 @@
 import { ReactNode, SyntheticEvent, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -17,7 +18,6 @@ import { UpdatesTab } from '../updates/UpdatesTab';
 import { countFutureEventsForProject } from './events/actions';
 import { EventsTab } from './events/EventsTab';
 import { ProjectProgress } from './ProjectProgress';
-
 interface TabPanelProps {
   children?: ReactNode;
   id: string;
@@ -72,20 +72,65 @@ const CustomTab = styled((props: TabProps) => <Tab disableRipple {...props} />)(
 
 interface BasicTabsProps {
   project: Project;
-  activeTab: number;
-  setActiveTab: (tab: number) => void;
   projectName: string;
 }
 
 export default function TabView(props: BasicTabsProps) {
-  const { project, activeTab, setActiveTab, projectName } = props;
+  const searchParams = useSearchParams();
+
+  const [activeTab, setActiveTab] = useState(0);
+  const { project, projectName } = props;
   const { opportunities, questions, collaborationQuestions, updates } = project;
   const collaborationActivities = opportunities.length + questions.length + collaborationQuestions.length;
   const [futureEventCount, setFutureEventCount] = useState<number>(0);
+  const [initialRender, setInitialRender] = useState(true);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
+
+    const params = new URLSearchParams(window.location.search);
+    params.set('tab', newValue.toString());
+    window.history.pushState(null, '', `?${params.toString()}`);
   };
+
+  useEffect(() => {
+    if (initialRender) {
+      setInitialRender(false);
+
+      let sectionId;
+      switch (activeTab) {
+        case 0:
+          sectionId = 'project-progress-tab';
+          break;
+        case 1:
+          sectionId = 'collaboration-tab';
+          break;
+        case 2:
+          sectionId = 'updates-tab';
+          break;
+        case 3:
+          sectionId = 'events-tab';
+          break;
+        default:
+          sectionId = 'project-progress-tab';
+      }
+
+      const section = document.getElementById(sectionId)?.offsetTop;
+      if (section) {
+        window.scrollTo({
+          top: section,
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [activeTab, initialRender]);
+
+  useEffect(() => {
+    const tabQueryParam = searchParams?.get('tab');
+    if (tabQueryParam && activeTab !== Number(tabQueryParam)) {
+      setActiveTab(Number(tabQueryParam));
+    }
+  }, [searchParams, activeTab]);
 
   useEffect(() => {
     const getFutureEventCount = async () => {

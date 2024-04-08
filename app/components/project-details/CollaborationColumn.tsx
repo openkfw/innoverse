@@ -18,7 +18,6 @@ import SupportTheTeamIcon from '../icons/SupportTheTeamIcon';
 
 interface CollaborationProps {
   project: Project;
-  setActiveTab: (tab: number) => void;
 }
 
 interface SectionProps {
@@ -54,11 +53,12 @@ const Section = ({ icon, title, subtitle, sectionId, buttonText, handleCollabora
 );
 
 const CollaborationColumn = (props: CollaborationProps) => {
-  const { project, setActiveTab } = props;
+  const { project } = props;
   const { surveyQuestions, opportunities, collaborationQuestions } = project;
 
   function handleCollaborationClick(sectionId: string) {
-    setActiveTab(1);
+    const newUrl = `${window.location.pathname}?tab=1`;
+    window.history.pushState({ path: newUrl }, '', newUrl);
 
     setTimeout(() => {
       const section = document.getElementById(sectionId);
