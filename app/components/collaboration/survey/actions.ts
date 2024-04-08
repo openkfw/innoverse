@@ -6,13 +6,15 @@ import { getSurveyVotes, getSuveyQuestionAndUserVote, handleSurveyQuestionVote }
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getFulfilledResults, sortDateByCreatedAt } from '@/utils/helpers';
-import logger from '@/utils/logger';
+import getLogger from '@/utils/logger';
 import { getInnoUserByProviderId } from '@/utils/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
 
 import { handleSurveyVoteSchema, voteSchema } from './validationSchema';
+
+const logger = getLogger();
 
 export const getSurveyQuestionVotes = async (body: { surveyQuestionId: string }) => {
   try {

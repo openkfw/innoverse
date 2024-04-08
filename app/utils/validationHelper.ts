@@ -2,7 +2,9 @@ import { StatusCodes } from 'http-status-codes';
 import { ZodType } from 'zod';
 
 import { validationError } from './errors';
-import logger from './logger';
+import getLogger from './logger';
+
+const logger = getLogger();
 
 export const validateParams = (schema: ZodType, body: any) => {
   const validatedParams = schema.safeParse(body);

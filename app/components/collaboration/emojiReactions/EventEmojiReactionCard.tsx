@@ -1,5 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { SxProps } from '@mui/material/styles';
 
@@ -17,6 +19,7 @@ export interface EventEmojiReactionCardProps {
 export function EventEmojiReactionCard({ eventId, sx }: EventEmojiReactionCardProps) {
   const [userReaction, setUserReaction] = useState<Reaction>();
   const [countOfReactions, setCountOfReactions] = useState<ReactionCount[]>([]);
+  const appInsights = useAppInsightsContext();
 
   const fetchReactions = useCallback(async () => {
     try {
@@ -27,6 +30,10 @@ export function EventEmojiReactionCard({ eventId, sx }: EventEmojiReactionCardPr
     } catch (error) {
       console.error('Failed to fetch reactions:', error);
       errorMessage({ message: 'Failed to load reactions. Please try again.' });
+      appInsights.trackException({
+        exception: new Error('Failed to load reactions.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   }, [eventId]);
 
@@ -41,6 +48,10 @@ export function EventEmojiReactionCard({ eventId, sx }: EventEmojiReactionCardPr
     } catch (error) {
       console.error('Failed to handle reaction:', error);
       errorMessage({ message: 'Failed to update reaction. Please try again.' });
+      appInsights.trackException({
+        exception: new Error('Failed to update reaction.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 

@@ -12,12 +12,14 @@ import {
 import { addLike, deleteProjectAndUserLike, getProjectAndUserLikes, getProjectLikes } from '@/repository/db/like';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
-import logger from '@/utils/logger';
+import getLogger from '@/utils/logger';
 import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
 
 import { followSchema, likeSchema } from './validationSchema';
+
+const logger = getLogger();
 
 export const handleLike = withAuth(async (user: UserSession, body: { projectId: string }) => {
   try {

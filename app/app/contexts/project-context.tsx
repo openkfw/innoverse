@@ -1,5 +1,7 @@
 'use client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { Project } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
@@ -29,6 +31,7 @@ export const ProjectContextProvider = ({ projectId, children }: { projectId: str
   const [collaborationCommentsAmount, setCollaborationCommentsAmount] = useState<number>(
     defaultState.collaborationCommentsAmount,
   );
+  const appInsights = useAppInsightsContext();
 
   useEffect(() => {
     const setData = async () => {
@@ -49,6 +52,10 @@ export const ProjectContextProvider = ({ projectId, children }: { projectId: str
       } catch (error) {
         errorMessage({ message: 'Failed to load project details. Please try again.' });
         console.error('Error fetching project details:', error);
+        appInsights.trackException({
+          exception: new Error('Error fetching project details', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       }
     };
     setData();

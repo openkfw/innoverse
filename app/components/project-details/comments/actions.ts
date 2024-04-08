@@ -15,7 +15,7 @@ import {
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getFulfilledResults, sortDateByCreatedAt } from '@/utils/helpers';
-import logger from '@/utils/logger';
+import getLogger from '@/utils/logger';
 import { getInnoUserByProviderId } from '@/utils/requests';
 import { validateParams } from '@/utils/validationHelper';
 
@@ -29,6 +29,7 @@ import {
   updateCommentSchema,
 } from './validationSchema';
 
+const logger = getLogger();
 export const addProjectComment = withAuth(async (user: UserSession, body: { projectId: string; comment: string }) => {
   try {
     const validatedParams = validateParams(handleCommentSchema, body);

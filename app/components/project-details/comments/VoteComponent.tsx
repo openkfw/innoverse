@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
@@ -28,6 +30,7 @@ export const CommentVoteComponent = ({
   handleUpvote,
   handleClickOnResponse,
 }: CommentVoteComponentProps) => {
+  const appInsights = useAppInsightsContext();
   const checkIfCommentIsUpvoted = async () => {
     const response = await isUpvoted({ commentId });
     return response.data ?? false;
@@ -39,6 +42,10 @@ export const CommentVoteComponent = ({
     } catch (error) {
       console.error('Error upvoting comment:', error);
       errorMessage({ message: 'Failed to upvote comment. Please try again later.' });
+      appInsights.trackException({
+        exception: new Error('Failed to upvote comment.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 

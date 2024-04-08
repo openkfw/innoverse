@@ -7,12 +7,14 @@ import { handleFeedbackSchema } from '@/components/landing/feedbackSection/valid
 import { addCollaborationComment } from '@/repository/db/collaboration_comment';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
-import logger from '@/utils/logger';
+import getLogger from '@/utils/logger';
 import { GetPlatformFeedbackCollaborationQuestion, STRAPI_QUERY, withResponseTransformer } from '@/utils/queries';
 import strapiFetcher from '@/utils/strapiFetcher';
 import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
+
+const logger = getLogger();
 
 export const saveFeedback = withAuth(
   async (user: UserSession, body: { feedback: string; showOnProjectPage: boolean }) => {

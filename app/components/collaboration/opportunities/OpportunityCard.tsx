@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -23,6 +25,7 @@ interface OpportunityCardProps {
 
 const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => {
   const [hasApplied, setHasApplied] = useState(false);
+  const appInsights = useAppInsightsContext();
 
   const handleOpportunityApply = async () => {
     try {
@@ -32,6 +35,10 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
     } catch (error) {
       console.error('Failed to apply for the opportunity:', error);
       errorMessage({ message: 'Applying for the opportunity failed. Please try again.' });
+      appInsights.trackException({
+        exception: new Error('Failed to apply for the opportunity.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 
@@ -43,6 +50,10 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
       } catch (error) {
         console.error('Failed to check application status:', error);
         errorMessage({ message: 'Failed to check if you have already applied. Please try again.' });
+        appInsights.trackException({
+          exception: new Error('Failed to check opportunity application status.', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       }
     };
     getAppliedForOpportunity();

@@ -1,6 +1,8 @@
 'use client';
 
 import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, useMemo, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { AmountOfNews, Filters, ProjectUpdate } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
@@ -46,6 +48,7 @@ export const NewsFilterContextProvider = ({ children }: { children: React.ReactN
   const [filters, setFilters] = useState<Filters>(defaultState.filters);
   const [amountOfNewsTopic, setAmountOfNewsTopic] = useState<AmountOfNews>(defaultState.amountOfNewsTopic);
   const [amountOfNewsProject, setAmountOfNewsProject] = useState<AmountOfNews>(defaultState.amountOfNewsProject);
+  const appInsights = useAppInsightsContext();
 
   const topics = useMemo(() => {
     const data = allNews
@@ -98,6 +101,10 @@ export const NewsFilterContextProvider = ({ children }: { children: React.ReactN
     } catch (error) {
       errorMessage({ message: 'Error refetching news. Please check your connection and try again.' });
       console.error('Error refetching news:', error);
+      appInsights.trackException({
+        exception: new Error('Error refetching news', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 
@@ -111,6 +118,10 @@ export const NewsFilterContextProvider = ({ children }: { children: React.ReactN
       } catch (error) {
         errorMessage({ message: 'Error fetching news updates. Please try again later.' });
         console.error('Error fetching initial news data:', error);
+        appInsights.trackException({
+          exception: new Error('Error fetching initial news data', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       }
     };
     setData();

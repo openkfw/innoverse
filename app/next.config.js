@@ -31,6 +31,9 @@ const nextConfig = {
       { hostname: '127.0.0.1', pathname: '/uploads/**', port: '1337' },
     ],
   },
+  experimental: {
+    instrumentationHook: true,
+  },
   async rewrites() {
     return [
       {
@@ -56,12 +59,19 @@ const nextConfig = {
       },
     ];
   },
-  webpack: function (config) {
+  webpack: function (config, { isServer }) {
     config.module.rules.push({
       test: /\.md$/,
       use: 'raw-loader',
     });
-    config.resolve.fallback = { fs: false };
+    if (isServer) {
+      // required for @azure/monitor-opentelemetry-exporter to work
+      config.resolve.fallback ??= {};
+      config.resolve.fallback.os = false;
+      config.resolve.fallback.fs = false;
+      config.resolve.fallback.child_process = false;
+      config.resolve.fallback.path = false;
+    }
     return config;
   },
 };

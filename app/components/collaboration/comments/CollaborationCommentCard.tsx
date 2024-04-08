@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { Comment } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
@@ -39,6 +41,7 @@ export const CollaborationCommentCard = (props: CollaborationCommentCardProps) =
 
 function useCollaborationCommentCardProps({ comment, onDelete }: CollaborationCommentCardProps) {
   const [isUpvoted, setIsUpvoted] = useState<boolean>();
+  const appInsights = useAppInsightsContext();
 
   useEffect(() => {
     async function loadAndSetIsUpvoted() {
@@ -48,6 +51,10 @@ function useCollaborationCommentCardProps({ comment, onDelete }: CollaborationCo
       } catch (error) {
         console.error('Error loading upvote status of collaboration comment', error);
         errorMessage({ message: 'Failed to load upvote status of collaboration comment. Please try again later.' });
+        appInsights.trackException({
+          exception: new Error('Failed to load upvote status of collaboration comment', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       }
     }
     loadAndSetIsUpvoted();
@@ -60,6 +67,10 @@ function useCollaborationCommentCardProps({ comment, onDelete }: CollaborationCo
     } catch (error) {
       console.error('Error upvoting collaboration comment:', error);
       errorMessage({ message: 'Failed to upvote collaboration comment. Please try again later.' });
+      appInsights.trackException({
+        exception: new Error('Failed to upvote collaboration comment', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 
@@ -69,6 +80,10 @@ function useCollaborationCommentCardProps({ comment, onDelete }: CollaborationCo
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
       errorMessage({ message: 'Failed to update collaboration comment. Please try again later.' });
+      appInsights.trackException({
+        exception: new Error('Failed to update collaboration comment', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 
@@ -79,6 +94,10 @@ function useCollaborationCommentCardProps({ comment, onDelete }: CollaborationCo
     } catch (error) {
       console.error('Error deleting collaboration comment:', error);
       errorMessage({ message: 'Failed to delete collaboration comment. Please try again later.' });
+      appInsights.trackException({
+        exception: new Error('Failed to delete collaboration comment.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 

@@ -8,7 +8,7 @@ import { SortValues } from '@/components/newsPage/News';
 
 import { InnoPlatformError, strapiError } from './errors';
 import { getPromiseResults } from './helpers';
-import logger from './logger';
+import getLogger from './logger';
 import {
   CreateInnoUserQuery,
   CreateProjectUpdateQuery,
@@ -33,6 +33,7 @@ import {
   withResponseTransformer,
 } from './queries';
 import strapiFetcher from './strapiFetcher';
+const logger = getLogger();
 import { UpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
 
 async function uploadImage(imageUrl: string, fileName: string) {

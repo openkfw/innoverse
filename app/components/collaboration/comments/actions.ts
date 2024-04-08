@@ -24,7 +24,7 @@ import {
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getPromiseResults, sortDateByCreatedAt } from '@/utils/helpers';
-import logger from '@/utils/logger';
+import getLogger from '@/utils/logger';
 import { getInnoUserByProviderId } from '@/utils/requests';
 import { validateParams } from '@/utils/validationHelper';
 
@@ -43,6 +43,7 @@ import {
   updateCollaborationCommentSchema,
 } from './validationSchema';
 
+const logger = getLogger();
 export const getProjectCollaborationComments = async (body: { projectId: string; questionId: string }) => {
   try {
     const validatedParams = validateParams(getCollaborationCommentsSchema, body);

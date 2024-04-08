@@ -5,7 +5,7 @@ import { UserSession } from '@/common/types';
 import { addReaction, countNumberOfReactions, findReaction, removeReaction } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
-import logger from '@/utils/logger';
+import getLogger from '@/utils/logger';
 import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
@@ -18,6 +18,7 @@ import {
   updateReactionShema,
 } from './validationSchema';
 
+const logger = getLogger();
 export const getReactionForUpdateAndUser = withAuth(async (user: UserSession, body: { updateId: string }) => {
   try {
     const validatedParams = validateParams(updateReactionShema, body);

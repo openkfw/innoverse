@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
@@ -35,6 +37,7 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
   const { setCollaborationCommentsAmount } = useProject();
   const [comments, setComments] = useState<Comment[]>(projectComments);
   const [writeNewComment, setWriteNewComment] = useState(false);
+  const appInsights = useAppInsightsContext();
 
   const avatarGroupStyle = {
     display: 'flex',
@@ -73,6 +76,10 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
       if (!newComment) {
         console.error('No comment was returned by the server.');
         errorMessage({ message: 'Failed to post the comment. Please try again.' });
+        appInsights.trackException({
+          exception: new Error('Failed to post the comment.'),
+          severityLevel: SeverityLevel.Error,
+        });
         return;
       }
       const newComments = sortDateByCreatedAt([...comments, newComment]);
@@ -81,6 +88,10 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
     } catch (error) {
       console.error('Failed to submit comment:', error);
       errorMessage({ message: 'Failed to submit your comment. Please try again.' });
+      appInsights.trackException({
+        exception: new Error('Failed to submit comment.'),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 

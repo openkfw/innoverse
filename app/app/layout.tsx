@@ -3,10 +3,13 @@ import React, { PropsWithChildren } from 'react';
 import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { AppInsightsContext, AppInsightsErrorBoundary } from '@microsoft/applicationinsights-react-js';
 
 import { NotificationContextProvider } from '@/app/contexts/notification-context';
 import CustomToastContainer from '@/components/common/CustomToast';
+import ErrorPage from '@/components/error/ErrorPage';
 import theme from '@/styles/theme';
+import { reactPlugin } from '@/utils/instrumentation/AppInsights';
 
 import { UserContextProvider } from './contexts/user-context';
 import { SWRProvider } from './swr-provider';
@@ -35,16 +38,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="description" content="***STRING_REMOVED***  Innovation Platform" />
       </head>
       <body>
-        <ApolloProvider client={client}>
-          <SessionProvider>
-            <SWRProvider>
-              <UserContextProvider>
-                <CustomToastContainer />
-                <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
-              </UserContextProvider>
-            </SWRProvider>
-          </SessionProvider>
-        </ApolloProvider>
+        <AppInsightsErrorBoundary onError={() => <ErrorPage />} appInsights={reactPlugin}>
+          <AppInsightsContext.Provider value={reactPlugin}>
+            <ApolloProvider client={client}>
+              <SessionProvider>
+                <SWRProvider>
+                  <UserContextProvider>
+                    <CustomToastContainer />
+                    <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+                  </UserContextProvider>
+                </SWRProvider>
+              </SessionProvider>
+            </ApolloProvider>
+          </AppInsightsContext.Provider>
+        </AppInsightsErrorBoundary>
       </body>
     </html>
   );

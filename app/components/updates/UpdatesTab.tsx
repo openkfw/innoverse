@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -27,6 +29,7 @@ export const UpdatesTab = (props: UpdatesTabProps) => {
 
   const isVeryLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const appInsights = useAppInsightsContext();
 
   useEffect(() => {
     const fetchUpdates = async () => {
@@ -38,6 +41,10 @@ export const UpdatesTab = (props: UpdatesTabProps) => {
       } catch (error) {
         console.error('Error fetching project updates:', error);
         errorMessage({ message: 'Failed to fetch project updates. Please try again later.' });
+        appInsights.trackException({
+          exception: new Error('Failed to fetch project updates.', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       }
     };
 
@@ -54,6 +61,10 @@ export const UpdatesTab = (props: UpdatesTabProps) => {
       } catch (error) {
         console.error('Error refetching project updates:', error);
         errorMessage({ message: 'Failed to refetch project updates. Please try again later.' });
+        appInsights.trackException({
+          exception: new Error('Failed to refetch project updates.', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       }
     };
 

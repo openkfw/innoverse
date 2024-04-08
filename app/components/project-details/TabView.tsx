@@ -7,7 +7,6 @@ import Tab, { TabProps } from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import triggerAnalyticsEvent from '@/analytics/analytics';
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
@@ -85,16 +84,6 @@ export default function TabView(props: BasicTabsProps) {
   const [futureEventCount, setFutureEventCount] = useState<number>(0);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
-    switch (newValue) {
-      case 0:
-        triggerAnalyticsEvent('tab-projektverlauf-clicked', projectName);
-      case 1:
-        triggerAnalyticsEvent('tab-zusammernarbeit-clicked', projectName);
-      case 2:
-        triggerAnalyticsEvent('tab-updates-clicked', projectName);
-      case 3:
-        triggerAnalyticsEvent('tab-events-clicked', projectName);
-    }
     setActiveTab(newValue);
   };
 

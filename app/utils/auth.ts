@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { UserSession } from '@/common/types';
 import { options } from '@/pages/api/auth/[...nextauth]';
 
-import logger from './logger';
+import getLogger from './logger';
 import { createInnoUserIfNotExist } from './requests';
 
 export interface AuthResponse<TArgs> {
@@ -13,6 +13,8 @@ export interface AuthResponse<TArgs> {
   errors?: any;
   message?: any;
 }
+
+const logger = getLogger();
 
 export function withAuth<TArgs, TReturn>(func: (user: UserSession, body: TArgs) => Promise<AuthResponse<TReturn>>) {
   return async function (args: TArgs) {

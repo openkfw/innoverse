@@ -6,14 +6,11 @@ As a short introduction, the main components of the InnoBuddy Platform are shown
 ![arch](./docs/innoplatform.png)
 
 For starting the platform, you need to start at least the Strapi CMS, the Database and the Innobuddy app.
-Optionally, you can also start up Umami to get an overview of the user analytics, but this is not needed for local
-development.
 
-## InnoBuddy App locally, strapi & umami with docker
+## InnoBuddy App locally, strapi in Docker
 
 The most common way to stat up the platform is by starting all components with docker except the InnoBuddy Next.js App.
-For this you can use the `docker-compose-strapi.yaml` for strapi & DB or the `docker-compose-full.yaml` for strapi &
-umami & DB
+For this you can use the `docker-compose-strapi.yaml` for strapi & DB or the `docker-compose-full.yaml` for strapi & DB
 
 First set up the correct env vars:
 
@@ -41,7 +38,7 @@ docker-compose -f docker-compose-strapi.yaml up # for starting the project with 
 or
 
 ```bash
-docker-compose -f docker-compose-full.yaml up  # for starting the project with strapi and umami
+docker-compose -f docker-compose-full.yaml up  # for starting the project with strapi
 ```
 
 > **IMPORTANT:**
@@ -96,4 +93,11 @@ now your app should be visible under [http://localhost:3000](http://localhost:30
 > This means your docker-compose file should use `network_mode: host` for strapi and db services. (This might also
 > include some changes in your `.env` file configuration i.e. the database/strapi host has to be set to `127.0.0.1`)
 
+### Azure Application Insights
+- Configure all required components for Azure Application Insights in the Azure Portal or via IaC.
+- Set the following environment variables in the `.env` file:
+  - `NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING`: Can be found in the Azure Portal
+  - `NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY`: Can be found in the Azure Portal
+  - `APP_INSIGHTS_SERVICE_NAME`: Can be chosen freely`
+- NB: The logs will only be published if the environment variable `NODE_ENV` is set to `production`!
 YOU MADE IT! (locally)
