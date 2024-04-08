@@ -2,6 +2,8 @@
 
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
@@ -45,6 +47,7 @@ const WriteCommentCard = ({
   sx,
 }: WriteCommentCardProps) => {
   const { user } = useUser();
+  const appInsights = useAppInsightsContext();
   const {
     handleSubmit,
     control,
@@ -67,6 +70,10 @@ const WriteCommentCard = ({
     } catch (error) {
       console.error('Failed to submit comment:', error);
       errorMessage({ message: 'Failed to submit your comment. Please try again.' });
+      appInsights.trackException({
+        exception: new Error('Failed to submit comment.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 

@@ -18,7 +18,6 @@ import Button, { ButtonProps } from '@mui/material/Button';
 import { SxProps } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 
-import triggerAnalyticsEvent from '@/analytics/analytics';
 import ApplyIcon from '@/components/icons/ApplyIcon';
 import ChatIcon from '@/components/icons/ChatIcon';
 import CloseIcon from '@/components/icons/CloseIcon';
@@ -56,17 +55,7 @@ export enum InteractionType {
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
-  const {
-    interactionType,
-    label,
-    onClick,
-    onIconClick,
-    sx,
-    projectName,
-    isSelected = false,
-    disabled = false,
-    tooltip,
-  } = props;
+  const { interactionType, label, onClick, onIconClick, sx, isSelected = false, disabled = false, tooltip } = props;
   const [isHovered, setIsHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
 
@@ -144,7 +133,6 @@ export default function InteractionButton(props: InteractionButtonProps) {
 
   const handleClick = () => {
     setClicked(!clicked);
-    triggerAnalyticsEvent(interactionType.toString(), projectName || 'unknown-project');
     if (onClick !== undefined) onClick();
   };
 

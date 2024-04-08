@@ -8,7 +8,9 @@ import { PushNotification } from '@/types/notification';
 import { withAuth } from '@/utils/auth';
 
 import dbClient from '../../repository/db/prisma/prisma';
-import logger from '../logger';
+import getLogger from '../logger';
+
+const logger = getLogger();
 
 webpush.setVapidDetails(
   process.env.VAPID_ADMIN_EMAIL || 'admin@localhost',

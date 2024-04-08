@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { Comment } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
@@ -36,6 +38,7 @@ export const ProjectCommentCard = (props: ProjectCommentCardProps) => {
 
 function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardProps) {
   const [isUpvoted, setIsUpvoted] = useState<boolean>();
+  const appInsights = useAppInsightsContext();
 
   useEffect(() => {
     async function loadAndSetIsUpvoted() {
@@ -45,6 +48,10 @@ function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardProps) {
       } catch (error) {
         console.error('Error updating collaboration comment:', error);
         errorMessage({ message: 'Failed to update collaboration comment response. Please try again later.' });
+        appInsights.trackException({
+          exception: new Error('Failed to update collaboration comment response.', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       }
     }
     loadAndSetIsUpvoted();
@@ -57,6 +64,10 @@ function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardProps) {
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
       errorMessage({ message: 'Failed to update collaboration comment response. Please try again later.' });
+      appInsights.trackException({
+        exception: new Error('Failed to update collaboration comment response.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 
@@ -66,6 +77,10 @@ function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardProps) {
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
       errorMessage({ message: 'Failed to update collaboration comment response. Please try again later.' });
+      appInsights.trackException({
+        exception: new Error('Failed to update collaboration comment response.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 
@@ -76,6 +91,10 @@ function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardProps) {
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
       errorMessage({ message: 'Failed to update collaboration comment response. Please try again later.' });
+      appInsights.trackException({
+        exception: new Error('Failed to update collaboration comment response.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 

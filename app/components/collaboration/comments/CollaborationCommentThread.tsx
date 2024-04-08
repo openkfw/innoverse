@@ -1,5 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import AddIcon from '@mui/icons-material/Add';
 import Stack from '@mui/material/Stack';
@@ -74,6 +76,7 @@ export const CollaborationCommentThread = ({
 function useCollaborationCommentThread({ comment }: useCollaborationCommentThreadProps) {
   const [displayResponses, setDisplayResponses] = useState(false);
   const [responses, setResponses] = useState<CommentResponse[]>([]);
+  const appInsights = useAppInsightsContext();
 
   useEffect(
     function loadResponseseIfTheyAreDisplayed() {
@@ -84,6 +87,10 @@ function useCollaborationCommentThread({ comment }: useCollaborationCommentThrea
         } catch (error) {
           console.error('Failed to load responses:', error);
           errorMessage({ message: 'Failed to load comment responses. Please try again.' });
+          appInsights.trackException({
+            exception: new Error('Failed to load comment responses.', { cause: error }),
+            severityLevel: SeverityLevel.Error,
+          });
         }
       }
 
@@ -110,6 +117,10 @@ function useCollaborationCommentThread({ comment }: useCollaborationCommentThrea
     } catch (error) {
       console.error('Failed to submit response:', error);
       errorMessage({ message: 'Submitting your response failed. Please try again.' });
+      appInsights.trackException({
+        exception: new Error('Failed to submit response.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 

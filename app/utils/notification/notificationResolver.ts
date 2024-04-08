@@ -3,7 +3,9 @@ import { PushSubscription as WebPushSubscription } from 'web-push';
 import { getProjectFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getAllPushSubscriptions, getPushSubscriptionsForUser } from '@/repository/db/push_subscriptions';
-import logger from '@/utils/logger';
+import getLogger from '@/utils/logger';
+
+const logger = getLogger();
 
 type NotificationTopic = 'project' | 'opportunity' | 'collaboration-question' | 'survey-question' | 'event' | 'update';
 type Resolver = {

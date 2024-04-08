@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import Grid from '@mui/material/Grid';
 import { SxProps } from '@mui/material/styles';
@@ -55,6 +57,7 @@ export const SurveyCard = (props: SurveyCardProps) => {
 function useSurveyCard({ projectId, surveyQuestion }: SurveyCardProps) {
   const [isLoadingSelectedOption, setIsLoadingSelectedOption] = useState(true);
   const [selectedOption, setSelectedOption] = useState<string>();
+  const appInsights = useAppInsightsContext();
 
   const { surveyVotesAmount, isLoadingSurveyVotesAmount, setSurveyVotesAmount } = useProject();
 
@@ -77,6 +80,10 @@ function useSurveyCard({ projectId, surveyQuestion }: SurveyCardProps) {
     } catch (error) {
       console.error('Failed to handle vote:', error);
       errorMessage({ message: 'Failed to submit your vote. Please try again.' });
+      appInsights.trackException({
+        exception: new Error('Failed to submit vote.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 
@@ -90,6 +97,10 @@ function useSurveyCard({ projectId, surveyQuestion }: SurveyCardProps) {
       } catch (error) {
         console.error('Failed to load and set selected vote option', error);
         errorMessage({ message: 'Failed to load your voting status. Please try again.' });
+        appInsights.trackException({
+          exception: new Error('Failed to load and set selected vote option', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       }
     }
     loadAndSetSelectedVoteOption().then(() => {

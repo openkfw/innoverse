@@ -1,6 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import AddReactionOutlinedIcon from '@mui/icons-material/AddReactionOutlined';
 import Box from '@mui/material/Box';
@@ -23,6 +25,7 @@ interface EmojiReactionCardProps {
 
 export function EmojiReactionCard({ userReaction, countOfReactions, handleReaction, sx }: EmojiReactionCardProps) {
   const [isEmojiPickerClicked, setIsEmojiPickerClicked] = useState(false);
+  const appInsights = useAppInsightsContext();
 
   const topReactions = useMemo(
     () => countOfReactions.sort((a, b) => b.count - a.count).slice(0, 3),
@@ -38,7 +41,11 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
       handleReaction(emoji, operation);
     } catch (error) {
       console.error('Failed to update reaction:', error);
-      errorMessage({ message: 'Updating your reaction failed. Please try again.' }); // Use your custom error handling here
+      errorMessage({ message: 'Updating your reaction failed. Please try again.' });
+      appInsights.trackException({
+        exception: new Error('Updating reactions failed.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 

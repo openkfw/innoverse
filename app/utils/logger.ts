@@ -1,5 +1,8 @@
 import winston from 'winston';
+
 const { combine, colorize, printf, timestamp } = winston.format;
+
+let _logger: winston.Logger | undefined = undefined;
 
 const logFormat = printf(function (info) {
   return info.stack ? getErrorLog(info) : `${info.timestamp} [${info.level}] ${info.message}`;
@@ -16,7 +19,7 @@ const getErrorLog = (info: winston.Logform.TransformableInfo) => {
   return logMessage;
 };
 
-const logger = winston.createLogger({
+const createLogger = winston.createLogger({
   level: 'info',
   format: combine(
     colorize(),
@@ -28,4 +31,11 @@ const logger = winston.createLogger({
   transports: [new winston.transports.Console()],
 });
 
-export default logger;
+const getLogger = (): winston.Logger => {
+  if (!_logger) {
+    _logger = createLogger;
+  }
+  return _logger;
+};
+
+export default getLogger;

@@ -17,7 +17,6 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import triggerAnalyticsEvent from '@/analytics/analytics';
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
@@ -81,7 +80,6 @@ const ProjectDescription = ({ project }: { project: Project }) => {
     collapsedHeight: 600,
     maxExpandedHeight: 800,
     content: <ProjectText text={project.description.text} sx={{ pr: 2 }} />,
-    onExpand: () => triggerAnalyticsEvent('expand-project-description', project.projectName),
   });
 
   const setHeadingActive = (id: string) => {

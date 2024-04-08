@@ -1,6 +1,8 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import Box from '@mui/material/Box';
 
@@ -74,6 +76,7 @@ const NotificationContext = createContext(contextObject);
 export const NotificationContextProvider = ({ children }: { children: React.ReactNode }) => {
   const { showPushSubscriptionAlert, hidePushSubscriptionAlert, registerPushNotifications, showManualSteps } =
     useNotificationContextProvider();
+
   return (
     <NotificationContext.Provider value={contextObject}>
       <Box
@@ -101,7 +104,7 @@ function useNotificationContextProvider() {
 
   const { user, isLoading } = useUser();
   const initialized = useRef(false);
-
+  const appInsights = useAppInsightsContext();
   const hideAlert = useCallback(
     ({ rememberAfterPageReload }: { rememberAfterPageReload: boolean }) => {
       setAlertState('dismissed');
@@ -119,6 +122,10 @@ function useNotificationContextProvider() {
 
       if (error) {
         console.error(message, error);
+        appInsights.trackException({
+          exception: new Error(message, { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       } else {
         console.info(message);
       }
@@ -175,6 +182,10 @@ function useNotificationContextProvider() {
         registerServiceWorker().then(() => console.log('Service worker registered'));
       } catch (error) {
         console.error("Can't register service worker", error);
+        appInsights.trackException({
+          exception: new Error('Unable to register service worker', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       }
     },
     [isLoading, user],

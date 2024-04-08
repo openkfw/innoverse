@@ -5,13 +5,14 @@ import { StatusCodes } from 'http-status-codes';
 import { Project, User, UserSession } from '@/common/types';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
-import logger from '@/utils/logger';
+import getLogger from '@/utils/logger';
 import { createProjectUpdate, getInnoUserByProviderId, getProjects } from '@/utils/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import { UpdateFormData } from './AddUpdateForm';
 import { handleProjectUpdateSchema } from './validationSchema';
 
+const logger = getLogger();
 export const getProjectsOptions = async () => {
   const projects = (await getProjects()) as Project[];
   return projects.map((project) => {

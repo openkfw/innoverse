@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { BuiltInProviderType } from 'next-auth/providers/index';
 import { ClientSafeProvider, getProviders, LiteralUnion } from 'next-auth/react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import { destroyCookie, parseCookies } from 'nookies';
 
 import Collapse from '@mui/material/Collapse';
@@ -21,6 +23,7 @@ export default function SignInOptions() {
   const [open, setOpen] = React.useState(false);
   const [userSuggested, setUserSuggested] = React.useState(true);
   const { session } = parseCookies();
+  const appInsights = useAppInsightsContext();
 
   useEffect(() => {
     async function getSignInProviders() {
@@ -30,6 +33,10 @@ export default function SignInOptions() {
       } catch (error) {
         console.error('Failed to fetch sign-in providers:', error);
         errorMessage({ message: 'Failed to load sign-in options. Please try again later.' });
+        appInsights.trackException({
+          exception: new Error('Failed to fetch sign-in providers', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       }
     }
     getSignInProviders();
@@ -47,6 +54,10 @@ export default function SignInOptions() {
     } catch (error) {
       console.error('Failed to parse session cookie:', error);
       errorMessage({ message: 'Failed to retrieve session information. Please refresh the page.' });
+      appInsights.trackException({
+        exception: new Error('Failed to retrieve session information.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
       return null;
     }
   };

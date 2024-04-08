@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -37,6 +39,7 @@ export default function NewsCard(props: NewsCardProps) {
   const projectId = update.projectId;
   const { title, comment, author, updatedAt } = update;
 
+  const appInsights = useAppInsightsContext();
   const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(false);
 
   const toggleFollow = async () => {
@@ -51,6 +54,10 @@ export default function NewsCard(props: NewsCardProps) {
     } catch (error) {
       console.error('Error toggling follow status:', error);
       errorMessage({ message: 'Failed to toggle follow status. Please try again later.' });
+      appInsights.trackException({
+        exception: new Error('Failed to toggle follow status.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 
@@ -62,6 +69,10 @@ export default function NewsCard(props: NewsCardProps) {
       } catch (error) {
         console.error('Error fetching follow status:', error);
         errorMessage({ message: 'Failed to fetch follow status. Please try again later.' });
+        appInsights.trackException({
+          exception: new Error('Error fetching follow status.', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
       }
     };
     setProjectInteraction();

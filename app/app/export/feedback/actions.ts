@@ -7,10 +7,10 @@ import { UserSession } from '@/common/types';
 import { getCollaborationQuestionComments } from '@/repository/db/collaboration_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { withAuth } from '@/utils/auth';
-import logger from '@/utils/logger';
+import getLogger from '@/utils/logger';
 import { GetPlatformFeedbackCollaborationQuestion, STRAPI_QUERY, withResponseTransformer } from '@/utils/queries';
 import strapiFetcher from '@/utils/strapiFetcher';
-
+const logger = getLogger();
 export const getFeedback = withAuth(async (user: UserSession, body: { username: string; password: string }) => {
   const { username, password } = body;
   if (!checkCredentials(username, password)) {
