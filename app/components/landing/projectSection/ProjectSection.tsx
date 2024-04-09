@@ -29,14 +29,14 @@ export const ProjectSection = ({ projects }: ProjectProps) => {
             right: '0',
             zIndex: 0,
             transform: 'translate(50%, -10%)',
-            width: '33vw',
+
             height: '0',
             paddingBottom: 'calc(33vw * 535 / 677)',
             opacity: 0.56,
             mixBlendMode: 'lighten',
           }}
         >
-          <Image src={bgBubble} alt="background bubble" fill layout="fill" objectFit="cover" />
+          <Image src={bgBubble} alt="background bubble" fill style={{ objectFit: 'cover' }} sizes="33vw" />
         </div>
       }
     >

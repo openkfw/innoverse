@@ -28,7 +28,7 @@ async function IndexPage() {
 
   return (
     <Layout>
-      <Stack spacing={8} useFlexGap>
+      <Stack spacing={8} useFlexGap sx={{ gap: { xs: 0 } }}>
         <FeaturedProjectSlider items={sliderContent} />
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
           <FeedbackSection />

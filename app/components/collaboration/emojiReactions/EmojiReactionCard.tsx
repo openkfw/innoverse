@@ -101,42 +101,46 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
 }
 
 const reactionCardButtonStyles = {
-  height: '1.6em',
+  height: '2.5em',
   minWidth: '.1em',
   width: '3rem',
-  bgcolor: 'background.paper',
-  borderStyle: 'solid',
-  borderRadius: '4px',
-  borderWidth: 'thin',
-  borderColor: 'InactiveBorder',
-  m: '.3em',
+  backgroundColor: 'background.paper',
+  borderRadius: '2px',
+  border: '1px solid #E7E6E2',
+  bgcolor: 'rgba(0, 0, 0, 0)',
   p: '.8em',
+  ml: '0.3em',
+  '&:hover': {
+    bgcolor: 'action.hover',
+  },
 };
 
 const activeReactionCardButtonStyles = {
-  height: '1.6em',
+  height: '2.5em',
   minWidth: '.1em',
   width: '3rem',
-  bgcolor: 'inherit',
-  borderStyle: 'solid',
-  borderRadius: '4px',
-  borderWidth: 'thin',
-  borderColor: '#E7E6E2',
-  m: '.3em',
+  border: '2px solid',
+  borderColor: 'action.hover',
+  borderRadius: '2px',
   p: '1em',
+  ml: '0.3em',
+  bgcolor: 'rgba(0, 0, 0, 0)',
+  color: 'text.primary',
+  '&:hover': {
+    bgcolor: 'action.hover',
+  },
 };
 
 const addNewReactionButtonStyles = {
-  height: '1.6em',
+  height: '2.5em',
   minWidth: '.1em',
-  width: '1rem',
+  width: '3rem',
   bgcolor: 'rgba(0, 0, 0, 0)',
-  mr: '.3em',
   p: '1em',
-  borderRadius: '4px',
+  ml: '0.3em',
+  borderRadius: '2px',
   color: 'text.primary',
   '&:hover': {
-    color: 'text.primary',
-    bgcolor: 'secondary.main',
+    bgcolor: 'action.hover',
   },
 };

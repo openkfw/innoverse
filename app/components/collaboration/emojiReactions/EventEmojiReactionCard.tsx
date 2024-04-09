@@ -19,7 +19,7 @@ export interface EventEmojiReactionCardProps {
   sx?: SxProps;
 }
 
-export function EventEmojiReactionCard({ event, sx }: EventEmojiReactionCardProps) {
+export default function EventEmojiReactionCard({ event, sx }: EventEmojiReactionCardProps) {
   const [currentEvent, setCurrentEvent] = useState(event);
   const { id, reactionForUser, reactionCount } = currentEvent;
   const appInsights = useAppInsightsContext();

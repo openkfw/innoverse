@@ -59,6 +59,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
 
   const getSelectedInteractionIcon = () => {
     if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddedOutlinedIcon fontSize="small" />;
+    if (interactionType === InteractionType.COMMENT) return <ChatIcon color={'black'} />;
     else {
       return getInteractionIcon();
     }
@@ -120,7 +121,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
   };
 
   const getText = () => {
-    return clicked ? getButtonTextClicked() : getButtonText();
+    return clicked || isSelected ? getButtonTextClicked() : getButtonText();
   };
 
   const handleClick = () => {
@@ -132,13 +133,19 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (disabled) {
       return 'grey';
     }
-    if (isSelected) {
-      return palette.secondary?.main;
-    }
     if (isHovered) {
       return 'white';
     }
+    if (isSelected || clicked) {
+      return palette.secondary?.main;
+    }
     return 'black';
+  };
+
+  const getBorderColor = () => {
+    if (interactionType === InteractionType.COMMENT || interactionType === InteractionType.FEEDBACK)
+      return 'rgba(0, 0, 0, 0.10)';
+    return isSelected || clicked ? 'secondary.main' : 'rgba(0, 0, 0, 0.10)';
   };
 
   const customButton = (
@@ -147,20 +154,20 @@ export default function InteractionButton(props: InteractionButtonProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       variant="outlined"
-      startIcon={isSelected ? getSelectedInteractionIcon() : getInteractionIcon()}
+      startIcon={isSelected || clicked ? getSelectedInteractionIcon() : getInteractionIcon()}
       endIcon={getEndIcon()}
       disabled={disabled}
       data-user-interaction-id={`${interactionType}-button`}
       sx={{
         px: getText() === undefined ? 1 : 2,
         py: 1,
-        color: isSelected ? 'secondary.main' : 'rgba(0, 0, 0, 0.56)',
+        color: isSelected || clicked ? 'secondary.main' : 'rgba(0, 0, 0, 0.56)',
         fontFamily: 'Arial',
         fontSize: '13px',
         fontWeight: '700',
         lineHeight: '19px',
         border: '1px solid',
-        borderColor: isSelected ? 'secondary.main' : 'rgba(0, 0, 0, 0.10)',
+        borderColor: getBorderColor(),
         background: 'rgba(255, 255, 255, 0.10)',
         minWidth: 0,
         height: '35px',

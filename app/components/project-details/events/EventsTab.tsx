@@ -331,6 +331,7 @@ const cardStyles = {
   borderRadius: '24px',
   background: '#FFF',
   position: 'relative',
+  overflow: 'scroll',
   zIndex: 0,
   boxShadow:
     '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',

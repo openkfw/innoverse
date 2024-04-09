@@ -8,12 +8,12 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { EventWithAdditionalData } from '@/common/types';
-import { EventEmojiReactionCard } from '@/components/collaboration/emojiReactions/EventEmojiReactionCard';
+import EventEmojiReactionCard from '@/components/collaboration/emojiReactions/EventEmojiReactionCard';
 import theme from '@/styles/theme';
 
 import { LinkWithArrowLeft } from '../../common/LinkWithArrowLeft';
 
-import { EventCardHeader } from './EventCardHeader';
+import EventCardHeader from './EventCardHeader';
 
 interface EventCardProps {
   event: EventWithAdditionalData;
@@ -26,7 +26,7 @@ export const EventCard = ({ event }: EventCardProps) => {
     <Card sx={cardStyles}>
       <CardHeader sx={cardHeaderStyles} title={<EventCardHeader event={event} />} />
       <CardContent sx={cardContentStyles}>
-        <Stack spacing={'12px'}>
+        <Stack spacing="12px">
           <Typography variant="h6" sx={titleStyles}>
             {event.title}
           </Typography>
@@ -42,7 +42,7 @@ export const EventCard = ({ event }: EventCardProps) => {
       </CardContent>
 
       <CardActions sx={cardActionsStyles}>
-        <Stack direction="column" spacing={'8px'}>
+        <Stack direction="column">
           <LinkWithArrowLeft title="Mehr Details" href={`/projects/${encodeURIComponent(event.projectId)}?tab=3`} />
           <EventEmojiReactionCard event={event} />
         </Stack>
@@ -85,7 +85,7 @@ const cardActionsStyles = {
 };
 
 const titleStyles = {
-  minHeight: '60px',
+  minHeight: '75px',
   color: 'text.primary',
   fontFamily: 'PFCentroSansProMed',
   fontSize: '17px',

@@ -11,8 +11,8 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { EventEmojiReactionCard } from '@/components/collaboration/emojiReactions/EventEmojiReactionCard';
-import { EventCardHeader } from '@/components/landing/eventsSection/EventCardHeader';
+import EventEmojiReactionCard from '@/components/collaboration/emojiReactions/EventEmojiReactionCard';
+import EventCardHeader from '@/components/landing/eventsSection/EventCardHeader';
 import theme from '@/styles/theme';
 
 import { EventWithAdditionalData } from '../../../common/types';

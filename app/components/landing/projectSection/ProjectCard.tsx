@@ -38,7 +38,6 @@ export default function ProjectCard(props: ProjectCardProps) {
             alt="project"
             style={{
               width: '100%',
-              height: 'auto',
               objectFit: 'cover',
               borderRadius: 0,
             }}
