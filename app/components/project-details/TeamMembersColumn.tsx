@@ -78,7 +78,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
         </CardContent>
       </Card>
 
-      <CustomDialog open={open} handleClose={() => setOpen(false)} title="All team members">
+      <CustomDialog open={open} handleClose={() => setOpen(false)} title="Alle Teammitglieder">
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {team.map((teamMember, index) => (
             <Stack key={index} sx={rowStyles} spacing={5} direction="row">
@@ -104,7 +104,12 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
               </Stack>
 
               <Box>
-                <InteractionButton projectName={projectName} interactionType={InteractionType.COMMENT} />
+                <InteractionButton
+                  projectName={projectName}
+                  interactionType={InteractionType.COMMENT}
+                  tooltip="Chat über Webex"
+                  onClick={() => openWebex(teamMember.email)}
+                />
               </Box>
             </Stack>
           ))}

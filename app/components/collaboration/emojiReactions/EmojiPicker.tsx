@@ -16,13 +16,16 @@ export default function EmojiPickerCard(props: EmojiPickerCardProps) {
   return (
     <Box sx={{ position: 'absolute', width: '368px' }}>
       {isEmojiPickerClicked && (
-        <Picker
-          data={data}
-          onEmojiSelect={(emoji: { shortcodes: string; native: string }) =>
-            handleEmojiSelection({ shortCode: emoji.shortcodes, nativeSymbol: emoji.native })
-          }
-          onClickOutside={() => setEmojiPickerClicked(!isEmojiPickerClicked)}
-        />
+        <Box sx={{ position: 'absolute', zIndex: 9999 }}>
+          <Picker
+            saveFeedback
+            data={data}
+            onEmojiSelect={(emoji: { shortcodes: string; native: string }) =>
+              handleEmojiSelection({ shortCode: emoji.shortcodes, nativeSymbol: emoji.native })
+            }
+            onClickOutside={() => setEmojiPickerClicked(!isEmojiPickerClicked)}
+          />
+        </Box>
       )}
     </Box>
   );

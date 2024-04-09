@@ -196,6 +196,7 @@ const featuredProjectSliderStyles = {
   [theme.breakpoints.down('sm')]: {
     marginRight: 0,
     marginLeft: 0,
+    marginBottom: 0,
   },
 };
 

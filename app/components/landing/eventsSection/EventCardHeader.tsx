@@ -15,7 +15,7 @@ export interface EventCardHeaderProps {
   disabled?: boolean;
 }
 
-export const EventCardHeader = ({ event, disabled = false }: EventCardHeaderProps) => {
+const EventCardHeader = ({ event, disabled = false }: EventCardHeaderProps) => {
   const date = dayjs(event.startTime, 'YYYY-MM-DDTHH:mm:ss.SSS');
 
   const renderEventType = (event: Event) => {
@@ -58,6 +58,8 @@ export const EventCardHeader = ({ event, disabled = false }: EventCardHeaderProp
     </Stack>
   );
 };
+
+export default EventCardHeader;
 
 export const dateStyles = {
   color: 'primary.main',
