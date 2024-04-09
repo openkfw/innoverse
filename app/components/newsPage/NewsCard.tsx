@@ -117,7 +117,7 @@ export default function NewsCard(props: NewsCardProps) {
         <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={'8px'}>
           <Grid item xs={7}>
             {projectId ? (
-              <LinkWithArrowLeft title={title} href={`/projects/${projectId}?tab=3`} />
+              <LinkWithArrowLeft title={title} href={`/projects/${projectId}?tab=2`} />
             ) : (
               <Stack direction="row" alignItems="center" />
             )}
