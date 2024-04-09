@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
@@ -14,11 +14,11 @@ import Stack from '@mui/material/Stack';
 import { SxProps, Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { ProjectUpdate } from '@/common/types';
+import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import AvatarIcon from '@/components/common/AvatarIcon';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import { LinkWithArrowLeft } from '@/components/common/LinkWithArrowLeft';
-import { handleFollow, handleRemoveFollower, isFollowed } from '@/components/project-details/likes-follows/actions';
+import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/helpers';
 
@@ -29,7 +29,7 @@ import { StyledTooltip } from '../common/StyledTooltip';
 import { TooltipContent } from '../project-details/TooltipContent';
 
 interface NewsCardProps {
-  update: ProjectUpdate;
+  update: ProjectUpdateWithAdditionalData;
   sx?: SxProps;
   noClamp?: boolean;
 }
@@ -37,10 +37,10 @@ interface NewsCardProps {
 export default function NewsCard(props: NewsCardProps) {
   const { update, sx, noClamp = false } = props;
   const projectId = update.projectId;
-  const { title, comment, author, updatedAt } = update;
+  const { title, comment, author, updatedAt, followedByUser = false } = update;
 
   const appInsights = useAppInsightsContext();
-  const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(false);
+  const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(followedByUser);
 
   const toggleFollow = async () => {
     try {
@@ -60,23 +60,6 @@ export default function NewsCard(props: NewsCardProps) {
       });
     }
   };
-
-  useEffect(() => {
-    const setProjectInteraction = async () => {
-      try {
-        const projectIsFollowed = (await isFollowed({ projectId })).data;
-        setIsProjectFollowed(projectIsFollowed ?? false);
-      } catch (error) {
-        console.error('Error fetching follow status:', error);
-        errorMessage({ message: 'Failed to fetch follow status. Please try again later.' });
-        appInsights.trackException({
-          exception: new Error('Error fetching follow status.', { cause: error }),
-          severityLevel: SeverityLevel.Error,
-        });
-      }
-    };
-    setProjectInteraction();
-  }, [projectId]);
 
   return (
     <Card sx={{ ...cardStyles, ...sx } as SxProps<Theme>}>
@@ -133,7 +116,7 @@ export default function NewsCard(props: NewsCardProps) {
             />
           </Grid>
           <Grid item xs={12}>
-            <UpdateEmojiReactionCard updateId={update.id} />
+            <UpdateEmojiReactionCard update={update} />
           </Grid>
         </Grid>
       </CardActions>

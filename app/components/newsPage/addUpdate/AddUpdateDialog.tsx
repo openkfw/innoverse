@@ -1,3 +1,4 @@
+import { Option } from '@/common/formTypes';
 import CustomDialog from '@/components/common/CustomDialog';
 
 import AddUpdateForm, { UpdateFormData } from './form/AddUpdateForm';
@@ -5,12 +6,13 @@ import AddUpdateForm, { UpdateFormData } from './form/AddUpdateForm';
 interface AddUpdateDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  setUpdateAdded: (added: boolean) => void;
+  refetchUpdates: () => void;
   defaultFormValues?: UpdateFormData;
+  projectOptions: Option[];
 }
 
 export default function AddUpdateDialog(props: AddUpdateDialogProps) {
-  const { open, setOpen, setUpdateAdded, defaultFormValues } = props;
+  const { open, setOpen, refetchUpdates, defaultFormValues, projectOptions } = props;
 
   const handleClose = () => {
     setOpen(false);
@@ -18,7 +20,12 @@ export default function AddUpdateDialog(props: AddUpdateDialogProps) {
 
   return (
     <CustomDialog open={open} handleClose={handleClose} title="Neuigkeit hinzufügen">
-      <AddUpdateForm setUpdateAdded={setUpdateAdded} handleClose={handleClose} defaultFormValues={defaultFormValues} />
+      <AddUpdateForm
+        refetchUpdates={refetchUpdates}
+        handleClose={handleClose}
+        defaultFormValues={defaultFormValues}
+        projectOptions={projectOptions}
+      />
     </CustomDialog>
   );
 }

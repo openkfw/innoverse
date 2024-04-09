@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 import BookmarkAddedOutlinedIcon from '@mui/icons-material/BookmarkAddedOutlined';
@@ -8,7 +8,6 @@ import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
-import FormatAlignLeftOutlinedIcon from '@mui/icons-material/FormatAlignLeftOutlined';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import SendIcon from '@mui/icons-material/Send';
@@ -43,7 +42,6 @@ export enum InteractionType {
   COMMENT = 'comment',
   COMMENT_SEND = 'comment-send',
   SHARE_OPINION = 'share-opinion',
-  ADD_INSIGHTS = 'add-insights',
   OPPORTUNITY_APPLY = 'opportunity-apply',
   RECOMMEND = 'recommend',
   FEEDBACK = 'feedback',
@@ -57,11 +55,7 @@ export enum InteractionType {
 export default function InteractionButton(props: InteractionButtonProps) {
   const { interactionType, label, onClick, onIconClick, sx, isSelected = false, disabled = false, tooltip } = props;
   const [isHovered, setIsHovered] = useState(false);
-  const [clicked, setClicked] = useState(false);
-
-  useEffect(() => {
-    setClicked(isSelected);
-  }, [isSelected]);
+  const [clicked, setClicked] = useState(isSelected);
 
   const getSelectedInteractionIcon = () => {
     if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddedOutlinedIcon fontSize="small" />;
@@ -76,7 +70,6 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.COMMENT) return <ChatIcon color={getIconColor()} />;
     if (interactionType === InteractionType.COMMENT_SEND) return <SendIcon fontSize="small" />;
     if (interactionType === InteractionType.SHARE_OPINION) return <EditIcon fontSize="small" />;
-    if (interactionType === InteractionType.ADD_INSIGHTS) return <FormatAlignLeftOutlinedIcon fontSize="small" />;
     if (interactionType === InteractionType.OPPORTUNITY_APPLY) return <ApplyIcon color={getIconColor()} />;
     if (interactionType === InteractionType.RECOMMEND) return <RecommendIcon color={getIconColor()} />;
     if (interactionType === InteractionType.LOG_IN) return <PersonIcon fontSize="small" />;
@@ -110,7 +103,6 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.COMMENT_SEND) return 'Senden';
     if (interactionType === InteractionType.SHARE_OPINION) return 'Teile Deine Erfahrung';
     if (interactionType === InteractionType.COMMENT) return;
-    if (interactionType === InteractionType.ADD_INSIGHTS) return 'Teile Deine Erfahrung';
     if (interactionType === InteractionType.OPPORTUNITY_APPLY) return 'Ich bin dabei';
     if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
     if (interactionType === InteractionType.FEEDBACK) return 'FEEDBACK';

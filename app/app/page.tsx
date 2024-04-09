@@ -15,16 +15,16 @@ import Layout from '@/components/layout/Layout';
 import { getMainPageData } from '@/utils/requests';
 
 async function IndexPage() {
-  // As the page is not staticaly generated and no ISR is used here fetch is required
   const data = (await getMainPageData()) as MainPageData;
+
+  if (!data || !data.projects || !data.sliderContent) {
+    return <ErrorPage />;
+  }
+
   const sliderContent = data.sliderContent;
   const projects = data.projects;
   const updates = data.updates;
   const events = data.events;
-
-  if (!sliderContent || !projects || !updates) {
-    return <ErrorPage />;
-  }
 
   return (
     <Layout>

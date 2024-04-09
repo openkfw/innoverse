@@ -152,6 +152,7 @@ function useNotificationContextProvider() {
     } catch (error) {
       handleError(error);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hideAlertSessionItem]);
 
   const registerServiceWorker = () => navigator.serviceWorker.register('/sw.js', { scope: '/' });
@@ -183,6 +184,7 @@ function useNotificationContextProvider() {
         });
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isLoading, user],
   );
 

@@ -8,24 +8,27 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { NewsFilterContextProvider, useNewsFilter } from '@/app/contexts/news-filter-context';
+import { useNewsFilter } from '@/app/contexts/news-filter-context';
+import { Option } from '@/common/formTypes';
+import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import theme from '@/styles/theme';
 
 import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
 import SecondaryIconButton from '../common/SecondaryIconButton';
 
 import AddUpdateDialog from './addUpdate/AddUpdateDialog';
+import { getProjectsOptions } from './addUpdate/form/actions';
 import MobileNewsFilter from './newsFilter/MobileNewsFilter';
 import NewsFilter from './newsFilter/NewsFilter';
 import { News, SortValues } from './News';
 
 interface NewsContainerProps {
   handleAddUpdate: () => void;
-  updateAdded: boolean;
+  news: ProjectUpdateWithAdditionalData[];
 }
 
 function NewsContainerMobile(props: NewsContainerProps) {
-  const { handleAddUpdate, updateAdded } = props;
+  const { handleAddUpdate } = props;
   const { sort, sortNews } = useNewsFilter();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -50,14 +53,14 @@ function NewsContainerMobile(props: NewsContainerProps) {
             onClick={sortNews}
           />
         </Grid>
-        <News updateAdded={updateAdded} />
+        <News />
       </Grid>
     </>
   );
 }
 
 function NewsContainerReg(props: NewsContainerProps) {
-  const { handleAddUpdate, updateAdded } = props;
+  const { handleAddUpdate } = props;
   const { sort, sortNews } = useNewsFilter();
 
   return (
@@ -80,33 +83,45 @@ function NewsContainerReg(props: NewsContainerProps) {
             onClick={sortNews}
           />
         </Box>
-        <News updateAdded={updateAdded} />
+        <News />
       </Grid>
     </Grid>
   );
 }
 
-export default function NewsContainer() {
+interface MainNewsContainerProps {
+  news: ProjectUpdateWithAdditionalData[];
+}
+
+export default function NewsContainer({ news }: MainNewsContainerProps) {
   const [addUpdateDialogOpen, setAddUpdateDialogOpen] = useState(false);
-  const [updateAdded, setUpdateAdded] = useState<boolean>(false);
+  const [projectOptions, setProjectOptions] = useState<Option[]>([]);
+  const { refetchNews } = useNewsFilter();
 
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  const handleAddUpdate = () => {
+  const handleAddUpdate = async () => {
+    const projectOptions = await getProjectsOptions();
+    setProjectOptions(projectOptions);
     setAddUpdateDialogOpen(true);
   };
 
   return (
-    <NewsFilterContextProvider>
+    <>
       <Grid container item sx={{ mt: 4 }} xs={12}>
         {isSmallScreen ? (
-          <NewsContainerMobile handleAddUpdate={handleAddUpdate} updateAdded={updateAdded} />
+          <NewsContainerMobile handleAddUpdate={handleAddUpdate} news={news} />
         ) : (
-          <NewsContainerReg handleAddUpdate={handleAddUpdate} updateAdded={updateAdded} />
+          <NewsContainerReg handleAddUpdate={handleAddUpdate} news={news} />
         )}
       </Grid>
-      <AddUpdateDialog open={addUpdateDialogOpen} setOpen={setAddUpdateDialogOpen} setUpdateAdded={setUpdateAdded} />
-    </NewsFilterContextProvider>
+      <AddUpdateDialog
+        open={addUpdateDialogOpen}
+        setOpen={setAddUpdateDialogOpen}
+        refetchUpdates={refetchNews}
+        projectOptions={projectOptions}
+      />
+    </>
   );
 }
 

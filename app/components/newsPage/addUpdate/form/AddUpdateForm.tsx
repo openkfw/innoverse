@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StatusCodes } from 'http-status-codes';
@@ -16,7 +15,7 @@ import { DropdownField } from '@/components/common/form/DropdownField';
 
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
 
-import { getProjectsOptions, handleProjectUpdate } from './actions';
+import { handleProjectUpdate } from './actions';
 import formFieldNames from './formFields';
 import { formValidationSchema, UpdateFormValidationSchema } from './validationSchema';
 
@@ -34,12 +33,18 @@ const defaultValues = {
 const { PROJECT_ID, COMMENT } = formFieldNames;
 
 interface AddUpdateFormProps {
-  setUpdateAdded: (added: boolean) => void;
+  refetchUpdates: () => void;
   handleClose: () => void;
   defaultFormValues?: UpdateFormData;
+  projectOptions: Option[];
 }
 
-export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultFormValues }: AddUpdateFormProps) {
+export default function AddUpdateForm({
+  refetchUpdates,
+  handleClose,
+  defaultFormValues,
+  projectOptions,
+}: AddUpdateFormProps) {
   const {
     handleSubmit,
     control,
@@ -50,8 +55,6 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
     mode: 'all',
   });
 
-  const [projectOptions, setProjectOptions] = useState<Option[]>();
-
   const onSubmit: SubmitHandler<UpdateFormValidationSchema> = async (data) => {
     const { comment, projectId } = data;
     const formData = {
@@ -61,23 +64,13 @@ export default function AddUpdateForm({ setUpdateAdded, handleClose, defaultForm
 
     const response = await handleProjectUpdate(formData);
     if (response.status === StatusCodes.OK) {
-      setUpdateAdded(true);
+      refetchUpdates();
       successMessage({ message: 'Update was successfully created' });
       handleClose();
     } else {
       errorMessage({ message: 'There was an error when adding an update' });
     }
   };
-
-  useEffect(() => {
-    const setValues = async () => {
-      const options = await getProjectsOptions();
-      setProjectOptions(options);
-      setUpdateAdded(false);
-    };
-
-    setValues();
-  }, [setUpdateAdded]);
 
   return (
     <>

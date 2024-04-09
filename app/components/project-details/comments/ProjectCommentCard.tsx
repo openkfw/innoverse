@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
@@ -7,12 +7,7 @@ import { errorMessage } from '@/components/common/CustomToast';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
-import {
-  deleteProjectComment,
-  handleProjectCommentUpvoteBy,
-  isProjectCommentUpvotedBy,
-  updateProjectComment,
-} from './actions';
+import { deleteProjectComment, handleProjectCommentUpvoteBy, updateProjectComment } from './actions';
 
 interface ProjectCommentCardProps {
   comment: Comment;
@@ -37,25 +32,8 @@ export const ProjectCommentCard = (props: ProjectCommentCardProps) => {
 };
 
 function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardProps) {
-  const [isUpvoted, setIsUpvoted] = useState<boolean>();
+  const [isUpvoted, setIsUpvoted] = useState<boolean>(comment.isUpvotedByUser || false);
   const appInsights = useAppInsightsContext();
-
-  useEffect(() => {
-    async function loadAndSetIsUpvoted() {
-      try {
-        const result = await isProjectCommentUpvotedBy({ commentId: comment.id });
-        setIsUpvoted(result.data);
-      } catch (error) {
-        console.error('Error updating collaboration comment:', error);
-        errorMessage({ message: 'Failed to update collaboration comment response. Please try again later.' });
-        appInsights.trackException({
-          exception: new Error('Failed to update collaboration comment response.', { cause: error }),
-          severityLevel: SeverityLevel.Error,
-        });
-      }
-    }
-    loadAndSetIsUpvoted();
-  }, [comment]);
 
   const toggleCommentUpvote = () => {
     try {

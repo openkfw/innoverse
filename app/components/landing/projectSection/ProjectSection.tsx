@@ -36,7 +36,7 @@ export const ProjectSection = ({ projects }: ProjectProps) => {
             mixBlendMode: 'lighten',
           }}
         >
-          <Image src={bgBubble} alt="background bubble" layout="fill" objectFit="cover" />
+          <Image src={bgBubble} alt="background bubble" fill layout="fill" objectFit="cover" />
         </div>
       }
     >

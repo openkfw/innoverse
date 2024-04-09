@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -11,7 +11,7 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { Event } from '@/common/types';
+import { EventWithAdditionalData, ProjectData } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { getAllEventsForProjectFilter } from './actions';
@@ -19,7 +19,7 @@ import EventCard from './EventCard';
 import FilteringPanel from './FilteringPanel';
 
 interface EventsTabProps {
-  projectId: string;
+  projectData: ProjectData;
 }
 
 export type CountOfTheme = {
@@ -29,21 +29,27 @@ export type CountOfTheme = {
 };
 
 export const EventsTab = (props: EventsTabProps) => {
-  const { projectId } = props;
-  const [allEvents, setAllEvents] = useState<Event[]>([]);
+  const { projectData } = props;
 
-  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+  const [allFutureEvents, setAllFutureEvents] = useState<EventWithAdditionalData[]>([...projectData.futureEvents]);
+  const [allPastEvents, setAllPastEvents] = useState<EventWithAdditionalData[]>(projectData.pastEvents);
+
+  const [filteredFutureEvents, setFilteredFutureEvents] = useState<EventWithAdditionalData[]>([
+    ...projectData.futureEvents,
+  ]);
+  const [filteredPastEvents, setFilteredPastEvents] = useState<EventWithAdditionalData[]>(projectData.pastEvents);
+
   const [filtersApplied, setFiltersApplied] = useState<boolean>(false);
   const [currentFilters, setCurrentFilters] = useState<{
     searchTerm: string;
     pastEventsShown: boolean;
     themes: CountOfTheme[];
-  }>({ searchTerm: '', pastEventsShown: false, themes: [] });
+  }>({ searchTerm: '', pastEventsShown: false, themes: getThemesFromEvents([...allFutureEvents, ...allPastEvents]) });
 
   const [hasMoreValue, setHasMoreValue] = useState(true);
-  const [index, setIndex] = useState(1);
+  const [index, setIndex] = useState(2);
   const [hasMoreValuePast, setHasMoreValuePast] = useState(true);
-  const [indexPast, setIndexPast] = useState(1);
+  const [indexPast, setIndexPast] = useState(2);
 
   const clearFilters = () => {
     const deselectedThemesArray = currentFilters.themes;
@@ -51,17 +57,24 @@ export const EventsTab = (props: EventsTabProps) => {
       t.active = false;
     });
     setCurrentFilters({ searchTerm: '', pastEventsShown: false, themes: deselectedThemesArray });
-    setFilteredEvents(futureEvents);
+    setFilteredFutureEvents(futureEvents);
+    setFilteredPastEvents(pastEvents);
     setFiltersApplied(false);
   };
 
-  const handleFilterChange = (filteredEventData: Event[] | undefined) => {
-    setFiltersApplied(currentFilters.searchTerm !== '' || currentFilters.themes.some((t) => t.active));
-    filteredEventData ? setFilteredEvents(filteredEventData) : setFilteredEvents([]);
+  const handleFilterChange = (
+    filteredFuture: EventWithAdditionalData[] | undefined,
+    filteredPast?: EventWithAdditionalData[] | undefined,
+  ) => {
+    setFiltersApplied(
+      currentFilters.searchTerm !== '' || currentFilters.themes.some((t) => t.active) || currentFilters.pastEventsShown,
+    );
+    filteredFuture ? setFilteredFutureEvents(filteredFuture) : setFilteredFutureEvents([]);
+    filteredPast ? setFilteredPastEvents(filteredPast) : setFilteredPastEvents([]);
   };
 
-  const getUniqueEvents = (events: Event[]) =>
-    events.reduce((unique: Event[], event) => {
+  const getUniqueEvents = (events: EventWithAdditionalData[]) =>
+    events.reduce((unique: EventWithAdditionalData[], event) => {
       if (!unique.some((e) => e.id === event.id)) {
         unique.push(event);
       }
@@ -69,7 +82,7 @@ export const EventsTab = (props: EventsTabProps) => {
     }, []);
 
   const futureEvents = useMemo(() => {
-    const uniqueEvents = getUniqueEvents(allEvents);
+    const uniqueEvents = getUniqueEvents(allFutureEvents);
 
     const helper = uniqueEvents.filter((event) => new Date(event.startTime) > new Date());
     helper.sort((a, b) => {
@@ -78,10 +91,10 @@ export const EventsTab = (props: EventsTabProps) => {
       return timeDiffA - timeDiffB;
     });
     return helper;
-  }, [allEvents]);
+  }, [allFutureEvents]);
 
   const pastEvents = useMemo(() => {
-    const uniqueEvents = getUniqueEvents(allEvents);
+    const uniqueEvents = getUniqueEvents(allPastEvents);
 
     const helper = uniqueEvents.filter((event) => new Date(event.startTime) <= new Date());
     helper.sort((a, b) => {
@@ -92,26 +105,20 @@ export const EventsTab = (props: EventsTabProps) => {
     });
 
     return helper;
-  }, [allEvents]);
+  }, [allPastEvents]);
 
   const loadScrollData = async () => {
     const { data } = await getAllEventsForProjectFilter({
-      projectId,
+      projectId: projectData.id,
       amountOfEventsPerPage: 2,
       currentPage: index,
       timeframe: 'future',
     });
 
-    setAllEvents((prevItems: Event[]) => {
+    setAllFutureEvents((prevItems: EventWithAdditionalData[]) => {
       // Combine previous items with new data, then filter for unique events
-      const combinedEvents = [...prevItems, ...(data as Event[])];
-      const uniqueEvents = combinedEvents.reduce((unique: Event[], event) => {
-        if (!unique.some((e) => e.id === event.id)) {
-          unique.push(event);
-        }
-        return unique;
-      }, []);
-
+      const combinedEvents = [...prevItems, ...(data as EventWithAdditionalData[])];
+      const uniqueEvents = getUniqueEvents(combinedEvents);
       return uniqueEvents;
     });
     data?.length && data?.length > 0 ? setHasMoreValue(true) : setHasMoreValue(false);
@@ -121,16 +128,16 @@ export const EventsTab = (props: EventsTabProps) => {
 
   const loadScrollDataPast = async () => {
     const { data } = await getAllEventsForProjectFilter({
-      projectId,
+      projectId: projectData.id,
       amountOfEventsPerPage: 2,
       currentPage: indexPast,
       timeframe: 'past',
     });
 
-    setAllEvents((prevItems: Event[]) => {
+    setAllPastEvents((prevItems: EventWithAdditionalData[]) => {
       // Combine previous items with new data, then filter for unique events
-      const combinedEvents = [...prevItems, ...(data as Event[])];
-      const uniqueEvents = getUniqueEvents(combinedEvents); // Reuse the getUniqueEvents function
+      const combinedEvents = [...prevItems, ...(data as EventWithAdditionalData[])];
+      const uniqueEvents = getUniqueEvents(combinedEvents);
 
       return uniqueEvents;
     });
@@ -138,12 +145,6 @@ export const EventsTab = (props: EventsTabProps) => {
     data?.length && data?.length > 0 ? setHasMoreValuePast(true) : setHasMoreValuePast(false);
     setIndexPast((prevIndexPast) => prevIndexPast + 1);
   };
-
-  useEffect(() => {
-    loadScrollData();
-    loadScrollDataPast();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
 
   return (
     <Card sx={cardStyles}>
@@ -153,24 +154,26 @@ export const EventsTab = (props: EventsTabProps) => {
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={'22px'}>
           <Box sx={{ pb: { xs: 2, md: 0 } }}>
             <FilteringPanel
-              events={allEvents}
-              futureEvents={futureEvents}
+              pastEvents={allPastEvents}
+              futureEvents={allFutureEvents}
               handleFilterChange={handleFilterChange}
               currentFilters={currentFilters}
               setCurrentFilters={setCurrentFilters}
             />
           </Box>
+
           {((!filtersApplied && futureEvents.length > 0) ||
-            (filtersApplied && filteredEvents.length > 0) ||
+            (filtersApplied && filteredFutureEvents.length > 0) ||
+            (filtersApplied && filteredPastEvents.length > 0 && currentFilters.pastEventsShown) ||
             (!filtersApplied && currentFilters.pastEventsShown && pastEvents.length > 0)) && (
             <Box flexGrow={1}>
-              {filteredEvents.length > 0 && filtersApplied && (
+              {filteredFutureEvents.length > 0 && (
                 <Box flexGrow={1}>
                   <InfiniteScroll
-                    dataLength={filteredEvents.length}
+                    dataLength={filteredFutureEvents.length}
                     next={loadScrollData}
                     hasMore={hasMoreValue}
-                    scrollThreshold={0.5}
+                    scrollThreshold={1}
                     style={{ overflow: 'unset' }}
                     loader={
                       <Stack key={0} sx={{ mt: 2 }} alignItems="center">
@@ -178,51 +181,19 @@ export const EventsTab = (props: EventsTabProps) => {
                       </Stack>
                     }
                     endMessage={
-                      <Typography color="primary.main" sx={{ textAlign: 'center', mt: 1 }}>
-                        Alle Daten wurden geladen
-                      </Typography>
-                    }
-                  >
-                    {filteredEvents.map((event, index) => {
-                      const key = event.id || index;
-                      const isFutureEvent = futureEvents.some((e) => e.id === event.id);
-                      return (
-                        <Box key={key} sx={{ paddingBottom: 2 }}>
-                          <EventCard event={event} disabled={!isFutureEvent} />
-                        </Box>
-                      );
-                    })}
-                  </InfiniteScroll>
-                </Box>
-              )}
-
-              {!filtersApplied && futureEvents.length > 0 && (
-                <Box flexGrow={1}>
-                  <InfiniteScroll
-                    dataLength={futureEvents.length}
-                    next={loadScrollData}
-                    hasMore={hasMoreValue}
-                    scrollThreshold={0.5}
-                    style={{ overflow: 'unset' }}
-                    loader={
-                      <Stack key={0} sx={{ mt: 2 }} alignItems="center">
-                        <CircularProgress />
-                      </Stack>
-                    }
-                    endMessage={
-                      !currentFilters.pastEventsShown && (
-                        <Typography color="primary.main" sx={{ textAlign: 'center', mt: 1 }}>
+                      (!currentFilters.pastEventsShown || pastEvents.length === 0) && (
+                        <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 1 }}>
                           Alle Daten wurden geladen
                         </Typography>
                       )
                     }
                   >
-                    {futureEvents.map((event, index) => {
+                    {filteredFutureEvents.map((event, index) => {
                       const key = event.id || index;
-                      const isFutureEvent = futureEvents.some((e) => e.id === event.id);
                       return (
                         <Box key={key} sx={{ paddingBottom: 2 }}>
-                          <EventCard event={event} disabled={!isFutureEvent} />
+                          {index !== 0 && <Grid item xs={3} />}
+                          <EventCard event={event} disabled={false} />
                         </Box>
                       );
                     })}
@@ -230,12 +201,12 @@ export const EventsTab = (props: EventsTabProps) => {
                 </Box>
               )}
 
-              {currentFilters.pastEventsShown && !filtersApplied && pastEvents.length > 0 && (
+              {currentFilters.pastEventsShown && filteredPastEvents.length > 0 && (
                 <>
-                  {futureEvents.length > 0 && <Grid item xs={3}></Grid>}
+                  {filteredFutureEvents.length > 0 && <Grid item xs={3}></Grid>}
                   <Box flexGrow={1}>
                     <InfiniteScroll
-                      dataLength={pastEvents.length}
+                      dataLength={filteredPastEvents.length}
                       next={loadScrollDataPast}
                       hasMore={hasMoreValuePast}
                       scrollThreshold={0.5}
@@ -246,14 +217,14 @@ export const EventsTab = (props: EventsTabProps) => {
                         </Stack>
                       }
                       endMessage={
-                        pastEvents.length > 0 && (
-                          <Typography color="primary.main" sx={{ textAlign: 'center', mt: 1 }}>
+                        filteredPastEvents.length > 0 && (
+                          <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 1 }}>
                             Alle Daten wurden geladen
                           </Typography>
                         )
                       }
                     >
-                      {pastEvents.map((event, index) => {
+                      {filteredPastEvents.map((event, index) => {
                         const key = event.id || index;
                         return (
                           <Box key={key} sx={{ paddingBottom: 2 }}>
@@ -269,25 +240,28 @@ export const EventsTab = (props: EventsTabProps) => {
           )}
 
           {/*If the filters don't find anything, display message and reset button*/}
-          {filteredEvents.length === 0 && filtersApplied && (
-            <EventFilterException
-              text="Keine Events wurden mit diesen Filtern gefunden."
-              action={{
-                text: 'Alle Filter zurücksetzen',
-                onClick: clearFilters,
-              }}
-            />
-          )}
+          {(futureEvents.length > 0 || pastEvents.length > 0) &&
+            filteredFutureEvents.length === 0 &&
+            filteredPastEvents.length === 0 &&
+            filtersApplied && (
+              <EventFilterException
+                text="Keine Events wurden mit diesen Filtern gefunden."
+                action={{
+                  text: 'Alle Filter zurücksetzen',
+                  onClick: clearFilters,
+                }}
+              />
+            )}
           {/*If the events don't exist, display come back later message*/}
-          {futureEvents.length === 0 && pastEvents.length === 0 && (
+          {filteredFutureEvents.length === 0 && pastEvents.length === 0 && (
             <EventFilterException text="Leider gibt es noch keine Events. Bitte schau später noch einmal vorbei." />
           )}
           {/*If no future events exist, display message and button to enable past events*/}
-          {futureEvents.length === 0 && pastEvents.length > 0 && !currentFilters.pastEventsShown && !filtersApplied && (
+          {filteredFutureEvents.length === 0 && filteredPastEvents.length > 0 && !currentFilters.pastEventsShown && (
             <EventFilterException
               text="Es gibt zurzeit leider keine Events in der Zukunft."
               action={{
-                text: 'Alle Filter zurücksetzen',
+                text: 'Vergangene Events anzeigen',
                 onClick: () => setCurrentFilters((old) => ({ ...old, pastEventsShown: true })),
               }}
             />
@@ -298,6 +272,23 @@ export const EventsTab = (props: EventsTabProps) => {
       </CardContent>
     </Card>
   );
+};
+
+const getThemesFromEvents = (events: EventWithAdditionalData[]) => {
+  const themes: CountOfTheme[] = [];
+  if (events) {
+    events.forEach((event) => {
+      event.themes?.forEach((theme) => {
+        const existingTheme = themes.find((t) => t.theme === theme);
+        if (existingTheme) {
+          existingTheme.count += 1;
+        } else {
+          themes.push({ theme: theme, count: 1, active: false });
+        }
+      });
+    });
+  }
+  return themes.sort((a, b) => b.count - a.count);
 };
 
 const EventFilterException = ({ text, action }: { text: string; action?: { text: string; onClick: () => void } }) => {

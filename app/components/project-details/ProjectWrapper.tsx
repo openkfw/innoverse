@@ -1,40 +1,31 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 
 import { ProjectContextProvider } from '@/app/contexts/project-context';
-import { Project } from '@/common/types';
-import { isFollowed, isLiked } from '@/components/project-details/likes-follows/actions';
+import { ProjectData } from '@/common/types';
 
 import { ProjectInfoCard } from './ProjectInfoCard';
 import TabView from './TabView';
 
 type ProjectWrapperProps = {
-  project: Project;
+  projectData: ProjectData;
 };
 
-export const ProjectWrapper = (props: ProjectWrapperProps) => {
-  const { project } = props;
-  const [isProjectLiked, setIsProjectLiked] = useState<boolean>(false);
-  const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(false);
-  const [likesAmount, setLikesAmount] = useState(project.likes.length);
-  const [followersAmount, setFollowersAmount] = useState(project.followers.length);
-
-  useEffect(() => {
-    const setProjectInteraction = async () => {
-      setIsProjectLiked((await isLiked({ projectId: project.id })).data ?? false);
-      setIsProjectFollowed((await isFollowed({ projectId: project.id })).data ?? false);
-    };
-    setProjectInteraction();
-  }, [project.id]);
+export const ProjectWrapper = ({ projectData }: ProjectWrapperProps) => {
+  const { likes, followers, isLiked, isFollowed } = projectData;
+  const [isProjectLiked, setIsProjectLiked] = useState<boolean>(isLiked);
+  const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(isFollowed);
+  const [likesAmount, setLikesAmount] = useState(likes.length);
+  const [followersAmount, setFollowersAmount] = useState(followers.length);
 
   return (
-    <ProjectContextProvider projectId={project.id}>
+    <ProjectContextProvider projectData={projectData}>
       <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
         <ProjectInfoCard
-          project={project}
+          project={projectData}
           isLiked={isProjectLiked}
           isFollowed={isProjectFollowed}
           setLiked={setIsProjectLiked}
@@ -46,7 +37,7 @@ export const ProjectWrapper = (props: ProjectWrapperProps) => {
         />
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
-        <TabView project={project} projectName={project.title} />
+        <TabView projectData={projectData} projectName={projectData.title} />
       </Box>
     </ProjectContextProvider>
   );

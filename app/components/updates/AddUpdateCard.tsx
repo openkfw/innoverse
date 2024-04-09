@@ -6,18 +6,28 @@ import CardContent from '@mui/material/CardContent';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
+import { Option } from '@/common/formTypes';
+
 import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
 import AddUpdateDialog from '../newsPage/addUpdate/AddUpdateDialog';
+import { getProjectsOptions } from '../newsPage/addUpdate/form/actions';
 
 interface AddUpdateCardProps {
   projectId: string;
-  setUpdateAdded: (added: boolean) => void;
+  refetchUpdates: () => void;
   sx?: SxProps;
 }
 
 export const AddUpdateCard = (props: AddUpdateCardProps) => {
-  const { projectId, setUpdateAdded, sx } = props;
+  const { projectId, refetchUpdates, sx } = props;
   const [addUpdateDialogOpen, setAddUpdateDialogOpen] = useState(false);
+  const [projectOptions, setProjectOptions] = useState<Option[]>([]);
+
+  const handleAddUpdate = async () => {
+    const projectOptions = await getProjectsOptions();
+    setProjectOptions(projectOptions);
+    setAddUpdateDialogOpen(true);
+  };
 
   const defaultFormValues = {
     comment: '',
@@ -33,7 +43,7 @@ export const AddUpdateCard = (props: AddUpdateCardProps) => {
             Halten Sie Ihr Publikum auf dem Laufenden! Klicken Sie hier, um Neuigkeiten hinzuzufügen.
           </Typography>
           <InteractionButton
-            onClick={() => setAddUpdateDialogOpen(true)}
+            onClick={() => handleAddUpdate()}
             interactionType={InteractionType.ADD_UPDATE}
             sx={{ ...interactionButtonStyles, ...buttonStyle }}
           />
@@ -42,8 +52,9 @@ export const AddUpdateCard = (props: AddUpdateCardProps) => {
       <AddUpdateDialog
         open={addUpdateDialogOpen}
         setOpen={setAddUpdateDialogOpen}
-        setUpdateAdded={setUpdateAdded}
+        refetchUpdates={refetchUpdates}
         defaultFormValues={defaultFormValues}
+        projectOptions={projectOptions}
       />
     </Box>
   );

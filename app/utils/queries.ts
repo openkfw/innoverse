@@ -41,6 +41,7 @@ import {
   getCollaborationQuestionsByProjectId,
   getOpportunitiesByProjectId,
   getProjectQuestionsByProjectId,
+  getProjectsUpdates,
   getSurveyQuestionsByProjectId,
   getUpdatesByProjectId,
 } from './requests';
@@ -167,7 +168,7 @@ export const GetInnoUserByProviderIdQuery = `query GetInnoUser($providerId: Stri
 `;
 
 export const GetEventsQuery = `query GetEvents($startingFrom: Date) {
-  events(filters: {date: {gte: $startingFrom}}, sort: "date:asc") {
+  events(filters: {date: {gte: $startingFrom}}, sort: "updatedAt:asc") {
     data {
       id
       attributes {
@@ -194,8 +195,8 @@ export const GetEventsQuery = `query GetEvents($startingFrom: Date) {
 }
 `;
 
-export const GetUpdatesQuery = `query GetUpdates {
-  updates(sort: "updatedAt:desc", pagination: { limit: 100 }) {
+export const GetUpdatesQuery = `query GetUpdates ($limit: Int) {
+  updates(sort: "updatedAt:desc", pagination: { limit: $limit }) {
     data {
       id
       attributes {
@@ -563,8 +564,8 @@ mutation PostInnoUser($providerId: String, $provider: String, $name: String!, $r
 `;
 
 export const GetOpportunityParticipantQuery = `
-query GetOpportunities($opportunityId: ID, $userId: [ID]) {
-  opportunities(filters: { id: { eq: $opportunityId }, participants: { id: { in: $userId } } }) {
+query GetOpportunities($opportunityId: ID, $userId: [String]) {
+  opportunities(filters: { id: { eq: $opportunityId }, participants: { providerId: { in: $userId } } }) {
     data {
       id
       attributes {
@@ -804,24 +805,17 @@ function getStaticBuildGetInnoUser(graphqlResponse: GetInnoUserResponse): User {
 }
 
 async function getStaticBuildFetchProjects(graphqlResponse: ProjectsResponse): Promise<ProjectsQueryResult> {
-  const allProjectUpdates: ProjectUpdate[] = [];
-
   const getProjects = graphqlResponse.data.projects.data.map(async (project: ProjectData) => {
-    const { title, shortTitle } = project.attributes;
-
-    const updates = await getUpdatesByProjectId(project.id);
-    updates?.forEach((update) => (update.title = title || shortTitle));
-    allProjectUpdates.push(...(updates || []));
-
     const basicProject = mapToBasicProject(project);
     return basicProject;
   });
 
+  const updates = await getProjectsUpdates(10);
   const projects = await getPromiseResults(getProjects);
 
   return {
     projects: projects,
-    updates: allProjectUpdates,
+    updates: updates || [],
   };
 }
 

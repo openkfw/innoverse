@@ -20,6 +20,7 @@ export type Comment = {
   projectId: string;
   questionId: string;
   createdAt: Date;
+  isUpvotedByUser?: boolean;
 };
 
 export type CommentResponse = {
@@ -40,6 +41,7 @@ export type SurveyQuestion = {
   question: string;
   responseOptions: ResponseOption[];
   votes: SurveyVote[];
+  userVote?: string;
 };
 
 export type SurveyVote = {
@@ -76,29 +78,24 @@ export type ProjectCollaboration = {
   participants: number;
 };
 
-export type Project = {
-  id: string;
-  title: string;
-  shortTitle: string;
-  featured: boolean;
-  status: PROJECT_PROGRESS;
-  image?: string;
-  summary: string;
-  projectStart: string;
+export type Project = BasicProject & {
   collaboration: ProjectCollaboration;
   likes: Like[];
   followers: Follower[];
   projectName: string;
-  team: User[];
-  updates: ProjectUpdate[];
-  description: ProjectDescription;
   questions: ProjectQuestion[];
   comments: Comment[];
   surveyQuestions: SurveyQuestion[];
-  author: User;
   opportunities: Opportunity[];
   collaborationQuestions: CollaborationQuestion[];
-  events: Event[];
+  events: EventWithAdditionalData[];
+};
+
+export type ProjectData = Project & {
+  isLiked: boolean;
+  isFollowed: boolean;
+  futureEvents: EventWithAdditionalData[];
+  pastEvents: EventWithAdditionalData[];
 };
 
 export type BasicProject = {
@@ -145,7 +142,32 @@ export type ProjectUpdate = {
   topic: string;
   projectId: string;
   projectStart?: string;
+  followedByUser?: boolean;
   updatedAt: string;
+};
+
+export type ProjectUpdateWithAdditionalData = ProjectUpdate & ReactionOnObject;
+
+export type EventWithAdditionalData = Event & ReactionOnObject;
+
+export type ObjectWithReactions = EventWithAdditionalData | ProjectUpdateWithAdditionalData;
+
+export type ReactionOnObject = {
+  reactionForUser?: Reaction;
+  reactionCount: {
+    count: number;
+    emoji: { shortCode: string; nativeSymbol: string };
+  }[];
+};
+
+export type Reaction = {
+  id: string;
+  reactedBy: string;
+  shortCode: string;
+  nativeSymbol: string;
+  objectId: string;
+  objectType: string;
+  createdAt: Date;
 };
 
 export type PersonInfo = {
@@ -215,8 +237,8 @@ export type ProjectByIdQueryResult = {
 export type MainPageData = {
   sliderContent: Project[];
   projects: Project[];
-  updates: ProjectUpdate[];
-  events: Event[];
+  updates: ProjectUpdateWithAdditionalData[];
+  events: EventWithAdditionalData[];
 };
 
 export type UserSession = {
@@ -236,6 +258,7 @@ export type Opportunity = {
   contactPerson?: User;
   expense: string;
   participants: User[];
+  hasApplied?: boolean;
 };
 
 export type CollaborationQuestion = {
@@ -248,7 +271,6 @@ export type CollaborationQuestion = {
 };
 
 export type Filters = {
-  resultsPerPage: number;
   projects: string[];
   topics: string[];
 };

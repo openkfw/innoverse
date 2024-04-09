@@ -1,12 +1,12 @@
 'use client';
 
-import { Event } from '@/common/types';
+import { EventWithAdditionalData } from '@/common/types';
 import { LandingPageSection } from '@/components/landing/LandingPageSection';
 
 import { EventCarousel } from './EventCarousel';
 
 interface EventSectionProps {
-  events: Event[];
+  events: EventWithAdditionalData[];
 }
 
 export const EventSection = ({ events }: EventSectionProps) => {

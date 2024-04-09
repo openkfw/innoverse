@@ -8,14 +8,13 @@ import Tab, { TabProps } from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import { Project } from '@/common/types';
+import { ProjectData } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
 import { CommentContextProvider } from '../common/comments/comment-context';
 import { UpdatesTab } from '../updates/UpdatesTab';
 
-import { countFutureEventsForProject } from './events/actions';
 import { EventsTab } from './events/EventsTab';
 import { ProjectProgress } from './ProjectProgress';
 interface TabPanelProps {
@@ -71,7 +70,7 @@ const CustomTab = styled((props: TabProps) => <Tab disableRipple {...props} />)(
 }));
 
 interface BasicTabsProps {
-  project: Project;
+  projectData: ProjectData;
   projectName: string;
 }
 
@@ -79,10 +78,9 @@ export default function TabView(props: BasicTabsProps) {
   const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState(0);
-  const { project, projectName } = props;
-  const { opportunities, questions, collaborationQuestions, updates } = project;
+  const { projectData, projectName } = props;
+  const { opportunities, questions, collaborationQuestions, updates, futureEvents } = projectData;
   const collaborationActivities = opportunities.length + questions.length + collaborationQuestions.length;
-  const [futureEventCount, setFutureEventCount] = useState<number>(0);
   const [initialRender, setInitialRender] = useState(true);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
@@ -131,16 +129,6 @@ export default function TabView(props: BasicTabsProps) {
       setActiveTab(Number(tabQueryParam));
     }
   }, [searchParams, activeTab]);
-
-  useEffect(() => {
-    const getFutureEventCount = async () => {
-      const { data: result } = await countFutureEventsForProject({ projectId: project.id });
-      if (result) {
-        setFutureEventCount(result);
-      }
-    };
-    getFutureEventCount();
-  }, [project]);
 
   const containerStyles: SxProps = {
     width: '85%',
@@ -202,7 +190,7 @@ export default function TabView(props: BasicTabsProps) {
           label={
             <Stack direction="row" spacing={1}>
               <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
-                {futureEventCount.toString()}
+                {futureEvents.length}
               </Typography>
               <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
                 Events
@@ -214,16 +202,16 @@ export default function TabView(props: BasicTabsProps) {
         />
       </CustomTabs>
       <CustomTabPanel value={activeTab} index={0} id="project-progress-tab">
-        <ProjectProgress project={project} projectName={projectName} />
+        <ProjectProgress project={projectData} projectName={projectName} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={1} id="collaboration-tab">
-        <CollaborationTab project={project} />
+        <CollaborationTab project={projectData} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={2} id="updates-tab">
-        <UpdatesTab projectId={project.id} />
+        <UpdatesTab projectData={projectData} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={3} id="events-tab">
-        <EventsTab projectId={project.id} />
+        <EventsTab projectData={projectData} />
       </CustomTabPanel>
     </Box>
   );

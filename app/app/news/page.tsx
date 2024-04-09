@@ -8,12 +8,21 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
+import ErrorPage from '@/components/error/ErrorPage';
 import Layout from '@/components/layout/Layout';
 import NewsContainer from '@/components/newsPage/NewsContainer';
+import { getProjectsUpdates, getProjectsUpdatesFilter } from '@/utils/requests';
+
+import { NewsFilterContextProvider } from '../contexts/news-filter-context';
 
 import backgroundImage from '/public/images/news-background.png';
 
 async function NewsPage() {
+  const initialUpdates = await getProjectsUpdatesFilter('desc', 1);
+  const allUpdates = await getProjectsUpdates();
+
+  if (!initialUpdates || !allUpdates) return <ErrorPage />;
+
   return (
     <Layout>
       <Stack spacing={8} useFlexGap>
@@ -43,7 +52,9 @@ async function NewsPage() {
               </Typography>
             </Card>
           </Grid>
-          <NewsContainer />
+          <NewsFilterContextProvider initialNews={initialUpdates} allUpdates={allUpdates}>
+            <NewsContainer news={initialUpdates} />
+          </NewsFilterContextProvider>
         </Container>
       </Stack>
     </Layout>

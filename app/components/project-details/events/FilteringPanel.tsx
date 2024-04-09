@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useMemo } from 'react';
+import React, { SetStateAction, useEffect } from 'react';
 
 import SearchIcon from '@mui/icons-material/Search';
 import Checkbox from '@mui/material/Checkbox';
@@ -12,14 +12,17 @@ import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { Event } from '@/common/types';
+import { EventWithAdditionalData } from '@/common/types';
 
 import { CountOfTheme } from './EventsTab';
 
 interface FilteringPanelProps {
-  events: Event[];
-  futureEvents: Event[];
-  handleFilterChange: (filteredEvents: Event[] | undefined) => void;
+  pastEvents: EventWithAdditionalData[];
+  futureEvents: EventWithAdditionalData[];
+  handleFilterChange: (
+    filteredFutureEvents: EventWithAdditionalData[] | undefined,
+    filteredPastEvents?: EventWithAdditionalData[] | undefined,
+  ) => void;
   currentFilters: {
     searchTerm: string;
     pastEventsShown: boolean;
@@ -35,52 +38,16 @@ interface FilteringPanelProps {
 }
 
 export const FilteringPanel = (props: FilteringPanelProps) => {
-  const { events, futureEvents, handleFilterChange, currentFilters, setCurrentFilters } = props;
-
-  const themesArrayAfterLoading = useMemo(() => {
-    const tempArray: CountOfTheme[] = [];
-    if (events) {
-      events.forEach((event) => {
-        event.themes?.forEach((theme) => {
-          const existingTheme = tempArray.find((t) => t.theme === theme);
-          if (existingTheme) {
-            existingTheme.count += 1;
-          } else {
-            tempArray.push({ theme: theme, count: 1, active: false });
-          }
-        });
-      });
-    }
-
-    tempArray.sort((a, b) => b.count - a.count);
-
-    return tempArray;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [events, currentFilters]);
+  const { pastEvents, futureEvents, handleFilterChange, currentFilters, setCurrentFilters } = props;
 
   useEffect(() => {
-    setCurrentFilters((old) => ({
-      ...old,
-      themes: themesArrayAfterLoading,
-    }));
+    const filteredFutureEvents = filterEventsBySearch(filterEventsByTheme(futureEvents));
 
-    if (!currentFilters.pastEventsShown) {
-      handleFilterChange(futureEvents);
-    } else {
-      handleFilterChange(events);
-    }
+    handleFilterChange(filteredFutureEvents, filterEventsBySearch(filterEventsByTheme(pastEvents)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [events]);
+  }, [currentFilters.pastEventsShown, currentFilters.themes, currentFilters.searchTerm]);
 
-  useEffect(() => {
-    const eventsToFilter = currentFilters.pastEventsShown ? events : futureEvents;
-    const filteredEventsByTheme = filterEventsByTheme(eventsToFilter);
-    const filteredEventsBySearch = filterEventsBySearch(filteredEventsByTheme);
-    handleFilterChange(filteredEventsBySearch);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFilters.pastEventsShown, currentFilters.themes, currentFilters.searchTerm, events, futureEvents]);
-
-  const filterEventsByTheme = (eventsToFilter: Event[]) => {
+  const filterEventsByTheme = (eventsToFilter: EventWithAdditionalData[]) => {
     const activeThemes = currentFilters.themes.filter((theme) => theme.active).map((theme) => theme.theme);
     if (!activeThemes.length) {
       return eventsToFilter;
@@ -88,7 +55,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
     return eventsToFilter.filter((event) => event.themes.some((theme) => activeThemes.includes(theme)));
   };
 
-  const filterEventsBySearch = (eventsToFilter: Event[]) => {
+  const filterEventsBySearch = (eventsToFilter: EventWithAdditionalData[]) => {
     const searchValue = currentFilters.searchTerm;
     if (searchValue && searchValue.trim() !== '') {
       const lowerCaseInput = searchValue.toLowerCase();
@@ -126,20 +93,21 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
         themes: updatedThemeHelper,
       }));
 
-      const eventsToFilter = currentFilters.pastEventsShown ? events : futureEvents;
-      const filteredEvents = filterEventsByTheme(eventsToFilter);
-      handleFilterChange(filteredEvents);
-    }
+      const filteredFutureEvents = filterEventsByTheme(futureEvents);
 
-    if (name === 'pastEventsSwitch') {
+      currentFilters.pastEventsShown
+        ? handleFilterChange(filteredFutureEvents, filterEventsByTheme(pastEvents))
+        : handleFilterChange(filteredFutureEvents);
+    } else if (name === 'pastEventsSwitch') {
       setCurrentFilters((old) => ({
         ...old,
         pastEventsShown: checked,
       }));
+      const filteredFutureEvents = filterEventsByTheme(futureEvents);
 
-      const eventsToFilter = checked ? events : futureEvents;
-      const filteredEvents = filterEventsByTheme(eventsToFilter);
-      handleFilterChange(filteredEvents);
+      checked
+        ? handleFilterChange(filteredFutureEvents, filterEventsByTheme(pastEvents))
+        : handleFilterChange(filteredFutureEvents);
     }
   };
 

@@ -1,13 +1,28 @@
 'use server';
 import { SurveyVote } from '@prisma/client';
 import dayjs from 'dayjs';
+import { StatusCodes } from 'http-status-codes';
 
-import { Event, Filters, UserSession } from '@/common/types';
+import {
+  Event,
+  EventWithAdditionalData,
+  Filters,
+  ObjectWithReactions,
+  Project,
+  ProjectUpdate,
+  ProjectUpdateWithAdditionalData,
+  UserSession,
+} from '@/common/types';
 import { getSurveyQuestionVotes } from '@/components/collaboration/survey/actions';
-import { SortValues } from '@/components/newsPage/News';
+import { getProjectAndUserFollowers, getProjectFollowers } from '@/repository/db/follow';
+import { getProjectAndUserLikes, getProjectLikes } from '@/repository/db/like';
+import dbClient from '@/repository/db/prisma/prisma';
+import { countNumberOfReactions, findReaction } from '@/repository/db/reaction';
+import { getSuveyQuestionAndUserVote } from '@/repository/db/survey_votes';
 
-import { InnoPlatformError, strapiError } from './errors';
-import { getPromiseResults } from './helpers';
+import { withAuth } from './auth';
+import { dbError, InnoPlatformError, strapiError } from './errors';
+import { getFulfilledResults, getPromiseResults } from './helpers';
 import getLogger from './logger';
 import {
   CreateInnoUserQuery,
@@ -35,6 +50,8 @@ import {
 import strapiFetcher from './strapiFetcher';
 const logger = getLogger();
 import { UpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
+import { getCollaborationCommentUpvotedBy } from '@/repository/db/collaboration_comment';
+import { getCommentUpvotedBy } from '@/repository/db/project_comment';
 
 async function uploadImage(imageUrl: string, fileName: string) {
   return fetch(imageUrl)
@@ -88,6 +105,76 @@ export async function getProjectById(id: string) {
   }
 }
 
+export async function getAllProjectData(id: string) {
+  const project = (await getProjectById(id)) as Project;
+  const likes = await getProjectLikes(dbClient, id);
+  const followers = await getProjectFollowers(dbClient, id);
+  const { data: isLiked } = await authenticatedFindLiked({ projectId: id });
+  const { data: isFollowed } = await authenticatedFindFollow({ projectId: id });
+  const futureEvents = (await getEventsFilter(id, 2, 1, 'future')) || [];
+  const pastEvents = (await getEventsFilter(id, 2, 1, 'past')) || [];
+
+  const getCollabQuestionsWithUpvote = project.collaborationQuestions.map(async (question) => {
+    const getCommentsWithUpvote = question.comments.map(async (comment) => {
+      const { data: isUpvotedByUser } = await authenticatedCollabCommenUpvoted({ commentId: comment.id });
+      return { ...comment, isUpvotedByUser };
+    });
+
+    return { ...question, comments: await getPromiseResults(getCommentsWithUpvote) };
+  });
+
+  const collaborationQuestions = await getPromiseResults(getCollabQuestionsWithUpvote);
+
+  const getProjectCommentsWithUpvote = project.comments.map(async (comment) => {
+    const { data: isUpvotedByUser } = await authenticatedProjectCommentUpvoted({ commentId: comment.id });
+
+    return {
+      ...comment,
+      isUpvotedByUser,
+    };
+  });
+  const projectComments = await getPromiseResults(getProjectCommentsWithUpvote);
+
+  const getOpportunities = project.opportunities.map(async (opp) => {
+    const { data: hasApplied } = await authenticatedAppliedForOpp({ oppId: opp.id });
+    return {
+      ...opp,
+      hasApplied,
+    };
+  });
+
+  const opportunities = await getPromiseResults(getOpportunities);
+
+  const getSurveyQuestions = project.surveyQuestions.map(async (question) => {
+    const { data: userVote } = await authenticatedGetSurveyQuestionVote({ surveyQuestionId: question.id });
+    return {
+      ...question,
+      userVote: userVote?.vote,
+    };
+  });
+
+  const surveyQuestions = await getPromiseResults(getSurveyQuestions);
+
+  const futureEventsWithReactions = (await getObjectsWithAdditionalData(
+    futureEvents,
+    'EVENT',
+  )) as EventWithAdditionalData[];
+  const pastEventsWithReactions = (await getObjectsWithAdditionalData(
+    pastEvents,
+    'EVENT',
+  )) as EventWithAdditionalData[];
+
+  return {
+    project: { ...project, opportunities, surveyQuestions, collaborationQuestions, comments: projectComments },
+    likes,
+    followers,
+    isLiked: isLiked || false,
+    isFollowed: isFollowed || false,
+    futureEvents: futureEventsWithReactions,
+    pastEvents: pastEventsWithReactions,
+  };
+}
+
 export async function getInnoUserByEmail(email: string) {
   try {
     const response = await strapiFetcher(GetInnoUserByEmailQuery, { email });
@@ -123,21 +210,182 @@ export async function getEvents(startingFrom: Date) {
   }
 }
 
-// As this is used in the "Main" Page no ISR here. Fetch data from Endpoint via fetch
-// Revalidate the cache every 2 mins.
-// Use fetch here as we want to revalidate the data from the CMS.
 export async function getMainPageData() {
   const events = await getUpcomingEvents();
   const data = await getDataWithFeaturedFiltering();
-  const updates = await getProjectsUpdates();
+  if (!data) return;
 
   return {
-    events: events ?? [],
     projects: data?.projects,
     sliderContent: data?.sliderContent,
-    updates: updates ?? [],
+    updates: data.updates ? await getObjectsWithAdditionalData(data.updates, 'UPDATE') : [],
+    events: events ? await getObjectsWithAdditionalData(events, 'EVENT') : [],
   };
 }
+
+const authenticatedFindReaction = withAuth(
+  async (user: UserSession, body: { objectType: 'UPDATE' | 'EVENT'; objectId: string }) => {
+    try {
+      const result = await findReaction(dbClient, user.providerId, body.objectType, body.objectId);
+      return {
+        status: StatusCodes.OK,
+        data: result,
+      };
+    } catch (err) {
+      const error: InnoPlatformError = strapiError(
+        `Find reaction for ${user.providerId} and ${body.objectType} ${body.objectId} `,
+        err as Error,
+        body.objectId,
+      );
+      logger.error(error);
+      throw err;
+    }
+  },
+);
+
+const authenticatedGetSurveyQuestionVote = withAuth(async (user: UserSession, body: { surveyQuestionId: string }) => {
+  try {
+    const result = await getSuveyQuestionAndUserVote(dbClient, body.surveyQuestionId, user.providerId);
+    return {
+      status: StatusCodes.OK,
+      data: result,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = strapiError(
+      `Find survey vote for user ${user.providerId} and survey question ${body.surveyQuestionId}`,
+      err as Error,
+      body.surveyQuestionId,
+    );
+    logger.error(error);
+    throw err;
+  }
+});
+
+const authenticatedCollabCommenUpvoted = withAuth(async (user: UserSession, body: { commentId: string }) => {
+  try {
+    const result = await getCollaborationCommentUpvotedBy(dbClient, body.commentId, user.providerId);
+    return { status: StatusCodes.OK, data: result.length > 0 };
+  } catch (err) {
+    const error: InnoPlatformError = strapiError(
+      `Find upvote for comment${body.commentId} by user ${user.providerId}`,
+      err as Error,
+      body.commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
+});
+
+const authenticatedProjectCommentUpvoted = withAuth(async (user: UserSession, body: { commentId: string }) => {
+  try {
+    const result = await getCommentUpvotedBy(dbClient, body.commentId, user.providerId);
+    return { status: StatusCodes.OK, data: result.length > 0 };
+  } catch (err) {
+    const error: InnoPlatformError = strapiError(
+      `Find upvote for comment${body.commentId} by user ${user.providerId}`,
+      err as Error,
+      body.commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
+});
+
+export async function getObjectsWithAdditionalData(
+  objects: Event[] | ProjectUpdate[],
+  objectType: 'UPDATE' | 'EVENT',
+): Promise<ObjectWithReactions[]> {
+  return (await Promise.allSettled(objects.map(async (object) => getAdditionalDataForObject(object, objectType))).then(
+    (results) => getFulfilledResults(results),
+  )) as ObjectWithReactions[];
+}
+export async function getAdditionalDataForObject(
+  object: Event | ProjectUpdate,
+  objectType: 'UPDATE' | 'EVENT',
+): Promise<ObjectWithReactions> {
+  const { data: reactionForUser } = await authenticatedFindReaction({ objectType, objectId: object.id });
+  const reactionCountResult = await countNumberOfReactions(dbClient, objectType, object.id);
+
+  const reactionCount = reactionCountResult.map((r) => ({
+    count: r._count.shortCode,
+    emoji: {
+      shortCode: r.shortCode,
+      nativeSymbol: r.nativeSymbol,
+    },
+  }));
+
+  if (objectType === 'UPDATE') {
+    const { data: followedByUser } = await authenticatedFindFollow({ projectId: object.projectId });
+    return {
+      ...object,
+      reactionForUser: reactionForUser || undefined,
+      followedByUser,
+      reactionCount,
+    };
+  }
+
+  return {
+    ...object,
+    reactionForUser: reactionForUser || undefined,
+    reactionCount,
+  };
+}
+
+const authenticatedFindFollow = withAuth(async (user: UserSession, body: { projectId: string }) => {
+  try {
+    const result = await getProjectAndUserFollowers(dbClient, body.projectId, user.providerId);
+
+    return {
+      status: StatusCodes.OK,
+      data: result.length > 0,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Find following for ${user.providerId} and ${body.projectId}`,
+      err as Error,
+      body.projectId,
+    );
+    logger.error(error);
+    throw err;
+  }
+});
+
+const authenticatedFindLiked = withAuth(async (user: UserSession, body: { projectId: string }) => {
+  try {
+    const result = await getProjectAndUserLikes(dbClient, body.projectId, user.providerId);
+
+    return {
+      status: StatusCodes.OK,
+      data: result.length > 0,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Find likes for ${user.providerId} and ${body.projectId}`,
+      err as Error,
+      body.projectId,
+    );
+    logger.error(error);
+    throw err;
+  }
+});
+
+const authenticatedAppliedForOpp = withAuth(async (user: UserSession, body: { oppId: string }) => {
+  try {
+    const result = await getOpportunityAndUserParticipant({ opportunityId: body.oppId, userId: user.providerId });
+    return {
+      status: StatusCodes.OK,
+      data: result !== undefined,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = strapiError(
+      `Find if user ${user.providerId} applied for opportunity ${body.oppId}`,
+      err as Error,
+      body.oppId,
+    );
+    logger.error(error);
+    throw err;
+  }
+});
 
 export async function getDataWithFeaturedFiltering() {
   try {
@@ -164,29 +412,34 @@ export async function getProjects() {
     const result = await withResponseTransformer(STRAPI_QUERY.GetProjects, response);
     return result.projects;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting all projects', err as Error);
+    logger.error(error);
   }
 }
 
-export async function getProjectsUpdates() {
+export async function getProjectsUpdates(limit: number = 100) {
   try {
-    const response = await strapiFetcher(GetUpdatesQuery);
+    const response = await strapiFetcher(GetUpdatesQuery, { limit });
     const updates = await withResponseTransformer(STRAPI_QUERY.GetUpdates, response);
-    return updates;
+    const updatesWithAdditionalData = await getObjectsWithAdditionalData(updates, 'UPDATE');
+    return updatesWithAdditionalData as ProjectUpdateWithAdditionalData[];
   } catch (err) {
     const error = strapiError('Getting all project updates', err as Error);
     logger.error(error);
   }
 }
 
-export async function getProjectsUpdatesFilter(sort: SortValues, filters: Filters, page?: number, pageSize?: number) {
+export async function getProjectsUpdatesFilter(
+  sort: 'desc' | 'asc',
+  page: number,
+  filters: Filters = { projects: [], topics: [] },
+): Promise<ProjectUpdateWithAdditionalData[] | undefined> {
   try {
     const { projects, topics } = filters;
     const variables = {
       projects,
       topics,
       page,
-      pageSize,
     };
 
     let filter = '';
@@ -203,8 +456,8 @@ export async function getProjectsUpdatesFilter(sort: SortValues, filters: Filter
       filterParams += '$topics: [String]';
       filter += 'filters: { topic: { in: $topics }} ';
     }
-    filterParams += '$page: Int, $pageSize: Int';
-    filter += 'pagination: { page: $page, pageSize: $pageSize }';
+    filterParams += '$page: Int';
+    filter += 'pagination: { page: $page, pageSize: 10 }';
 
     if (filterParams.length) {
       filterParams = `(${filterParams})`;
@@ -212,7 +465,12 @@ export async function getProjectsUpdatesFilter(sort: SortValues, filters: Filter
 
     const response = await strapiFetcher(GetUpdatesFilterQuery(filterParams, filter, sort), variables);
     const result = await withResponseTransformer(STRAPI_QUERY.GetUpdates, response);
-    return result;
+    const updatesWithAdditionalData = (await getObjectsWithAdditionalData(
+      result,
+      'UPDATE',
+    )) as ProjectUpdateWithAdditionalData[];
+
+    return updatesWithAdditionalData;
   } catch (err) {
     const error = strapiError('Getting all project updates with filter', err as Error);
     logger.error(error);

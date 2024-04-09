@@ -5,7 +5,7 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { Project } from '@/common/types';
+import { ProjectData } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { UnsavedCommentChangesDialog } from '../common/comments/UnsavedChangesDialog';
@@ -15,7 +15,7 @@ import { SurveyCard } from './survey/SurveyCard';
 import { CollaborationQuestionCard } from './CollaborationQuestionCard';
 
 interface CollaborationTabProps {
-  project: Project;
+  project: ProjectData;
 }
 
 export const CollaborationTab = ({ project }: CollaborationTabProps) => {
@@ -36,7 +36,7 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
   );
 };
 
-const OpportunitiesSection = ({ project }: { project: Project }) => {
+const OpportunitiesSection = ({ project }: { project: ProjectData }) => {
   if (!project.opportunities.length) return <></>;
 
   return (
@@ -56,7 +56,7 @@ const OpportunitiesSection = ({ project }: { project: Project }) => {
   );
 };
 
-const SurveyQuestionsSection = ({ project }: { project: Project }) => {
+const SurveyQuestionsSection = ({ project }: { project: ProjectData }) => {
   if (!project.surveyQuestions.length) return <></>;
 
   return (
@@ -76,7 +76,7 @@ const SurveyQuestionsSection = ({ project }: { project: Project }) => {
   );
 };
 
-const CollaborationQuestionsSection = ({ project }: { project: Project }) => {
+const CollaborationQuestionsSection = ({ project }: { project: ProjectData }) => {
   if (!project.collaborationQuestions.length) return <></>;
 
   return (

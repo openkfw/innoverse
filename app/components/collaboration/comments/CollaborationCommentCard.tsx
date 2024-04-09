@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
@@ -10,7 +10,6 @@ import { CommentCard } from '../../common/comments/CommentCard';
 import {
   deleteProjectCollaborationComment,
   handleProjectCollaborationCommentUpvotedBy,
-  isProjectCollaborationCommentUpvotedBy,
   updateProjectCollaborationComment,
 } from './actions';
 
@@ -40,25 +39,8 @@ export const CollaborationCommentCard = (props: CollaborationCommentCardProps) =
 };
 
 function useCollaborationCommentCardProps({ comment, onDelete }: CollaborationCommentCardProps) {
-  const [isUpvoted, setIsUpvoted] = useState<boolean>();
+  const [isUpvoted, setIsUpvoted] = useState<boolean>(comment.isUpvotedByUser || false);
   const appInsights = useAppInsightsContext();
-
-  useEffect(() => {
-    async function loadAndSetIsUpvoted() {
-      try {
-        const result = await isProjectCollaborationCommentUpvotedBy({ commentId: comment.id });
-        setIsUpvoted(result.data);
-      } catch (error) {
-        console.error('Error loading upvote status of collaboration comment', error);
-        errorMessage({ message: 'Failed to load upvote status of collaboration comment. Please try again later.' });
-        appInsights.trackException({
-          exception: new Error('Failed to load upvote status of collaboration comment', { cause: error }),
-          severityLevel: SeverityLevel.Error,
-        });
-      }
-    }
-    loadAndSetIsUpvoted();
-  }, [comment]);
 
   const toggleCommentUpvote = () => {
     try {

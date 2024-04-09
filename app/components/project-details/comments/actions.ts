@@ -8,7 +8,6 @@ import {
   deleteComment,
   getCommentbyId,
   getComments,
-  getCommentUpvotedBy,
   handleCommentUpvotedBy,
   updateComment,
 } from '@/repository/db/project_comment';
@@ -105,35 +104,6 @@ export const getProjectComments = async (body: { projectId: string }) => {
     };
   }
 };
-
-export const isProjectCommentUpvotedBy = withAuth(async (user: UserSession, body: { commentId: string }) => {
-  try {
-    const validatedParams = validateParams(commentUpvotedBySchema, body);
-    if (validatedParams.status === StatusCodes.OK) {
-      const result = await getCommentUpvotedBy(dbClient, body.commentId, user.providerId);
-      return {
-        status: StatusCodes.OK,
-        data: result.length > 0,
-      };
-    }
-    return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
-      message: validatedParams.message,
-    };
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Checking the upvote status of a Comment ${body.commentId} for user ${user.providerId}`,
-      err as Error,
-      body.commentId,
-    );
-    logger.error(error);
-    return {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Checking the upvote status failed',
-    };
-  }
-});
 
 export const handleProjectCommentUpvoteBy = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
