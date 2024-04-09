@@ -13,7 +13,11 @@ export const ShowLessButton = ({ isVisible, onClick }: ShowLessButtonProps) => {
   if (!isVisible) return <></>;
   return (
     <Box sx={showLessButonStyles}>
-      <IconButton sx={{ color: 'rgba(0, 0, 0, 1)' }} onClick={onClick}>
+      <IconButton
+        sx={{ color: 'rgba(0, 0, 0, 1)' }}
+        onClick={onClick}
+        data-user-interaction-id={`contract-content-button`}
+      >
         <ArrowUpward />
       </IconButton>
     </Box>

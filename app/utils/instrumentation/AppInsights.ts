@@ -1,5 +1,6 @@
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
+import { ClickAnalyticsPlugin } from '@microsoft/applicationinsights-clickanalytics-js';
 
 const defaultBroserHistory = {
   url: '/',
@@ -14,15 +15,20 @@ if (typeof window !== 'undefined') {
   browserHistory.location.pathname = browserHistory?.state?.url;
 }
 const reactPlugin = new ReactPlugin();
+const clickPluginInstance = new ClickAnalyticsPlugin();
+const clickPluginConfig = {
+  autoCapture: true,
+};
 
 const appInsights = new ApplicationInsights({
   config: {
     connectionString: process.env.NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING,
     instrumentationKey: process.env.NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY,
     disableTelemetry: process.env.NODE_ENV !== 'production',
-    extensions: [reactPlugin],
+    extensions: [reactPlugin, clickPluginInstance],
     extensionConfig: {
       [reactPlugin.identifier]: { history: browserHistory },
+      [clickPluginInstance.identifier]: clickPluginConfig,
     },
   },
 });

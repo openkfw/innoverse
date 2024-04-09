@@ -18,7 +18,11 @@ export const ShowMoreButton = ({ isVisible, top, backgroundColor, onClick }: Sho
   backgroundColor ??= 'rgba(255, 255, 255, 1)';
   return (
     <Box sx={mergeStyles(showMoreButtonStyles(backgroundColor), { top: top })}>
-      <IconButton sx={{ color: 'rgba(0, 0, 0, 1)' }} onClick={onClick}>
+      <IconButton
+        sx={{ color: 'rgba(0, 0, 0, 1)' }}
+        onClick={onClick}
+        data-user-interaction-id={`expand-content-button`}
+      >
         <ArrowDownwardIcon />
       </IconButton>
     </Box>
