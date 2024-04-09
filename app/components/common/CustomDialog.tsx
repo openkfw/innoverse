@@ -58,7 +58,7 @@ const CustomDialog: FC<CustomDialogProps> = ({
     >
       {closeIcon && (
         <DialogActions sx={dialogActionsStyle}>
-          <IconButton onClick={handleClose} sx={closeIconButtonStyle}>
+          <IconButton data-user-interaction-id={`dialog-close-button`} onClick={handleClose} sx={closeIconButtonStyle}>
             <CloseIcon color="#41484C" />
           </IconButton>
         </DialogActions>

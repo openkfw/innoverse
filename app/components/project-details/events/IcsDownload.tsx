@@ -21,7 +21,12 @@ const IcsDownload = ({ event, disabled = false }: IcsDownloadProps) => {
   const color = disabled ? palette.action?.disabled : palette.text?.primary;
 
   return (
-    <TransparentButton disabled={disabled} onClick={downloadIcsFileForEvent} sx={{ px: 1, m: 0 }}>
+    <TransparentButton
+      data-user-interaction-id={`download-event-${event.id}-button`}
+      disabled={disabled}
+      onClick={downloadIcsFileForEvent}
+      sx={{ px: 1, m: 0 }}
+    >
       <Stack sx={{ alignItems: 'center' }}>
         <AddToCalendarIcon color={color} />
         <Typography variant="caption" sx={{ fontSize: '10px', fontWeight: 500, mt: '2px' }} color={color}>

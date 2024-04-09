@@ -25,6 +25,7 @@
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@hookform/resolvers": "^3.3.4",
+    "@microsoft/applicationinsights-clickanalytics-js": "^3.1.2",
     "@microsoft/applicationinsights-react-js": "^17.1.2",
     "@microsoft/applicationinsights-web": "^3.1.2",
     "@mui/icons-material": "^5.14.3",

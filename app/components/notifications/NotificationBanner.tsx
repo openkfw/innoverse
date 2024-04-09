@@ -71,10 +71,14 @@ const BuildNotificationBanner = (props: BuildNotificationBannerProps) => {
       </Stack>
       <Box>{image()}</Box>
       <Stack direction={'row'} alignSelf={'flex-end'} spacing={'8px'}>
-        <InteractionButton interactionType={InteractionType.OK} label={okText} onClick={action}>
+        <InteractionButton interactionType={InteractionType.ALLOW_NOTIFICATIONS} label={okText} onClick={action}>
           {okText}
         </InteractionButton>
-        <InteractionButton interactionType={InteractionType.DISMISS} label={dismissText} onClick={dismissAction}>
+        <InteractionButton
+          interactionType={InteractionType.DISMISS_NOTIFICATION_BANNER}
+          label={dismissText}
+          onClick={dismissAction}
+        >
           {dismissText}
         </InteractionButton>
       </Stack>

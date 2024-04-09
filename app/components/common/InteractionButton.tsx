@@ -48,8 +48,8 @@ export enum InteractionType {
   LOG_IN = 'log-in',
   CLEAR = 'clear',
   ADD_UPDATE = 'add-update',
-  OK = 'ok',
-  DISMISS = 'dismiss',
+  ALLOW_NOTIFICATIONS = 'allow-notifications',
+  DISMISS_NOTIFICATION_BANNER = 'dismiss-notification-banner',
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
@@ -75,8 +75,8 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.LOG_IN) return <PersonIcon fontSize="small" />;
     if (interactionType === InteractionType.CLEAR) return <ClearIcon fontSize="small" />;
     if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddOutlinedIcon fontSize="small" />;
-    if (interactionType === InteractionType.OK) return <CheckOutlinedIcon fontSize="small" />;
-    if (interactionType === InteractionType.DISMISS) return;
+    if (interactionType === InteractionType.ALLOW_NOTIFICATIONS) return <CheckOutlinedIcon fontSize="small" />;
+    if (interactionType === InteractionType.DISMISS_NOTIFICATION_BANNER) return;
   };
 
   function handleIconClick(e: React.MouseEvent) {
@@ -150,6 +150,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
       startIcon={isSelected ? getSelectedInteractionIcon() : getInteractionIcon()}
       endIcon={getEndIcon()}
       disabled={disabled}
+      data-user-interaction-id={`${interactionType}-button`}
       sx={{
         px: getText() === undefined ? 1 : 2,
         py: 1,
