@@ -24,6 +24,8 @@ interface NewsFilterContextInterface {
   amountOfNewsProject: AmountOfNews;
   pageNumber: number;
   setPageNumber: Dispatch<SetStateAction<number>>;
+  hasMoreValue: boolean;
+  setHasMoreValue: Dispatch<SetStateAction<boolean>>;
 }
 
 const defaultState: NewsFilterContextInterface = {
@@ -41,6 +43,8 @@ const defaultState: NewsFilterContextInterface = {
   amountOfNewsProject: {},
   pageNumber: 2,
   setPageNumber: () => {},
+  hasMoreValue: true,
+  setHasMoreValue: () => {},
 };
 
 interface NewsFilterContextProviderProps {
@@ -58,6 +62,7 @@ export const NewsFilterContextProvider = ({ children, initialNews, allUpdates }:
   const [amountOfNewsTopic, setAmountOfNewsTopic] = useState<AmountOfNews>(defaultState.amountOfNewsTopic);
   const [amountOfNewsProject, setAmountOfNewsProject] = useState<AmountOfNews>(defaultState.amountOfNewsProject);
   const [pageNumber, setPageNumber] = useState<number>(defaultState.pageNumber);
+  const [hasMoreValue, setHasMoreValue] = useState<boolean>(defaultState.hasMoreValue);
 
   const refetchNews = async (newFilters?: Filters) => {
     try {
@@ -65,6 +70,7 @@ export const NewsFilterContextProvider = ({ children, initialNews, allUpdates }:
       if (result) {
         setNews([...result]);
         setPageNumber(2);
+        result.length > 0 ? setHasMoreValue(true) : setHasMoreValue(false);
       }
     } catch (error) {
       errorMessage({ message: 'Error refetching news. Please check your connection and try again.' });
@@ -136,6 +142,8 @@ export const NewsFilterContextProvider = ({ children, initialNews, allUpdates }:
     amountOfNewsProject,
     pageNumber,
     setPageNumber,
+    hasMoreValue,
+    setHasMoreValue,
   };
 
   return <NewsFilterContext.Provider value={contextObject}> {children}</NewsFilterContext.Provider>;

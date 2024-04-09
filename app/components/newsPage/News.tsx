@@ -1,6 +1,3 @@
-'use client';
-
-import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import Box from '@mui/material/Box';
@@ -27,8 +24,7 @@ export enum SortValues {
 
 export const News = (props: NewsProps) => {
   const { sx } = props;
-  const { news, setNews, filters, sort, pageNumber, setPageNumber } = useNewsFilter();
-  const [hasMoreValue, setHasMoreValue] = useState(true);
+  const { news, setNews, filters, sort, pageNumber, setPageNumber, hasMoreValue, setHasMoreValue } = useNewsFilter();
 
   const loadScrollData = async () => {
     const filteredUpdates = await getProjectsUpdatesFilter(sort, pageNumber, filters);
