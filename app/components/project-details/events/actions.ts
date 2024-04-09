@@ -1,9 +1,9 @@
 'use server';
 import { StatusCodes } from 'http-status-codes';
 
-import { UserSession } from '@/common/types';
+import { EventWithAdditionalData, UserSession } from '@/common/types';
 import { withAuth } from '@/utils/auth';
-import { getCountOfFutureEvents, getEventsFilter } from '@/utils/requests';
+import { getCountOfFutureEvents, getEventsFilter, getObjectsWithAdditionalData } from '@/utils/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import { eventSchema, projectFilterSchema } from './validationSchema';
@@ -41,7 +41,9 @@ export const getAllEventsForProjectFilter = withAuth(
       };
     }
 
-    const result = await getEventsFilter(body.projectId, body.amountOfEventsPerPage, body.currentPage, body.timeframe);
-    return { status: StatusCodes.OK, data: result };
+    const result =
+      (await getEventsFilter(body.projectId, body.amountOfEventsPerPage, body.currentPage, body.timeframe)) || [];
+    const events = (await getObjectsWithAdditionalData(result, 'EVENT')) as EventWithAdditionalData[];
+    return { status: StatusCodes.OK, data: events };
   },
 );

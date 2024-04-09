@@ -7,7 +7,7 @@ import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { Event } from '@/common/types';
+import { EventWithAdditionalData } from '@/common/types';
 import { EventEmojiReactionCard } from '@/components/collaboration/emojiReactions/EventEmojiReactionCard';
 import theme from '@/styles/theme';
 
@@ -16,7 +16,7 @@ import { LinkWithArrowLeft } from '../../common/LinkWithArrowLeft';
 import { EventCardHeader } from './EventCardHeader';
 
 interface EventCardProps {
-  event: Event;
+  event: EventWithAdditionalData;
 }
 
 export const EventCard = ({ event }: EventCardProps) => {
@@ -44,7 +44,7 @@ export const EventCard = ({ event }: EventCardProps) => {
       <CardActions sx={cardActionsStyles}>
         <Stack direction="column" spacing={'8px'}>
           <LinkWithArrowLeft title="Mehr Details" href={`/projects/${encodeURIComponent(event.projectId)}?tab=3`} />
-          <EventEmojiReactionCard eventId={event.id} />
+          <EventEmojiReactionCard event={event} />
         </Stack>
       </CardActions>
     </Card>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
@@ -24,7 +24,7 @@ interface OpportunityCardProps {
 }
 
 const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => {
-  const [hasApplied, setHasApplied] = useState(false);
+  const [hasApplied, setHasApplied] = useState(opportunity.hasApplied);
   const appInsights = useAppInsightsContext();
 
   const handleOpportunityApply = async () => {
@@ -41,23 +41,6 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
       });
     }
   };
-
-  useEffect(() => {
-    const getAppliedForOpportunity = async () => {
-      try {
-        const { data } = await hasAppliedForOpportunity({ opportunityId: opportunity.id });
-        setHasApplied(data ?? false);
-      } catch (error) {
-        console.error('Failed to check application status:', error);
-        errorMessage({ message: 'Failed to check if you have already applied. Please try again.' });
-        appInsights.trackException({
-          exception: new Error('Failed to check opportunity application status.', { cause: error }),
-          severityLevel: SeverityLevel.Error,
-        });
-      }
-    };
-    getAppliedForOpportunity();
-  }, [opportunity.id]);
 
   const leftGridStyles: SxProps = {
     paddingRight: '2em',

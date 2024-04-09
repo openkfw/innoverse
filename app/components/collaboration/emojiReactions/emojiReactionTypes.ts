@@ -12,8 +12,5 @@ export type Reaction = {
 
 export type ReactionCount = {
   count: number;
-  emoji: {
-    shortCode: string;
-    nativeSymbol: string;
-  };
+  emoji: Emoji;
 };

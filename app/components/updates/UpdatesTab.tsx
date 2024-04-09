@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { ProjectUpdate } from '@/common/types';
+import { ProjectData, ProjectUpdate } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { errorMessage } from '../common/CustomToast';
@@ -19,59 +19,32 @@ import { AddUpdateCard } from './AddUpdateCard';
 import { ProjectTimeLine } from './ProjectTimeLine';
 
 interface UpdatesTabProps {
-  projectId: string;
+  projectData: ProjectData;
 }
 
 export const UpdatesTab = (props: UpdatesTabProps) => {
-  const { projectId } = props;
-  const [updateAdded, setUpdateAdded] = useState<boolean>(false);
-  const [projectUpdates, setProjectUpdates] = useState<ProjectUpdate[]>([]);
+  const { projectData } = props;
+  const [projectUpdates, setProjectUpdates] = useState<ProjectUpdate[]>(projectData.updates);
 
   const isVeryLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const appInsights = useAppInsightsContext();
 
-  useEffect(() => {
-    const fetchUpdates = async () => {
-      try {
-        const { data } = await getProjectUpdates({ projectId });
-        if (data) {
-          setProjectUpdates([...data]);
-        }
-      } catch (error) {
-        console.error('Error fetching project updates:', error);
-        errorMessage({ message: 'Failed to fetch project updates. Please try again later.' });
-        appInsights.trackException({
-          exception: new Error('Failed to fetch project updates.', { cause: error }),
-          severityLevel: SeverityLevel.Error,
-        });
+  const refetchUpdates = async () => {
+    try {
+      const { data } = await getProjectUpdates({ projectId: projectData.id });
+      if (data) {
+        setProjectUpdates([...data]);
       }
-    };
-
-    fetchUpdates();
-  }, [projectId]);
-
-  useEffect(() => {
-    const refetchUpdates = async () => {
-      try {
-        const { data } = await getProjectUpdates({ projectId });
-        if (data) {
-          setProjectUpdates([...data]);
-        }
-      } catch (error) {
-        console.error('Error refetching project updates:', error);
-        errorMessage({ message: 'Failed to refetch project updates. Please try again later.' });
-        appInsights.trackException({
-          exception: new Error('Failed to refetch project updates.', { cause: error }),
-          severityLevel: SeverityLevel.Error,
-        });
-      }
-    };
-
-    if (updateAdded) {
-      refetchUpdates();
+    } catch (error) {
+      console.error('Error refetching project updates:', error);
+      errorMessage({ message: 'Failed to refetch project updates. Please try again later.' });
+      appInsights.trackException({
+        exception: new Error('Failed to refetch project updates.', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
-  }, [projectId, updateAdded]);
+  };
 
   return (
     <Card sx={cardStyles}>
@@ -79,7 +52,7 @@ export const UpdatesTab = (props: UpdatesTabProps) => {
 
       <CardContent sx={cardContentStyles}>
         <Stack direction={isVeryLargeScreen ? 'row-reverse' : 'column'}>
-          <AddUpdateCard sx={updateCardStyles} projectId={projectId} setUpdateAdded={setUpdateAdded} />
+          <AddUpdateCard sx={updateCardStyles} projectId={projectData.id} refetchUpdates={refetchUpdates} />
           <Box flexGrow={'1'}>
             <ProjectTimeLine widthOfDateColumn={isSmallScreen ? '83px' : '273px'} projectUpdates={projectUpdates} />
           </Box>

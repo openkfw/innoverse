@@ -6,7 +6,6 @@ import {
   addCollaborationComment,
   deleteCollaborationComment,
   getCollaborationCommentById,
-  getCollaborationCommentUpvotedBy,
   getCollaborationQuestionComments,
   handleCollaborationCommentUpvote,
   updateCollaborationComment,
@@ -198,34 +197,6 @@ export const updateProjectCollaborationComment = withAuth(
       status: StatusCodes.OK,
       comment: updatedComment,
     };
-  },
-);
-
-export const isProjectCollaborationCommentUpvotedBy = withAuth(
-  async (user: UserSession, body: { commentId: string }) => {
-    try {
-      const validatedParams = validateParams(collaborationCommentUpvotedBySchema, body);
-      if (validatedParams.status === StatusCodes.OK) {
-        const result = await getCollaborationCommentUpvotedBy(dbClient, body.commentId, user.providerId);
-        return { status: StatusCodes.OK, data: result.length > 0 };
-      }
-      return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-        message: validatedParams.message,
-      };
-    } catch (err) {
-      const error: InnoPlatformError = dbError(
-        `Checking the upvote status of a Collaboration Comment ${body.commentId} for user ${user.providerId}`,
-        err as Error,
-        body.commentId,
-      );
-      logger.error(error);
-      return {
-        status: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: 'Checking the upvote status of comment failed',
-      };
-    }
   },
 );
 

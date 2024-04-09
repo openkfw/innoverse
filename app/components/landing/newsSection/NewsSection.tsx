@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { ProjectUpdate } from '@/common/types';
+import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
 import ErrorPage from '@/components/error/ErrorPage';
 
@@ -11,7 +11,7 @@ import { LandingPageSection } from '../LandingPageSection';
 import NewsCarousel from './NewsCarousel';
 
 type NewsProps = {
-  updates: ProjectUpdate[];
+  updates: ProjectUpdateWithAdditionalData[];
 };
 
 export const NewsSection = ({ updates }: NewsProps) => {

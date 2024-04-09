@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
@@ -11,8 +11,7 @@ import { SurveyQuestion } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import theme from '@/styles/theme';
 
-import { getUserVoted, handleSurveyVote } from './actions';
-import { SurveyReponsePickerLoadingSkeleton } from './SurveyReponsePickerLoadingSkeleton';
+import { handleSurveyVote } from './actions';
 import { SurveyResponsePicker } from './SurveyResponsePicker';
 
 interface SurveyCardProps {
@@ -21,7 +20,7 @@ interface SurveyCardProps {
 }
 
 export const SurveyCard = (props: SurveyCardProps) => {
-  const { isLoading, selectedOption, voteCount, handleVote } = useSurveyCard(props);
+  const { selectedOption, voteCount, handleVote } = useSurveyCard(props);
   const { surveyQuestion } = props;
 
   return (
@@ -35,9 +34,7 @@ export const SurveyCard = (props: SurveyCardProps) => {
       </Grid>
 
       <Grid item xs={12} md={6} sx={rightGridStyles}>
-        {isLoading ? (
-          <SurveyReponsePickerLoadingSkeleton />
-        ) : (
+        {
           <SurveyResponsePicker
             sx={{
               alignItems: 'center',
@@ -48,18 +45,17 @@ export const SurveyCard = (props: SurveyCardProps) => {
             responseOptions={surveyQuestion.responseOptions}
             voteCount={voteCount}
           />
-        )}
+        }
       </Grid>
     </Grid>
   );
 };
 
 function useSurveyCard({ projectId, surveyQuestion }: SurveyCardProps) {
-  const [isLoadingSelectedOption, setIsLoadingSelectedOption] = useState(true);
-  const [selectedOption, setSelectedOption] = useState<string>();
+  const [selectedOption, setSelectedOption] = useState(surveyQuestion.userVote);
   const appInsights = useAppInsightsContext();
 
-  const { surveyVotesAmount, isLoadingSurveyVotesAmount, setSurveyVotesAmount } = useProject();
+  const { surveyVotesAmount, setSurveyVotesAmount } = useProject();
 
   const hasVoted = selectedOption !== undefined;
 
@@ -87,29 +83,7 @@ function useSurveyCard({ projectId, surveyQuestion }: SurveyCardProps) {
     }
   };
 
-  useEffect(() => {
-    async function loadAndSetSelectedVoteOption() {
-      try {
-        const { data: userVote } = await getUserVoted({ surveyQuestionId: surveyQuestion.id });
-        if (userVote) {
-          setSelectedOption(userVote.vote);
-        }
-      } catch (error) {
-        console.error('Failed to load and set selected vote option', error);
-        errorMessage({ message: 'Failed to load your voting status. Please try again.' });
-        appInsights.trackException({
-          exception: new Error('Failed to load and set selected vote option', { cause: error }),
-          severityLevel: SeverityLevel.Error,
-        });
-      }
-    }
-    loadAndSetSelectedVoteOption().then(() => {
-      setIsLoadingSelectedOption(false);
-    });
-  }, [surveyQuestion.id]);
-
   return {
-    isLoading: isLoadingSelectedOption || isLoadingSurveyVotesAmount,
     voteCount: surveyVotesAmount,
     selectedOption,
     handleVote,

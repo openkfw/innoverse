@@ -40,6 +40,7 @@ export default function SignInOptions() {
       }
     }
     getSignInProviders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getCookieData = () => {

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { ProjectUpdate } from '@/common/types';
+import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
 import theme from '@/styles/theme';
 
@@ -16,7 +16,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 
 type NewsSliderProps = {
-  updates: ProjectUpdate[];
+  updates: ProjectUpdateWithAdditionalData[];
 };
 
 export default function NewsCarousel({ updates }: NewsSliderProps) {

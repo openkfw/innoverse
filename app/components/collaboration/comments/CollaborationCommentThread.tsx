@@ -98,6 +98,7 @@ function useCollaborationCommentThread({ comment }: useCollaborationCommentThrea
         loadResponses();
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [comment, displayResponses],
   );
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import Box from '@mui/material/Box';
@@ -10,14 +10,13 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { useNewsFilter } from '@/app/contexts/news-filter-context';
-import { ProjectUpdate } from '@/common/types';
+import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import theme from '@/styles/theme';
 import { getProjectsUpdatesFilter } from '@/utils/requests';
 
 import NewsCard from './NewsCard';
 
 interface NewsProps {
-  updateAdded: boolean;
   sx?: SxProps;
 }
 
@@ -27,37 +26,18 @@ export enum SortValues {
 }
 
 export const News = (props: NewsProps) => {
-  const { updateAdded, sx } = props;
-  const { news, setNews, refetchNews, filters, sort } = useNewsFilter();
+  const { sx } = props;
+  const { news, setNews, filters, sort, pageNumber, setPageNumber } = useNewsFilter();
   const [hasMoreValue, setHasMoreValue] = useState(true);
-  const [index, setIndex] = useState(1);
 
   const loadScrollData = async () => {
-    const data = (await getProjectsUpdatesFilter(sort, filters, index, filters.resultsPerPage)) as ProjectUpdate[];
-    setNews((prevItems: ProjectUpdate[]) => [...prevItems, ...data]);
-    data.length > 0 ? setHasMoreValue(true) : setHasMoreValue(false);
-    setIndex((prevIndex) => prevIndex + 1);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      refetchNews();
-      setIndex(2);
-    };
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, sort]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      refetchNews();
-      setIndex(2);
-    };
-    if (updateAdded) {
-      fetchData();
+    const filteredUpdates = await getProjectsUpdatesFilter(sort, pageNumber, filters);
+    if (filteredUpdates) {
+      setNews((prevItems: ProjectUpdateWithAdditionalData[]) => [...prevItems, ...filteredUpdates]);
+      filteredUpdates.length > 0 ? setHasMoreValue(true) : setHasMoreValue(false);
+      setPageNumber((prevIndex: number) => prevIndex + 1);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateAdded]);
+  };
 
   return (
     <Box sx={{ width: '100%', ...sx }}>

@@ -1,33 +1,35 @@
 'use client';
 
-import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, Dispatch, SetStateAction, useContext, useMemo, useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
-import { AmountOfNews, Filters, ProjectUpdate } from '@/common/types';
+import { AmountOfNews, Filters, ProjectUpdateWithAdditionalData } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import { SortValues } from '@/components/newsPage/News';
-import { getProjectsUpdates, getProjectsUpdatesFilter } from '@/utils/requests';
+import { getProjectsUpdatesFilter } from '@/utils/requests';
 
 interface NewsFilterContextInterface {
-  news: ProjectUpdate[];
-  setNews: Dispatch<SetStateAction<ProjectUpdate[]>>;
+  news: ProjectUpdateWithAdditionalData[];
+  setNews: Dispatch<SetStateAction<ProjectUpdateWithAdditionalData[]>>;
   filters: Filters;
   setFilters: (filters: Filters) => void;
   sort: SortValues.ASC | SortValues.DESC;
   setSort: (sort: SortValues.ASC | SortValues.DESC) => void;
-  refetchNews: () => void;
+  refetchNews: (filters?: Filters) => void;
   sortNews: () => void;
   topics: string[];
   projects: string[];
   amountOfNewsTopic: AmountOfNews;
   amountOfNewsProject: AmountOfNews;
+  pageNumber: number;
+  setPageNumber: Dispatch<SetStateAction<number>>;
 }
 
 const defaultState: NewsFilterContextInterface = {
   news: [],
   setNews: () => {},
-  filters: { resultsPerPage: 10, projects: [], topics: [] },
+  filters: { projects: [], topics: [] },
   setFilters: () => {},
   sort: SortValues.DESC,
   setSort: () => {},
@@ -37,67 +39,33 @@ const defaultState: NewsFilterContextInterface = {
   projects: [],
   amountOfNewsTopic: {},
   amountOfNewsProject: {},
+  pageNumber: 2,
+  setPageNumber: () => {},
 };
+
+interface NewsFilterContextProviderProps {
+  initialNews: ProjectUpdateWithAdditionalData[];
+  allUpdates: ProjectUpdateWithAdditionalData[];
+  children: React.ReactNode;
+}
 
 const NewsFilterContext = createContext(defaultState);
 
-export const NewsFilterContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [news, setNews] = useState<ProjectUpdate[]>(defaultState.news);
-  const [allNews, setAllNews] = useState<ProjectUpdate[]>(defaultState.news);
+export const NewsFilterContextProvider = ({ children, initialNews, allUpdates }: NewsFilterContextProviderProps) => {
+  const [news, setNews] = useState<ProjectUpdateWithAdditionalData[]>(initialNews);
   const [sort, setSort] = useState<SortValues.ASC | SortValues.DESC>(defaultState.sort);
   const [filters, setFilters] = useState<Filters>(defaultState.filters);
   const [amountOfNewsTopic, setAmountOfNewsTopic] = useState<AmountOfNews>(defaultState.amountOfNewsTopic);
   const [amountOfNewsProject, setAmountOfNewsProject] = useState<AmountOfNews>(defaultState.amountOfNewsProject);
-  const appInsights = useAppInsightsContext();
+  const [pageNumber, setPageNumber] = useState<number>(defaultState.pageNumber);
 
-  const topics = useMemo(() => {
-    const data = allNews
-      .map((update) => update.topic)
-      .filter((value, index, self) => self.indexOf(value) === index)
-      .filter((value) => value);
-
-    const mapUpdatesTopics = () => {
-      const arr: AmountOfNews = {};
-      return allNews.reduce((accumulator, value) => {
-        accumulator[value.topic] = ++accumulator[value.topic] || 1;
-        return accumulator;
-      }, arr);
-    };
-    setAmountOfNewsTopic(mapUpdatesTopics());
-    return data;
-  }, [allNews]);
-
-  const projects = useMemo(() => {
-    const data = allNews
-      .map((update) => update.title)
-      .filter((value, index, self) => self.indexOf(value) === index)
-      .filter((value) => value);
-
-    const mapUpdatesProjects = () => {
-      const arr: AmountOfNews = {};
-      return allNews.reduce((accumulator, value) => {
-        accumulator[value.title] = ++accumulator[value.title] || 1;
-        return accumulator;
-      }, arr);
-    };
-    setAmountOfNewsProject(mapUpdatesProjects());
-    return data;
-  }, [allNews]);
-
-  const sortNews = () => {
-    if (sort === SortValues.ASC) {
-      setSort(SortValues.DESC);
-      return;
-    }
-    setSort(SortValues.ASC);
-  };
-
-  const refetchNews = async () => {
+  const refetchNews = async (newFilters?: Filters) => {
     try {
-      const updates = (await getProjectsUpdatesFilter(sort, filters, 1, filters.resultsPerPage)) as ProjectUpdate[];
-      const allUpdates = (await getProjectsUpdates()) as ProjectUpdate[];
-      setNews([...updates]);
-      setAllNews([...allUpdates]);
+      const result = await getProjectsUpdatesFilter(sort, 1, newFilters || filters);
+      if (result) {
+        setNews([...result]);
+        setPageNumber(2);
+      }
     } catch (error) {
       errorMessage({ message: 'Error refetching news. Please check your connection and try again.' });
       console.error('Error refetching news:', error);
@@ -107,26 +75,51 @@ export const NewsFilterContextProvider = ({ children }: { children: React.ReactN
       });
     }
   };
+  const appInsights = useAppInsightsContext();
 
-  useEffect(() => {
-    const setData = async () => {
-      try {
-        const updates = (await getProjectsUpdatesFilter(sort, filters, 1, filters.resultsPerPage)) as ProjectUpdate[];
-        const allUpdates = (await getProjectsUpdates()) as ProjectUpdate[];
-        setNews([...updates]);
-        setAllNews([...allUpdates]);
-      } catch (error) {
-        errorMessage({ message: 'Error fetching news updates. Please try again later.' });
-        console.error('Error fetching initial news data:', error);
-        appInsights.trackException({
-          exception: new Error('Error fetching initial news data', { cause: error }),
-          severityLevel: SeverityLevel.Error,
-        });
-      }
+  const topics = useMemo(() => {
+    const data = allUpdates
+      .map((update) => update.topic)
+      .filter((value, index, self) => self.indexOf(value) === index)
+      .filter((value) => value);
+
+    const mapUpdatesTopics = () => {
+      const arr: AmountOfNews = {};
+      return allUpdates.reduce((accumulator, value) => {
+        accumulator[value.topic] = ++accumulator[value.topic] || 1;
+        return accumulator;
+      }, arr);
     };
-    setData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setAmountOfNewsTopic(mapUpdatesTopics());
+    return data;
+  }, [allUpdates]);
+
+  const projects = useMemo(() => {
+    const data = allUpdates
+      .map((update) => update.title)
+      .filter((value, index, self) => self.indexOf(value) === index)
+      .filter((value) => value);
+
+    const mapUpdatesProjects = () => {
+      const arr: AmountOfNews = {};
+      return allUpdates.reduce((accumulator, value) => {
+        accumulator[value.title] = ++accumulator[value.title] || 1;
+        return accumulator;
+      }, arr);
+    };
+    setAmountOfNewsProject(mapUpdatesProjects());
+    return data;
+  }, [allUpdates]);
+
+  const sortNews = () => {
+    if (sort === SortValues.ASC) {
+      setSort(SortValues.DESC);
+      setNews(news.reverse());
+      return;
+    }
+    setSort(SortValues.ASC);
+    setNews(news.reverse());
+  };
 
   const contextObject: NewsFilterContextInterface = {
     news,
@@ -141,6 +134,8 @@ export const NewsFilterContextProvider = ({ children }: { children: React.ReactN
     projects,
     amountOfNewsTopic,
     amountOfNewsProject,
+    pageNumber,
+    setPageNumber,
   };
 
   return <NewsFilterContext.Provider value={contextObject}> {children}</NewsFilterContext.Provider>;

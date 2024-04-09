@@ -15,14 +15,14 @@ import { EventEmojiReactionCard } from '@/components/collaboration/emojiReaction
 import { EventCardHeader } from '@/components/landing/eventsSection/EventCardHeader';
 import theme from '@/styles/theme';
 
-import { Event } from '../../../common/types';
+import { EventWithAdditionalData } from '../../../common/types';
 
 import EventContent from './EventContent';
 
 export const defaultImageForEvents = '/images/event_image.jpg';
 
 interface EventCardProps {
-  event: Event;
+  event: EventWithAdditionalData;
   disabled: boolean;
 }
 
@@ -54,12 +54,12 @@ const EventCard = ({ event, disabled }: EventCardProps) => {
             />
             <Box sx={{ mt: 1 }}>
               <EventThemes themes={event.themes} sx={{ mb: 1, mt: -0.5 }} />
-              {isLargeSceen && <EventEmojiReactionCard eventId={event.id} />}
+              {isLargeSceen && <EventEmojiReactionCard event={event} />}
             </Box>
           </Box>
           <Box style={{ marginTop: 0 }}>
             <EventContent event={event} sx={{ my: { xs: 2, lg: 0.5 } }} />
-            {!isLargeSceen && <EventEmojiReactionCard eventId={event.id} />}
+            {!isLargeSceen && <EventEmojiReactionCard event={event} />}
           </Box>
         </Stack>
       </CardContent>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
@@ -14,25 +14,26 @@ import { NewsFilterProps } from '@/common/types';
 
 export default function ProjectsInput(props: NewsFilterProps) {
   const { setFilters, filters } = props;
-  const { projects, amountOfNewsProject } = useNewsFilter();
+  const { projects, amountOfNewsProject, refetchNews } = useNewsFilter();
   const [values, setValues] = useState(filters.projects);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
     const name = event.target.name;
+    let newValues = [...values];
     if (checked && !values.includes(name)) {
       setValues((values) => [...values, name]);
+      newValues = [...values, name];
     } else if (!checked && values.includes(name)) {
       setValues(values.filter((value) => value != name));
+      newValues = values.filter((value) => value != name);
     } else if (checked && values.includes(name)) {
       setValues((values) => values.filter((value) => value === name));
+      newValues = values.filter((value) => value === name);
     }
+    setFilters({ ...filters, projects: newValues });
+    refetchNews({ ...filters, projects: newValues });
   };
-
-  useEffect(() => {
-    setFilters({ ...filters, projects: values });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values]);
 
   return (
     <Box sx={{ m: 3 }}>

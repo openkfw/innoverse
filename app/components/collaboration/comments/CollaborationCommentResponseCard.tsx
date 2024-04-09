@@ -58,6 +58,7 @@ function useCollaborationCommentResponseCard({ response, onDelete }: Collaborati
       }
     }
     loadAndSetIsUpvoted();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);
 
   const toggleResponseUpvote = () => {

@@ -1,11 +1,11 @@
-import { Event } from '@/common/types';
+import { EventWithAdditionalData } from '@/common/types';
 
 import Carousel from '../Carousel';
 
 import { EventCard } from './EventCard';
 
 interface EventCarouselProps {
-  events: Event[];
+  events: EventWithAdditionalData[];
 }
 
 export const EventCarousel = ({ events }: EventCarouselProps) => {
