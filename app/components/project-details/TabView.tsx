@@ -92,7 +92,7 @@ export default function TabView(props: BasicTabsProps) {
   };
 
   useEffect(() => {
-    if (initialRender) {
+    if (initialRender && searchParams?.get('tab')) {
       setInitialRender(false);
 
       let sectionId;
@@ -121,7 +121,7 @@ export default function TabView(props: BasicTabsProps) {
         });
       }
     }
-  }, [activeTab, initialRender]);
+  }, [activeTab, initialRender, searchParams]);
 
   useEffect(() => {
     const tabQueryParam = searchParams?.get('tab');
