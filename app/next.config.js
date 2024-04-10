@@ -7,8 +7,8 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   experimental: {
+    instrumentationHook: true,
     serverActions: {
-      allowedForwardedHosts: ["***URL_REMOVED***"],
       allowedOrigins: ["***URL_REMOVED***"]
     }
   },
@@ -31,9 +31,6 @@ const nextConfig = {
       },
       { hostname: '127.0.0.1', pathname: '/uploads/**', port: '1337' },
     ],
-  },
-  experimental: {
-    instrumentationHook: true,
   },
   async rewrites() {
     return [
