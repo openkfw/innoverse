@@ -8,6 +8,7 @@ const nextConfig = {
   swcMinify: true,
   experimental: {
     serverActions: {
+      allowedForwardedHosts: ["***URL_REMOVED***"],
       allowedOrigins: ["***URL_REMOVED***"]
     }
   },
