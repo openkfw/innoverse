@@ -9,7 +9,7 @@ const nextConfig = {
   experimental: {
     instrumentationHook: true,
     serverActions: {
-      allowedOrigins: ["***URL_REMOVED***"]
+      allowedOrigins: ["***URL_REMOVED***", "***URL_REMOVED***"]
     }
   },
   images: {

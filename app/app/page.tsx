@@ -39,7 +39,7 @@ async function IndexPage() {
         </div>
         <EventSection events={events} />
         <ProjectSection projects={projects} />
-        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+        <Box>
           <MappingProjectsCard projects={projects} />
         </Box>
       </Stack>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -71,6 +72,9 @@ export default function TopBarMobile() {
               </ListItem>
             ),
           )}
+          <ListItem sx={listItemStyles} onClick={() => signOut()}>
+            Sign out
+          </ListItem>
         </List>
       </nav>
 

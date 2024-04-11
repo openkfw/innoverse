@@ -17,7 +17,7 @@ import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 import CustomDialog from '../common/CustomDialog';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
-interface UserSuggestionRowProps {
+export interface UserSuggestionRowProps {
   provider: { name: string; id: string };
   name: string;
   image?: string;

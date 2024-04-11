@@ -14,7 +14,7 @@ type Resolver = {
       {
         subscriptions: WebPushSubscription[];
         userId: string;
-        notification: { topic: NotificationTopic; body: string; url?: string };
+        notification: { topic: NotificationTopic; body: string; url: string };
       }[]
     >;
     shouldNotify: () => boolean;
@@ -28,7 +28,7 @@ type NotificationResolverResult =
         {
           subscriptions: WebPushSubscription[];
           userId: string;
-          notification: { topic: NotificationTopic; body: string; url?: string };
+          notification: { topic: NotificationTopic; body: string; url: string };
         }[]
       >;
     }
@@ -126,6 +126,7 @@ export const evalPushNotificationRules = async (
             notification: {
               topic: 'opportunity',
               body: 'Eine neue Opportunity wurde kürzlich zu einem Projekt dem du folgst hinzugefügt.',
+              url: '/',
             },
           };
         }),
@@ -145,6 +146,7 @@ export const evalPushNotificationRules = async (
             notification: {
               topic: 'collaboration-question',
               body: 'Eine neue Frage wurde kürzlich zu einem Projekt dem du folgst hinzugefügt.',
+              url: '/',
             },
           };
         }),
@@ -164,6 +166,7 @@ export const evalPushNotificationRules = async (
             notification: {
               topic: 'survey-question',
               body: 'Eine neue Umfrage wurde kürzlich zu einem Projekt dem du folgst hinzugefügt.',
+              url: '/',
             },
           };
         }),
@@ -181,6 +184,7 @@ export const evalPushNotificationRules = async (
           notification: {
             topic: 'event',
             body: `Ein neues Event wurde kürzlich hinzugefügt.`,
+            url: '/',
           },
         };
       });
@@ -197,6 +201,7 @@ export const evalPushNotificationRules = async (
           notification: {
             topic: 'update',
             body: `Ein neues Update wurde hinzugefügt.`,
+            url: '/news',
           },
         };
       });
