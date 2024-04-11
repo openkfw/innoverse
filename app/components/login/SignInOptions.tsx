@@ -9,10 +9,15 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import { destroyCookie, parseCookies } from 'nookies';
 
 import Collapse from '@mui/material/Collapse';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
+import theme from '@/styles/theme';
 
 import { errorMessage } from '../common/CustomToast';
 
 import LoginProviderRow from './LoginProviderRow';
+import MobileLoginProviderRow from './MobileLoginProviderRow';
+import MobileUserSuggestionRow from './MobileUserSuggestionRow';
 import UserSuggestionRow from './UserSuggestionRow';
 
 export default function SignInOptions() {
@@ -24,6 +29,8 @@ export default function SignInOptions() {
   const [userSuggested, setUserSuggested] = React.useState(true);
   const { session } = parseCookies();
   const appInsights = useAppInsightsContext();
+
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     async function getSignInProviders() {
@@ -86,19 +93,40 @@ export default function SignInOptions() {
   return (
     <>
       {signInProviders && session && userSuggested && (
-        <UserSuggestionRow
-          key={getProvider().id}
-          provider={getProvider()}
-          name={getCookieData()?.name}
-          image={getCookieData()?.image}
-          handleRemoveCookie={handleRemoveCookie}
-          handleToggleCollapse={handleToggleCollapse}
-          open={open}
-        />
+        <>
+          {isSmallScreen ? (
+            <MobileUserSuggestionRow
+              key={getProvider().id}
+              provider={getProvider()}
+              name={getCookieData()?.name}
+              image={getCookieData()?.image}
+              handleRemoveCookie={handleRemoveCookie}
+              handleToggleCollapse={handleToggleCollapse}
+              open={open}
+            />
+          ) : (
+            <UserSuggestionRow
+              key={getProvider().id}
+              provider={getProvider()}
+              name={getCookieData()?.name}
+              image={getCookieData()?.image}
+              handleRemoveCookie={handleRemoveCookie}
+              handleToggleCollapse={handleToggleCollapse}
+              open={open}
+            />
+          )}
+        </>
       )}
+
       <Collapse in={open || !session} unmountOnExit>
         {signInProviders &&
-          Object.values(signInProviders).map((provider) => <LoginProviderRow key={provider.id} provider={provider} />)}
+          Object.values(signInProviders).map((provider) =>
+            isSmallScreen ? (
+              <MobileLoginProviderRow key={provider.id} provider={provider} />
+            ) : (
+              <LoginProviderRow key={provider.id} provider={provider} />
+            ),
+          )}
       </Collapse>
     </>
   );

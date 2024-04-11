@@ -70,7 +70,7 @@ export const MappingProjectsCard = (props: ProjectProps) => {
               backdropFilter: `blur(20px)`,
               borderRadius: '24px',
               border: '1px solid rgba(255, 255, 255, 0.20)',
-              height: '600px',
+              height: 'auto',
               boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
             }}
           >
@@ -79,8 +79,8 @@ export const MappingProjectsCard = (props: ProjectProps) => {
               title={<Typography variant="h4">Strategische Innovation @ ***STRING_REMOVED*** </Typography>}
             />
 
-            <CardContent sx={{ ml: '25px', mr: '25px' }}>
-              <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <CardContent sx={{ ml: '25px', mr: '25px', display: 'flex' }}>
+              <Grid container spacing={2} sx={{ display: 'flex' }}>
                 {mappingData.map((data) => {
                   return (
                     <PhaseColumn
@@ -105,4 +105,5 @@ export const MappingProjectsCard = (props: ProjectProps) => {
 const mappingProjectsCardStyles = {
   position: 'relative',
   overflowX: 'hidden',
+  minHeight: '400px',
 };

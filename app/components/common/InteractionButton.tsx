@@ -143,7 +143,11 @@ export default function InteractionButton(props: InteractionButtonProps) {
   };
 
   const getBorderColor = () => {
-    if (interactionType === InteractionType.COMMENT || interactionType === InteractionType.FEEDBACK)
+    if (
+      interactionType === InteractionType.COMMENT ||
+      interactionType === InteractionType.FEEDBACK ||
+      interactionType === InteractionType.ADD_UPDATE
+    )
       return 'rgba(0, 0, 0, 0.10)';
     return isSelected || clicked ? 'secondary.main' : 'rgba(0, 0, 0, 0.10)';
   };
@@ -163,7 +167,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
         py: 1,
         color: isSelected || clicked ? 'secondary.main' : 'rgba(0, 0, 0, 0.56)',
         fontFamily: 'Arial',
-        fontSize: '13px',
+        fontSize: { xs: '12px', lg: '13px' },
         fontWeight: '700',
         lineHeight: '19px',
         border: '1px solid',

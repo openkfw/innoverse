@@ -53,11 +53,20 @@ const featuredTypographyStyles = {
 };
 
 const titleStyles = {
+  maxWidth: '100%',
   display: 'inline-block',
-  whiteSpace: 'pre-line',
+  overflowWrap: 'break-word',
+  whiteSpace: 'pre-wrap',
   marginLeft: 6 / 8,
   marginTop: 7 / 8,
   marginBottom: 3,
+  hyphens: 'auto',
+  WebkitHyphens: 'auto',
+  MsHyphens: 'auto',
+  MozHyphens: 'auto',
+  WebkitLocale: 'de-DE',
+  locale: 'de-DE',
+
   fontSize: {
     lg: 55,
     md: 35,

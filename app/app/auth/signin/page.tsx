@@ -17,11 +17,11 @@ export default function SignIn() {
           backdropFilter: 'blur(4px)',
           background: 'rgba(0, 0, 0, 0.12)',
           top: '8%',
-          padding: 3,
+          padding: { xs: 0, lg: 3 },
           borderRadius: '24px',
         }}
       >
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 440 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, lg: 2 } }}>
           <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 700 }}>
             Sign in to continue
           </Typography>
