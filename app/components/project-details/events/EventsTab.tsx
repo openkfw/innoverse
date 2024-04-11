@@ -253,7 +253,7 @@ export const EventsTab = (props: EventsTabProps) => {
               />
             )}
           {/*If the events don't exist, display come back later message*/}
-          {filteredFutureEvents.length === 0 && pastEvents.length === 0 && (
+          {futureEvents.length === 0 && pastEvents.length === 0 && (
             <EventFilterException text="Leider gibt es noch keine Events. Bitte schau später noch einmal vorbei." />
           )}
           {/*If no future events exist, display message and button to enable past events*/}
