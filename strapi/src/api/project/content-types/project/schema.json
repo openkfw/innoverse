@@ -14,7 +14,8 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true
+      "required": true,
+      "maxLength": 60
     },
     "featured": {
       "type": "boolean",
@@ -64,7 +65,8 @@
       "required": true
     },
     "shortTitle": {
-      "type": "string"
+      "type": "string",
+      "maxLength": 30
     },
     "team": {
       "type": "relation",
