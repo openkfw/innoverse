@@ -1,17 +1,5 @@
 import { z } from 'zod';
 
-export const updateReactionShema = z
-  .object({
-    updateId: z.string(),
-  })
-  .required();
-
-export const eventReactionShema = z
-  .object({
-    eventId: z.string(),
-  })
-  .required();
-
 export const reactionShemaForUpdate = z
   .object({
     updateId: z.string(),
