@@ -42,7 +42,7 @@ export default function HeroSection(props: HeroSectionProps) {
       </Grid>
       <Grid container item xs={12} md={7}>
         <Card sx={cardStyles}>
-          <Typography variant="h2" sx={cardTitleStyles}>
+          <Typography variant="h2" sx={{ ...cardTitleStyles, ...textOverflowStyle }}>
             {title}
           </Typography>
           <Grid container item spacing={0} sx={cardBodyStyles}>
@@ -68,9 +68,11 @@ export default function HeroSection(props: HeroSectionProps) {
                       </Typography>
                     }
                     subheader={
-                      <Typography variant="caption" sx={{ color: 'common.white', ml: '8px' }}>
-                        {author.role}
-                      </Typography>
+                      author.role && (
+                        <Typography variant="caption" sx={{ color: 'common.white', ml: '8px' }}>
+                          {author.role}
+                        </Typography>
+                      )
                     }
                     sx={cardHeaderStyles}
                   />
@@ -134,7 +136,7 @@ const cardStyles = {
   boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
   backdropFilter: 'blur(20px)',
   width: 588,
-  height: 312,
+  minHeight: 312,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
@@ -158,10 +160,11 @@ const cardStyles = {
 };
 
 const cardTitleStyles = {
-  fontSize: '48px',
-
-  [theme.breakpoints.down('md')]: {
-    fontSize: '23px',
+  fontSize: {
+    lg: 43,
+    md: 40,
+    sm: 35,
+    xs: 30,
   },
 };
 
@@ -199,4 +202,13 @@ const statusStyles = {
   [theme.breakpoints.down('md')]: {
     marginTop: '10px',
   },
+};
+
+const textOverflowStyle = {
+  hyphens: 'auto',
+  WebkitHyphens: 'auto',
+  MsHyphens: 'auto',
+  MozHyphens: 'auto',
+  WebkitLocale: 'de-DE',
+  locale: 'de-DE',
 };
