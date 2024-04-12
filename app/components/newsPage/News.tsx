@@ -49,7 +49,7 @@ export const News = (props: NewsProps) => {
           </Stack>
         }
         endMessage={
-          <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 1 }}>
+          <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 2 }}>
             Alle Daten wurden geladen
           </Typography>
         }

@@ -202,7 +202,7 @@ const titleStyles = {
 };
 
 const subtitleStyles = {
-  color: 'secondary.main',
+  color: 'text.primary',
   fontWeight: '400',
   marginTop: 1,
   fontSize: '16px',

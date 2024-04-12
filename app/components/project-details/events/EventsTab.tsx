@@ -182,7 +182,7 @@ export const EventsTab = (props: EventsTabProps) => {
                     }
                     endMessage={
                       (!currentFilters.pastEventsShown || pastEvents.length === 0) && (
-                        <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 1 }}>
+                        <Typography color="primary.main" sx={{ textAlign: 'center', mt: 1 }}>
                           Alle Daten wurden geladen
                         </Typography>
                       )
@@ -218,7 +218,7 @@ export const EventsTab = (props: EventsTabProps) => {
                       }
                       endMessage={
                         filteredPastEvents.length > 0 && (
-                          <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 1 }}>
+                          <Typography color="primary.main" sx={{ textAlign: 'center', mt: 1 }}>
                             Alle Daten wurden geladen
                           </Typography>
                         )
