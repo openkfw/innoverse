@@ -141,6 +141,7 @@ const addNewReactionButtonStyles = {
   borderRadius: '2px',
   color: 'text.primary',
   '&:hover': {
+    color: 'text.primary',
     bgcolor: 'action.hover',
   },
 };
