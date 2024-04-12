@@ -6,6 +6,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { ProjectUpdate } from '@/common/types';
 import AllUpdatesIcon from '@/components/icons/AllUpdatesIcon';
@@ -32,6 +33,8 @@ const UpdateCard = (props: UpdateCardProps) => {
   const nextDisabled = currentIndex === updates.length - 1;
   const progress = `${currentIndex + 1}/${updates.length}`;
   const update = updates[currentIndex];
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const MAX_LENGTH = isSmallScreen ? 350 : 160;
 
   function showPrevious() {
     if (currentIndex > 0) {
@@ -64,6 +67,31 @@ const UpdateCard = (props: UpdateCardProps) => {
     return <></>;
   }
 
+  function readMore() {
+    const newUrl = `${window.location.pathname}?tab=2`;
+    window.history.pushState({ path: newUrl }, '', newUrl);
+
+    setTimeout(() => {
+      const scroll = () => {
+        const section = document.getElementById('updates-tab')?.offsetTop;
+        if (section) {
+          window.scrollTo({
+            top: section,
+            behavior: 'smooth',
+          });
+        }
+      };
+
+      scroll();
+    }, 100);
+  }
+
+  function showText() {
+    return update?.comment.length > MAX_LENGTH
+      ? parseStringForLinks(update?.comment.slice(0, MAX_LENGTH))
+      : parseStringForLinks(update?.comment);
+  }
+
   return (
     <>
       <Typography variant="overline" sx={titleStyles}>
@@ -93,9 +121,24 @@ const UpdateCard = (props: UpdateCardProps) => {
               </Typography>
             </Box>
           </Grid>
-          <Typography variant="body1" sx={{ color: 'rgba(0, 0, 0, 0.87)', marginTop: 1, marginBottom: 1 }}>
-            {parseStringForLinks(update?.comment)}
-          </Typography>
+          <Box>
+            <Typography
+              variant="body1"
+              sx={{ color: 'rgba(0, 0, 0, 0.87)', marginTop: 1, marginBottom: 1, display: 'inline' }}
+            >
+              {showText()}
+            </Typography>
+
+            {update?.comment.length > MAX_LENGTH && (
+              <Typography
+                variant="subtitle2"
+                onClick={readMore}
+                sx={{ ...buttonOverlayStyle, display: 'inline', cursor: 'pointer' }}
+              >
+                ... alles anzeigen
+              </Typography>
+            )}
+          </Box>
           <Typography variant="caption" color="text.secondary">
             {formatDate(update?.updatedAt)}
           </Typography>
@@ -216,4 +259,18 @@ const buttonStyles = {
 
 const typographyStyles = {
   color: 'rgba(0, 0, 0, 0.56)',
+};
+
+const buttonOverlayStyle = {
+  background: '#ffffff',
+  color: theme.palette.primary.main,
+  ':hover': {
+    background: '#ffffff',
+    color: theme.palette.primary.main,
+  },
+  fontSize: '14px',
+  fontWeight: '500',
+  cursor: 'pointer',
+  boxShadow: '-10px 0 10px white',
+  width: '130px',
 };

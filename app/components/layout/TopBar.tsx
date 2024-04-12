@@ -71,8 +71,8 @@ export default function TopBar() {
                   alt="***STRING_REMOVED***  Logo"
                   sizes="100vw"
                   style={{
-                    width: '100%',
-                    height: '100%',
+                    width: '70%',
+                    height: '70%',
                   }}
                 />
               </Link>

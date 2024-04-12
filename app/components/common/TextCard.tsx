@@ -29,7 +29,7 @@ interface TextCardProps {
   headerSx?: SxProps;
 }
 
-const MAX_TEXT_LENGTH = 300;
+const MAX_TEXT_LENGTH = 200;
 
 export const TextCard = ({ content, footer, sx, headerSx }: TextCardProps) => {
   const { author, text } = content;
@@ -72,9 +72,9 @@ export const TextCard = ({ content, footer, sx, headerSx }: TextCardProps) => {
       )}
       <CardContent sx={{ ...cardContentStyles }} style={{ paddingBottom: 0 }}>
         <Stack direction="column" spacing={2}>
-          <Box sx={{ ...textContainerStyle, WebkitLineClamp: isCollapsed ? '100' : '6' }}>
+          <Box sx={{ ...textContainerStyle, overflowWrap: isCollapsed ? 'break-word' : 'unset' }}>
             <Typography variant="body1" sx={textStyle}>
-              {parseStringForLinks(text)}
+              {isCollapsed ? parseStringForLinks(text) : parseStringForLinks(text.slice(0, MAX_TEXT_LENGTH))}
             </Typography>
             {!isCollapsed && (
               <Typography variant="subtitle2" onClick={handleToggle} sx={buttonOverlayStyle}>
