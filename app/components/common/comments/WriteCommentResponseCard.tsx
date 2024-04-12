@@ -15,7 +15,7 @@ interface WriteCommentResponseCardProps {
   sx?: SxProps;
 }
 
-export const WriteCommentResponseCard = ({ comment, projectName, onRespond, sx }: WriteCommentResponseCardProps) => {
+const WriteCommentResponseCard = ({ comment, projectName, onRespond, sx }: WriteCommentResponseCardProps) => {
   const commentState = useCommentState();
   const commentInteractions = useCommentInteractions();
 
@@ -25,8 +25,12 @@ export const WriteCommentResponseCard = ({ comment, projectName, onRespond, sx }
   };
 
   return (
-    commentState.isResponding(comment) && (
-      <WriteCommentCard sx={sx} projectName={projectName} onSubmit={handleResponse} />
-    )
+    <>
+      {commentState.isResponding(comment) && (
+        <WriteCommentCard sx={sx} projectName={projectName} onSubmit={handleResponse} />
+      )}
+    </>
   );
 };
+
+export default WriteCommentResponseCard;

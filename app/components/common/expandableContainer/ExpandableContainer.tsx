@@ -60,7 +60,7 @@ export function useExpandableContainer({
     if (!containerRef.current) return;
     const scrollTop = containerRef.current.scrollTop;
     if (scrollTop > 0 && !isExpanded) {
-      containerRef.current.scrollTo({ top: 0, behavior: 'instant' });
+      containerRef.current.scrollTo({ top: 0, behavior: 'auto' });
     }
   });
 

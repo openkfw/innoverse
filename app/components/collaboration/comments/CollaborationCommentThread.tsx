@@ -10,7 +10,7 @@ import { Comment, CommentResponse } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import { TransparentButton } from '@/components/common/TransparentButton';
 
-import { WriteCommentResponseCard } from '../../common/comments/WriteCommentResponseCard';
+import WriteCommentResponseCard from '../../common/comments/WriteCommentResponseCard';
 
 import { addProjectCollaborationCommentResponse, getProjectCollaborationCommentResponses } from './actions';
 import { CollaborationCommentCard } from './CollaborationCommentCard';
