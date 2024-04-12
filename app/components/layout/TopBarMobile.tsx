@@ -17,20 +17,15 @@ import { useUser } from '@/app/contexts/user-context';
 
 import FeedbackSection from '../landing/feedbackSection/FeedbackSection';
 
+import { Headers } from './Layout';
+
 import logo from '/public/images/logo.svg';
 
-type Headers = {
-  text: string;
-  link?: string;
-};
+interface TopBarProps {
+  pages: Headers[];
+}
 
-const pages: Headers[] = [
-  { text: 'Initiativen', link: '/#initiativen' },
-  { text: 'News', link: '/news' },
-  { text: 'AI Assistant' },
-];
-
-export default function TopBarMobile() {
+export default function TopBarMobile({ pages }: TopBarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useUser();
 
@@ -72,6 +67,13 @@ export default function TopBarMobile() {
               </ListItem>
             ),
           )}
+          <Link
+            href={process.env.NEXT_PUBLIC_STRAPI_ENDPOINT || '/not-found'}
+            target="_blank"
+            style={{ textDecoration: 'none', color: 'common.white' }}
+          >
+            <ListItem sx={listItemStyles}>Content Editor</ListItem>
+          </Link>
           <ListItem sx={listItemStyles} onClick={() => signOut()}>
             Sign out
           </ListItem>
