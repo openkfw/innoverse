@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import MuiMarkdown, { getOverrides, Overrides } from 'mui-markdown';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -22,6 +21,7 @@ import theme from '@/styles/theme';
 
 import { useExpandableContainer } from '../common/expandableContainer/ExpandableContainer';
 import { parseStringForLinks } from '../common/LinkString';
+import MuiMarkdownSection from '../common/MuiMarkdownSection';
 
 import CommentsSection from './comments/CommentsSection';
 import { AuthorInformation } from './AuthorInformation';
@@ -56,12 +56,34 @@ interface ProjectTextAnchorMenuProps {
   setHeadingActive: (id: string) => void;
 }
 
+interface ProjectHeadingProps {
+  heading: MarkdownHeading;
+  setHeadingActive: (id: string) => void;
+}
+
 export const ProjectProgress = (props: ProjectProgressProps) => {
   const { project, projectName } = props;
 
+  const contentStyle = {
+    margin: '88px 64px',
+    [theme.breakpoints.down('md')]: {
+      margin: '48px 24px',
+    },
+  };
+
+  const wrapperStyle = {
+    borderRadius: '24px',
+    background: '#FFF',
+    position: 'relative',
+    zIndex: 0,
+    boxShadow:
+      '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
+    flexGrow: 1,
+  };
+
   return (
-    <Card sx={wrapperStyles}>
-      <Stack sx={contentStyles}>
+    <Card sx={wrapperStyle}>
+      <Stack sx={contentStyle}>
         <ProjectDescription project={project} />
         <Divider sx={{ width: { xs: '100%', lg: '70%' } }} />
         <ProjectTags tags={project.description.tags} />
@@ -100,11 +122,11 @@ const ProjectDescription = ({ project }: { project: Project }) => {
   const generateLinkMarkup = (contentElement: Element | null): MarkdownHeading[] => {
     if (!contentElement) return [] as MarkdownHeading[];
     const headings = [...contentElement.querySelectorAll<HTMLElement>('h1, h2')];
-    return headings.map((heading) => ({
+    return headings.map((heading, key) => ({
       title: heading.innerText,
       depth: parseInt(heading.nodeName.replace(/\D/g, '')) || 0,
       id: heading.getAttribute('id') || '',
-      active: false,
+      active: key === 0 ? true : false,
     }));
   };
 
@@ -117,18 +139,26 @@ const ProjectDescription = ({ project }: { project: Project }) => {
     [project],
   );
 
-  return (
-    <Grid container direction={'row'}>
-      <Grid item lg={2} md={3} sx={textAnchorMenuStyles} hidden={!headings.length}>
-        <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
-      </Grid>
+  const containerStyle = {
+    marginLeft: '5%',
+    marginTop: '25%',
+    [theme.breakpoints.down('lg')]: {
+      display: 'none',
+    },
+  };
 
-      <Grid item xs flexGrow={1}>
+  return (
+    <Grid container direction="row" spacing={1}>
+      {headings.length > 0 && (
+        <Grid item md={4} lg={3}>
+          <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
+        </Grid>
+      )}
+      <Grid item sm={12} md={8} lg={headings.length > 0 ? 6 : 8}>
         {container.element}
       </Grid>
-
       <Grid item md={0} lg={3}>
-        <Box sx={infoItemRightContainerStyles}>
+        <Box sx={containerStyle}>
           <InfoItemRight title={project.title} summary={project.summary} />
         </Box>
       </Grid>
@@ -137,20 +167,36 @@ const ProjectDescription = ({ project }: { project: Project }) => {
 };
 
 const InfoItemRight = ({ title, summary }: InfoItemProps) => {
+  const dividerStyle = {
+    width: '100%',
+    height: '2px',
+    bgcolor: 'common.white',
+    borderColor: 'common.white',
+    mb: '17px',
+  };
+
+  const infoItemRightStyle = {
+    width: '270px',
+    maxWidth: '100%',
+    backgroundColor: '#EBF3F7',
+    borderRadius: '8px',
+    marginBottom: 1,
+  };
+
   return (
-    <Card sx={infoItemRightStyles} elevation={0}>
+    <Card sx={infoItemRightStyle} elevation={0}>
       <CardContent sx={{ p: '18px', pb: 1 }}>
-        <Typography variant="subtitle1" color="text.primary" sx={{ textTransform: 'uppercase' }}>
+        <Typography variant="subtitle1" color="#5A6166" sx={{ ...textOverflowStyle, textTransform: 'uppercase' }}>
           {title}
         </Typography>
       </CardContent>
       <Divider sx={dividerStyle} />
 
-      <CardMedia sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Image src={robotic_hand} alt="image" width={235} height={132} />
+      <CardMedia sx={{ px: '18px' }}>
+        <Image src={robotic_hand} alt="image" width={0} height={0} style={{ width: '100%', height: 'auto' }} />
       </CardMedia>
       <CardContent sx={{ p: '18px' }}>
-        <Typography variant="subtitle2" color="text.primary">
+        <Typography variant="subtitle2" color="#5A6166" sx={textOverflowStyle}>
           {parseStringForLinks(summary)}
         </Typography>
       </CardContent>
@@ -160,156 +206,87 @@ const InfoItemRight = ({ title, summary }: InfoItemProps) => {
 
 const ProjectText = ({ text, sx }: ProjectTextProps) => (
   <Box id="main-text" sx={sx}>
-    <MuiMarkdown overrides={muiMarkdownOverrides as Overrides}>{text}</MuiMarkdown>
+    <MuiMarkdownSection text={text} />
   </Box>
 );
 
-const ProjectTextAnchorMenu = (props: ProjectTextAnchorMenuProps) => {
-  const listStyles: SxProps = {
-    width: '100%',
-    maxWidth: 360,
-    bgcolor: 'background.paper',
+const ProjectHeading = ({ heading, setHeadingActive }: ProjectHeadingProps) => {
+  const listItemStyle = {
+    pl: '20px',
+    mb: '10px',
+    pt: 0,
+    '&:last-child': {
+      pb: 0,
+    },
+    '&:hover': {
+      borderRadius: '8px',
+      backgroundColor: 'rgba(0, 90, 140, 0.1)',
+    },
+  };
+
+  const dividerStyle = {
+    borderWidth: heading.active ? '2px' : '1px',
+    m: 0,
+    borderColor: heading.active ? '#99A815' : '#32373B',
+    opacity: heading.active ? 1 : 0.2,
+  };
+
+  const linkStyle = {
+    color: '#99A815',
+    lineHeight: '140%',
+    textDecoration: 'none',
+    '&:hover': { color: '#99A815' },
+  };
+
+  return (
+    <Stack direction="row">
+      <Divider orientation="vertical" variant="middle" flexItem sx={dividerStyle} />
+      <ListItemButton sx={listItemStyle} key={heading.id} onClick={() => setHeadingActive(heading.id)}>
+        <Link sx={{ ...linkStyle, ...textOverflowStyle }} href={`#${heading.id}`} variant="subtitle1">
+          {heading.title}
+        </Link>
+      </ListItemButton>
+    </Stack>
+  );
+};
+
+const ProjectTextAnchorMenu = ({ headings, setHeadingActive }: ProjectTextAnchorMenuProps) => {
+  const listStyle: SxProps = {
     wordBreak: 'break-word',
   };
 
   return (
-    <Box>
-      <List sx={listStyles} component="nav" aria-labelledby="nested-list-subheader">
-        {props.headings?.map((heading) => {
+    <Box
+      sx={{
+        borderRadius: '16px',
+        p: '24px',
+        border: '1px solid rgba(0, 90, 140, 0.20)',
+        width: '90%',
+      }}
+    >
+      <List sx={listStyle} component="nav" aria-labelledby="nested-list-subheader">
+        {headings?.map((heading) => {
           if (heading.depth > 1) {
             return (
               <Collapse in timeout="auto" unmountOnExit key={heading.id}>
-                <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 1, mr: 3 }} onClick={() => props.setHeadingActive(heading.id)}>
-                    <Link
-                      color={heading.active ? 'secondary.main' : 'primary.main'}
-                      href={`#${heading.id}`}
-                      variant="body2"
-                      underline="none"
-                    >
-                      {heading.title}
-                    </Link>
-                  </ListItemButton>
+                <List disablePadding>
+                  <ProjectHeading heading={heading} setHeadingActive={setHeadingActive} />
                 </List>
               </Collapse>
             );
           }
-          return (
-            <ListItemButton sx={{ mr: 3, pl: 0 }} key={heading.id} onClick={() => props.setHeadingActive(heading.id)}>
-              <Link
-                color={heading.active ? 'secondary.main' : 'primary.main'}
-                href={`#${heading.id}`}
-                variant="body2"
-                underline="none"
-              >
-                {heading.title}
-              </Link>
-            </ListItemButton>
-          );
+          return <ProjectHeading heading={heading} setHeadingActive={setHeadingActive} key={heading.id} />;
         })}
       </List>
     </Box>
   );
 };
 
-const textAnchorMenuStyles: SxProps = {
-  verflowWrap: 'anywhere',
+const textOverflowStyle = {
   hyphens: 'auto',
-  [theme.breakpoints.down('md')]: {
-    display: 'none',
-  },
-};
-
-// Project Progress Styles
-const wrapperStyles = {
-  borderRadius: '24px',
-  background: '#FFF',
-  position: 'relative',
-  zIndex: 0,
-  boxShadow:
-    '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
-  flexGrow: 1,
-};
-
-const contentStyles = {
-  margin: '88px 64px',
-  [theme.breakpoints.down('md')]: {
-    margin: '48px 24px',
-  },
-};
-
-const infoItemRightContainerStyles = {
-  marginLeft: '5%',
-  marginTop: '25%',
-  [theme.breakpoints.down('lg')]: {
-    display: 'none',
-  },
-};
-
-const infoItemRightStyles = {
-  width: '270px',
-  maxWidth: '100%',
-  backgroundColor: '#EBF3F7',
-  borderRadius: '8px',
-  marginBottom: 1,
-};
-
-const dividerStyle = {
-  width: '100%',
-  height: '2px',
-  bgcolor: 'common.white',
-  borderColor: 'common.white',
-  mb: '17px',
-};
-
-const muiMarkdownOverrides = {
-  ...getOverrides(), // This will keep the other default overrides.
-  p: {
-    component: 'p',
-    props: {
-      style: { color: 'text.primary' },
-    } as React.HTMLProps<HTMLParagraphElement>,
-  },
-  code: {
-    component: 'code',
-    props: {
-      style: { color: 'text.primary' },
-    } as React.HTMLProps<HTMLParagraphElement>,
-  },
-  h1: {
-    component: 'h1',
-    props: {
-      style: { scrollMargin: '5em', color: 'text.primary', lineHeight: 1 },
-    } as React.HTMLProps<HTMLParagraphElement>,
-  },
-  h2: {
-    component: 'h2',
-    props: {
-      style: { scrollMargin: '5em', color: 'text.primary' },
-    } as React.HTMLProps<HTMLParagraphElement>,
-  },
-  h3: {
-    component: 'h3',
-    props: {
-      style: { scrollMargin: '5em', color: 'text.primary' },
-    } as React.HTMLProps<HTMLParagraphElement>,
-  },
-  img: {
-    component: 'img',
-    props: {
-      style: {
-        maxWidth: '100%',
-        height: 'auto',
-        padding: '1em',
-        objectFit: 'contain',
-      },
-    } as React.HTMLProps<HTMLImageElement>,
-  },
-  //If there is nothing but text in the description, it will be a span component.
-  span: {
-    component: 'p',
-    props: {
-      style: { color: 'text.primary' },
-    } as React.HTMLProps<HTMLParagraphElement>,
-  },
+  WebkitHyphens: 'auto',
+  MsHyphens: 'auto',
+  MozHyphens: 'auto',
+  WebkitLocale: 'de-DE',
+  locale: 'de-DE',
 };
