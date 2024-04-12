@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 
 import Badge from '@mui/material/Badge';
@@ -42,6 +43,17 @@ export default function UserMenu(props: UserMenuProps) {
         {user.email}
       </Typography>
       <Divider sx={{ mx: 2, my: 1 }} />
+      <MenuItem>
+        <Link
+          href={process.env.NEXT_PUBLIC_STRAPI_ENDPOINT || '/not-found'}
+          target="_blank"
+          style={{ textDecoration: 'none' }}
+        >
+          <Typography variant="body2" color="text.primary">
+            Content Editor
+          </Typography>
+        </Link>
+      </MenuItem>
       <MenuItem disabled>
         <Typography variant="body2" color="text.primary">
           Profil

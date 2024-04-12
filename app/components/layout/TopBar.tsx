@@ -12,22 +12,16 @@ import Typography from '@mui/material/Typography';
 import { useUser } from '@/app/contexts/user-context';
 import theme from '@/styles/theme';
 
+import { Headers } from './Layout';
 import LoggedInMenu from './LoggedInMenu';
 
 import logo from '/public/images/logo.svg';
 
-type Headers = {
-  text: string;
-  link?: string;
-};
+interface TopBarProps {
+  pages: Headers[];
+}
 
-const pages: Headers[] = [
-  { text: 'Initiativen', link: '/#initiativen' },
-  { text: 'News', link: '/news' },
-  { text: 'AI Assistant' },
-];
-
-export default function TopBar() {
+export default function TopBar({ pages }: TopBarProps) {
   const { user, isLoading } = useUser();
 
   const menuItemStyle = {
