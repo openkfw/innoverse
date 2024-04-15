@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import React from 'react';
 import Slider from 'react-slick';
 import Image from 'next/image';
@@ -31,9 +31,13 @@ type SlideProps = {
   index: number;
 };
 
+interface PillWidths {
+  [key: number]: number;
+}
+
 const Slide = ({ content, index, setSelected }: SlideProps) => {
   const [isHovered, setIsHovered] = useState(false);
-  const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
+  const isWideScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const NextArrow = () => {
     if (isHovered || !isWideScreen) {
@@ -74,6 +78,7 @@ const Slide = ({ content, index, setSelected }: SlideProps) => {
         sx={imageContainerStyles}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        data-identifier="image-container"
       >
         <Image
           src={content?.image || defaultImage}
@@ -102,25 +107,15 @@ const Slide = ({ content, index, setSelected }: SlideProps) => {
 
 const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   const slides = props.items;
-  const [selectedItem, setSelectedItem] = useState<number>(slides.length - 1);
+  const initialSlideIndex = slides.length - 1;
+  const [selectedItem, setSelectedItem] = useState<number>(initialSlideIndex);
+  const [previousMovement, setPreviousMovement] = useState(0);
+  const [pillWidths, setPillWidths] = useState<PillWidths>({});
+  const [previousSelectedItem, setPreviousSelectedItem] = useState<number>(initialSlideIndex);
   const [show, setShow] = useState(false);
 
   const sliderRef = useRef<Slider>(null);
-  const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
-
-  function moveIndicator(newIndex: number) {
-    const slider = document.querySelectorAll('.slick-dots.slick-thumb')[0] as HTMLElement;
-    const old = Number(slider.style.translate.split('px')[0]);
-    const diff = Math.abs(selectedItem - newIndex);
-    const moveByPx = diff * 150;
-
-    if (selectedItem > newIndex) {
-      slider.style.translate = `${old + moveByPx}px`;
-    }
-    if (selectedItem < newIndex) {
-      slider.style.translate = `${old - moveByPx}px`;
-    }
-  }
+  const isWideScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   function setSelected(index: number) {
     let newIndex = index;
@@ -131,11 +126,104 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
     }
     sliderRef.current?.slickGoTo(newIndex);
     setSelectedItem(newIndex);
-    moveIndicator(newIndex);
   }
 
+  function moveIndicator(oldIndex: number, newIndex: number) {
+    const pillbox = document.querySelector('.slick-dots.slick-thumb') as HTMLElement | null;
+
+    if (!pillbox || oldIndex === newIndex) {
+      return;
+    }
+
+    const pills = pillbox.querySelectorAll('li');
+
+    if (oldIndex >= 0 && oldIndex < pills.length && newIndex >= 0 && newIndex < pills.length) {
+      // Calculate movement from old pill to new pill
+      const oldPill = pills[oldIndex];
+      const newPill = pills[newIndex];
+      const oldPillRect = oldPill.getBoundingClientRect();
+      const newPillRect = newPill.getBoundingClientRect();
+      const oldPillCenter = oldPillRect.left + oldPillRect.width / 2;
+      const newPillCenter = newPillRect.left + newPillRect.width / 2;
+      const primaryMovement = newPillCenter - oldPillCenter;
+
+      // Adjust movement based on changes in sizes of old and new pills
+      const oldPillWidthBefore = pillWidths[oldIndex];
+      const newPillWidthBefore = pillWidths[newIndex];
+      let secondaryMovement = 0;
+      if (newIndex > oldIndex) {
+        secondaryMovement = (oldPill.offsetWidth - oldPillWidthBefore) / 2;
+      } else if (newIndex < oldIndex) {
+        secondaryMovement = newPill.offsetWidth - newPillWidthBefore + (oldPill.offsetWidth - oldPillWidthBefore) / 2;
+      }
+
+      // Apply transform to move pillbox container
+      const totalMovement = previousMovement - primaryMovement - secondaryMovement;
+      pillbox.style.transform = `translateX(${totalMovement}px)`;
+
+      // Update state
+      const updatedPillWidths = { ...pillWidths };
+      updatedPillWidths[oldIndex] = oldPill.offsetWidth;
+      updatedPillWidths[newIndex] = newPill.offsetWidth;
+      setPillWidths(updatedPillWidths);
+      setPreviousMovement(totalMovement);
+    }
+  }
+
+  useEffect(() => {
+    // Calculate the width of each pill
+    const timer = setTimeout(() => {
+      const pillbox = document.querySelector('.slick-dots.slick-thumb') as HTMLElement | null;
+      const newPillWidths: PillWidths = {};
+      if (pillbox) {
+        pillbox.querySelectorAll('li').forEach((pill, index) => {
+          newPillWidths[index] = pill.offsetWidth;
+        });
+        setPillWidths(newPillWidths);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    // Adjust slider initial position to match the right corner of slider image
+    const timer = setTimeout(() => {
+      const adjustPillboxPosition = () => {
+        const imageContainer = document.querySelector('[data-identifier="image-container"]');
+        const pillbox = document.querySelector('.slick-dots.slick-thumb') as HTMLElement | null;
+
+        if (imageContainer && pillbox) {
+          window.requestAnimationFrame(() => {
+            const pillboxLeftPosition = imageContainer.getBoundingClientRect().right - pillbox.offsetWidth;
+            pillbox.style.opacity = '1';
+            pillbox.style.left = `${pillboxLeftPosition}px`;
+            pillbox.style.right = 'auto';
+          });
+        }
+      };
+
+      adjustPillboxPosition();
+      window.addEventListener('resize', adjustPillboxPosition);
+
+      return () => {
+        window.removeEventListener('resize', adjustPillboxPosition);
+      };
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (selectedItem !== previousSelectedItem) {
+      moveIndicator(previousSelectedItem, selectedItem);
+      setPreviousSelectedItem(selectedItem);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedItem]);
+
   const settings = {
-    initialSlide: slides.length - 1,
+    initialSlide: initialSlideIndex,
     arrows: false,
     dots: true,
     infinite: true,
@@ -162,7 +250,6 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
     className: 'carouselStyles',
     beforeChange: (_current: number, next: number) => {
       setSelectedItem(next);
-      moveIndicator(next);
     },
   };
 
@@ -188,12 +275,11 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
 export default FeaturedProjectSlider;
 
 // Featured Project Slider Styles
-
 const featuredProjectSliderStyles = {
   paddingTop: 10,
   marginRight: '5%',
-  marginBottom: 'min(10%, 229px)',
-  [theme.breakpoints.down('sm')]: {
+  marginBottom: '180px',
+  [theme.breakpoints.down('md')]: {
     marginRight: 0,
     marginLeft: 0,
     marginBottom: 0,
@@ -213,7 +299,7 @@ const wrapperStyles = {
     marginLeft: '100px',
   },
 
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -241,7 +327,7 @@ const imageContainerStyles = {
     alignItems: 'flex-start',
   },
 
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     width: 'calc(100vw - 80px)',
     height: 'initial',
   },

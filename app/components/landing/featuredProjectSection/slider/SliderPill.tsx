@@ -30,10 +30,11 @@ const ActiveSliderPill = (props: { itemNumber: string; title: string; projectSta
       height: '0px',
       marginLeft: '50%',
       zIndex: 0,
-      animation: 'grow 1s ease forwards',
+      animation: 'grow 1s ease-in forwards',
+      animationDelay: '300ms',
       '@keyframes grow': {
         from: { height: 0 },
-        to: { height: '200px' },
+        to: { height: '250px' },
       },
     },
   };
