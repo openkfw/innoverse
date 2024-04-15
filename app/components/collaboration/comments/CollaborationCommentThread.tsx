@@ -43,7 +43,7 @@ export const CollaborationCommentThread = ({
       {!displayResponses && comment.responseCount > 0 && (
         <TransparentButton
           onClick={() => setDisplayResponses(true)}
-          icon={<AddIcon color="secondary" fontSize="large" />}
+          startIcon={<AddIcon color="secondary" fontSize="large" />}
           style={{ marginTop: '1em', marginLeft: '1.5em', marginBottom: 2 }}
         >
           Kommentare anzeigen ({comment.responseCount})
