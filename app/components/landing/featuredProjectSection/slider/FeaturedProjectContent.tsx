@@ -97,9 +97,10 @@ const listItemStyles = {
 const descriptionStyles = {
   marginLeft: 6 / 8,
   marginTop: 3,
-  [theme.breakpoints.down('sm')]: {
-    marginTop: 2,
-  },
+  display: '-webkit-box',
+  overflow: 'hidden',
+  WebkitBoxOrient: 'vertical',
+  WebkitLineClamp: 6,
 };
 
 const linkStyle = {

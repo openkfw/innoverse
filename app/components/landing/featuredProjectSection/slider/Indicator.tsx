@@ -22,7 +22,7 @@ const Indicator = (props: IndicatorProps) => {
   };
 
   return (
-    <Box sx={indicatorStyles} onClick={() => handleClick(index)}>
+    <Box sx={indicatorStyles} onClick={() => handleClick(index)} onTouchEnd={() => handleClick(index)}>
       <SliderPill
         active={isSelected}
         itemNumber={(index + 1).toString()}

@@ -10,12 +10,12 @@
   max-width: 806px;
   aspect-ratio: 806/477;
   position: relative;
-  z-index: 1;
 }
+
+
 
 .slick-dots.slick-thumb {
   position: absolute !important;
-  margin-left: calc(50% - 1000px);
   width: fit-content;
   bottom: initial !important;
   display: flex !important;
@@ -24,15 +24,9 @@
   align-items: center;
   gap: 25px;
   top: calc(100% + 100px);
-  transition-timing-function: ease-in-out;
-  transition: translate 750ms;
-}
-
-/* XXL */
-@media only screen and (min-width: 1920px) {
-  .slick-dots.slick-thumb {
-    margin-left: -100px;
-  }
+  transition-timing-function: ease-in-out !important;
+  transition: all 750ms !important;
+  opacity: 0;
 }
 
 /* XL */
@@ -67,16 +61,10 @@
 
 /* SM */
 @media only screen and (min-width: 600px) and (max-width: 899px) {
-  .slick-dots.slick-thumb {
-    top: calc(100% + 45px);
-    transform: scale(0.6);
-    gap: 40px;
-  }
-
   .slider-image {
-    height: 100%;
-    width: auto;
-  }
+    width: 100%;
+    height: auto;
+  }  
 }
 
 .slick-list {
