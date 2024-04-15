@@ -60,7 +60,7 @@ export const CollaborationComments = ({ projectName, comments, onDeleteComment }
       {!isCollapsed && comments.length > MAX_NUM_OF_COMMENTS && (
         <TransparentButton
           onClick={handleToggle}
-          icon={<AddIcon color="secondary" fontSize="large" />}
+          startIcon={<AddIcon color="secondary" fontSize="large" />}
           style={{ marginLeft: '1.5em', marginBottom: 2 }}
         >
           weitere Rückmeldungen anzeigen ({lengthOfNotShownComments})

@@ -1,30 +1,20 @@
 'use client';
 import React, { CSSProperties, PropsWithChildren } from 'react';
 
-import Button from '@mui/material/Button';
+import Button, { ButtonProps } from '@mui/material/Button';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import theme from '@/styles/theme';
 
-type TransparenButtonProps = PropsWithChildren & {
-  onClick?: () => void;
-  icon?: React.JSX.Element;
-  disabled?: boolean;
-  sx?: SxProps;
-  style?: CSSProperties;
-  textSx?: SxProps;
-};
+type TransparenButtonProps = PropsWithChildren &
+  ButtonProps & {
+    sx?: SxProps;
+    style?: CSSProperties;
+    textSx?: SxProps;
+  };
 
-export const TransparentButton = ({
-  onClick,
-  icon,
-  disabled = false,
-  children,
-  sx,
-  textSx,
-  style,
-}: TransparenButtonProps) => {
+export const TransparentButton = ({ children, sx, textSx, style, ...buttonProps }: TransparenButtonProps) => {
   const buttonStyle: SxProps = {
     width: 'fit-content',
     px: 2,
@@ -47,13 +37,7 @@ export const TransparentButton = ({
   };
 
   return (
-    <Button
-      sx={buttonStyle}
-      style={style}
-      onClick={() => !disabled && onClick && onClick()}
-      startIcon={icon}
-      disabled={disabled}
-    >
+    <Button sx={buttonStyle} style={style} {...buttonProps}>
       <Typography variant="subtitle2" sx={textStyle}>
         {children}
       </Typography>
