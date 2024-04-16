@@ -96,8 +96,8 @@ export default function TopBarMobile({ pages }: TopBarProps) {
               alt="***STRING_REMOVED***  Logo"
               sizes="100vw"
               style={{
-                width: '100%',
-                height: '100%',
+                width: '70%',
+                height: '70%',
               }}
             />
           </Link>
@@ -129,6 +129,7 @@ const wrapperStyles = {
   position: 'fixed',
   width: '100%',
   zIndex: 1201,
+  height: '65px',
 };
 
 const listStyles = {
