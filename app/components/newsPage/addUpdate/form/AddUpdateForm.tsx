@@ -73,48 +73,46 @@ export default function AddUpdateForm({
   };
 
   return (
-    <>
-      <Stack spacing={2} sx={formStyles} direction="column">
-        <form>
-          <MultilineTextInputField
-            name={COMMENT}
-            control={control}
-            label="Update"
-            placeholder="Geben Sie hier das Update ein"
-            sx={{ width: '100%' }}
-          />
-        </form>
-        <Stack spacing={2} direction={{ sm: 'column', md: 'row' }}>
-          <DropdownField
-            name={PROJECT_ID}
-            control={control}
-            label="Initiative"
-            options={projectOptions}
-            readOnly={!!!projectOptions}
-            startAdornment={
-              !!!projectOptions && (
-                <Box sx={{ pt: 1 }}>
-                  <CircularProgress size={20} />
-                </Box>
-              )
-            }
-            sx={inputStyle}
-          />
-        </Stack>
-
-        <Box display="flex" justifyContent="flex-end">
-          <Button
-            onClick={handleSubmit(onSubmit)}
-            variant="contained"
-            size="small"
-            disabled={!isDirty || !isValid}
-            sx={{ width: '30%', backgroundColor: 'secondary.main' }}
-          >
-            Speichern
-          </Button>
-        </Box>
+    <Stack spacing={2} sx={formStyles} direction="column">
+      <form>
+        <MultilineTextInputField
+          name={COMMENT}
+          control={control}
+          label="Update"
+          placeholder="Geben Sie hier das Update ein"
+          sx={{ width: '100%' }}
+        />
+      </form>
+      <Stack spacing={2} direction={{ sm: 'column', md: 'row' }}>
+        <DropdownField
+          name={PROJECT_ID}
+          control={control}
+          label="Initiative"
+          options={projectOptions}
+          readOnly={!!!projectOptions}
+          startAdornment={
+            !!!projectOptions && (
+              <Box sx={{ pt: 1 }}>
+                <CircularProgress size={20} />
+              </Box>
+            )
+          }
+          sx={inputStyle}
+        />
       </Stack>
-    </>
+
+      <Box display="flex" justifyContent="flex-end">
+        <Button
+          onClick={handleSubmit(onSubmit)}
+          variant="contained"
+          size="small"
+          disabled={!isDirty || !isValid}
+          sx={{ width: '30%', backgroundColor: 'secondary.main' }}
+        >
+          Speichern
+        </Button>
+      </Box>
+    </Stack>
   );
 }
 
@@ -126,9 +124,6 @@ const inputStyle = {
 };
 
 const formStyles = {
-  display: 'flex',
-  flexDirection: 'column',
   borderTop: '1px solid rgba(0, 90, 140, 0.10)',
   paddingTop: 3,
-  width: 'min(500px, 70vw)',
 };
