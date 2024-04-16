@@ -13,6 +13,7 @@ import { SxProps } from '@mui/material/styles';
 import { TransitionProps } from '@mui/material/transitions';
 
 import CloseIcon from '@/components/icons/CloseIcon';
+import { mergeStyles } from '@/utils/helpers';
 
 interface CustomDialogProps {
   children: ReactNode;
@@ -51,8 +52,7 @@ const CustomDialog: FC<CustomDialogProps> = ({
     <Dialog
       open={open}
       onClose={handleClose}
-      sx={sx}
-      PaperProps={{ sx: paperPropsStyle }}
+      PaperProps={{ sx: mergeStyles(paperPropsStyle, sx) }}
       TransitionComponent={Transition}
       maxWidth={false}
     >

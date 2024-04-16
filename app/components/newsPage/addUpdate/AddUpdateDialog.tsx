@@ -19,7 +19,12 @@ export default function AddUpdateDialog(props: AddUpdateDialogProps) {
   };
 
   return (
-    <CustomDialog open={open} handleClose={handleClose} title="Neuigkeit hinzufügen">
+    <CustomDialog
+      open={open}
+      handleClose={handleClose}
+      title="Neuigkeit hinzufügen"
+      sx={{ width: { xs: '100%' }, maxWidth: { xs: '500px' } }}
+    >
       <AddUpdateForm
         refetchUpdates={refetchUpdates}
         handleClose={handleClose}
