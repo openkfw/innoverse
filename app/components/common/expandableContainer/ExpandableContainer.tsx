@@ -56,13 +56,16 @@ export function useExpandableContainer({
     return () => observer.unobserve(containerElement);
   }, []);
 
-  useEffect(function scrollToTopOnCollapse() {
-    if (!containerRef.current) return;
-    const scrollTop = containerRef.current.scrollTop;
-    if (scrollTop > 0 && !isExpanded) {
-      containerRef.current.scrollTo({ top: 0, behavior: 'auto' });
-    }
-  });
+  useEffect(
+    function scrollToTopOnCollapse() {
+      if (!containerRef.current) return;
+      const scrollTop = containerRef.current.scrollTop;
+      if (scrollTop > 0 && !isExpanded) {
+        containerRef.current.scrollTo({ top: 0, behavior: 'instant' });
+      }
+    },
+    [isExpanded],
+  );
 
   const expand = () => {
     if (isExpandable) {
