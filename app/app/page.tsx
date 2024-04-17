@@ -1,5 +1,7 @@
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
+// eslint-disable-next-line no-restricted-imports
+import { Stack } from '@mui/material';
+// eslint-disable-next-line no-restricted-imports
+import Box from '@mui/material/Box/Box';
 
 import { MainPageData } from '@/common/types';
 import CustomToast from '@/components/common/CustomToast';

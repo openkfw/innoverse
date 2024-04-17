@@ -1,7 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 
-import Typography from '@mui/material/Typography';
+// eslint-disable-next-line no-restricted-imports
+import Typography from '@mui/material/Typography/Typography';
 
 import Error from '../components/error/Error';
 import Layout from '../components/layout/Layout';
