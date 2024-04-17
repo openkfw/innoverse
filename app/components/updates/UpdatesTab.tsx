@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
@@ -20,12 +19,10 @@ import { ProjectTimeLine } from './ProjectTimeLine';
 
 interface UpdatesTabProps {
   projectData: ProjectData;
+  onUpdate: (updates: ProjectUpdate[]) => void;
 }
 
-export const UpdatesTab = (props: UpdatesTabProps) => {
-  const { projectData } = props;
-  const [projectUpdates, setProjectUpdates] = useState<ProjectUpdate[]>(projectData.updates);
-
+export const UpdatesTab = ({ projectData, onUpdate }: UpdatesTabProps) => {
   const isVeryLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const appInsights = useAppInsightsContext();
@@ -34,7 +31,7 @@ export const UpdatesTab = (props: UpdatesTabProps) => {
     try {
       const { data } = await getProjectUpdates({ projectId: projectData.id });
       if (data) {
-        setProjectUpdates([...data]);
+        onUpdate(data);
       }
     } catch (error) {
       console.error('Error refetching project updates:', error);
@@ -54,7 +51,10 @@ export const UpdatesTab = (props: UpdatesTabProps) => {
         <Stack direction={isVeryLargeScreen ? 'row-reverse' : 'column'}>
           <AddUpdateCard sx={updateCardStyles} projectId={projectData.id} refetchUpdates={refetchUpdates} />
           <Box flexGrow={'1'}>
-            <ProjectTimeLine widthOfDateColumn={isSmallScreen ? '83px' : '273px'} projectUpdates={projectUpdates} />
+            <ProjectTimeLine
+              widthOfDateColumn={isSmallScreen ? '83px' : '273px'}
+              projectUpdates={projectData.updates}
+            />
           </Box>
         </Stack>
       </CardContent>
