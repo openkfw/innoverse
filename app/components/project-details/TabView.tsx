@@ -8,7 +8,7 @@ import Tab, { TabProps } from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import { ProjectData } from '@/common/types';
+import { ProjectData, ProjectUpdate } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
@@ -74,14 +74,18 @@ interface BasicTabsProps {
   projectName: string;
 }
 
-export default function TabView(props: BasicTabsProps) {
+export default function TabView({ projectName, ...props }: BasicTabsProps) {
   const searchParams = useSearchParams();
-
   const [activeTab, setActiveTab] = useState(0);
-  const { projectData, projectName } = props;
-  const { opportunities, questions, collaborationQuestions, updates, futureEvents } = projectData;
-  const collaborationActivities = opportunities.length + questions.length + collaborationQuestions.length;
   const [initialRender, setInitialRender] = useState(true);
+  const [projectData, setProjectData] = useState(props.projectData);
+
+  const { opportunities, collaborationQuestions, updates, futureEvents, surveyQuestions } = projectData;
+  const collaborationActivities = opportunities.length + surveyQuestions.length + collaborationQuestions.length;
+
+  const setProjectUpdates = (updates: ProjectUpdate[]) => {
+    setProjectData({ ...projectData, updates });
+  };
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -208,7 +212,7 @@ export default function TabView(props: BasicTabsProps) {
         <CollaborationTab project={projectData} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={2} id="updates-tab">
-        <UpdatesTab projectData={projectData} />
+        <UpdatesTab projectData={projectData} onUpdate={setProjectUpdates} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={3} id="events-tab">
         <EventsTab projectData={projectData} />
