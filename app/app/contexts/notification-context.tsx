@@ -3,10 +3,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
+import { useLocalStorage } from 'usehooks-ts';
 
 import Box from '@mui/material/Box';
 
-import { useSessionItem } from '@/app/contexts/helpers';
 import { NotificationBanner } from '@/components/notifications/NotificationBanner';
 import theme from '@/styles/theme';
 import { subscribeToWebPush } from '@/utils/notification/pushNotification';
@@ -92,10 +92,18 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
 };
 
 function useNotificationContextProvider() {
+  interface AlertSessionItem {
+    hide: boolean;
+    userAction: 'dismissed' | 'enabled' | 'not-set';
+  }
   const delayBeforeAlertIsDisplayedInSeconds = 5;
 
   const [alertState, setAlertState] = useState<'askEnablePush' | 'showManualSteps' | 'dismissed'>();
-  const hideAlertSessionItem = useSessionItem<boolean>('hide-push-subscription-alert');
+
+  const [alertSessionItem, setAlertSessionItem] = useLocalStorage<AlertSessionItem>('hide-push-subscription-alert', {
+    hide: false,
+    userAction: 'not-set',
+  });
 
   const { user, isLoading } = useUser();
   const initialized = useRef(false);
@@ -104,10 +112,10 @@ function useNotificationContextProvider() {
     ({ rememberAfterPageReload }: { rememberAfterPageReload: boolean }) => {
       setAlertState('dismissed');
       if (rememberAfterPageReload) {
-        hideAlertSessionItem.set(true);
+        setAlertSessionItem({ hide: true, userAction: 'dismissed' });
       }
     },
-    [hideAlertSessionItem],
+    [setAlertSessionItem],
   );
 
   const registerNotifications = useCallback(async () => {
@@ -148,12 +156,12 @@ function useNotificationContextProvider() {
       await subscribeToWebPush(JSON.stringify(subscription));
 
       console.info('Enabled push notifications');
-      hideAlertSessionItem.set(true);
+      setAlertSessionItem({ hide: true, userAction: 'enabled' });
     } catch (error) {
       handleError(error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hideAlertSessionItem]);
+  }, [alertSessionItem.hide]);
 
   const registerServiceWorker = () => navigator.serviceWorker.register('/sw.js', { scope: '/' });
 
@@ -189,8 +197,7 @@ function useNotificationContextProvider() {
   );
 
   return {
-    showPushSubscriptionAlert:
-      user && !hideAlertSessionItem.value && alertState !== undefined && alertState !== 'dismissed',
+    showPushSubscriptionAlert: user && !alertSessionItem.hide && alertState !== undefined && alertState !== 'dismissed',
     hidePushSubscriptionAlert: hideAlert,
     registerPushNotifications: registerNotifications,
     showManualSteps: alertState === 'showManualSteps',
