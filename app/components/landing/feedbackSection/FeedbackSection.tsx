@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { StatusCodes } from 'http-status-codes';
+import { useSessionStorage } from 'usehooks-ts';
 
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
@@ -19,19 +20,12 @@ import theme from '@/styles/theme';
 
 function FeedbackSection() {
   const [open, openDialog] = useState(false);
-  const [hideButton, setHideButton] = useState(true);
+  // The useState and the useSessionStorage both must be used to avoid pre-hydration errors.
+  const [feedbackClosed, setFeedbackClosed] = useSessionStorage('feedbackClosed', false);
+  const [hideButton, setHideButton] = useState(feedbackClosed);
+
   const [showFeedbackOnProjectPage, setShowFeedbackOnProjectPage] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
-
-  useEffect(() => {
-    const navigationEntries = window.performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-    if (navigationEntries.length > 0 && navigationEntries[0].type === 'reload') {
-      setHideButton(false);
-      sessionStorage.setItem('feedbackClosed', 'false');
-    } else {
-      setHideButton(sessionStorage.getItem('feedbackClosed') === 'true');
-    }
-  }, []);
 
   function handleOpen() {
     openDialog(true);
@@ -42,7 +36,7 @@ function FeedbackSection() {
   }
 
   function hideFeedbackButton() {
-    sessionStorage.setItem('feedbackClosed', 'true');
+    setFeedbackClosed(true);
     setHideButton(true);
   }
 
