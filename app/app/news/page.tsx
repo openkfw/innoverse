@@ -1,12 +1,11 @@
-/* eslint-disable no-restricted-imports */
 import Image from 'next/image';
 
-import Box from '@mui/material/Box/Box';
-import Card from '@mui/material/Card/Card';
-import Container from '@mui/material/Container/Container';
-import Grid from '@mui/material/Grid/Grid';
-import Stack from '@mui/material/Stack/Stack';
-import Typography from '@mui/material/Typography/Typography';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';

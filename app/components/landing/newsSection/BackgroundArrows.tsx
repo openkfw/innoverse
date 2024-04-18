@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-restricted-imports
-import Box from '@mui/material/Box/Box';
+import Box from '@mui/material/Box';
 
 import classes from './BackgroundArrows.module.css';
 
