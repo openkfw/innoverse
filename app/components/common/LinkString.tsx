@@ -7,7 +7,7 @@ export const parseStringForLinks = (text: string): React.ReactNode | string => {
   return parts.map((part, index) => {
     if ((part.match(urlRegex) && part.startsWith('http')) || part.startsWith('www')) {
       return (
-        <Link href={part.startsWith('http') ? part : `http://${part}`} key={index}>
+        <Link href={part.startsWith('http') ? part : `http://${part}`} target="_blank" key={index}>
           {part}
         </Link>
       );

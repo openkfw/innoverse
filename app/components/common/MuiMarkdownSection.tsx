@@ -58,6 +58,12 @@ const muiMarkdownOverrides = {
       },
     } as React.HTMLProps<HTMLImageElement>,
   },
+  a: {
+    component: 'a',
+    props: {
+      target: '_blank',
+    } as React.HTMLProps<HTMLParagraphElement>,
+  },
   //If there is nothing but text in the description, it will be a span component.
   span: {
     component: 'p',
