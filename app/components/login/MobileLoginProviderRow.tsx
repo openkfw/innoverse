@@ -5,6 +5,8 @@ import { signIn } from 'next-auth/react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
+import { getProviderLabel } from '@/utils/helpers';
+
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 import { LoginProviderRowProps } from './LoginProviderRow';
@@ -38,7 +40,7 @@ export default function MobileLoginProviderRow(props: LoginProviderRowProps) {
         <InteractionButton
           key={provider.name}
           interactionType={InteractionType.LOG_IN}
-          label={`Log in with ${provider.name.split(' ')[0]}`}
+          label={getProviderLabel(provider)}
           onClick={() => signIn(provider.id)}
         />
       </Grid>

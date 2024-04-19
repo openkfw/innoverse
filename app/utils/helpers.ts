@@ -30,3 +30,7 @@ export function formatDate(dateString: string, locale = 'de-DE') {
   const year = date.toLocaleString(locale, { year: 'numeric' });
   return `${day}. ${month} ${year}`;
 }
+
+export function getProviderLabel(provider: { name: string; id: string }) {
+  return provider.id === 'azure-ad' ? `Mit ***STRING_REMOVED***  Account einloggen` : `Mit ${provider.name.split(' ')[0]} einloggen`;
+}

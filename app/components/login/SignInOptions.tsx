@@ -20,11 +20,12 @@ import MobileLoginProviderRow from './MobileLoginProviderRow';
 import MobileUserSuggestionRow from './MobileUserSuggestionRow';
 import UserSuggestionRow from './UserSuggestionRow';
 
-export default function SignInOptions() {
-  const [signInProviders, setSignInProviders] = useState<Record<
-    LiteralUnion<BuiltInProviderType, string>,
-    ClientSafeProvider
-  > | null>(null);
+interface SignInOptionsProps {
+  providers: string[];
+}
+
+export default function SignInOptions({ providers: providersForPage }: SignInOptionsProps) {
+  const [signInProviders, setSignInProviders] = useState<ClientSafeProvider[]>([]);
   const [open, setOpen] = React.useState(false);
   const [userSuggested, setUserSuggested] = React.useState(true);
   const { session } = parseCookies();
@@ -36,7 +37,12 @@ export default function SignInOptions() {
     async function getSignInProviders() {
       try {
         const providers = await getProviders();
-        setSignInProviders(providers);
+        if (!providers) {
+          handleNoProvider();
+        } else {
+          const filteredProviders = filterProviders(providers);
+          !filteredProviders ? handleNoProvider() : setSignInProviders(filteredProviders);
+        }
       } catch (error) {
         console.error('Failed to fetch sign-in providers:', error);
         errorMessage({ message: 'Failed to load sign-in options. Please try again later.' });
@@ -49,6 +55,11 @@ export default function SignInOptions() {
     getSignInProviders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleNoProvider = () => {
+    console.error('No sign-in providers found');
+    errorMessage({ message: 'No sign-in providers found. Please try again later.' });
+  };
 
   const getCookieData = () => {
     try {
@@ -81,6 +92,11 @@ export default function SignInOptions() {
     });
   };
 
+  const filterProviders = (providers: Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider>) => {
+    const matchingProviders = Object.values(providers).filter((provider) => providersForPage.includes(provider.id));
+    return matchingProviders;
+  };
+
   const getProvider = () => {
     if (!signInProviders) return { name: '', id: '' };
 
@@ -92,7 +108,7 @@ export default function SignInOptions() {
 
   return (
     <>
-      {signInProviders && session && userSuggested && (
+      {signInProviders && session && userSuggested && getProvider() && (
         <>
           {isSmallScreen ? (
             <MobileUserSuggestionRow
@@ -118,7 +134,7 @@ export default function SignInOptions() {
         </>
       )}
 
-      <Collapse in={open || !session} unmountOnExit>
+      <Collapse in={open || !session || (session !== undefined && providersForPage.length === 1)} unmountOnExit>
         {signInProviders &&
           Object.values(signInProviders).map((provider) =>
             isSmallScreen ? (

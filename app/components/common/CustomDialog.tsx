@@ -80,8 +80,8 @@ export default CustomDialog;
 const paperPropsStyle = {
   backgroundColor: 'transparent',
   boxShadow: 'none',
-  width: { xs: 'calc(100% - 10px)', sm: 'calc(100% - 50px)', md: '40%', lg: '40%' },
-  maxWidth: { xs: 'calc(100% - 10px)', sm: 'calc(100% - 50px)', md: '40%', lg: '40%' },
+  width: { xs: 'calc(100% - 10px)', sm: 'calc(100% - 50px)', md: '60%', lg: '45%' },
+  maxWidth: { xs: 'calc(100% - 10px)', sm: 'calc(100% - 50px)', md: '60%', lg: '45%' },
 };
 
 export const closeIconButtonStyle = {
