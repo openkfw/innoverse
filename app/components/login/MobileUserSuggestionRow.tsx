@@ -13,6 +13,8 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { getProviderLabel } from '@/utils/helpers';
+
 import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 import CustomDialog from '../common/CustomDialog';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
@@ -57,7 +59,7 @@ export default function MobileUserSuggestionRow(props: UserSuggestionRowProps) {
         <InteractionButton
           key={provider.name}
           interactionType={InteractionType.LOG_IN}
-          label={`Log in with ${provider.name.split(' ')[0]}`}
+          label={getProviderLabel(provider)}
           onClick={() => signIn(provider.id)}
         />
 
