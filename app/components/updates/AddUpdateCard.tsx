@@ -7,19 +7,20 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { Option } from '@/common/formTypes';
+import { Project } from '@/common/types';
 
 import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
 import AddUpdateDialog from '../newsPage/addUpdate/AddUpdateDialog';
 import { getProjectsOptions } from '../newsPage/addUpdate/form/actions';
 
 interface AddUpdateCardProps {
-  projectId: string;
+  project: Project;
   refetchUpdates: () => void;
   sx?: SxProps;
 }
 
 export const AddUpdateCard = (props: AddUpdateCardProps) => {
-  const { projectId, refetchUpdates, sx } = props;
+  const { project, refetchUpdates, sx } = props;
   const [addUpdateDialogOpen, setAddUpdateDialogOpen] = useState(false);
   const [projectOptions, setProjectOptions] = useState<Option[]>([]);
 
@@ -32,7 +33,7 @@ export const AddUpdateCard = (props: AddUpdateCardProps) => {
   const defaultFormValues = {
     comment: '',
     author: '',
-    projectId,
+    project: { id: project.id, label: project.title },
   };
 
   return (

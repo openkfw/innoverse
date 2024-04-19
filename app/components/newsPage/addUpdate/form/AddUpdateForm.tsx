@@ -11,7 +11,7 @@ import Stack from '@mui/material/Stack';
 
 import { Option } from '@/common/formTypes';
 import { errorMessage, successMessage } from '@/components/common/CustomToast';
-import { DropdownField } from '@/components/common/form/DropdownField';
+import { AutocompleteDropdownField } from '@/components/common/form/AutocompleteDropdownField';
 
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
 
@@ -19,18 +19,23 @@ import { handleProjectUpdate } from './actions';
 import formFieldNames from './formFields';
 import { formValidationSchema, UpdateFormValidationSchema } from './validationSchema';
 
-export interface UpdateFormData {
+export interface AddUpdateData {
   comment: string;
   projectId: string;
+  authorId?: string;
+}
+export interface UpdateFormData {
+  comment: string;
+  project: { id: string; label: string } | null;
   authorId?: string;
 }
 
 const defaultValues = {
   comment: '',
-  projectId: '',
+  project: null,
 };
 
-const { PROJECT_ID, COMMENT } = formFieldNames;
+const { PROJECT, COMMENT } = formFieldNames;
 
 interface AddUpdateFormProps {
   refetchUpdates: () => void;
@@ -56,19 +61,21 @@ export default function AddUpdateForm({
   });
 
   const onSubmit: SubmitHandler<UpdateFormValidationSchema> = async (data) => {
-    const { comment, projectId } = data;
-    const formData = {
-      comment,
-      projectId,
-    };
+    const { comment, project } = data;
+    if (project) {
+      const formData = {
+        comment,
+        projectId: project?.id,
+      };
 
-    const response = await handleProjectUpdate(formData);
-    if (response.status === StatusCodes.OK) {
-      refetchUpdates();
-      successMessage({ message: 'Update was successfully created' });
-      handleClose();
-    } else {
-      errorMessage({ message: 'There was an error when adding an update' });
+      const response = await handleProjectUpdate(formData);
+      if (response.status === StatusCodes.OK) {
+        refetchUpdates();
+        successMessage({ message: 'Update was successfully created' });
+        handleClose();
+      } else {
+        errorMessage({ message: 'There was an error when adding an update' });
+      }
     }
   };
 
@@ -84,14 +91,14 @@ export default function AddUpdateForm({
         />
       </form>
       <Stack spacing={2} direction={{ sm: 'column', md: 'row' }}>
-        <DropdownField
-          name={PROJECT_ID}
+        <AutocompleteDropdownField
+          name={PROJECT}
           control={control}
           label="Initiative"
           options={projectOptions}
-          readOnly={!!!projectOptions}
+          readOnly={!projectOptions}
           startAdornment={
-            !!!projectOptions && (
+            !projectOptions && (
               <Box sx={{ pt: 1 }}>
                 <CircularProgress size={20} />
               </Box>

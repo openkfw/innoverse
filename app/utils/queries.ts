@@ -67,6 +67,12 @@ export enum STRAPI_QUERY {
   GetPlatformFeedbackCollaborationQuestion,
 }
 
+export const SORT_OPTION = {
+  UPDATED_AT_ASC: 'updatedAt:asc',
+  UPDATED_AT_DESC: 'updatedAt:desc',
+  TITLE_ASC: 'title:asc',
+};
+
 function formatDate(value: string, locale = 'de-DE') {
   const date = new Date(value);
   const month = date.toLocaleString(locale, { month: 'long' });
@@ -168,7 +174,7 @@ export const GetInnoUserByProviderIdQuery = `query GetInnoUser($providerId: Stri
 `;
 
 export const GetEventsQuery = `query GetEvents($startingFrom: Date) {
-  events(filters: {date: {gte: $startingFrom}}, sort: "updatedAt:asc") {
+  events(filters: {date: {gte: $startingFrom}}, sort: "${SORT_OPTION.UPDATED_AT_ASC}") {
     data {
       id
       attributes {
@@ -196,7 +202,7 @@ export const GetEventsQuery = `query GetEvents($startingFrom: Date) {
 `;
 
 export const GetUpdatesQuery = `query GetUpdates ($limit: Int) {
-  updates(sort: "updatedAt:desc", pagination: { limit: $limit }) {
+  updates(sort: "${SORT_OPTION.UPDATED_AT_DESC}", pagination: { limit: $limit }) {
     data {
       id
       attributes {
@@ -248,7 +254,7 @@ export const GetUpdatesFilterQuery = (
 }`;
 
 export const GetUpdatesByProjectIdQuery = `query GetUpdates($projectId: ID) {
-  updates(sort: "updatedAt:desc", filters: { project: { id: { eq: $projectId } } }) {
+  updates(sort: "${SORT_OPTION.UPDATED_AT_DESC}", filters: { project: { id: { eq: $projectId } } }) {
     data {
       id
       attributes {
@@ -357,8 +363,8 @@ export const GetCollaborationQuestionsByProjectIdQuery = `query GetCollaboration
   }
 }`;
 
-export const GetProjectsQuery = `query GetProjects {
-  projects(sort: "updatedAt:desc", pagination: { limit: 80 }) {
+export const GetProjectsQuery = (sort = SORT_OPTION.UPDATED_AT_DESC) => `query GetProjects {
+  projects(sort: "${sort}", pagination: { limit: 80 }) {
     data {
       id
       attributes {

@@ -18,6 +18,6 @@ export interface MultilineFormInputProps extends FormInputProps {
 }
 
 export type Option = {
+  id: string;
   label: string;
-  value: string;
 };

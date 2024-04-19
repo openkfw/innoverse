@@ -49,8 +49,8 @@ export const UpdatesTab = ({ projectData, onUpdate }: UpdatesTabProps) => {
 
       <CardContent sx={cardContentStyles}>
         <Stack direction={isVeryLargeScreen ? 'row-reverse' : 'column'}>
-          <AddUpdateCard sx={updateCardStyles} projectId={projectData.id} refetchUpdates={refetchUpdates} />
-          <Box flexGrow={'1'}>
+          <AddUpdateCard sx={updateCardStyles} project={projectData} refetchUpdates={refetchUpdates} />
+          <Box flexGrow="1">
             <ProjectTimeLine
               widthOfDateColumn={isSmallScreen ? '83px' : '273px'}
               projectUpdates={projectData.updates}
