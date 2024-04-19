@@ -49,9 +49,9 @@ import {
 } from './queries';
 import strapiFetcher from './strapiFetcher';
 const logger = getLogger();
-import { UpdateFormData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
 import { getCollaborationCommentUpvotedBy } from '@/repository/db/collaboration_comment';
 import { getCommentUpvotedBy } from '@/repository/db/project_comment';
+import { AddUpdateData } from '@/components/newsPage/addUpdate/form/AddUpdateForm';
 
 async function uploadImage(imageUrl: string, fileName: string) {
   return fetch(imageUrl)
@@ -389,7 +389,7 @@ const authenticatedAppliedForOpp = withAuth(async (user: UserSession, body: { op
 
 export async function getDataWithFeaturedFiltering() {
   try {
-    const response = await strapiFetcher(GetProjectsQuery);
+    const response = await strapiFetcher(GetProjectsQuery());
     const result = await withResponseTransformer(STRAPI_QUERY.GetProjects, response);
 
     // Filter projects which are featured
@@ -406,9 +406,9 @@ export async function getDataWithFeaturedFiltering() {
   }
 }
 
-export async function getProjects() {
+export async function getProjects(sort?: string) {
   try {
-    const response = await strapiFetcher(GetProjectsQuery);
+    const response = await strapiFetcher(GetProjectsQuery(sort));
     const result = await withResponseTransformer(STRAPI_QUERY.GetProjects, response);
     return result.projects;
   } catch (err) {
@@ -566,7 +566,7 @@ export async function createInnoUserIfNotExist(body: UserSession, image?: string
   }
 }
 
-export async function createProjectUpdate(body: Omit<UpdateFormData, 'author'>) {
+export async function createProjectUpdate(body: AddUpdateData) {
   try {
     const response = await strapiFetcher(CreateProjectUpdateQuery, body);
     const resultUpdate = await withResponseTransformer(STRAPI_QUERY.CreateProjectUpdate, response);

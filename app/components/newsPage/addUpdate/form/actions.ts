@@ -6,25 +6,26 @@ import { Project, User, UserSession } from '@/common/types';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
+import { SORT_OPTION } from '@/utils/queries';
 import { createProjectUpdate, getInnoUserByProviderId, getProjects } from '@/utils/requests';
 import { validateParams } from '@/utils/validationHelper';
 
-import { UpdateFormData } from './AddUpdateForm';
+import { AddUpdateData } from './AddUpdateForm';
 import { handleProjectUpdateSchema } from './validationSchema';
 
 const logger = getLogger();
 export const getProjectsOptions = async () => {
-  const projects = (await getProjects()) as Project[];
+  const projects = (await getProjects(SORT_OPTION.TITLE_ASC)) as Project[];
   return projects.map((project) => {
     return {
+      id: project.id,
       label: project.title,
-      value: project.id,
     };
   });
 };
 
 export const handleProjectUpdate = withAuth(
-  async (user: UserSession, body: Omit<UpdateFormData, 'authorId' | 'author'>) => {
+  async (user: UserSession, body: Omit<AddUpdateData, 'authorId' | 'author'>) => {
     const validatedParams = validateParams(handleProjectUpdateSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
       const author = (await getInnoUserByProviderId(user.providerId)) as User;
