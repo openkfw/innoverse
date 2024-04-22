@@ -34,7 +34,10 @@ const ExportFeedbackPage = () => {
       return;
     }
     toast('Feedback should be downloaded now!');
-    window.open('data:text/csv;charset=utf-8,' + feedback.data);
+    const link = document.createElement('a');
+    link.href = 'data:text/csv;charset=utf-8,' + feedback.data;
+    link.download = 'platform_feedback.csv';
+    link.click();
   };
 
   const downloadOverallStats = async () => {
@@ -47,7 +50,10 @@ const ExportFeedbackPage = () => {
       return;
     }
     toast('Platform statistics  should be downloaded now!');
-    window.open('data:text/csv;charset=utf-8,' + platformStats.data);
+    const link = document.createElement('a');
+    link.href = 'data:text/csv;charset=utf-8,' + platformStats.data;
+    link.download = 'overall_platform_statistics.csv';
+    link.click();
   };
 
   const downloadProjectStats = async () => {
@@ -60,7 +66,10 @@ const ExportFeedbackPage = () => {
       return;
     }
     toast('Project statistics should be downloaded now!');
-    window.open('data:text/csv;charset=utf-8,' + projectStats.data);
+    const link = document.createElement('a');
+    link.href = 'data:text/csv;charset=utf-8,' + projectStats.data;
+    link.download = 'project_statistics.csv';
+    link.click();
   };
 
   return (
@@ -95,10 +104,10 @@ const ExportFeedbackPage = () => {
               Download Platform Feedbacks
             </Button>
             <Button variant="contained" color="primary" onClick={downloadOverallStats}>
-              Download Overall Stats
+              Download Overall Statistics
             </Button>
             <Button variant="contained" color="primary" onClick={downloadProjectStats}>
-              Download Stats for Projects
+              Download Statistics for Projects
             </Button>
           </Stack>
         </Stack>

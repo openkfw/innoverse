@@ -48,7 +48,7 @@ export const generatePlatformStatistics = withAuth(
   async (user: UserSession, body: { username: string; password: string }) => {
     const { username, password } = body;
     if (!checkCredentials(username, password)) {
-      logger.error('Invalid credentials for downloading feedback');
+      logger.error('Invalid credentials for downloading platform statistics');
       return {
         status: StatusCodes.UNAUTHORIZED,
         data: 'Invalid credentials',
