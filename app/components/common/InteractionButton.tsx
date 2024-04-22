@@ -22,7 +22,6 @@ import ChatIcon from '@/components/icons/ChatIcon';
 import CloseIcon from '@/components/icons/CloseIcon';
 import RecommendIcon from '@/components/icons/RecommendIcon';
 import palette from '@/styles/palette';
-import theme from '@/styles/theme';
 
 export interface InteractionButtonProps extends ButtonProps {
   interactionType: InteractionType;
@@ -166,14 +165,11 @@ export default function InteractionButton(props: InteractionButtonProps) {
       sx={{
         px: getText() === undefined ? 1 : 2,
         py: 1,
-        [theme.breakpoints.down('sm')]: {
-          py: 3,
-        },
         color: isSelected || clicked ? 'secondary.main' : 'rgba(0, 0, 0, 0.56)',
         fontFamily: 'Arial',
         fontSize: { xs: '12px', lg: '13px' },
         fontWeight: '700',
-        lineHeight: '19px',
+        lineHeight: { xs: '13px', md: '19px' },
         border: '1px solid',
         borderColor: getBorderColor(),
         background: 'rgba(255, 255, 255, 0.10)',
