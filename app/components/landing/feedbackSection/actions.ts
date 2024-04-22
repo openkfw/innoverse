@@ -18,11 +18,7 @@ const logger = getLogger();
 
 export const saveFeedback = withAuth(
   async (user: UserSession, body: { feedback: string; showOnProjectPage: boolean }) => {
-    const request = await strapiFetcher(GetPlatformFeedbackCollaborationQuestion);
-    const { collaborationQuestionId: questionId, projectId } = (await withResponseTransformer(
-      STRAPI_QUERY.GetPlatformFeedbackCollaborationQuestion,
-      request,
-    )) as unknown as { collaborationQuestionId: string; projectId: string };
+    const { collaborationQuestionId: questionId, projectId } = await getPlatformFeedbackQuestion();
 
     try {
       const validatedParams = validateParams(handleFeedbackSchema, body);
@@ -53,3 +49,29 @@ export const saveFeedback = withAuth(
     }
   },
 );
+
+export const getPlatfromFeedbackProject = withAuth(async (user: UserSession) => {
+  try {
+    const data = await getPlatformFeedbackQuestion();
+    return {
+      status: StatusCodes.OK,
+      data: { projectId: data.projectId },
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Getting platform feedback project from user ${user.providerId}`,
+      err as Error,
+    );
+    logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Getting project feedback for platform failed',
+    };
+  }
+});
+
+const getPlatformFeedbackQuestion = async () => {
+  const response = await strapiFetcher(GetPlatformFeedbackCollaborationQuestion);
+  const data = await withResponseTransformer(STRAPI_QUERY.GetPlatformFeedbackCollaborationQuestion, response);
+  return data;
+};
