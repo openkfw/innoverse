@@ -84,7 +84,7 @@ export const generateProjectsStatistics = withAuth(
       };
     }
     const getAllProjects = async () => {
-      const response = await strapiFetcher(GetProjectsQuery);
+      const response = await strapiFetcher(GetProjectsQuery());
       const result = await withResponseTransformer(STRAPI_QUERY.GetProjects, response);
       return result.projects.map(({ id }) => id);
     };
