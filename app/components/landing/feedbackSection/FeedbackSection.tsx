@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
 import { StatusCodes } from 'http-status-codes';
 import { useSessionStorage } from 'usehooks-ts';
 
@@ -15,17 +16,50 @@ import Typography from '@mui/material/Typography';
 
 import CustomDialog from '@/components/common/CustomDialog';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
-import { saveFeedback } from '@/components/landing/feedbackSection/actions';
+import {
+  getPlatfromFeedbackProject as getPlatformFeedbackProject,
+  saveFeedback,
+} from '@/components/landing/feedbackSection/actions';
 import theme from '@/styles/theme';
+
+const ProjectLink = ({
+  children,
+  projectId,
+  navigateToCollaborationTab = false,
+}: {
+  children: React.ReactNode;
+  projectId?: string;
+  navigateToCollaborationTab?: boolean;
+}) => (
+  <Link
+    href={projectId ? `/projects/${projectId}${navigateToCollaborationTab ? '?tab=1' : ''}` : '#'}
+    style={{ textDecoration: 'none' }}
+    target="_blank"
+  >
+    <Typography component="span" fontSize={'12px'} color={'text.secondary'}>
+      {children}
+    </Typography>
+  </Link>
+);
 
 function FeedbackSection() {
   const [open, openDialog] = useState(false);
   // The useState and the useSessionStorage both must be used to avoid pre-hydration errors.
   const [feedbackClosed, setFeedbackClosed] = useSessionStorage('feedbackClosed', false);
   const [hideButton, setHideButton] = useState(feedbackClosed);
+  const [projectId, setProjectId] = useState<string>();
 
   const [showFeedbackOnProjectPage, setShowFeedbackOnProjectPage] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
+
+  useEffect(() => {
+    async function loadAndSetFeedbackProjectId() {
+      const response = await getPlatformFeedbackProject({});
+      setProjectId(response.data?.projectId);
+    }
+
+    loadAndSetFeedbackProjectId();
+  });
 
   function handleOpen() {
     openDialog(true);
@@ -88,10 +122,8 @@ function FeedbackSection() {
         <FormGroup>
           <Typography color={'text.primary'} fontSize={'12px'}>
             Dein Feedback wird an die Administrator:innen der{' '}
-            <Typography component="span" fontSize={'12px'} color={'text.secondary'}>
-              Projektseite &quot;InnoPlattform&quot;
-            </Typography>{' '}
-            gesendet. Deine Daten (Name) werden mitgesendet.
+            <ProjectLink projectId={projectId}>Projektseite &quot;InnoPlattform&quot;</ProjectLink> gesendet. Deine
+            Daten (Name) werden mitgesendet.
           </Typography>
           <Stack direction={'row'} sx={{ mt: 1 }}>
             <FormControlLabel
@@ -111,7 +143,11 @@ function FeedbackSection() {
               }
               label={
                 <Typography color={'text.primary'} fontSize={'12px'}>
-                  Ich möchte mein Feedback zusätzlich auch auf der Projektseite anzeigen lassen.
+                  Mein Feedback soll zusätzlich auf der{' '}
+                  <ProjectLink projectId={projectId} navigateToCollaborationTab={true}>
+                    Initiativenseite der Innovationsplattform
+                  </ProjectLink>{' '}
+                  zur Diskussion gepostet werden
                 </Typography>
               }
               labelPlacement="end"
