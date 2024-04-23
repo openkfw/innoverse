@@ -44,11 +44,8 @@ export const SurveyResponsePicker = ({
       </StyledToggleButtonGroup>
 
       <Box sx={votesCardStyle}>
-        <Typography variant="subtitle1" color="primary.main">
+        <Typography variant="subtitle1" color="primary.main" sx={{ textAlign: 'center' }}>
           {voteCount} Votes
-        </Typography>
-        <Typography variant="caption" color="primary.main">
-          Um die Ergebnisse zu sehen, bitte gib deine Stimme ab.
         </Typography>
       </Box>
     </Box>
