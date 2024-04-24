@@ -18,5 +18,9 @@ export const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
     borderRadius: '16px',
     border: '1px solid rgba(0, 90, 140, 0.20)',
     maxWidth: 'none',
+    transition: 'all 300ms ease-in-out',
+  },
+  [`& .${tooltipClasses.popper}`]: {
+    transition: 'all 300ms ease-in-out',
   },
 }));

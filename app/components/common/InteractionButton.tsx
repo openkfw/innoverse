@@ -15,13 +15,14 @@ import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import Box from '@mui/material/Box';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { SxProps } from '@mui/material/styles';
-import Tooltip from '@mui/material/Tooltip';
 
 import ApplyIcon from '@/components/icons/ApplyIcon';
 import ChatIcon from '@/components/icons/ChatIcon';
 import CloseIcon from '@/components/icons/CloseIcon';
 import RecommendIcon from '@/components/icons/RecommendIcon';
 import palette from '@/styles/palette';
+
+import CustomTooltip from './CustomTooltip';
 
 export interface InteractionButtonProps extends ButtonProps {
   interactionType: InteractionType;
@@ -195,9 +196,9 @@ export default function InteractionButton(props: InteractionButtonProps) {
 
   if (tooltip) {
     return (
-      <Tooltip title={tooltip}>
+      <CustomTooltip tooltip={tooltip}>
         <span style={{ height: 'fit-content' }}>{customButton}</span>
-      </Tooltip>
+      </CustomTooltip>
     );
   }
 

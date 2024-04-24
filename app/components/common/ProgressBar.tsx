@@ -4,12 +4,13 @@ import { CSSProperties } from 'react';
 
 import Box from '@mui/material/Box';
 import { SxProps } from '@mui/material/styles';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { PROJECT_PROGRESS } from '@/common/types';
 
 import theme from '../../styles/theme';
+
+import CustomTooltip from './CustomTooltip';
 
 interface ProgressBarProps {
   active: string;
@@ -133,12 +134,7 @@ function StepLabel({
   backgroundColor,
 }: ProgressStepLabelProps & { backgroundColor: CSSProperties['backgroundColor'] }) {
   return (
-    <Box
-      style={{
-        position: 'absolute',
-      }}
-      sx={sx}
-    >
+    <Box style={{ position: 'absolute' }} sx={sx}>
       <Box
         style={{
           width: 24,
@@ -165,8 +161,8 @@ function FirstStep({ idx, step, activeStep }: ProgressStepProps) {
   const statusLabel = getStepStatusLabel(stepIsDone, active);
 
   return (
-    <Tooltip title={`${label}: ${statusLabel}`}>
-      <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <CustomTooltip tooltip={`${label}: ${statusLabel}`}>
+      <Box sx={stepStyles}>
         {active ? (
           <>
             <ActiveStepLabel label={label} />
@@ -189,7 +185,7 @@ function FirstStep({ idx, step, activeStep }: ProgressStepProps) {
           </>
         )}
       </Box>
-    </Tooltip>
+    </CustomTooltip>
   );
 }
 
@@ -200,8 +196,8 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
   const statusLabel = getStepStatusLabel(stepIsDone, active);
 
   return (
-    <Tooltip title={`${label}: ${statusLabel}`}>
-      <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <CustomTooltip tooltip={`${label}: ${statusLabel}`}>
+      <Box sx={stepStyles}>
         {active ? (
           <>
             <ActiveStepLabel label={label} />
@@ -224,13 +220,13 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
           </>
         )}
       </Box>
-    </Tooltip>
+    </CustomTooltip>
   );
 }
 
 export default function ProgressBar({ active }: ProgressBarProps) {
   return (
-    <Box sx={{ justifyContent: 'flex-start', alignItems: 'flex-start', display: 'inline-flex' }}>
+    <Box sx={wrapperStyles}>
       <FirstStep idx={1} step={PROJECT_PROGRESS.EXPLORATION} activeStep={active} />
       <Step idx={2} step={PROJECT_PROGRESS.KONZEPTION} activeStep={active} />
       <Step idx={3} step={PROJECT_PROGRESS.PROOF_OF_CONCEPT} activeStep={active} />
@@ -238,3 +234,18 @@ export default function ProgressBar({ active }: ProgressBarProps) {
     </Box>
   );
 }
+
+// Progress Bar Styles
+const wrapperStyles = {
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start',
+  display: 'inline-flex',
+};
+
+const stepStyles = {
+  position: 'relative',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  cursor: 'default',
+};

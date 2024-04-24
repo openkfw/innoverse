@@ -194,7 +194,7 @@ export default function TabView({ projectName, ...props }: BasicTabsProps) {
           label={
             <Stack direction="row" spacing={1}>
               <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
-                {futureEvents.length}
+                {futureEvents?.length}
               </Typography>
               <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
                 Events
