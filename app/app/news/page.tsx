@@ -11,15 +11,16 @@ import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';
 import Layout from '@/components/layout/Layout';
 import NewsContainer from '@/components/newsPage/NewsContainer';
-import { getProjectsUpdates, getProjectsUpdatesFilter } from '@/utils/requests';
+import { getProjectUpdates, getProjectUpdatesPage } from '@/utils/requests/updates/requests';
 
 import { NewsFilterContextProvider } from '../contexts/news-filter-context';
 
 import backgroundImage from '/public/images/news-background.png';
 
 async function NewsPage() {
-  const initialUpdates = await getProjectsUpdatesFilter('desc', 1);
-  const allUpdates = await getProjectsUpdates();
+  const initialUpdates = (await getProjectUpdatesPage({ filters: { projects: [], topics: [] }, page: 1 })) ?? [];
+
+  const allUpdates = await getProjectUpdates();
 
   if (!initialUpdates || !allUpdates) return <ErrorPage />;
 

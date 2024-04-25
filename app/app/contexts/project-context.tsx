@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState } from 'react';
 
-import { ProjectData } from '@/common/types';
+import { Project } from '@/common/types';
 
 interface ProjectContextInterface {
   surveyVotesAmount: number;
@@ -20,18 +20,12 @@ const defaultState: ProjectContextInterface = {
 
 const ProjectContext = createContext(defaultState);
 
-export const ProjectContextProvider = ({
-  projectData,
-  children,
-}: {
-  projectData: ProjectData;
-  children: React.ReactNode;
-}) => {
+export const ProjectContextProvider = ({ project, children }: { project: Project; children: React.ReactNode }) => {
   const [surveyVotesAmount, setSurveyVotesAmount] = useState<number>(
-    projectData.surveyQuestions.reduce((sum, survey) => sum + survey.votes.length, 0),
+    project.surveyQuestions.reduce((sum, survey) => sum + survey.votes.length, 0),
   );
   const [collaborationCommentsAmount, setCollaborationCommentsAmount] = useState<number>(
-    projectData.collaborationQuestions.reduce((sum, comment) => sum + comment.comments.length, 0),
+    project.collaborationQuestions.reduce((sum, comment) => sum + comment.comments.length, 0),
   );
 
   const contextObject: ProjectContextInterface = {

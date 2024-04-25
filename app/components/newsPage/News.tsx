@@ -1,3 +1,5 @@
+'use client';
+
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import Box from '@mui/material/Box';
@@ -9,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import theme from '@/styles/theme';
-import { getProjectsUpdatesFilter } from '@/utils/requests';
+import { getProjectUpdatesPage } from '@/utils/requests/updates/requests';
 
 import NewsCard from './NewsCard';
 
@@ -17,17 +19,12 @@ interface NewsProps {
   sx?: SxProps;
 }
 
-export enum SortValues {
-  DESC = 'desc',
-  ASC = 'asc',
-}
-
 export const News = (props: NewsProps) => {
   const { sx } = props;
   const { news, setNews, filters, sort, pageNumber, setPageNumber, hasMoreValue, setHasMoreValue } = useNewsFilter();
 
   const loadScrollData = async () => {
-    const filteredUpdates = await getProjectsUpdatesFilter(sort, pageNumber, filters);
+    const filteredUpdates = await getProjectUpdatesPage({ filters, page: pageNumber, sort: sort });
     if (filteredUpdates) {
       setNews((prevItems: ProjectUpdateWithAdditionalData[]) => [...prevItems, ...filteredUpdates]);
       filteredUpdates.length > 0 ? setHasMoreValue(true) : setHasMoreValue(false);

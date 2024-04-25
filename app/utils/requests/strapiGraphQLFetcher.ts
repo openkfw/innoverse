@@ -1,8 +1,21 @@
 'use server';
+import { ResultOf, VariablesOf } from 'gql.tada';
+import { DocumentNode, print } from 'graphql';
 
-import { RequestError } from '../entities/error';
+import { RequestError } from '@/entities/error';
 
-const strapiFetcher = async (query: string, variables?: unknown) => {
+const strapiGraphQLFetcher = async <TQuery extends DocumentNode>(
+  graphqlQuery: TQuery,
+  variables?: VariablesOf<TQuery>,
+) => {
+  const queryString = print(graphqlQuery);
+  const response = await strapiFetcher(queryString, variables);
+  const typedResult = response as { data?: ResultOf<TQuery> };
+  if (!typedResult.data) throw 'JSON response contained no data';
+  return typedResult.data;
+};
+
+const strapiFetcher = async (query: unknown, variables?: unknown) => {
   const res = await fetch(process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT as string, {
     method: 'POST',
     headers: {
@@ -34,4 +47,4 @@ const strapiFetcher = async (query: string, variables?: unknown) => {
   return res.json();
 };
 
-export default strapiFetcher;
+export default strapiGraphQLFetcher;

@@ -29,6 +29,9 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
 
   const handleOpportunityApply = async () => {
     try {
+      // Optimistic update
+      setHasApplied((prev) => !prev);
+      // Now wait for actual status and set it
       await handleApplyForOpportunity({ opportunityId: opportunity.id });
       const { data } = await hasAppliedForOpportunity({ opportunityId: opportunity.id });
       setHasApplied(data ?? false);
@@ -106,7 +109,7 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
             isSelected={hasApplied}
             projectName={projectName}
             interactionType={InteractionType.OPPORTUNITY_APPLY}
-            onClick={() => handleOpportunityApply()}
+            onClick={handleOpportunityApply}
           />
         </Grid>
         <Grid item>

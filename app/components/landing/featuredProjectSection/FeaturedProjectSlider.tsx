@@ -11,7 +11,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { Project } from '@/common/types';
+import { BasicProject } from '@/common/types';
 import theme from '@/styles/theme';
 
 import FeaturedProjectContent from './slider/FeaturedProjectContent';
@@ -22,11 +22,11 @@ import './FeatureProjectSlider.css';
 export const defaultImage = '/images/ai_01.png';
 
 type FeaturedProjectSliderProps = {
-  items: Project[];
+  items: BasicProject[];
 };
 
 type SlideProps = {
-  content: Project;
+  content: BasicProject;
   setSelected: (index: number) => void;
   index: number;
 };

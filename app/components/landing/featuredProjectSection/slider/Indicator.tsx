@@ -2,7 +2,7 @@
 
 import Box from '@mui/material/Box';
 
-import { Project } from '@/common/types';
+import { BasicProject } from '@/common/types';
 import theme from '@/styles/theme';
 
 import SliderPill from './SliderPill';
@@ -11,7 +11,7 @@ interface IndicatorProps {
   isSelected: boolean;
   index: number;
   setSelectedItem: (index: number) => void;
-  slide: Project;
+  slide: BasicProject;
 }
 
 const Indicator = (props: IndicatorProps) => {

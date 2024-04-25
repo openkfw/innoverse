@@ -19,7 +19,7 @@ export const mergeStyles = (primary: SxProps | undefined, overrides: SxProps | u
   return [primary, ...(Array.isArray(overrides) ? overrides : [overrides])];
 };
 
-export function formatDate(dateString: string, locale = 'de-DE') {
+export function formatDate(dateString: string | Date, locale = 'de-DE') {
   if (!dateString || isNaN(new Date(dateString).getTime())) {
     return null;
   }

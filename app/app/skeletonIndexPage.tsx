@@ -6,7 +6,7 @@ import { EventSection } from '@/components/landing/eventsSection/EventsSection';
 import FeaturedProjectSlider from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import Layout from '@/components/layout/Layout';
-import { getMainPageData } from '@/utils/requests';
+import { getMainPageData } from '@/utils/requests/pageRequests';
 
 async function SkeletonIndexPage() {
   const data = (await getMainPageData()) as MainPageData;

@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { ProjectData, ProjectUpdate } from '@/common/types';
+import { Project, ProjectUpdate } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { errorMessage } from '../common/CustomToast';
@@ -18,18 +18,18 @@ import { AddUpdateCard } from './AddUpdateCard';
 import { ProjectTimeLine } from './ProjectTimeLine';
 
 interface UpdatesTabProps {
-  projectData: ProjectData;
+  project: Project;
   onUpdate: (updates: ProjectUpdate[]) => void;
 }
 
-export const UpdatesTab = ({ projectData, onUpdate }: UpdatesTabProps) => {
+export const UpdatesTab = ({ project, onUpdate }: UpdatesTabProps) => {
   const isVeryLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const appInsights = useAppInsightsContext();
 
   const refetchUpdates = async () => {
     try {
-      const { data } = await getProjectUpdates({ projectId: projectData.id });
+      const { data } = await getProjectUpdates({ projectId: project.id });
       if (data) {
         onUpdate(data);
       }
@@ -49,12 +49,9 @@ export const UpdatesTab = ({ projectData, onUpdate }: UpdatesTabProps) => {
 
       <CardContent sx={cardContentStyles}>
         <Stack direction={isVeryLargeScreen ? 'row-reverse' : 'column'}>
-          <AddUpdateCard sx={updateCardStyles} project={projectData} refetchUpdates={refetchUpdates} />
+          <AddUpdateCard sx={updateCardStyles} project={project} refetchUpdates={refetchUpdates} />
           <Box flexGrow="1">
-            <ProjectTimeLine
-              widthOfDateColumn={isSmallScreen ? '83px' : '273px'}
-              projectUpdates={projectData.updates}
-            />
+            <ProjectTimeLine widthOfDateColumn={isSmallScreen ? '83px' : '273px'} projectUpdates={project.updates} />
           </Box>
         </Stack>
       </CardContent>

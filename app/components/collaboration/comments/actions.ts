@@ -24,7 +24,7 @@ import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getPromiseResults, sortDateByCreatedAt } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { getInnoUserByProviderId } from '@/utils/requests';
+import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
@@ -43,6 +43,7 @@ import {
 } from './validationSchema';
 
 const logger = getLogger();
+
 export const getProjectCollaborationComments = async (body: { projectId: string; questionId: string }) => {
   try {
     const validatedParams = validateParams(getCollaborationCommentsSchema, body);

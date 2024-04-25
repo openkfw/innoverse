@@ -13,9 +13,10 @@ import {
 } from '@/repository/db/project_comment';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
-import { getFulfilledResults, sortDateByCreatedAt } from '@/utils/helpers';
+import { getFulfilledResults, getPromiseResults, sortDateByCreatedAt } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { getInnoUserByProviderId } from '@/utils/requests';
+import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import { isProjectCommentUpvotedByUser } from '@/utils/requests/project/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
@@ -29,6 +30,7 @@ import {
 } from './validationSchema';
 
 const logger = getLogger();
+
 export const addProjectComment = withAuth(async (user: UserSession, body: { projectId: string; comment: string }) => {
   try {
     const validatedParams = validateParams(handleCommentSchema, body);
@@ -85,9 +87,21 @@ export const getProjectComments = async (body: { projectId: string }) => {
         }),
       ).then((results) => getFulfilledResults(results));
 
+      // Get user upvotes
+      const getUpvotes = comments.map(async (comment): Promise<Comment> => {
+        const { data: isUpvotedByUser } = await isProjectCommentUpvotedByUser({ commentId: comment.id });
+
+        return {
+          ...comment,
+          isUpvotedByUser,
+        };
+      });
+
+      const commentsWithUserUpvote = await getPromiseResults(getUpvotes);
+
       return {
         status: StatusCodes.OK,
-        data: comments,
+        data: commentsWithUserUpvote,
       };
     }
     return {

@@ -76,7 +76,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
       <Stack direction="row" spacing={1} sx={interactionStyles}>
         <InteractionButton
           isSelected={isLiked}
-          projectName={project.projectName}
+          projectName={project.title}
           interactionType={InteractionType.LIKE}
           onClick={toggleLike}
           label={likesAmount.toString()}
@@ -84,7 +84,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
         />
         <InteractionButton
           isSelected={isFollowed}
-          projectName={project.projectName}
+          projectName={project.title}
           interactionType={InteractionType.PROJECT_FOLLOW}
           onClick={toggleFollow}
           sx={interactionButtonStyles}

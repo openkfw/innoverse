@@ -23,13 +23,14 @@ export async function getUserLikes(client: PrismaClient, likedBy: string, limit?
 
   return client.like.findMany(query);
 }
-export async function getProjectAndUserLikes(client: PrismaClient, projectId: string, likedBy: string) {
-  return client.like.findMany({
+export async function isProjectLikedBy(client: PrismaClient, projectId: string, likedBy: string) {
+  const isLikedByUserCount = await client.like.count({
     where: {
       projectId: projectId,
       likedBy: likedBy,
     },
   });
+  return isLikedByUserCount > 0;
 }
 
 export async function deleteProjectAndUserLike(client: PrismaClient, projectId: string, likedBy: string) {

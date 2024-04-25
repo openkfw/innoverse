@@ -5,7 +5,7 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { ProjectData } from '@/common/types';
+import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { UnsavedCommentChangesDialog } from '../common/comments/UnsavedChangesDialog';
@@ -15,7 +15,7 @@ import { SurveyCard } from './survey/SurveyCard';
 import { CollaborationQuestionCard } from './CollaborationQuestionCard';
 
 interface CollaborationTabProps {
-  project: ProjectData;
+  project: Project;
 }
 
 export const CollaborationTab = ({ project }: CollaborationTabProps) => {
@@ -36,7 +36,7 @@ export const CollaborationTab = ({ project }: CollaborationTabProps) => {
   );
 };
 
-const OpportunitiesSection = ({ project }: { project: ProjectData }) => {
+const OpportunitiesSection = ({ project }: { project: Project }) => {
   if (!project.opportunities.length) return <></>;
 
   return (
@@ -56,7 +56,7 @@ const OpportunitiesSection = ({ project }: { project: ProjectData }) => {
   );
 };
 
-const SurveyQuestionsSection = ({ project }: { project: ProjectData }) => {
+const SurveyQuestionsSection = ({ project }: { project: Project }) => {
   if (!project.surveyQuestions.length) return <></>;
 
   return (
@@ -76,7 +76,7 @@ const SurveyQuestionsSection = ({ project }: { project: ProjectData }) => {
   );
 };
 
-const CollaborationQuestionsSection = ({ project }: { project: ProjectData }) => {
+const CollaborationQuestionsSection = ({ project }: { project: Project }) => {
   if (!project.collaborationQuestions.length) return <></>;
 
   return (
@@ -88,7 +88,7 @@ const CollaborationQuestionsSection = ({ project }: { project: ProjectData }) =>
         {project.collaborationQuestions.map((question, idx) => (
           <CollaborationQuestionCard
             key={idx}
-            projectName={project.projectName}
+            projectName={project.title}
             content={question}
             projectId={project.id}
             questionId={question.id}

@@ -893,7 +893,11 @@ export interface ApiProjectProject extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    title: Attribute.String & Attribute.Required;
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     featured: Attribute.Boolean &
       Attribute.Required &
       Attribute.DefaultTo<false>;
@@ -912,7 +916,10 @@ export interface ApiProjectProject extends Schema.CollectionType {
       'api::inno-user.inno-user'
     >;
     projectStart: Attribute.Date & Attribute.Required;
-    shortTitle: Attribute.String;
+    shortTitle: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 30;
+      }>;
     team: Attribute.Relation<
       'api::project.project',
       'oneToMany',
@@ -1037,7 +1044,6 @@ export interface ApiUpdateUpdate extends Schema.CollectionType {
   attributes: {
     comment: Attribute.Text & Attribute.Required;
     topic: Attribute.String;
-    date: Attribute.Date;
     author: Attribute.Relation<
       'api::update.update',
       'oneToOne',

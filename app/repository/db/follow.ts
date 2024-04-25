@@ -23,13 +23,16 @@ export async function getUserFollowers(client: PrismaClient, followedBy: string,
 
   return client.follow.findMany(query);
 }
-export async function getProjectAndUserFollowers(client: PrismaClient, projectId: string, followedBy: string) {
-  return client.follow.findMany({
+
+export async function isProjectFollowedBy(client: PrismaClient, projectId: string, followedBy: string) {
+  const followedProjectCount = await client.follow.count({
     where: {
       projectId: projectId,
       followedBy: followedBy,
     },
   });
+
+  return followedProjectCount > 0;
 }
 
 export async function deleteProjectAndUserFollower(client: PrismaClient, projectId: string, followedBy: string) {

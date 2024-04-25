@@ -30,6 +30,7 @@ services:
       - ./strapi/yarn.lock:/opt/yarn.lock
       - ./strapi/.env:/opt/app/.env
       - ./strapi/public/uploads:/opt/app/public/uploads
+      - ./strapi/types:/opt/app/types
     ports:
       - "1337:1337"
     depends_on:

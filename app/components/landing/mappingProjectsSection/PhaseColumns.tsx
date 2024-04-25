@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { Project } from '@/common/types';
+import { BasicProject } from '@/common/types';
 import { MappingDataProps } from '@/components/landing/mappingProjectsSection/MappingProjectsCard';
 import theme from '@/styles/theme';
 
@@ -13,7 +13,7 @@ import { ProjectLinks } from './ProjectLinks';
 
 interface PhaseColumnsProps {
   mappingData: MappingDataProps[];
-  projects: Project[];
+  projects: BasicProject[];
 }
 
 export default function PhaseColumns(props: PhaseColumnsProps) {
@@ -67,7 +67,7 @@ const PhaseColumnHeader = ({ title, description, icon, isFirstStep }: MappingDat
   );
 };
 
-const PhaseColumFooter = ({ phaseName, projects }: { projects: Project[]; phaseName: string }) => {
+const PhaseColumFooter = ({ phaseName, projects }: { projects: BasicProject[]; phaseName: string }) => {
   const getProjectsInPhase = (phase: string) => projects.filter((p) => p.status.replace(/_/g, ' ') === phase);
 
   return (

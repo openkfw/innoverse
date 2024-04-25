@@ -17,7 +17,6 @@
     "prisma": "prisma"
   },
   "dependencies": {
-    "@apollo/client": "^3.8.4",
     "@azure/monitor-opentelemetry-exporter": "1.0.0-beta.21",
     "@emoji-mart/data": "^1.1.2",
     "@emoji-mart/react": "^1.1.1",
@@ -36,6 +35,8 @@
     "@vercel/otel": "1.8.0",
     "dayjs": "^1.11.10",
     "emoji-mart": "^5.5.2",
+    "gql.tada": "^1.5.2",
+    "graphql-scalars": "^1.23.0",
     "http-status-codes": "^2.3.0",
     "json-2-csv": "^5.4.0",
     "lodash": "^4.17.21",
@@ -60,6 +61,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@0no-co/graphqlsp": "^1.10.1",
     "@types/emoji-mart": "^3.0.14",
     "@types/lodash": "^4.14.202",
     "@types/next-auth": "^3.15.0",

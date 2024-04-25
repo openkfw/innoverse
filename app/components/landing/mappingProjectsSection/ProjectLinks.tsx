@@ -5,10 +5,10 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { Project } from '@/common/types';
+import { BasicProject } from '@/common/types';
 import { TransparentButton } from '@/components/common/TransparentButton';
 
-export const ProjectLinks = ({ projects }: { projects: Project[] }) => {
+export const ProjectLinks = ({ projects }: { projects: BasicProject[] }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const visibleProjects = projects.slice(0, isCollapsed ? 3 : undefined);
   const notShownProjectCount = projects.length - visibleProjects.length;

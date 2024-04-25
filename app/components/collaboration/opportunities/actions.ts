@@ -4,11 +4,8 @@ import { StatusCodes } from 'http-status-codes';
 
 import { User, UserSession } from '@/common/types';
 import { withAuth } from '@/utils/auth';
-import {
-  getInnoUserByProviderId,
-  getOpportunityAndUserParticipant,
-  handleOpportunityAppliedBy,
-} from '@/utils/requests';
+import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import { handleOpportunityAppliedBy, isUserParticipatingInOpportunity } from '@/utils/requests/opportunities/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import { handleOpportunitySchema } from './validationSchema';
@@ -16,7 +13,7 @@ import { handleOpportunitySchema } from './validationSchema';
 export const handleApplyForOpportunity = withAuth(async (user: UserSession, body: { opportunityId: string }) => {
   const validatedParams = validateParams(handleOpportunitySchema, body);
   if (validatedParams.status === StatusCodes.OK) {
-    const innoUser = (await getInnoUserByProviderId(user.providerId)) as User;
+    const innoUser = await getInnoUserByProviderId(user.providerId);
     const result = await handleOpportunityAppliedBy({
       opportunityId: body.opportunityId,
       userId: innoUser.id as string,
@@ -34,12 +31,12 @@ export const hasAppliedForOpportunity = withAuth(async (user: UserSession, body:
   if (validatedParams.status === StatusCodes.OK) {
     const innoUser = (await getInnoUserByProviderId(user.providerId)) as User;
     if (innoUser) {
-      const result = await getOpportunityAndUserParticipant({
+      const result = await isUserParticipatingInOpportunity({
         opportunityId: body.opportunityId,
-        userId: innoUser.id as string,
+        userId: innoUser.providerId as string,
       });
 
-      return { status: StatusCodes.OK, data: result !== undefined };
+      return { status: StatusCodes.OK, data: result ?? false };
     }
   }
   return {

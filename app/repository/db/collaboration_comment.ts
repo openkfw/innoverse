@@ -55,13 +55,15 @@ export async function deleteCollaborationComment(client: PrismaClient, commentId
   });
 }
 
-export async function getCollaborationCommentUpvotedBy(client: PrismaClient, commentId: string, upvotedBy: string) {
-  return client.collaborationComment.findMany({
+export async function getCollaborationCommentIsUpvotedBy(client: PrismaClient, commentId: string, upvotedBy: string) {
+  const upvotedCommentCount = await client.collaborationComment.count({
     where: {
       id: commentId,
       upvotedBy: { has: upvotedBy },
     },
   });
+
+  return upvotedCommentCount > 0;
 }
 
 export async function handleCollaborationCommentUpvote(client: PrismaClient, commentId: string, upvotedBy: string) {

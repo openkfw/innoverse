@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -8,15 +7,13 @@ import { Event } from '@/common/types';
 import EventTimeDate from '@/components/project-details/events/EventTimeDate';
 import IcsDownload from '@/components/project-details/events/IcsDownload';
 
-dayjs.extend(customParseFormat);
-
 export interface EventCardHeaderProps {
   event: Event;
   disabled?: boolean;
 }
 
 const EventCardHeader = ({ event, disabled = false }: EventCardHeaderProps) => {
-  const date = dayjs(event.startTime, 'YYYY-MM-DDTHH:mm:ss.SSS');
+  const date = dayjs(event.startTime);
 
   const renderEventType = (event: Event) => {
     switch (event.type) {

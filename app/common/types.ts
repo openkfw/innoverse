@@ -45,6 +45,9 @@ export type SurveyQuestion = {
 };
 
 export type SurveyVote = {
+  id: string;
+  createdAt: Date;
+  vote: string;
   votedBy: string;
 };
 
@@ -79,36 +82,30 @@ export type ProjectCollaboration = {
 };
 
 export type Project = BasicProject & {
-  collaboration: ProjectCollaboration;
   likes: Like[];
   followers: Follower[];
-  projectName: string;
   questions: ProjectQuestion[];
   comments: Comment[];
   surveyQuestions: SurveyQuestion[];
   opportunities: Opportunity[];
   collaborationQuestions: CollaborationQuestion[];
-  events: EventWithAdditionalData[];
-};
-
-export type ProjectData = Project & {
   isLiked: boolean;
   isFollowed: boolean;
   futureEvents: EventWithAdditionalData[];
   pastEvents: EventWithAdditionalData[];
+  updates: ProjectUpdate[];
 };
 
 export type BasicProject = {
   id: string;
   title: string;
-  shortTitle: string;
+  shortTitle?: string;
   featured: boolean;
   status: PROJECT_PROGRESS;
   image?: string;
   summary: string;
-  projectStart: string;
+  projectStart?: string;
   team: User[];
-  updates: ProjectUpdate[];
   description: ProjectDescription;
   author?: User;
 };
@@ -254,9 +251,9 @@ export type UserSession = {
 export type Opportunity = {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   contactPerson?: User;
-  expense: string;
+  expense?: string;
   participants: User[];
   hasApplied?: boolean;
 };
@@ -289,9 +286,9 @@ export type Event = {
   title: string;
   startTime: Date;
   endTime: Date;
-  type: string;
+  type?: string;
   description?: string;
-  location: string;
+  location?: string;
   author?: User;
   image?: string;
   themes: string[];
