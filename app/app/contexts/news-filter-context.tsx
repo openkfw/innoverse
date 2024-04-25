@@ -6,8 +6,12 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { AmountOfNews, Filters, ProjectUpdateWithAdditionalData } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
-import { SortValues } from '@/components/newsPage/News';
-import { getProjectsUpdatesFilter } from '@/utils/requests';
+import { getProjectUpdatesPage } from '@/utils/requests/updates/requests';
+
+export enum SortValues {
+  DESC = 'desc',
+  ASC = 'asc',
+}
 
 interface NewsFilterContextInterface {
   news: ProjectUpdateWithAdditionalData[];
@@ -66,7 +70,7 @@ export const NewsFilterContextProvider = ({ children, initialNews, allUpdates }:
 
   const refetchNews = async (newFilters?: Filters) => {
     try {
-      const result = await getProjectsUpdatesFilter(sort, 1, newFilters || filters);
+      const result = await getProjectUpdatesPage({ filters: newFilters || filters, sort, page: 1 });
       if (result) {
         setNews([...result]);
         setPageNumber(2);

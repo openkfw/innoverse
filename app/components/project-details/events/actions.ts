@@ -1,9 +1,13 @@
 'use server';
 import { StatusCodes } from 'http-status-codes';
 
-import { EventWithAdditionalData, UserSession } from '@/common/types';
+import { UserSession } from '@/common/types';
 import { withAuth } from '@/utils/auth';
-import { getCountOfFutureEvents, getEventsFilter, getObjectsWithAdditionalData } from '@/utils/requests';
+import {
+  getCountOfFutureEvents,
+  getEventsWithAdditionalData,
+  getProjectEventsPage,
+} from '@/utils/requests/events/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import { eventSchema, projectFilterSchema } from './validationSchema';
@@ -41,9 +45,13 @@ export const getAllEventsForProjectFilter = withAuth(
       };
     }
 
-    const result =
-      (await getEventsFilter(body.projectId, body.amountOfEventsPerPage, body.currentPage, body.timeframe)) || [];
-    const events = (await getObjectsWithAdditionalData(result, 'EVENT')) as EventWithAdditionalData[];
-    return { status: StatusCodes.OK, data: events };
+    const events = await getProjectEventsPage(
+      body.projectId,
+      body.amountOfEventsPerPage,
+      body.currentPage,
+      body.timeframe,
+    );
+    const eventsWithAdditionalData = await getEventsWithAdditionalData(events ?? []);
+    return { status: StatusCodes.OK, data: eventsWithAdditionalData };
   },
 );

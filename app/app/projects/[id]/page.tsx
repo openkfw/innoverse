@@ -6,12 +6,10 @@ import ErrorPage from '@/components/error/ErrorPage';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/project-details/HeroSection';
 import ProjectWrapper from '@/components/project-details/ProjectWrapper';
-import { getAllProjectData } from '@/utils/requests';
+import { getProjectById } from '@/utils/requests/project/requests';
 
 async function ProjectPage({ params }: { params: { id: string } }) {
-  const { project, likes, followers, isLiked, isFollowed, futureEvents, pastEvents } = await getAllProjectData(
-    params.id,
-  );
+  const project = await getProjectById(params.id);
 
   if (!project) {
     return <ErrorPage message="Projekt konnte nicht abgerufen werden, versuchen Sie es später erneut" />;
@@ -25,17 +23,7 @@ async function ProjectPage({ params }: { params: { id: string } }) {
             <BreadcrumbsNav activePage="Projekt" />
             <HeroSection project={project} />
           </Container>
-          <ProjectWrapper
-            projectData={{
-              ...project,
-              likes,
-              followers,
-              isLiked,
-              isFollowed,
-              futureEvents,
-              pastEvents,
-            }}
-          />
+          <ProjectWrapper project={project} />
         </Stack>
       )}
     </Layout>

@@ -2,7 +2,6 @@
 import React, { PropsWithChildren } from 'react';
 import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { AppInsightsContext, AppInsightsErrorBoundary } from '@microsoft/applicationinsights-react-js';
 
 import { NotificationContextProvider } from '@/app/contexts/notification-context';
@@ -22,11 +21,6 @@ const metadata: Metadata = {
   themeColor: theme.palette.primary.main,
 };
 
-const client = new ApolloClient({
-  uri: process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT,
-  cache: new InMemoryCache(),
-});
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
@@ -40,16 +34,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <AppInsightsErrorBoundary onError={() => <ErrorPage />} appInsights={reactPlugin}>
           <AppInsightsContext.Provider value={reactPlugin}>
-            <ApolloProvider client={client}>
-              <SessionProvider>
-                <SWRProvider>
-                  <UserContextProvider>
-                    <CustomToastContainer />
-                    <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
-                  </UserContextProvider>
-                </SWRProvider>
-              </SessionProvider>
-            </ApolloProvider>
+            <SessionProvider>
+              <SWRProvider>
+                <UserContextProvider>
+                  <CustomToastContainer />
+                  <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+                </UserContextProvider>
+              </SWRProvider>
+            </SessionProvider>
           </AppInsightsContext.Provider>
         </AppInsightsErrorBoundary>
       </body>

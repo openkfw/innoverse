@@ -2,7 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { getUpdatesByProjectId } from '@/utils/requests';
+import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import { handleProjectUpdatesSchema } from './validationSchema';

@@ -2,20 +2,22 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { Project, User, UserSession } from '@/common/types';
+import { User, UserSession } from '@/common/types';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
-import { SORT_OPTION } from '@/utils/queries';
-import { createProjectUpdate, getInnoUserByProviderId, getProjects } from '@/utils/requests';
+import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import { getProjects } from '@/utils/requests/project/requests';
+import { createProjectUpdate } from '@/utils/requests/updates/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import { AddUpdateData } from './AddUpdateForm';
 import { handleProjectUpdateSchema } from './validationSchema';
 
 const logger = getLogger();
+
 export const getProjectsOptions = async () => {
-  const projects = (await getProjects(SORT_OPTION.TITLE_ASC)) as Project[];
+  const projects = (await getProjects({ limit: 100, sort: { by: 'title', order: 'asc' } })) ?? [];
   return projects.map((project) => {
     return {
       id: project.id,

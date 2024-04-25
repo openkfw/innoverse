@@ -1,3 +1,5 @@
+'use server';
+
 import winston from 'winston';
 
 const { combine, colorize, printf, timestamp } = winston.format;

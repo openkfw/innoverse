@@ -4,7 +4,7 @@ import AzureADProvider from 'next-auth/providers/azure-ad';
 import GitLabProvider from 'next-auth/providers/gitlab';
 
 import { UserSession } from '@/common/types';
-import { createInnoUserIfNotExist } from '@/utils/requests';
+import { createInnoUserIfNotExist } from '@/utils/requests/innoUsers/requests';
 
 export const options: NextAuthOptions = {
   providers: [

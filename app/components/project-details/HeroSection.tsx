@@ -55,7 +55,7 @@ export default function HeroSection(props: HeroSectionProps) {
                         <StyledTooltip
                           arrow
                           key={author.id}
-                          title={<TooltipContent projectName={project.projectName} teamMember={author} />}
+                          title={<TooltipContent projectName={project.title} teamMember={author} />}
                           placement="bottom"
                         >
                           <AvatarIcon user={author} size={48} allowAnimation />

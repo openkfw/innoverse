@@ -5,27 +5,27 @@ import { useState } from 'react';
 import Box from '@mui/material/Box';
 
 import { ProjectContextProvider } from '@/app/contexts/project-context';
-import { ProjectData } from '@/common/types';
+import { Project } from '@/common/types';
 
 import { ProjectInfoCard } from './ProjectInfoCard';
 import TabView from './TabView';
 
 type ProjectWrapperProps = {
-  projectData: ProjectData;
+  project: Project;
 };
 
-export const ProjectWrapper = ({ projectData }: ProjectWrapperProps) => {
-  const { likes, followers, isLiked, isFollowed } = projectData;
+export const ProjectWrapper = ({ project }: ProjectWrapperProps) => {
+  const { likes, followers, isLiked, isFollowed } = project;
   const [isProjectLiked, setIsProjectLiked] = useState<boolean>(isLiked);
   const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(isFollowed);
   const [likesAmount, setLikesAmount] = useState(likes.length);
   const [followersAmount, setFollowersAmount] = useState(followers.length);
 
   return (
-    <ProjectContextProvider projectData={projectData}>
+    <ProjectContextProvider project={project}>
       <Box sx={{ pb: 5 }} display="flex" justifyContent="center" alignItems="center">
         <ProjectInfoCard
-          project={projectData}
+          project={project}
           isLiked={isProjectLiked}
           isFollowed={isProjectFollowed}
           setLiked={setIsProjectLiked}
@@ -37,7 +37,7 @@ export const ProjectWrapper = ({ projectData }: ProjectWrapperProps) => {
         />
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
-        <TabView projectData={projectData} projectName={projectData.title} />
+        <TabView project={project} />
       </Box>
     </ProjectContextProvider>
   );

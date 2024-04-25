@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-import { Project } from '@/common/types';
+import { BasicProject } from '@/common/types';
 
 import { LandingPageSection } from '../LandingPageSection';
 
@@ -13,7 +13,7 @@ import bgBubble from '/public/images/bg-image.png';
 export const defaultImage = '/images/ai_01.png';
 
 export type ProjectProps = {
-  projects: Project[];
+  projects: BasicProject[];
 };
 
 export const ProjectSection = ({ projects }: ProjectProps) => {

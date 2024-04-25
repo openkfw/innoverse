@@ -9,13 +9,9 @@ import dbClient from '@/repository/db/prisma/prisma';
 import { getTotalComments, getTotalProjectLikes, getTotalReactions } from '@/repository/db/statistics';
 import { withAuth } from '@/utils/auth';
 import getLogger from '@/utils/logger';
-import {
-  GetPlatformFeedbackCollaborationQuestion,
-  GetProjectsQuery,
-  STRAPI_QUERY,
-  withResponseTransformer,
-} from '@/utils/queries';
-import strapiFetcher from '@/utils/strapiFetcher';
+import { getPlatformFeedbackCollaborationQuestion } from '@/utils/requests/collaborationQuestions/requests';
+import { getProjects } from '@/utils/requests/project/requests';
+
 const logger = getLogger();
 const add = (acc: number, el: { _count: number }) => acc + el._count;
 interface PromiseFulfilledResult<T> {
@@ -32,12 +28,21 @@ export const getFeedback = withAuth(async (user: UserSession, body: { username: 
       data: 'Invalid credentials',
     };
   }
-  const request = await strapiFetcher(GetPlatformFeedbackCollaborationQuestion);
-  const { collaborationQuestionId: questionId, projectId } = (await withResponseTransformer(
-    STRAPI_QUERY.GetPlatformFeedbackCollaborationQuestion,
-    request,
-  )) as unknown as { collaborationQuestionId: string; projectId: string };
-  const feedback = await getCollaborationQuestionComments(dbClient, projectId, questionId);
+  const response = await getPlatformFeedbackCollaborationQuestion();
+
+  if (!response) {
+    return {
+      status: StatusCodes.BAD_REQUEST,
+      data: 'Could not find project collaboration question',
+    };
+  }
+
+  const feedback = await getCollaborationQuestionComments(
+    dbClient,
+    response.projectId,
+    response.collaborationQuestionId,
+  );
+
   return {
     status: StatusCodes.OK,
     data: json2csv(feedback),
@@ -83,12 +88,9 @@ export const generateProjectsStatistics = withAuth(
         data: 'Invalid credentials',
       };
     }
-    const getAllProjects = async () => {
-      const response = await strapiFetcher(GetProjectsQuery());
-      const result = await withResponseTransformer(STRAPI_QUERY.GetProjects, response);
-      return result.projects.map(({ id }) => id);
-    };
-    const projects = await getAllProjects();
+
+    const response = await getProjects();
+    const projects = response?.map((project) => project.id) ?? [];
 
     // I hate to this, but we can't query on a more efficient way as we don't have a direct relation between the projects in strapi & the DB
     // So we need to query each project individually.

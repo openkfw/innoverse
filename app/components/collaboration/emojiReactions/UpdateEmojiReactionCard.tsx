@@ -6,7 +6,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
-import { getAdditionalDataForObject } from '@/utils/requests';
+import { getUpdateWithAdditionalData } from '@/utils/requests/updates/requests';
 
 import { handleNewReactionOnUpdate } from './actions';
 import { EmojiReactionCard } from './EmojiReactionCard';
@@ -28,7 +28,8 @@ export function UpdateEmojiReactionCard(props: UpdateEmojiReactionCardProps) {
   const handleReaction = async (emoji: Emoji, operation: 'upsert' | 'delete') => {
     try {
       await handleNewReactionOnUpdate({ emoji, updateId: update.id, operation });
-      setCurrentUpdate((await getAdditionalDataForObject(update, 'UPDATE')) as ProjectUpdateWithAdditionalData);
+      const updateWithAdditionalData = await getUpdateWithAdditionalData(update);
+      setCurrentUpdate(updateWithAdditionalData);
     } catch (error) {
       console.error('Failed to handle reaction on the update:', error);
       errorMessage({ message: 'Updating your reaction failed. Please try again.' });

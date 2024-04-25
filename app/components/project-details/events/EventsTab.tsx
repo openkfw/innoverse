@@ -11,7 +11,7 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { EventWithAdditionalData, ProjectData } from '@/common/types';
+import { EventWithAdditionalData, Project } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { getAllEventsForProjectFilter } from './actions';
@@ -19,7 +19,7 @@ import EventCard from './EventCard';
 import FilteringPanel from './FilteringPanel';
 
 interface EventsTabProps {
-  projectData: ProjectData;
+  project: Project;
 }
 
 export type CountOfTheme = {
@@ -28,16 +28,14 @@ export type CountOfTheme = {
   active: boolean;
 };
 
-export const EventsTab = (props: EventsTabProps) => {
-  const { projectData } = props;
-
-  const [allFutureEvents, setAllFutureEvents] = useState<EventWithAdditionalData[]>([...projectData.futureEvents]);
-  const [allPastEvents, setAllPastEvents] = useState<EventWithAdditionalData[]>(projectData.pastEvents);
+export const EventsTab = ({ project }: EventsTabProps) => {
+  const [allFutureEvents, setAllFutureEvents] = useState<EventWithAdditionalData[]>([...project.futureEvents]);
+  const [allPastEvents, setAllPastEvents] = useState<EventWithAdditionalData[]>(project.pastEvents);
 
   const [filteredFutureEvents, setFilteredFutureEvents] = useState<EventWithAdditionalData[]>([
-    ...projectData.futureEvents,
+    ...project.futureEvents,
   ]);
-  const [filteredPastEvents, setFilteredPastEvents] = useState<EventWithAdditionalData[]>(projectData.pastEvents);
+  const [filteredPastEvents, setFilteredPastEvents] = useState<EventWithAdditionalData[]>(project.pastEvents);
 
   const [filtersApplied, setFiltersApplied] = useState<boolean>(false);
   const [currentFilters, setCurrentFilters] = useState<{
@@ -108,41 +106,45 @@ export const EventsTab = (props: EventsTabProps) => {
   }, [allPastEvents]);
 
   const loadScrollData = async () => {
-    const { data } = await getAllEventsForProjectFilter({
-      projectId: projectData.id,
+    const result = await getAllEventsForProjectFilter({
+      projectId: project.id,
       amountOfEventsPerPage: 2,
       currentPage: index,
       timeframe: 'future',
     });
 
+    const events = result.data ?? [];
+
     setAllFutureEvents((prevItems: EventWithAdditionalData[]) => {
       // Combine previous items with new data, then filter for unique events
-      const combinedEvents = [...prevItems, ...(data as EventWithAdditionalData[])];
+      const combinedEvents = [...prevItems, ...events];
       const uniqueEvents = getUniqueEvents(combinedEvents);
       return uniqueEvents;
     });
-    data?.length && data?.length > 0 ? setHasMoreValue(true) : setHasMoreValue(false);
+    events.length && events.length > 0 ? setHasMoreValue(true) : setHasMoreValue(false);
 
     setIndex((prevIndex) => prevIndex + 1);
   };
 
   const loadScrollDataPast = async () => {
-    const { data } = await getAllEventsForProjectFilter({
-      projectId: projectData.id,
+    const result = await getAllEventsForProjectFilter({
+      projectId: project.id,
       amountOfEventsPerPage: 2,
       currentPage: indexPast,
       timeframe: 'past',
     });
 
+    const events = result.data ?? [];
+
     setAllPastEvents((prevItems: EventWithAdditionalData[]) => {
       // Combine previous items with new data, then filter for unique events
-      const combinedEvents = [...prevItems, ...(data as EventWithAdditionalData[])];
+      const combinedEvents = [...prevItems, ...events];
       const uniqueEvents = getUniqueEvents(combinedEvents);
 
       return uniqueEvents;
     });
 
-    data?.length && data?.length > 0 ? setHasMoreValuePast(true) : setHasMoreValuePast(false);
+    events.length && events.length > 0 ? setHasMoreValuePast(true) : setHasMoreValuePast(false);
     setIndexPast((prevIndexPast) => prevIndexPast + 1);
   };
 
@@ -245,7 +247,7 @@ export const EventsTab = (props: EventsTabProps) => {
             filteredPastEvents.length === 0 &&
             filtersApplied && (
               <EventFilterException
-                text="Keine Events wurden mit diesen Filtern gefunden."
+                text="Mit diesem Filter wurden keine Events gefunden."
                 action={{
                   text: 'Alle Filter zurücksetzen',
                   onClick: clearFilters,

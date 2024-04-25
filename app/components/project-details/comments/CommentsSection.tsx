@@ -60,7 +60,7 @@ const CommentsSection = ({ project }: { project: Project }) => {
           <ProjectCommentCard
             key={comment.id}
             comment={comment}
-            projectName={project.projectName}
+            projectName={project.title}
             onDelete={() => deleteComment(comment)}
           />
         ))}

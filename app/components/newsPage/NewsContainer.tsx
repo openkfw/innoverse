@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { useNewsFilter } from '@/app/contexts/news-filter-context';
+import { SortValues, useNewsFilter } from '@/app/contexts/news-filter-context';
 import { Option } from '@/common/formTypes';
 import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import theme from '@/styles/theme';
@@ -20,7 +20,7 @@ import AddUpdateDialog from './addUpdate/AddUpdateDialog';
 import { getProjectsOptions } from './addUpdate/form/actions';
 import MobileNewsFilter from './newsFilter/MobileNewsFilter';
 import NewsFilter from './newsFilter/NewsFilter';
-import { News, SortValues } from './News';
+import { News } from './News';
 
 interface NewsContainerProps {
   handleAddUpdate: () => void;

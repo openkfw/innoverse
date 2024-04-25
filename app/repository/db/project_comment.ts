@@ -45,13 +45,14 @@ export async function deleteComment(client: PrismaClient, commentId: string) {
   });
 }
 
-export async function getCommentUpvotedBy(client: PrismaClient, commentId: string, upvotedBy: string) {
-  return client.projectComment.findMany({
+export async function isCommentUpvotedBy(client: PrismaClient, commentId: string, upvotedBy: string) {
+  const likedCommentsCount = await client.projectComment.count({
     where: {
       id: commentId,
       upvotedBy: { has: upvotedBy },
     },
   });
+  return likedCommentsCount > 0;
 }
 
 export async function handleCommentUpvotedBy(client: PrismaClient, commentId: string, upvotedBy: string) {

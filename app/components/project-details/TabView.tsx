@@ -8,7 +8,7 @@ import Tab, { TabProps } from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import { ProjectData, ProjectUpdate } from '@/common/types';
+import { Project, ProjectUpdate } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
@@ -70,21 +70,20 @@ const CustomTab = styled((props: TabProps) => <Tab disableRipple {...props} />)(
 }));
 
 interface BasicTabsProps {
-  projectData: ProjectData;
-  projectName: string;
+  project: Project;
 }
 
-export default function TabView({ projectName, ...props }: BasicTabsProps) {
+export default function TabView(props: BasicTabsProps) {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(0);
   const [initialRender, setInitialRender] = useState(true);
-  const [projectData, setProjectData] = useState(props.projectData);
+  const [project, setProject] = useState(props.project);
 
-  const { opportunities, collaborationQuestions, updates, futureEvents, surveyQuestions } = projectData;
+  const { opportunities, collaborationQuestions, updates, futureEvents, surveyQuestions } = project;
   const collaborationActivities = opportunities.length + surveyQuestions.length + collaborationQuestions.length;
 
   const setProjectUpdates = (updates: ProjectUpdate[]) => {
-    setProjectData({ ...projectData, updates });
+    setProject({ ...project, updates });
   };
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
@@ -206,16 +205,16 @@ export default function TabView({ projectName, ...props }: BasicTabsProps) {
         />
       </CustomTabs>
       <CustomTabPanel value={activeTab} index={0} id="project-progress-tab">
-        <ProjectProgress project={projectData} projectName={projectName} />
+        <ProjectProgress project={project} projectName={project.title} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={1} id="collaboration-tab">
-        <CollaborationTab project={projectData} />
+        <CollaborationTab project={project} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={2} id="updates-tab">
-        <UpdatesTab projectData={projectData} onUpdate={setProjectUpdates} />
+        <UpdatesTab project={project} onUpdate={setProjectUpdates} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={3} id="events-tab">
-        <EventsTab projectData={projectData} />
+        <EventsTab project={project} />
       </CustomTabPanel>
     </Box>
   );

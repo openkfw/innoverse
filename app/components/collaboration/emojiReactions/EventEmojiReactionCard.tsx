@@ -8,7 +8,7 @@ import { SxProps } from '@mui/material/styles';
 
 import { EventWithAdditionalData } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
-import { getAdditionalDataForObject } from '@/utils/requests';
+import { getEventWithAdditionalData } from '@/utils/requests/events/requests';
 
 import { handleNewReactionOnEvent } from './actions';
 import { EmojiReactionCard } from './EmojiReactionCard';
@@ -27,7 +27,8 @@ export default function EventEmojiReactionCard({ event, sx }: EventEmojiReaction
   const handleReaction = async (emoji: Emoji, operation: 'upsert' | 'delete') => {
     try {
       await handleNewReactionOnEvent({ emoji: emoji, eventId: id, operation: operation });
-      setCurrentEvent((await getAdditionalDataForObject(event, 'EVENT')) as EventWithAdditionalData);
+      const eventWithAdditionalData = await getEventWithAdditionalData(event);
+      setCurrentEvent(eventWithAdditionalData);
     } catch (error) {
       console.error('Failed to handle reaction:', error);
       errorMessage({ message: 'Failed to update reaction. Please try again.' });

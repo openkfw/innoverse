@@ -7,6 +7,7 @@ export default withAuth({
       req.nextUrl.pathname === '/api/readiness' ||
       req.nextUrl.pathname === '/api/hooks/push' ||
       req.nextUrl.pathname === '/api/notification/update-subscription' ||
+      req.nextUrl.pathname === '/manifest.json' ||
       req.nextUrl.pathname.startsWith('/fonts') ||
       !!token,
   },
