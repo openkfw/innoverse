@@ -11,11 +11,13 @@ import FormLabel from '@mui/material/FormLabel';
 
 import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import { NewsFilterProps } from '@/common/types';
+import useHydration from '@/components/common/Hydration';
 
 export default function ProjectsInput(props: NewsFilterProps) {
   const { setFilters, filters } = props;
   const { projects, amountOfNewsProject, refetchNews } = useNewsFilter();
   const [values, setValues] = useState(filters.projects);
+  const { hydrated } = useHydration();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
@@ -45,6 +47,10 @@ export default function ProjectsInput(props: NewsFilterProps) {
               key={key}
               control={<Checkbox checked={values.includes(title) || false} onChange={handleChange} name={title} />}
               label={`${title} (${amountOfNewsProject[title]})`}
+              disabled={!hydrated}
+              data-testid="news-project-filter"
+              data-testdata-count={amountOfNewsProject[title]}
+              data-testdata-label={title}
             />
           ))}
         </FormGroup>

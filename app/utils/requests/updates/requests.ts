@@ -6,6 +6,10 @@ import { SortValues } from '@/app/contexts/news-filter-context';
 import { Filters, ProjectUpdate, ProjectUpdateWithAdditionalData, UserSession } from '@/common/types';
 import dbClient from '@/repository/db/prisma/prisma';
 import { countNumberOfReactions, findReaction } from '@/repository/db/reaction';
+import { withAuth } from '@/utils/auth';
+import { InnoPlatformError, strapiError } from '@/utils/errors';
+import { getPromiseResults } from '@/utils/helpers';
+import getLogger from '@/utils/logger';
 import { isProjectFollowedByUser } from '@/utils/requests/project/requests';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { mapToProjectUpdate } from '@/utils/requests/updates/mappings';
@@ -17,10 +21,6 @@ import {
   GetUpdatesPageQuery,
   GetUpdatesQuery,
 } from '@/utils/requests/updates/queries';
-import { withAuth } from '@/utils/auth';
-import { InnoPlatformError, strapiError } from '@/utils/errors';
-import { getPromiseResults } from '@/utils/helpers';
-import getLogger from '@/utils/logger';
 
 import { GetUpdatesPageByProjectTitlesQuery } from './queries';
 

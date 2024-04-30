@@ -22,6 +22,7 @@ interface NewsFilterContextInterface {
   setSort: (sort: SortValues.ASC | SortValues.DESC) => void;
   refetchNews: (filters?: Filters) => void;
   sortNews: () => void;
+  isLoading: boolean;
   topics: string[];
   projects: string[];
   amountOfNewsTopic: AmountOfNews;
@@ -41,6 +42,7 @@ const defaultState: NewsFilterContextInterface = {
   setSort: () => {},
   refetchNews: () => {},
   sortNews: () => {},
+  isLoading: false,
   topics: [],
   projects: [],
   amountOfNewsTopic: {},
@@ -67,9 +69,12 @@ export const NewsFilterContextProvider = ({ children, initialNews, allUpdates }:
   const [amountOfNewsProject, setAmountOfNewsProject] = useState<AmountOfNews>(defaultState.amountOfNewsProject);
   const [pageNumber, setPageNumber] = useState<number>(defaultState.pageNumber);
   const [hasMoreValue, setHasMoreValue] = useState<boolean>(defaultState.hasMoreValue);
+  const [isLoading, setIsLoading] = useState(false);
 
   const refetchNews = async (newFilters?: Filters) => {
     try {
+      setIsLoading(true);
+
       const result = await getProjectUpdatesPage({ filters: newFilters || filters, sort, page: 1 });
       if (result) {
         setNews([...result]);
@@ -83,6 +88,8 @@ export const NewsFilterContextProvider = ({ children, initialNews, allUpdates }:
         exception: new Error('Error refetching news', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
   const appInsights = useAppInsightsContext();
@@ -139,6 +146,7 @@ export const NewsFilterContextProvider = ({ children, initialNews, allUpdates }:
     filters,
     setFilters,
     refetchNews,
+    isLoading,
     sortNews,
     topics,
     projects,

@@ -5,7 +5,7 @@ export default function SignInWithGitLab() {
   return (
     <>
       <SkeletonIndexPage />
-      <LoginDialog providers={['gitlab']} />
+      <LoginDialog providers={['gitlab', 'credentials']} />
     </>
   );
 }

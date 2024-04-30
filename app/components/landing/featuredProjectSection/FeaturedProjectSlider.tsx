@@ -71,7 +71,7 @@ const Slide = ({ content, index, setSelected }: SlideProps) => {
   };
 
   return (
-    <Grid container key={content?.id} sx={wrapperStyles}>
+    <Grid container key={content?.id} sx={wrapperStyles} data-testid="featured-project">
       <Grid
         container
         item
@@ -254,7 +254,7 @@ const FeaturedProjectSlider = (props: FeaturedProjectSliderProps) => {
   };
 
   return (
-    <Box sx={featuredProjectSliderStyles}>
+    <Box sx={featuredProjectSliderStyles} data-testid="featured-project-slider">
       {!show && <Slide content={slides[slides.length - 1]} index={selectedItem} setSelected={setSelected} />}
       <Slider
         {...settings}
