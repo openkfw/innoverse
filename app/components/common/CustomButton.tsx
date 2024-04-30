@@ -2,17 +2,21 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { SxProps } from '@mui/material/styles';
 
+import useHydration from '@/components/common/Hydration';
+
 type CustomButtonProps = ButtonProps & {
   themeVariant?: 'primary' | 'secondary';
 };
 
-export default function CustomButton({ themeVariant = 'primary', sx, ...props }: CustomButtonProps) {
+export default function CustomButton({ themeVariant = 'primary', sx, disabled, ...props }: CustomButtonProps) {
   const style = themeVariant === 'primary' ? buttonStylePrimary : buttonStyleSecondary;
+  const { hydrated } = useHydration();
   return (
     <Button
       variant="outlined"
       endIcon={<ArrowForwardIcon fontSize="small" />}
       sx={[style, ...(Array.isArray(sx) ? sx : [sx])]}
+      disabled={!hydrated || disabled}
       {...props}
     >
       {props.children}

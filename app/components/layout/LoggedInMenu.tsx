@@ -54,7 +54,7 @@ export default function LoggedInMenu({ user, isUserLoading }: LoggedInMenuProps)
   return (
     <>
       {user && (
-        <>
+        <div data-testid="user-menu">
           <IconButton sx={menuItemStyle} onClick={handleOpenUserMenu}>
             <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'top', horizontal: 'right' }} variant="dot">
               {user.image ? (
@@ -67,7 +67,7 @@ export default function LoggedInMenu({ user, isUserLoading }: LoggedInMenuProps)
             </StyledBadge>
           </IconButton>
           <UserMenu user={user} anchorElUser={anchorElUser} setAnchorElUser={setAnchorElUser} />
-        </>
+        </div>
       )}
     </>
   );

@@ -1,7 +1,5 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
-
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
@@ -11,11 +9,10 @@ import InteractionButton, { InteractionType } from '../common/InteractionButton'
 
 export interface LoginProviderRowProps {
   provider: { name: string; id: string };
+  onSignIn: () => void;
 }
 
-export default function LoginProviderRow(props: LoginProviderRowProps) {
-  const { provider } = props;
-
+export default function LoginProviderRow({ provider, onSignIn }: LoginProviderRowProps) {
   return (
     <Grid container justifyItems="space-between" sx={{ pb: '10px' }} justifyContent="center" alignItems="center">
       <Grid container item direction="row" xs={5} spacing={1}>
@@ -43,7 +40,7 @@ export default function LoginProviderRow(props: LoginProviderRowProps) {
           key={provider.name}
           interactionType={InteractionType.LOG_IN}
           label={getProviderLabel(provider)}
-          onClick={() => signIn(provider.id)}
+          onClick={onSignIn}
         />
       </Grid>
     </Grid>

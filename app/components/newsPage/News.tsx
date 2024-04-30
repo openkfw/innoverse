@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 
 import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import { ProjectUpdateWithAdditionalData } from '@/common/types';
+import { NewsSkeleton } from '@/components/newsPage/skeletons/NewsSkeleton';
 import theme from '@/styles/theme';
 import { getProjectUpdatesPage } from '@/utils/requests/updates/requests';
 
@@ -21,7 +22,8 @@ interface NewsProps {
 
 export const News = (props: NewsProps) => {
   const { sx } = props;
-  const { news, setNews, filters, sort, pageNumber, setPageNumber, hasMoreValue, setHasMoreValue } = useNewsFilter();
+  const { news, setNews, filters, sort, pageNumber, setPageNumber, hasMoreValue, setHasMoreValue, isLoading } =
+    useNewsFilter();
 
   const loadScrollData = async () => {
     const filteredUpdates = await getProjectUpdatesPage({ filters, page: pageNumber, sort: sort });
@@ -33,28 +35,32 @@ export const News = (props: NewsProps) => {
   };
 
   return (
-    <Box sx={{ width: '100%', ...sx }}>
-      <InfiniteScroll
-        dataLength={news.length}
-        next={loadScrollData}
-        hasMore={hasMoreValue}
-        scrollThreshold={0.5}
-        style={{ overflow: 'unset' }}
-        loader={
-          <Stack key={0} sx={{ mt: 2 }} alignItems="center">
-            <CircularProgress />
+    <Box sx={{ width: '100%', ...sx }} data-testid="news-container">
+      {isLoading ? (
+        <NewsSkeleton count={2} />
+      ) : (
+        <InfiniteScroll
+          dataLength={news.length}
+          next={loadScrollData}
+          hasMore={hasMoreValue}
+          scrollThreshold={0.5}
+          style={{ overflow: 'unset' }}
+          loader={
+            <Stack key={0} sx={{ mt: 2 }} alignItems="center">
+              <CircularProgress />
+            </Stack>
+          }
+          endMessage={
+            <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 2 }}>
+              Alle Daten wurden geladen
+            </Typography>
+          }
+        >
+          <Stack spacing={2} direction="column" justifyContent="flex-end" alignItems="flex-end">
+            {news && news.map((update, key) => <NewsCard key={key} update={update} sx={cardStyles} />)}
           </Stack>
-        }
-        endMessage={
-          <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 2 }}>
-            Alle Daten wurden geladen
-          </Typography>
-        }
-      >
-        <Stack spacing={2} direction="column" justifyContent="flex-end" alignItems="flex-end">
-          {news && news.map((update, key) => <NewsCard key={key} update={update} sx={cardStyles} />)}
-        </Stack>
-      </InfiniteScroll>
+        </InfiniteScroll>
+      )}
     </Box>
   );
 };

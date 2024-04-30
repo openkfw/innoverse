@@ -16,6 +16,7 @@ import Box from '@mui/material/Box';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { SxProps } from '@mui/material/styles';
 
+import useHydration from '@/components/common/Hydration';
 import ApplyIcon from '@/components/icons/ApplyIcon';
 import ChatIcon from '@/components/icons/ChatIcon';
 import CloseIcon from '@/components/icons/CloseIcon';
@@ -57,6 +58,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
   const { interactionType, label, onClick, onIconClick, sx, isSelected = false, disabled = false, tooltip } = props;
   const [isHovered, setIsHovered] = useState(false);
   const [clicked, setClicked] = useState(isSelected);
+  const { hydrated } = useHydration();
 
   const getSelectedInteractionIcon = () => {
     if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddedOutlinedIcon fontSize="small" />;
@@ -161,8 +163,9 @@ export default function InteractionButton(props: InteractionButtonProps) {
       variant="outlined"
       startIcon={isSelected || clicked ? getSelectedInteractionIcon() : getInteractionIcon()}
       endIcon={getEndIcon()}
-      disabled={disabled}
+      disabled={!hydrated || disabled}
       data-user-interaction-id={`${interactionType}-button`}
+      data-teststate-active={clicked}
       sx={{
         px: getText() === undefined ? 1 : 2,
         py: 1,

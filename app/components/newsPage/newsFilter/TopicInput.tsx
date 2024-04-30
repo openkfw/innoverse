@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 
 import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import { NewsFilterProps } from '@/common/types';
+import useHydration from '@/components/common/Hydration';
 
 const MAX_AMOUNT = 3;
 
@@ -21,6 +22,7 @@ export default function TopicInput(props: NewsFilterProps) {
   const { topics, amountOfNewsTopic, refetchNews } = useNewsFilter();
   const [values, setValues] = useState<string[]>([]);
   const [expanded, setExpanded] = useState(false);
+  const { hydrated } = useHydration();
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -45,7 +47,7 @@ export default function TopicInput(props: NewsFilterProps) {
   };
 
   return (
-    <Box sx={{ m: 3 }}>
+    <Box sx={{ m: 3 }} data-testid="topic-filters">
       {topics && (
         <FormControl component="fieldset" variant="standard">
           <FormLabel component="legend">Themen</FormLabel>
@@ -55,6 +57,10 @@ export default function TopicInput(props: NewsFilterProps) {
                 key={key}
                 control={<Checkbox checked={values.includes(topic) || false} onChange={handleChange} name={topic} />}
                 label={`${topic} (${amountOfNewsTopic[topic]})`}
+                disabled={!hydrated}
+                data-testid="news-topic-filter"
+                data-testdata-count={amountOfNewsTopic[topic]}
+                data-testdata-label={topic}
               />
             ))}
             {topics.length > MAX_AMOUNT && !expanded && (
@@ -68,6 +74,7 @@ export default function TopicInput(props: NewsFilterProps) {
                   key={key}
                   control={<Checkbox checked={values.includes(topic) || false} onChange={handleChange} name={topic} />}
                   label={`${topic} (${amountOfNewsTopic[topic]})`}
+                  disabled={!hydrated}
                 />
               ))}
               {topics.length > MAX_AMOUNT && expanded && (

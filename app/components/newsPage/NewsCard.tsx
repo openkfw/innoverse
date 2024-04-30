@@ -77,12 +77,17 @@ export default function NewsCard(props: NewsCardProps) {
         title={
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             {author && (
-              <Typography variant="subtitle2" color="secondary.contrastText" sx={{ fontSize: '14px', ml: '16px' }}>
+              <Typography
+                variant="subtitle2"
+                color="secondary.contrastText"
+                sx={{ fontSize: '14px', ml: '16px' }}
+                data-testid="author"
+              >
                 {author.name}
               </Typography>
             )}
 
-            <Typography variant="caption" color="secondary.contrastText">
+            <Typography variant="caption" color="secondary.contrastText" data-testid="date">
               {formatDate(updatedAt)}
             </Typography>
           </Stack>
@@ -90,7 +95,7 @@ export default function NewsCard(props: NewsCardProps) {
       />
       <CardContent sx={cardContentStyles}>
         <Box sx={titleWrapperStyles}>
-          <Typography sx={noClamp ? subtitleStyles : null} color="text.primary" variant="body1">
+          <Typography sx={noClamp ? subtitleStyles : null} color="text.primary" variant="body1" data-testid="text">
             {parseStringForLinks(comment)}
           </Typography>
         </Box>
@@ -100,7 +105,7 @@ export default function NewsCard(props: NewsCardProps) {
         <Grid container direction="row" justifyContent="space-between" alignItems="center">
           <Grid item xs={7}>
             {projectId ? (
-              <LinkWithArrowLeft title={title} href={`/projects/${projectId}?tab=2`} />
+              <LinkWithArrowLeft title={title} href={`/projects/${projectId}?tab=2`} data-testid="project-link" />
             ) : (
               <Stack direction="row" alignItems="center" />
             )}

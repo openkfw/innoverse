@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 import { BuiltInProviderType } from 'next-auth/providers/index';
-import { ClientSafeProvider, getProviders, LiteralUnion } from 'next-auth/react';
+import { ClientSafeProvider, getProviders, LiteralUnion, signIn } from 'next-auth/react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import { destroyCookie, parseCookies } from 'nookies';
@@ -15,6 +15,7 @@ import theme from '@/styles/theme';
 
 import { errorMessage } from '../common/CustomToast';
 
+import { CredentialsLoginForm, useCredentialsLoginForm } from './CredentialsLoginForm';
 import LoginProviderRow from './LoginProviderRow';
 import MobileLoginProviderRow from './MobileLoginProviderRow';
 import MobileUserSuggestionRow from './MobileUserSuggestionRow';
@@ -26,8 +27,10 @@ interface SignInOptionsProps {
 
 export default function SignInOptions({ providers: providersForPage }: SignInOptionsProps) {
   const [signInProviders, setSignInProviders] = useState<ClientSafeProvider[]>([]);
-  const [open, setOpen] = React.useState(false);
-  const [userSuggested, setUserSuggested] = React.useState(true);
+  const [open, setOpen] = useState(false);
+  const [userSuggested, setUserSuggested] = useState(true);
+  const credentialsLoginForm = useCredentialsLoginForm();
+
   const { session } = parseCookies();
   const appInsights = useAppInsightsContext();
 
@@ -98,22 +101,31 @@ export default function SignInOptions({ providers: providersForPage }: SignInOpt
   };
 
   const getProvider = () => {
-    if (!signInProviders) return { name: '', id: '' };
-
-    return Object.values(signInProviders).find((provider) => provider.id === getCookieData()?.provider) as {
-      name: string;
-      id: string;
-    };
+    if (!signInProviders || !session) return undefined;
+    return Object.values(signInProviders).find(
+      (provider) => provider.id === getCookieData()?.provider && provider.type !== 'credentials',
+    );
   };
+
+  const handleSignIn = (provider: ClientSafeProvider) => {
+    if (provider.type === 'credentials') {
+      credentialsLoginForm.openForm(provider.id);
+    } else {
+      signIn(provider.id);
+    }
+  };
+
+  const loggedInProvider = getProvider();
+  const suggestionRowVisible = signInProviders && session && userSuggested && loggedInProvider !== undefined;
 
   return (
     <>
-      {signInProviders && session && userSuggested && getProvider() && (
+      {suggestionRowVisible && (
         <>
           {isSmallScreen ? (
             <MobileUserSuggestionRow
-              key={getProvider().id}
-              provider={getProvider()}
+              key={loggedInProvider.id}
+              provider={loggedInProvider}
               name={getCookieData()?.name}
               image={getCookieData()?.image}
               handleRemoveCookie={handleRemoveCookie}
@@ -122,8 +134,8 @@ export default function SignInOptions({ providers: providersForPage }: SignInOpt
             />
           ) : (
             <UserSuggestionRow
-              key={getProvider().id}
-              provider={getProvider()}
+              key={loggedInProvider.id}
+              provider={loggedInProvider}
               name={getCookieData()?.name}
               image={getCookieData()?.image}
               handleRemoveCookie={handleRemoveCookie}
@@ -134,13 +146,23 @@ export default function SignInOptions({ providers: providersForPage }: SignInOpt
         </>
       )}
 
-      <Collapse in={open || !session || (session !== undefined && providersForPage.length === 1)} unmountOnExit>
-        {signInProviders &&
+      <Collapse
+        in={open || !session || (session !== undefined && providersForPage.length === 1) || !suggestionRowVisible}
+        unmountOnExit
+      >
+        {credentialsLoginForm.open && credentialsLoginForm.providerId && (
+          <CredentialsLoginForm
+            providerId={credentialsLoginForm.providerId}
+            onNavigateBack={credentialsLoginForm.closeForm}
+          />
+        )}
+        {!credentialsLoginForm.open &&
+          signInProviders &&
           Object.values(signInProviders).map((provider) =>
             isSmallScreen ? (
-              <MobileLoginProviderRow key={provider.id} provider={provider} />
+              <MobileLoginProviderRow key={provider.id} provider={provider} onSignIn={() => handleSignIn(provider)} />
             ) : (
-              <LoginProviderRow key={provider.id} provider={provider} />
+              <LoginProviderRow key={provider.id} provider={provider} onSignIn={() => handleSignIn(provider)} />
             ),
           )}
       </Collapse>

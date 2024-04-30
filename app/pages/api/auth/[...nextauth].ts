@@ -1,6 +1,7 @@
 import { NextApiHandler } from 'next';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import AzureADProvider from 'next-auth/providers/azure-ad';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import GitLabProvider from 'next-auth/providers/gitlab';
 
 import { UserSession } from '@/common/types';
@@ -21,6 +22,24 @@ export const options: NextAuthOptions = {
       userinfo: process.env.NEXTAUTH_GITLAB_URL + '/api/v4/user',
       token: {
         url: process.env.NEXTAUTH_GITLAB_URL + '/oauth/token',
+      },
+    }),
+    CredentialsProvider({
+      name: 'Testbenutzer',
+      async authorize(credentials) {
+        const username = process.env.NEXTAUTH_CREDENTIALS_USERNAME;
+        const password = process.env.NEXTAUTH_CREDENTIALS_PASSWORD;
+        if (!credentials || credentials.username !== username || credentials.password !== password) return null;
+        return {
+          id: '1',
+          name: 'Testbenutzer',
+          username: credentials.username,
+          email: `${credentials.username}@tester.com`,
+        };
+      },
+      credentials: {
+        username: { label: 'username', type: 'text' },
+        password: { label: 'password', type: 'password' },
       },
     }),
   ],

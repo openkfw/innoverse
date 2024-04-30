@@ -20,7 +20,7 @@ export const ProjectSection = ({ projects }: ProjectProps) => {
   return (
     <LandingPageSection
       id="initiativen"
-      title="Innovationsinitativen"
+      title="Innovationsinitiativen"
       subtitle="Aktuelle Pipeline"
       beforeContent={
         <div

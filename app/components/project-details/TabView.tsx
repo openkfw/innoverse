@@ -52,7 +52,7 @@ const CustomTabs = styled(Tabs)({
   },
 });
 
-const CustomTab = styled((props: TabProps) => <Tab disableRipple {...props} />)(({ theme }) => ({
+const CustomTab = styled((props: TabProps) => <Tab disableRipple data-testid="tab" {...props} />)(({ theme }) => ({
   minWidth: 0,
   fontWeight: theme.typography.fontWeightRegular,
   color: 'rgba(242, 242, 242, 0.85)',

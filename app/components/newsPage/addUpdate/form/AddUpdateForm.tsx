@@ -71,16 +71,18 @@ export default function AddUpdateForm({
       const response = await handleProjectUpdate(formData);
       if (response.status === StatusCodes.OK) {
         refetchUpdates();
-        successMessage({ message: 'Update was successfully created' });
+        successMessage({ message: 'Neuigkeit wurde erstellt' });
         handleClose();
       } else {
-        errorMessage({ message: 'There was an error when adding an update' });
+        errorMessage({
+          message: 'Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuchen sie es erneut',
+        });
       }
     }
   };
 
   return (
-    <Stack spacing={2} sx={formStyles} direction="column">
+    <Stack spacing={2} sx={formStyles} direction="column" data-testid="add-update-form">
       <form>
         <MultilineTextInputField
           name={COMMENT}

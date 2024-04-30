@@ -45,7 +45,7 @@ export default function MobileNewsFilter(props: MobileNewsFilterProps) {
   }, [newFilters, filters]);
 
   return (
-    <Box sx={{ backgroundColor: theme.palette.background.paper }}>
+    <Box sx={{ backgroundColor: theme.palette.background.paper }} date-testid="news-filter">
       <SwipeableDrawer
         sx={{
           '& .MuiPaper-root': {

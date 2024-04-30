@@ -13,7 +13,7 @@ import TopicInput from './TopicInput';
 export default function NewsFilter() {
   const { filters, setFilters } = useNewsFilter();
   return (
-    <Card sx={cardStyles}>
+    <Card sx={cardStyles} data-testid="news-filter">
       <ProjectsInput filters={filters} setFilters={setFilters} />
       <TopicInput filters={filters} setFilters={setFilters} />
     </Card>

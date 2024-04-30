@@ -42,7 +42,7 @@ export default function HeroSection(props: HeroSectionProps) {
       </Grid>
       <Grid container item xs={12} md={7}>
         <Card sx={cardStyles}>
-          <Typography variant="h2" sx={{ ...cardTitleStyles, ...textOverflowStyle }}>
+          <Typography variant="h2" sx={{ ...cardTitleStyles, ...textOverflowStyle }} data-testid="project-title">
             {title}
           </Typography>
           <Grid container item spacing={0} sx={cardBodyStyles}>
