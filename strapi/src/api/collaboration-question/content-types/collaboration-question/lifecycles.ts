@@ -1,6 +1,5 @@
 "use strict";
-import { ApplicationError } from "@strapi/utils/dist/errors";
-import { ID } from "@strapi/strapi/lib/services/entity-service/types/params/attributes";
+const { ApplicationError } = require("@strapi/utils").errors;
 
 const formatCreateErrorMessage = (
   title: string
@@ -56,7 +55,7 @@ export default {
   },
 };
 
-const getPlatformFeedbackQuestions = async (questionIdToExclude?: ID) => {
+const getPlatformFeedbackQuestions = async () => {
   const platformFeedbackQuestions = await strapi.entityService.findMany(
     "api::collaboration-question.collaboration-question",
     {
