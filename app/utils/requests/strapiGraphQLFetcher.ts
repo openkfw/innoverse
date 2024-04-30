@@ -1,6 +1,6 @@
 'use server';
 import { ResultOf, VariablesOf } from 'gql.tada';
-import { DocumentNode, print } from 'graphql';
+import { DocumentNode, Kind, OperationDefinitionNode, print } from 'graphql';
 
 import { RequestError } from '@/entities/error';
 
@@ -9,18 +9,28 @@ const strapiGraphQLFetcher = async <TQuery extends DocumentNode>(
   variables?: VariablesOf<TQuery>,
 ) => {
   const queryString = print(graphqlQuery);
-  const response = await strapiFetcher(queryString, variables);
+  const operationName = getOperationName(graphqlQuery);
+  const response = await strapiFetcher(queryString, variables, operationName);
   const typedResult = response as { data?: ResultOf<TQuery> };
   if (!typedResult.data) throw 'JSON response contained no data';
   return typedResult.data;
 };
 
-const strapiFetcher = async (query: unknown, variables?: unknown) => {
+const getOperationName = (graphqlQuery: DocumentNode) => {
+  const operationDefinition = graphqlQuery.definitions.find(
+    (definition): definition is OperationDefinitionNode => definition.kind === Kind.OPERATION_DEFINITION,
+  );
+  const operationName = operationDefinition?.name?.value;
+  return operationName;
+};
+
+const strapiFetcher = async (query: unknown, variables?: unknown, operationName?: string) => {
   const res = await fetch(process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT as string, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${process.env.STRAPI_TOKEN}`,
+      ...(operationName ? { 'graphql-operation-name': operationName } : {}),
     },
     body: JSON.stringify({
       query: query,

@@ -1,6 +1,6 @@
-import { ApplicationInsights } from '@microsoft/applicationinsights-web';
-import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import { ClickAnalyticsPlugin } from '@microsoft/applicationinsights-clickanalytics-js';
+import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
+import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 
 const defaultBroserHistory = {
   url: '/',
@@ -32,6 +32,7 @@ const appInsights = new ApplicationInsights({
     },
   },
 });
+
 if (typeof window !== 'undefined') {
   appInsights.loadAppInsights();
 }
