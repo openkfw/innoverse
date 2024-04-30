@@ -1,17 +1,9 @@
-/** @type {import('next').NextConfig} */
-
 const withFonts = require('next-fonts');
 
-const nextConfig = {  
+const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   swcMinify: true,
-  experimental: {
-    instrumentationHook: true,
-    serverActions: {
-      allowedOrigins: ["***URL_REMOVED***", "***URL_REMOVED***"]
-    }
-  },
   images: {
     remotePatterns: [
       {
@@ -71,6 +63,16 @@ const nextConfig = {
       config.resolve.fallback.path = false;
     }
     return config;
+  },
+  experimental: {
+    staleTimes: {
+      dynamic: 3,
+      static: 180,
+    },
+    instrumentationHook: true,
+    serverActions: {
+      allowedOrigins: ['***URL_REMOVED***', '***URL_REMOVED***'],
+    },
   },
 };
 

@@ -1,18 +1,24 @@
 'use client';
 
+import { PropsWithChildren } from 'react';
+import { SessionProvider } from 'next-auth/react';
+import { AppInsightsContext, AppInsightsErrorBoundary } from '@microsoft/applicationinsights-react-js';
+
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { AppLayout } from '@/app/layout';
+import { NotificationContextProvider } from '@/app/contexts/notification-context';
+import { UserContextProvider } from '@/app/contexts/user-context';
+import { SWRProvider } from '@/app/swr-provider';
+import ThemeRegistry from '@/app/ThemeRegistry';
+import CustomToastContainer from '@/components/common/CustomToast';
+import ErrorPage from '@/components/error/ErrorPage';
 import theme from '@/styles/theme';
+import { reactPlugin } from '@/utils/instrumentation/AppInsights';
 
 import Footer from './Footer';
 import TopBar from './TopBar';
 import TopBarMobile from './TopBarMobile';
-
-interface LayoutProps {
-  children: React.ReactNode;
-}
 
 export type Headers = {
   text: string;
@@ -25,20 +31,40 @@ const pages: Headers[] = [
   { text: 'AI Assistant' },
 ];
 
-export default function Layout({ children }: LayoutProps) {
+function AppLayout({ children }: PropsWithChildren) {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
   return (
-    <AppLayout>
-      <div
-        style={{
-          background: `linear-gradient(84deg, ${theme.palette.primary?.dark} 0%, ${theme.palette.primary?.light} 100%)`,
-        }}
-      >
-        {isSmallScreen ? <TopBarMobile pages={pages} /> : <TopBar pages={pages} />}
-        <Box>{children}</Box>
-        <Footer />
-      </div>
-    </AppLayout>
+    <>
+      <CustomToastContainer />
+      <ThemeRegistry options={{ key: 'mui' }}>
+        <div
+          style={{
+            background: `linear-gradient(84deg, ${theme.palette.primary?.dark} 0%, ${theme.palette.primary?.light} 100%)`,
+          }}
+        >
+          {isSmallScreen ? <TopBarMobile pages={pages} /> : <TopBar pages={pages} />}
+          <Box>{children}</Box>
+          <Footer />
+        </div>
+      </ThemeRegistry>
+    </>
+  );
+}
+
+export default function Layout({ children }: PropsWithChildren) {
+  return (
+    <AppInsightsErrorBoundary onError={() => <ErrorPage />} appInsights={reactPlugin}>
+      <AppInsightsContext.Provider value={reactPlugin}>
+        <SessionProvider>
+          <SWRProvider>
+            <UserContextProvider>
+              <NotificationContextProvider>
+                <AppLayout>{children}</AppLayout>
+              </NotificationContextProvider>
+            </UserContextProvider>
+          </SWRProvider>
+        </SessionProvider>
+      </AppInsightsContext.Provider>
+    </AppInsightsErrorBoundary>
   );
 }

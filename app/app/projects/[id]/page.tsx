@@ -3,7 +3,6 @@ import Stack from '@mui/material/Stack';
 
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';
-import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/project-details/HeroSection';
 import ProjectWrapper from '@/components/project-details/ProjectWrapper';
 import { getProjectById } from '@/utils/requests/project/requests';
@@ -16,7 +15,7 @@ async function ProjectPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <Layout>
+    <>
       {project && (
         <Stack spacing={8} useFlexGap>
           <Container maxWidth="lg" sx={containerStyles}>
@@ -26,7 +25,7 @@ async function ProjectPage({ params }: { params: { id: string } }) {
           <ProjectWrapper project={project} />
         </Stack>
       )}
-    </Layout>
+    </>
   );
 }
 

@@ -3,7 +3,7 @@ import { createContext, PropsWithChildren, useCallback, useContext, useMemo, use
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 
 interface CommentState {
-  unsavedChangesDialog: React.ReactNode;
+  unsavedChangesDialog: JSX.Element;
   state: {
     isEditing: (comment: CommentWithId) => boolean;
     isResponding: (comment: CommentWithId) => boolean;
