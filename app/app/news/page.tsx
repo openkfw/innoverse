@@ -9,7 +9,6 @@ import Typography from '@mui/material/Typography';
 
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';
-import Layout from '@/components/layout/Layout';
 import NewsContainer from '@/components/newsPage/NewsContainer';
 import { getProjectUpdates, getProjectUpdatesPage } from '@/utils/requests/updates/requests';
 
@@ -25,40 +24,38 @@ async function NewsPage() {
   if (!initialUpdates || !allUpdates) return <ErrorPage />;
 
   return (
-    <Layout>
-      <Stack spacing={8} useFlexGap>
-        <Image
-          src={backgroundImage}
-          alt="news-background"
-          sizes="33vw"
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: 264,
-            background: `lightgray 50% / cover no-repeat`,
-            mixBlendMode: 'plus-lighter',
-          }}
-        />
-        <Container>
-          <Box style={{ position: 'relative' }}>
-            <BreadcrumbsNav activePage="News" />
-          </Box>
-          <Grid container sx={containerStyles}>
-            <Card sx={cardStyles}>
-              <Typography variant="h2" sx={cardTitleStyles}>
-                News
-              </Typography>
-              <Typography variant="body1" sx={{ mt: 1, fontSize: { lg: 24, sm: 22, xs: 16 } }}>
-                Die Neuigkeiten im Überblick: Aktuelle Nachrichten zu unseren Projekten auf der Innovationsplattform
-              </Typography>
-            </Card>
-          </Grid>
-          <NewsFilterContextProvider initialNews={initialUpdates} allUpdates={allUpdates}>
-            <NewsContainer news={initialUpdates} />
-          </NewsFilterContextProvider>
-        </Container>
-      </Stack>
-    </Layout>
+    <Stack spacing={8} useFlexGap>
+      <Image
+        src={backgroundImage}
+        alt="news-background"
+        sizes="33vw"
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: 264,
+          background: `lightgray 50% / cover no-repeat`,
+          mixBlendMode: 'plus-lighter',
+        }}
+      />
+      <Container>
+        <Box style={{ position: 'relative' }}>
+          <BreadcrumbsNav activePage="News" />
+        </Box>
+        <Grid container sx={containerStyles}>
+          <Card sx={cardStyles}>
+            <Typography variant="h2" sx={cardTitleStyles}>
+              News
+            </Typography>
+            <Typography variant="body1" sx={{ mt: 1, fontSize: { lg: 24, sm: 22, xs: 16 } }}>
+              Die Neuigkeiten im Überblick: Aktuelle Nachrichten zu unseren Projekten auf der Innovationsplattform
+            </Typography>
+          </Card>
+        </Grid>
+        <NewsFilterContextProvider initialNews={initialUpdates} allUpdates={allUpdates}>
+          <NewsContainer news={initialUpdates} />
+        </NewsFilterContextProvider>
+      </Container>
+    </Stack>
   );
 }
 

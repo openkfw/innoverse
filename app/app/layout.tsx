@@ -1,24 +1,12 @@
-'use client';
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import type { Metadata } from 'next';
-import { SessionProvider } from 'next-auth/react';
-import { AppInsightsContext, AppInsightsErrorBoundary } from '@microsoft/applicationinsights-react-js';
 
-import { NotificationContextProvider } from '@/app/contexts/notification-context';
-import CustomToastContainer from '@/components/common/CustomToast';
-import ErrorPage from '@/components/error/ErrorPage';
-import theme from '@/styles/theme';
-import { reactPlugin } from '@/utils/instrumentation/AppInsights';
-
-import { UserContextProvider } from './contexts/user-context';
-import { SWRProvider } from './swr-provider';
-import ThemeRegistry from './ThemeRegistry';
+import Layout from '@/components/layout/Layout';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const metadata: Metadata = {
   title: 'InnoVerse',
   viewport: { width: 'device-width', initialScale: 1 },
-  themeColor: theme.palette.primary.main,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -26,29 +14,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="de">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content={theme.palette.primary.main} />
         <link rel="manifest" href="/manifest.json" />
         <title>InnoVerse</title>
         <meta name="description" content="***STRING_REMOVED***  Innovation Platform" />
       </head>
       <body>
-        <AppInsightsErrorBoundary onError={() => <ErrorPage />} appInsights={reactPlugin}>
-          <AppInsightsContext.Provider value={reactPlugin}>
-            <SessionProvider>
-              <SWRProvider>
-                <UserContextProvider>
-                  <CustomToastContainer />
-                  <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
-                </UserContextProvider>
-              </SWRProvider>
-            </SessionProvider>
-          </AppInsightsContext.Provider>
-        </AppInsightsErrorBoundary>
+        <Layout>{children}</Layout>
       </body>
     </html>
   );
-}
-
-export function AppLayout({ children }: PropsWithChildren) {
-  return <NotificationContextProvider>{children}</NotificationContextProvider>;
 }

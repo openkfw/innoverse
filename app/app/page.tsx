@@ -10,7 +10,6 @@ import { MappingProjectsCard } from '@/components/landing/mappingProjectsSection
 import { BackgroundArrows } from '@/components/landing/newsSection/BackgroundArrows';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
-import Layout from '@/components/layout/Layout';
 import { getMainPageData } from '@/utils/requests/pageRequests';
 
 async function IndexPage() {
@@ -27,7 +26,7 @@ async function IndexPage() {
   const events = data.events;
 
   return (
-    <Layout>
+    <>
       <Stack spacing={8} useFlexGap sx={{ gap: { xs: 0 }, overflowX: 'hidden' }}>
         <FeaturedProjectSlider items={sliderContent} />
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
@@ -44,7 +43,7 @@ async function IndexPage() {
         </Box>
       </Stack>
       <CustomToast />
-    </Layout>
+    </>
   );
 }
 

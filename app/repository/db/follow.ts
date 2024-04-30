@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 export async function getProjectFollowers(client: PrismaClient, projectId: string, limit?: number) {
   const query: any = {
     where: {
-      projectId: projectId,
+      projectId,
     },
   };
 
@@ -15,7 +15,7 @@ export async function getProjectFollowers(client: PrismaClient, projectId: strin
 export async function getUserFollowers(client: PrismaClient, followedBy: string, limit?: number) {
   const query: any = {
     where: {
-      followedBy: followedBy,
+      followedBy,
     },
   };
 
@@ -27,8 +27,8 @@ export async function getUserFollowers(client: PrismaClient, followedBy: string,
 export async function isProjectFollowedBy(client: PrismaClient, projectId: string, followedBy: string) {
   const followedProjectCount = await client.follow.count({
     where: {
-      projectId: projectId,
-      followedBy: followedBy,
+      projectId,
+      followedBy,
     },
   });
 
@@ -38,15 +38,25 @@ export async function isProjectFollowedBy(client: PrismaClient, projectId: strin
 export async function deleteProjectAndUserFollower(client: PrismaClient, projectId: string, followedBy: string) {
   return client.follow.deleteMany({
     where: {
-      projectId: projectId,
-      followedBy: followedBy,
+      projectId,
+      followedBy,
     },
   });
 }
 
 export async function addFollower(client: PrismaClient, projectId: string, followedBy: string) {
-  return client.follow.create({
-    data: {
+  return client.follow.upsert({
+    where: {
+      projectId_followedBy: {
+        projectId,
+        followedBy,
+      },
+    },
+    update: {
+      projectId,
+      followedBy,
+    },
+    create: {
       projectId,
       followedBy,
     },

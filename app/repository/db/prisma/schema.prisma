@@ -56,6 +56,8 @@ model Like {
 
   projectId String // liked project
   likedBy   String // user id  
+
+   @@unique(fields: [projectId, likedBy])
 }
 
 model Follow {
@@ -64,6 +66,8 @@ model Follow {
 
   projectId  String // followed project
   followedBy String // user id  
+
+   @@unique(fields: [projectId, followedBy])
 }
 
 model PushSubscription {

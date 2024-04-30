@@ -1032,7 +1032,6 @@ type Update {
   author: InnoUserEntityResponse
   comment: String!
   createdAt: DateTime
-  date: Date
   project: ProjectEntityResponse
   topic: String
   updatedAt: DateTime
@@ -1057,7 +1056,6 @@ input UpdateFiltersInput {
   author: InnoUserFiltersInput
   comment: StringFilterInput
   createdAt: DateTimeFilterInput
-  date: DateFilterInput
   id: IDFilterInput
   not: UpdateFiltersInput
   or: [UpdateFiltersInput]
@@ -1069,7 +1067,6 @@ input UpdateFiltersInput {
 input UpdateInput {
   author: ID
   comment: String
-  date: Date
   project: ID
   topic: String
 }
