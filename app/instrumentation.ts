@@ -11,6 +11,13 @@ export async function register() {
       traceExporter: new AzureMonitorTraceExporter({
         connectionString: process.env.NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING,
       }),
+      instrumentationConfig: {
+        fetch: {
+          attributesFromRequestHeaders: {
+            'graphql.operation.name': 'graphql-operation-name',
+          },
+        },
+      },
     });
   }
 }
