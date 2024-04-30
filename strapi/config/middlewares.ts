@@ -1,5 +1,4 @@
 export default [
-  "strapi::logger",
   "strapi::errors",
   "strapi::security",
   "strapi::poweredBy",
@@ -11,6 +10,7 @@ export default [
       origin: ["*"],
     },
   },
+  "strapi::logger",
   "strapi::query",
   {
     name: "strapi::body",
@@ -23,6 +23,7 @@ export default [
       },
     },
   },
+  "strapi::logger",
   "strapi::session",
   "strapi::favicon",
   "strapi::public",
