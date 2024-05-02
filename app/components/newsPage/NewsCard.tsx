@@ -135,7 +135,7 @@ const cardStyles = {
   py: 4,
   borderRadius: '8px',
   marginRight: 3,
-  height: '100%',
+  height: '105%',
   background: 'linear-gradient(0deg, rgba(240, 238, 225, 0.30) 0%, rgba(240, 238, 225, 0.30) 100%), #FFF',
   [theme.breakpoints.up('sm')]: {
     width: '368px',
@@ -179,7 +179,7 @@ const subtitleStyles = {
   display: '-webkit-box',
   overflow: 'hidden',
   WebkitBoxOrient: 'vertical',
-  WebkitLineClamp: 4,
+  WebkitLineClamp: 3,
 };
 
 const followButtonStyles = {
