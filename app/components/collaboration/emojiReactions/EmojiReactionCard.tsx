@@ -26,11 +26,19 @@ interface EmojiReactionCardProps {
 export function EmojiReactionCard({ userReaction, countOfReactions, handleReaction, sx }: EmojiReactionCardProps) {
   const [isEmojiPickerClicked, setIsEmojiPickerClicked] = useState(false);
   const appInsights = useAppInsightsContext();
+  // Amount of emojis that still look good on the card
+  const MAX_EMOJIS_SHOWN = 11;
 
-  const topReactions = useMemo(
-    () => countOfReactions.sort((a, b) => b.count - a.count).slice(0, 3),
-    [countOfReactions],
-  );
+  const topReactions = useMemo(() => {
+    // If User reaction: move the reaction to the first position
+    if (userReaction) {
+      const reactionNativeSymbol = userReaction.nativeSymbol;
+      countOfReactions.sort((a, b) =>
+        a.emoji.nativeSymbol === reactionNativeSymbol ? -1 : b.emoji.nativeSymbol === reactionNativeSymbol ? 1 : 0,
+      );
+    }
+    return countOfReactions.slice(0, MAX_EMOJIS_SHOWN);
+  }, [countOfReactions, userReaction]);
 
   const handleEmojiReaction = (emoji: Emoji) => {
     try {
@@ -54,8 +62,10 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
       <Grid
         container
         direction="row"
+        spacing={0.4}
         sx={{
           alignItems: 'center',
+          mt: 0.3,
           ...sx,
         }}
       >
@@ -109,7 +119,6 @@ const reactionCardButtonStyles = {
   border: '1px solid #E7E6E2',
   bgcolor: 'rgba(0, 0, 0, 0)',
   p: '.8em',
-  ml: '0.3em',
   '&:hover': {
     bgcolor: 'action.hover',
   },
@@ -123,7 +132,6 @@ const activeReactionCardButtonStyles = {
   borderColor: 'action.hover',
   borderRadius: '2px',
   p: '1em',
-  ml: '0.3em',
   bgcolor: 'rgba(0, 0, 0, 0)',
   color: 'text.primary',
   '&:hover': {
@@ -137,7 +145,6 @@ const addNewReactionButtonStyles = {
   width: '3rem',
   bgcolor: 'rgba(0, 0, 0, 0)',
   p: '1em',
-  ml: '0.3em',
   borderRadius: '2px',
   color: 'text.primary',
   '&:hover': {
