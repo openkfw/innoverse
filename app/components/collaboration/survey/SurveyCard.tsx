@@ -14,13 +14,19 @@ import theme from '@/styles/theme';
 import { handleSurveyVote } from './actions';
 import { SurveyResponsePicker } from './SurveyResponsePicker';
 
+export interface SurveyVotes {
+  surveyId: string;
+  totalVotes: number;
+  optionsWithVotes: { option: string; votes: number; percentage: number }[];
+}
+
 interface SurveyCardProps {
   projectId: string;
   surveyQuestion: SurveyQuestion;
 }
 
 export const SurveyCard = (props: SurveyCardProps) => {
-  const { selectedOption, voteCount, handleVote } = useSurveyCard(props);
+  const { selectedOption, handleVote, votesPerOption } = useSurveyCard(props);
   const { surveyQuestion } = props;
 
   return (
@@ -37,13 +43,14 @@ export const SurveyCard = (props: SurveyCardProps) => {
         {
           <SurveyResponsePicker
             sx={{
-              alignItems: 'center',
+              alignItems: { md: 'center', lg: 'flex-start' },
               display: { md: 'block', lg: 'flex' },
+              '@media (max-width: 1360px)': { display: 'block' },
             }}
             handleVote={handleVote}
             selectedOption={selectedOption}
             responseOptions={surveyQuestion.responseOptions}
-            voteCount={voteCount}
+            votesPerOption={votesPerOption.optionsWithVotes}
           />
         }
       </Grid>
@@ -52,20 +59,71 @@ export const SurveyCard = (props: SurveyCardProps) => {
 };
 
 function useSurveyCard({ projectId, surveyQuestion }: SurveyCardProps) {
+  const { surveyQuestions } = useProject();
+
+  const surveyVoteResponses = surveyQuestions
+    .map((surveyQuestion) => {
+      return {
+        surveyId: surveyQuestion.id,
+        totalVotes: surveyQuestion.votes.length,
+        optionsWithVotes: surveyQuestion.responseOptions.reduce(
+          (acc, option) => {
+            const votes = surveyQuestion.votes.filter((vote) => vote.vote === option.responseOption).length || 0;
+            const totalVotes = surveyQuestion.votes.length;
+            acc.push({
+              option: option.responseOption,
+              votes: votes,
+              percentage: Math.round((votes / totalVotes) * 100) || 0,
+            });
+            return acc;
+          },
+          [] as { votes: number; option: string; percentage: number }[],
+        ),
+      };
+    })
+    .find((vote) => vote.surveyId === surveyQuestion.id);
+
   const [selectedOption, setSelectedOption] = useState(surveyQuestion.userVote);
+  const [votesPerOption, setVotesPerOption] = useState(surveyVoteResponses);
   const appInsights = useAppInsightsContext();
 
-  const { surveyVotesAmount, setSurveyVotesAmount } = useProject();
-
   const hasVoted = selectedOption !== undefined;
+
+  const voteSetter = (action: 'INCREMENT' | 'DECREMENT', vote: string) => {
+    const operation = action === 'INCREMENT' ? 1 : -1;
+
+    setVotesPerOption((prev) => {
+      if (!prev) return { surveyId: surveyQuestion.id, totalVotes: 0, optionsWithVotes: [] };
+      const updatedOptions = prev.optionsWithVotes.map((option) => {
+        return {
+          ...option,
+          votes: option.option === vote ? option.votes + operation : option.votes,
+          percentage:
+            Math.round(
+              ((option.option === vote ? option.votes + operation : option.votes) / (prev.totalVotes + operation)) *
+                100,
+            ) || 0,
+        };
+      });
+
+      return {
+        surveyId: prev.surveyId,
+        totalVotes: prev.totalVotes + operation,
+        optionsWithVotes: updatedOptions,
+      };
+    });
+  };
 
   const updateVoteState = (vote: string) => {
     if (selectedOption === vote) {
       setSelectedOption(undefined);
-      setSurveyVotesAmount((prev) => Math.max(0, prev - 1));
+      voteSetter('DECREMENT', vote);
     } else {
       setSelectedOption(vote);
-      if (!hasVoted) setSurveyVotesAmount((prev) => prev + 1);
+      voteSetter('INCREMENT', vote);
+      if (hasVoted) {
+        voteSetter('DECREMENT', selectedOption);
+      }
     }
   };
 
@@ -84,7 +142,7 @@ function useSurveyCard({ projectId, surveyQuestion }: SurveyCardProps) {
   };
 
   return {
-    voteCount: surveyVotesAmount,
+    votesPerOption: votesPerOption || { surveyId: surveyQuestion.id, totalVotes: 0, optionsWithVotes: [] },
     selectedOption,
     handleVote,
   };

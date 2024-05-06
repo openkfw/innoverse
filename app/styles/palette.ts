@@ -3,6 +3,7 @@ import { PaletteOptions, SimplePaletteColorOptions } from '@mui/material/styles'
 interface DefaultPaletteOptions extends PaletteOptions {
   primary?: SimplePaletteColorOptions;
   secondary?: SimplePaletteColorOptions;
+  statistics?: SimplePaletteColorOptions;
 }
 
 const palette: DefaultPaletteOptions = {
@@ -51,6 +52,11 @@ const palette: DefaultPaletteOptions = {
   success: {
     main: '#4F7765',
     light: '#EDF7EE',
+  },
+  statistics: {
+    main: '#B7F9AA',
+    light: '#ECFDED',
+    dark: '#EBEBEB',
   },
 };
 

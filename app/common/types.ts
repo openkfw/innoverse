@@ -47,8 +47,8 @@ export type SurveyQuestion = {
 export type SurveyVote = {
   id: string;
   createdAt: Date;
-  vote: string;
   votedBy: string;
+  vote: string;
 };
 
 export type ProjectColaboration = {

@@ -7,12 +7,12 @@ import Typography from '@mui/material/Typography';
 import { mergeStyles } from '../../utils/helpers';
 
 type CustomIconButtonProps = PropsWithChildren &
-  ButtonProps & { sx?: SxProps; buttonRef?: RefObject<HTMLButtonElement> };
+  ButtonProps & { sx?: SxProps; buttonRef?: RefObject<HTMLButtonElement>; textSx?: SxProps };
 
-export const CustomIconButton = ({ children, sx, buttonRef, ...buttonProps }: CustomIconButtonProps) => {
+export const CustomIconButton = ({ children, sx, buttonRef, textSx, ...buttonProps }: CustomIconButtonProps) => {
   return (
     <Button variant="outlined" sx={mergeStyles(iconButtonStyles, sx)} ref={buttonRef} {...buttonProps}>
-      <Typography variant="subtitle2" sx={iconButtonTypographyStyle}>
+      <Typography variant="subtitle2" sx={mergeStyles(iconButtonTypographyStyle, textSx)}>
         {children}
       </Typography>
     </Button>
