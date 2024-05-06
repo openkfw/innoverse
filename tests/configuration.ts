@@ -1,7 +1,7 @@
 const configuration = {
   auth: {
-    username: "",
-    password: "",
+    username: process.env.TESTUSER_USERNAME ?? "",
+    password: process.env.TESTUSER_PASSWORD ?? "",
   },
 };
 

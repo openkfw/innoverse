@@ -7,9 +7,7 @@ export class LandingPage extends PageLayout {
   }
 
   async goto() {
-    // Waits for DOMContentLoaded event:
-    // https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event
-    await this.page.goto("/", { waitUntil: "domcontentloaded" });
+    await this.page.goto("/");
   }
 
   getProjectsSection() {
