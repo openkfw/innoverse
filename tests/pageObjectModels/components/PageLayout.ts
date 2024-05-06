@@ -4,6 +4,7 @@ export class PageLayout {
   constructor(protected page: Page) {}
 
   async navigateToNews() {
+    await this.getUserMenu().waitFor();
     const newsLink = this.navbarLinks.filter({ hasText: "News" });
     await newsLink.click();
     await this.page.waitForURL("/news");
