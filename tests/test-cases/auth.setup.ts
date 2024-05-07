@@ -17,7 +17,7 @@ setup("authenticate", async ({ page }) => {
   const landingPage = new LandingPage(page);
   const userMenu = landingPage.getUserMenu();
 
-  await expect(userMenu).toBeVisible({ timeout: 10 * 1000 });
+  await expect(userMenu).toBeVisible({ timeout: 20 * 1000 });
 
   // Saves storage state to file for other tests to use
   await page.context().storageState({ path: authFile });

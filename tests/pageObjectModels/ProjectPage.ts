@@ -41,11 +41,13 @@ export class ProjectPage extends PageLayout {
   }
 
   private get likeButton() {
-    return this.page.locator("button[data-user-interaction-id='like-button']");
+    return this.projectInfoCard.locator(
+      "button[data-user-interaction-id='like-button']"
+    );
   }
 
   private get followButton() {
-    return this.page.locator(
+    return this.projectInfoCard.locator(
       "button[data-user-interaction-id='project-follow-button']"
     );
   }
@@ -56,5 +58,9 @@ export class ProjectPage extends PageLayout {
 
   private get projectTitle() {
     return this.page.getByTestId("project-title");
+  }
+
+  private get projectInfoCard() {
+    return this.page.getByTestId("project-info-card");
   }
 }

@@ -96,7 +96,7 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
   };
 
   return (
-    <Box sx={wrapperStyles}>
+    <Box sx={wrapperStyles} data-testid="project-info-card">
       {interactionButtons()}
 
       <Card sx={cardStyles}>
