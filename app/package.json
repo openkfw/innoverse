@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:analyze": "ANALYZE=true npm run build",
     "start": "next start",
     "start:prod": "node server.js",
     "start:migrate:prod": "node server.js",
@@ -30,6 +31,7 @@
     "@mui/icons-material": "^5.14.3",
     "@mui/material": "^5.14.3",
     "@mui/x-date-pickers": "^6.19.0",
+    "@next/bundle-analyzer": "^14.2.3",
     "@opentelemetry/api": "1.7.0",
     "@prisma/client": "^5.1.0",
     "@vercel/otel": "1.8.0",

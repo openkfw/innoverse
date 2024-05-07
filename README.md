@@ -100,4 +100,9 @@ now your app should be visible under [http://localhost:3000](http://localhost:30
   - `NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY`: Can be found in the Azure Portal
   - `APP_INSIGHTS_SERVICE_NAME`: Can be chosen freely`
 - NB: The logs will only be published if the environment variable `NODE_ENV` is set to `production`!
-YOU MADE IT! (locally)
+
+### Analyze the build
+You can analyze the bundle size running `npm run build:analyze`, this will generate a report and can help identify large chunks.
+The main focus should here be the `client` report, as we do not use any edge functions.
+
+
