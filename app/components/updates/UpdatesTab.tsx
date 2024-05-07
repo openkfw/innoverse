@@ -12,6 +12,7 @@ import { Project, ProjectUpdate } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { errorMessage } from '../common/CustomToast';
+import EmptyTabContent from '../project-details/EmptyTabContent';
 
 import { getProjectUpdates } from './actions';
 import { AddUpdateCard } from './AddUpdateCard';
@@ -20,9 +21,13 @@ import { ProjectTimeLine } from './ProjectTimeLine';
 interface UpdatesTabProps {
   project: Project;
   onUpdate: (updates: ProjectUpdate[]) => void;
+  isFollowed: boolean;
+  setFollowed: (i: boolean) => void;
+  followersAmount: number;
+  setFollowersAmount: (i: number) => void;
 }
 
-export const UpdatesTab = ({ project, onUpdate }: UpdatesTabProps) => {
+export const UpdatesTab = ({ project, onUpdate, ...otherProps }: UpdatesTabProps) => {
   const isVeryLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const appInsights = useAppInsightsContext();
@@ -42,6 +47,18 @@ export const UpdatesTab = ({ project, onUpdate }: UpdatesTabProps) => {
       });
     }
   };
+
+  if (project?.updates?.length === 0) {
+    return (
+      <Card sx={cardStyles}>
+        <EmptyTabContent
+          message="Momentan scheint es hier nichts zu geben. Du folgst dieser Seite, und wirst benachrichtigt, falls sich hier etwas ändert. Verpasse es nicht! 😉"
+          project={project}
+          {...otherProps}
+        />
+      </Card>
+    );
+  }
 
   return (
     <Card sx={cardStyles}>

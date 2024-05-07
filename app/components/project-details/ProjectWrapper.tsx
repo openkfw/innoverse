@@ -37,7 +37,14 @@ export const ProjectWrapper = ({ project }: ProjectWrapperProps) => {
         />
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
-        <TabView project={project} />
+        <TabView
+          project={project}
+          projectName={project.title}
+          isFollowed={isProjectFollowed}
+          setFollowed={setIsProjectFollowed}
+          followersAmount={followersAmount}
+          setFollowersAmount={setFollowersAmount}
+        />
       </Box>
     </ProjectContextProvider>
   );
