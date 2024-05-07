@@ -9,6 +9,7 @@ import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { UnsavedCommentChangesDialog } from '../common/comments/UnsavedChangesDialog';
+import EmptyTabContent from '../project-details/EmptyTabContent';
 
 import OpportunityCard from './opportunities/OpportunityCard';
 import { SurveyCard } from './survey/SurveyCard';
@@ -16,9 +17,28 @@ import { CollaborationQuestionCard } from './CollaborationQuestionCard';
 
 interface CollaborationTabProps {
   project: Project;
+  isFollowed: boolean;
+  setFollowed: (i: boolean) => void;
+  followersAmount: number;
+  setFollowersAmount: (i: number) => void;
 }
 
-export const CollaborationTab = ({ project }: CollaborationTabProps) => {
+export const CollaborationTab = ({ project, ...otherProps }: CollaborationTabProps) => {
+  const collaborationActivities =
+    project.opportunities.length + project.surveyQuestions.length + project.collaborationQuestions.length;
+
+  if (collaborationActivities === 0) {
+    return (
+      <Card sx={containerStyles}>
+        <EmptyTabContent
+          message="Momentan scheint es hier nichts zu geben. Schaue später nochmal um zu sehen was sich noch ändert! Verpasse es nicht! 😉"
+          project={project}
+          {...otherProps}
+        />
+      </Card>
+    );
+  }
+
   return (
     <Card sx={containerStyles}>
       <Box sx={colorOverlayStyles} />
@@ -100,7 +120,6 @@ const CollaborationQuestionsSection = ({ project }: { project: Project }) => {
 };
 
 // Collaboration Tab Styles
-
 const containerStyles = {
   borderRadius: '24px',
   background: '#FFF',

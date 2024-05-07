@@ -27,7 +27,7 @@ interface EventCardProps {
 }
 
 const EventCard = ({ event, disabled }: EventCardProps) => {
-  const isLargeSceen = useMediaQuery(theme.breakpoints.up('lg'));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   return (
     <Card elevation={0} sx={newsCardStyles}>
@@ -47,19 +47,19 @@ const EventCard = ({ event, disabled }: EventCardProps) => {
                 objectFit: 'contain',
                 objectPosition: 'center',
                 height: 'auto',
-                width: isLargeSceen ? 'auto' : '100%',
+                width: isLargeScreen ? 'auto' : '100%',
                 alignSelf: 'center',
                 maxWidth: '315px',
               }}
             />
             <Box sx={{ mt: 1 }}>
               <EventThemes themes={event.themes} sx={{ mb: 1, mt: -0.5 }} />
-              {isLargeSceen && <EventEmojiReactionCard event={event} />}
+              {isLargeScreen && <EventEmojiReactionCard event={event} />}
             </Box>
           </Box>
           <Box style={{ marginTop: 0 }}>
             <EventContent event={event} sx={{ my: { xs: 2, lg: 0.5 } }} />
-            {!isLargeSceen && <EventEmojiReactionCard event={event} />}
+            {!isLargeScreen && <EventEmojiReactionCard event={event} />}
           </Box>
         </Stack>
       </CardContent>

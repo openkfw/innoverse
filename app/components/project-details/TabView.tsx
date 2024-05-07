@@ -71,13 +71,22 @@ const CustomTab = styled((props: TabProps) => <Tab disableRipple data-testid="ta
 
 interface BasicTabsProps {
   project: Project;
+  projectName: string;
+  isFollowed: boolean;
+  setFollowed: (i: boolean) => void;
+  followersAmount: number;
+  setFollowersAmount: (i: number) => void;
 }
 
 export default function TabView(props: BasicTabsProps) {
   const searchParams = useSearchParams();
+
   const [activeTab, setActiveTab] = useState(0);
   const [initialRender, setInitialRender] = useState(true);
   const [project, setProject] = useState(props.project);
+
+  const { isFollowed, setFollowed, followersAmount, setFollowersAmount } = props;
+  const otherProps = { setFollowed, isFollowed, followersAmount, setFollowersAmount };
 
   const { opportunities, collaborationQuestions, updates, futureEvents, surveyQuestions } = project;
   const collaborationActivities = opportunities.length + surveyQuestions.length + collaborationQuestions.length;
@@ -208,13 +217,13 @@ export default function TabView(props: BasicTabsProps) {
         <ProjectProgress project={project} projectName={project.title} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={1} id="collaboration-tab">
-        <CollaborationTab project={project} />
+        <CollaborationTab project={project} {...otherProps} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={2} id="updates-tab">
-        <UpdatesTab project={project} onUpdate={setProjectUpdates} />
+        <UpdatesTab project={project} onUpdate={setProjectUpdates} {...otherProps} />
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={3} id="events-tab">
-        <EventsTab project={project} />
+        <EventsTab project={project} {...otherProps} />
       </CustomTabPanel>
     </Box>
   );

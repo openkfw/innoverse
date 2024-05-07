@@ -14,12 +14,18 @@ import Typography from '@mui/material/Typography';
 import { EventWithAdditionalData, Project } from '@/common/types';
 import theme from '@/styles/theme';
 
+import EmptyTabContent from '../EmptyTabContent';
+
 import { getAllEventsForProjectFilter } from './actions';
 import EventCard from './EventCard';
 import FilteringPanel from './FilteringPanel';
 
 interface EventsTabProps {
   project: Project;
+  isFollowed: boolean;
+  setFollowed: (i: boolean) => void;
+  followersAmount: number;
+  setFollowersAmount: (i: number) => void;
 }
 
 export type CountOfTheme = {
@@ -28,7 +34,9 @@ export type CountOfTheme = {
   active: boolean;
 };
 
-export const EventsTab = ({ project }: EventsTabProps) => {
+export const EventsTab = (props: EventsTabProps) => {
+  const { project, ...otherProps } = props;
+
   const [allFutureEvents, setAllFutureEvents] = useState<EventWithAdditionalData[]>([...project.futureEvents]);
   const [allPastEvents, setAllPastEvents] = useState<EventWithAdditionalData[]>(project.pastEvents);
 
@@ -147,6 +155,18 @@ export const EventsTab = ({ project }: EventsTabProps) => {
     events.length && events.length > 0 ? setHasMoreValuePast(true) : setHasMoreValuePast(false);
     setIndexPast((prevIndexPast) => prevIndexPast + 1);
   };
+
+  if (futureEvents?.length === 0) {
+    return (
+      <Card sx={cardStyles}>
+        <EmptyTabContent
+          message="Momentan scheint es hier nichts zu geben. Du folgst dieser Seite, und wirst benachrichtigt, falls sich hier etwas ändert. Verpasse es nicht! 😉"
+          project={project}
+          {...otherProps}
+        />
+      </Card>
+    );
+  }
 
   return (
     <Card sx={cardStyles}>
