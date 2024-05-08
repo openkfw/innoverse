@@ -6,16 +6,16 @@ import { UserSession } from '@/common/types';
 import { getProjectCollaborationComments } from '@/components/collaboration/comments/actions';
 import { getCollaborationCommentIsUpvotedBy } from '@/repository/db/collaboration_comment';
 import dbClient from '@/repository/db/prisma/prisma';
+import { withAuth } from '@/utils/auth';
+import { InnoPlatformError, strapiError } from '@/utils/errors';
+import { getPromiseResults } from '@/utils/helpers';
+import getLogger from '@/utils/logger';
 import { mapToCollaborationQuestion } from '@/utils/requests/collaborationQuestions/mappings';
 import {
   GetCollaborationQuestionsByProjectIdQuery,
   GetPlatformFeedbackCollaborationQuestion,
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { withAuth } from '@/utils/auth';
-import { InnoPlatformError, strapiError } from '@/utils/errors';
-import { getPromiseResults } from '@/utils/helpers';
-import getLogger from '@/utils/logger';
 
 const logger = getLogger();
 
@@ -49,10 +49,10 @@ export async function getPlatformFeedbackCollaborationQuestion() {
   try {
     const response = await strapiGraphQLFetcher(GetPlatformFeedbackCollaborationQuestion);
     if (!response.collaborationQuestions?.data || !response.collaborationQuestions.data.length)
-      throw 'Response contained no collaboration questions';
+      throw new Error('Response contained no collaboration questions');
 
     const questionData = response.collaborationQuestions.data[0];
-    if (!questionData.attributes.project?.data) throw 'Collaboration question is not linked to a project';
+    if (!questionData.attributes.project?.data) throw new Error('Collaboration question is not linked to a project');
 
     const collaborationQuestion = {
       collaborationQuestionId: questionData.id,

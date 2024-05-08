@@ -26,7 +26,7 @@ export function withAuth<TArgs, TReturn>(func: (user: UserSession, body: TArgs) 
         message: 'User is not authenticated',
       };
     }
-    const sessionUser = session?.user as UserSession;
+    const sessionUser = session.user;
     await createInnoUserIfNotExist(sessionUser, sessionUser.image);
     try {
       return func(sessionUser, args) as Promise<AuthResponse<TReturn>>;

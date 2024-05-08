@@ -83,7 +83,7 @@ const shouldNotifyResolver = (event: string, model: string): boolean => {
   if (resolvers[event][model]) {
     return resolvers[event][model];
   } else {
-    logger.error('No resolver found for event: ' + event + ' and model: ' + model);
+    logger.info('No resolver found for event: ' + event + ' and model: ' + model);
     return false;
   }
 };
@@ -211,7 +211,7 @@ export const evalPushNotificationRules = async (
   if (resolvers[model]) {
     return resolvers[model];
   } else {
-    logger.error('No resolver found for model: ' + model);
+    logger.info('No resolver found for model: ' + model);
     return { shouldNotify: () => false, buildPushNotifications: () => [] };
   }
 };

@@ -8,6 +8,9 @@ import { getProjectFollowers, isProjectFollowedBy } from '@/repository/db/follow
 import { getProjectLikes, isProjectLikedBy } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
 import { isCommentUpvotedBy } from '@/repository/db/project_comment';
+import { withAuth } from '@/utils/auth';
+import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
+import getLogger from '@/utils/logger';
 import { getCollaborationQuestionsByProjectId } from '@/utils/requests/collaborationQuestions/requests';
 import { getEventsWithAdditionalData, getProjectEventsPage } from '@/utils/requests/events/requests';
 import { getOpportunitiesByProjectId } from '@/utils/requests/opportunities/requests';
@@ -17,9 +20,6 @@ import { getProjectQuestionsByProjectId } from '@/utils/requests/questions/reque
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { getSurveyQuestionsByProjectId } from '@/utils/requests/surveyQuestions/requests';
 import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
-import { withAuth } from '@/utils/auth';
-import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
-import getLogger from '@/utils/logger';
 
 const logger = getLogger();
 
@@ -28,11 +28,11 @@ export async function getProjectById(id: string) {
     const response = await strapiGraphQLFetcher(GetProjectByIdQuery, { id });
     const projectData = response.project?.data;
 
-    if (!projectData) throw 'Response contained no project data';
+    if (!projectData) throw new Error('Response contained no project data');
 
     const projectComments = await getProjectComments({ projectId: projectData.id });
 
-    if (!projectComments.data) throw 'Failed to load project comments for project';
+    if (!projectComments.data) throw new Error('Failed to load project comments for project');
 
     const likes = await getProjectLikes(dbClient, id);
     const followers = await getProjectFollowers(dbClient, id);

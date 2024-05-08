@@ -30,7 +30,7 @@ export async function getProjectUpdates(limit = 100) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesQuery, { limit });
     const updatesData = response.updates?.data;
-    if (!updatesData) throw 'Response contained no updates';
+    if (!updatesData) throw new Error('Response contained no updates');
 
     const updates = updatesData.map(mapToProjectUpdate);
     const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
@@ -45,7 +45,7 @@ export async function getUpdatesByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesByProjectIdQuery, { projectId });
     const updatesData = response.updates?.data;
-    if (!updatesData) throw 'Response contained no updates';
+    if (!updatesData) throw new Error('Response contained no updates');
     const updates = updatesData.map(mapToProjectUpdate);
     return updates;
   } catch (err) {
@@ -63,7 +63,7 @@ export async function createProjectUpdate(body: { comment: string; projectId: st
     });
 
     const updateData = response.createUpdate?.data;
-    if (!updateData) throw 'Response contained no update';
+    if (!updateData) throw new Error('Response contained no update');
 
     const update = mapToProjectUpdate(updateData);
     return update;
