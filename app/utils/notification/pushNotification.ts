@@ -1,5 +1,6 @@
 'use server';
 
+import { StatusCodes } from 'http-status-codes';
 import webpush, { PushSubscription as WebPushSubscription, WebPushError } from 'web-push';
 
 import { UserSession } from '@/common/types';
@@ -41,7 +42,7 @@ export const sendPushNotification = async (subscription: WebPushSubscription, pu
     const error = <WebPushError>e;
     // subscription has expired or is no longer valid
     // remove it from the database
-    if (error.statusCode === 410) {
+    if (error.statusCode === StatusCodes.GONE) {
       logger.info('Push Subscription has expired or is no longer valid, removing it from the database. User: ', userId);
       await removeExpiredPushSubscriptions(userId, subscription);
     }
@@ -50,11 +51,13 @@ export const sendPushNotification = async (subscription: WebPushSubscription, pu
 const removeExpiredPushSubscriptions = async (userId: string, subscription: webpush.PushSubscription) =>
   await removePushSubscriptionForUser(dbClient, userId, subscription);
 
-export const subscribeToWebPush = withAuth(async (user: UserSession, body: string) => {
-  const subscription = JSON.parse(body);
-  await createPushSubscriptionForUser(dbClient, user.providerId, subscription);
-  return { status: 200 };
-});
+export const subscribeToWebPush = withAuth(
+  async (user: UserSession, body: { subscription: string; browserFingerprint: string }) => {
+    const subscription = JSON.parse(body.subscription);
+    await createPushSubscriptionForUser(dbClient, user.providerId, body.browserFingerprint, subscription);
+    return { status: 200 };
+  },
+);
 
 export const unsubscribeFromWebPush = withAuth(async (user: UserSession, body: string) => {
   const subscription: webpush.PushSubscription = JSON.parse(body);

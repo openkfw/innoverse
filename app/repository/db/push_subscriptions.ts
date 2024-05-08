@@ -1,4 +1,4 @@
-import { PrismaClient, PushSubscription } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { JsonValue } from '@prisma/client/runtime/library';
 import webpush, { PushSubscription as WebPushSubscription } from 'web-push';
 
@@ -47,12 +47,24 @@ export const getAllPushSubscriptions = async (
 export const createPushSubscriptionForUser = async (
   client: PrismaClient,
   userId: string,
-  subscription: PushSubscription,
+  browserFingerprint: string,
+  subscription: unknown,
 ) =>
-  client.pushSubscription.create({
-    data: {
+  client.pushSubscription.upsert({
+    create: {
       userId,
       subscription: JSON.stringify(subscription),
+      browserFingerprint,
+    },
+    update: {
+      subscription: JSON.stringify(subscription),
+      createdAt: new Date(),
+    },
+    where: {
+      userId_browserFingerprint: {
+        userId,
+        browserFingerprint,
+      },
     },
   });
 
