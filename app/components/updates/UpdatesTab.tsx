@@ -12,7 +12,6 @@ import { Project, ProjectUpdate } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { errorMessage } from '../common/CustomToast';
-import EmptyTabContent from '../project-details/EmptyTabContent';
 
 import { getProjectUpdates } from './actions';
 import { AddUpdateCard } from './AddUpdateCard';
@@ -27,7 +26,7 @@ interface UpdatesTabProps {
   setFollowersAmount: (i: number) => void;
 }
 
-export const UpdatesTab = ({ project, onUpdate, ...otherProps }: UpdatesTabProps) => {
+export const UpdatesTab = ({ project, onUpdate }: UpdatesTabProps) => {
   const isVeryLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const appInsights = useAppInsightsContext();
@@ -51,10 +50,12 @@ export const UpdatesTab = ({ project, onUpdate, ...otherProps }: UpdatesTabProps
   if (project?.updates?.length === 0) {
     return (
       <Card sx={cardStyles}>
-        <EmptyTabContent
-          message="Momentan scheint es hier nichts zu geben. Du folgst dieser Seite, und wirst benachrichtigt, falls sich hier etwas ändert. Verpasse es nicht! 😉"
+        <AddUpdateCard
+          wrapSx={noUpdatesCardWrapperStyles}
+          cardSx={{ background: 'transparent', boxShadow: 'none' }}
           project={project}
-          {...otherProps}
+          refetchUpdates={refetchUpdates}
+          text={'Es gibt noch keine Neuigkeiten zu diesem Projekt. Klick hier um eine hinzuzufügen.'}
         />
       </Card>
     );
@@ -66,7 +67,12 @@ export const UpdatesTab = ({ project, onUpdate, ...otherProps }: UpdatesTabProps
 
       <CardContent sx={cardContentStyles}>
         <Stack direction={isVeryLargeScreen ? 'row-reverse' : 'column'}>
-          <AddUpdateCard sx={updateCardStyles} project={project} refetchUpdates={refetchUpdates} />
+          <AddUpdateCard
+            wrapSx={updateCardWrapperStyles}
+            project={project}
+            refetchUpdates={refetchUpdates}
+            text={'Halten Dein Publikum auf dem Laufenden! Klick hier, um eine Neuigkeit hinzuzufügen.'}
+          />
           <Box flexGrow="1">
             <ProjectTimeLine widthOfDateColumn={isSmallScreen ? '83px' : '273px'} projectUpdates={project.updates} />
           </Box>
@@ -111,7 +117,7 @@ const cardContentStyles = {
   },
 };
 
-const updateCardStyles: SxProps = {
+const updateCardWrapperStyles: SxProps = {
   width: '270px',
   maxWidth: '100%',
   marginLeft: '1.5em',
@@ -125,5 +131,18 @@ const updateCardStyles: SxProps = {
   },
   [theme.breakpoints.down('sm')]: {
     width: '100%',
+  },
+};
+
+const noUpdatesCardWrapperStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  borderRadius: '8px',
+  padding: '32px 24px',
+  background: 'linear-gradient(0deg, rgba(240, 238, 225, 0.30) 0%, rgba(240, 238, 225, 0.30) 100%), #FFF',
+  margin: '88px 64px',
+  alignItems: 'flex-start',
+  [theme.breakpoints.down('md')]: {
+    margin: '48px 24px',
   },
 };
