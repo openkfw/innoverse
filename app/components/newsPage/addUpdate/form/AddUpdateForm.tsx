@@ -93,21 +93,24 @@ export default function AddUpdateForm({
         />
       </form>
       <Stack spacing={2} direction={{ sm: 'column', md: 'row' }}>
-        <AutocompleteDropdownField
-          name={PROJECT}
-          control={control}
-          label="Initiative"
-          options={projectOptions}
-          readOnly={!projectOptions}
-          startAdornment={
-            !projectOptions && (
-              <Box sx={{ pt: 1 }}>
-                <CircularProgress size={20} />
-              </Box>
-            )
-          }
-          sx={inputStyle}
-        />
+        {!defaultFormValues?.project && (
+          <AutocompleteDropdownField
+            name={PROJECT}
+            control={control}
+            label="Initiative"
+            options={projectOptions}
+            // Field is readOnly in case there are no project options available
+            readOnly={!projectOptions}
+            startAdornment={
+              !projectOptions && (
+                <Box sx={{ pt: 1 }}>
+                  <CircularProgress size={20} />
+                </Box>
+              )
+            }
+            sx={inputStyle}
+          />
+        )}
       </Stack>
 
       <Box display="flex" justifyContent="flex-end">
