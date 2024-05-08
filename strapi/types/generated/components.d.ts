@@ -87,7 +87,7 @@ export interface UserAuthor extends Schema.Component {
   };
 }
 
-declare module '@strapi/strapi' {
+declare module '@strapi/types' {
   export module Shared {
     export interface Components {
       'description.description': DescriptionDescription;
