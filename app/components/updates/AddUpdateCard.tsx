@@ -16,11 +16,13 @@ import { getProjectsOptions } from '../newsPage/addUpdate/form/actions';
 interface AddUpdateCardProps {
   project: Project;
   refetchUpdates: () => void;
-  sx?: SxProps;
+  text: string;
+  wrapSx?: SxProps;
+  cardSx?: SxProps;
 }
 
 export const AddUpdateCard = (props: AddUpdateCardProps) => {
-  const { project, refetchUpdates, sx } = props;
+  const { project, refetchUpdates, text, wrapSx, cardSx } = props;
   const [addUpdateDialogOpen, setAddUpdateDialogOpen] = useState(false);
   const [projectOptions, setProjectOptions] = useState<Option[]>([]);
 
@@ -37,11 +39,11 @@ export const AddUpdateCard = (props: AddUpdateCardProps) => {
   };
 
   return (
-    <Box sx={sx}>
-      <Card sx={cardStyles} elevation={0}>
+    <Box sx={wrapSx}>
+      <Card sx={{ ...cardStyles, ...cardSx }} elevation={0}>
         <CardContent sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <Typography variant="body1" color="secondary.contrastText" sx={{ pb: 2 }}>
-            Halten Sie Ihr Publikum auf dem Laufenden! Klicken Sie hier, um Neuigkeiten hinzuzufügen.
+            {text}
           </Typography>
           <InteractionButton
             onClick={() => handleAddUpdate()}
@@ -73,4 +75,5 @@ const buttonStyle = {
   height: ' 48px',
   fontSize: '18px',
   boxShadow: 'none',
+  maxWidth: '240px',
 };
