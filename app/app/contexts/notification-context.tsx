@@ -3,6 +3,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
+import { getCurrentBrowserFingerPrint } from '@rajesh896/broprint.js';
 import { useLocalStorage } from 'usehooks-ts';
 
 import Box from '@mui/material/Box';
@@ -38,6 +39,12 @@ export const requestPushNotificationPermissionsIfNotPresent = async () => {
 
   const permissions = await requestPushNotificationPermission();
   return { permitted: permissions !== 'denied' };
+};
+
+export const subscribeBrowserToWebPush = async (subscription: PushSubscription) => {
+  // IMPORTANT: getCurrentBrowserFingerPrint() returns a number, not a string
+  const fingerprint = await getCurrentBrowserFingerPrint().then((fingerprint) => fingerprint.toString());
+  await subscribeToWebPush({ subscription: JSON.stringify(subscription), browserFingerprint: fingerprint });
 };
 
 export const subscribePushNotification = async () => {
@@ -153,7 +160,7 @@ function useNotificationContextProvider() {
         subscription = await subscribePushNotification();
       }
 
-      await subscribeToWebPush(JSON.stringify(subscription));
+      await subscribeBrowserToWebPush(subscription);
 
       console.info('Enabled push notifications');
       setAlertSessionItem({ hide: true, userAction: 'enabled' });

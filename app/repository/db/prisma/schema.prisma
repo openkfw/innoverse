@@ -74,8 +74,9 @@ model PushSubscription {
   id        String   @id @default(uuid())
   userId    String
   createdAt DateTime @default(now())
-
-  subscription String
+  subscription String // JSON of push subscription
+  browserFingerprint String // Fingerprint to uniquely identify user by their browser
+  @@unique([userId, browserFingerprint])
 }
 
 model Reaction {
