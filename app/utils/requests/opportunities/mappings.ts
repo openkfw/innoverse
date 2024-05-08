@@ -6,7 +6,7 @@ import { OpportunityFragment } from '@/utils/requests/opportunities/queries';
 
 export function mapFirstToOpportunity(opportunities: ResultOf<typeof OpportunityFragment>[] | undefined) {
   if (!opportunities || !opportunities.length) {
-    throw 'Response contained no opportunities';
+    throw new Error('Response contained no opportunities');
   }
   const opportunity = opportunities[0];
   return mapToOpportunity(opportunity);

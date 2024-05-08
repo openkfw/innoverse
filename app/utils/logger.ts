@@ -21,7 +21,7 @@ const getErrorLog = (info: winston.Logform.TransformableInfo) => {
   return logMessage;
 };
 
-const createLogger = winston.createLogger({
+const createdLogger = winston.createLogger({
   level: 'info',
   format: combine(
     colorize(),
@@ -30,12 +30,12 @@ const createLogger = winston.createLogger({
     }),
     logFormat,
   ),
-  transports: [new winston.transports.Console()],
+  transports: [new winston.transports.Console({ stderrLevels: ['error'] })],
 });
 
 const getLogger = (): winston.Logger => {
   if (!_logger) {
-    _logger = createLogger;
+    _logger = createdLogger;
   }
   return _logger;
 };

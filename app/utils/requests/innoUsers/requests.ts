@@ -3,7 +3,7 @@
 import { UserSession } from '@/common/types';
 import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
-import { mapFirstToUser, mapToUser } from '@/utils/requests/innoUsers/mappings';
+import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { CreateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
 import { GetInnoUserByEmailQuery, GetInnoUserByProviderIdQuery } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
@@ -21,7 +21,7 @@ export async function createInnoUser(body: UserSession, image?: string | null) {
     });
 
     const userData = response.createInnoUser?.data;
-    if (!userData) throw 'Response contained no user data';
+    if (!userData) throw new Error('Response contained no user data');
 
     const createdUser = mapToUser(userData);
     return createdUser;
@@ -45,7 +45,7 @@ export async function getInnoUserByEmail(email: string) {
 export async function getInnoUserByProviderId(providerId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetInnoUserByProviderIdQuery, { providerId });
-    const user = mapFirstToUser(response.innoUsers?.data);
+    const user = mapFirstToUserOrThrow(response.innoUsers?.data);
     return user;
   } catch (err) {
     const error = strapiError('Getting Inno user by providerId', err as Error, providerId);
@@ -56,10 +56,9 @@ export async function getInnoUserByProviderId(providerId: string) {
 
 export async function createInnoUserIfNotExist(body: UserSession, image?: string | null) {
   try {
-    if (body.email) {
-      const user = await getInnoUserByEmail(body.email);
-      return user ? user : await createInnoUser(body, image);
-    }
+    if (!body.email) throw new Error('User session does not contain email');
+    const user = await getInnoUserByEmail(body.email);
+    return user ? user : await createInnoUser(body, image);
   } catch (err) {
     const error = strapiError('Trying to create a InnoUser if it does not exist', err as Error, body.name);
     logger.error(error);

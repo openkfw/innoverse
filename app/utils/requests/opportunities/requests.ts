@@ -3,6 +3,10 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
+import { withAuth } from '@/utils/auth';
+import { InnoPlatformError, strapiError } from '@/utils/errors';
+import { getPromiseResults } from '@/utils/helpers';
+import getLogger from '@/utils/logger';
 import { mapFirstToOpportunity, mapToOpportunity } from '@/utils/requests/opportunities/mappings';
 import {
   GetOpportunitiesByIdQuery,
@@ -11,10 +15,6 @@ import {
   UpdateOpportunityParticipantsQuery,
 } from '@/utils/requests/opportunities/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { withAuth } from '@/utils/auth';
-import { InnoPlatformError, strapiError } from '@/utils/errors';
-import { getPromiseResults } from '@/utils/helpers';
-import getLogger from '@/utils/logger';
 
 const logger = getLogger();
 
@@ -70,7 +70,7 @@ export async function handleOpportunityAppliedBy(body: { opportunityId: string; 
     const response = await strapiGraphQLFetcher(UpdateOpportunityParticipantsQuery, body);
     const opportunityData = response.updateOpportunityParticipants?.data;
 
-    if (!opportunityData) throw 'Response contained no opportunity data';
+    if (!opportunityData) throw new Error('Response contained no opportunity data');
 
     const opportunity = mapToOpportunity(opportunityData);
     return opportunity;

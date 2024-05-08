@@ -3,8 +3,14 @@ import { ResultOf } from 'gql.tada';
 import { User } from '@/common/types';
 import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
-export function mapFirstToUser(users: ResultOf<typeof InnoUserFragment>[] | undefined): User {
-  if (!users || !users.length) throw 'Response contained no users';
+export function mapFirstToUser(users: ResultOf<typeof InnoUserFragment>[] | undefined): User | undefined {
+  if (!users || !users.length) return undefined;
+  const user = users[0];
+  return mapToUser(user);
+}
+
+export function mapFirstToUserOrThrow(users: ResultOf<typeof InnoUserFragment>[] | undefined): User {
+  if (!users || !users.length) throw new Error('Response contained no users');
   const user = users[0];
   return mapToUser(user);
 }

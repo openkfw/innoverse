@@ -12,7 +12,7 @@ const strapiGraphQLFetcher = async <TQuery extends DocumentNode>(
   const operationName = getOperationName(graphqlQuery);
   const response = await strapiFetcher(queryString, variables, operationName);
   const typedResult = response as { data?: ResultOf<TQuery> };
-  if (!typedResult.data) throw 'JSON response contained no data';
+  if (!typedResult.data) throw new Error('JSON response contained no data');
   return typedResult.data;
 };
 
@@ -54,7 +54,16 @@ const strapiFetcher = async (query: unknown, variables?: unknown, operationName?
     throw error;
   }
 
-  return res.json();
+  // Ensure response has json content-type
+  const contentType = res.headers.get('content-type') ?? '';
+
+  if (contentType.indexOf('application/json') < 0) {
+    throw new Error(
+      `Response content type is not 'application/json', but '${contentType}'. This could be due to the request being blocked and redirected e.g. by a WAF`,
+    );
+  }
+
+  return await res.json();
 };
 
 export default strapiGraphQLFetcher;
