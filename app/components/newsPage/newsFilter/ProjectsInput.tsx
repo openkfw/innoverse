@@ -34,7 +34,7 @@ export default function ProjectsInput(props: NewsFilterProps) {
       newValues = values.filter((value) => value === name);
     }
     setFilters({ ...filters, projects: newValues });
-    refetchNews({ ...filters, projects: newValues });
+    refetchNews({ filters: { ...filters, projects: newValues }, fullRefetch: false });
   };
 
   return (
