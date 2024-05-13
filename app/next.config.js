@@ -1,4 +1,5 @@
 const withFonts = require('next-fonts');
+const withBundleAnalyzer = require('@next/bundle-analyzer')()
 
 const nextConfig = {
   output: 'standalone',
@@ -76,4 +77,6 @@ const nextConfig = {
   },
 };
 
-module.exports = withFonts(nextConfig);
+module.exports =
+  process.env.ANALYZE === 'true' ? withBundleAnalyzer(nextConfig) : withFonts(nextConfig);
+
