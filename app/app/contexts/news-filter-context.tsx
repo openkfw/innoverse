@@ -6,7 +6,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { AmountOfNews, Filters, ProjectUpdateWithAdditionalData } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
-import { getProjectUpdatesPage } from '@/utils/requests/updates/requests';
+import { getProjectUpdates, getProjectUpdatesPage } from '@/utils/requests/updates/requests';
 
 export enum SortValues {
   DESC = 'desc',
@@ -20,7 +20,7 @@ interface NewsFilterContextInterface {
   setFilters: (filters: Filters) => void;
   sort: SortValues.ASC | SortValues.DESC;
   setSort: (sort: SortValues.ASC | SortValues.DESC) => void;
-  refetchNews: (filters?: Filters) => void;
+  refetchNews: (options?: { filters?: Filters; fullRefetch?: boolean }) => void;
   sortNews: () => void;
   isLoading: boolean;
   topics: string[];
@@ -54,15 +54,20 @@ const defaultState: NewsFilterContextInterface = {
 };
 
 interface NewsFilterContextProviderProps {
-  initialNews: ProjectUpdateWithAdditionalData[];
-  allUpdates: ProjectUpdateWithAdditionalData[];
+  initiallyLoadedNews: ProjectUpdateWithAdditionalData[];
+  allNews: ProjectUpdateWithAdditionalData[];
   children: React.ReactNode;
 }
 
 const NewsFilterContext = createContext(defaultState);
 
-export const NewsFilterContextProvider = ({ children, initialNews, allUpdates }: NewsFilterContextProviderProps) => {
-  const [news, setNews] = useState<ProjectUpdateWithAdditionalData[]>(initialNews);
+export const NewsFilterContextProvider = ({
+  children,
+  initiallyLoadedNews,
+  allNews,
+}: NewsFilterContextProviderProps) => {
+  const appInsights = useAppInsightsContext();
+  const [news, setNews] = useState<ProjectUpdateWithAdditionalData[]>(initiallyLoadedNews);
   const [sort, setSort] = useState<SortValues.ASC | SortValues.DESC>(defaultState.sort);
   const [filters, setFilters] = useState<Filters>(defaultState.filters);
   const [amountOfNewsTopic, setAmountOfNewsTopic] = useState<AmountOfNews>(defaultState.amountOfNewsTopic);
@@ -70,12 +75,17 @@ export const NewsFilterContextProvider = ({ children, initialNews, allUpdates }:
   const [pageNumber, setPageNumber] = useState<number>(defaultState.pageNumber);
   const [hasMoreValue, setHasMoreValue] = useState<boolean>(defaultState.hasMoreValue);
   const [isLoading, setIsLoading] = useState(false);
+  const [allUpdates, setAllUpdates] = useState(allNews);
 
-  const refetchNews = async (newFilters?: Filters) => {
+  const refetchNews = async (options?: { filters?: Filters; fullRefetch?: boolean }) => {
+    const newFilters = options?.filters;
     try {
       setIsLoading(true);
-
       const result = await getProjectUpdatesPage({ filters: newFilters || filters, sort, page: 1 });
+      if (options?.fullRefetch) {
+        const fetchUpdatesRequest = await getProjectUpdates();
+        if (fetchUpdatesRequest) setAllUpdates(fetchUpdatesRequest);
+      }
       if (result) {
         setNews([...result]);
         setPageNumber(2);
@@ -92,7 +102,6 @@ export const NewsFilterContextProvider = ({ children, initialNews, allUpdates }:
       setIsLoading(false);
     }
   };
-  const appInsights = useAppInsightsContext();
 
   const topics = useMemo(() => {
     const data = allUpdates

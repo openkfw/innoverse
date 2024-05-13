@@ -10,6 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 
 import { Option } from '@/common/formTypes';
+import { Filters } from '@/common/types';
 import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { AutocompleteDropdownField } from '@/components/common/form/AutocompleteDropdownField';
 
@@ -38,7 +39,7 @@ const defaultValues = {
 const { PROJECT, COMMENT } = formFieldNames;
 
 interface AddUpdateFormProps {
-  refetchUpdates: () => void;
+  refetchUpdates: (options?: { filters?: Filters; fullRefetch?: boolean }) => void;
   handleClose: () => void;
   defaultFormValues?: UpdateFormData;
   projectOptions: Option[];
@@ -70,7 +71,7 @@ export default function AddUpdateForm({
 
       const response = await handleProjectUpdate(formData);
       if (response.status === StatusCodes.OK) {
-        refetchUpdates();
+        refetchUpdates({ fullRefetch: true });
         successMessage({ message: 'Neuigkeit wurde erstellt' });
         handleClose();
       } else {

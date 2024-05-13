@@ -1,4 +1,5 @@
 import { Option } from '@/common/formTypes';
+import { Filters } from '@/common/types';
 import CustomDialog from '@/components/common/CustomDialog';
 
 import AddUpdateForm, { UpdateFormData } from './form/AddUpdateForm';
@@ -6,7 +7,7 @@ import AddUpdateForm, { UpdateFormData } from './form/AddUpdateForm';
 interface AddUpdateDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  refetchUpdates: () => void;
+  refetchUpdates: (options?: { filters?: Filters; fullRefetch?: boolean }) => void;
   defaultFormValues?: UpdateFormData;
   projectOptions: Option[];
 }

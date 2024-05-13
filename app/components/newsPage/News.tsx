@@ -37,7 +37,7 @@ export const News = (props: NewsProps) => {
   return (
     <Box sx={{ width: '100%', ...sx }} data-testid="news-container">
       {isLoading ? (
-        <NewsSkeleton count={2} />
+        <NewsSkeleton count={5} />
       ) : (
         <InfiniteScroll
           dataLength={news.length}

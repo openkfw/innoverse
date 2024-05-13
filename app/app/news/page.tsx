@@ -18,7 +18,6 @@ import backgroundImage from '/public/images/news-background.png';
 
 async function NewsPage() {
   const initialUpdates = (await getProjectUpdatesPage({ filters: { projects: [], topics: [] }, page: 1 })) ?? [];
-
   const allUpdates = await getProjectUpdates();
 
   if (!initialUpdates || !allUpdates) return <ErrorPage />;
@@ -51,7 +50,7 @@ async function NewsPage() {
             </Typography>
           </Card>
         </Grid>
-        <NewsFilterContextProvider initialNews={initialUpdates} allUpdates={allUpdates}>
+        <NewsFilterContextProvider initiallyLoadedNews={initialUpdates} allNews={allUpdates}>
           <NewsContainer news={initialUpdates} />
         </NewsFilterContextProvider>
       </Container>

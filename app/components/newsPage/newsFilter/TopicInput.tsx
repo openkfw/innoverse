@@ -43,7 +43,7 @@ export default function TopicInput(props: NewsFilterProps) {
       newValues = values.filter((value) => value === name);
     }
     setFilters({ ...filters, topics: newValues });
-    refetchNews({ ...filters, topics: newValues });
+    refetchNews({ filters: { ...filters, topics: newValues }, fullRefetch: false });
   };
 
   return (
