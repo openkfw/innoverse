@@ -111,6 +111,7 @@ const UpdateCard = (props: UpdateCardProps) => {
                 <AvatarIcon user={update?.author} size={24} allowAnimation index={100} />
               </StyledTooltip>
             </Box>
+
             <Box sx={{ paddingLeft: '16px', ml: '8px' }}>
               <Typography variant="subtitle2" sx={authorNameStyles}>
                 {update?.author?.name}

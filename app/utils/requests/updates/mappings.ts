@@ -9,7 +9,9 @@ export function mapToProjectUpdate(updateData: ResultOf<typeof ProjectUpdateFrag
   const author = attributes.author?.data;
   const project = attributes.project?.data;
 
-  if (!author) throw new Error('Update contained no author');
+  if (!author) {
+    throw new Error('Update contained no author');
+  }
 
   return {
     id: updateData.id,
