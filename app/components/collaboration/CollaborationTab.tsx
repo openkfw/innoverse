@@ -138,7 +138,7 @@ const cardContentStyles = {
 
 const colorOverlayStyles = {
   width: '50%',
-  height: '100%',
+  height: 'fit-content',
   borderRadius: 'var(--2, 16px) 0px 0px var(--2, 16px)',
   opacity: 0.6,
   background: 'linear-gradient(90deg, rgba(240, 238, 225, 0.00) 10.42%, #F0EEE1 100%)',

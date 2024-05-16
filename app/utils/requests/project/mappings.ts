@@ -11,7 +11,7 @@ import {
   Project,
   PROJECT_PROGRESS,
   ProjectQuestion,
-  ProjectUpdate,
+  ProjectUpdateWithAdditionalData,
   SurveyQuestion,
 } from '@/common/types';
 import { formatDate } from '@/utils/helpers';
@@ -29,7 +29,7 @@ export const mapToProject = ({
   collaborationQuestions: CollaborationQuestion[];
   comments: Comment[];
   followers: Follower[];
-  updates: ProjectUpdate[];
+  updates: ProjectUpdateWithAdditionalData[];
   likes: Like[];
   isLiked: boolean;
   isFollowed: boolean;

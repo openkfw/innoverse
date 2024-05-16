@@ -128,7 +128,7 @@ const wrapperStyles = {
   backdropFilter: 'blur(20px)',
   position: 'fixed',
   width: '100%',
-  zIndex: 1201,
+  zIndex: 10000,
   height: '65px',
 };
 

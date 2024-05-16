@@ -16,13 +16,12 @@ import { mapToProjectUpdate } from '@/utils/requests/updates/mappings';
 import { CreateProjectUpdateMutation } from '@/utils/requests/updates/mutations';
 import {
   GetUpdatesByProjectIdQuery,
+  GetUpdatesPageByProjectTitlesQuery,
   GetUpdatesPageByProjectsTitlesAndTopicsQuery,
   GetUpdatesPageByTopicsQuery,
   GetUpdatesPageQuery,
   GetUpdatesQuery,
 } from '@/utils/requests/updates/queries';
-
-import { GetUpdatesPageByProjectTitlesQuery } from './queries';
 
 const logger = getLogger();
 
@@ -47,7 +46,8 @@ export async function getUpdatesByProjectId(projectId: string) {
     const updatesData = response.updates?.data;
     if (!updatesData) throw new Error('Response contained no updates');
     const updates = updatesData.map(mapToProjectUpdate);
-    return updates;
+    const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
+    return updatesWithAdditionalData;
   } catch (err) {
     const error = strapiError('Getting all project updates', err as Error, projectId);
     logger.error(error);

@@ -34,20 +34,16 @@ const pages: Headers[] = [
 function AppLayout({ children }: PropsWithChildren) {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   return (
-    <>
+    <Box>
       <CustomToastContainer />
       <ThemeRegistry options={{ key: 'mui' }}>
-        <div
-          style={{
-            background: `linear-gradient(84deg, ${theme.palette.primary?.dark} 0%, ${theme.palette.primary?.light} 100%)`,
-          }}
-        >
-          {isSmallScreen ? <TopBarMobile pages={pages} /> : <TopBar pages={pages} />}
+        {isSmallScreen ? <TopBarMobile pages={pages} /> : <TopBar pages={pages} />}
+        <Box sx={{ position: 'relative', overflow: 'hidden' }}>
           <Box>{children}</Box>
           <Footer />
-        </div>
+        </Box>
       </ThemeRegistry>
-    </>
+    </Box>
   );
 }
 

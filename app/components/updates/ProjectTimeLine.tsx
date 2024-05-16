@@ -4,9 +4,10 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 
-import { ProjectUpdate } from '@/common/types';
+import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import theme from '@/styles/theme';
 
+import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/UpdateEmojiReactionCard';
 import { TextCard } from '../common/TextCard';
 
 import { ProjectTimeLineDate } from './ProjectTimeLineDate';
@@ -17,12 +18,12 @@ function getYear(date: string) {
 }
 
 interface ProjectTimeLineProps {
-  projectUpdates: ProjectUpdate[];
+  projectUpdates: ProjectUpdateWithAdditionalData[];
   widthOfDateColumn?: React.CSSProperties['width'];
 }
 
 interface useProjectTimeLineProps {
-  projectUpdates: ProjectUpdate[];
+  projectUpdates: ProjectUpdateWithAdditionalData[];
 }
 
 export const ProjectTimeLine = ({ projectUpdates, widthOfDateColumn }: ProjectTimeLineProps) => {
@@ -81,7 +82,7 @@ function useProjectTimeLine({ projectUpdates }: useProjectTimeLineProps) {
 
 interface ProjectYearTimelineProps {
   year: string;
-  projectUpdates: ProjectUpdate[];
+  projectUpdates: ProjectUpdateWithAdditionalData[];
   isLastYear: boolean;
   widthOfDateColumn?: React.CSSProperties['width'];
 }
@@ -103,6 +104,7 @@ const ProjectYearTimeline = ({ year, projectUpdates, isLastYear, widthOfDateColu
             sx={updateCommentCardStyles}
             headerSx={updateCommentCardHeaderStyles}
             content={{ author: update.author, text: update.comment }}
+            footer={<UpdateEmojiReactionCard update={update} />}
           />
         </Stack>
       ))}

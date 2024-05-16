@@ -51,13 +51,6 @@ export type SurveyVote = {
   vote: string;
 };
 
-export type ProjectColaboration = {
-  projectName: string;
-  writeCommentText: string;
-  projectUpdates: ProjectUpdate[];
-  surveyQuestions: SurveyQuestion[];
-};
-
 export enum PROJECT_PROGRESS {
   EXPLORATION = 'Exploration',
   KONZEPTION = 'Konzeption',
@@ -76,11 +69,6 @@ export type Hero = {
   projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT;
 };
 
-export type ProjectCollaboration = {
-  upvotes: number;
-  participants: number;
-};
-
 export type Project = BasicProject & {
   likes: Like[];
   followers: Follower[];
@@ -93,7 +81,7 @@ export type Project = BasicProject & {
   isFollowed: boolean;
   futureEvents: EventWithAdditionalData[];
   pastEvents: EventWithAdditionalData[];
-  updates: ProjectUpdate[];
+  updates: ProjectUpdateWithAdditionalData[];
 };
 
 export type BasicProject = {
@@ -182,53 +170,6 @@ export type Info = {
 
 export type Tag = {
   tag: string;
-};
-
-export type ProjectStatus = {
-  text: string;
-  author: User;
-  tags: Tag[];
-  info: Info;
-  projectName: string;
-};
-
-export type ProjectProgression = {
-  projectId: number;
-  hero: Hero;
-  projectSummary: Project;
-  projectStatus: ProjectStatus;
-  comments: Comment[];
-  questions: CollaborationQuestion[];
-};
-
-export type ProjectsProgression = {
-  writeCommentText: string;
-  projects: ProjectProgression[];
-};
-
-export type ProjectsQueryResult = {
-  projects: BasicProject[];
-  updates: ProjectUpdate[];
-};
-
-export type ProjectByIdQueryResult = {
-  id: string;
-  title: string;
-  shortTitle: string;
-  featured: boolean;
-  status: PROJECT_PROGRESS;
-  image?: string;
-  summary: string;
-  projectStart: string;
-  team: User[];
-  updates: ProjectUpdate[];
-  description: ProjectDescription;
-  questions: ProjectQuestion[];
-  comments: Comment[] | undefined;
-  surveyQuestions: SurveyQuestion[];
-  author?: User;
-  opportunities: Opportunity[];
-  collaborationQuestions: CollaborationQuestion[];
 };
 
 export type MainPageData = {

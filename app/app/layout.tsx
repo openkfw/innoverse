@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <title>InnoVerse</title>
         <meta name="description" content="***STRING_REMOVED***  Innovation Platform" />
       </head>
-      <body>
+      <body style={{ background: 'linear-gradient(90deg, rgb(0, 66, 103) 0%, rgb(0, 90, 140) 100%)' }}>
         <Layout>{children}</Layout>
       </body>
     </html>

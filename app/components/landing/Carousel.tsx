@@ -16,7 +16,7 @@ interface Author {
   image?: string;
 }
 
-interface ProjectUpdate {
+interface CarouselItem {
   id: string;
   projectId?: string;
   title?: string;
@@ -27,7 +27,7 @@ interface ProjectUpdate {
   projectStart?: string;
 }
 
-interface CarouselProps<T extends ProjectUpdate> {
+interface CarouselProps<T extends CarouselItem> {
   items: T[];
   renderItem: (item: T, idx: number) => React.JSX.Element;
   moreButton?: React.JSX.Element;
@@ -35,7 +35,7 @@ interface CarouselProps<T extends ProjectUpdate> {
   sx?: SxProps;
 }
 
-export default function Carousel<T extends ProjectUpdate>({
+export default function Carousel<T extends CarouselItem>({
   items,
   renderItem,
   moreButton,
