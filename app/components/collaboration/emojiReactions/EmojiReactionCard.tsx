@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
@@ -26,6 +26,8 @@ interface EmojiReactionCardProps {
 export function EmojiReactionCard({ userReaction, countOfReactions, handleReaction, sx }: EmojiReactionCardProps) {
   const [isEmojiPickerClicked, setIsEmojiPickerClicked] = useState(false);
   const appInsights = useAppInsightsContext();
+  const ref = useRef<HTMLDivElement>(null);
+
   // Amount of emojis that still look good on the card
   const MAX_EMOJIS_SHOWN = 11;
 
@@ -63,6 +65,7 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
         container
         direction="row"
         spacing={0.4}
+        ref={ref}
         sx={{
           alignItems: 'center',
           mt: 0.3,
@@ -105,6 +108,7 @@ export function EmojiReactionCard({ userReaction, countOfReactions, handleReacti
         isEmojiPickerClicked={isEmojiPickerClicked}
         setEmojiPickerClicked={setIsEmojiPickerClicked}
         handleEmojiSelection={handleEmojiReaction}
+        anchorElement={ref.current}
       />
     </Box>
   );

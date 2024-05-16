@@ -42,7 +42,7 @@ export async function getProjectById(id: string) {
     const pastEvents = (await getProjectEventsPage(id, 2, 1, 'past')) || [];
 
     const comments = projectComments.data;
-    const updates = (await getUpdatesByProjectId(id)) ?? [];
+    const updatesWithAdditionalData = (await getUpdatesByProjectId(id)) ?? [];
     const opportunities = (await getOpportunitiesByProjectId(projectData.id)) ?? [];
     const questions = (await getProjectQuestionsByProjectId(projectData.id)) ?? [];
     const surveyQuestions = (await getSurveyQuestionsByProjectId(projectData.id)) ?? [];
@@ -58,11 +58,11 @@ export async function getProjectById(id: string) {
       surveyQuestions,
       collaborationQuestions,
       comments,
-      updates,
       followers,
       likes,
       isLiked: isLiked ?? false,
       isFollowed: isFollowed ?? false,
+      updates: updatesWithAdditionalData,
       futureEvents: futureEventsWithAdditionalData,
       pastEvents: pastEventsWithAdditionalData,
     });

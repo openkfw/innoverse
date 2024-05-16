@@ -10,10 +10,10 @@ import { handleProjectUpdatesSchema } from './validationSchema';
 export const getProjectUpdates = async (body: { projectId: string }) => {
   const validatedParams = validateParams(handleProjectUpdatesSchema, body);
   if (validatedParams.status === StatusCodes.OK) {
-    const updates = await getUpdatesByProjectId(body.projectId);
+    const updatesWithAdditionalData = await getUpdatesByProjectId(body.projectId);
     return {
       status: StatusCodes.OK,
-      data: updates,
+      data: updatesWithAdditionalData,
     };
   }
   return {

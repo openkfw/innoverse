@@ -8,7 +8,7 @@ import Tab, { TabProps } from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import { Project, ProjectUpdate } from '@/common/types';
+import { Project, ProjectUpdateWithAdditionalData } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
@@ -91,7 +91,7 @@ export default function TabView(props: BasicTabsProps) {
   const { opportunities, collaborationQuestions, updates, futureEvents, surveyQuestions } = project;
   const collaborationActivities = opportunities.length + surveyQuestions.length + collaborationQuestions.length;
 
-  const setProjectUpdates = (updates: ProjectUpdate[]) => {
+  const setProjectUpdates = (updates: ProjectUpdateWithAdditionalData[]) => {
     setProject({ ...project, updates });
   };
 

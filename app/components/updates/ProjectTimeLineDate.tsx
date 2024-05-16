@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { ProjectUpdate } from '@/common/types';
+import { ProjectUpdateWithAdditionalData } from '@/common/types';
 
 import { DateField } from './DateField';
 
@@ -15,7 +15,7 @@ function getMonth(date: string) {
 }
 
 interface ProjectTimeLineDateProps {
-  update: ProjectUpdate;
+  update: ProjectUpdateWithAdditionalData;
   showDivider: boolean;
   sx?: SxProps;
 }

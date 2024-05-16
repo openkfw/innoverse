@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { Project, ProjectUpdate } from '@/common/types';
+import { Project, ProjectUpdateWithAdditionalData } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { errorMessage } from '../common/CustomToast';
@@ -19,7 +19,7 @@ import { ProjectTimeLine } from './ProjectTimeLine';
 
 interface UpdatesTabProps {
   project: Project;
-  onUpdate: (updates: ProjectUpdate[]) => void;
+  onUpdate: (updates: ProjectUpdateWithAdditionalData[]) => void;
   isFollowed: boolean;
   setFollowed: (i: boolean) => void;
   followersAmount: number;
@@ -85,8 +85,7 @@ export const UpdatesTab = ({ project, onUpdate }: UpdatesTabProps) => {
 // Updates Tab Styles
 const cardStyles = {
   borderRadius: '24px',
-  background: 'common.white',
-  position: 'relative',
+  backgroundColor: 'common.white',
   zIndex: 0,
   boxShadow:
     '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
@@ -94,11 +93,11 @@ const cardStyles = {
 
 const colorOverlayStyles = {
   width: '354px',
-  height: '100%',
+  position: 'absolute',
+  height: 'fit-content',
   borderRadius: 'var(--2, 16px) 0px 0px var(--2, 16px)',
   opacity: 0.6,
   background: 'linear-gradient(90deg, rgba(240, 238, 225, 0.00) 10.42%, #F0EEE1 100%)',
-  position: 'absolute',
   zIndex: -1,
   [theme.breakpoints.down('md')]: {
     display: 'none',
