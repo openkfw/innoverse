@@ -58,6 +58,9 @@ export const toggleButtonStyle = {
   minWidth: 'fit-content',
   px: 1.5,
   py: '5px',
-  '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.10)' },
+  '&:hover': {
+    backgroundColor: 'action.hover',
+    border: '1px solid rgba(255, 255, 255, 0.40)',
+  },
   '&:active': { backgroundColor: 'rgba(0, 0, 0, 0.10)' },
 };

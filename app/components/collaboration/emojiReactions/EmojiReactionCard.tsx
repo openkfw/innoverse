@@ -136,6 +136,7 @@ const activeReactionCardButtonStyles = {
   color: 'text.primary',
   '&:hover': {
     bgcolor: 'action.hover',
+    borderColor: 'action.hover',
   },
 };
 

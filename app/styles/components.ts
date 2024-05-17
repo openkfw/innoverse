@@ -7,6 +7,12 @@ import palette from './palette';
 const components: Components<Omit<Theme, 'components'>> = {
   MuiCssBaseline: {
     styleOverrides: `
+      html {
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
       @font-face {
         font-family: '***FONT_REMOVED***';
         src: local('***FONT_REMOVED***) format('woff2');
@@ -103,7 +109,7 @@ const components: Components<Omit<Theme, 'components'>> = {
       root: {
         color: palette.common?.white,
         '&.Mui-checked': {
-          color: palette.secondary.main,
+          color: palette.secondary?.main,
         },
       },
     },
@@ -113,7 +119,7 @@ const components: Components<Omit<Theme, 'components'>> = {
       root: {
         color: palette.common?.white,
         '&.Mui-checked': {
-          color: palette.secondary.main,
+          color: palette.secondary?.main,
         },
       },
     },
@@ -151,10 +157,6 @@ const components: Components<Omit<Theme, 'components'>> = {
       root: {
         color: palette.common?.black,
       },
-    },
-  },
-  MuiInputLabel: {
-    styleOverrides: {
       formControl: {
         color: palette.common?.black,
       },
@@ -182,9 +184,9 @@ const components: Components<Omit<Theme, 'components'>> = {
   MuiPickersToolbar: {
     styleOverrides: {
       root: {
-        backgroundColor: palette.primary.light,
+        backgroundColor: palette.primary?.light,
         '.MuiTypography-root': {
-          color: palette.common.white,
+          color: palette.common?.white,
         },
       },
     },
