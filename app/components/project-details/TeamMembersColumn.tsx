@@ -200,5 +200,6 @@ const showAllButtonStyles = {
   backdropFilter: 'blur(24px)',
   '&:hover': {
     color: 'action.active',
+    border: '1px solid rgba(255, 255, 255, 0.40)',
   },
 };

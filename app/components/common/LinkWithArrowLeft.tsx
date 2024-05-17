@@ -12,7 +12,7 @@ interface LinkWithArrowLeftProps {
 export const LinkWithArrowLeft = ({ title, href, ...props }: LinkWithArrowLeftProps) => {
   return (
     <Link href={href} style={{ textDecoration: 'none' }} {...props}>
-      <Stack direction="row" alignItems="center">
+      <Stack direction="row" alignItems="center" sx={{ gap: '4px' }}>
         <ArrowForwardIcon sx={{ fontSize: '14px', color: 'primary.main' }} />
         <Typography variant="subtitle2" sx={{ fontSize: '14px', color: 'primary.main' }} noWrap>
           {title}

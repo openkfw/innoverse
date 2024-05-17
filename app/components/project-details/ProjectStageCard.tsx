@@ -124,6 +124,10 @@ const buttonStyles = {
   border: '1px solid rgba(0, 0, 0, 0.10)',
   backdropFilter: 'blur(24px)',
   maxWidth: 'fit-content',
+
+  '&:hover': {
+    border: '1px solid rgba(255, 255, 255, 0.40)',
+  },
 };
 
 const buttonTextStyles = {
