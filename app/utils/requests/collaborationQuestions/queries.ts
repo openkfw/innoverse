@@ -25,6 +25,19 @@ export const CollaborationQuestionFragment = graphql(
   [InnoUserFragment],
 );
 
+export const GetCollaborationQuestionByIdQuery = graphql(
+  `
+    query GetCollaborationQuestionById($id: ID) {
+      collaborationQuestion(id: $id) {
+        data {
+          ...CollaborationQuestion
+        }
+      }
+    }
+  `,
+  [CollaborationQuestionFragment],
+);
+
 export const GetCollaborationQuestionsByProjectIdQuery = graphql(
   `
     query GetCollaborationQuestions($projectId: ID) {

@@ -80,3 +80,20 @@ export const GetProjectsPageQuery = graphql(
   `,
   [ProjectFragment],
 );
+
+export const GetProjectAuthorIdByProjectIdQuery = graphql(`
+  query GetProjectAuthorIdByProjectId($projectId: ID) {
+    project(id: $projectId) {
+      data {
+        id
+        attributes {
+          author {
+            data {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+`);

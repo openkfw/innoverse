@@ -21,5 +21,6 @@ export function mapToProjectUpdate(updateData: ResultOf<typeof ProjectUpdateFrag
     updatedAt: attributes.updatedAt?.toString() ?? '',
     topic: attributes.topic as string,
     author: mapToUser(author),
+    linkToCollaborationTab: updateData.attributes.linkToCollaborationTab ?? false,
   };
 }

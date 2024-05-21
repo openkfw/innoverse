@@ -35,6 +35,11 @@ export const TextCard = ({ content, footer, sx, headerSx }: TextCardProps) => {
   const { author, text } = content;
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const getText = () => {
+    const slicedText = isCollapsed ? text : text.slice(0, MAX_TEXT_LENGTH);
+    return parseStringForLinks(slicedText);
+  };
+
   const handleToggle = () => {
     setIsCollapsed(!isCollapsed);
   };
@@ -74,7 +79,7 @@ export const TextCard = ({ content, footer, sx, headerSx }: TextCardProps) => {
         <Stack direction="column" spacing={2}>
           <Box sx={{ ...textContainerStyle, overflowWrap: isCollapsed ? 'break-word' : 'unset' }}>
             <Typography variant="body1" sx={textStyle}>
-              {isCollapsed ? parseStringForLinks(text) : parseStringForLinks(text.slice(0, MAX_TEXT_LENGTH))}
+              {getText()}
             </Typography>
             {!isCollapsed && (
               <Typography variant="subtitle2" onClick={handleToggle} sx={buttonOverlayStyle}>

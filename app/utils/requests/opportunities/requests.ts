@@ -2,13 +2,15 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { UserSession } from '@/common/types';
+import { BasicOpportunity, UserSession } from '@/common/types';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
+import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { mapFirstToOpportunity, mapToOpportunity } from '@/utils/requests/opportunities/mappings';
 import {
+  GetBasicOpportunityByIdQuery,
   GetOpportunitiesByIdQuery,
   GetOpportunitiesByProjectIdQuery,
   GetOpportunityWithParticipantQuery,
@@ -25,7 +27,7 @@ export async function getOpportunitiesByProjectId(projectId: string) {
 
     const mapToEntities = opportunitiesData.map(async (opportunityData) => {
       const { data: isParticipant } = await userParticipatesInOpportunity({ opportunityId: opportunityData.id });
-      return await mapToOpportunity(opportunityData, isParticipant);
+      return mapToOpportunity(opportunityData, isParticipant);
     });
 
     const opportunities = await getPromiseResults(mapToEntities);
@@ -43,6 +45,31 @@ export async function getOpportunityById(opportunityId: string) {
     return opportunity;
   } catch (err) {
     const error = strapiError('Getting an opporunity', err as Error, opportunityId);
+    logger.error(error);
+  }
+}
+
+export async function getBasicOpportunityById(opportunityId: string) {
+  try {
+    const response = await strapiGraphQLFetcher(GetBasicOpportunityByIdQuery, { opportunityId });
+    const opportunityData = response.opportunity?.data;
+    const projectData = opportunityData?.attributes.project?.data;
+
+    if (!opportunityData) throw new Error('Response contained no opportunity data');
+
+    const attributes = opportunityData.attributes;
+    const contactPersonData = attributes.contactPerson?.data;
+
+    const opportunity: BasicOpportunity = {
+      id: opportunityData.id,
+      title: attributes.title,
+      description: attributes.description,
+      projectId: projectData?.id,
+      contactPerson: contactPersonData ? mapToUser(contactPersonData) : undefined,
+    };
+    return opportunity;
+  } catch (err) {
+    const error = strapiError('Getting basic opportunity by id', err as Error, opportunityId);
     logger.error(error);
   }
 }

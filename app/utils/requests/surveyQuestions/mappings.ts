@@ -1,10 +1,22 @@
-import { SurveyQuestion, SurveyVote } from '@/common/types';
+import { BasicSurveyQuestion, SurveyQuestion, SurveyVote } from '@/common/types';
 
 type SurveyQuestionData = {
+  id: string;
   attributes: {
+    question: string;
     responseOptions: ({
       responseOption: string;
     } | null)[];
+  };
+};
+
+type BasicSurveyQuestionData = {
+  attributes: {
+    project: {
+      data: {
+        id: string;
+      } | null;
+    } | null;
     question: string;
   };
   id: string;
@@ -25,5 +37,15 @@ export const mapToSurveyQuestion = (
     responseOptions: responseOptions,
     votes,
     userVote: userVote?.vote,
+  };
+};
+
+export const mapToBasicSurveyQuestion = (surveyQuestionData: BasicSurveyQuestionData): BasicSurveyQuestion => {
+  const attributes = surveyQuestionData.attributes;
+
+  return {
+    id: surveyQuestionData.id,
+    question: attributes.question,
+    projectId: attributes.project?.data?.id,
   };
 };

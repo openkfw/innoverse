@@ -44,6 +44,12 @@ export type SurveyQuestion = {
   userVote?: string;
 };
 
+export type BasicSurveyQuestion = {
+  id: string;
+  question: string;
+  projectId?: string;
+};
+
 export type SurveyVote = {
   id: string;
   createdAt: Date;
@@ -129,6 +135,7 @@ export type ProjectUpdate = {
   projectStart?: string;
   followedByUser?: boolean;
   updatedAt: string;
+  linkToCollaborationTab: boolean;
 };
 
 export type ProjectUpdateWithAdditionalData = ProjectUpdate & ReactionOnObject;
@@ -199,6 +206,14 @@ export type Opportunity = {
   hasApplied?: boolean;
 };
 
+export type BasicOpportunity = {
+  id: string;
+  title: string;
+  description: string | null;
+  projectId?: string;
+  contactPerson?: User;
+};
+
 export type CollaborationQuestion = {
   id: string;
   title: string;
@@ -206,6 +221,14 @@ export type CollaborationQuestion = {
   description: string;
   authors: User[];
   comments: Comment[];
+};
+
+export type BasicCollaborationQuestion = {
+  id: string;
+  title: string;
+  description: string;
+  authors: User[];
+  projectId?: string;
 };
 
 export type Filters = {
