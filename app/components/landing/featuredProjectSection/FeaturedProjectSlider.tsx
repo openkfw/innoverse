@@ -13,6 +13,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { BasicProject } from '@/common/types';
 import theme from '@/styles/theme';
+import { getImageByBreakpoint } from '@/utils/helpers';
 
 import FeaturedProjectContent from './slider/FeaturedProjectContent';
 import Indicator from './slider/Indicator';
@@ -38,6 +39,8 @@ interface PillWidths {
 const Slide = ({ content, index, setSelected }: SlideProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const isWideScreen = useMediaQuery(theme.breakpoints.up('md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const image = getImageByBreakpoint(isSmallScreen, content?.image) || defaultImage;
 
   const NextArrow = () => {
     if (isHovered || !isWideScreen) {
@@ -81,7 +84,7 @@ const Slide = ({ content, index, setSelected }: SlideProps) => {
         data-identifier="image-container"
       >
         <Image
-          src={content?.image || defaultImage}
+          src={image}
           width={0}
           height={0}
           alt="Project"

@@ -16,6 +16,7 @@ export const ProjectFragment = graphql(
           data {
             attributes {
               url
+              formats
             }
           }
         }

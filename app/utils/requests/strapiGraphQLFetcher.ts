@@ -36,7 +36,7 @@ const strapiFetcher = async (query: unknown, variables?: unknown, operationName?
       query: query,
       variables: variables,
     }),
-    cache: 'no-store',
+    next: { revalidate: 0 },
   });
 
   // If the status code is not in the range 200-299,
