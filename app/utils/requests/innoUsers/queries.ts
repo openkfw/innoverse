@@ -14,6 +14,7 @@ export const InnoUserFragment = graphql(`
         data {
           attributes {
             url
+            formats
           }
         }
       }

@@ -6,9 +6,11 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
+import { getImageByBreakpoint } from '@/utils/helpers';
 
 import AvatarIcon from '../common/AvatarIcon';
 import ProgressBar from '../common/ProgressBar';
@@ -24,13 +26,15 @@ interface HeroSectionProps {
 export default function HeroSection(props: HeroSectionProps) {
   const { project } = props;
   const { title, author, status, image } = project;
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const heroImage = getImageByBreakpoint(isSmallScreen, image) || defaultImage;
 
   return (
     <Grid container sx={containerStyles}>
       <Grid item xs={12} md={5}>
         <Box sx={imageWrapperStyles}>
           <Image
-            src={image || defaultImage}
+            src={heroImage}
             alt="Project"
             width={0}
             height={0}

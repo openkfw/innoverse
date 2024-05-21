@@ -90,7 +90,7 @@ export type BasicProject = {
   shortTitle?: string;
   featured: boolean;
   status: PROJECT_PROGRESS;
-  image?: string;
+  image?: ImageFormats;
   summary: string;
   projectStart?: string;
   team: User[];
@@ -231,7 +231,29 @@ export type Event = {
   description?: string;
   location?: string;
   author?: User;
-  image?: string;
+  image?: ImageFormats;
   themes: string[];
   projectId: string;
+};
+
+export type ImageFormat = {
+  ext: string;
+  url: string;
+  hash: string;
+  mime: string;
+  name: string;
+  path: null;
+  size: number;
+  width: number;
+  height: number;
+};
+
+export type ImageFormats = {
+  xxlarge?: ImageFormat;
+  xlarge?: ImageFormat;
+  large?: ImageFormat;
+  medium?: ImageFormat;
+  small?: ImageFormat;
+  xsmall?: ImageFormat;
+  thumbnail?: ImageFormat;
 };

@@ -1,3 +1,4 @@
+import { ImageFormats } from '@/common/types';
 import { SxProps } from '@mui/material/styles';
 
 export const sortDateByCreatedAt = <T extends { createdAt: Date }>(array: T[]): T[] => {
@@ -33,4 +34,11 @@ export function formatDate(dateString: string | Date, locale = 'de-DE') {
 
 export function getProviderLabel(provider: { name: string; id: string }) {
   return provider.id === 'azure-ad' ? `Mit ***STRING_REMOVED***  Account einloggen` : `Mit ${provider.name.split(' ')[0]} einloggen`;
+}
+
+export function getImageByBreakpoint(isSmallScreen: boolean, image?: ImageFormats) {
+  if (!image || !image.small || !image.large) {
+    return undefined;
+  }
+  return isSmallScreen ? image.small?.url : image.large?.url;
 }

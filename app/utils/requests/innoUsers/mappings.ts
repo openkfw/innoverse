@@ -1,6 +1,6 @@
 import { ResultOf } from 'gql.tada';
 
-import { User } from '@/common/types';
+import { ImageFormats, User } from '@/common/types';
 import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
 export function mapFirstToUser(users: ResultOf<typeof InnoUserFragment>[] | undefined): User | undefined {
@@ -25,10 +25,31 @@ export function mapToUser(userData: ResultOf<typeof InnoUserFragment>): User {
     department: attributes.department ?? undefined,
     email: attributes.email ?? undefined,
     providerId: attributes.providerId ?? undefined,
-    image: mapToImageUrl(attributes.avatar),
+    image: mapToAvatarUrl(attributes.avatar),
   };
 }
-export function mapToImageUrl(image: { data: { attributes: { url: string } } | null } | null): string | undefined {
+
+export function mapToImageUrl(
+  image: { data: { attributes: { url: string; formats: unknown } } | null } | null,
+): ImageFormats | undefined {
   if (!image?.data) return undefined;
-  return `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes?.url}`;
+  const formats = image.data.attributes.formats as ImageFormats;
+  if (!formats) {
+    return undefined;
+  }
+  const mappedFormats = Object.fromEntries(
+    Object.entries(formats).map(([key, value]) => [
+      key,
+      {
+        ...value,
+        url: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${value.url}`,
+      },
+    ]),
+  );
+  return { ...mappedFormats };
+}
+
+export function mapToAvatarUrl(image: { data: { attributes: { url: string } } | null } | null): string | undefined {
+  if (!image?.data) return undefined;
+  return `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`;
 }

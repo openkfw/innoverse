@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import theme from '@/styles/theme';
+import { getImageByBreakpoint } from '@/utils/helpers';
 
 import Carousel from '../Carousel';
 import { defaultImage } from '../featuredProjectSection/FeaturedProjectSlider';
@@ -24,18 +25,21 @@ export default function ProjectCarousel({ projects }: ProjectProps) {
         slidesToShow: 1,
         slidesToScroll: isSmallScreen ? 1 : 2,
       }}
-      renderItem={(project) => (
-        <Grid item key={project.id} sx={cardContainerStyles}>
-          <ProjectCard
-            id={project.id}
-            img={project.image || defaultImage}
-            contributors={project.team}
-            title={project.title}
-            summary={project.summary}
-            status={project.status}
-          />
-        </Grid>
-      )}
+      renderItem={(project) => {
+        const image = getImageByBreakpoint(isSmallScreen, project.image) || defaultImage;
+        return (
+          <Grid item key={project.id} sx={cardContainerStyles}>
+            <ProjectCard
+              id={project.id}
+              img={image}
+              contributors={project.team}
+              title={project.title}
+              summary={project.summary}
+              status={project.status}
+            />
+          </Grid>
+        );
+      }}
       sx={{ zIndex: 1, minHeight: '490px' }}
     />
   );

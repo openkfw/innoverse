@@ -6,11 +6,13 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { EventWithAdditionalData } from '@/common/types';
 import EventEmojiReactionCard from '@/components/collaboration/emojiReactions/EventEmojiReactionCard';
 import theme from '@/styles/theme';
 
+import { getImageByBreakpoint } from '../../../utils/helpers';
 import { LinkWithArrowLeft } from '../../common/LinkWithArrowLeft';
 
 import EventCardHeader from './EventCardHeader';
@@ -21,6 +23,8 @@ interface EventCardProps {
 
 export const EventCard = ({ event }: EventCardProps) => {
   const defaultImage = '/images/energy_01.png';
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const image = getImageByBreakpoint(isSmallScreen, event?.image) || defaultImage;
 
   return (
     <Card sx={cardStyles}>
@@ -30,14 +34,7 @@ export const EventCard = ({ event }: EventCardProps) => {
           <Typography variant="h6" sx={titleStyles}>
             {event.title}
           </Typography>
-          <Image
-            width={0}
-            height={0}
-            sizes="50vw"
-            src={event.image ?? defaultImage}
-            alt="Event image"
-            style={titleImageStyles}
-          />
+          <Image width={0} height={0} sizes="50vw" src={image} alt="Event image" style={titleImageStyles} />
         </Stack>
       </CardContent>
 

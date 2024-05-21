@@ -40,7 +40,7 @@ const EventCard = ({ event, disabled }: EventCardProps) => {
               height={0}
               quality={60}
               sizes="25vw"
-              src={event.image || defaultImageForEvents}
+              src={event.image?.medium?.url || defaultImageForEvents}
               alt={'Event Image'}
               style={{
                 borderRadius: '.4em',
