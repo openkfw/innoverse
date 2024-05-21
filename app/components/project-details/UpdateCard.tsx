@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Link from 'next/link';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -128,6 +129,12 @@ const UpdateCard = (props: UpdateCardProps) => {
               sx={{ color: 'rgba(0, 0, 0, 0.87)', marginTop: 1, marginBottom: 1, display: 'inline' }}
             >
               {showText()}
+              {update.linkToCollaborationTab && (
+                <Link style={linkStyles} href={`/projects/${update.projectId}?tab=1#moredetails`}>
+                  {' '}
+                  Mehr erfahren
+                </Link>
+              )}
             </Typography>
 
             {update?.comment.length > MAX_LENGTH && (
@@ -278,4 +285,10 @@ const buttonOverlayStyle = {
   cursor: 'pointer',
   boxShadow: '-10px 0 10px white',
   width: '130px',
+};
+
+const linkStyles = {
+  textDecoration: 'none',
+  cursor: 'pointer',
+  color: theme.palette.primary.main,
 };

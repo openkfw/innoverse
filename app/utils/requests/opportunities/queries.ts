@@ -51,6 +51,33 @@ export const GetOpportunitiesByIdQuery = graphql(
   [OpportunityFragment],
 );
 
+export const GetBasicOpportunityByIdQuery = graphql(
+  `
+    query GetBasicOpportunityById($opportunityId: ID) {
+      opportunity(id: $opportunityId) {
+        data {
+          id
+          attributes {
+            title
+            description
+            contactPerson {
+              data {
+                ...InnoUser
+              }
+            }
+            project {
+              data {
+                id
+              }
+            }
+          }
+        }
+      }
+    }
+  `,
+  [InnoUserFragment],
+);
+
 export const GetOpportunityWithParticipantQuery = graphql(
   `
     query GetOpportunities($opportunityId: ID!, $userId: String) {

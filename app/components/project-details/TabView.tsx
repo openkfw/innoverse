@@ -152,7 +152,7 @@ export default function TabView(props: BasicTabsProps) {
   };
 
   return (
-    <Box sx={containerStyles}>
+    <Box sx={containerStyles} id="moredetails">
       <CustomTabs
         value={activeTab}
         onChange={handleChange}

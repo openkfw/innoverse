@@ -4,6 +4,13 @@ import { DocumentNode, Kind, OperationDefinitionNode, print } from 'graphql';
 
 import { RequestError } from '@/entities/error';
 
+type StrapiError = {
+  message: string;
+  locations: { line: number; column: number }[];
+  path: string[];
+  extensions: { code: string; exception: { stacktrace: string[] } };
+};
+
 const strapiGraphQLFetcher = async <TQuery extends DocumentNode>(
   graphqlQuery: TQuery,
   variables?: VariablesOf<TQuery>,
@@ -11,7 +18,9 @@ const strapiGraphQLFetcher = async <TQuery extends DocumentNode>(
   const queryString = print(graphqlQuery);
   const operationName = getOperationName(graphqlQuery);
   const response = await strapiFetcher(queryString, variables, operationName);
-  const typedResult = response as { data?: ResultOf<TQuery> };
+  const typedResult = response as { data?: ResultOf<TQuery>; errors?: StrapiError[] };
+
+  if (typedResult.errors?.length) throw createErrorFromStrapiError(typedResult.errors[0]);
   if (!typedResult.data) throw new Error('JSON response contained no data');
   return typedResult.data;
 };
@@ -22,6 +31,10 @@ const getOperationName = (graphqlQuery: DocumentNode) => {
   );
   const operationName = operationDefinition?.name?.value;
   return operationName;
+};
+
+const createErrorFromStrapiError = (strapiError: StrapiError) => {
+  return new Error('Strapi request failed on strapi side', { cause: strapiError.extensions.exception.stacktrace });
 };
 
 const strapiFetcher = async (query: unknown, variables?: unknown, operationName?: string) => {

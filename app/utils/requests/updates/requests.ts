@@ -16,8 +16,8 @@ import { mapToProjectUpdate } from '@/utils/requests/updates/mappings';
 import { CreateProjectUpdateMutation } from '@/utils/requests/updates/mutations';
 import {
   GetUpdatesByProjectIdQuery,
-  GetUpdatesPageByProjectTitlesQuery,
   GetUpdatesPageByProjectsTitlesAndTopicsQuery,
+  GetUpdatesPageByProjectTitlesQuery,
   GetUpdatesPageByTopicsQuery,
   GetUpdatesPageQuery,
   GetUpdatesQuery,
@@ -54,12 +54,18 @@ export async function getUpdatesByProjectId(projectId: string) {
   }
 }
 
-export async function createProjectUpdate(body: { comment: string; projectId: string; authorId?: string }) {
+export async function createProjectUpdate(body: {
+  comment: string;
+  projectId: string;
+  authorId?: string;
+  linkToCollaborationTab?: boolean;
+}) {
   try {
     const response = await strapiGraphQLFetcher(CreateProjectUpdateMutation, {
       authorId: body.authorId ?? '0',
       projectId: body.projectId,
       comment: body.comment,
+      linkToCollaborationTab: body.linkToCollaborationTab ?? false,
     });
 
     const updateData = response.createUpdate?.data;

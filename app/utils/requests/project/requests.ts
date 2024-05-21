@@ -15,7 +15,11 @@ import { getCollaborationQuestionsByProjectId } from '@/utils/requests/collabora
 import { getEventsWithAdditionalData, getProjectEventsPage } from '@/utils/requests/events/requests';
 import { getOpportunitiesByProjectId } from '@/utils/requests/opportunities/requests';
 import { mapToBasicProject, mapToProject } from '@/utils/requests/project/mappings';
-import { GetProjectByIdQuery, GetProjectsQuery } from '@/utils/requests/project/queries';
+import {
+  GetProjectAuthorIdByProjectIdQuery,
+  GetProjectByIdQuery,
+  GetProjectsQuery,
+} from '@/utils/requests/project/queries';
 import { getProjectQuestionsByProjectId } from '@/utils/requests/questions/requests';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { getSurveyQuestionsByProjectId } from '@/utils/requests/surveyQuestions/requests';
@@ -89,6 +93,21 @@ export async function getProjects(
     return projects;
   } catch (err) {
     console.info(err);
+  }
+}
+
+export async function getProjectAuthorIdByProjectId(projectId: string) {
+  try {
+    const response = await strapiGraphQLFetcher(GetProjectAuthorIdByProjectIdQuery, { projectId });
+    const projectData = response.project?.data;
+    const authorData = projectData?.attributes.author?.data;
+
+    if (!projectData) throw new Error('Response contained no project data');
+
+    return { authorId: authorData?.id };
+  } catch (err) {
+    const error = strapiError('Getting project author by project id', err as Error, projectId);
+    logger.error(error);
   }
 }
 

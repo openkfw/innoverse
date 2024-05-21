@@ -15,6 +15,7 @@ export const strapiError = (context: string, error: Error, resource?: string): I
   resource,
   message: `Strapi error occurred: ${context}`,
   stack: error.stack,
+  cause: error.cause,
 });
 
 export const dbError = (context: string, error: Error, resource?: string): InnoPlatformError => ({
@@ -22,10 +23,12 @@ export const dbError = (context: string, error: Error, resource?: string): InnoP
   resource,
   message: `Database error occurred: ${context}`,
   stack: error.stack,
+  cause: error.cause,
 });
 
 export const validationError = (context: string, error: Error): InnoPlatformError => ({
   name: 'ValidationError',
   message: `Validation error occurred: ${context}`,
   stack: error.stack,
+  cause: error.cause,
 });

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
@@ -37,7 +38,7 @@ interface NewsCardProps {
 export default function NewsCard(props: NewsCardProps) {
   const { update, sx, noClamp = false } = props;
   const projectId = update.projectId;
-  const { title, comment, author, updatedAt, followedByUser = false } = update;
+  const { title, comment, author, updatedAt, linkToCollaborationTab, followedByUser = false } = update;
 
   const appInsights = useAppInsightsContext();
   const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(followedByUser);
@@ -59,6 +60,10 @@ export default function NewsCard(props: NewsCardProps) {
         severityLevel: SeverityLevel.Error,
       });
     }
+  };
+
+  const getText = () => {
+    return parseStringForLinks(comment);
   };
 
   return (
@@ -96,7 +101,13 @@ export default function NewsCard(props: NewsCardProps) {
       <CardContent sx={cardContentStyles}>
         <Box sx={titleWrapperStyles}>
           <Typography sx={noClamp ? subtitleStyles : null} color="text.primary" variant="body1" data-testid="text">
-            {parseStringForLinks(comment)}
+            {getText()}
+            {linkToCollaborationTab && (
+              <Link style={linkStyles} href={`/projects/${projectId}?tab=1#moredetails`}>
+                {' '}
+                Mehr erfahren
+              </Link>
+            )}
           </Typography>
         </Box>
       </CardContent>
@@ -193,4 +204,10 @@ const followButtonStyles = {
     ml: '4px',
     mr: '2px',
   },
+};
+
+const linkStyles = {
+  textDecoration: 'none',
+  cursor: 'pointer',
+  color: theme.palette.primary.main,
 };

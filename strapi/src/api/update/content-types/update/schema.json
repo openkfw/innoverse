@@ -28,6 +28,10 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::project.project"
+    },
+    "linkToCollaborationTab": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

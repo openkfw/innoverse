@@ -14,10 +14,17 @@ const getErrorLog = (info: winston.Logform.TransformableInfo) => {
   let logMessage = `${info.timestamp} [${info.level}]: ${info.name}`;
 
   logMessage += `\n\tmessage: ${info.message}`;
+
   if (info.resource) {
     logMessage += `\n\tresource: ${info.resource}`;
   }
+
   logMessage += `\n\tstack: ${info.stack}`;
+
+  if (info.cause) {
+    logMessage += `\n\tcause: ${info.cause}`;
+  }
+
   return logMessage;
 };
 

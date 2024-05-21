@@ -9,6 +9,7 @@ export const ProjectUpdateFragment = graphql(
         comment
         topic
         updatedAt
+        linkToCollaborationTab
         author {
           data {
             ...InnoUser

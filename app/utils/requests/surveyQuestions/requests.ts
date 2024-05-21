@@ -10,10 +10,27 @@ import { strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { mapToSurveyQuestion } from '@/utils/requests/surveyQuestions/mappings';
+import { mapToBasicSurveyQuestion, mapToSurveyQuestion } from '@/utils/requests/surveyQuestions/mappings';
 import { GetSurveyQuestionsByProjectIdQuery } from '@/utils/requests/surveyQuestions/queries';
 
+import { GetSurveyQuestionByIdQuery } from './queries';
+
 const logger = getLogger();
+
+export async function getBasicSurveyQuestionById(id: string) {
+  try {
+    const response = await strapiGraphQLFetcher(GetSurveyQuestionByIdQuery, { id });
+    const data = response.surveyQuestion?.data;
+
+    if (!data) throw new Error('Response contained no survey question data');
+
+    const surveyQuestion = mapToBasicSurveyQuestion(data);
+    return surveyQuestion;
+  } catch (err) {
+    const error = strapiError('Getting basic survey question by id', err as Error, id);
+    logger.error(error);
+  }
+}
 
 export async function getSurveyQuestionsByProjectId(projectId: string) {
   try {
