@@ -24,9 +24,10 @@ export const defaultImageForEvents = '/images/event_image.jpg';
 interface EventCardProps {
   event: EventWithAdditionalData;
   disabled: boolean;
+  arrow?: boolean;
 }
 
-const EventCard = ({ event, disabled }: EventCardProps) => {
+const EventCard = ({ event, disabled, arrow = true }: EventCardProps) => {
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   return (
@@ -53,7 +54,7 @@ const EventCard = ({ event, disabled }: EventCardProps) => {
               }}
             />
             <Box sx={{ mt: 1 }}>
-              <EventThemes themes={event.themes} sx={{ mb: 1, mt: -0.5 }} />
+              <EventThemes themes={event.themes} sx={{ mb: 1, mt: -0.5 }} arrow={arrow} />
               {isLargeScreen && <EventEmojiReactionCard event={event} />}
             </Box>
           </Box>
@@ -67,14 +68,17 @@ const EventCard = ({ event, disabled }: EventCardProps) => {
   );
 };
 
-const EventThemes = ({ themes, sx }: { themes: string[]; sx?: SxProps }) => {
+const EventThemes = ({ themes, sx, arrow }: { themes: string[]; sx?: SxProps; arrow: boolean }) => {
   if (!themes.length) return <></>;
 
   return (
     <Stack direction="row" alignItems={'center'} sx={sx}>
-      <Typography variant="subtitle2" color="primary.main">
-        <ArrowForwardIcon sx={{ fontSize: '14px' }} />
-      </Typography>
+      {arrow && (
+        <Typography variant="subtitle2" color="primary.main">
+          <ArrowForwardIcon sx={{ fontSize: '14px' }} />
+        </Typography>
+      )}
+
       {themes.map((theme, index) => (
         <Typography key={index} variant="subtitle2" color="primary.main" sx={{ fontSize: '14px' }}>
           {theme}
