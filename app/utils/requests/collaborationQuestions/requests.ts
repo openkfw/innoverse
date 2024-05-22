@@ -3,13 +3,13 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
-import { getProjectCollaborationComments } from '@/components/collaboration/comments/actions';
 import { getCollaborationCommentIsUpvotedBy } from '@/repository/db/collaboration_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
+import { getProjectCollaborationComments } from '@/utils/requests/collaborationComments/requests';
 import {
   mapToBasicCollaborationQuestion,
   mapToCollaborationQuestion,

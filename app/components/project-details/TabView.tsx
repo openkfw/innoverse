@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode, SyntheticEvent, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 

@@ -10,10 +10,10 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { Project, ProjectUpdateWithAdditionalData } from '@/common/types';
 import theme from '@/styles/theme';
+import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
 
 import { errorMessage } from '../common/CustomToast';
 
-import { getProjectUpdates } from './actions';
 import { AddUpdateCard } from './AddUpdateCard';
 import { ProjectTimeLine } from './ProjectTimeLine';
 
@@ -33,9 +33,9 @@ export const UpdatesTab = ({ project, onUpdate }: UpdatesTabProps) => {
 
   const refetchUpdates = async () => {
     try {
-      const { data } = await getProjectUpdates({ projectId: project.id });
-      if (data) {
-        onUpdate(data);
+      const updates = await getUpdatesByProjectId(project.id);
+      if (updates) {
+        onUpdate(updates);
       }
     } catch (error) {
       console.error('Error refetching project updates:', error);

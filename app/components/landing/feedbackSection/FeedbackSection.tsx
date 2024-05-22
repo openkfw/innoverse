@@ -16,11 +16,9 @@ import Typography from '@mui/material/Typography';
 
 import CustomDialog from '@/components/common/CustomDialog';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
-import {
-  getPlatfromFeedbackProject as getPlatformFeedbackProject,
-  saveFeedback,
-} from '@/components/landing/feedbackSection/actions';
+import { saveFeedback } from '@/components/landing/feedbackSection/actions';
 import theme from '@/styles/theme';
+import { getPlatformFeedbackCollaborationQuestion } from '@/utils/requests/collaborationQuestions/requests';
 
 const ProjectLink = ({
   children,
@@ -54,8 +52,8 @@ function FeedbackSection() {
 
   useEffect(() => {
     async function loadAndSetFeedbackProjectId() {
-      const response = await getPlatformFeedbackProject({});
-      setProjectId(response.data?.projectId);
+      const response = await getPlatformFeedbackCollaborationQuestion();
+      setProjectId(response?.projectId);
     }
 
     loadAndSetFeedbackProjectId();

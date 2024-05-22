@@ -1,3 +1,5 @@
+'use client';
+
 import { ChangeEvent, useState } from 'react';
 import React from 'react';
 import { signIn } from 'next-auth/react';

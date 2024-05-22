@@ -1,16 +1,18 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { CommentResponse } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import { isProjectCollaborationCommentResponseUpvotedBy } from '@/utils/requests/collaborationComments/requests';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
 import {
   deleteProjectCollaborationCommentResponse,
   handleProjectCollaborationCommentResponseUpvotedBy,
-  isProjectCollaborationCommentResponseUpvotedBy,
   updateProjectCollaborationCommentResponse,
 } from './actions';
 

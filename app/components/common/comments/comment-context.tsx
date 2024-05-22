@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react';
 
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';

@@ -1,3 +1,5 @@
+'use client';
+
 import { errorMessage } from '@/components/common/CustomToast';
 
 export function openWebex(email: string | undefined) {

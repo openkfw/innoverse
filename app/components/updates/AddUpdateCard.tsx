@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -8,10 +10,10 @@ import Typography from '@mui/material/Typography';
 
 import { Option } from '@/common/formTypes';
 import { Project } from '@/common/types';
+import { getProjectsOptions } from '@/utils/requests/project/requests';
 
 import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
 import AddUpdateDialog from '../newsPage/addUpdate/AddUpdateDialog';
-import { getProjectsOptions } from '../newsPage/addUpdate/form/actions';
 
 interface AddUpdateCardProps {
   project: Project;
