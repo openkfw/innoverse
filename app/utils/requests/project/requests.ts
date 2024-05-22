@@ -2,14 +2,15 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { UserSession } from '@/common/types';
-import { getProjectComments } from '@/components/project-details/comments/actions';
+import { Comment, UserSession } from '@/common/types';
+import { getCommentsSchema } from '@/components/project-details/comments/validationSchema';
 import { getProjectFollowers, isProjectFollowedBy } from '@/repository/db/follow';
 import { getProjectLikes, isProjectLikedBy } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
-import { isCommentUpvotedBy } from '@/repository/db/project_comment';
+import { getComments, isCommentUpvotedBy } from '@/repository/db/project_comment';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
+import { getFulfilledResults, getPromiseResults, sortDateByCreatedAt } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { getCollaborationQuestionsByProjectId } from '@/utils/requests/collaborationQuestions/requests';
 import { getEventsWithAdditionalData, getProjectEventsPage } from '@/utils/requests/events/requests';
@@ -24,6 +25,9 @@ import { getProjectQuestionsByProjectId } from '@/utils/requests/questions/reque
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { getSurveyQuestionsByProjectId } from '@/utils/requests/surveyQuestions/requests';
 import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
+import { validateParams } from '@/utils/validationHelper';
+
+import { getInnoUserByProviderId } from '../innoUsers/requests';
 
 const logger = getLogger();
 
@@ -162,3 +166,66 @@ export const isProjectCommentUpvotedByUser = withAuth(async (user: UserSession, 
     throw err;
   }
 });
+
+export const getProjectsOptions = async () => {
+  const projects = (await getProjects({ limit: 100, sort: { by: 'title', order: 'asc' } })) ?? [];
+  return projects.map((project) => {
+    return {
+      id: project.id,
+      label: project.title,
+    };
+  });
+};
+
+export const getProjectComments = async (body: { projectId: string }) => {
+  try {
+    const validatedParams = validateParams(getCommentsSchema, body);
+    if (validatedParams.status === StatusCodes.OK) {
+      const result = await getComments(dbClient, body.projectId);
+
+      const comments = await Promise.allSettled(
+        sortDateByCreatedAt(result).map(async (comment) => {
+          const author = await getInnoUserByProviderId(comment.author);
+          const upvotes = await Promise.allSettled(
+            comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote)),
+          ).then((results) => getFulfilledResults(results));
+
+          return {
+            ...comment,
+            upvotedBy: upvotes,
+            author,
+          } as Comment;
+        }),
+      ).then((results) => getFulfilledResults(results));
+
+      // Get user upvotes
+      const getUpvotes = comments.map(async (comment): Promise<Comment> => {
+        const { data: isUpvotedByUser } = await isProjectCommentUpvotedByUser({ commentId: comment.id });
+
+        return {
+          ...comment,
+          isUpvotedByUser,
+        };
+      });
+
+      const commentsWithUserUpvote = await getPromiseResults(getUpvotes);
+
+      return {
+        status: StatusCodes.OK,
+        data: commentsWithUserUpvote,
+      };
+    }
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+      message: validatedParams.message,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError('Getting Project Comments', err as Error, body.projectId);
+    logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Getting Project Comments failed',
+    };
+  }
+};

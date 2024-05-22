@@ -55,23 +55,3 @@ export const saveFeedback = withAuth(
     }
   },
 );
-
-export const getPlatfromFeedbackProject = withAuth(async (user: UserSession) => {
-  try {
-    const data = await getPlatformFeedbackCollaborationQuestion();
-    return {
-      status: StatusCodes.OK,
-      data: { projectId: data?.projectId },
-    };
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Getting platform feedback project from user ${user.providerId}`,
-      err as Error,
-    );
-    logger.error(error);
-    return {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Getting project feedback for platform failed',
-    };
-  }
-});

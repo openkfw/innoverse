@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';

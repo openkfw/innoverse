@@ -12,12 +12,12 @@ import { SortValues, useNewsFilter } from '@/app/contexts/news-filter-context';
 import { Option } from '@/common/formTypes';
 import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import theme from '@/styles/theme';
+import { getProjectsOptions } from '@/utils/requests/project/requests';
 
 import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
 import SecondaryIconButton from '../common/SecondaryIconButton';
 
 import AddUpdateDialog from './addUpdate/AddUpdateDialog';
-import { getProjectsOptions } from './addUpdate/form/actions';
 import MobileNewsFilter from './newsFilter/MobileNewsFilter';
 import NewsFilter from './newsFilter/NewsFilter';
 import { News } from './News';

@@ -6,6 +6,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import theme from '@/styles/theme';
+import { mergeStyles } from '@/utils/helpers';
 
 type TransparenButtonProps = PropsWithChildren &
   ButtonProps & {
@@ -27,7 +28,6 @@ export const TransparentButton = ({ children, sx, textSx, style, ...buttonProps 
       background: 'transparent',
       color: theme.palette.secondary.main,
     },
-    ...sx,
   };
 
   const textStyle = {
@@ -37,7 +37,7 @@ export const TransparentButton = ({ children, sx, textSx, style, ...buttonProps 
   };
 
   return (
-    <Button sx={buttonStyle} style={style} {...buttonProps}>
+    <Button sx={mergeStyles(buttonStyle, sx)} style={style} {...buttonProps}>
       <Typography variant="subtitle2" sx={textStyle}>
         {children}
       </Typography>

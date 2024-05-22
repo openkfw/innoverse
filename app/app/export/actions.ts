@@ -4,50 +4,13 @@ import { StatusCodes } from 'http-status-codes';
 import { json2csv } from 'json-2-csv';
 
 import { UserSession } from '@/common/types';
-import { getCollaborationQuestionComments } from '@/repository/db/collaboration_comment';
-import dbClient from '@/repository/db/prisma/prisma';
-import { getTotalComments, getTotalProjectLikes, getTotalReactions } from '@/repository/db/statistics';
 import { withAuth } from '@/utils/auth';
+import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { getPlatformFeedbackCollaborationQuestion } from '@/utils/requests/collaborationQuestions/requests';
 import { getProjects } from '@/utils/requests/project/requests';
+import { checkCredentials, getOverallStats, getProjectsStats } from '@/utils/requests/statistics/requests';
 
 const logger = getLogger();
-const add = (acc: number, el: { _count: number }) => acc + el._count;
-interface PromiseFulfilledResult<T> {
-  status: 'fulfilled';
-  value: T;
-}
-
-export const getFeedback = withAuth(async (user: UserSession, body: { username: string; password: string }) => {
-  const { username, password } = body;
-  if (!checkCredentials(username, password)) {
-    logger.error('Invalid credentials for downloading feedback');
-    return {
-      status: StatusCodes.UNAUTHORIZED,
-      data: 'Invalid credentials',
-    };
-  }
-  const response = await getPlatformFeedbackCollaborationQuestion();
-
-  if (!response) {
-    return {
-      status: StatusCodes.BAD_REQUEST,
-      data: 'Could not find project collaboration question',
-    };
-  }
-
-  const feedback = await getCollaborationQuestionComments(
-    dbClient,
-    response.projectId,
-    response.collaborationQuestionId,
-  );
-
-  return {
-    status: StatusCodes.OK,
-    data: json2csv(feedback),
-  };
-});
 
 export const generatePlatformStatistics = withAuth(
   async (user: UserSession, body: { username: string; password: string }) => {
@@ -70,11 +33,7 @@ export const generatePlatformStatistics = withAuth(
 export const generateProjectsStatistics = withAuth(
   async (user: UserSession, body: { username: string; password: string }) => {
     const { username, password } = body;
-    interface ProjectStatisticsRaw {
-      projectId: string;
-      projectComments: { _count: number }[];
-      projectLikes: { _count: number }[];
-    }
+
     interface ProjectStatistics {
       projectId: string;
       projectComments: number;
@@ -92,13 +51,8 @@ export const generateProjectsStatistics = withAuth(
     const response = await getProjects();
     const projects = response?.map((project) => project.id) ?? [];
 
-    // I hate to this, but we can't query on a more efficient way as we don't have a direct relation between the projects in strapi & the DB
-    // So we need to query each project individually.
-
-    const projectsStatistics = (await Promise.allSettled(projects.map((projectId) => getProjectsStats(projectId))))
-      // not fulfilled promises are not interesting for us
-      .filter((el) => el.status === 'fulfilled')
-      .map((el) => (el as PromiseFulfilledResult<ProjectStatisticsRaw>).value);
+    const projectsStatisticsPromises = projects.map((projectId) => getProjectsStats(projectId));
+    const projectsStatistics = await getPromiseResults(projectsStatisticsPromises);
 
     const result = projects.reduce(function (acc, projectId) {
       const stat = projectsStatistics.find((el) => el.projectId === projectId);
@@ -117,33 +71,3 @@ export const generateProjectsStatistics = withAuth(
     };
   },
 );
-
-const getOverallStats = async () => {
-  //returns overall stats for the platform such as: total reactions, total comments, total users, total projects
-  const totalReactionsForNews = await getTotalReactions(dbClient, 'UPDATE');
-  const totalReactionsForEvents = await getTotalReactions(dbClient, 'EVENT');
-  const totalComments = await getTotalComments(dbClient);
-  const totalProjectLikes = await getTotalProjectLikes(dbClient);
-
-  return {
-    totalReactionsForNews: totalReactionsForNews.reduce(add, 0),
-    totalReactionsForEvents: totalReactionsForEvents.reduce(add, 0),
-    totalComments: totalComments.reduce(add, 0),
-    totalProjectLikes: totalProjectLikes.reduce(add, 0),
-  };
-};
-
-const getProjectsStats = async (projectId: string) => {
-  const projectComments = await getTotalComments(dbClient, projectId);
-  const projectLikes = await getTotalProjectLikes(dbClient, projectId);
-
-  return {
-    projectId,
-    projectComments,
-    projectLikes,
-  };
-};
-const checkCredentials = (username: string, password: string) => {
-  const [AUTH_USER, AUTH_PASS] = (process.env.HTTP_BASIC_AUTH || ':').split(':');
-  return username == AUTH_USER && password == AUTH_PASS;
-};

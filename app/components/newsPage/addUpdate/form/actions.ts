@@ -7,7 +7,6 @@ import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
-import { getProjects } from '@/utils/requests/project/requests';
 import { createProjectUpdate } from '@/utils/requests/updates/requests';
 import { validateParams } from '@/utils/validationHelper';
 
@@ -15,16 +14,6 @@ import { AddUpdateData } from './AddUpdateForm';
 import { handleProjectUpdateSchema } from './validationSchema';
 
 const logger = getLogger();
-
-export const getProjectsOptions = async () => {
-  const projects = (await getProjects({ limit: 100, sort: { by: 'title', order: 'asc' } })) ?? [];
-  return projects.map((project) => {
-    return {
-      id: project.id,
-      label: project.title,
-    };
-  });
-};
 
 export const handleProjectUpdate = withAuth(
   async (user: UserSession, body: Omit<AddUpdateData, 'authorId' | 'author'>) => {

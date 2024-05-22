@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 const Icon = ({ color = '#41484C', width = 24, height = 25, disabled = false }) => {

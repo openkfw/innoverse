@@ -9,10 +9,11 @@ import Stack from '@mui/material/Stack';
 import { Comment, CommentResponse } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import { TransparentButton } from '@/components/common/TransparentButton';
+import { getProjectCollaborationCommentResponses } from '@/utils/requests/collaborationComments/requests';
 
 import WriteCommentResponseCard from '../../common/comments/WriteCommentResponseCard';
 
-import { addProjectCollaborationCommentResponse, getProjectCollaborationCommentResponses } from './actions';
+import { addProjectCollaborationCommentResponse } from './actions';
 import { CollaborationCommentCard } from './CollaborationCommentCard';
 import { CollaborationCommentResponseCard } from './CollaborationCommentResponseCard';
 

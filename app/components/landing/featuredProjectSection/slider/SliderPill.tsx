@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode, useState } from 'react';
 
 import Box from '@mui/material/Box';

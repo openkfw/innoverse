@@ -1,10 +1,18 @@
 'use server';
 
-import { Event, EventWithAdditionalData } from '@/common/types';
+import { StatusCodes } from 'http-status-codes';
+
+import { Event, EventWithAdditionalData, UserSession } from '@/common/types';
+import { eventSchema, projectFilterSchema } from '@/components/project-details/events/validationSchema';
 import dbClient from '@/repository/db/prisma/prisma';
 import { countNumberOfReactions } from '@/repository/db/reaction';
+import { withAuth } from '@/utils/auth';
+import { dbError, strapiError } from '@/utils/errors';
+import { getPromiseResults } from '@/utils/helpers';
+import getLogger from '@/utils/logger';
 import { mapToEvents } from '@/utils/requests/events/mappings';
 import {
+  GetEventsPageQuery,
   GetFutureEventCountQuery,
   GetFutureEventsPageQuery,
   GetPastEventsPageQuery,
@@ -12,11 +20,7 @@ import {
 } from '@/utils/requests/events/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { findReactionByUser } from '@/utils/requests/updates/requests';
-import { strapiError } from '@/utils/errors';
-import { getPromiseResults } from '@/utils/helpers';
-import getLogger from '@/utils/logger';
-
-import { GetEventsPageQuery } from './queries';
+import { validateParams } from '@/utils/validationHelper';
 
 const logger = getLogger();
 
@@ -36,7 +40,7 @@ export async function getCountOfFutureEvents(projectId: string) {
   try {
     const now = new Date();
     const response = await strapiGraphQLFetcher(GetFutureEventCountQuery, { projectId, now });
-    return response.events?.meta.pagination.total ?? 0;
+    return (response.events && response.events?.meta.pagination.total) ?? 0;
   } catch (err) {
     const error = strapiError('Getting count of future events', err as Error);
     logger.error(error);
@@ -98,4 +102,34 @@ export async function getEventWithAdditionalData(event: Event): Promise<EventWit
     reactionForUser: reactionForUser || undefined,
     reactionCount,
   };
+}
+
+export async function getAllEventsForProjectFilter(body: {
+  projectId: string;
+  amountOfEventsPerPage: number;
+  currentPage: number;
+  timeframe: 'past' | 'future' | 'all';
+}) {
+  const validatedParams = validateParams(projectFilterSchema, body);
+
+  if (validatedParams.status !== StatusCodes.OK) {
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+    };
+  }
+
+  try {
+    const events = await getProjectEventsPage(
+      body.projectId,
+      body.amountOfEventsPerPage,
+      body.currentPage,
+      body.timeframe,
+    );
+    const eventsWithAdditionalData = await getEventsWithAdditionalData(events ?? []);
+    return { status: StatusCodes.OK, data: eventsWithAdditionalData };
+  } catch (err) {
+    const error = dbError(`Getting all events for project ${body.projectId} with filter`, err as Error, body.projectId);
+    logger.error(error);
+  }
 }

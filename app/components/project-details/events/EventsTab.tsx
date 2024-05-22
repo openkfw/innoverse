@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useMemo, useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -7,10 +9,10 @@ import Stack from '@mui/material/Stack';
 
 import { EventWithAdditionalData, Project } from '@/common/types';
 import theme from '@/styles/theme';
+import { getAllEventsForProjectFilter } from '@/utils/requests/events/requests';
 
 import EmptyTabContent from '../EmptyTabContent';
 
-import { getAllEventsForProjectFilter } from './actions';
 import EventFilterException from './EventFilterException';
 import EventList from './EventList';
 import FilteringPanel from './FilteringPanel';
@@ -92,7 +94,7 @@ export const EventsTab: React.FC<EventsTabProps> = (props) => {
       timeframe: 'future',
     });
 
-    const events = result.data ?? [];
+    const events = result?.data ?? [];
     setAllFutureEvents((prevItems) => getUniqueEvents([...prevItems, ...events]));
     setHasMoreValue(events.length > 0);
     setIndex((prevIndex) => prevIndex + events.length);
@@ -106,7 +108,7 @@ export const EventsTab: React.FC<EventsTabProps> = (props) => {
       timeframe: 'past',
     });
 
-    const events = result.data ?? [];
+    const events = result?.data ?? [];
     setAllPastEvents((prevItems) => getUniqueEvents([...prevItems, ...events]));
     setHasMoreValuePast(events.length > 0);
     setIndexPast((prevIndexPast) => prevIndexPast + 1);
