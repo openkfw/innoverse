@@ -64,23 +64,6 @@ interface ProjectHeadingProps {
 export const ProjectProgress = (props: ProjectProgressProps) => {
   const { project, projectName } = props;
 
-  const contentStyle = {
-    margin: '88px 64px',
-    [theme.breakpoints.down('md')]: {
-      margin: '48px 24px',
-    },
-  };
-
-  const wrapperStyle = {
-    borderRadius: '24px',
-    background: '#FFF',
-    position: 'relative',
-    zIndex: 0,
-    boxShadow:
-      '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
-    flexGrow: 1,
-  };
-
   return (
     <Card sx={wrapperStyle}>
       <Stack sx={contentStyle}>
@@ -139,14 +122,6 @@ const ProjectDescription = ({ project }: { project: Project }) => {
     [project],
   );
 
-  const containerStyle = {
-    marginLeft: '5%',
-    marginTop: '25%',
-    [theme.breakpoints.down('lg')]: {
-      display: 'none',
-    },
-  };
-
   return (
     <Grid container direction="row" spacing={1}>
       {headings.length > 0 && (
@@ -154,7 +129,7 @@ const ProjectDescription = ({ project }: { project: Project }) => {
           <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
         </Grid>
       )}
-      <Grid item sm={12} md={8} lg={headings.length > 0 ? 6 : 8}>
+      <Grid item sm={12} md={headings.length > 0 ? 8 : 12} lg={headings.length > 0 ? 6 : 9}>
         {container.element}
       </Grid>
       <Grid item md={0} lg={3}>
@@ -167,22 +142,6 @@ const ProjectDescription = ({ project }: { project: Project }) => {
 };
 
 const InfoItemRight = ({ title, summary }: InfoItemProps) => {
-  const dividerStyle = {
-    width: '100%',
-    height: '2px',
-    bgcolor: 'common.white',
-    borderColor: 'common.white',
-    mb: '17px',
-  };
-
-  const infoItemRightStyle = {
-    width: '270px',
-    maxWidth: '100%',
-    backgroundColor: '#EBF3F7',
-    borderRadius: '8px',
-    marginBottom: 1,
-  };
-
   return (
     <Card sx={infoItemRightStyle} elevation={0}>
       <CardContent sx={{ p: '18px', pb: 1 }}>
@@ -190,7 +149,7 @@ const InfoItemRight = ({ title, summary }: InfoItemProps) => {
           {title}
         </Typography>
       </CardContent>
-      <Divider sx={dividerStyle} />
+      <Divider sx={infoItemDividerStyle} />
 
       <CardMedia sx={{ px: '18px' }}>
         <Image src={robotic_hand} alt="image" width={0} height={0} style={{ width: '100%', height: 'auto' }} />
@@ -211,31 +170,11 @@ const ProjectText = ({ text, sx }: ProjectTextProps) => (
 );
 
 const ProjectHeading = ({ heading, setHeadingActive }: ProjectHeadingProps) => {
-  const listItemStyle = {
-    pl: '20px',
-    mb: '10px',
-    pt: 0,
-    '&:last-child': {
-      pb: 0,
-    },
-    '&:hover': {
-      borderRadius: '8px',
-      backgroundColor: 'rgba(0, 90, 140, 0.1)',
-    },
-  };
-
   const dividerStyle = {
     borderWidth: heading.active ? '2px' : '1px',
     m: 0,
     borderColor: heading.active ? '#99A815' : '#32373B',
     opacity: heading.active ? 1 : 0.2,
-  };
-
-  const linkStyle = {
-    color: '#99A815',
-    lineHeight: '140%',
-    textDecoration: 'none',
-    '&:hover': { color: '#99A815' },
   };
 
   return (
@@ -251,19 +190,8 @@ const ProjectHeading = ({ heading, setHeadingActive }: ProjectHeadingProps) => {
 };
 
 const ProjectTextAnchorMenu = ({ headings, setHeadingActive }: ProjectTextAnchorMenuProps) => {
-  const listStyle: SxProps = {
-    wordBreak: 'break-word',
-  };
-
   return (
-    <Box
-      sx={{
-        borderRadius: '16px',
-        p: '24px',
-        border: '1px solid rgba(0, 90, 140, 0.20)',
-        width: '90%',
-      }}
-    >
+    <Box sx={menuStyles}>
       <List sx={listStyle} component="nav" aria-labelledby="nested-list-subheader">
         {headings?.map((heading) => {
           if (heading.depth > 1) {
@@ -282,6 +210,14 @@ const ProjectTextAnchorMenu = ({ headings, setHeadingActive }: ProjectTextAnchor
   );
 };
 
+// Project Progress Styles
+const menuStyles = {
+  borderRadius: '16px',
+  p: '24px',
+  border: '1px solid rgba(0, 90, 140, 0.20)',
+  width: '90%',
+};
+
 const textOverflowStyle = {
   hyphens: 'auto',
   WebkitHyphens: 'auto',
@@ -289,4 +225,69 @@ const textOverflowStyle = {
   MozHyphens: 'auto',
   WebkitLocale: 'de-DE',
   locale: 'de-DE',
+};
+
+const listItemStyle = {
+  pl: '20px',
+  mb: '10px',
+  pt: 0,
+  '&:last-child': {
+    pb: 0,
+  },
+  '&:hover': {
+    borderRadius: '8px',
+    backgroundColor: 'rgba(0, 90, 140, 0.1)',
+  },
+};
+
+const linkStyle = {
+  color: '#99A815',
+  lineHeight: '140%',
+  textDecoration: 'none',
+  '&:hover': { color: '#99A815' },
+};
+
+const containerStyle = {
+  marginLeft: '5%',
+  marginTop: '25%',
+  [theme.breakpoints.down('lg')]: {
+    display: 'none',
+  },
+};
+
+const contentStyle = {
+  margin: '88px 64px',
+  [theme.breakpoints.down('md')]: {
+    margin: '48px 24px',
+  },
+};
+
+const wrapperStyle = {
+  borderRadius: '24px',
+  background: '#FFF',
+  position: 'relative',
+  zIndex: 0,
+  boxShadow:
+    '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
+  flexGrow: 1,
+};
+
+const listStyle: SxProps = {
+  wordBreak: 'break-word',
+};
+
+const infoItemRightStyle = {
+  width: '270px',
+  maxWidth: '100%',
+  backgroundColor: '#EBF3F7',
+  borderRadius: '8px',
+  marginBottom: 1,
+};
+
+const infoItemDividerStyle = {
+  width: '100%',
+  height: '2px',
+  bgcolor: 'common.white',
+  borderColor: 'common.white',
+  mb: '17px',
 };
