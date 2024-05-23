@@ -76,12 +76,7 @@ export default function TopBar({ pages }: TopBarProps) {
               <Stack direction="row" spacing={3}>
                 {pages.map((page) =>
                   page.link ? (
-                    <Link
-                      key={page.text}
-                      style={{ textDecoration: 'none', color: 'white' }}
-                      href={page.link}
-                      data-testid={'navbar-link'}
-                    >
+                    <Link key={page.text} style={{ textDecoration: 'none', color: 'white' }} href={page.link}>
                       <MenuItem sx={menuItemStyle}>
                         <Typography variant="body2">{page.text}</Typography>
                       </MenuItem>

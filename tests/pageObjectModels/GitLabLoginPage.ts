@@ -21,11 +21,11 @@ export class GitlabLoginPage {
   }
 
   private get usernameInput() {
-    return this.page.locator("input[type=text]");
+    return this.page.getByLabel("Benutzername");
   }
 
   private get passwordInput() {
-    return this.page.locator("input[type=password]");
+    return this.page.getByLabel("Passwort");
   }
 
   private get loginButton() {
