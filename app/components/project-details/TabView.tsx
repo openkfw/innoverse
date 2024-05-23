@@ -193,7 +193,7 @@ export default function TabView(props: BasicTabsProps) {
                 {updates.length}
               </Typography>
               <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
-                Updates
+                News
               </Typography>
             </Stack>
           }

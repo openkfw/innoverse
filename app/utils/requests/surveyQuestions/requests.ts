@@ -5,13 +5,16 @@ import { StatusCodes } from 'http-status-codes';
 import { SurveyVote, UserSession } from '@/common/types';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getSurveyVotes } from '@/repository/db/survey_votes';
+import {
+  GetSurveyQuestionsByProjectIdQuery,
+  GetSurveyQuestionsCountByProjectIdQuery,
+} from '@/utils/requests/surveyQuestions/queries';
 import { withAuth } from '@/utils/auth';
 import { strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { mapToBasicSurveyQuestion, mapToSurveyQuestion } from '@/utils/requests/surveyQuestions/mappings';
-import { GetSurveyQuestionsByProjectIdQuery } from '@/utils/requests/surveyQuestions/queries';
 
 import { GetSurveyQuestionByIdQuery } from './queries';
 
@@ -61,4 +64,17 @@ export const findUserVote = withAuth((user: UserSession, body: { votes: SurveyVo
     status: StatusCodes.OK,
     data: userVote,
   });
+});
+
+export const countSurveyQuestionsForProject = withAuth(async (user, body: { projectId: string }) => {
+  try {
+    const response = await strapiGraphQLFetcher(GetSurveyQuestionsCountByProjectIdQuery, { projectId: body.projectId });
+    const countResult = response.surveyQuestions?.meta.pagination.total;
+
+    return { status: StatusCodes.OK, data: countResult };
+  } catch (err) {
+    const error = strapiError('Error fetching survey questions count for project', err as Error);
+    logger.error(error);
+    throw err;
+  }
 });

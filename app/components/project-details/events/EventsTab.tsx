@@ -9,10 +9,10 @@ import Stack from '@mui/material/Stack';
 
 import { EventWithAdditionalData, Project } from '@/common/types';
 import theme from '@/styles/theme';
-import { getAllEventsForProjectFilter } from '@/utils/requests/events/requests';
 
 import EmptyTabContent from '../EmptyTabContent';
 
+import { getAllEventsForProjectFilter } from './actions';
 import EventFilterException from './EventFilterException';
 import EventList from './EventList';
 import FilteringPanel from './FilteringPanel';

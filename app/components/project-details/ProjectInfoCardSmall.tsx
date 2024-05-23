@@ -48,7 +48,7 @@ const SliderNavigation = (props: SliderNavigationProps) => {
       </IconButton>
 
       <Box ref={navRef} style={navigationStyles}>
-        {['Info', 'Team', 'Zusammenarbeit', 'Updates'].map((item, index) => (
+        {['Info', 'Team', 'Zusammenarbeit', 'News'].map((item, index) => (
           <Typography
             key={index}
             variant="overline"

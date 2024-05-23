@@ -15,6 +15,7 @@ import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { mapToProjectUpdate } from '@/utils/requests/updates/mappings';
 import { CreateProjectUpdateMutation } from '@/utils/requests/updates/mutations';
 import {
+  GetUpdateCountQuery,
   GetUpdatesByProjectIdQuery,
   GetUpdatesPageByProjectsTitlesAndTopicsQuery,
   GetUpdatesPageByProjectTitlesQuery,
@@ -22,6 +23,9 @@ import {
   GetUpdatesPageQuery,
   GetUpdatesQuery,
 } from '@/utils/requests/updates/queries';
+
+import { validateParams } from '@/utils/validationHelper';
+import { handleProjectUpdatesSchema } from '@/components/updates/validationSchema';
 
 const logger = getLogger();
 
@@ -179,3 +183,25 @@ export const findReactionByUser = withAuth(
     }
   },
 );
+
+export const countUpdatesForProject = withAuth(async (user: UserSession, body: { projectId: string }) => {
+  try {
+    const validatedParams = validateParams(handleProjectUpdatesSchema, body);
+
+    if (validatedParams.status !== StatusCodes.OK) {
+      return {
+        status: validatedParams.status,
+        errors: validatedParams.errors,
+      };
+    }
+
+    const response = await strapiGraphQLFetcher(GetUpdateCountQuery, { projectId: body.projectId });
+    const countResult = response.updates?.meta.pagination.total ?? 0;
+
+    return { status: StatusCodes.OK, data: countResult };
+  } catch (err) {
+    const error = strapiError('Getting count of updates', err as Error);
+    logger.error(error);
+    throw err;
+  }
+});

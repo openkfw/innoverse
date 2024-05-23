@@ -99,7 +99,7 @@ const Slide = ({ content, index, setSelected }: SlideProps) => {
       <Grid item md={4} sx={contentStyles}>
         <FeaturedProjectContent
           title={content?.title}
-          tags={content?.description?.tags}
+          collaborationTags={content?.description?.collaborationTags || []}
           summary={content?.summary}
           projectId={content?.id}
         />

@@ -120,3 +120,15 @@ export const GetUpdatesPageQuery = graphql(
   `,
   [ProjectUpdateFragment],
 );
+
+export const GetUpdateCountQuery = graphql(`
+  query getUpdateCount($projectId: ID!) {
+    updates(filters: { project: { id: { eq: $projectId } } }) {
+      meta {
+        pagination {
+          total
+        }
+      }
+    }
+  }
+`);

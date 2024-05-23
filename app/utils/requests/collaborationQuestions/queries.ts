@@ -67,3 +67,15 @@ export const GetPlatformFeedbackCollaborationQuestion = graphql(`
     }
   }
 `);
+
+export const GetCollaborationQuestionsCountProjectIdQuery = graphql(`
+  query GetCollaborationQuestions($projectId: ID) {
+    collaborationQuestions(filters: { project: { id: { eq: $projectId } } }) {
+      meta {
+        pagination {
+          total
+        }
+      }
+    }
+  }
+`);
