@@ -5,7 +5,7 @@ export class PageLayout {
 
   async navigateToNews() {
     await this.getUserMenu().waitFor();
-    const newsLink = this.navbarLinks.filter({ hasText: "News" });
+    const newsLink = this.page.getByRole("link", { name: "News", exact: true });
     await newsLink.click();
     await this.page.waitForURL("/news");
   }
@@ -16,9 +16,5 @@ export class PageLayout {
 
   get userMenu() {
     return this.page.getByTestId("user-menu");
-  }
-
-  get navbarLinks() {
-    return this.page.getByTestId("navbar-link");
   }
 }

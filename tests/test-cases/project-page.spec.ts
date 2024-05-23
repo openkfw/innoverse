@@ -19,7 +19,7 @@ test("visiting a project from the project carousel and interacting with it", asy
   const tabs = projectPage.getTabs();
   await tabs.getByText("Inno-Infos").click();
   await tabs.getByText("Zusammenarbeit").click();
-  await tabs.getByText("Updates").click();
+  await tabs.getByText("News").click();
   await tabs.getByText("Events").click();
 
   const isFollowed = await projectPage.projectIsFollowed();

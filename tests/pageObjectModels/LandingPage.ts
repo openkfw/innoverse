@@ -22,7 +22,7 @@ export class LandingPage extends PageLayout {
   }
 
   async getActiveFeaturedProject() {
-    const link = this.activeFeaturedProject.locator("a");
+    const link = this.activeFeaturedProject.locator("a").first();
     const projectTitle = await link.textContent();
     return {
       title: projectTitle,

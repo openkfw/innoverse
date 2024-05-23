@@ -57,18 +57,7 @@ export class NewsPage extends PageLayout {
     await dialog.submit();
   }
 
-  private async mapToNews(newsCard: Locator) {
-    const author = await newsCard.getByTestId("author").textContent();
-    const date = await newsCard.getByTestId("date").textContent();
-    const text = await newsCard.getByTestId("text").textContent();
-    const projectLink = newsCard.getByTestId("project-link");
-    const projectTitle = await projectLink.textContent();
-    return { author, date, text, projectTitle, projectLink };
-  }
-
   async getFilters() {
-    // locator.all() does not wait for elements, that is why we wait for the first filter
-    await this.projectFilters.first().waitFor();
     const projectFilters = await this.parseFilters(this.projectFilters);
     const topicFilters = await this.parseFilters(this.topicFilters);
     return {
@@ -81,14 +70,27 @@ export class NewsPage extends PageLayout {
     await filter.checkbox.click();
   }
 
+  private async mapToNews(newsCard: Locator) {
+    const author = await newsCard.getByTestId("author").textContent();
+    const date = await newsCard.getByTestId("date").textContent();
+    const text = await newsCard.getByTestId("text").textContent();
+    const projectLink = newsCard.getByTestId("project-link");
+    const projectTitle = await projectLink.textContent();
+    return { author, date, text, projectTitle, projectLink };
+  }
+
   private async parseFilters(labelsSelector: Locator): Promise<NewsFilter[]> {
+    // locator.all() does not wait for elements, that is why we wait for the first filter
+    await this.projectFilters.first().waitFor();
     const labels = await labelsSelector.all();
+
     const parseLabels = labels.map(async (label) => {
       const countString = await label.getAttribute("data-testdata-count");
       const labelText = await label.getAttribute("data-testdata-label");
       const count = parseInt(countString ?? "0");
       return { checkbox: label, label: labelText ?? "", count };
     });
+
     return await Promise.all(parseLabels);
   }
 
