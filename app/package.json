@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=6096\" next build",
     "build:analyze": "ANALYZE=true npm run build",
     "start": "next start",
     "start:prod": "node server.js",

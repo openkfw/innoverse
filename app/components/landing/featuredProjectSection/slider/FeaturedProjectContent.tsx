@@ -4,12 +4,17 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 
-import { Tag } from '@/common/types';
+import { CollaborationTag } from '@/common/types';
 import CustomChip from '@/components/common/CustomChip';
 import theme from '@/styles/theme';
 
-const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: string; projectId: string }) => {
-  const { title, tags, summary, projectId } = props;
+const FeaturedProjectContent = (props: {
+  title: string;
+  collaborationTags: CollaborationTag[];
+  summary: string;
+  projectId: string;
+}) => {
+  const { title, collaborationTags, summary, projectId } = props;
 
   return (
     <Box sx={wrapperStyles}>
@@ -23,11 +28,16 @@ const FeaturedProjectContent = (props: { title: string; tags: Tag[]; summary: st
       </Link>
       <Box>
         <List aria-label="tags" sx={listStyles}>
-          {tags?.map((el, id) => (
-            <ListItem key={id} sx={listItemStyles}>
-              <CustomChip label={el.tag} />
-            </ListItem>
-          ))}
+          {collaborationTags.map((el, id) => {
+            const label = Object.keys(el)[0];
+            const count = el[label];
+
+            return count && count > 0 ? (
+              <ListItem key={id} sx={listItemStyles}>
+                <CustomChip label={label} count={count} projectId={projectId} />
+              </ListItem>
+            ) : null;
+          })}
         </List>
       </Box>
       <Typography variant="body1" sx={descriptionStyles}>
@@ -66,6 +76,7 @@ const titleStyles = {
   MozHyphens: 'auto',
   WebkitLocale: 'de-DE',
   locale: 'de-DE',
+  transition: '0.2s all',
 
   fontSize: {
     lg: 55,
@@ -76,6 +87,10 @@ const titleStyles = {
 
   [theme.breakpoints.down('sm')]: {
     marginBottom: 2,
+  },
+
+  '&:hover': {
+    color: 'action.hover',
   },
 };
 

@@ -33,3 +33,15 @@ export const GetSurveyQuestionsByProjectIdQuery = graphql(`
     }
   }
 `);
+
+export const GetSurveyQuestionsCountByProjectIdQuery = graphql(`
+  query GetSurveyQuestions($projectId: ID) {
+    surveyQuestions(filters: { project: { id: { eq: $projectId } } }) {
+      meta {
+        pagination {
+          total
+        }
+      }
+    }
+  }
+`);

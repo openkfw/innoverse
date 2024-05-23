@@ -13,6 +13,7 @@ import {
   GetBasicOpportunityByIdQuery,
   GetOpportunitiesByIdQuery,
   GetOpportunitiesByProjectIdQuery,
+  GetOpportunityCountProjectIdQuery,
   GetOpportunityWithParticipantQuery,
   UpdateOpportunityParticipantsQuery,
 } from '@/utils/requests/opportunities/queries';
@@ -123,6 +124,19 @@ export const userParticipatesInOpportunity = withAuth(async (user: UserSession, 
       err as Error,
       body.opportunityId,
     );
+    logger.error(error);
+    throw err;
+  }
+});
+
+export const countOpportunitiesForProject = withAuth(async (user: UserSession, body: { projectId: string }) => {
+  try {
+    const response = await strapiGraphQLFetcher(GetOpportunityCountProjectIdQuery, { projectId: body.projectId });
+    const countResult = response.opportunities?.meta.pagination.total;
+
+    return { status: StatusCodes.OK, data: countResult };
+  } catch (err) {
+    const error = strapiError('Error fetching opportunities count for project', err as Error);
     logger.error(error);
     throw err;
   }
