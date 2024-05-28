@@ -17,7 +17,7 @@ import { strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { withAuth } from '@/utils/auth';
-import { eventSchema } from '@/components/project-details/events/validationSchema';
+import { eventSchema, projectFilterSchema } from '@/components/project-details/events/validationSchema';
 import { validateParams } from '@/utils/validationHelper';
 import { StatusCodes } from 'http-status-codes';
 
@@ -122,3 +122,33 @@ export const countFutureEventsForProject = withAuth(async (user: UserSession, bo
     throw err;
   }
 });
+
+export const getAllEventsForProjectFilter = withAuth(
+  async (
+    user: UserSession,
+    body: {
+      projectId: string;
+      amountOfEventsPerPage: number;
+      currentPage: number;
+      timeframe: 'past' | 'future' | 'all';
+    },
+  ) => {
+    const validatedParams = validateParams(projectFilterSchema, body);
+
+    if (validatedParams.status !== StatusCodes.OK) {
+      return {
+        status: validatedParams.status,
+        errors: validatedParams.errors,
+      };
+    }
+
+    const events = await getProjectEventsPage(
+      body.projectId,
+      body.amountOfEventsPerPage,
+      body.currentPage,
+      body.timeframe,
+    );
+    const eventsWithAdditionalData = await getEventsWithAdditionalData(events ?? []);
+    return { status: StatusCodes.OK, data: eventsWithAdditionalData };
+  },
+);
