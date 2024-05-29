@@ -19,6 +19,8 @@ First set up the correct env vars:
 - For some of the Strapi env vars (`./strapi/.env.example`) some examples can be found in GitLab in
   the [CICD Variable](***URL_REMOVED***) `StrapiEnv`.
 
+You can find a full list of the environment variables in the section 'Environment variables'.
+
 ```bash
 # from project root
 cp .env.example .env
@@ -106,3 +108,35 @@ You can analyze the bundle size running `npm run build:analyze`, this will gener
 The main focus should here be the `client` report, as we do not use any edge functions.
 
 
+### Environment variables
+
+| Name                                         	| Required 	| Default 	| Stage     	| Component 	|
+|----------------------------------------------	|----------	|---------	|-----------	|-----------	|
+| POSTGRES_USER                                	| Y        	| -       	| Runtime   	| Strapi    	|
+| POSTGRES_PASSWORD                            	| Y        	| -       	| Runtime   	| Strapi    	|
+| DATABASE_URL                                 	| Y        	| -       	| Runtime   	| Innoverse 	|
+| NEXTAUTH_URL                                 	| Y        	| -       	| Runtime   	| Innoverse 	|
+| POSTGRES_USER                                	| Y        	| -       	| Runtime   	| Innoverse 	|
+| POSTGRES_PASSWORD                            	| Y        	| -       	| Runtime   	| Innoverse 	|
+| NEXTAUTH_AZURE_CLIENT_ID                     	| N(*)     	| -       	| Runtime   	| Innoverse 	|
+| NEXTAUTH_AZURE_CLIENT_SECRET                 	| N(*)     	| -       	| Runtime   	| Innoverse 	|
+| NEXTAUTH_AZURE_TENANT_ID                     	| N(*)     	| -       	| Runtime   	| Innoverse 	|
+| NEXTAUTH_SECRET                              	| N(*)     	| -       	| Runtime   	| Innoverse 	|
+| NEXTAUTH_GITLAB_ID                           	| N(*)     	| -       	| Runtime   	| Innoverse 	|
+| NEXTAUTH_GITLAB_SECRET                       	| N(*)     	| -       	| Runtime   	| Innoverse 	|
+| NEXTAUTH_GITLAB_URL                          	| N(*)     	| -       	| Runtime   	| Innoverse 	|
+| NEXTAUTH_CREDENTIALS_USERNAME                	| N(*)     	| -       	| Runtime   	| Innoverse 	|
+| NEXTAUTH_CREDENTIALS_PASSWORD                	| N(*)     	| -       	| Runtime   	| Innoverse 	|
+| NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT          	| Y        	| -       	| Buildtime 	| Innoverse 	|
+| NEXT_PUBLIC_STRAPI_ENDPOINT                  	| Y        	| -       	| Buildtime 	| Innoverse 	|
+| STRAPI_TOKEN                                 	| Y        	| -       	| Runtime   	| Innoverse 	|
+| HTTP_BASIC_AUTH                              	| Y        	| -       	| Runtime   	| Innoverse 	|
+| NEXT_PUBLIC_VAPID_PUBLIC_KEY                 	| N        	| -       	| Buildtime 	| Innoverse 	|
+| VAPID_PRIVATE_KEY                            	| N        	| -       	| Runtime   	| Innoverse 	|
+| VAPID_ADMIN_EMAIL                            	| N        	| -       	| Runtime   	| Innoverse 	|
+| STRAPI_PUSH_NOTIFICATION_SECRET              	| N        	| -       	| Runtime   	| Innoverse 	|
+| NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING   	| N        	| -       	| Buildtime 	| Innoverse 	|
+| NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY 	| N        	| -       	| Buildtime 	| Innoverse 	|
+| APP_INSIGHTS_SERVICE_NAME                    	| N        	| -       	| Runtime   	| Innoverse 	|
+
+(*) Note: At least one authentication method must be enabled 

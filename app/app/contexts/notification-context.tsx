@@ -9,6 +9,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import Box from '@mui/material/Box';
 
 import { NotificationBanner } from '@/components/notifications/NotificationBanner';
+import { clientConfig } from '@/config/client';
 import theme from '@/styles/theme';
 import { subscribeToWebPush } from '@/utils/notification/pushNotification';
 
@@ -51,7 +52,7 @@ export const subscribePushNotification = async () => {
   const registration = await navigator.serviceWorker.ready;
   const subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
-    applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    applicationServerKey: clientConfig.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
   });
   return subscription;
 };

@@ -16,6 +16,7 @@ import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 
 import { useUser } from '@/app/contexts/user-context';
+import { clientConfig } from '@/config/client';
 
 import FeedbackSection from '../landing/feedbackSection/FeedbackSection';
 
@@ -70,7 +71,7 @@ export default function TopBarMobile({ pages }: TopBarProps) {
             ),
           )}
           <Link
-            href={process.env.NEXT_PUBLIC_STRAPI_ENDPOINT || '/not-found'}
+            href={clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}
             target="_blank"
             style={{ textDecoration: 'none', color: 'common.white' }}
           >

@@ -4,6 +4,8 @@ import { StatusCodes } from 'http-status-codes';
 import webpush, { PushSubscription as WebPushSubscription, WebPushError } from 'web-push';
 
 import { UserSession } from '@/common/types';
+import { clientConfig } from '@/config/client';
+import { serverConfig } from '@/config/server';
 import { createPushSubscriptionForUser, removePushSubscriptionForUser } from '@/repository/db/push_subscriptions';
 import { PushNotification } from '@/types/notification';
 import { withAuth } from '@/utils/auth';
@@ -14,9 +16,9 @@ import getLogger from '../logger';
 const logger = getLogger();
 
 webpush.setVapidDetails(
-  process.env.VAPID_ADMIN_EMAIL || 'admin@localhost',
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
-  process.env.VAPID_PRIVATE_KEY || '',
+  serverConfig.VAPID_ADMIN_EMAIL,
+  clientConfig.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  serverConfig.VAPID_PRIVATE_KEY,
 );
 
 export const sendPushNotification = async (subscription: WebPushSubscription, pushNotification: PushNotification) => {

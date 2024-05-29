@@ -1,8 +1,16 @@
 'use server';
 
+import { StatusCodes } from 'http-status-codes';
+
 import { Event, EventWithAdditionalData, UserSession } from '@/common/types';
+import { eventSchema, projectFilterSchema } from '@/components/project-details/events/validationSchema';
+import { RequestError } from '@/entities/error';
 import dbClient from '@/repository/db/prisma/prisma';
 import { countNumberOfReactions } from '@/repository/db/reaction';
+import { withAuth } from '@/utils/auth';
+import { strapiError } from '@/utils/errors';
+import { getPromiseResults } from '@/utils/helpers';
+import getLogger from '@/utils/logger';
 import { mapToEvents } from '@/utils/requests/events/mappings';
 import {
   GetEventsPageQuery,
@@ -13,13 +21,7 @@ import {
 } from '@/utils/requests/events/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { findReactionByUser } from '@/utils/requests/updates/requests';
-import { strapiError } from '@/utils/errors';
-import { getPromiseResults } from '@/utils/helpers';
-import getLogger from '@/utils/logger';
-import { withAuth } from '@/utils/auth';
-import { eventSchema, projectFilterSchema } from '@/components/project-details/events/validationSchema';
 import { validateParams } from '@/utils/validationHelper';
-import { StatusCodes } from 'http-status-codes';
 
 const logger = getLogger();
 
@@ -30,7 +32,7 @@ export async function getUpcomingEvents() {
     const events = mapToEvents(response.events?.data);
     return events;
   } catch (err) {
-    const error = strapiError('Getting upcoming events', err as Error);
+    const error = strapiError('Getting upcoming events', err as RequestError);
     logger.error(error);
   }
 }
@@ -41,7 +43,7 @@ export async function getCountOfFutureEvents(projectId: string) {
     const response = await strapiGraphQLFetcher(GetFutureEventCountQuery, { projectId, now });
     return (response.events && response.events?.meta.pagination.total) ?? 0;
   } catch (err) {
-    const error = strapiError('Getting count of future events', err as Error);
+    const error = strapiError('Getting count of future events', err as RequestError);
     logger.error(error);
   }
 }
@@ -57,7 +59,7 @@ export async function getProjectEventsPage(
     const events = mapToEvents(response.events?.data);
     return events;
   } catch (err) {
-    const error = strapiError('Getting all events', err as Error);
+    const error = strapiError('Getting all events', err as RequestError);
     logger.error(error);
   }
 }
@@ -117,7 +119,7 @@ export const countFutureEventsForProject = withAuth(async (user: UserSession, bo
     const countResult = await getCountOfFutureEvents(body.projectId);
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {
-    const error = strapiError('Error fetching future events count for project', err as Error);
+    const error = strapiError('Error fetching future events count for project', err as RequestError);
     logger.error(error);
     throw err;
   }

@@ -1,7 +1,10 @@
+import { RequestError } from '@/entities/error';
+
 interface ExtendedError extends Error {
   name: string;
   message: string;
   stack?: string;
+  info?: string;
   resource?: string;
 }
 
@@ -10,7 +13,7 @@ export type InnoPlatformError =
   | (ExtendedError & { name: 'DatabaseError' })
   | (ExtendedError & { name: 'ValidationError' });
 
-export const strapiError = (context: string, error: Error, resource?: string): InnoPlatformError => ({
+export const strapiError = (context: string, error: RequestError, resource?: string): InnoPlatformError => ({
   name: 'StrapiError',
   resource,
   message: `Strapi error occurred: ${context}`,

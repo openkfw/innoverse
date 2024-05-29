@@ -3,6 +3,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
+import { RequestError } from '@/entities/error';
 import { getCollaborationCommentIsUpvotedBy } from '@/repository/db/collaboration_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { withAuth } from '@/utils/auth';
@@ -32,7 +33,7 @@ export async function getBasicCollaborationQuestionById(id: string) {
     const collaborationQuestion = mapToBasicCollaborationQuestion(data);
     return collaborationQuestion;
   } catch (err) {
-    const error = strapiError('Getting basic collaboration question by id', err as Error, id);
+    const error = strapiError('Getting basic collaboration question by id', err as RequestError, id);
     logger.error(error);
   }
 }
@@ -58,7 +59,7 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
     const collaborationQuestions = await getPromiseResults(mapToEntities);
     return collaborationQuestions;
   } catch (err) {
-    const error = strapiError('Getting all collaboration questions', err as Error, projectId);
+    const error = strapiError('Getting all collaboration questions', err as RequestError, projectId);
     logger.error(error);
   }
 }
@@ -79,7 +80,7 @@ export async function getPlatformFeedbackCollaborationQuestion() {
 
     return collaborationQuestion;
   } catch (err) {
-    const error = strapiError('Getting platform feedback collaboration question', err as Error);
+    const error = strapiError('Getting platform feedback collaboration question', err as RequestError);
     logger.error(error);
   }
 }
@@ -91,7 +92,7 @@ export const isCollaborationCommentUpvotedByUser = withAuth(async (user: UserSes
   } catch (err) {
     const error: InnoPlatformError = strapiError(
       `Find upvote for comment${body.commentId} by user ${user.providerId}`,
-      err as Error,
+      err as RequestError,
       body.commentId,
     );
     logger.error(error);
@@ -108,7 +109,7 @@ export const countCollaborationQuestionsForProject = withAuth(async (user, body:
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {
-    const error = strapiError('Error fetching collaboration questions count for project', err as Error);
+    const error = strapiError('Error fetching collaboration questions count for project', err as RequestError);
     logger.error(error);
     throw err;
   }

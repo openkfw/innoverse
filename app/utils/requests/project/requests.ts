@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { Comment, UserSession } from '@/common/types';
 import { getCommentsSchema } from '@/components/project-details/comments/validationSchema';
+import { RequestError } from '@/entities/error';
 import { getProjectFollowers, isProjectFollowedBy } from '@/repository/db/follow';
 import { getProjectLikes, isProjectLikedBy } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
@@ -77,7 +78,7 @@ export async function getProjectById(id: string) {
 
     return project;
   } catch (err) {
-    const e: InnoPlatformError = strapiError('Getting Project by ID', err as Error, id);
+    const e: InnoPlatformError = strapiError('Getting Project by ID', err as RequestError, id);
     logger.error(e);
   }
 }
@@ -110,7 +111,7 @@ export async function getProjectAuthorIdByProjectId(projectId: string) {
 
     return { authorId: authorData?.id };
   } catch (err) {
-    const error = strapiError('Getting project author by project id', err as Error, projectId);
+    const error = strapiError('Getting project author by project id', err as RequestError, projectId);
     logger.error(error);
   }
 }
@@ -159,7 +160,7 @@ export const isProjectCommentUpvotedByUser = withAuth(async (user: UserSession, 
   } catch (err) {
     const error: InnoPlatformError = strapiError(
       `Find upvote for comment${body.commentId} by user ${user.providerId}`,
-      err as Error,
+      err as RequestError,
       body.commentId,
     );
     logger.error(error);

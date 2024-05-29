@@ -16,7 +16,7 @@ async function IndexPage() {
   // As the page is not staticaly generated and no ISR is used here fetch is required
   const data = await getMainPageData();
 
-  if (!data || !data.projects || !data.sliderContent) {
+  if (!data || !data.projects?.length || !data.sliderContent?.length) {
     return <ErrorPage />;
   }
 

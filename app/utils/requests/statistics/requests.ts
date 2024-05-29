@@ -9,6 +9,7 @@ import { getTotalComments, getTotalProjectLikes, getTotalReactions } from '@/rep
 import getLogger from '@/utils/logger';
 
 import { getPlatformFeedbackCollaborationQuestion } from '../collaborationQuestions/requests';
+import { serverConfig } from '@/config/server';
 const logger = getLogger();
 const add = (acc: number, el: { _count: number }) => acc + el._count;
 
@@ -67,7 +68,7 @@ export const getProjectsStats = async (projectId: string) => {
     projectLikes,
   };
 };
-export const checkCredentials = (username: string, password: string) => {
-  const [AUTH_USER, AUTH_PASS] = (process.env.HTTP_BASIC_AUTH || ':').split(':');
+export const checkCredentials = async (username: string, password: string) => {
+  const [AUTH_USER, AUTH_PASS] = serverConfig.HTTP_BASIC_AUTH.split(':');
   return username == AUTH_USER && password == AUTH_PASS;
 };

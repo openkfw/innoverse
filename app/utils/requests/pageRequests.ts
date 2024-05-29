@@ -1,4 +1,5 @@
 import { MainPageData } from '@/common/types';
+import { RequestError } from '@/entities/error';
 import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import {
@@ -8,8 +9,9 @@ import {
 } from '@/utils/requests/events/requests';
 import { getProjects } from '@/utils/requests/project/requests';
 import { countUpdatesForProject, getProjectUpdates } from '@/utils/requests/updates/requests';
-import { countOpportunitiesForProject } from './opportunities/requests';
+
 import { countCollaborationQuestionsForProject } from './collaborationQuestions/requests';
+import { countOpportunitiesForProject } from './opportunities/requests';
 import { countSurveyQuestionsForProject } from './surveyQuestions/requests';
 
 const logger = getLogger();
@@ -63,7 +65,7 @@ export async function getDataWithFeaturedFiltering() {
       updates: projectUpdates ?? [],
     };
   } catch (err) {
-    const error = strapiError('Getting All featured projects', err as Error);
+    const error = strapiError('Getting All featured projects', err as RequestError);
     logger.error(error);
   }
 }

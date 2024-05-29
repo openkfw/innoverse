@@ -10,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
 import { UserSession } from '@/common/types';
+import { clientConfig } from '@/config/client';
 
 interface UserMenuProps {
   user: UserSession;
@@ -44,11 +45,7 @@ export default function UserMenu(props: UserMenuProps) {
       </Typography>
       <Divider sx={{ mx: 2, my: 1 }} />
       <MenuItem>
-        <Link
-          href={process.env.NEXT_PUBLIC_STRAPI_ENDPOINT || '/not-found'}
-          target="_blank"
-          style={{ textDecoration: 'none' }}
-        >
+        <Link href={clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT} target="_blank" style={{ textDecoration: 'none' }}>
           <Typography variant="body2" color="text.primary">
             Content Editor
           </Typography>

@@ -7,6 +7,9 @@ import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/reques
 import { CreateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
 import { GetInnoUserByEmailQuery, GetInnoUserByProviderIdQuery } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
+import { clientConfig } from '@/config/client';
+import { serverConfig } from '@/config/server';
+import { RequestError } from '@/entities/error';
 
 const logger = getLogger();
 
@@ -26,7 +29,7 @@ export async function createInnoUser(body: UserSession, image?: string | null) {
     const createdUser = mapToUser(userData);
     return createdUser;
   } catch (err) {
-    const error = strapiError('Create Inno User', err as Error, body.name);
+    const error = strapiError('Create Inno User', err as RequestError, body.name);
     logger.error(error);
   }
 }
@@ -37,7 +40,7 @@ export async function getInnoUserByEmail(email: string) {
     const user = mapFirstToUser(response.innoUsers?.data);
     return user;
   } catch (err) {
-    const error = strapiError('Getting Inno user by email', err as Error, email);
+    const error = strapiError('Getting Inno user by email', err as RequestError, email);
     logger.error(error);
   }
 }
@@ -48,7 +51,7 @@ export async function getInnoUserByProviderId(providerId: string) {
     const user = mapFirstToUserOrThrow(response.innoUsers?.data);
     return user;
   } catch (err) {
-    const error = strapiError('Getting Inno user by providerId', err as Error, providerId);
+    const error = strapiError('Getting Inno user by providerId', err as RequestError, providerId);
     logger.error(error);
     throw err;
   }
@@ -60,7 +63,7 @@ export async function createInnoUserIfNotExist(body: UserSession, image?: string
     const user = await getInnoUserByEmail(body.email);
     return user ? user : await createInnoUser(body, image);
   } catch (err) {
-    const error = strapiError('Trying to create a InnoUser if it does not exist', err as Error, body.name);
+    const error = strapiError('Trying to create a InnoUser if it does not exist', err as RequestError, body.name);
     logger.error(error);
   }
 }
@@ -74,10 +77,10 @@ async function uploadImage(imageUrl: string, fileName: string) {
       formData.append('ref', 'api::event.event');
       formData.append('field', 'image');
 
-      return fetch(`${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
+      return fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${process.env.STRAPI_TOKEN}`,
+          Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
         },
         body: formData,
       })
