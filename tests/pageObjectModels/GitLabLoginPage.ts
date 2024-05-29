@@ -15,7 +15,7 @@ export class GitlabLoginPage {
   }
 
   private get loginWithCredentialsButtton() {
-    return this.page.getByRole("button", {
+    return this.page.getByLabelText("button", {
       name: "Mit Testbenutzer einloggen",
     });
   }
@@ -29,6 +29,6 @@ export class GitlabLoginPage {
   }
 
   private get loginButton() {
-    return this.page.getByRole("button", { name: "Login" });
+    return this.page.getByLabelText("button", { name: "Login" });
   }
 }
