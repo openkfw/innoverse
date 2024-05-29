@@ -3,11 +3,11 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { BasicOpportunity, UserSession } from '@/common/types';
+import { RequestError } from '@/entities/error';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { mapFirstToOpportunity, mapToOpportunity } from '@/utils/requests/opportunities/mappings';
 import {
   GetBasicOpportunityByIdQuery,
@@ -18,6 +18,7 @@ import {
   UpdateOpportunityParticipantsQuery,
 } from '@/utils/requests/opportunities/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
+import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 
 const logger = getLogger();
 
@@ -34,7 +35,7 @@ export async function getOpportunitiesByProjectId(projectId: string) {
     const opportunities = await getPromiseResults(mapToEntities);
     return opportunities;
   } catch (err) {
-    const error = strapiError('Getting project opportunities by project id', err as Error, projectId);
+    const error = strapiError('Getting project opportunities by project id', err as RequestError, projectId);
     logger.error(error);
   }
 }
@@ -45,7 +46,7 @@ export async function getOpportunityById(opportunityId: string) {
     const opportunity = mapFirstToOpportunity(response.opportunities?.data);
     return opportunity;
   } catch (err) {
-    const error = strapiError('Getting an opporunity', err as Error, opportunityId);
+    const error = strapiError('Getting an opporunity', err as RequestError, opportunityId);
     logger.error(error);
   }
 }
@@ -70,7 +71,7 @@ export async function getBasicOpportunityById(opportunityId: string) {
     };
     return opportunity;
   } catch (err) {
-    const error = strapiError('Getting basic opportunity by id', err as Error, opportunityId);
+    const error = strapiError('Getting basic opportunity by id', err as RequestError, opportunityId);
     logger.error(error);
   }
 }
@@ -86,7 +87,7 @@ export async function isUserParticipatingInOpportunity(body: { opportunityId: st
   } catch (err) {
     const error = strapiError(
       'Trying to get project opportunity and add participant',
-      err as Error,
+      err as RequestError,
       body.opportunityId,
     );
     logger.error(error);
@@ -103,7 +104,11 @@ export async function handleOpportunityAppliedBy(body: { opportunityId: string; 
     const opportunity = mapToOpportunity(opportunityData);
     return opportunity;
   } catch (err) {
-    const error = strapiError('Trying to update project opportunity participants', err as Error, body.opportunityId);
+    const error = strapiError(
+      'Trying to update project opportunity participants',
+      err as RequestError,
+      body.opportunityId,
+    );
     logger.error(error);
   }
 }
@@ -121,7 +126,7 @@ export const userParticipatesInOpportunity = withAuth(async (user: UserSession, 
   } catch (err) {
     const error: InnoPlatformError = strapiError(
       `Find if user ${user.providerId} applied for opportunity ${body.opportunityId}`,
-      err as Error,
+      err as RequestError,
       body.opportunityId,
     );
     logger.error(error);
@@ -136,7 +141,7 @@ export const countOpportunitiesForProject = withAuth(async (user: UserSession, b
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {
-    const error = strapiError('Error fetching opportunities count for project', err as Error);
+    const error = strapiError('Error fetching opportunities count for project', err as RequestError);
     logger.error(error);
     throw err;
   }

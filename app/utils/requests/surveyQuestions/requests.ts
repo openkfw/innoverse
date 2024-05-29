@@ -13,6 +13,7 @@ import { withAuth } from '@/utils/auth';
 import { strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
+import { RequestError } from '@/entities/error';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { mapToBasicSurveyQuestion, mapToSurveyQuestion } from '@/utils/requests/surveyQuestions/mappings';
 
@@ -30,7 +31,7 @@ export async function getBasicSurveyQuestionById(id: string) {
     const surveyQuestion = mapToBasicSurveyQuestion(data);
     return surveyQuestion;
   } catch (err) {
-    const error = strapiError('Getting basic survey question by id', err as Error, id);
+    const error = strapiError('Getting basic survey question by id', err as RequestError, id);
     logger.error(error);
   }
 }
@@ -52,7 +53,7 @@ export async function getSurveyQuestionsByProjectId(projectId: string) {
     const surveyQuestions = await getPromiseResults(mapToEntities);
     return surveyQuestions;
   } catch (err) {
-    const error = strapiError('Getting all survey questions', err as Error, projectId);
+    const error = strapiError('Getting all survey questions', err as RequestError, projectId);
     logger.error(error);
   }
 }
@@ -73,7 +74,7 @@ export const countSurveyQuestionsForProject = withAuth(async (user, body: { proj
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {
-    const error = strapiError('Error fetching survey questions count for project', err as Error);
+    const error = strapiError('Error fetching survey questions count for project', err as RequestError);
     logger.error(error);
     throw err;
   }

@@ -3,6 +3,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { User, UserSession } from '@/common/types';
+import { RequestError } from '@/entities/error';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
@@ -32,7 +33,9 @@ export const handleProjectUpdate = withAuth(
       }
       const error: InnoPlatformError = strapiError(
         `Creating a project update by user ${user.providerId}`,
-        new Error('InnoUser does not exist'),
+        {
+          info: 'InnoUser does not exist',
+        } as RequestError,
         body.projectId,
       );
       logger.error(error);

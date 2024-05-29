@@ -2,6 +2,7 @@ import { ResultOf } from 'gql.tada';
 
 import { ImageFormats, User } from '@/common/types';
 import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
+import { clientConfig } from '@/config/client';
 
 export function mapFirstToUser(users: ResultOf<typeof InnoUserFragment>[] | undefined): User | undefined {
   if (!users || !users.length) return undefined;
@@ -42,7 +43,7 @@ export function mapToImageUrl(
       key,
       {
         ...value,
-        url: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${value.url}`,
+        url: `${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}${value.url}`,
       },
     ]),
   );
@@ -51,5 +52,5 @@ export function mapToImageUrl(
 
 export function mapToAvatarUrl(image: { data: { attributes: { url: string } } | null } | null): string | undefined {
   if (!image?.data) return undefined;
-  return `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`;
+  return `${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`;
 }

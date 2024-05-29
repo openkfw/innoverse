@@ -1,6 +1,7 @@
 import { ClickAnalyticsPlugin } from '@microsoft/applicationinsights-clickanalytics-js';
 import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
+import { clientConfig } from '@/config/client';
 
 const defaultBroserHistory = {
   url: '/',
@@ -22,8 +23,8 @@ const clickPluginConfig = {
 
 const appInsights = new ApplicationInsights({
   config: {
-    connectionString: process.env.NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING,
-    instrumentationKey: process.env.NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY,
+    connectionString: clientConfig.NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING,
+    instrumentationKey: clientConfig.NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY,
     disableTelemetry: process.env.NODE_ENV !== 'production',
     extensions: [reactPlugin, clickPluginInstance],
     extensionConfig: {

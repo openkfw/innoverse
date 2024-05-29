@@ -1,5 +1,8 @@
+require('./config/server');
+
+const { clientConfig } = require('./config/client');
 const withFonts = require('next-fonts');
-const withBundleAnalyzer = require('@next/bundle-analyzer')()
+const withBundleAnalyzer = require('@next/bundle-analyzer')();
 
 const nextConfig = {
   output: 'standalone',
@@ -29,11 +32,11 @@ const nextConfig = {
     return [
       {
         source: '/api/strapi',
-        destination: process.env.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT,
+        destination: clientConfig.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT,
       },
       {
         source: '/api/strapi/upload',
-        destination: `${process.env.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`,
+        destination: `${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`,
       },
     ];
   },
@@ -77,6 +80,4 @@ const nextConfig = {
   },
 };
 
-module.exports =
-  process.env.ANALYZE === 'true' ? withBundleAnalyzer(nextConfig) : withFonts(nextConfig);
-
+module.exports = process.env.ANALYZE === 'true' ? withBundleAnalyzer(nextConfig) : withFonts(nextConfig);

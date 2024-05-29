@@ -23,6 +23,7 @@ import {
   GetUpdatesPageQuery,
   GetUpdatesQuery,
 } from '@/utils/requests/updates/queries';
+import { RequestError } from '@/entities/error';
 
 import { validateParams } from '@/utils/validationHelper';
 import { handleProjectUpdatesSchema } from '@/components/updates/validationSchema';
@@ -39,7 +40,7 @@ export async function getProjectUpdates(limit = 100) {
     const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
     return updatesWithAdditionalData;
   } catch (err) {
-    const error = strapiError('Getting all project updates', err as Error);
+    const error = strapiError('Getting all project updates', err as RequestError);
     logger.error(error);
   }
 }
@@ -53,7 +54,7 @@ export async function getUpdatesByProjectId(projectId: string) {
     const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
     return updatesWithAdditionalData;
   } catch (err) {
-    const error = strapiError('Getting all project updates', err as Error, projectId);
+    const error = strapiError('Getting all project updates', err as RequestError, projectId);
     logger.error(error);
   }
 }
@@ -73,12 +74,12 @@ export async function createProjectUpdate(body: {
     });
 
     const updateData = response.createUpdate?.data;
-    if (!updateData) throw new Error('Response contained no update');
+    if (!updateData) throw 'Response contained no update';
 
     const update = mapToProjectUpdate(updateData);
     return update;
   } catch (err) {
-    const error = strapiError('Trying to to create project update', err as Error, body.projectId);
+    const error = strapiError('Trying to to create project update', err as RequestError, body.projectId);
     logger.error(error);
   }
 }
@@ -101,7 +102,7 @@ export async function getProjectUpdatesPage({
     const updatesWithAdditionalData = await getUpdatesWithAdditionalData(updates);
     return updatesWithAdditionalData;
   } catch (err) {
-    const error = strapiError('Getting all project updates with filter', err as Error);
+    const error = strapiError('Getting all project updates with filter', err as RequestError);
     logger.error(error);
   }
 }
@@ -175,7 +176,7 @@ export const findReactionByUser = withAuth(
     } catch (err) {
       const error: InnoPlatformError = strapiError(
         `Find reaction for ${user.providerId} and ${body.objectType} ${body.objectId} `,
-        err as Error,
+        err as RequestError,
         body.objectId,
       );
       logger.error(error);
@@ -200,7 +201,7 @@ export const countUpdatesForProject = withAuth(async (user: UserSession, body: {
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {
-    const error = strapiError('Getting count of updates', err as Error);
+    const error = strapiError('Getting count of updates', err as RequestError);
     logger.error(error);
     throw err;
   }
