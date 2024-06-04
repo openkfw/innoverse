@@ -24,8 +24,8 @@ const RequiredEnv = z
   .superRefine((values, ctx) => {
     const {
       DATABASE_URL,
-      POSTGRES_USER,
-      POSTGRES_PASSWORD,
+      // POSTGRES_USER,
+      // POSTGRES_PASSWORD,
       NEXTAUTH_URL,
       NEXTAUTH_SECRET,
       STRAPI_TOKEN,
@@ -34,8 +34,8 @@ const RequiredEnv = z
     } = values;
     const required = [
       DATABASE_URL,
-      POSTGRES_USER,
-      POSTGRES_PASSWORD,
+      // POSTGRES_USER, TODO: Check if we need this at all
+      // POSTGRES_PASSWORD, TODO: Check if we need this at all
       NEXTAUTH_URL,
       NEXTAUTH_SECRET,
       STRAPI_TOKEN,
