@@ -84,8 +84,8 @@ now your app should be visible under [http://localhost:3000](http://localhost:30
 - Go to the CMS > Settings > Webhooks > Create a new Webhook
 - Add a meaningful name
 - Add the URL of the push notifications
-    - For local development: `http://host.docker.internal:3000/api/hooks/push`
-    - For production: `https://${YOUR-DOMAIN}/api/hooks/push`
+  - For local development: `http://host.docker.internal:3000/api/hooks/push`
+  - For production: `https://${YOUR-DOMAIN}/api/hooks/push`
 - Add the header `Authorization`, the value should be the value of the environment
   variable `STRAPI_PUSH_NOTIFICATION_SECRET`
 - Add all the events to the webhook
@@ -96,6 +96,7 @@ now your app should be visible under [http://localhost:3000](http://localhost:30
 > include some changes in your `.env` file configuration i.e. the database/strapi host has to be set to `127.0.0.1`)
 
 ### Azure Application Insights
+
 - Configure all required components for Azure Application Insights in the Azure Portal or via IaC.
 - Set the following environment variables in the `.env` file:
   - `NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING`: Can be found in the Azure Portal
@@ -104,39 +105,39 @@ now your app should be visible under [http://localhost:3000](http://localhost:30
 - NB: The logs will only be published if the environment variable `NODE_ENV` is set to `production`!
 
 ### Analyze the build
+
 You can analyze the bundle size running `npm run build:analyze`, this will generate a report and can help identify large chunks.
 The main focus should here be the `client` report, as we do not use any edge functions.
 
-
 ### Environment variables
 
-| Name                                         	| Required 	| Default 	| Stage     	| Component 	|
-|----------------------------------------------	|----------	|---------	|-----------	|-----------	|
-| POSTGRES_USER                                	| Y        	| -       	| Runtime   	| Strapi    	|
-| POSTGRES_PASSWORD                            	| Y        	| -       	| Runtime   	| Strapi    	|
-| DATABASE_URL                                 	| Y        	| -       	| Runtime   	| Innoverse 	|
-| NEXTAUTH_URL                                 	| Y        	| -       	| Runtime   	| Innoverse 	|
-| POSTGRES_USER                                	| Y        	| -       	| Runtime   	| Innoverse 	|
-| POSTGRES_PASSWORD                            	| Y        	| -       	| Runtime   	| Innoverse 	|
-| NEXTAUTH_AZURE_CLIENT_ID                     	| N(*)     	| -       	| Runtime   	| Innoverse 	|
-| NEXTAUTH_AZURE_CLIENT_SECRET                 	| N(*)     	| -       	| Runtime   	| Innoverse 	|
-| NEXTAUTH_AZURE_TENANT_ID                     	| N(*)     	| -       	| Runtime   	| Innoverse 	|
-| NEXTAUTH_SECRET                              	| N(*)     	| -       	| Runtime   	| Innoverse 	|
-| NEXTAUTH_GITLAB_ID                           	| N(*)     	| -       	| Runtime   	| Innoverse 	|
-| NEXTAUTH_GITLAB_SECRET                       	| N(*)     	| -       	| Runtime   	| Innoverse 	|
-| NEXTAUTH_GITLAB_URL                          	| N(*)     	| -       	| Runtime   	| Innoverse 	|
-| NEXTAUTH_CREDENTIALS_USERNAME                	| N(*)     	| -       	| Runtime   	| Innoverse 	|
-| NEXTAUTH_CREDENTIALS_PASSWORD                	| N(*)     	| -       	| Runtime   	| Innoverse 	|
-| NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT          	| Y        	| -       	| Buildtime 	| Innoverse 	|
-| NEXT_PUBLIC_STRAPI_ENDPOINT                  	| Y        	| -       	| Buildtime 	| Innoverse 	|
-| STRAPI_TOKEN                                 	| Y        	| -       	| Runtime   	| Innoverse 	|
-| HTTP_BASIC_AUTH                              	| Y        	| -       	| Runtime   	| Innoverse 	|
-| NEXT_PUBLIC_VAPID_PUBLIC_KEY                 	| N        	| -       	| Buildtime 	| Innoverse 	|
-| VAPID_PRIVATE_KEY                            	| N        	| -       	| Runtime   	| Innoverse 	|
-| VAPID_ADMIN_EMAIL                            	| N        	| -       	| Runtime   	| Innoverse 	|
-| STRAPI_PUSH_NOTIFICATION_SECRET              	| N        	| -       	| Runtime   	| Innoverse 	|
-| NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING   	| N        	| -       	| Buildtime 	| Innoverse 	|
-| NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY 	| N        	| -       	| Buildtime 	| Innoverse 	|
-| APP_INSIGHTS_SERVICE_NAME                    	| N        	| -       	| Runtime   	| Innoverse 	|
+| Name                                         | Required | Default | Stage     | Component |
+| -------------------------------------------- | -------- | ------- | --------- | --------- |
+| POSTGRES_USER                                | Y        | -       | Runtime   | Strapi    |
+| POSTGRES_PASSWORD                            | Y        | -       | Runtime   | Strapi    |
+| DATABASE_URL                                 | Y        | -       | Runtime   | Innoverse |
+| NEXTAUTH_URL                                 | Y        | -       | Runtime   | Innoverse |
+| POSTGRES_USER                                | N        | -       | Runtime   | Innoverse |
+| POSTGRES_PASSWORD                            | N        | -       | Runtime   | Innoverse |
+| NEXTAUTH_AZURE_CLIENT_ID                     | N(\*)    | -       | Runtime   | Innoverse |
+| NEXTAUTH_AZURE_CLIENT_SECRET                 | N(\*)    | -       | Runtime   | Innoverse |
+| NEXTAUTH_AZURE_TENANT_ID                     | N(\*)    | -       | Runtime   | Innoverse |
+| NEXTAUTH_SECRET                              | N(\*)    | -       | Runtime   | Innoverse |
+| NEXTAUTH_GITLAB_ID                           | N(\*)    | -       | Runtime   | Innoverse |
+| NEXTAUTH_GITLAB_SECRET                       | N(\*)    | -       | Runtime   | Innoverse |
+| NEXTAUTH_GITLAB_URL                          | N(\*)    | -       | Runtime   | Innoverse |
+| NEXTAUTH_CREDENTIALS_USERNAME                | N(\*)    | -       | Runtime   | Innoverse |
+| NEXTAUTH_CREDENTIALS_PASSWORD                | N(\*)    | -       | Runtime   | Innoverse |
+| NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT          | Y        | -       | Buildtime | Innoverse |
+| NEXT_PUBLIC_STRAPI_ENDPOINT                  | Y        | -       | Buildtime | Innoverse |
+| STRAPI_TOKEN                                 | Y        | -       | Runtime   | Innoverse |
+| HTTP_BASIC_AUTH                              | Y        | -       | Runtime   | Innoverse |
+| NEXT_PUBLIC_VAPID_PUBLIC_KEY                 | N        | -       | Buildtime | Innoverse |
+| VAPID_PRIVATE_KEY                            | N        | -       | Runtime   | Innoverse |
+| VAPID_ADMIN_EMAIL                            | N        | -       | Runtime   | Innoverse |
+| STRAPI_PUSH_NOTIFICATION_SECRET              | N        | -       | Runtime   | Innoverse |
+| NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING   | N        | -       | Buildtime | Innoverse |
+| NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY | N        | -       | Buildtime | Innoverse |
+| APP_INSIGHTS_SERVICE_NAME                    | N        | -       | Runtime   | Innoverse |
 
-(*) Note: At least one authentication method must be enabled 
+(\*) Note: At least one authentication method must be enabled
