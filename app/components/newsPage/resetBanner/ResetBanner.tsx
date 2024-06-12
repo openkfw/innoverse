@@ -17,10 +17,12 @@ export default function ResetBanner(props: ResetBannerProps) {
       <Icon sx={iconStyles} onClick={onClick}>
         <RefreshOutlinedIcon />
       </Icon>
-      <Typography variant="subtitle1">{updateCount} neue Updates verfügbar</Typography>
+      <Typography variant="subtitle1">
+        {updateCount} neue Updates verfügbar
         <Button sx={buttonStyles} onClick={onClick}>
-        Jetzt zeigen
-      </Button>
+          Jetzt zeigen
+        </Button>
+      </Typography>
     </Card>
   );
 }
@@ -45,14 +47,16 @@ const iconStyles = {
   width: '16',
   height: '16',
   cursor: 'pointer',
+  '&:hover': {
+    color: '#B7F9AA',
+  },
 };
 
 const buttonStyles = {
-    color: '#B7F9AA',
-    textDecoration: 'underline',
-    border: 'none',
-    borderRadius: '0',
-    backgroundColor: 'rgba(255, 255, 255, 0.20)',
-    backdropFilter: 'blur(20px)',
+  color: '#B7F9AA !important',
+  textDecoration: 'underline !important',
+  border: 'none',
+  borderRadius: '0',
+  backgroundColor: 'transparent !important',
+  backdropFilter: 'none',
 };
-

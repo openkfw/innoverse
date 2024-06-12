@@ -10,7 +10,6 @@ import Typography from '@mui/material/Typography';
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';
 import NewsContainer from '@/components/newsPage/NewsContainer';
-import ResetBanner from '@/components/newsPage/resetBanner/ResetBanner';
 import { getProjectUpdates, getProjectUpdatesPage } from '@/utils/requests/updates/requests';
 
 import { NewsFilterContextProvider } from '../contexts/news-filter-context';
