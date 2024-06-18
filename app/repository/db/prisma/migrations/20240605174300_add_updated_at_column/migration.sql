@@ -15,3 +15,5 @@ ALTER TABLE "collaboration_comments_responses" ADD COLUMN     "updatedAt" TIMEST
 -- AlterTable
 ALTER TABLE "project_comments" ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL;
 
+-- AlterTable
+ALTER TABLE "Follow" ALTER COLUMN "objectType" SET DEFAULT 'PROJECT';
