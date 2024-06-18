@@ -12,9 +12,3 @@ ALTER TYPE "ReactionObjectType" RENAME TO "ObjectType";
 ALTER TYPE "ObjectType" ADD VALUE 'PROJECT';
 
 
--- AlterTable
-ALTER TABLE "Follow" RENAME COLUMN "projectId" TO "objectId"; 
-ALTER TABLE "Follow" ADD COLUMN "objectType" "ObjectType" NOT NULL;
-
--- CreateIndex
-CREATE UNIQUE INDEX "Follow_objectId_objectType_followedBy_key" ON "Follow"("objectId", "objectType", "followedBy");

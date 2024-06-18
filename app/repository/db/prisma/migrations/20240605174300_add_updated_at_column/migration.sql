@@ -7,6 +7,16 @@
 
 */
 -- AlterTable
+ALTER TABLE "Follow" RENAME COLUMN "projectId" TO "objectId";
+ALTER TABLE "Follow" ADD COLUMN "objectType" "ObjectType" DEFAULT 'PROJECT';
+
+-- AlterTable
+ALTER TABLE "Follow" ALTER COLUMN "objectType" SET NOT NULL;
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Follow_objectId_objectType_followedBy_key" ON "Follow"("objectId", "objectType", "followedBy");
+
+-- AlterTable
 ALTER TABLE "collaboration_comments" ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL;
 
 -- AlterTable
@@ -14,6 +24,3 @@ ALTER TABLE "collaboration_comments_responses" ADD COLUMN     "updatedAt" TIMEST
 
 -- AlterTable
 ALTER TABLE "project_comments" ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL;
-
--- AlterTable
-ALTER TABLE "Follow" ALTER COLUMN "objectType" SET DEFAULT 'PROJECT';
