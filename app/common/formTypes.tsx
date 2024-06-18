@@ -11,6 +11,7 @@ export interface FormInputProps {
   disableFuture?: boolean;
   endAdornment?: JSX.Element;
   sx?: SxProps;
+  inputPropsSx?: any;
 }
 
 export interface MultilineFormInputProps extends FormInputProps {

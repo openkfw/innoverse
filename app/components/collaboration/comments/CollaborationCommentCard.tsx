@@ -17,7 +17,7 @@ import {
 
 interface CollaborationCommentCardProps {
   comment: Comment;
-  projectName: string;
+  projectName?: string;
   onDelete?: () => void;
 }
 
@@ -40,7 +40,7 @@ export const CollaborationCommentCard = (props: CollaborationCommentCardProps) =
   );
 };
 
-function useCollaborationCommentCardProps({ comment, onDelete }: CollaborationCommentCardProps) {
+export function useCollaborationCommentCardProps({ comment, onDelete }: CollaborationCommentCardProps) {
   const [isUpvoted, setIsUpvoted] = useState<boolean>(comment.isUpvotedByUser || false);
   const appInsights = useAppInsightsContext();
 

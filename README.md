@@ -116,6 +116,7 @@ The main focus should here be the `client` report, as we do not use any edge fun
 | POSTGRES_USER                                | Y        | -       | Runtime   | Strapi    |
 | POSTGRES_PASSWORD                            | Y        | -       | Runtime   | Strapi    |
 | DATABASE_URL                                 | Y        | -       | Runtime   | Innoverse |
+| REDIS_URL                                    | Y        | -       | Runtime   | Innoverse |
 | NEXTAUTH_URL                                 | Y        | -       | Runtime   | Innoverse |
 | POSTGRES_USER                                | N        | -       | Runtime   | Innoverse |
 | POSTGRES_PASSWORD                            | N        | -       | Runtime   | Innoverse |

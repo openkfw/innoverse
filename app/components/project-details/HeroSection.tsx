@@ -9,15 +9,12 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { Project } from '@/common/types';
+import { UserAvatar } from '@/components/common/UserAvatar';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 
-import AvatarIcon from '../common/AvatarIcon';
 import ProgressBar from '../common/ProgressBar';
-import { StyledTooltip } from '../common/StyledTooltip';
 import { defaultImage } from '../landing/featuredProjectSection/FeaturedProjectSlider';
-
-import { TooltipContent } from './TooltipContent';
 
 interface HeroSectionProps {
   project: Project;
@@ -54,18 +51,7 @@ export default function HeroSection(props: HeroSectionProps) {
               <Grid item sx={avatarContainerStyles}>
                 <Box display="flex" flexDirection="column" justifyContent="flex-end" height="100%">
                   <CardHeader
-                    avatar={
-                      <Box>
-                        <StyledTooltip
-                          arrow
-                          key={author.id}
-                          title={<TooltipContent projectName={project.title} teamMember={author} />}
-                          placement="bottom"
-                        >
-                          <AvatarIcon user={author} size={48} allowAnimation />
-                        </StyledTooltip>
-                      </Box>
-                    }
+                    avatar={<UserAvatar user={author} size={48} allowAnimation />}
                     title={
                       <Typography variant="body2" sx={{ ml: '8px' }}>
                         {author.name}

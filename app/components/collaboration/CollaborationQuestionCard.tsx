@@ -13,28 +13,31 @@ import Typography from '@mui/material/Typography';
 
 import { useProject } from '@/app/contexts/project-context';
 import { CollaborationQuestion, Comment } from '@/common/types';
+import { UserAvatar } from '@/components/common/UserAvatar';
 import theme from '@/styles/theme';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 
-import AvatarIcon from '../common/AvatarIcon';
 import { errorMessage } from '../common/CustomToast';
+import WriteTextCard from '../common/editing/writeText/WriteTextCard';
 import { parseStringForLinks } from '../common/LinkString';
-import { StyledTooltip } from '../common/StyledTooltip';
-import { TooltipContent } from '../project-details/TooltipContent';
 
 import { addProjectCollaborationComment } from './comments/actions';
 import { CollaborationComments } from './comments/CollaborationComments';
-import WriteCommentCard from './writeComment/WriteCommentCard';
 import { ShareOpinionCard } from './ShareOpinionCard';
 
-interface UpdateCardProps {
+interface CollaborationQuestionCardProps {
   content: CollaborationQuestion;
-  projectName: string;
   projectId: string;
   questionId: string;
+  projectName?: string;
 }
 
-export const CollaborationQuestionCard = ({ content, projectName, projectId, questionId }: UpdateCardProps) => {
+export const CollaborationQuestionCard = ({
+  content,
+  projectId,
+  questionId,
+  projectName,
+}: CollaborationQuestionCardProps) => {
   const { title, description, authors, comments: projectComments } = content;
   const { setCollaborationCommentsAmount } = useProject();
   const [comments, setComments] = useState<Comment[]>(projectComments);
@@ -116,16 +119,7 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
           </Typography>
           <AvatarGroup sx={avatarGroupStyle}>
             {authors.length > 0 ? (
-              authors.map((author, index) => (
-                <StyledTooltip
-                  arrow
-                  key={index}
-                  title={<TooltipContent projectName={projectName} teamMember={author} />}
-                  placement="bottom"
-                >
-                  <AvatarIcon user={author} size={48} index={index} allowAnimation />
-                </StyledTooltip>
-              ))
+              authors.map((author, idx) => <UserAvatar key={idx} size={48} user={author} allowAnimation />)
             ) : (
               <Typography variant="caption" color="text.disabled">
                 Niemand zugewiesen
@@ -139,7 +133,7 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
           {comments.length > 0 ? (
             <Stack spacing={3}>
               {writeNewComment ? (
-                <WriteCommentCard projectName={projectName} onSubmit={handleComment} />
+                <WriteTextCard metadata={{ projectName }} onSubmit={handleComment} />
               ) : (
                 <ShareOpinionCard projectName={projectName} handleClick={handleShareOpinion} />
               )}
@@ -150,7 +144,7 @@ export const CollaborationQuestionCard = ({ content, projectName, projectId, que
               />
             </Stack>
           ) : (
-            <WriteCommentCard sx={newCommentStyle} projectName={projectName} onSubmit={handleComment} />
+            <WriteTextCard sx={newCommentStyle} metadata={{ projectName }} onSubmit={handleComment} />
           )}
         </Box>
       </Grid>

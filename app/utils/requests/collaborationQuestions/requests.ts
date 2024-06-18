@@ -2,19 +2,17 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { UserSession } from '@/common/types';
+import { BasicCollaborationQuestion, ObjectType, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import { getCollaborationCommentIsUpvotedBy } from '@/repository/db/collaboration_comment';
 import dbClient from '@/repository/db/prisma/prisma';
+import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { getProjectCollaborationComments } from '@/utils/requests/collaborationComments/requests';
-import {
-  mapToBasicCollaborationQuestion,
-  mapToCollaborationQuestion,
-} from '@/utils/requests/collaborationQuestions/mappings';
+import { mapToCollaborationQuestion } from '@/utils/requests/collaborationQuestions/mappings';
 import {
   GetCollaborationQuestionByIdQuery,
   GetCollaborationQuestionsByProjectIdQuery,
@@ -23,20 +21,10 @@ import {
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
-const logger = getLogger();
+import { mapToBasicCollaborationQuestion } from './mappings';
+import { GetCollaborationQuestsionsStartingFromQuery } from './queries';
 
-export async function getBasicCollaborationQuestionById(id: string) {
-  try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { id });
-    const data = response.collaborationQuestion?.data;
-    if (!data) throw new Error('Response contained no collaboration question data');
-    const collaborationQuestion = mapToBasicCollaborationQuestion(data);
-    return collaborationQuestion;
-  } catch (err) {
-    const error = strapiError('Getting basic collaboration question by id', err as RequestError, id);
-    logger.error(error);
-  }
-}
+const logger = getLogger();
 
 export async function getCollaborationQuestionsByProjectId(projectId: string) {
   try {
@@ -60,6 +48,60 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
     return collaborationQuestions;
   } catch (err) {
     const error = strapiError('Getting all collaboration questions', err as RequestError, projectId);
+    logger.error(error);
+  }
+}
+
+export async function getBasicCollaborationQuestionById(id: string): Promise<BasicCollaborationQuestion | undefined> {
+  try {
+    const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { id });
+    const data = response.collaborationQuestion?.data;
+    if (!data) throw new Error('Response contained no collaboration question data');
+    const collaborationQuestion = mapToBasicCollaborationQuestion(data);
+    return collaborationQuestion;
+  } catch (err) {
+    const error = strapiError('Getting basic collaboration question by id', err as RequestError, id);
+    logger.error(error);
+  }
+}
+
+export async function getBasicCollaborationQuestionByIdWithAdditionalData(id: string) {
+  try {
+    const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { id });
+    const data = response.collaborationQuestion?.data;
+    if (!data) throw new Error('Response contained no collaboration question data');
+    const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, id);
+    const collaborationQuestion = mapToBasicCollaborationQuestion(data);
+    return { ...collaborationQuestion, reactions };
+  } catch (err) {
+    const error = strapiError(
+      'Getting basic collaboration question by id with additional data',
+      err as RequestError,
+      id,
+    );
+    logger.error(error);
+  }
+}
+
+export async function getBasicCollaborationQuestionStartingFromWithAdditionalData(from: Date) {
+  try {
+    const response = await strapiGraphQLFetcher(GetCollaborationQuestsionsStartingFromQuery, { from });
+    const data = response.collaborationQuestions?.data;
+    if (!data) throw new Error('Response contained no collaboration question data');
+
+    const mapQuestions = data.map(async (questionData) => {
+      const basicQuestion = mapToBasicCollaborationQuestion(questionData);
+      const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, questionData.id);
+      return { ...basicQuestion, reactions };
+    });
+
+    const questions = await Promise.all(mapQuestions);
+    return questions;
+  } catch (err) {
+    const error = strapiError(
+      `Getting basic collaboration question starting from ${from.toISOString()} with additional data`,
+      err as RequestError,
+    );
     logger.error(error);
   }
 }

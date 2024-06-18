@@ -8,9 +8,7 @@ interface ErrorPageProps {
 
 const ErrorPage = (props: ErrorPageProps) => {
   const { message } = props;
-  return (
-    <Error text={message ? message : 'Die Daten konnten nicht geladen werden.' + 'Versuchen Sie es später erneut.'} />
-  );
+  return <Error text={message ? message : 'Die Daten konnten nicht geladen werden. Versuchen Sie es später erneut.'} />;
 };
 
 export default ErrorPage;

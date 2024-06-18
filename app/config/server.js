@@ -20,6 +20,7 @@ const RequiredEnv = z
     HTTP_BASIC_AUTH: z.string().default(''),
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     STAGE: z.enum(['development', 'test', 'build', 'production']).default('development'),
+    REDIS_URL: z.string({ errorMap: () => ({ message: 'REDIS_URL must be set!' }) }).default(''),
   })
   .superRefine((values, ctx) => {
     const {
@@ -31,6 +32,7 @@ const RequiredEnv = z
       STRAPI_TOKEN,
       HTTP_BASIC_AUTH,
       STAGE,
+      REDIS_URL,
     } = values;
     const required = [
       DATABASE_URL,
@@ -40,6 +42,7 @@ const RequiredEnv = z
       NEXTAUTH_SECRET,
       STRAPI_TOKEN,
       HTTP_BASIC_AUTH,
+      REDIS_URL,
     ];
     if (required.some((el) => el === '') && STAGE !== 'build') {
       ctx.addIssue({
@@ -50,6 +53,12 @@ const RequiredEnv = z
     if (!/^(postgres|postgresql):\/\//.test(DATABASE_URL) && STAGE !== 'build') {
       ctx.addIssue({
         message: 'DB_URL is not a valid postgres connection string',
+        code: z.ZodIssueCode.custom,
+      });
+    }
+    if (!/^(redis):\/\//.test(REDIS_URL) && STAGE !== 'build') {
+      ctx.addIssue({
+        message: 'REDIS_URL is not a valid postgres connection string',
         code: z.ZodIssueCode.custom,
       });
     }

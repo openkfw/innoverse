@@ -24,7 +24,7 @@ import { parseStringForLinks } from '../common/LinkString';
 import MuiMarkdownSection from '../common/MuiMarkdownSection';
 
 import CommentsSection from './comments/CommentsSection';
-import { AuthorInformation } from './AuthorInformation';
+import { UserInformation } from './AuthorInformation';
 import { ProjectTags } from './ProjectTags';
 
 import robotic_hand from '/public/images/robotic-hand.png';
@@ -70,7 +70,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
         <ProjectDescription project={project} />
         <Divider sx={{ width: { xs: '100%', lg: '70%' } }} />
         <ProjectTags tags={project.description.tags} />
-        {project.author && <AuthorInformation projectName={projectName} author={project.author} />}
+        {project.author && <UserInformation projectName={projectName} user={project.author} />}
         <Divider sx={{ my: 2, width: '100%' }} />
         <CommentsSection project={project} />
       </Stack>

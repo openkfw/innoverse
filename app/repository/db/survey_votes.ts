@@ -1,9 +1,18 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, SurveyVote } from '@prisma/client';
 
 export async function getSurveyVotes(client: PrismaClient, surveyQuestionId: string) {
   return client.surveyVote.findMany({
     where: {
       surveyQuestionId,
+    },
+  });
+}
+
+export async function findUserSurveyVote(client: PrismaClient, surveyQuestionId: string, votedBy: string) {
+  return client.surveyVote.findFirst({
+    where: {
+      surveyQuestionId,
+      votedBy,
     },
   });
 }
@@ -14,14 +23,10 @@ export async function handleSurveyQuestionVote(
   surveyQuestionId: string,
   votedBy: string,
   vote: string,
-) {
-  return client.$transaction(async (tx) => {
+): Promise<SurveyVote> {
+  return await client.$transaction(async (tx) => {
     const result = await tx.surveyVote.findFirst({
       where: { projectId, surveyQuestionId, votedBy },
-      select: {
-        votedBy: true,
-        vote: true,
-      },
     });
 
     if (result?.votedBy) {
@@ -44,6 +49,7 @@ export async function handleSurveyQuestionVote(
         },
       });
     }
+    return result;
   });
 }
 

@@ -8,8 +8,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { EventWithAdditionalData } from '@/common/types';
-import EventEmojiReactionCard from '@/components/collaboration/emojiReactions/EventEmojiReactionCard';
+import { EventWithAdditionalData, ObjectType } from '@/common/types';
+import EventEmojiReactionCard from '@/components/collaboration/emojiReactions/cards/EventEmojiReactionCard';
 import theme from '@/styles/theme';
 
 import { getImageByBreakpoint } from '../../../utils/helpers';
@@ -41,7 +41,7 @@ export const EventCard = ({ event }: EventCardProps) => {
       <CardActions sx={cardActionsStyles}>
         <Stack direction="column">
           <LinkWithArrowLeft title="Mehr Details" href={`/projects/${encodeURIComponent(event.projectId)}?tab=3`} />
-          <EventEmojiReactionCard event={event} />
+          <EventEmojiReactionCard item={event} type={ObjectType.EVENT} />
         </Stack>
       </CardActions>
     </Card>

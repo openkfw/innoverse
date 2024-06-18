@@ -12,6 +12,7 @@ export const ProjectFragment = graphql(
         status
         featured
         projectStart
+        updatedAt
         image {
           data {
             attributes {

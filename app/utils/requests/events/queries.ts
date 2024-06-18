@@ -6,6 +6,7 @@ export const EventFragment = graphql(
     fragment Event on EventEntity @_unmask {
       id
       attributes {
+        updatedAt
         title
         startTime
         endTime
@@ -20,6 +21,9 @@ export const EventFragment = graphql(
         project {
           data {
             id
+            attributes {
+              title
+            }
           }
         }
         Themes {
@@ -37,6 +41,19 @@ export const EventFragment = graphql(
     }
   `,
   [InnoUserFragment],
+);
+
+export const GetEventByIdQuery = graphql(
+  `
+    query GetEventById($id: ID) {
+      event(id: $id) {
+        data {
+          ...Event
+        }
+      }
+    }
+  `,
+  [EventFragment],
 );
 
 export const GetUpcomingEventsQuery = graphql(
@@ -108,3 +125,16 @@ export const GetFutureEventCountQuery = graphql(`
     }
   }
 `);
+
+export const GetEventsStartingFromQuery = graphql(
+  `
+    query GetUpdatedEvents($from: DateTime) {
+      events(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
+        data {
+          ...Event
+        }
+      }
+    }
+  `,
+  [EventFragment],
+);

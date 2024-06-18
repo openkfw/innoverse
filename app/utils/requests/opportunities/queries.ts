@@ -13,6 +13,7 @@ export const OpportunityFragment = graphql(
             ...InnoUser
           }
         }
+        updatedAt
         expense
         participants {
           data {
@@ -68,6 +69,9 @@ export const GetBasicOpportunityByIdQuery = graphql(
             project {
               data {
                 id
+                attributes {
+                  title
+                }
               }
             }
           }
@@ -115,3 +119,16 @@ export const GetOpportunityCountProjectIdQuery = graphql(`
     }
   }
 `);
+
+export const GetUpdatedOpportunitiesQuery = graphql(
+  `
+    query GetUpdatedOpportunities($from: DateTime) {
+      opportunities(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
+        data {
+          ...Opportunity
+        }
+      }
+    }
+  `,
+  [OpportunityFragment],
+);

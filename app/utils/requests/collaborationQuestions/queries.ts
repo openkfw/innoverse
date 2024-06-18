@@ -6,14 +6,19 @@ export const CollaborationQuestionFragment = graphql(
     fragment CollaborationQuestion on CollaborationQuestionEntity @_unmask {
       id
       attributes {
+        updatedAt
         project {
           data {
             id
+            attributes {
+              title
+            }
           }
         }
         title
         isPlatformFeedback
         description
+        updatedAt
         authors {
           data {
             ...InnoUser
@@ -79,3 +84,16 @@ export const GetCollaborationQuestionsCountProjectIdQuery = graphql(`
     }
   }
 `);
+
+export const GetCollaborationQuestsionsStartingFromQuery = graphql(
+  `
+    query GetUpdatedCollaborationQuestions($from: DateTime) {
+      collaborationQuestions(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
+        data {
+          ...CollaborationQuestion
+        }
+      }
+    }
+  `,
+  [CollaborationQuestionFragment],
+);

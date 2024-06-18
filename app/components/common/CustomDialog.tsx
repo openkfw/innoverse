@@ -23,6 +23,7 @@ interface CustomDialogProps {
   subtitle?: ReactNode;
   closeIcon?: boolean;
   sx?: SxProps;
+  titleSx?: SxProps;
 }
 
 const Transition = React.forwardRef(function Transition(
@@ -46,6 +47,7 @@ const CustomDialog: FC<CustomDialogProps> = ({
   title,
   subtitle,
   sx,
+  titleSx,
   closeIcon = true,
 }) => {
   return (
@@ -65,7 +67,7 @@ const CustomDialog: FC<CustomDialogProps> = ({
       )}
 
       <DialogTitle sx={dialogTitleStyle}>
-        <Box>{title}</Box>
+        <Box sx={titleSx}>{title}</Box>
         <Box>{subtitle}</Box>
       </DialogTitle>
 

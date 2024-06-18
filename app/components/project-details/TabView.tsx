@@ -14,7 +14,7 @@ import { Project, ProjectUpdateWithAdditionalData } from '@/common/types';
 import theme from '@/styles/theme';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
-import { CommentContextProvider } from '../common/comments/comment-context';
+import { EditingContextProvider } from '../common/editing/editing-context';
 import { UpdatesTab } from '../updates/UpdatesTab';
 
 import { EventsTab } from './events/EventsTab';
@@ -30,11 +30,11 @@ function CustomTabPanel(props: TabPanelProps) {
   const { children, value, id, index, ...other } = props;
 
   return (
-    <CommentContextProvider>
+    <EditingContextProvider>
       <div role="tabpanel" hidden={value !== index} id={id} aria-labelledby={`tab-${id}`} {...other}>
         <Box sx={{ paddingTop: 3 }}>{children}</Box>
       </div>
-    </CommentContextProvider>
+    </EditingContextProvider>
   );
 }
 

@@ -25,7 +25,7 @@ export const NewsSection = ({ updates }: NewsProps) => {
       title="Innovationsnews"
       subtitle="Aktuelles aus den Initiativen"
       topRightMenu={
-        <Link href={'news'}>
+        <Link href="newsFeed">
           <CustomButton>Mehr news</CustomButton>
         </Link>
       }

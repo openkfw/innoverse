@@ -2,20 +2,22 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { Comment, CommentResponse, User, UserSession } from '@/common/types';
+import { getCollaborationCommentById } from '@/repository/db/collaboration_comment';
 import {
-  addCollaborationComment,
-  deleteCollaborationComment,
-  getCollaborationCommentById,
-  handleCollaborationCommentUpvote,
-  updateCollaborationComment,
-} from '@/repository/db/collaboration_comment';
+  getCollaborationCommentResponseById,
+  handleCollaborationCommentResponseUpvotedByInDb,
+  updateCollaborationCommentResponseInDb,
+} from '@/repository/db/collaboration_comment_response';
 import {
   addCollaborationCommentResponse,
   deleteCollaborationCommentResponse,
-  getCollaborationCommentResponseById,
-  handleCollaborationCommentResponseUpvotedBy,
-  updateCollaborationCommentResponse,
-} from '@/repository/db/collaboration_comment_response';
+} from '@/services/collaborationCommentResponseService';
+import {
+  addCollaborationComment,
+  deleteCollaborationComment,
+  handleCollaborationCommentUpvote,
+  updateCollaborationComment,
+} from '@/services/collaborationCommentService';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
@@ -43,13 +45,14 @@ export const addProjectCollaborationComment = withAuth(
     try {
       const validatedParams = validateParams(addCollaborationCommentSchema, body);
       if (validatedParams.status === StatusCodes.OK) {
-        const newComment = await addCollaborationComment(
-          dbClient,
-          body.projectId,
-          body.questionId,
-          user.providerId,
-          body.comment,
-        );
+        const newComment = await addCollaborationComment({
+          comment: {
+            comment: body.comment,
+            projectId: body.projectId,
+            questionId: body.questionId,
+          },
+          user,
+        });
         return {
           status: StatusCodes.OK,
           data: {
@@ -107,7 +110,7 @@ export const deleteProjectCollaborationComment = withAuth(async (user: UserSessi
     };
   }
 
-  await deleteCollaborationComment(dbClient, body.commentId);
+  await deleteCollaborationComment(body.commentId);
 
   return {
     status: StatusCodes.OK,
@@ -142,7 +145,13 @@ export const updateProjectCollaborationComment = withAuth(
       };
     }
 
-    const updatedComment = await updateCollaborationComment(dbClient, body.commentId, body.updatedText);
+    const updatedComment = await updateCollaborationComment({
+      user,
+      comment: {
+        id: body.commentId,
+        comment: body.updatedText,
+      },
+    });
 
     return {
       status: StatusCodes.OK,
@@ -156,7 +165,7 @@ export const handleProjectCollaborationCommentUpvotedBy = withAuth(
     try {
       const validatedParams = validateParams(collaborationCommentUpvotedBySchema, body);
       if (validatedParams.status === StatusCodes.OK) {
-        await handleCollaborationCommentUpvote(dbClient, body.commentId, user.providerId);
+        await handleCollaborationCommentUpvote({ commentId: body.commentId, user });
         return { status: StatusCodes.OK };
       }
       return {
@@ -190,7 +199,7 @@ export const addProjectCollaborationCommentResponse = withAuth(
       };
     }
 
-    const response = await addCollaborationCommentResponse(dbClient, user.providerId, body.response, body.comment.id);
+    const response = await addCollaborationCommentResponse({ user, response: body.response, comment: body.comment });
     const getUpvoters = response.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote));
     const upvoters = await getPromiseResults(getUpvoters);
 
@@ -238,7 +247,7 @@ export const deleteProjectCollaborationCommentResponse = withAuth(
       };
     }
 
-    await deleteCollaborationCommentResponse(dbClient, body.responseId);
+    await deleteCollaborationCommentResponse({ user, response: { id: body.responseId } });
 
     return {
       status: StatusCodes.OK,
@@ -274,7 +283,7 @@ export const updateProjectCollaborationCommentResponse = withAuth(
       };
     }
 
-    const updatedResponse = await updateCollaborationCommentResponse(dbClient, body.responseId, body.updatedText);
+    const updatedResponse = await updateCollaborationCommentResponseInDb(dbClient, body.responseId, body.updatedText);
 
     return {
       status: StatusCodes.OK,
@@ -287,7 +296,7 @@ export const handleProjectCollaborationCommentResponseUpvotedBy = withAuth(
   async (user: UserSession, body: { responseId: string }) => {
     const validatedParams = validateParams(collaborationCommentResponseUpvotedBySchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      await handleCollaborationCommentResponseUpvotedBy(dbClient, body.responseId, user.providerId);
+      await handleCollaborationCommentResponseUpvotedByInDb(dbClient, body.responseId, user.providerId);
       return { status: StatusCodes.OK };
     }
     return {

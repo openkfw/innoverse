@@ -7,6 +7,8 @@ import HeroSection from '@/components/project-details/HeroSection';
 import ProjectWrapper from '@/components/project-details/ProjectWrapper';
 import { getProjectById } from '@/utils/requests/project/requests';
 
+export const dynamic = 'force-dynamic';
+
 async function ProjectPage({ params }: { params: { id: string } }) {
   const project = await getProjectById(params.id);
 

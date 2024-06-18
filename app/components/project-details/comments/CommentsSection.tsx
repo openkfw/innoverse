@@ -7,10 +7,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Comment, Project, ProjectQuestion } from '@/common/types';
-import { UnsavedCommentChangesDialog } from '@/components/common/comments/UnsavedChangesDialog';
+import { UnsavedEditingChangesDialog } from '@/components/common/editing/UnsavedChangesDialog';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 
-import WriteCommentCard from '../../collaboration/writeComment/WriteCommentCard';
+import WriteTextCard from '../../common/editing/writeText/WriteTextCard';
 
 import { addProjectComment } from './actions';
 import { ProjectCommentCard } from './ProjectCommentCard';
@@ -64,10 +64,14 @@ const CommentsSection = ({ project }: { project: Project }) => {
             onDelete={() => deleteComment(comment)}
           />
         ))}
-        <WriteCommentCard projectName={project.title} onSubmit={addComment} sx={{ width: '622px', maxWidth: '100%' }} />
+        <WriteTextCard
+          metadata={{ projectName: project.title }}
+          onSubmit={addComment}
+          sx={{ width: '622px', maxWidth: '100%' }}
+        />
       </Stack>
 
-      <UnsavedCommentChangesDialog />
+      <UnsavedEditingChangesDialog />
     </Stack>
   );
 };

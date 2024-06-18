@@ -4,14 +4,12 @@ import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
 import { handleFeedbackSchema } from '@/components/landing/feedbackSection/validationSchema';
-import { addCollaborationComment } from '@/repository/db/collaboration_comment';
+import { addCollaborationComment } from '@/services/collaborationCommentService';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { getPlatformFeedbackCollaborationQuestion } from '@/utils/requests/collaborationQuestions/requests';
 import { validateParams } from '@/utils/validationHelper';
-
-import dbClient from '../../../repository/db/prisma/prisma';
 
 const logger = getLogger();
 
@@ -24,14 +22,15 @@ export const saveFeedback = withAuth(
       if (validatedParams.status === StatusCodes.OK && question) {
         const { feedback, showOnProjectPage } = body;
 
-        await addCollaborationComment(
-          dbClient,
-          question.projectId,
-          question.collaborationQuestionId,
-          user.providerId,
-          feedback,
-          showOnProjectPage,
-        );
+        await addCollaborationComment({
+          comment: {
+            projectId: question.projectId,
+            questionId: question.collaborationQuestionId,
+            comment: feedback,
+            visible: showOnProjectPage,
+          },
+          user,
+        });
         return {
           status: StatusCodes.OK,
         };

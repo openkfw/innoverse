@@ -4,19 +4,16 @@ import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
-import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { Opportunity } from '@/common/types';
-import AvatarIcon from '@/components/common/AvatarIcon';
 import { errorMessage } from '@/components/common/CustomToast';
-import { TooltipContent } from '@/components/project-details/TooltipContent';
+import { UserAvatar } from '@/components/common/UserAvatar';
 import theme from '@/styles/theme';
 
 import InteractionButton, { InteractionType } from '../../common/InteractionButton';
-import { StyledTooltip } from '../../common/StyledTooltip';
 
 import { handleApplyForOpportunity, hasAppliedForOpportunity } from './actions';
 
@@ -87,15 +84,7 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
               Contact Person
             </Typography>
             {opportunity.contactPerson ? (
-              <Box sx={{ width: '10%' }}>
-                <StyledTooltip
-                  arrow
-                  title={<TooltipContent projectName={projectName} teamMember={opportunity.contactPerson} />}
-                  placement="bottom"
-                >
-                  <AvatarIcon user={opportunity.contactPerson} size={48} allowAnimation />
-                </StyledTooltip>
-              </Box>
+              <UserAvatar sx={{ width: '10%' }} size={48} user={opportunity.contactPerson} allowAnimation />
             ) : (
               <Typography variant="caption" color="text.disabled">
                 Niemand zugewiesen

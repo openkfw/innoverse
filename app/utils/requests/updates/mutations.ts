@@ -20,3 +20,16 @@ export const CreateProjectUpdateMutation = graphql(
   `,
   [ProjectUpdateFragment],
 );
+
+export const UpdateProjectUpdateMutation = graphql(
+  `
+    mutation UpdateProjectUpdate($updateId: ID!, $comment: String) {
+      updateUpdate(id: $updateId, data: { comment: $comment }) {
+        data {
+          ...ProjectUpdate
+        }
+      }
+    }
+  `,
+  [ProjectUpdateFragment],
+);

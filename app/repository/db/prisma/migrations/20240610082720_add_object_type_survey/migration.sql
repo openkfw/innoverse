@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "ObjectType" ADD VALUE 'SURVEY_QUESTION';

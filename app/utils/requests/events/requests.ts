@@ -2,18 +2,20 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { Event, EventWithAdditionalData, UserSession } from '@/common/types';
+import { Event, EventWithAdditionalData, ObjectType, UserSession } from '@/common/types';
 import { eventSchema, projectFilterSchema } from '@/components/project-details/events/validationSchema';
 import { RequestError } from '@/entities/error';
 import dbClient from '@/repository/db/prisma/prisma';
-import { countNumberOfReactions } from '@/repository/db/reaction';
+import { countNumberOfReactions, getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { mapToEvents } from '@/utils/requests/events/mappings';
+import { mapToEvent, mapToEvents } from '@/utils/requests/events/mappings';
 import {
+  GetEventByIdQuery,
   GetEventsPageQuery,
+  GetEventsStartingFromQuery,
   GetFutureEventCountQuery,
   GetFutureEventsPageQuery,
   GetPastEventsPageQuery,
@@ -24,6 +26,42 @@ import { findReactionByUser } from '@/utils/requests/updates/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 const logger = getLogger();
+
+export async function getEventById(id: string) {
+  try {
+    const response = await strapiGraphQLFetcher(GetEventByIdQuery, { id });
+    if (!response.event?.data) return null;
+    const event = mapToEvent(response.event.data);
+    return event;
+  } catch (err) {
+    const error = strapiError('Getting event by id', err as RequestError, id);
+    logger.error(error);
+  }
+}
+
+export async function getEventByIdWithReactions(id: string) {
+  try {
+    const response = await strapiGraphQLFetcher(GetEventByIdQuery, { id });
+    if (!response.event?.data) throw new Error('Response contained no event');
+    const event = mapToEvent(response.event.data);
+    const reactions = await getReactionsForEntity(dbClient, ObjectType.EVENT, event.id);
+    return { ...event, reactions };
+  } catch (err) {
+    const error = strapiError('Getting project update', err as RequestError);
+    logger.error(error);
+  }
+}
+
+export async function getEventsStartingFrom({ from }: { from: Date }) {
+  try {
+    const response = await strapiGraphQLFetcher(GetEventsStartingFromQuery, { from });
+    const events = mapToEvents(response.events?.data);
+    return events;
+  } catch (err) {
+    const error = strapiError('Getting upcoming events', err as RequestError);
+    logger.error(error);
+  }
+}
 
 export async function getUpcomingEvents() {
   try {
@@ -87,8 +125,8 @@ export async function getEventsWithAdditionalData(events: Event[]) {
 }
 
 export async function getEventWithAdditionalData(event: Event): Promise<EventWithAdditionalData> {
-  const { data: reactionForUser } = await findReactionByUser({ objectType: 'EVENT', objectId: event.id });
-  const reactionCountResult = await countNumberOfReactions(dbClient, 'EVENT', event.id);
+  const { data: reactionForUser } = await findReactionByUser({ objectType: ObjectType.EVENT, objectId: event.id });
+  const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.EVENT, event.id);
 
   const reactionCount = reactionCountResult.map((r) => ({
     count: r._count.shortCode,
@@ -100,7 +138,9 @@ export async function getEventWithAdditionalData(event: Event): Promise<EventWit
 
   return {
     ...event,
-    reactionForUser: reactionForUser || undefined,
+    reactionForUser: reactionForUser
+      ? { ...reactionForUser, objectType: reactionForUser.objectType as ObjectType }
+      : null,
     reactionCount,
   };
 }

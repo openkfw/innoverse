@@ -23,7 +23,7 @@ interface CarouselItem {
   projectId?: string;
   title?: string;
   comment?: string;
-  updatedAt?: string;
+  updatedAt?: Date;
   topic?: string;
   author?: Author;
   projectStart?: string;

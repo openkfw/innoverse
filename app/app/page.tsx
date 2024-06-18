@@ -12,6 +12,8 @@ import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
 import { getMainPageData } from '@/utils/requests/pageRequests';
 
+export const dynamic = 'force-dynamic';
+
 async function IndexPage() {
   // As the page is not staticaly generated and no ISR is used here fetch is required
   const data = await getMainPageData();

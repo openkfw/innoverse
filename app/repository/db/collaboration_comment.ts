@@ -17,7 +17,35 @@ export async function getCollaborationQuestionComments(client: PrismaClient, pro
   });
 }
 
-export async function addCollaborationComment(
+export async function getCollaborationCommentIsUpvotedBy(client: PrismaClient, commentId: string, upvotedBy: string) {
+  const upvotedCommentCount = await client.collaborationComment.count({
+    where: {
+      id: commentId,
+      upvotedBy: { has: upvotedBy },
+    },
+  });
+
+  return upvotedCommentCount > 0;
+}
+
+export async function getCollaborationCommentUpvotedBy(client: PrismaClient, commentId: string) {
+  const comment = await client.collaborationComment.findUnique({
+    where: {
+      id: commentId,
+    },
+    select: {
+      upvotedBy: true,
+    },
+  });
+
+  return comment?.upvotedBy;
+}
+
+export async function getCollaborationCommentStartingFrom(client: PrismaClient, from: Date) {
+  return await client.collaborationComment.findMany({ where: { createdAt: { gte: from } } });
+}
+
+export async function addCollaborationCommentToDb(
   client: PrismaClient,
   projectId: string,
   questionId: string,
@@ -36,7 +64,7 @@ export async function addCollaborationComment(
   });
 }
 
-export async function updateCollaborationComment(client: PrismaClient, commentId: string, updatedText: string) {
+export async function updateCollaborationCommentInDb(client: PrismaClient, commentId: string, updatedText: string) {
   return client.collaborationComment.update({
     where: {
       id: commentId,
@@ -47,7 +75,7 @@ export async function updateCollaborationComment(client: PrismaClient, commentId
   });
 }
 
-export async function deleteCollaborationComment(client: PrismaClient, commentId: string) {
+export async function deleteCollaborationCommentInDb(client: PrismaClient, commentId: string) {
   return client.collaborationComment.delete({
     where: {
       id: commentId,
@@ -55,18 +83,7 @@ export async function deleteCollaborationComment(client: PrismaClient, commentId
   });
 }
 
-export async function getCollaborationCommentIsUpvotedBy(client: PrismaClient, commentId: string, upvotedBy: string) {
-  const upvotedCommentCount = await client.collaborationComment.count({
-    where: {
-      id: commentId,
-      upvotedBy: { has: upvotedBy },
-    },
-  });
-
-  return upvotedCommentCount > 0;
-}
-
-export async function handleCollaborationCommentUpvote(client: PrismaClient, commentId: string, upvotedBy: string) {
+export async function handleCollaborationCommentUpvoteInDb(client: PrismaClient, commentId: string, upvotedBy: string) {
   return client.$transaction(async (tx) => {
     const result = await tx.collaborationComment.findFirst({
       where: { id: commentId },

@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { Project } from '@/common/types';
+import { ObjectType, Project } from '@/common/types';
 import theme from '@/styles/theme';
 
 import InteractionButton, { interactionButtonStyles, InteractionType } from '../common/InteractionButton';
@@ -65,11 +65,11 @@ export const ProjectInfoCard = (props: ProjectInfoProps) => {
     function toggleFollow() {
       if (isFollowed) {
         setFollowed(false);
-        handleRemoveFollower({ projectId: project.id });
+        handleRemoveFollower({ objectType: ObjectType.PROJECT, objectId: project.id });
         setFollowersAmount(followersAmount - 1);
       } else {
         setFollowed(true);
-        handleFollow({ projectId: project.id });
+        handleFollow({ objectType: ObjectType.PROJECT, objectId: project.id });
         setFollowersAmount(followersAmount + 1);
       }
     }

@@ -1,8 +1,10 @@
+import { ObjectType } from '@/common/types';
 import { PrismaClient } from '@prisma/client';
+import type { ObjectType as PrismaObjectType } from '@prisma/client';
 
-export async function getTotalReactions(client: PrismaClient, type: 'UPDATE' | 'EVENT') {
+export async function getTotalReactions(client: PrismaClient, type: ObjectType) {
   return client.reaction.groupBy({
-    where: { objectType: type },
+    where: { objectType: type as PrismaObjectType },
     by: ['shortCode'],
     _count: true,
   });

@@ -2,17 +2,20 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { Comment, UserSession } from '@/common/types';
+import { Comment, ObjectType, UserSession } from '@/common/types';
 import { getCommentsSchema } from '@/components/project-details/comments/validationSchema';
 import { RequestError } from '@/entities/error';
+import { getCollaborationCommentResponseCount } from '@/repository/db/collaboration_comment_response';
 import { getProjectFollowers, isProjectFollowedBy } from '@/repository/db/follow';
 import { getProjectLikes, isProjectLikedBy } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getComments, isCommentUpvotedBy } from '@/repository/db/project_comment';
+import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
 import { getFulfilledResults, getPromiseResults, sortDateByCreatedAt } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
+import { mapFollow } from '@/utils/newsFeed/redis/redisMappings';
 import { getCollaborationQuestionsByProjectId } from '@/utils/requests/collaborationQuestions/requests';
 import { getEventsWithAdditionalData, getProjectEventsPage } from '@/utils/requests/events/requests';
 import { getOpportunitiesByProjectId } from '@/utils/requests/opportunities/requests';
@@ -60,14 +63,14 @@ export async function getProjectById(id: string) {
     const futureEventsWithAdditionalData = await getEventsWithAdditionalData(futureEvents);
     const pastEventsWithAdditionalData = await getEventsWithAdditionalData(pastEvents);
 
-    const project = await mapToProject({
+    const project = mapToProject({
       projectBaseData: projectData,
       opportunities,
       questions,
       surveyQuestions,
       collaborationQuestions,
       comments,
-      followers,
+      followers: followers.map(mapFollow),
       likes,
       isLiked: isLiked ?? false,
       isFollowed: isFollowed ?? false,
@@ -190,11 +193,14 @@ export const getProjectComments = async (body: { projectId: string }) => {
           const upvotes = await Promise.allSettled(
             comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote)),
           ).then((results) => getFulfilledResults(results));
+          const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
 
           return {
             ...comment,
+            projectName: await getProjectName(comment.projectId),
             upvotedBy: upvotes,
             author,
+            responseCount,
           } as Comment;
         }),
       ).then((results) => getFulfilledResults(results));
@@ -229,4 +235,28 @@ export const getProjectComments = async (body: { projectId: string }) => {
       message: 'Getting Project Comments failed',
     };
   }
+};
+
+export async function getProjectByIdWithReactions(id: string) {
+  try {
+    const response = await strapiGraphQLFetcher(GetProjectByIdQuery, { id });
+    if (!response?.project?.data) throw new Error('Response contained no project');
+    const project = mapToBasicProject(response.project.data);
+    const reactions = await getReactionsForEntity(dbClient, ObjectType.PROJECT, project.id);
+    return { ...project, reactions };
+  } catch (err) {
+    const error = strapiError('Getting project', err as RequestError);
+    logger.error(error);
+  }
+}
+
+export const getProjectName = async (projectId: string | undefined) => {
+  if (!projectId) {
+    return undefined;
+  }
+  const project = await getProjectById(projectId);
+  if (project) {
+    return project.title;
+  }
+  return undefined;
 };

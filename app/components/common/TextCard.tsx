@@ -1,38 +1,27 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { User } from '@/common/types';
 import { parseStringForLinks } from '@/components/common/LinkString';
 import theme from '@/styles/theme';
 
-import { TooltipContent } from '../project-details/TooltipContent';
-
-import AvatarIcon from './AvatarIcon';
-import { StyledTooltip } from './StyledTooltip';
-
-import badgeIcon from '/public/images/icons/badge.svg';
-
 interface TextCardProps {
-  content: { author?: User; text: string };
+  text: string;
+  header?: React.ReactNode;
   footer?: React.ReactNode;
   sx?: SxProps;
-  headerSx?: SxProps;
 }
 
 const MAX_TEXT_LENGTH = 200;
 
-export const TextCard = ({ content, footer, sx, headerSx }: TextCardProps) => {
-  const { author, text } = content;
+export const TextCard = ({ text, header, footer, sx }: TextCardProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const getText = () => {
@@ -52,29 +41,7 @@ export const TextCard = ({ content, footer, sx, headerSx }: TextCardProps) => {
 
   return (
     <Card sx={{ ...cardStyle, ...sx }}>
-      {author && (
-        <CardHeader
-          sx={{ ...cardHeaderStyles, ...headerSx }}
-          avatar={
-            <Box>
-              <StyledTooltip arrow key={author.id} title={<TooltipContent teamMember={author} />} placement="bottom">
-                <AvatarIcon user={author} size={32} allowAnimation disableTransition />
-              </StyledTooltip>
-            </Box>
-          }
-          title={
-            <Stack direction="row" spacing={1} sx={cardHeaderTitleStyles}>
-              <Typography variant="subtitle2" color="primary.dark">
-                {author.name}
-              </Typography>
-              {author.badge && <Image src={badgeIcon} alt="badge" />}
-              <Typography variant="subtitle2" color="text.secondary">
-                {author.role}
-              </Typography>
-            </Stack>
-          }
-        />
-      )}
+      {header}
       <CardContent sx={{ ...cardContentStyles }} style={{ paddingBottom: 0 }}>
         <Stack direction="column" spacing={2}>
           <Box sx={{ ...textContainerStyle, overflowWrap: isCollapsed ? 'break-word' : 'unset' }}>
@@ -106,22 +73,6 @@ const cardStyle = {
   '.MuiCardContent-root': {
     paddingLeft: 0,
   },
-};
-
-const cardHeaderStyles = {
-  paddingBottom: '11px',
-  paddingTop: 0,
-  '& .MuiCardHeader-avatar': {
-    marginRight: '8px',
-  },
-};
-
-const cardHeaderTitleStyles = {
-  fontSize: 14,
-  fontWeight: '500',
-  alignItems: 'center',
-  justifyItems: 'center',
-  marginLeft: '16px',
 };
 
 const cardContentStyles = {

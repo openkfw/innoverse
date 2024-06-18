@@ -1,15 +1,15 @@
 'use server';
 
 import { UserSession } from '@/common/types';
+import { clientConfig } from '@/config/client';
+import { serverConfig } from '@/config/server';
+import { RequestError } from '@/entities/error';
 import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { CreateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
 import { GetInnoUserByEmailQuery, GetInnoUserByProviderIdQuery } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { clientConfig } from '@/config/client';
-import { serverConfig } from '@/config/server';
-import { RequestError } from '@/entities/error';
 
 const logger = getLogger();
 

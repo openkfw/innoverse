@@ -4,22 +4,17 @@ import React, { createContext, Dispatch, SetStateAction, useContext, useMemo, us
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
-import { AmountOfNews, Filters, ProjectUpdateWithAdditionalData } from '@/common/types';
+import { AmountOfNews, Filters, ProjectUpdateWithAdditionalData, SortValues } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import { getProjectUpdates, getProjectUpdatesPage } from '@/utils/requests/updates/requests';
-
-export enum SortValues {
-  DESC = 'desc',
-  ASC = 'asc',
-}
 
 interface NewsFilterContextInterface {
   news: ProjectUpdateWithAdditionalData[];
   setNews: Dispatch<SetStateAction<ProjectUpdateWithAdditionalData[]>>;
   filters: Filters;
   setFilters: (filters: Filters) => void;
-  sort: SortValues.ASC | SortValues.DESC;
-  setSort: (sort: SortValues.ASC | SortValues.DESC) => void;
+  sort: SortValues;
+  setSort: (sort: SortValues) => void;
   refetchNews: (options?: { filters?: Filters; fullRefetch?: boolean }) => void;
   sortNews: () => void;
   isLoading: boolean;

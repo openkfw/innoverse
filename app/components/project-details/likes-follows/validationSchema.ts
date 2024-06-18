@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { ObjectType } from '@/common/types';
+
 export const likeSchema = z
   .object({
     projectId: z.string(),
@@ -8,6 +10,7 @@ export const likeSchema = z
 
 export const followSchema = z
   .object({
-    projectId: z.string(),
+    objectId: z.string(),
+    objectType: z.nativeEnum(ObjectType),
   })
   .required();

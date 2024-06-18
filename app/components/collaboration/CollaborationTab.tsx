@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { Project } from '@/common/types';
 import theme from '@/styles/theme';
 
-import { UnsavedCommentChangesDialog } from '../common/comments/UnsavedChangesDialog';
+import { UnsavedEditingChangesDialog } from '../common/editing/UnsavedChangesDialog';
 import EmptyTabContent from '../project-details/EmptyTabContent';
 
 import OpportunityCard from './opportunities/OpportunityCard';
@@ -51,7 +51,7 @@ export const CollaborationTab = ({ project, ...otherProps }: CollaborationTabPro
         </Box>
       </CardContent>
 
-      <UnsavedCommentChangesDialog />
+      <UnsavedEditingChangesDialog />
     </Card>
   );
 };

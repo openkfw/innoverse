@@ -14,6 +14,28 @@ export const GetQuestionsByProjectIdQuery = graphql(
                 ...InnoUser
               }
             }
+            updatedAt
+          }
+        }
+      }
+    }
+  `,
+  [InnoUserFragment],
+);
+
+export const GetUpdatedQuestionsQuery = graphql(
+  `
+    query GetUpdatedQuestions($from: DateTime) {
+      questions(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
+        data {
+          id
+          attributes {
+            title
+            authors {
+              data {
+                ...InnoUser
+              }
+            }
           }
         }
       }

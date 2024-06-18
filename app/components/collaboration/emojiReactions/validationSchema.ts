@@ -1,17 +1,19 @@
 import { z } from 'zod';
 
-export const reactionShemaForUpdate = z
+import { ObjectType } from '@/common/types';
+
+export const reactionSchema = z
   .object({
-    updateId: z.string(),
+    objectId: z.string(),
+    objectType: z.nativeEnum(ObjectType),
     operation: z.string(),
     emoji: z.object({ shortCode: z.string(), nativeSymbol: z.string() }),
   })
   .required();
 
-export const reactionShemaForEvent = z
+export const basicSchema = z
   .object({
-    eventId: z.string(),
-    operation: z.string(),
-    emoji: z.object({ shortCode: z.string(), nativeSymbol: z.string() }),
+    objectId: z.string(),
+    objectType: z.nativeEnum(ObjectType),
   })
   .required();

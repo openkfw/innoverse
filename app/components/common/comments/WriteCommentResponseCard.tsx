@@ -3,33 +3,28 @@ import React from 'react';
 
 import { SxProps } from '@mui/material/styles';
 
-import { Comment } from '@/common/types';
-import { useCommentInteractions, useCommentState } from '@/components/common/comments/comment-context';
+import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
 
-import WriteCommentCard from '../../collaboration/writeComment/WriteCommentCard';
+import WriteTextCard from '../editing/writeText/WriteTextCard';
 
 interface WriteCommentResponseCardProps {
-  comment: Comment;
-  projectName: string;
+  comment: { id: string };
+  projectName?: string;
   onRespond: (response: string) => Promise<void>;
   sx?: SxProps;
 }
 
 const WriteCommentResponseCard = ({ comment, projectName, onRespond, sx }: WriteCommentResponseCardProps) => {
-  const commentState = useCommentState();
-  const commentInteractions = useCommentInteractions();
+  const editingState = useEditingState();
+  const editingInteractions = useEditingInteractions();
 
   const handleResponse = async (comment: string) => {
     await onRespond(comment);
-    commentInteractions.onSubmitResponse();
+    editingInteractions.onSubmitResponse();
   };
 
   return (
-    <>
-      {commentState.isResponding(comment) && (
-        <WriteCommentCard sx={sx} projectName={projectName} onSubmit={handleResponse} />
-      )}
-    </>
+    editingState.isResponding(comment) && <WriteTextCard sx={sx} metadata={{ projectName }} onSubmit={handleResponse} />
   );
 };
 

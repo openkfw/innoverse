@@ -4,11 +4,11 @@ import { StatusCodes } from 'http-status-codes';
 
 import { User, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
+import { createProjectUpdate } from '@/services/updateService';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
-import { createProjectUpdate } from '@/utils/requests/updates/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import { AddUpdateData } from './AddUpdateForm';

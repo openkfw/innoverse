@@ -1,11 +1,11 @@
 'use server';
 import { ResultOf, VariablesOf } from 'gql.tada';
 import { DocumentNode, Kind, OperationDefinitionNode, print } from 'graphql';
+import { StatusCodes } from 'http-status-codes';
 
 import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { RequestError, StrapiRequestError } from '@/entities/error';
-import { StatusCodes } from 'http-status-codes';
 
 const strapiGraphQLFetcher = async <TQuery extends DocumentNode>(
   graphqlQuery: TQuery,

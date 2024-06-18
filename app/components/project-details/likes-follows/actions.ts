@@ -2,9 +2,9 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { UserSession } from '@/common/types';
-import { addFollower, deleteProjectAndUserFollower } from '@/repository/db/follow';
+import { ObjectType, UserSession } from '@/common/types';
 import { addLike, deleteProjectAndUserLike } from '@/repository/db/like';
+import { addFollow, removeFollow } from '@/services/followService';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
@@ -68,37 +68,45 @@ export const handleRemoveLike = withAuth(async (user: UserSession, body: { proje
   }
 });
 
-export const handleRemoveFollower = withAuth(async (user: UserSession, body: { projectId: string }) => {
-  try {
-    const validatedParams = validateParams(followSchema, body);
-    if (validatedParams.status === StatusCodes.OK) {
-      await deleteProjectAndUserFollower(dbClient, body.projectId, user.providerId);
-      return { status: StatusCodes.OK };
+export const handleRemoveFollower = withAuth(
+  async (user: UserSession, body: { objectId: string; objectType: ObjectType }) => {
+    try {
+      const validatedParams = validateParams(followSchema, body);
+      if (validatedParams.status === StatusCodes.OK) {
+        await removeFollow({
+          user,
+          object: { objectId: body.objectId, objectType: body.objectType, followedBy: user.providerId },
+        });
+        return { status: StatusCodes.OK };
+      }
+      return {
+        status: validatedParams.status,
+        errors: validatedParams.errors,
+        message: validatedParams.message,
+      };
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Removing a follower for a ${body.objectType} ${body.objectId} for user ${user.providerId}`,
+        err as Error,
+        body.objectId,
+      );
+      logger.error(error);
+      return {
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: `Unfollowing the ${body.objectType} failed`,
+      };
     }
-    return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
-      message: validatedParams.message,
-    };
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Removing a follower for a Project ${body.projectId} for user ${user.providerId}`,
-      err as Error,
-      body.projectId,
-    );
-    logger.error(error);
-    return {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Unfollowing the project failed',
-    };
-  }
-});
+  },
+);
 
-export const handleFollow = withAuth(async (user: UserSession, body: { projectId: string }) => {
+export const handleFollow = withAuth(async (user: UserSession, body: { objectId: string; objectType: ObjectType }) => {
   try {
     const validatedParams = validateParams(followSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      await addFollower(dbClient, body.projectId, user.providerId);
+      await addFollow({
+        user,
+        object: { objectId: body.objectId, objectType: body.objectType, followedBy: user.providerId },
+      });
       return { status: StatusCodes.OK };
     }
     return {
@@ -108,14 +116,14 @@ export const handleFollow = withAuth(async (user: UserSession, body: { projectId
     };
   } catch (err) {
     const error: InnoPlatformError = dbError(
-      `Adding a follower to a Project ${body.projectId} for user ${user.providerId}`,
+      `Adding a follower to a ${body.objectType} ${body.objectId} for user ${user.providerId}`,
       err as Error,
-      body.projectId,
+      body.objectId,
     );
     logger.error(error);
     return {
       status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Following the project failed',
+      message: `Following the ${body.objectType} failed`,
     };
   }
 });
