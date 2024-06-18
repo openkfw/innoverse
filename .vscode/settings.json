@@ -1,4 +1,12 @@
 {
   "typescript.tsdk": "app/node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "azureAutomation.directory.basePath": "",
+  "azureFunctions.deploySubpath": "functionapp",
+  "azureFunctions.postDeployTask": "npm install (functions)",
+  "azureFunctions.projectLanguage": "TypeScript",
+  "azureFunctions.projectRuntime": "~3",
+  "debug.internalConsoleOptions": "neverOpen",
+  "azureFunctions.projectSubpath": "functionapp",
+  "azureFunctions.preDeployTask": "npm prune (functions)"
 }

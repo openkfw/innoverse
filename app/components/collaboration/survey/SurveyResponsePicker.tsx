@@ -14,6 +14,7 @@ interface SurveyResponsePickerProps {
   selectedOption: string | undefined;
   votesPerOption: { option: string; votes: number; percentage: number }[];
   sx?: SxProps;
+  fill?: boolean;
 }
 
 export const SurveyResponsePicker = ({
@@ -22,6 +23,7 @@ export const SurveyResponsePicker = ({
   selectedOption,
   votesPerOption,
   sx,
+  fill,
 }: SurveyResponsePickerProps) => {
   const getFillPercentage = (response: ResponseOption) => {
     return (
@@ -35,7 +37,7 @@ export const SurveyResponsePicker = ({
         exclusive
         orientation="vertical"
         size="small"
-        sx={toggleButonStyle}
+        sx={{ ...toggleButonStyle, width: fill ? '1000px' : '360px' }}
         onChange={(_, vote) => handleVote(vote)}
       >
         {responseOptions.map((response, idx) => (
@@ -77,7 +79,6 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 }));
 
 const toggleButonStyle: SxProps = {
-  width: '360px',
   maxWidth: '100%',
   paddingRight: '1em',
   paddingBottom: '1em',

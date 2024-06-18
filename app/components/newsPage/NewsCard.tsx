@@ -1,33 +1,24 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import { SxProps, Theme } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 
-import { ProjectUpdateWithAdditionalData } from '@/common/types';
-import AvatarIcon from '@/components/common/AvatarIcon';
+import { ObjectType, ProjectUpdateWithAdditionalData } from '@/common/types';
+import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import { LinkWithArrowLeft } from '@/components/common/LinkWithArrowLeft';
+import { UpdateCardContent } from '@/components/common/UpdateCardText';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
 import theme from '@/styles/theme';
-import { formatDate } from '@/utils/helpers';
 
-import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/UpdateEmojiReactionCard';
+import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/cards/UpdateEmojiReactionCard';
 import { errorMessage } from '../common/CustomToast';
-import { parseStringForLinks } from '../common/LinkString';
-import { StyledTooltip } from '../common/StyledTooltip';
-import { TooltipContent } from '../project-details/TooltipContent';
 
 interface NewsCardProps {
   update: ProjectUpdateWithAdditionalData;
@@ -35,22 +26,37 @@ interface NewsCardProps {
   noClamp?: boolean;
 }
 
+interface UpdateCardActionsProps {
+  update: ProjectUpdateWithAdditionalData;
+}
+
 export default function NewsCard(props: NewsCardProps) {
   const { update, sx, noClamp = false } = props;
-  const projectId = update.projectId;
-  const { title, comment, author, updatedAt, linkToCollaborationTab, followedByUser = false } = update;
 
-  const appInsights = useAppInsightsContext();
+  return (
+    <Card sx={{ ...cardStyles, ...sx } as SxProps<Theme>}>
+      <CommentCardHeader content={update} />
+      <UpdateCardContent update={update} noClamp={noClamp} />
+      <UpdateCardActions update={update} />
+    </Card>
+  );
+}
+
+const UpdateCardActions = (props: UpdateCardActionsProps) => {
+  const { update } = props;
+  const { title, projectId, followedByUser = false } = update;
+
   const [isProjectFollowed, setIsProjectFollowed] = useState<boolean>(followedByUser);
+  const appInsights = useAppInsightsContext();
 
   const toggleFollow = async () => {
     try {
       if (isProjectFollowed) {
         setIsProjectFollowed(false);
-        await handleRemoveFollower({ projectId });
+        await handleRemoveFollower({ objectType: ObjectType.PROJECT, objectId: projectId });
       } else {
         setIsProjectFollowed(true);
-        await handleFollow({ projectId });
+        await handleFollow({ objectType: ObjectType.PROJECT, objectId: projectId });
       }
     } catch (error) {
       console.error('Error toggling follow status:', error);
@@ -62,83 +68,28 @@ export default function NewsCard(props: NewsCardProps) {
     }
   };
 
-  const getText = () => {
-    return parseStringForLinks(comment);
-  };
-
   return (
-    <Card sx={{ ...cardStyles, ...sx } as SxProps<Theme>}>
-      <CardHeader
-        sx={cardHeaderStyles}
-        avatar={
-          author && (
-            <Box>
-              <StyledTooltip arrow key={author.id} title={<TooltipContent teamMember={author} />} placement="bottom">
-                <AvatarIcon user={author} size={24} allowAnimation />
-              </StyledTooltip>
-            </Box>
-          )
-        }
-        title={
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            {author && (
-              <Typography
-                variant="subtitle2"
-                color="secondary.contrastText"
-                sx={{ fontSize: '14px', ml: '16px' }}
-                data-testid="author"
-              >
-                {author.name}
-              </Typography>
-            )}
-
-            <Typography variant="caption" color="secondary.contrastText" data-testid="date">
-              {formatDate(updatedAt)}
-            </Typography>
-          </Stack>
-        }
-      />
-      <CardContent sx={cardContentStyles}>
-        <Box sx={titleWrapperStyles}>
-          <Typography sx={noClamp ? subtitleStyles : null} color="text.primary" variant="body1" data-testid="text">
-            {getText()}
-            {linkToCollaborationTab && (
-              <Link style={linkStyles} href={`/projects/${projectId}?tab=1#moredetails`}>
-                {' '}
-                Mehr erfahren
-              </Link>
-            )}
-          </Typography>
-        </Box>
-      </CardContent>
-
-      <CardActions sx={cardActionsStyles}>
-        <Grid container direction="row" justifyContent="space-between" alignItems="center">
-          <Grid item xs={7}>
-            {projectId ? (
-              <LinkWithArrowLeft title={title} href={`/projects/${projectId}?tab=2`} data-testid="project-link" />
-            ) : (
-              <Stack direction="row" alignItems="center" />
-            )}
-          </Grid>
-
-          <Grid item container xs={5} justifyContent="flex-end">
-            <InteractionButton
-              isSelected={isProjectFollowed}
-              projectName={title}
-              interactionType={InteractionType.PROJECT_FOLLOW}
-              onClick={() => toggleFollow()}
-              sx={followButtonStyles}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <UpdateEmojiReactionCard update={update} />
-          </Grid>
+    <CardActions sx={cardActionsStyles}>
+      <Grid container direction="row" justifyContent="space-between" alignItems="center">
+        <Grid item xs={7}>
+          <LinkWithArrowLeft title={title} href={`/projects/${projectId}?tab=2`} data-testid="project-link" />
         </Grid>
-      </CardActions>
-    </Card>
+        <Grid item container xs={5} justifyContent="flex-end">
+          <InteractionButton
+            isSelected={isProjectFollowed}
+            projectName={title}
+            interactionType={InteractionType.PROJECT_FOLLOW}
+            onClick={() => toggleFollow()}
+            sx={followButtonStyles}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <UpdateEmojiReactionCard update={update} />
+        </Grid>
+      </Grid>
+    </CardActions>
   );
-}
+};
 
 // News Card Styles
 const cardStyles = {
@@ -159,38 +110,10 @@ const cardStyles = {
   flexDirection: 'column',
 };
 
-const cardHeaderStyles = {
-  textAlign: 'left',
-  padding: 0,
-  marginTop: 1,
-  '& .MuiCardHeader-avatar': {
-    marginRight: 1,
-  },
-};
-
-const cardContentStyles = {
-  paddingTop: 0,
-  padding: 0,
-  margin: 0,
-  textAlign: 'left',
-};
-
 const cardActionsStyles = {
   mt: 'auto',
   p: 0,
   pt: 1,
-};
-
-const titleWrapperStyles = {
-  marginTop: 10 / 8,
-  marginBotom: 10 / 8,
-};
-
-const subtitleStyles = {
-  display: '-webkit-box',
-  overflow: 'hidden',
-  WebkitBoxOrient: 'vertical',
-  WebkitLineClamp: 3,
 };
 
 const followButtonStyles = {
@@ -204,10 +127,4 @@ const followButtonStyles = {
     ml: '4px',
     mr: '2px',
   },
-};
-
-const linkStyles = {
-  textDecoration: 'none',
-  cursor: 'pointer',
-  color: theme.palette.primary.main,
 };

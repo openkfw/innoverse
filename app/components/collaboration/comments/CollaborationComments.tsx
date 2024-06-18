@@ -12,14 +12,15 @@ import { TransparentButton } from '@/components/common/TransparentButton';
 import { CollaborationCommentThread } from './CollaborationCommentThread';
 
 interface CommentsProps {
-  projectName: string;
   comments: Comment[];
+  projectName?: string;
   onDeleteComment: (comment: Comment) => void;
 }
 
 const MAX_NUM_OF_COMMENTS = 2;
 
-export const CollaborationComments = ({ projectName, comments, onDeleteComment }: CommentsProps) => {
+export const CollaborationComments = (props: CommentsProps) => {
+  const { comments, projectName, onDeleteComment } = props;
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [maxVisibleComments, setMaxVisibleComments] = useState<Comment[]>();
   const [remainingComments, setRemainingComments] = useState<Comment[]>();
@@ -63,7 +64,7 @@ export const CollaborationComments = ({ projectName, comments, onDeleteComment }
           startIcon={<AddIcon color="secondary" fontSize="large" />}
           style={{ marginLeft: '1.5em', marginBottom: 2 }}
         >
-          weitere Rückmeldungen anzeigen ({lengthOfNotShownComments})
+          weitere Kommentare anzeigen ({lengthOfNotShownComments})
         </TransparentButton>
       )}
     </Stack>

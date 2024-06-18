@@ -1,11 +1,11 @@
 'use server';
 
+import { RequestError } from '@/entities/error';
 import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapToQuestion } from '@/utils/requests/questions/mappings';
 import { GetQuestionsByProjectIdQuery } from '@/utils/requests/questions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { RequestError } from '@/entities/error';
 
 const logger = getLogger();
 

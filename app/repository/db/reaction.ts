@@ -1,9 +1,14 @@
+import type { ObjectType as PrismaObjectType, Reaction } from '@prisma/client';
 import { PrismaClient } from '@prisma/client';
 
-export async function addReaction(
+import { ObjectType } from '@/common/types';
+
+export type ReactionObjectType = 'UPDATE' | 'EVENT' | 'COLLABORATION_COMMENT' | 'COLLABORATION_QUESTION';
+
+export async function addReactionToDb(
   client: PrismaClient,
   reactedBy: string,
-  objectType: 'UPDATE' | 'EVENT',
+  objectType: ObjectType,
   objectId: string,
   shortCode: string,
   nativeSymbol: string,
@@ -13,7 +18,7 @@ export async function addReaction(
       reactedBy_objectId_objectType: {
         reactedBy,
         objectId,
-        objectType,
+        objectType: objectType as PrismaObjectType,
       },
     },
     update: {
@@ -22,7 +27,7 @@ export async function addReaction(
     },
     create: {
       objectId,
-      objectType,
+      objectType: objectType as PrismaObjectType,
       reactedBy,
       shortCode,
       nativeSymbol,
@@ -30,18 +35,18 @@ export async function addReaction(
   });
 }
 
-export async function removeReaction(
+export async function removeReactionFromDb(
   client: PrismaClient,
   reactedBy: string,
-  objectType: 'UPDATE' | 'EVENT',
+  objectType: ObjectType,
   objectId: string,
-) {
+): Promise<Reaction> {
   return await client.reaction.delete({
     where: {
       reactedBy_objectId_objectType: {
         reactedBy,
         objectId,
-        objectType,
+        objectType: objectType as PrismaObjectType,
       },
     },
   });
@@ -50,22 +55,35 @@ export async function removeReaction(
 export async function findReaction(
   client: PrismaClient,
   reactedBy: string,
-  objectType: 'UPDATE' | 'EVENT',
+  objectType: ObjectType,
   objectId: string,
-) {
+): Promise<Reaction | null> {
   return await client.reaction.findUnique({
     where: {
       reactedBy_objectId_objectType: {
         reactedBy,
         objectId,
-        objectType,
+        objectType: objectType as PrismaObjectType,
       },
     },
   });
 }
 
-export async function countNumberOfReactions(client: PrismaClient, objectType: 'UPDATE' | 'EVENT', objectId: string) {
-  return client.reaction.groupBy({
+export async function getReactionsForEntity(
+  client: PrismaClient,
+  objectType: ObjectType,
+  objectId: string,
+): Promise<Reaction[]> {
+  return await client.reaction.findMany({
+    where: {
+      objectId,
+      objectType: objectType as PrismaObjectType,
+    },
+  });
+}
+
+export async function countNumberOfReactions(client: PrismaClient, objectType: ObjectType, objectId: string) {
+  return await client.reaction.groupBy({
     by: ['shortCode', 'nativeSymbol'],
     _count: {
       shortCode: true,
@@ -77,7 +95,7 @@ export async function countNumberOfReactions(client: PrismaClient, objectType: '
     },
     where: {
       objectId,
-      objectType,
+      objectType: objectType as PrismaObjectType,
     },
   });
 }

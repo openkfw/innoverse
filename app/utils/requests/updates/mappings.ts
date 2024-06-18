@@ -3,11 +3,13 @@ import { ResultOf } from 'gql.tada';
 import { ProjectUpdate } from '@/common/types';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { ProjectUpdateFragment } from '@/utils/requests/updates/queries';
+import { toDate } from '@/utils/helpers';
 
 export function mapToProjectUpdate(updateData: ResultOf<typeof ProjectUpdateFragment>): ProjectUpdate {
   const attributes = updateData.attributes;
   const author = attributes.author?.data;
   const project = attributes.project?.data;
+  const projectName = project?.attributes.title;
 
   if (!author) {
     throw new Error('Update contained no author');
@@ -16,9 +18,10 @@ export function mapToProjectUpdate(updateData: ResultOf<typeof ProjectUpdateFrag
   return {
     id: updateData.id,
     projectId: project?.id ?? '',
+    projectName: projectName ?? '',
     title: project?.attributes.title ?? '',
     comment: attributes.comment,
-    updatedAt: attributes.updatedAt?.toString() ?? '',
+    updatedAt: toDate(attributes.updatedAt),
     topic: attributes.topic as string,
     author: mapToUser(author),
     linkToCollaborationTab: updateData.attributes.linkToCollaborationTab ?? false,

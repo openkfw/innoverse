@@ -4,17 +4,18 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 
-import { ProjectUpdateWithAdditionalData } from '@/common/types';
+import { ObjectType, ProjectUpdateWithAdditionalData } from '@/common/types';
+import { CommentCardHeaderSecondary } from '@/components/common/CommentCardHeaderSecondary';
 import theme from '@/styles/theme';
 
-import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/UpdateEmojiReactionCard';
+import ItemEmojiReactionCard from '../collaboration/emojiReactions/ItemEmojiReactionCard';
 import { TextCard } from '../common/TextCard';
 
 import { ProjectTimeLineDate } from './ProjectTimeLineDate';
 import { YearField } from './YearField';
 
-function getYear(date: string) {
-  return new Date(date).getFullYear().toString();
+function getYear(date: Date) {
+  return date.getFullYear().toString();
 }
 
 interface ProjectTimeLineProps {
@@ -102,9 +103,9 @@ const ProjectYearTimeline = ({ year, projectUpdates, isLastYear, widthOfDateColu
           </Box>
           <TextCard
             sx={updateCommentCardStyles}
-            headerSx={updateCommentCardHeaderStyles}
-            content={{ author: update.author, text: update.comment }}
-            footer={<UpdateEmojiReactionCard update={update} />}
+            header={<CommentCardHeaderSecondary author={update.author} sx={updateCommentCardHeaderStyles} />}
+            text={update.comment}
+            footer={<ItemEmojiReactionCard item={update} type={ObjectType.UPDATE} />}
           />
         </Stack>
       ))}

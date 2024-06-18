@@ -4,6 +4,7 @@ const VALIDATION_ERROR = "There was a validation error";
 
 export const validateAuthorOnCreate = (data: any) => {
   if (
+    data?.author &&
     data.author.disconnect?.length === 0 &&
     data.author.connect?.length === 0
   ) {
@@ -31,7 +32,11 @@ export const validateAuthorOnUpdate = (data: any) => {
     return;
   }
 
-  if (data.author.disconnect.length != 0 && data.author.connect.length === 0) {
+  if (
+    data?.author &&
+    data.author.disconnect.length != 0 &&
+    data.author.connect.length === 0
+  ) {
     throw new YupValidationError(
       {
         value: data.author,

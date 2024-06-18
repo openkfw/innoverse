@@ -9,15 +9,12 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { User } from '@/common/types';
+import { UserAvatar } from '@/components/common/UserAvatar';
 import theme from '@/styles/theme';
 import { openWebex } from '@/utils/openWebex';
 
-import AvatarIcon from '../common/AvatarIcon';
 import CustomDialog from '../common/CustomDialog';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
-import { StyledTooltip } from '../common/StyledTooltip';
-
-import { TooltipContent } from './TooltipContent';
 
 interface TeamMembersProps {
   team: User[];
@@ -40,16 +37,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
           {team.slice(0, maxTeamMembers).map((teamMember, index) => (
             <Box key={index} sx={rowStyles}>
               <Stack sx={boxStyles} direction="row" spacing={1}>
-                <Box>
-                  <StyledTooltip
-                    arrow
-                    key={teamMember.id}
-                    title={<TooltipContent projectName={projectName} teamMember={teamMember} />}
-                    placement="bottom"
-                  >
-                    <AvatarIcon user={teamMember} size={24} allowAnimation />
-                  </StyledTooltip>
-                </Box>
+                <UserAvatar size={24} user={teamMember} allowAnimation />
                 <Box sx={{ paddingLeft: '16px', ml: '8px' }}>
                   <Typography variant="subtitle2" sx={teamMemberNameStyles}>
                     {teamMember.name}
@@ -83,16 +71,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
           {team.map((teamMember, index) => (
             <Stack key={index} sx={rowStyles} spacing={5} direction="row">
               <Stack sx={boxStyles} direction="row" spacing={1}>
-                <Box>
-                  <StyledTooltip
-                    arrow
-                    key={teamMember.id}
-                    title={<TooltipContent projectName={projectName} teamMember={teamMember} />}
-                    placement="bottom"
-                  >
-                    <AvatarIcon user={teamMember} size={48} allowAnimation />
-                  </StyledTooltip>
-                </Box>
+                <UserAvatar size={48} user={teamMember} allowAnimation />
                 <Box>
                   <Typography variant="subtitle1" sx={{ color: 'text.primary', lineHeight: 1, ml: '16px' }}>
                     {teamMember.name}

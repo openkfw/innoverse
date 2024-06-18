@@ -6,7 +6,7 @@ import {
   CollaborationQuestion,
   Comment,
   EventWithAdditionalData,
-  Follower,
+  Follow,
   Opportunity,
   Project,
   PROJECT_PROGRESS,
@@ -14,7 +14,7 @@ import {
   ProjectUpdateWithAdditionalData,
   SurveyQuestion,
 } from '@/common/types';
-import { formatDate } from '@/utils/helpers';
+import { formatDate, toDate } from '@/utils/helpers';
 import { mapToImageUrl, mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { ProjectFragment } from '@/utils/requests/project/queries';
 
@@ -28,7 +28,7 @@ export const mapToProject = ({
   surveyQuestions: SurveyQuestion[];
   collaborationQuestions: CollaborationQuestion[];
   comments: Comment[];
-  followers: Follower[];
+  followers: Follow[];
   updates: ProjectUpdateWithAdditionalData[];
   likes: Like[];
   isLiked: boolean;
@@ -46,6 +46,7 @@ export const mapToProject = ({
     author: basicProject.author,
     shortTitle: basicProject.shortTitle,
     projectStart: basicProject.projectStart,
+    updatedAt: new Date(attributes.updatedAt ?? new Date()),
     ...otherProps,
   };
 };
@@ -58,6 +59,7 @@ export const mapToBasicProject = (projectData: ResultOf<typeof ProjectFragment>)
     id: projectData.id,
     summary: attributes.summary,
     title: attributes.title,
+    projectName: attributes.title,
     projectStart: formatDate(attributes.projectStart) ?? undefined,
     shortTitle: attributes.shortTitle ?? undefined,
     status: mapToProjectStatus(attributes.status),
@@ -66,6 +68,7 @@ export const mapToBasicProject = (projectData: ResultOf<typeof ProjectFragment>)
     team: attributes.team?.data.map(mapToUser) ?? [],
     image: mapToImageUrl(attributes.image),
     featured: attributes.featured,
+    updatedAt: toDate(attributes.updatedAt),
   };
 };
 

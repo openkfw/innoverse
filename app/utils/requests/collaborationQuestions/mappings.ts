@@ -2,6 +2,7 @@ import { ResultOf } from 'gql.tada';
 
 import { BasicCollaborationQuestion, CollaborationQuestion } from '@/common/types';
 import { Comment } from '@/common/types';
+import { toDate } from '@/utils/helpers';
 import { CollaborationQuestionFragment } from '@/utils/requests/collaborationQuestions/queries';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 
@@ -17,6 +18,7 @@ export const mapToCollaborationQuestion = (
     description: attributes.description,
     isPlatformFeedback: attributes.isPlatformFeedback,
     title: attributes.title,
+    updatedAt: toDate(attributes.updatedAt),
   };
 };
 
@@ -29,6 +31,7 @@ export const mapToBasicCollaborationQuestion = (
     authors: attributes.authors?.data.map(mapToUser) ?? [],
     title: attributes.title,
     description: attributes.description,
-    projectId: attributes.project?.data?.id,
+    projectId: attributes.project?.data?.id ?? '',
+    updatedAt: attributes.updatedAt ? new Date(attributes.updatedAt) : new Date(),
   };
 };

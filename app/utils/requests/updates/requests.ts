@@ -2,19 +2,31 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { SortValues } from '@/app/contexts/news-filter-context';
-import { Filters, ProjectUpdate, ProjectUpdateWithAdditionalData, UserSession } from '@/common/types';
+import {
+  Filters,
+  NewsFeedEntry,
+  ObjectType,
+  ProjectUpdate,
+  ProjectUpdateWithAdditionalData,
+  SortValues,
+  UserSession,
+} from '@/common/types';
+import { handleProjectUpdatesSchema } from '@/components/updates/validationSchema';
+import { RequestError } from '@/entities/error';
+import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
-import { countNumberOfReactions, findReaction } from '@/repository/db/reaction';
+import { countNumberOfReactions, findReaction, getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
-import { getPromiseResults } from '@/utils/helpers';
+import { getPromiseResults, getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
+import { mapReaction } from '@/utils/newsFeed/redis/redisMappings';
 import { isProjectFollowedByUser } from '@/utils/requests/project/requests';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { mapToProjectUpdate } from '@/utils/requests/updates/mappings';
-import { CreateProjectUpdateMutation } from '@/utils/requests/updates/mutations';
+import { CreateProjectUpdateMutation, UpdateProjectUpdateMutation } from '@/utils/requests/updates/mutations';
 import {
+  GetUpdateByIdQuery,
   GetUpdateCountQuery,
   GetUpdatesByProjectIdQuery,
   GetUpdatesPageByProjectsTitlesAndTopicsQuery,
@@ -23,10 +35,7 @@ import {
   GetUpdatesPageQuery,
   GetUpdatesQuery,
 } from '@/utils/requests/updates/queries';
-import { RequestError } from '@/entities/error';
-
 import { validateParams } from '@/utils/validationHelper';
-import { handleProjectUpdatesSchema } from '@/components/updates/validationSchema';
 
 const logger = getLogger();
 
@@ -45,6 +54,32 @@ export async function getProjectUpdates(limit = 100) {
   }
 }
 
+export async function getProjectUpdateById(id: string) {
+  try {
+    const response = await strapiGraphQLFetcher(GetUpdateByIdQuery, { id });
+    const updateData = response.update?.data;
+    if (!updateData) return null;
+    const update = mapToProjectUpdate(updateData);
+    return update;
+  } catch (err) {
+    const error = strapiError('Getting project update by id', err as RequestError, id);
+    logger.error(error);
+  }
+}
+
+export async function getProjectUpdateByIdWithReactions(id: string) {
+  try {
+    const response = await strapiGraphQLFetcher(GetUpdateByIdQuery, { id });
+    if (!response?.update?.data) throw new Error('Response contained no update');
+    const update = mapToProjectUpdate(response.update.data);
+    const reactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
+    return { ...update, reactions };
+  } catch (err) {
+    const error = strapiError('Getting project update', err as RequestError);
+    logger.error(error);
+  }
+}
+
 export async function getUpdatesByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesByProjectIdQuery, { projectId });
@@ -59,7 +94,7 @@ export async function getUpdatesByProjectId(projectId: string) {
   }
 }
 
-export async function createProjectUpdate(body: {
+export async function createProjectUpdateInStrapi(body: {
   comment: string;
   projectId: string;
   authorId?: string;
@@ -80,6 +115,22 @@ export async function createProjectUpdate(body: {
     return update;
   } catch (err) {
     const error = strapiError('Trying to to create project update', err as RequestError, body.projectId);
+    logger.error(error);
+  }
+}
+
+export async function updateProjectUpdateInStrapi(id: string, comment: string) {
+  try {
+    const response = await strapiGraphQLFetcher(UpdateProjectUpdateMutation, {
+      updateId: id,
+      comment,
+    });
+    const updatedUpdate = response.updateUpdate?.data;
+    if (!updatedUpdate) throw new Error('Response contained no updated project update');
+    const update = mapToProjectUpdate(updatedUpdate);
+    return update;
+  } catch (err) {
+    const error = strapiError('Updating project update', err as RequestError, id);
     logger.error(error);
   }
 }
@@ -144,9 +195,23 @@ export async function getUpdatesWithAdditionalData(updates: ProjectUpdate[]) {
   return updatesWithAdditionalData;
 }
 
+export const getUpdateWithReactions = withAuth(async (user: UserSession, body: { update: ProjectUpdate }) => {
+  const reactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, body.update.id);
+  const followedByIds = await getFollowedByForEntity(dbClient, ObjectType.UPDATE, body.update.id);
+  return {
+    status: 200,
+    data: {
+      ...body.update,
+      updatedAt: getUnixTimestamp(new Date(body.update.updatedAt)),
+      reactions,
+      followedByUser: followedByIds.some((followerId) => followerId === user.providerId),
+    },
+  };
+});
+
 export async function getUpdateWithAdditionalData(update: ProjectUpdate): Promise<ProjectUpdateWithAdditionalData> {
-  const { data: reactionForUser } = await findReactionByUser({ objectType: 'UPDATE', objectId: update.id });
-  const reactionCountResult = await countNumberOfReactions(dbClient, 'UPDATE', update.id);
+  const { data: reactionForUser } = await findReactionByUser({ objectType: ObjectType.UPDATE, objectId: update.id });
+  const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.UPDATE, update.id);
   const { data: followedByUser } = await isProjectFollowedByUser({ projectId: update.projectId });
 
   const reactionCount = reactionCountResult.map((r) => ({
@@ -159,14 +224,41 @@ export async function getUpdateWithAdditionalData(update: ProjectUpdate): Promis
 
   return {
     ...update,
-    reactionForUser: reactionForUser || undefined,
+    reactionForUser: reactionForUser ? mapReaction(reactionForUser) : undefined,
     followedByUser,
     reactionCount,
   };
 }
 
+export async function getNewsFeedEntry(entry: any): Promise<NewsFeedEntry> {
+  const { data: reactionForUser } = await findReactionByUser({
+    objectType: ObjectType.UPDATE,
+    objectId: entry.item.id,
+  });
+  const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.UPDATE, entry.item.id);
+  const { data: followedByUser } = await isProjectFollowedByUser({ projectId: entry.item.projectId });
+
+  const reactionCount = reactionCountResult.map((r) => ({
+    count: r._count.shortCode,
+    emoji: {
+      shortCode: r.shortCode,
+      nativeSymbol: r.nativeSymbol,
+    },
+  }));
+
+  return {
+    ...entry,
+    item: {
+      ...entry.item,
+      reactionForUser: reactionForUser ? mapReaction(reactionForUser) : undefined,
+      followedByUser,
+      reactionCount,
+    },
+  };
+}
+
 export const findReactionByUser = withAuth(
-  async (user: UserSession, body: { objectType: 'UPDATE' | 'EVENT'; objectId: string }) => {
+  async (user: UserSession, body: { objectType: ObjectType; objectId: string }) => {
     try {
       const result = await findReaction(dbClient, user.providerId, body.objectType, body.objectId);
       return {

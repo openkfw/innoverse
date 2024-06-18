@@ -11,7 +11,8 @@ interface ExtendedError extends Error {
 export type InnoPlatformError =
   | (ExtendedError & { name: 'StrapiError' })
   | (ExtendedError & { name: 'DatabaseError' })
-  | (ExtendedError & { name: 'ValidationError' });
+  | (ExtendedError & { name: 'ValidationError' })
+  | (ExtendedError & { name: 'RedisError' });
 
 export const strapiError = (context: string, error: RequestError, resource?: string): InnoPlatformError => ({
   name: 'StrapiError',
@@ -34,4 +35,11 @@ export const validationError = (context: string, error: Error): InnoPlatformErro
   message: `Validation error occurred: ${context}`,
   stack: error.stack,
   cause: error.cause,
+});
+
+export const redisError = (context: string, error?: Error): InnoPlatformError => ({
+  name: 'RedisError',
+  message: `Redis error occurred: ${context}`,
+  stack: error?.stack,
+  cause: error?.cause,
 });

@@ -1,3 +1,4 @@
+import { ObjectType } from '@/common/types';
 import getLogger from '@/utils/logger';
 import { CollaborationQuestionLifecycle } from '@/utils/strapiEvents/entityLifecycles/collaborationQuestionLifecycle';
 import { EventLifecycle } from '@/utils/strapiEvents/entityLifecycles/eventLifecycle';
@@ -11,15 +12,24 @@ const logger = getLogger();
 
 type StrapiEvent = 'entry.create' | 'entry.update' | 'entry.delete' | 'entry.publish' | 'entry.unpublish';
 
+export enum StrapiModel {
+  UPDATE = 'update',
+  EVENT = 'event',
+  PROJECT = 'project',
+  SURVEY_QUESTION = 'survey-question',
+  OPPORTUNITY = 'opportunity',
+  COLLABORATION_QUESTION = 'collaboration-question',
+}
+
 const entityLifecyclesByModelName: {
   [model: string]: StrapiEntityLifecycle;
 } = {
-  ['project']: new ProjectLifecycle(),
-  ['opportunity']: new OpportunityLifecycle(),
-  ['survey-question']: new SurveyQuestionLifecycle(),
-  ['collaboration-question']: new CollaborationQuestionLifecycle(),
-  ['event']: new EventLifecycle(),
-  ['update']: new UpdateLifecycle(),
+  [StrapiModel.PROJECT]: new ProjectLifecycle(StrapiModel.PROJECT),
+  [StrapiModel.OPPORTUNITY]: new OpportunityLifecycle(StrapiModel.OPPORTUNITY),
+  [StrapiModel.SURVEY_QUESTION]: new SurveyQuestionLifecycle(StrapiModel.SURVEY_QUESTION),
+  [StrapiModel.COLLABORATION_QUESTION]: new CollaborationQuestionLifecycle(StrapiModel.COLLABORATION_QUESTION),
+  [StrapiModel.EVENT]: new EventLifecycle(StrapiModel.EVENT),
+  [StrapiModel.UPDATE]: new UpdateLifecycle(StrapiModel.UPDATE),
 };
 
 export const onStrapiEvent = async (event: StrapiEvent, model: string, entry: StrapiEntry) => {

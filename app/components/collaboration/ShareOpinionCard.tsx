@@ -10,8 +10,8 @@ import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 type ShareOpinionCardProps = {
-  projectName: string;
   handleClick: () => void;
+  projectName?: string;
 };
 
 export const ShareOpinionCard = ({ projectName, handleClick }: ShareOpinionCardProps) => {

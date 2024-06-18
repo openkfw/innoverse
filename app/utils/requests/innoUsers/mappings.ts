@@ -1,8 +1,8 @@
 import { ResultOf } from 'gql.tada';
 
 import { ImageFormats, User } from '@/common/types';
-import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 import { clientConfig } from '@/config/client';
+import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
 export function mapFirstToUser(users: ResultOf<typeof InnoUserFragment>[] | undefined): User | undefined {
   if (!users || !users.length) return undefined;
@@ -21,7 +21,7 @@ export function mapToUser(userData: ResultOf<typeof InnoUserFragment>): User {
 
   return {
     id: userData.id,
-    ...attributes,
+    name: attributes.name,
     role: attributes.role ?? undefined,
     department: attributes.department ?? undefined,
     email: attributes.email ?? undefined,

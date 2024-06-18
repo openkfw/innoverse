@@ -100,7 +100,6 @@ export default function AddUpdateForm({
             control={control}
             label="Initiative"
             options={projectOptions}
-            // Field is readOnly in case there are no project options available
             readOnly={!projectOptions}
             startAdornment={
               !projectOptions && (
@@ -114,18 +113,24 @@ export default function AddUpdateForm({
         )}
       </Stack>
 
-      <Box display="flex" justifyContent="flex-end">
-        <Button
-          onClick={handleSubmit(onSubmit)}
-          variant="contained"
-          size="small"
-          disabled={!isDirty || !isValid}
-          sx={{ width: '30%', backgroundColor: 'secondary.main' }}
-        >
-          Speichern
-        </Button>
-      </Box>
+      <DialogSaveButton onSave={handleSubmit(onSubmit)} disabled={!isDirty || !isValid} />
     </Stack>
+  );
+}
+
+export function DialogSaveButton({ onSave, disabled }: { onSave: () => void; disabled: boolean }) {
+  return (
+    <Box display="flex" justifyContent="flex-end">
+      <Button
+        onClick={onSave}
+        variant="contained"
+        size="small"
+        disabled={disabled}
+        sx={{ width: '30%', backgroundColor: 'secondary.main' }}
+      >
+        Speichern
+      </Button>
+    </Box>
   );
 }
 

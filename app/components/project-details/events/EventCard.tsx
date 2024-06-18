@@ -11,11 +11,11 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import EventEmojiReactionCard from '@/components/collaboration/emojiReactions/EventEmojiReactionCard';
+import ItemEmojiReactionCard from '@/components/collaboration/emojiReactions/cards/EventEmojiReactionCard';
 import EventCardHeader from '@/components/landing/eventsSection/EventCardHeader';
 import theme from '@/styles/theme';
 
-import { EventWithAdditionalData } from '../../../common/types';
+import { EventWithAdditionalData, ObjectType } from '../../../common/types';
 
 import EventContent from './EventContent';
 
@@ -55,12 +55,12 @@ const EventCard = ({ event, disabled, arrow = true }: EventCardProps) => {
             />
             <Box sx={{ mt: 1 }}>
               <EventThemes themes={event.themes} sx={{ mb: 1, mt: -0.5 }} arrow={arrow} />
-              {isLargeScreen && <EventEmojiReactionCard event={event} />}
+              {isLargeScreen && <ItemEmojiReactionCard item={event} type={ObjectType.EVENT} />}
             </Box>
           </Box>
           <Box style={{ marginTop: 0 }}>
             <EventContent event={event} sx={{ my: { xs: 2, lg: 0.5 } }} />
-            {!isLargeScreen && <EventEmojiReactionCard event={event} />}
+            {!isLargeScreen && <ItemEmojiReactionCard item={event} type={ObjectType.EVENT} />}
           </Box>
         </Stack>
       </CardContent>

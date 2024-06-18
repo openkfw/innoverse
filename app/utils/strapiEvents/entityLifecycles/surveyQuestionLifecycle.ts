@@ -1,11 +1,19 @@
-import { getProjectFollowers } from '@/repository/db/follow';
+import { ObjectType } from '@/common/types';
+import { getFollowedByForEntity, getProjectFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getPushSubscriptionsForUser } from '@/repository/db/push_subscriptions';
+import { createProjectUpdate } from '@/services/updateService';
+import { mapObjectWithReactions } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
+import { mapSurveyQuestionToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
+import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
+import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { NotificationRequest, sendPushNotifications } from '@/utils/notification/notificationSender';
 import { getProjectAuthorIdByProjectId } from '@/utils/requests/project/requests';
-import { getBasicSurveyQuestionById } from '@/utils/requests/surveyQuestions/requests';
-import { createProjectUpdate } from '@/utils/requests/updates/requests';
+import {
+  getBasicSurveyQuestionById,
+  getSurveyQuestionByIdWithReactions,
+} from '@/utils/requests/surveyQuestions/requests';
 import { StrapiEntityLifecycle, StrapiEntry } from '@/utils/strapiEvents/entityLifecycles/strapiEntityLifecycle';
 
 const logger = getLogger();
@@ -15,6 +23,22 @@ export class SurveyQuestionLifecycle extends StrapiEntityLifecycle {
     const surveyId = entry.id.toString();
     await this.notifyFollowers(surveyId);
     await this.createUpdateForNewSurvey(surveyId);
+    await this.saveSurveyQuestionToCache(surveyId);
+  }
+
+  public override async onUpdate(entry: StrapiEntry): Promise<void> {
+    const surveyId = entry.id.toString();
+    await this.saveSurveyQuestionToCache(surveyId, { createIfNew: false });
+  }
+
+  public override async onDelete(entry: StrapiEntry): Promise<void> {
+    const surveyId = entry.id.toString();
+    await this.deleteSurveyQuestionFromCache(surveyId);
+  }
+
+  public override async onUnpublish(entry: StrapiEntry): Promise<void> {
+    const surveyId = entry.id.toString();
+    this.deleteSurveyQuestionFromCache(surveyId);
   }
 
   private notifyFollowers = async (surveyId: string) => {
@@ -40,8 +64,8 @@ export class SurveyQuestionLifecycle extends StrapiEntityLifecycle {
     );
   };
 
-  private createUpdateForNewSurvey = async (surveyQuestionId: string) => {
-    const surveyQuestion = await getBasicSurveyQuestionById(surveyQuestionId);
+  private createUpdateForNewSurvey = async (surveyId: string) => {
+    const surveyQuestion = await getBasicSurveyQuestionById(surveyId);
 
     if (!surveyQuestion) return;
 
@@ -63,5 +87,38 @@ export class SurveyQuestionLifecycle extends StrapiEntityLifecycle {
     if (update) {
       logger.info(`Created project update with id ${update.id} for published survey`);
     }
+  };
+
+  private saveSurveyQuestionToCache = async (
+    surveyId: string,
+    options: { createIfNew: boolean } = { createIfNew: true },
+  ) => {
+    const surveyQuestion = await getSurveyQuestionByIdWithReactions(surveyId);
+    if (!surveyQuestion) {
+      logger.warn(`Failed to save survey question with id '${surveyId}' to cache`);
+      return;
+    }
+
+    const redisClient = await getRedisClient();
+    if (!options.createIfNew) {
+      const redisKey = this.getRedisKey(surveyId);
+      const cachedQuestion = await getNewsFeedEntryByKey(redisClient, redisKey);
+      if (!cachedQuestion) return;
+    }
+
+    const followerIds = await getFollowedByForEntity(dbClient, ObjectType.SURVEY_QUESTION, surveyId);
+    const followers = await mapToRedisUsers(followerIds);
+    const newsFeedEntry = mapSurveyQuestionToRedisNewsFeedEntry(
+      mapObjectWithReactions(surveyQuestion),
+      surveyQuestion.reactions,
+      followers,
+    );
+    await saveNewsFeedEntry(redisClient, newsFeedEntry);
+  };
+
+  private deleteSurveyQuestionFromCache = async (surveyQuestionId: string) => {
+    const redisClient = await getRedisClient();
+    const redisKey = this.getRedisKey(surveyQuestionId);
+    await deleteItemFromRedis(redisClient, redisKey);
   };
 }

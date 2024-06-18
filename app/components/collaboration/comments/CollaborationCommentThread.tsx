@@ -3,12 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
-import AddIcon from '@mui/icons-material/Add';
 import Stack from '@mui/material/Stack';
 
 import { Comment, CommentResponse } from '@/common/types';
+import { TransparentAddButton } from '@/components/common/AddItemButton';
 import { errorMessage } from '@/components/common/CustomToast';
-import { TransparentButton } from '@/components/common/TransparentButton';
 import { getProjectCollaborationCommentResponses } from '@/utils/requests/collaborationComments/requests';
 
 import WriteCommentResponseCard from '../../common/comments/WriteCommentResponseCard';
@@ -19,19 +18,16 @@ import { CollaborationCommentResponseCard } from './CollaborationCommentResponse
 
 type CollaborationCommentThreadProps = {
   comment: Comment;
-  projectName: string;
   onDeleteComment: () => void;
+  projectName?: string;
 };
 
 interface useCollaborationCommentThreadProps {
   comment: Comment;
 }
 
-export const CollaborationCommentThread = ({
-  comment,
-  projectName,
-  onDeleteComment,
-}: CollaborationCommentThreadProps) => {
+export const CollaborationCommentThread = (props: CollaborationCommentThreadProps) => {
+  const { comment, onDeleteComment, projectName } = props;
   const { responses, displayResponses, setDisplayResponses, handleResponse, removeResponse } =
     useCollaborationCommentThread({
       comment: comment,
@@ -42,13 +38,9 @@ export const CollaborationCommentThread = ({
       <CollaborationCommentCard comment={comment} projectName={projectName} onDelete={onDeleteComment} />
 
       {!displayResponses && comment.responseCount > 0 && (
-        <TransparentButton
-          onClick={() => setDisplayResponses(true)}
-          startIcon={<AddIcon color="secondary" fontSize="large" />}
-          style={{ marginTop: '1em', marginLeft: '1.5em', marginBottom: 2 }}
-        >
+        <TransparentAddButton onClick={() => setDisplayResponses(true)}>
           Kommentare anzeigen ({comment.responseCount})
-        </TransparentButton>
+        </TransparentAddButton>
       )}
 
       <WriteCommentResponseCard
@@ -74,7 +66,7 @@ export const CollaborationCommentThread = ({
   );
 };
 
-function useCollaborationCommentThread({ comment }: useCollaborationCommentThreadProps) {
+export function useCollaborationCommentThread({ comment }: useCollaborationCommentThreadProps) {
   const [displayResponses, setDisplayResponses] = useState(false);
   const [responses, setResponses] = useState<CommentResponse[]>([]);
   const appInsights = useAppInsightsContext();

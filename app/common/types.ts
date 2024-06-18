@@ -1,5 +1,51 @@
 import { StaticImageData } from 'next/image';
 
+export enum ObjectType {
+  UPDATE = 'UPDATE',
+  EVENT = 'EVENT',
+  COLLABORATION_COMMENT = 'COLLABORATION_COMMENT',
+  PROJECT = 'PROJECT',
+  POST = 'POST',
+  SURVEY_QUESTION = 'SURVEY_QUESTION',
+  OPPORTUNITY = 'OPPORTUNITY',
+  COLLABORATION_QUESTION = 'COLLABORATION_QUESTION',
+}
+
+export type NewsFeedEntry =
+  | {
+      type: ObjectType.UPDATE;
+      item: ProjectUpdate;
+    }
+  | {
+      type: ObjectType.PROJECT;
+      item: Project;
+    }
+  | {
+      type: ObjectType.COLLABORATION_COMMENT;
+      item: CollaborationComment;
+    }
+  | { type: ObjectType.POST; item: Post }
+  | { type: ObjectType.COLLABORATION_QUESTION; item: CollaborationQuestion }
+  | {
+      type: ObjectType.SURVEY_QUESTION;
+      item: SurveyQuestion;
+    }
+  | {
+      type: ObjectType.EVENT;
+      item: Event;
+    };
+
+export type CollaborationComment = CommonNewsFeedProps & {
+  id: string;
+  author: User;
+  comment: string;
+  upvotedBy: string[];
+  projectId: string;
+  projectName: string;
+  question: CollaborationQuestion;
+  isUpvotedByUser?: boolean;
+};
+
 export type User = {
   id?: string;
   name: string;
@@ -18,7 +64,8 @@ export type Comment = {
   upvotedBy: User[];
   responseCount: number;
   projectId: string;
-  questionId: string;
+  projectName?: string | undefined;
+  questionId?: string;
   createdAt: Date;
   isUpvotedByUser?: boolean;
 };
@@ -36,8 +83,9 @@ export type ResponseOption = {
   responseOption: string;
 };
 
-export type SurveyQuestion = {
+export type SurveyQuestion = CommonNewsFeedProps & {
   id: string;
+  projectId: string;
   question: string;
   responseOptions: ResponseOption[];
   votes: SurveyVote[];
@@ -52,7 +100,7 @@ export type BasicSurveyQuestion = {
 
 export type SurveyVote = {
   id: string;
-  createdAt: Date;
+  createdAt?: Date;
   votedBy: string;
   vote: string;
 };
@@ -75,22 +123,23 @@ export type Hero = {
   projectStatus: PROJECT_PROGRESS.PROOF_OF_CONCEPT;
 };
 
-export type Project = BasicProject & {
-  likes: Like[];
-  followers: Follower[];
-  questions: ProjectQuestion[];
-  comments: Comment[];
-  surveyQuestions: SurveyQuestion[];
-  opportunities: Opportunity[];
-  collaborationQuestions: CollaborationQuestion[];
-  isLiked: boolean;
-  isFollowed: boolean;
-  futureEvents: EventWithAdditionalData[];
-  pastEvents: EventWithAdditionalData[];
-  updates: ProjectUpdateWithAdditionalData[];
-};
+export type Project = BasicProject &
+  CommonNewsFeedProps & {
+    likes: Like[];
+    followers: Follow[];
+    questions: ProjectQuestion[];
+    comments: Comment[];
+    surveyQuestions: SurveyQuestion[];
+    opportunities: Opportunity[];
+    collaborationQuestions: CollaborationQuestion[];
+    isLiked: boolean;
+    isFollowed: boolean;
+    futureEvents: EventWithAdditionalData[];
+    pastEvents: EventWithAdditionalData[];
+    updates: ProjectUpdateWithAdditionalData[];
+  };
 
-export type BasicProject = {
+export type BasicProject = CommonNewsFeedProps & {
   id: string;
   title: string;
   shortTitle?: string;
@@ -109,8 +158,9 @@ export type Like = {
   likedBy: string;
 };
 
-export type Follower = {
-  projectId: string;
+export type Follow = {
+  objectId: string;
+  objectType: ObjectType;
   followedBy: string;
 };
 
@@ -120,23 +170,23 @@ export type ProjectDescription = {
   collaborationTags?: CollaborationTag[];
 };
 
-export type ProjectQuestion = {
+export type ProjectQuestion = CommonNewsFeedProps & {
   id: string;
   title: string;
   authors: User[];
 };
 
-export type ProjectUpdate = {
+export type ProjectUpdate = CommonNewsFeedProps & {
   id: string;
   title: string;
   author: User;
   comment: string;
   topic: string;
   projectId: string;
+  projectName: string;
   projectStart?: string;
-  followedByUser?: boolean;
-  updatedAt: string;
   linkToCollaborationTab: boolean;
+  responseCount?: number;
 };
 
 export type ProjectUpdateWithAdditionalData = ProjectUpdate & ReactionOnObject;
@@ -146,7 +196,7 @@ export type EventWithAdditionalData = Event & ReactionOnObject;
 export type ObjectWithReactions = EventWithAdditionalData | ProjectUpdateWithAdditionalData;
 
 export type ReactionOnObject = {
-  reactionForUser?: Reaction;
+  reactionForUser?: Reaction | null;
   reactionCount: {
     count: number;
     emoji: { shortCode: string; nativeSymbol: string };
@@ -158,9 +208,9 @@ export type Reaction = {
   reactedBy: string;
   shortCode: string;
   nativeSymbol: string;
-  objectId: string;
-  objectType: string;
   createdAt: Date;
+  objectId: string;
+  objectType: ObjectType;
 };
 
 export type PersonInfo = {
@@ -190,6 +240,17 @@ export type ProjectStatus = {
   tags: Tag[];
   info: Info;
   projectName: string;
+};
+
+export type CommonNewsFeedProps = {
+  updatedAt: Date;
+  createdAt?: Date;
+  projectId?: string;
+  reactions?: Reaction[];
+  followedBy?: User[];
+  reactionForUser?: Reaction | null;
+  followedByUser?: boolean;
+  projectName?: string | null;
 };
 
 export type ProjectProgression = {
@@ -248,7 +309,7 @@ export type UserSession = {
   email: string;
 };
 
-export type Opportunity = {
+export type Opportunity = CommonNewsFeedProps & {
   id: string;
   title: string;
   description?: string;
@@ -263,24 +324,28 @@ export type BasicOpportunity = {
   title: string;
   description: string | null;
   projectId?: string;
+  projectName?: string;
   contactPerson?: User;
 };
 
-export type CollaborationQuestion = {
+export type CollaborationQuestion = CommonNewsFeedProps & {
   id: string;
   title: string;
   isPlatformFeedback: boolean;
   description: string;
   authors: User[];
   comments: Comment[];
+  projectId?: string;
 };
 
 export type BasicCollaborationQuestion = {
   id: string;
+  updatedAt: Date;
   title: string;
   description: string;
   authors: User[];
-  projectId?: string;
+  projectId: string;
+  projectName?: string;
 };
 
 export type Filters = {
@@ -297,7 +362,7 @@ export type AmountOfNews = {
   [key: string]: number;
 };
 
-export type Event = {
+export type Event = CommonNewsFeedProps & {
   id: string;
   title: string;
   startTime: Date;
@@ -309,6 +374,15 @@ export type Event = {
   image?: ImageFormats;
   themes: string[];
   projectId: string;
+  projectName?: string;
+};
+
+export type Post = CommonNewsFeedProps & {
+  id: string;
+  author: User;
+  content: string;
+  upvotedBy: string[];
+  responseCount: number;
 };
 
 export type ImageFormat = {
@@ -323,6 +397,30 @@ export type ImageFormat = {
   height: number;
 };
 
+export type CommonCommentProps = {
+  id: string;
+  commentId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  comment: string;
+  author: User;
+  upvotedBy: string[];
+  responseCount: number;
+  parentId?: string;
+};
+
+export type PostComment = CommonCommentProps & {
+  postId: string;
+};
+
+export type NewsComment = CommonCommentProps & {
+  newsId: string;
+};
+
+export type CommentWithResponses = CommonCommentProps & {
+  responses: CommentWithResponses[];
+};
+
 export type ImageFormats = {
   xxlarge?: ImageFormat;
   xlarge?: ImageFormat;
@@ -332,3 +430,8 @@ export type ImageFormats = {
   xsmall?: ImageFormat;
   thumbnail?: ImageFormat;
 };
+
+export enum SortValues {
+  DESC = 'DESC',
+  ASC = 'ASC',
+}

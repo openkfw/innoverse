@@ -1,5 +1,6 @@
 'use client';
 
+import React, { PropsWithChildren } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import Box from '@mui/material/Box';
@@ -10,7 +11,7 @@ import Typography from '@mui/material/Typography';
 
 import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import { ProjectUpdateWithAdditionalData } from '@/common/types';
-import { NewsSkeleton } from '@/components/newsPage/skeletons/NewsSkeleton';
+import { CardSkeletons } from '@/components/skeletons/CardSkeletons';
 import theme from '@/styles/theme';
 import { getProjectUpdatesPage } from '@/utils/requests/updates/requests';
 
@@ -35,14 +36,40 @@ export const News = (props: NewsProps) => {
   };
 
   return (
+    <CustomInfiniteScroll
+      numberOfItems={news.length}
+      hasMore={hasMoreValue}
+      isLoading={isLoading}
+      onScroll={loadScrollData}
+      loadingSkeleton={<CardSkeletons count={5} />}
+      sx={sx}
+    >
+      {news && news.map((update, key) => <NewsCard key={key} update={update} sx={cardStyles} />)}
+    </CustomInfiniteScroll>
+  );
+};
+
+type CustomInfiniteScrollProps = PropsWithChildren & {
+  numberOfItems: number;
+  hasMore: boolean;
+  isLoading: boolean;
+  loadingSkeleton: React.ReactNode;
+  onScroll: () => Promise<void>;
+  sx?: SxProps;
+};
+
+export const CustomInfiniteScroll = (props: CustomInfiniteScrollProps) => {
+  const { numberOfItems, hasMore, children, isLoading, loadingSkeleton, onScroll, sx } = props;
+
+  return (
     <Box sx={{ width: '100%', ...sx }} data-testid="news-container">
       {isLoading ? (
-        <NewsSkeleton count={5} />
+        loadingSkeleton
       ) : (
         <InfiniteScroll
-          dataLength={news.length}
-          next={loadScrollData}
-          hasMore={hasMoreValue}
+          dataLength={numberOfItems}
+          next={onScroll}
+          hasMore={hasMore}
           scrollThreshold={0.5}
           style={{ overflow: 'unset' }}
           loader={
@@ -57,7 +84,7 @@ export const News = (props: NewsProps) => {
           }
         >
           <Stack spacing={2} direction="column" justifyContent="flex-end" alignItems="flex-end">
-            {news && news.map((update, key) => <NewsCard key={key} update={update} sx={cardStyles} />)}
+            {children}
           </Stack>
         </InfiniteScroll>
       )}

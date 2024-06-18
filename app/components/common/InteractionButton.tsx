@@ -52,6 +52,7 @@ export enum InteractionType {
   ADD_UPDATE = 'add-update',
   ALLOW_NOTIFICATIONS = 'allow-notifications',
   DISMISS_NOTIFICATION_BANNER = 'dismiss-notification-banner',
+  ADD_POST = 'add-post',
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
@@ -90,7 +91,8 @@ export default function InteractionButton(props: InteractionButtonProps) {
 
   const getEndIcon = () => {
     if (interactionType === InteractionType.LIKE) return <ThumbUpOutlinedIcon fontSize="small" />;
-    if (interactionType === InteractionType.ADD_UPDATE) return <AddIcon fontSize="small" />;
+    if (interactionType === InteractionType.ADD_UPDATE || interactionType === InteractionType.ADD_POST)
+      return <AddIcon fontSize="small" />;
     if (interactionType === InteractionType.FEEDBACK)
       return (
         <Box onClick={handleIconClick}>
@@ -112,7 +114,8 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.FEEDBACK) return 'FEEDBACK';
     if (interactionType === InteractionType.LOG_IN) return 'Log in';
     if (interactionType === InteractionType.CLEAR) return 'Entfernen';
-    if (interactionType === InteractionType.ADD_UPDATE) return 'Neuigkeit hinzufügen';
+    if (interactionType === InteractionType.ADD_UPDATE) return 'Beitrag hinzufügen';
+    if (interactionType === InteractionType.ADD_POST) return 'Beitrag hinzufügen';
   };
 
   const getButtonTextClicked = () => {

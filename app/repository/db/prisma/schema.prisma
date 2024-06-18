@@ -10,9 +10,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Comment {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  objectType CommentType
+
+  postComment PostComment?
+  newsComment NewsComment?
+
+  text   String // text of comment
+  author    String // id of author
+  upvotedBy String[] // ids of users
+  reactions Reaction[]
+
+  parent  Comment? @relation("CommentResponseRelation",fields: [parentId], references: [id], onDelete: Cascade)
+  parentId String?
+
+  responses  Comment[]  @relation("CommentResponseRelation")
+
+}
+
+model NewsComment {
+  id        String   @id @default(uuid())
+  commentId String      @unique
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  newsId    String
+}
+
+model PostComment {
+  id        String   @id @default(uuid())
+  commentId String      @unique
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  postId    String
+}
+
 model ProjectComment {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   comment   String // text of comment
   projectId String // commented project
@@ -22,9 +58,11 @@ model ProjectComment {
   @@map(name: "project_comments")
 }
 
+
 model CollaborationComment {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   comment    String // text of comment
   projectId  String // commented project
@@ -37,9 +75,11 @@ model CollaborationComment {
   @@map(name: "collaboration_comments")
 }
 
+
 model CollaborationCommentResponse {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   response    String // text of response
   author      String // id of the author
@@ -64,10 +104,11 @@ model Follow {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  projectId  String // followed project
+  objectId  String // followed object
+  objectType ObjectType @default(PROJECT) // type of object that was followed
   followedBy String // user id  
 
-   @@unique(fields: [projectId, followedBy])
+   @@unique(fields: [objectId, objectType, followedBy])
 }
 
 model PushSubscription {
@@ -85,10 +126,13 @@ model Reaction {
 
   reactedBy  String // user id
   objectId   String // object id that was reacted to (e.g. id of update or event)
-  objectType ReactionObjectType // type of object that was reacted to (e.g. update or event)
+  objectType ObjectType // type of object that was reacted to (e.g. update or event)
 
   shortCode    String // shortcode of emoji, see unicode
   nativeSymbol String // native representation of emoji symbol, see unicode
+
+  comment   Comment? @relation(fields: [commentId], references: [id]) // only used if associated with a comment
+  commentId String?
 
   @@unique(fields: [reactedBy, objectId, objectType])
   @@map("reactions")
@@ -106,7 +150,27 @@ model SurveyVote {
   @@map(name: "survey_votes")
 }
 
-enum ReactionObjectType {
+model Post {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  upvotedBy   String[] // ids of users
+  author      String // id of author
+  content     String
+}
+
+enum ObjectType {
   UPDATE
   EVENT
+  COLLABORATION_QUESTION
+  COLLABORATION_COMMENT
+  POST
+  PROJECT
+  SURVEY_QUESTION
+}
+
+enum CommentType {
+  POST_COMMENT
+  NEWS_COMMENT
 }

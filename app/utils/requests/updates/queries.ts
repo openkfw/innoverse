@@ -42,6 +42,19 @@ export const GetUpdatesQuery = graphql(
   [ProjectUpdateFragment],
 );
 
+export const GetUpdateByIdQuery = graphql(
+  `
+    query GetUpdateById($id: ID!) {
+      update(id: $id) {
+        data {
+          ...ProjectUpdate
+        }
+      }
+    }
+  `,
+  [ProjectUpdateFragment],
+);
+
 export const GetUpdatesByProjectIdQuery = graphql(
   `
     query GetUpdates($projectId: ID, $sort: String! = "updatedAt:desc") {
@@ -132,3 +145,16 @@ export const GetUpdateCountQuery = graphql(`
     }
   }
 `);
+
+export const GetUpdatesStartingFromQuery = graphql(
+  `
+    query GetUpdatesStartingFrom($from: DateTime) {
+      updates(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
+        data {
+          ...ProjectUpdate
+        }
+      }
+    }
+  `,
+  [ProjectUpdateFragment],
+);

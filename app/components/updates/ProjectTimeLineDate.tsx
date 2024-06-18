@@ -6,12 +6,12 @@ import { ProjectUpdateWithAdditionalData } from '@/common/types';
 
 import { DateField } from './DateField';
 
-function getDay(date: string) {
-  return new Date(date).getDate().toString();
+function getDay(date: Date) {
+  return date.getDate().toString();
 }
 
-function getMonth(date: string) {
-  return new Date(date).toLocaleString('de-DE', { month: 'short' });
+function getMonth(date: Date) {
+  return date.toLocaleString('de-DE', { month: 'short' });
 }
 
 interface ProjectTimeLineDateProps {

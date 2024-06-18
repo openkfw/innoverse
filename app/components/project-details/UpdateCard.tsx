@@ -12,17 +12,14 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { ProjectUpdate } from '@/common/types';
+import { UserAvatar } from '@/components/common/UserAvatar';
 import AllUpdatesIcon from '@/components/icons/AllUpdatesIcon';
 import ArrowLeftIcon from '@/components/icons/ArrowLeftIcon';
 import ArrowRightIcon from '@/components/icons/ArrowRightIcon';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/helpers';
 
-import AvatarIcon from '../common/AvatarIcon';
 import { parseStringForLinks } from '../common/LinkString';
-import { StyledTooltip } from '../common/StyledTooltip';
-
-import { TooltipContent } from './TooltipContent';
 
 interface UpdateCardProps {
   updates: ProjectUpdate[];
@@ -104,16 +101,7 @@ const UpdateCard = (props: UpdateCardProps) => {
       <Card sx={cardStyles} elevation={0}>
         <CardContent>
           <Grid container alignItems="center">
-            <Box>
-              <StyledTooltip
-                arrow
-                key={update?.id}
-                title={<TooltipContent teamMember={update?.author} />}
-                placement="bottom"
-              >
-                <AvatarIcon user={update?.author} size={24} allowAnimation index={100} />
-              </StyledTooltip>
-            </Box>
+            <UserAvatar size={24} user={update.author} allowAnimation />
 
             <Box sx={{ paddingLeft: '16px', ml: '8px' }}>
               <Typography variant="subtitle2" sx={authorNameStyles}>

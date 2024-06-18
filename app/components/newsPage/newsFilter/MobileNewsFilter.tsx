@@ -15,8 +15,8 @@ import CloseIcon from '@/components/icons/CloseIcon';
 import theme from '@/styles/theme';
 
 import ApplyFilterButton, { APPLY_BUTTON } from './ApplyFilterButton';
-import ProjectsInput from './ProjectsInput';
-import TopicInput from './TopicInput';
+import NewsProjectsFilter from './NewsProjectsFilter';
+import NewsTopicFilter from './NewsTopicFilter';
 
 interface MobileNewsFilterProps {
   open: boolean;
@@ -45,7 +45,7 @@ export default function MobileNewsFilter(props: MobileNewsFilterProps) {
   }, [newFilters, filters]);
 
   return (
-    <Box sx={{ backgroundColor: theme.palette.background.paper }} date-testid="news-filter">
+    <Box mb={0} sx={{ backgroundColor: theme.palette.background.paper }} date-testid="news-filter">
       <SwipeableDrawer
         sx={{
           '& .MuiPaper-root': {
@@ -67,8 +67,8 @@ export default function MobileNewsFilter(props: MobileNewsFilterProps) {
         <Box sx={drawerBoxStyle}>
           <Typography variant="overline">Filtern</Typography>
           <Card sx={cardStyles}>
-            <ProjectsInput filters={newFilters} setFilters={setNewFilters} />
-            <TopicInput filters={newFilters} setFilters={setNewFilters} />
+            <NewsProjectsFilter filters={newFilters} setFilters={setNewFilters} />
+            <NewsTopicFilter filters={newFilters} setFilters={setNewFilters} />
           </Card>
         </Box>
         <ApplyFilterButton onClick={applyFilters} applyButtonType={getApplyButtonType()} />

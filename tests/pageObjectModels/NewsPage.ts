@@ -116,7 +116,7 @@ export class NewsPage extends PageLayout {
 
   private get addNewsButton() {
     return this.page.getByRole("button", {
-      name: "Neuigkeit hinzufügen",
+      name: "Beitrag hinzufügen",
     });
   }
 }

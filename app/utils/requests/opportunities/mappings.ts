@@ -3,6 +3,7 @@ import { ResultOf } from 'gql.tada';
 import { Opportunity } from '@/common/types';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { OpportunityFragment } from '@/utils/requests/opportunities/queries';
+import { toDate } from '@/utils/helpers';
 
 export function mapFirstToOpportunity(opportunities: ResultOf<typeof OpportunityFragment>[] | undefined) {
   if (!opportunities || !opportunities.length) {
@@ -28,5 +29,6 @@ export function mapToOpportunity(
     contactPerson: contactPerson ? mapToUser(contactPerson) : undefined,
     participants: participants ? participants.map(mapToUser) : [],
     hasApplied,
+    updatedAt: toDate(attributes.updatedAt),
   };
 }

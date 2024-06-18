@@ -18,7 +18,7 @@ import {
 
 interface CollaborationCommentResponseCardProps {
   response: CommentResponse;
-  projectName: string;
+  projectName?: string;
   onDelete?: () => void;
 }
 

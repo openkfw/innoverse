@@ -8,7 +8,6 @@ import Grid from '@mui/material/Grid';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { useProject } from '@/app/contexts/project-context';
 import { SurveyQuestion } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import theme from '@/styles/theme';
@@ -25,15 +24,27 @@ export interface SurveyVotes {
 interface SurveyCardProps {
   projectId: string;
   surveyQuestion: SurveyQuestion;
+  sx?: SxProps;
+  fill?: boolean;
 }
+
+type SurveyVoteResponses = {
+  surveyId: string;
+  totalVotes: number;
+  optionsWithVotes: {
+    votes: number;
+    option: string;
+    percentage: number;
+  }[];
+};
 
 export const SurveyCard = (props: SurveyCardProps) => {
   const { selectedOption, handleVote, votesPerOption } = useSurveyCard(props);
-  const { surveyQuestion } = props;
+  const { surveyQuestion, sx, fill = false } = props;
 
   return (
-    <Grid container item>
-      <Grid container item xs={12} md={6} direction="column" sx={leftGridStyles}>
+    <Grid container item sx={sx}>
+      <Grid container item xs={12} md={fill ? 12 : 6} direction="column" sx={leftGridStyles}>
         <Grid item>
           <Typography variant="h5" color="secondary.contrastText">
             {surveyQuestion.question}
@@ -41,52 +52,43 @@ export const SurveyCard = (props: SurveyCardProps) => {
         </Grid>
       </Grid>
 
-      <Grid item xs={12} md={6} sx={rightGridStyles}>
-        {
-          <SurveyResponsePicker
-            sx={{
-              alignItems: { md: 'center', lg: 'flex-start' },
-              display: { md: 'block', lg: 'flex' },
-              '@media (max-width: 1360px)': { display: 'block' },
-            }}
-            handleVote={handleVote}
-            selectedOption={selectedOption}
-            responseOptions={surveyQuestion.responseOptions}
-            votesPerOption={votesPerOption.optionsWithVotes}
-          />
-        }
+      <Grid item xs={12} md={fill ? 12 : 6} sx={{ ...rightGridStyles, paddingLeft: fill ? 0 : '2em' }}>
+        <SurveyResponsePicker
+          sx={surveyPickerStyles}
+          handleVote={handleVote}
+          selectedOption={selectedOption}
+          responseOptions={surveyQuestion.responseOptions}
+          votesPerOption={votesPerOption.optionsWithVotes}
+          fill={fill}
+        />
       </Grid>
     </Grid>
   );
 };
 
 function useSurveyCard({ projectId, surveyQuestion }: SurveyCardProps) {
-  const { surveyQuestions } = useProject();
-
-  const surveyVoteResponses = surveyQuestions
-    .map((surveyQuestion) => {
-      return {
-        surveyId: surveyQuestion.id,
-        totalVotes: surveyQuestion.votes.length,
-        optionsWithVotes: surveyQuestion.responseOptions.reduce(
-          (acc, option) => {
-            const votes = surveyQuestion.votes.filter((vote) => vote.vote === option.responseOption).length || 0;
-            const totalVotes = surveyQuestion.votes.length;
-            acc.push({
-              option: option.responseOption,
-              votes: votes,
-              percentage: Math.round((votes / totalVotes) * 100) || 0,
-            });
-            return acc;
-          },
-          [] as { votes: number; option: string; percentage: number }[],
-        ),
-      };
-    })
-    .find((vote) => vote.surveyId === surveyQuestion.id);
+  const surveyVoteResponses = () => {
+    return {
+      surveyId: surveyQuestion.id,
+      totalVotes: surveyQuestion.votes.length,
+      optionsWithVotes: surveyQuestion.responseOptions.reduce(
+        (acc, option) => {
+          const votes = surveyQuestion.votes.filter((vote) => vote.vote == option.responseOption).length || 0;
+          const totalVotes = surveyQuestion.votes.length;
+          acc.push({
+            option: option.responseOption,
+            votes: votes,
+            percentage: Math.round((votes / totalVotes) * 100) || 0,
+          });
+          return acc;
+        },
+        [] as { votes: number; option: string; percentage: number }[],
+      ),
+    };
+  };
 
   const [selectedOption, setSelectedOption] = useState(surveyQuestion.userVote);
-  const [votesPerOption, setVotesPerOption] = useState(surveyVoteResponses);
+  const [votesPerOption, setVotesPerOption] = useState<SurveyVoteResponses>(surveyVoteResponses);
   const appInsights = useAppInsightsContext();
 
   const hasVoted = selectedOption !== undefined;
@@ -159,9 +161,14 @@ const leftGridStyles: SxProps = {
 };
 
 const rightGridStyles: SxProps = {
-  paddingLeft: '2em',
   [theme.breakpoints.down('md')]: {
     paddingLeft: 0,
     flexDirection: 'column',
   },
+};
+
+const surveyPickerStyles = {
+  alignItems: { md: 'center', lg: 'flex-start' },
+  display: { md: 'block', lg: 'flex' },
+  '@media (max-width: 1360px)': { display: 'block' },
 };

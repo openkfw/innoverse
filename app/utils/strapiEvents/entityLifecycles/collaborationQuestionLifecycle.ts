@@ -1,19 +1,37 @@
-import { getProjectFollowers } from '@/repository/db/follow';
+import { ObjectType } from '@/common/types';
+import { getFollowedByForEntity, getProjectFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getPushSubscriptionsForUser } from '@/repository/db/push_subscriptions';
 import getLogger from '@/utils/logger';
+import { mapCollaborationQuestionToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
+import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
+import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { NotificationRequest, sendPushNotifications } from '@/utils/notification/notificationSender';
-import { getBasicCollaborationQuestionById } from '@/utils/requests/collaborationQuestions/requests';
-import { createProjectUpdate } from '@/utils/requests/updates/requests';
+import { getBasicCollaborationQuestionByIdWithAdditionalData } from '@/utils/requests/collaborationQuestions/requests';
 import { StrapiEntityLifecycle, StrapiEntry } from '@/utils/strapiEvents/entityLifecycles/strapiEntityLifecycle';
 
 const logger = getLogger();
 
 export class CollaborationQuestionLifecycle extends StrapiEntityLifecycle {
+  public override async onUpdate(entry: StrapiEntry): Promise<void> {
+    const questionId = entry.id.toString();
+    await this.saveQuestionToCache(questionId, { createIfNew: false });
+  }
+
+  public override async onDelete(entry: StrapiEntry): Promise<void> {
+    const questionId = entry.id.toString();
+    await this.deleteQuestionFromCache(questionId);
+  }
+
   public override async onPublish(entry: StrapiEntry): Promise<void> {
     const questionId = entry.id.toString();
     await this.notifyFollowers(questionId);
-    await this.createUpdateForNewCollaborationQuestion(questionId);
+    await this.saveQuestionToCache(questionId);
+  }
+
+  public override async onUnpublish(entry: StrapiEntry): Promise<void> {
+    const questionId = entry.id.toString();
+    this.deleteQuestionFromCache(questionId);
   }
 
   private notifyFollowers = async (questionId: string) => {
@@ -39,37 +57,33 @@ export class CollaborationQuestionLifecycle extends StrapiEntityLifecycle {
     );
   };
 
-  private createUpdateForNewCollaborationQuestion = async (collaborationQuestId: string) => {
-    const collaborationQuestion = await getBasicCollaborationQuestionById(collaborationQuestId);
-
-    if (!collaborationQuestion) return;
-
-    if (!collaborationQuestion.projectId) {
-      logger.warn("Can't create project update for published collaboration question as it contains no project");
+  private saveQuestionToCache = async (
+    questionId: string,
+    options: { createIfNew: boolean } = { createIfNew: true },
+  ) => {
+    const question = await getBasicCollaborationQuestionByIdWithAdditionalData(questionId);
+    if (!question) {
+      logger.warn(`Failed to save collaboration question with id '${questionId}' to cache`);
       return;
     }
 
-    if (!collaborationQuestion.authors.length) {
-      logger.warn("Can't create project update for published collaboration question as it contains no author");
-      return;
+    const redisClient = await getRedisClient();
+
+    if (!options.createIfNew) {
+      const redisKey = this.getRedisKey(questionId);
+      const cachedQuestion = await getNewsFeedEntryByKey(redisClient, redisKey);
+      if (!cachedQuestion) return;
     }
 
-    const author = collaborationQuestion.authors[0];
+    const followerIds = await getFollowedByForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, question.id);
+    const followers = await mapToRedisUsers(followerIds);
+    const newsFeedEntry = mapCollaborationQuestionToRedisNewsFeedEntry(question, question.reactions, followers);
+    await saveNewsFeedEntry(redisClient, newsFeedEntry);
+  };
 
-    // Removing trailing '.' from title
-    const title = collaborationQuestion.title.endsWith('.')
-      ? collaborationQuestion.title.slice(0, collaborationQuestion.title.length - 1)
-      : collaborationQuestion.title;
-
-    const update = await createProjectUpdate({
-      comment: `Eine neue Frage wurde eingestellt: ${title}. ${collaborationQuestion.description}`,
-      authorId: author.id,
-      projectId: collaborationQuestion.projectId,
-      linkToCollaborationTab: true,
-    });
-
-    if (update) {
-      logger.info(`Created project update with id ${update.id} for published collaboration question`);
-    }
+  private deleteQuestionFromCache = async (questionId: string) => {
+    const redisClient = await getRedisClient();
+    const redisKey = this.getRedisKey(questionId);
+    await deleteItemFromRedis(redisClient, redisKey);
   };
 }

@@ -14,6 +14,7 @@ export const MultilineTextInputField = ({
   readOnly = false,
   endAdornment,
   sx,
+  inputPropsSx,
   rows = 4,
 }: MultilineFormInputProps) => {
   return (
@@ -35,6 +36,7 @@ export const MultilineTextInputField = ({
           InputProps={{
             readOnly,
             endAdornment: endAdornment,
+            style: inputPropsSx,
           }}
         />
       )}

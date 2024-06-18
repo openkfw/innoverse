@@ -1,10 +1,10 @@
 import { getProjectFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getPushSubscriptionsForUser } from '@/repository/db/push_subscriptions';
+import { createProjectUpdate } from '@/services/updateService';
 import getLogger from '@/utils/logger';
 import { NotificationRequest, sendPushNotifications } from '@/utils/notification/notificationSender';
 import { getBasicOpportunityById } from '@/utils/requests/opportunities/requests';
-import { createProjectUpdate } from '@/utils/requests/updates/requests';
 import { StrapiEntityLifecycle, StrapiEntry } from '@/utils/strapiEvents/entityLifecycles/strapiEntityLifecycle';
 
 const logger = getLogger();

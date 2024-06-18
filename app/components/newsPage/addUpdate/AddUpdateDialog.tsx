@@ -23,14 +23,14 @@ export default function AddUpdateDialog(props: AddUpdateDialogProps) {
     <CustomDialog
       open={open}
       handleClose={handleClose}
-      title="Neuigkeit hinzufügen"
+      title="Beitrag hinzufügen"
       sx={{ width: { xs: '100%' }, maxWidth: { xs: '500px' } }}
     >
       <AddUpdateForm
-        refetchUpdates={refetchUpdates}
         handleClose={handleClose}
         defaultFormValues={defaultFormValues}
         projectOptions={projectOptions}
+        refetchUpdates={refetchUpdates}
       />
     </CustomDialog>
   );

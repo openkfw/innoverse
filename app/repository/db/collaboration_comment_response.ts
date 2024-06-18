@@ -24,7 +24,7 @@ export async function getCollaborationCommentResponseCount(client: PrismaClient,
   });
 }
 
-export async function addCollaborationCommentResponse(
+export async function addCollaborationCommentResponseToDb(
   client: PrismaClient,
   author: string,
   response: string,
@@ -39,7 +39,7 @@ export async function addCollaborationCommentResponse(
   });
 }
 
-export async function updateCollaborationCommentResponse(
+export async function updateCollaborationCommentResponseInDb(
   client: PrismaClient,
   responseId: string,
   updatedText: string,
@@ -54,7 +54,7 @@ export async function updateCollaborationCommentResponse(
   });
 }
 
-export async function deleteCollaborationCommentResponse(client: PrismaClient, responseId: string) {
+export async function deleteCollaborationCommentResponseInDb(client: PrismaClient, responseId: string) {
   return client.collaborationCommentResponse.delete({
     where: {
       id: responseId,
@@ -75,7 +75,7 @@ export async function getCollaborationCommentResponseUpvotedBy(
   });
 }
 
-export async function handleCollaborationCommentResponseUpvotedBy(
+export async function handleCollaborationCommentResponseUpvotedByInDb(
   client: PrismaClient,
   responseId: string,
   upvotedBy: string,

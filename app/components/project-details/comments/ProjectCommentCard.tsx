@@ -11,7 +11,7 @@ import { deleteProjectComment, handleProjectCommentUpvoteBy, updateProjectCommen
 
 interface ProjectCommentCardProps {
   comment: Comment;
-  projectName: string;
+  projectName?: string;
   onDelete?: () => void;
 }
 
@@ -31,7 +31,7 @@ export const ProjectCommentCard = (props: ProjectCommentCardProps) => {
   );
 };
 
-function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardProps) {
+export function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardProps) {
   const [isUpvoted, setIsUpvoted] = useState<boolean>(comment.isUpvotedByUser || false);
   const appInsights = useAppInsightsContext();
 

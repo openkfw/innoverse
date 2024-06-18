@@ -31,10 +31,8 @@ export const AutocompleteDropdownField = ({
               {...field}
               id="autocomplete-dropdown"
               getOptionLabel={(option) => option.label || ''}
-              onChange={(_, value) => {
-                field.onChange(value);
-              }}
-              isOptionEqualToValue={(option, value) => option.id === value.id || value.id == ''}
+              onChange={(_, value) => field.onChange(value)}
+              isOptionEqualToValue={(option, value) => option.id === value.id || value.id === ''}
               options={options as readonly Option[]}
               renderOption={(props, option) => {
                 return (
@@ -48,11 +46,10 @@ export const AutocompleteDropdownField = ({
                   {...params}
                   label={label}
                   sx={{ color: 'text.primary' }}
+                  helperText="Falls dein Beitrag projektbezogen ist, wähle bitte das entsprechende Projekt aus."
+                  FormHelperTextProps={{ sx: helperTextStyles }}
                   error={!!error}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment,
-                  }}
+                  InputProps={{ ...params.InputProps, startAdornment }}
                 />
               )}
               noOptionsText="Keine Optionen"
@@ -68,4 +65,9 @@ export const AutocompleteDropdownField = ({
       />
     </FormControl>
   );
+};
+
+// Autocomplete Dropdown Field Styles
+const helperTextStyles = {
+  color: 'var(--text-primary, #2D3134)',
 };

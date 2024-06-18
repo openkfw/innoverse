@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
 import { handleSurveyQuestionVote } from '@/repository/db/survey_votes';
+import { handleSurveyVoteInCache } from '@/services/surveyQuestionVoteService';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
@@ -26,11 +27,14 @@ export const handleSurveyVote = withAuth(
           user.providerId,
           body.vote,
         );
+
+        await handleSurveyVoteInCache(surveyVote);
         return {
           status: StatusCodes.OK,
           data: surveyVote,
         };
       }
+
       return {
         status: validatedParams.status,
         errors: validatedParams.errors,
