@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { StatusCodes } from 'http-status-codes';
 
 import { sync as synchronizeNewsFeed } from '@/utils/newsFeed/newsFeedSync';
 
@@ -55,6 +56,6 @@ const demoUpdateItem = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader('Cache-Control', 'no-store');
-  await synchronizeNewsFeed();
-  return res.json({ status: 200, result: 'OK' });
+  const sync = await synchronizeNewsFeed();
+  return res.json({ status: StatusCodes.OK, result: sync });
 }
