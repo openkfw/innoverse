@@ -19,7 +19,7 @@ import { NewsType, RedisCollaborationComment } from '@/utils/newsFeed/redis/mode
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { getBasicCollaborationQuestionById } from '@/utils/requests/collaborationQuestions/requests';
-import { getProjectName } from '@/utils/requests/project/requests';
+import { getProjectTitleById } from '@/utils/requests/project/requests';
 
 const logger = getLogger();
 
@@ -149,7 +149,7 @@ export const createNewsFeedEntryForComment = async (user: User, commentId: strin
   const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_COMMENT, commentId);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, question.id);
   const followers = await mapToRedisUsers(followerIds);
-  const projectName = await getProjectName(comment.projectId);
+  const projectName = await getProjectTitleById(comment.projectId);
 
   return mapCollaborationCommentToRedisNewsFeedEntry(
     { ...comment, projectName: projectName ?? '', upvotedBy, author: user, responseCount },

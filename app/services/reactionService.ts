@@ -12,6 +12,7 @@ import getLogger from '@/utils/logger';
 import { RedisReaction } from '@/utils/newsFeed/redis/models';
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
+
 import { getNewsFeedEntryForEntity } from './commonService';
 
 const logger = getLogger();

@@ -11,13 +11,14 @@ import { getReactionsForEntity } from '@/repository/db/reaction';
 import { redisError } from '@/utils/errors';
 import { getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
+import * as mappings from '@/utils/newsFeed/redis/mappings';
 import {
-  mapCollaborationCommentToRedisNewsFeedEntry,
-  mapToRedisCollaborationQuestion,
-  mapToRedisPost,
-  mapToRedisUsers,
-} from '@/utils/newsFeed/redis/mappings';
-import { NewsType, RedisNewsFeedEntry, RedisProjectEvent, RedisProjectUpdate } from '@/utils/newsFeed/redis/models';
+  NewsType,
+  RedisNewsFeedEntry,
+  RedisProjectEvent,
+  RedisProjectUpdate,
+  RedisSync,
+} from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { getProjectsEvents } from '@/utils/newsFeed/redis/requests/events';
 import { getProjectsUpdates } from '@/utils/newsFeed/redis/requests/projectUpdates';
@@ -26,6 +27,7 @@ import {
   getBasicCollaborationQuestionStartingFromWithAdditionalData,
 } from '@/utils/requests/collaborationQuestions/requests';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import { getProjectTitleById } from '@/utils/requests/project/requests';
 
 import {
   getLatestSuccessfulNewsFeedSync,
@@ -35,12 +37,11 @@ import {
   transactionalDeleteItemsFromRedis,
   transactionalSaveNewsFeedEntry,
 } from './redis/redisService';
-import { getProjectName } from '../requests/project/requests';
 
 const logger = getLogger();
 const maxSyncRetries = 3;
 
-export const sync = async (retry?: number) => {
+export const sync = async (retry?: number): Promise<RedisSync> => {
   const now = new Date();
   retry ??= 0;
 
@@ -52,29 +53,35 @@ export const sync = async (retry?: number) => {
 
     logger.info(`Sync news feed items starting from ${syncFrom.toISOString()} ...`);
 
-    const itemsToSync = await Promise.all([
+    const getItems = [
       aggregateProjectUpdates({ from: syncFrom }),
       aggregateProjectEvents({ from: syncFrom }),
       aggregatePosts({ from: syncFrom }),
       aggregateCollaborationQuestions({ from: syncFrom }),
       aggregateCollaborationComments({ from: syncFrom }),
-    ]);
+    ];
 
-    const affectedEntries = await getNewsFeedEntries(redisClient, {
-      filterBy: { updatedAt: { from: syncFrom, to: now } },
-      pagination: { page: 1, pageSize: 1000 },
-      sortBy: {
-        updatedAt: 'DESC',
-      },
-    });
+    const settledItems = await Promise.allSettled(getItems);
+    const itemsToSync = settledItems
+      .filter((result): result is PromiseFulfilledResult<RedisNewsFeedEntry[]> => result.status === 'fulfilled')
+      .map((result) => result.value);
 
-    const affectedKeys = affectedEntries.documents.map((document) => document.id);
+    const failedItemsToSync = settledItems.filter(
+      (result): result is PromiseRejectedResult => result.status === 'rejected',
+    );
+
+    if (failedItemsToSync.length) {
+      logger.warn('Failed to load items for sync:', failedItemsToSync);
+    }
+
+    const affectedKeys = await getNewsFeedEntryKeys({ redisClient, from: syncFrom, to: now });
     const entriesToAdd = [...itemsToSync[0], ...itemsToSync[1], ...itemsToSync[2], ...itemsToSync[3]];
 
     if (!affectedKeys.length && !entriesToAdd.length) {
       logger.info('Found no items to delete or add, saving sync to redis and stopping ...');
-      await saveSuccessfulSyncToRedis(redisClient, now);
-      return;
+      const sync = createSuccessfulSync(now, 0);
+      await saveNewsFeedSync(redisClient, sync);
+      return sync;
     }
 
     const transactionResult = await removeKeysAndSaveNewEntriesAsTransaction(redisClient, affectedKeys, entriesToAdd);
@@ -82,24 +89,53 @@ export const sync = async (retry?: number) => {
     logger.info(transactionResult);
 
     logger.info('Synchronization completed, saving sync to redis and stopping ...');
-    await saveSuccessfulSyncToRedis(redisClient, now);
+    const sync = createSuccessfulSync(now, entriesToAdd.length);
+    await saveNewsFeedSync(redisClient, sync);
+    return sync;
   } catch (error) {
     logger.error('Synchronization failed, error:');
     logger.error(error);
 
     if (retry < maxSyncRetries) {
-      await sync(retry + 1);
+      return await sync(retry + 1);
     } else {
       logger.error(`Max synchronization retries (${maxSyncRetries}) exceeded, saving sync to redis and stopping ...`);
       const redisClient = await getRedisClient();
       const syncError = redisError('Sync failed', error as Error);
-      await saveNewsFeedSync(redisClient, { errors: [syncError], status: 'Failed', syncedAt: getUnixTimestamp(now) });
+      const sync: RedisSync = { errors: [syncError], status: 'Failed', syncedAt: getUnixTimestamp(now) };
+      await saveNewsFeedSync(redisClient, sync);
+      return sync;
     }
   }
 };
 
-const saveSuccessfulSyncToRedis = async (redisClient: RedisClient, timestamp: Date) => {
-  await saveNewsFeedSync(redisClient, { errors: [], status: 'OK', syncedAt: getUnixTimestamp(timestamp) });
+const getNewsFeedEntryKeys = async ({ redisClient, from, to }: { redisClient: RedisClient; from: Date; to: Date }) => {
+  const keys: string[] = [];
+  const pageSize = 100;
+  let page = 1;
+  let retrievedEntries = 0;
+
+  while (page === 1 || retrievedEntries >= pageSize) {
+    logger.info(`Fetching page ${page} of news feed entry keys from ${from} to ${to} ...`);
+    const entries = await getNewsFeedEntries(redisClient, {
+      filterBy: { updatedAt: { from, to } },
+      pagination: { page, pageSize },
+      sortBy: {
+        updatedAt: 'DESC',
+      },
+    });
+
+    const newKeys = entries.documents.map((document) => document.id);
+    keys.push(...newKeys);
+    retrievedEntries = keys.length;
+    page++;
+  }
+
+  return keys;
+};
+
+const createSuccessfulSync = (timestamp: Date, syncedItemCount: number): RedisSync => {
+  return { status: 'OK', syncedAt: getUnixTimestamp(timestamp), syncedItemCount, errors: [] };
 };
 
 const removeKeysAndSaveNewEntriesAsTransaction = async (
@@ -131,9 +167,9 @@ const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEn
     const reactions = await getReactionsForEntity(dbClient, ObjectType.POST, post.id);
     const author = await getInnoUserByProviderId(post.author);
     const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
-    const followers = await mapToRedisUsers(followerIds);
+    const followers = await mappings.mapToRedisUsers(followerIds);
     const responseCount = await countPostResponses(dbClient, post.id);
-    return mapToRedisPost({ ...post, author, responseCount }, reactions, followers);
+    return mappings.mapToRedisPost({ ...post, author, responseCount }, reactions, followers);
   });
   const redisPosts = await Promise.all(mapToRediPosts);
   return redisPosts.map((post) => ({
@@ -154,9 +190,9 @@ export const aggregateCollaborationComments = async ({ from }: { from: Date }): 
     const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_COMMENT, comment.id);
     const author = await getInnoUserByProviderId(comment.author);
     const followerIds = await getFollowedByForEntity(dbClient, ObjectType.COLLABORATION_COMMENT, comment.id);
-    const followers = await mapToRedisUsers(followerIds);
-    const projectName = await getProjectName(comment.projectId);
-    return mapCollaborationCommentToRedisNewsFeedEntry(
+    const followers = await mappings.mapToRedisUsers(followerIds);
+    const projectName = await getProjectTitleById(comment.projectId);
+    return mappings.mapCollaborationCommentToRedisNewsFeedEntry(
       { ...comment, projectName: projectName ?? '', author, responseCount },
       question,
       reactions,
@@ -190,8 +226,8 @@ const aggregateCollaborationQuestions = async ({ from }: { from: Date }): Promis
   const questions = (await getBasicCollaborationQuestionStartingFromWithAdditionalData(from)) ?? [];
   const mapToRedisQuestions = questions.map(async (question) => {
     const followerIds = await getFollowedByForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, question.id);
-    const followers = await mapToRedisUsers(followerIds);
-    return mapToRedisCollaborationQuestion(question, question.reactions, followers);
+    const followers = await mappings.mapToRedisUsers(followerIds);
+    return mappings.mapToRedisCollaborationQuestion(question, question.reactions, followers);
   });
   const redisQuestions = await Promise.all(mapToRedisQuestions);
   return redisQuestions.map((question) => ({

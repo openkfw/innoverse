@@ -42,6 +42,7 @@ type RedisNewsFeedTypeEntry =
 export interface RedisSync {
   syncedAt: number;
   status: 'OK' | 'Failed';
+  syncedItemCount?: number;
   errors: InnoPlatformError[];
 }
 

@@ -24,6 +24,7 @@ import {
   GetProjectAuthorIdByProjectIdQuery,
   GetProjectByIdQuery,
   GetProjectsQuery,
+  GetProjectTitleByIdQuery,
 } from '@/utils/requests/project/queries';
 import { getProjectQuestionsByProjectId } from '@/utils/requests/questions/requests';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
@@ -34,6 +35,20 @@ import { validateParams } from '@/utils/validationHelper';
 import { getInnoUserByProviderId } from '../innoUsers/requests';
 
 const logger = getLogger();
+
+export async function getProjectTitleById(id: string) {
+  try {
+    const response = await strapiGraphQLFetcher(GetProjectTitleByIdQuery, { id });
+    const title = response.project?.data?.attributes.title;
+    if (title === undefined) {
+      throw new Error('Response contained no title');
+    }
+    return title;
+  } catch (err) {
+    const e: InnoPlatformError = strapiError('Getting Project title by ID', err as RequestError, id);
+    logger.error(e);
+  }
+}
 
 export async function getProjectById(id: string) {
   try {
@@ -194,10 +209,11 @@ export const getProjectComments = async (body: { projectId: string }) => {
             comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote)),
           ).then((results) => getFulfilledResults(results));
           const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
+          const projectTitle = await getProjectTitleById(comment.projectId);
 
           return {
             ...comment,
-            projectName: await getProjectName(comment.projectId),
+            projectName: projectTitle,
             upvotedBy: upvotes,
             author,
             responseCount,
@@ -249,14 +265,3 @@ export async function getProjectByIdWithReactions(id: string) {
     logger.error(error);
   }
 }
-
-export const getProjectName = async (projectId: string | undefined) => {
-  if (!projectId) {
-    return undefined;
-  }
-  const project = await getProjectById(projectId);
-  if (project) {
-    return project.title;
-  }
-  return undefined;
-};

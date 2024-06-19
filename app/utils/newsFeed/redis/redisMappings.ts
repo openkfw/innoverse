@@ -1,4 +1,5 @@
 import { Follow as PrismaFollow, Reaction as PrismaReaction } from '@prisma/client';
+
 import {
   CollaborationComment,
   CollaborationQuestion,

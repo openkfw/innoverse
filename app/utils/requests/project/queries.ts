@@ -69,6 +69,19 @@ export const GetProjectByIdQuery = graphql(
   [ProjectFragment],
 );
 
+export const GetProjectTitleByIdQuery = graphql(`
+  query GetProjectTitleById($id: ID!) {
+    project(id: $id) {
+      data {
+        id
+        attributes {
+          title
+        }
+      }
+    }
+  }
+`);
+
 export const GetProjectsPageQuery = graphql(
   `
     query GetProjectsPage($page: Int, $pageSize: Int) {
