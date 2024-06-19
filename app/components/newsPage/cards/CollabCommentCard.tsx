@@ -78,7 +78,7 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
           startIcon={<AddIcon color="secondary" fontSize="large" />}
           style={{ marginTop: '1em', marginLeft: '1.5em', marginBottom: 2 }}
         >
-          Kommentare anzeigen ({question?.comments.length})
+          Kommentare anzeigen ({question?.comments?.length})
         </TransparentButton>
       )}
 
