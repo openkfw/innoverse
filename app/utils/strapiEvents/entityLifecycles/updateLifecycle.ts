@@ -52,7 +52,7 @@ export class UpdateLifecycle extends StrapiEntityLifecycle {
         notification: {
           topic: 'update',
           body: `Ein neues Update wurde hinzugefügt.`,
-          url: '/newsFeed',
+          url: '/news',
         },
       };
     });

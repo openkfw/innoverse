@@ -27,7 +27,7 @@ export type Headers = {
 
 const pages: Headers[] = [
   { text: 'Initiativen', link: '/#initiativen' },
-  { text: 'News', link: '/newsFeed' },
+  { text: 'News', link: '/news' },
   { text: 'AI Assistant' },
 ];
 

@@ -35,7 +35,7 @@ export default function NewsCarousel({ updates }: NewsSliderProps) {
         </Grid>
       )}
       moreButton={
-        <Link href="newsFeed">
+        <Link href="news">
           <CustomButton>Mehr News</CustomButton>
         </Link>
       }
