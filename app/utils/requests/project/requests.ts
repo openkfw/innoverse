@@ -25,6 +25,7 @@ import {
   GetProjectByIdQuery,
   GetProjectsQuery,
   GetProjectTitleByIdQuery,
+  GetProjectTitleByIdsQuery,
 } from '@/utils/requests/project/queries';
 import { getProjectQuestionsByProjectId } from '@/utils/requests/questions/requests';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
@@ -46,6 +47,18 @@ export async function getProjectTitleById(id: string) {
     return title;
   } catch (err) {
     const e: InnoPlatformError = strapiError('Getting Project title by ID', err as RequestError, id);
+    logger.error(e);
+  }
+}
+
+export async function getProjectTitleByIds(ids: string[]) {
+  try {
+    const response = await strapiGraphQLFetcher(GetProjectTitleByIdsQuery, { ids });
+    const data = response.projects?.data ?? [];
+    const projectTitles = data.map((project) => ({ id: project.id, title: project.attributes.title }));
+    return projectTitles;
+  } catch (err) {
+    const e: InnoPlatformError = strapiError('Getting Project titles by ID list', err as RequestError);
     logger.error(e);
   }
 }

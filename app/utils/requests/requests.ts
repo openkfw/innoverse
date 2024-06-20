@@ -1,13 +1,15 @@
-import { ObjectType, UserSession } from '@/common/types';
-import { withAuth } from '../auth';
-import getLogger from '../logger';
-import { isFollowedBy } from '@/repository/db/follow';
 import { StatusCodes } from 'http-status-codes';
-import { InnoPlatformError, dbError } from '../errors';
+
+import { ObjectType, UserSession } from '@/common/types';
+import { isFollowedBy } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
+import { findUserSurveyVote } from '@/repository/db/survey_votes';
+
+import { withAuth } from '../auth';
+import { dbError, InnoPlatformError } from '../errors';
+import getLogger from '../logger';
+
 import { findReactionByUser } from './updates/requests';
-import { findUserSurveyVote, getSurveyVotes } from '@/repository/db/survey_votes';
-import { findUserVote } from './surveyQuestions/requests';
 
 const logger = getLogger();
 

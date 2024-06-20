@@ -14,7 +14,7 @@ import {
   SurveyQuestion,
 } from '@/common/types';
 import { getPromiseResults, unixTimestampToDate } from '@/utils/helpers';
-import { getProjectById } from '@/utils/requests/project/requests';
+import { getProjectTitleById, getProjectTitleByIds } from '@/utils/requests/project/requests';
 import { findReactedByUser, findSurveyUserVote, isFollowedByUser } from '@/utils/requests/requests';
 
 import { NewsType, RedisNewsFeedEntry, RedisReaction } from './models';
@@ -31,15 +31,28 @@ export const MappedRedisType: Record<NewsType, ObjectType> = {
 };
 
 export const mapRedisNewsFeedEntries = async (redisFeedEntries: RedisNewsFeedEntry[]) => {
-  return getPromiseResults(redisFeedEntries.map(mapRedisNewsFeedEntry));
+  const projectIds = redisFeedEntries
+    .map((entry) => entry.item.projectId)
+    .filter((projectId): projectId is string => !!projectId);
+
+  const projects = (await getProjectTitleByIds(projectIds)) ?? [];
+
+  const mapItems = redisFeedEntries.map(async (entry) => {
+    const projectTitle = projects.find((project) => project.id === entry.item.projectId);
+    return await mapRedisItem(entry, projectTitle?.title);
+  });
+
+  return await getPromiseResults(mapItems);
 };
 
 export const mapRedisNewsFeedEntry = async (redisFeedEntry: RedisNewsFeedEntry) => {
-  const mappedItem = await mapRedisItem(redisFeedEntry);
+  const projectId = redisFeedEntry.item.projectId;
+  const projectTitle = projectId && (await getProjectTitleById(projectId));
+  const mappedItem = await mapRedisItem(redisFeedEntry, projectTitle);
   return mappedItem as NewsFeedEntry;
 };
 
-const mapItem = async (redisFeedEntry: RedisNewsFeedEntry) => {
+const mapItem = async (redisFeedEntry: RedisNewsFeedEntry, projectTitle?: string) => {
   const { type, item } = redisFeedEntry;
   const { data: followedByUser } = await isFollowedByUser({ objectType: MappedRedisType[type], objectId: item.id });
   const { data: reactionForUser } = await findReactedByUser({ objectType: MappedRedisType[type], objectId: item.id });
@@ -48,8 +61,8 @@ const mapItem = async (redisFeedEntry: RedisNewsFeedEntry) => {
     const { data: userVote } = await findSurveyUserVote({ objectId: item.id });
     return mapObjectWithReactions({
       ...item,
-      projectName: await getProjectName(redisFeedEntry),
-      userVote: userVote?.vote,
+      projectName: projectTitle ?? '',
+      userVote: userVote?.vote ?? null,
       followedByUser: followedByUser ?? false,
       reactionForUser: reactionForUser ? mapReaction(reactionForUser) : null,
       createdAt: unixTimestampToDate(item.createdAt),
@@ -58,7 +71,7 @@ const mapItem = async (redisFeedEntry: RedisNewsFeedEntry) => {
   }
   return mapObjectWithReactions({
     ...item,
-    projectName: await getProjectName(redisFeedEntry),
+    projectName: projectTitle ?? '',
     followedByUser: followedByUser ?? false,
     reactionForUser: reactionForUser ? mapReaction(reactionForUser) : null,
     updatedAt: unixTimestampToDate(item.updatedAt),
@@ -97,8 +110,8 @@ export const mapFollow = (reaction: PrismaFollow): Follow => {
   } as Follow;
 };
 
-export const mapRedisItem = async (entry: RedisNewsFeedEntry) => {
-  const mappedItem = await mapItem(entry);
+export const mapRedisItem = async (entry: RedisNewsFeedEntry, projectTitle?: string): Promise<NewsFeedEntry> => {
+  const mappedItem = await mapItem(entry, projectTitle);
   switch (entry.type) {
     case NewsType.UPDATE:
       return { type: ObjectType.UPDATE, item: mappedItem as ProjectUpdate };
@@ -117,20 +130,4 @@ export const mapRedisItem = async (entry: RedisNewsFeedEntry) => {
     default:
       return { type: ObjectType.UPDATE, item: mappedItem as ProjectUpdate };
   }
-};
-
-const getProjectName = async (entry: RedisNewsFeedEntry) => {
-  const { type, item } = entry;
-  if (type === NewsType.PROJECT) {
-    return item.title;
-  } else if (
-    type === NewsType.EVENT ||
-    type === NewsType.UPDATE ||
-    type === NewsType.SURVEY_QUESTION ||
-    type === NewsType.COLLABORATION_QUESTION
-  ) {
-    const project = item.projectId ? await getProjectById(item.projectId) : null;
-    return project?.title;
-  }
-  return null;
 };

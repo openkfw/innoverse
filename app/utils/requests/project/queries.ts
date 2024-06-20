@@ -82,6 +82,19 @@ export const GetProjectTitleByIdQuery = graphql(`
   }
 `);
 
+export const GetProjectTitleByIdsQuery = graphql(`
+  query GetProjectTitlesByIds($ids: [ID!]) {
+    projects(filters: { id: { in: $ids } }) {
+      data {
+        id
+        attributes {
+          title
+        }
+      }
+    }
+  }
+`);
+
 export const GetProjectsPageQuery = graphql(
   `
     query GetProjectsPage($page: Int, $pageSize: Int) {
