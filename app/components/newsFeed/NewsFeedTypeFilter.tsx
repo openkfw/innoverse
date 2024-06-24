@@ -7,12 +7,13 @@ import { ObjectType } from '@/common/types';
 import FilterSelect, { FilterOption } from '@/components/common/FilterSelect';
 
 type NewsFeedTypeFilterProps = {
+  isLoading: boolean;
   filters: NewsFeedFilters;
   setFilters: (filters: NewsFeedFilters) => void;
 };
 
 export default function NewsFeedTypeFilter(props: NewsFeedTypeFilterProps) {
-  const { filters, setFilters } = props;
+  const { isLoading, filters, setFilters } = props;
   const { types, amountOfEntriesByType: entriesByType } = useNewsFeed();
 
   const updateFilters = (types: string[]) => {
@@ -50,5 +51,13 @@ export default function NewsFeedTypeFilter(props: NewsFeedTypeFilterProps) {
     count: entriesByType[type],
   }));
 
-  return <FilterSelect title="Art" options={options} onSelect={updateFilters} maxOptionsToDisplayCollapsed={3} />;
+  return (
+    <FilterSelect
+      title="Art"
+      isLoading={isLoading}
+      options={options}
+      onSelect={updateFilters}
+      maxOptionsToDisplayCollapsed={3}
+    />
+  );
 }

@@ -14,8 +14,13 @@ import {
   SurveyQuestion,
 } from '@/common/types';
 import { getPromiseResults, unixTimestampToDate } from '@/utils/helpers';
-import { getProjectTitleById, getProjectTitleByIds } from '@/utils/requests/project/requests';
-import { findReactedByUser, findSurveyUserVote, isFollowedByUser } from '@/utils/requests/requests';
+import {
+  findReactedByUser,
+  findSurveyUserVote,
+  getFollowedByForObjects as getFollowedObjectIds,
+  getUserReactionsForObjects,
+  isFollowedByUser,
+} from '@/utils/requests/requests';
 
 import { NewsType, RedisNewsFeedEntry, RedisReaction } from './models';
 
@@ -30,53 +35,42 @@ export const MappedRedisType: Record<NewsType, ObjectType> = {
   [NewsType.COLLABORATION_COMMENT]: ObjectType.COLLABORATION_COMMENT,
 };
 
+type RedisNewsFeedEntryWithAdditionalData = RedisNewsFeedEntry & {
+  reaction?: RedisReaction;
+  followedByUser: boolean;
+};
+
 export const mapRedisNewsFeedEntries = async (redisFeedEntries: RedisNewsFeedEntry[]) => {
-  const projectIds = redisFeedEntries
-    .map((entry) => entry.item.projectId)
-    .filter((projectId): projectId is string => !!projectId);
+  const objects = redisFeedEntries.map((entry) => ({
+    objectType: MappedRedisType[entry.type],
+    objectId: entry.item.id,
+  }));
 
-  const projects = (await getProjectTitleByIds(projectIds)) ?? [];
+  const { data: followedObjectIds } = await getFollowedObjectIds({ objects });
+  const { data: reactions } = await getUserReactionsForObjects({ objects });
 
-  const mapItems = redisFeedEntries.map(async (entry) => {
-    const projectTitle = projects.find((project) => project.id === entry.item.projectId);
-    return await mapRedisItem(entry, projectTitle?.title);
-  });
+  const objectsWithAdditionalData = redisFeedEntries.map((entry) => ({
+    ...entry,
+    followedByUser: followedObjectIds?.some((id) => id === entry.item.id) ?? false,
+    reaction: reactions?.find((reaction) => reaction.objectId === entry.item.id),
+  }));
 
-  return await getPromiseResults(mapItems);
+  const mapObjects = objectsWithAdditionalData.map(mapRedisItem);
+  return await getPromiseResults(mapObjects);
 };
 
 export const mapRedisNewsFeedEntry = async (redisFeedEntry: RedisNewsFeedEntry) => {
-  const projectId = redisFeedEntry.item.projectId;
-  const projectTitle = projectId && (await getProjectTitleById(projectId));
-  const mappedItem = await mapRedisItem(redisFeedEntry, projectTitle);
-  return mappedItem as NewsFeedEntry;
-};
+  const object = { objectId: redisFeedEntry.item.id, objectType: MappedRedisType[redisFeedEntry.type] };
+  const { data: isFollowedBy } = await isFollowedByUser(object);
+  const { data: reactionForUser } = await findReactedByUser(object);
+  const objectWithAdditionalData = {
+    ...redisFeedEntry,
+    followedByUser: isFollowedBy ?? false,
+    reaction: reactionForUser ?? undefined,
+  };
 
-const mapItem = async (redisFeedEntry: RedisNewsFeedEntry, projectTitle?: string) => {
-  const { type, item } = redisFeedEntry;
-  const { data: followedByUser } = await isFollowedByUser({ objectType: MappedRedisType[type], objectId: item.id });
-  const { data: reactionForUser } = await findReactedByUser({ objectType: MappedRedisType[type], objectId: item.id });
-  const projectId = type === NewsType.PROJECT ? item.id : item.projectId;
-  if (type === NewsType.SURVEY_QUESTION) {
-    const { data: userVote } = await findSurveyUserVote({ objectId: item.id });
-    return mapObjectWithReactions({
-      ...item,
-      projectName: projectTitle ?? '',
-      userVote: userVote?.vote ?? null,
-      followedByUser: followedByUser ?? false,
-      reactionForUser: reactionForUser ? mapReaction(reactionForUser) : null,
-      createdAt: unixTimestampToDate(item.createdAt),
-      updatedAt: unixTimestampToDate(item.updatedAt),
-    });
-  }
-  return mapObjectWithReactions({
-    ...item,
-    projectName: projectTitle ?? '',
-    followedByUser: followedByUser ?? false,
-    reactionForUser: reactionForUser ? mapReaction(reactionForUser) : null,
-    updatedAt: unixTimestampToDate(item.updatedAt),
-    projectId: projectId,
-  }) as NewsFeedEntry['item'];
+  const mappedItem = await mapRedisItem(objectWithAdditionalData);
+  return mappedItem as NewsFeedEntry;
 };
 
 export const mapReaction = (reaction: PrismaReaction): Reaction => {
@@ -110,8 +104,8 @@ export const mapFollow = (reaction: PrismaFollow): Follow => {
   } as Follow;
 };
 
-export const mapRedisItem = async (entry: RedisNewsFeedEntry, projectTitle?: string): Promise<NewsFeedEntry> => {
-  const mappedItem = await mapItem(entry, projectTitle);
+export const mapRedisItem = async (entry: RedisNewsFeedEntryWithAdditionalData): Promise<NewsFeedEntry> => {
+  const mappedItem = await mapItem(entry);
   switch (entry.type) {
     case NewsType.UPDATE:
       return { type: ObjectType.UPDATE, item: mappedItem as ProjectUpdate };
@@ -130,4 +124,30 @@ export const mapRedisItem = async (entry: RedisNewsFeedEntry, projectTitle?: str
     default:
       return { type: ObjectType.UPDATE, item: mappedItem as ProjectUpdate };
   }
+};
+
+const mapItem = async (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData) => {
+  const { type, item } = redisFeedEntry;
+  const projectId = type === NewsType.PROJECT ? item.id : item.projectId;
+
+  if (type === NewsType.SURVEY_QUESTION) {
+    const { data: userVote } = await findSurveyUserVote({ objectId: item.id });
+    return mapObjectWithReactions({
+      ...item,
+      userVote: userVote?.vote ?? undefined,
+      followedByUser: redisFeedEntry.followedByUser,
+      reactionForUser: redisFeedEntry.reaction ?? null,
+      createdAt: unixTimestampToDate(item.createdAt),
+      updatedAt: unixTimestampToDate(item.updatedAt),
+      projectId: item.projectId,
+    });
+  }
+
+  return mapObjectWithReactions({
+    ...item,
+    followedByUser: redisFeedEntry.followedByUser,
+    reactionForUser: redisFeedEntry.reaction ?? null,
+    updatedAt: unixTimestampToDate(item.updatedAt),
+    projectId: projectId,
+  }) as NewsFeedEntry['item'];
 };

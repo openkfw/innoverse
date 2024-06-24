@@ -19,6 +19,25 @@ export async function getPromiseResults<T>(promises: Promise<T>[]) {
   return getFulfilledResults(results);
 }
 
+export const groupBy = <T, K extends (string | number | symbol) & keyof T>(array: T[], key: K) => {
+  const map = new Map<T[K], T[]>();
+
+  for (const item of array) {
+    const value = item[key];
+    if (!map.has(value)) {
+      map.set(value, []);
+    }
+    map.get(value)!.push(item);
+  }
+
+  const result: { key: T[K]; items: T[] }[] = [];
+  map.forEach((items, key) => {
+    result.push({ key, items });
+  });
+
+  return result;
+};
+
 export async function processAsBatch<T, R>(
   items: Array<T>,
   limit: number,
