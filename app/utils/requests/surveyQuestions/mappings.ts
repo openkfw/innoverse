@@ -1,18 +1,8 @@
+import { ResultOf } from 'gql.tada';
+
 import { BasicSurveyQuestion, SurveyQuestion, SurveyVote } from '@/common/types';
 import { toDate } from '@/utils/helpers';
-import { ResultOf } from 'gql.tada';
 import { SurveyQuestionFragment } from '@/utils/requests/surveyQuestions/queries';
-
-type SurveyQuestionData = {
-  id: string;
-  attributes: {
-    question: string;
-    updatedAt: string | Date | null;
-    responseOptions: ({
-      responseOption: string;
-    } | null)[];
-  };
-};
 
 type BasicSurveyQuestionData = {
   attributes: {

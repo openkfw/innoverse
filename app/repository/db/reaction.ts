@@ -69,6 +69,21 @@ export async function findReaction(
   });
 }
 
+export async function findsReactionsForObjects(
+  client: PrismaClient,
+  reactedBy: string,
+  objectType: ObjectType,
+  objectIds: string[],
+) {
+  return await client.reaction.findMany({
+    where: {
+      reactedBy,
+      objectId: { in: objectIds },
+      objectType: objectType as PrismaObjectType,
+    },
+  });
+}
+
 export async function getReactionsForEntity(
   client: PrismaClient,
   objectType: ObjectType,

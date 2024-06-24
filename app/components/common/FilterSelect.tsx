@@ -10,16 +10,18 @@ import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
 
 import useHydration from '@/components/common/Hydration';
+import { FiltersSkeleton } from '@/components/skeletons/FiltersSkeleton';
 
 export type FilterOption = { name: string; label: string; count: number };
 
 export default function FilterSelect(props: {
   title: string;
-  options: FilterOption[];
+  isLoading?: boolean;
+  options: FilterOption[] | undefined;
   maxOptionsToDisplayCollapsed?: number;
   onSelect: (selectedFilters: string[]) => void;
 }) {
-  const { title, options, maxOptionsToDisplayCollapsed = 20, onSelect } = props;
+  const { title, options, maxOptionsToDisplayCollapsed = 20, isLoading = false, onSelect } = props;
 
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [expanded, setExpanded] = useState(false);
@@ -47,46 +49,49 @@ export default function FilterSelect(props: {
 
   const toggleExpand = () => setExpanded((expanded) => !expanded);
 
-  if (!options.length) return <></>;
+  if (isLoading) return <FiltersSkeleton count={4} sx={{ mt: 2, mb: 3 }} />;
+  if (!options?.length) return <></>;
 
   return (
-    <Box sx={{ m: 3 }}>
-      <FormControl component="fieldset" variant="standard">
-        <FormLabel component="legend">{title}</FormLabel>
-        <FormGroup>
-          {options.slice(0, maxOptionsToDisplayCollapsed).map((option, key) => (
-            <FormControlLabel
-              key={key}
-              control={<Checkbox name={option.name} checked={filterIsChecked(option)} onChange={selectFilter} />}
-              label={getFilterLabel(option)}
-              disabled={!hydrated}
-              data-testid="news-project-filter"
-              data-testdata-count={option.count}
-              data-testdata-label={option.label}
-            />
-          ))}
-          {options.length > maxOptionsToDisplayCollapsed && !expanded && (
-            <Typography onClick={toggleExpand} color="secondary" sx={{ textDecoration: 'underline' }}>
-              Mehr anzeigen
-            </Typography>
-          )}
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
-            {options.slice(maxOptionsToDisplayCollapsed).map((option, key) => (
+    <>
+      <Box sx={{ m: 3 }}>
+        <FormControl component="fieldset" variant="standard">
+          <FormLabel component="legend">{title}</FormLabel>
+          <FormGroup>
+            {options.slice(0, maxOptionsToDisplayCollapsed).map((option, key) => (
               <FormControlLabel
                 key={key}
                 control={<Checkbox name={option.name} checked={filterIsChecked(option)} onChange={selectFilter} />}
                 label={getFilterLabel(option)}
                 disabled={!hydrated}
+                data-testid="news-project-filter"
+                data-testdata-count={option.count}
+                data-testdata-label={option.label}
               />
             ))}
-            {options.length > maxOptionsToDisplayCollapsed && expanded && (
+            {options.length > maxOptionsToDisplayCollapsed && !expanded && (
               <Typography onClick={toggleExpand} color="secondary" sx={{ textDecoration: 'underline' }}>
-                Weniger anzeigen
+                Mehr anzeigen
               </Typography>
             )}
-          </Collapse>
-        </FormGroup>
-      </FormControl>
-    </Box>
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+              {options.slice(maxOptionsToDisplayCollapsed).map((option, key) => (
+                <FormControlLabel
+                  key={key}
+                  control={<Checkbox name={option.name} checked={filterIsChecked(option)} onChange={selectFilter} />}
+                  label={getFilterLabel(option)}
+                  disabled={!hydrated}
+                />
+              ))}
+              {options.length > maxOptionsToDisplayCollapsed && expanded && (
+                <Typography onClick={toggleExpand} color="secondary" sx={{ textDecoration: 'underline' }}>
+                  Weniger anzeigen
+                </Typography>
+              )}
+            </Collapse>
+          </FormGroup>
+        </FormControl>
+      </Box>
+    </>
   );
 }
