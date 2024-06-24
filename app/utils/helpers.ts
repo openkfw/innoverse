@@ -88,8 +88,11 @@ export function getProviderLabel(provider: { name: string; id: string }) {
 }
 
 export function getImageByBreakpoint(isSmallScreen: boolean, image?: ImageFormats) {
-  if (!image || !image.small || !image.large) {
+  if (!image) {
     return undefined;
+  }
+  if (!image.small?.url || !image.large?.url) {
+    return image.thumbnail?.url;
   }
   return isSmallScreen ? image.small?.url : image.large?.url;
 }
