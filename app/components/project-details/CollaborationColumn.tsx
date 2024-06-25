@@ -10,6 +10,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import CurrentPollsIcon from '../icons/CurrentPollsIcon';
@@ -74,33 +75,33 @@ const CollaborationColumn = (props: CollaborationProps) => {
   return (
     <>
       <Typography variant="overline" sx={titleStyles}>
-        Zusammenarbeit
+        {m.components_projectdetails_collaborationColumn_collaboration()}
       </Typography>
       <Card sx={cardStyles}>
         <CardContent sx={cardContentStyles}>
           <Section
             icon={<JoinInIcon />}
-            title="Hilf dem Team mit Deinem Wissen"
-            subtitle={`${collaborationQuestions.length} Frage(n) brauchen Deinen Input`}
+            title={m.components_projectdetails_collaborationColumn_helpTeam()}
+            subtitle={`${collaborationQuestions.length} ${m.components_projectdetails_collaborationColumn_questionInput()}`}
             sectionId="collaboration-questions-section"
-            buttonText="Zu den Fragen"
+            buttonText={m.components_projectdetails_collaborationColumn_toQuestions()}
             handleCollaborationClick={handleCollaborationClick}
           />
           <Section
             icon={<CurrentPollsIcon />}
-            title="Aktuelle Umfragen"
-            subtitle={`${surveyQuestions.length} Umfrage(n) offen`}
+            title={m.components_projectdetails_collaborationColumn_surveys()}
+            subtitle={`${surveyQuestions.length} ${m.components_projectdetails_collaborationColumn_openSurveys()}`}
             sectionId="surveys-section"
-            buttonText="Abstimmen"
+            buttonText={m.components_projectdetails_collaborationColumn_vote()}
             handleCollaborationClick={handleCollaborationClick}
             borders={true}
           />
           <Section
             icon={<SupportTheTeamIcon />}
-            title="Unterstütze das Team"
-            subtitle={`${opportunities.length} Anfragen warten aktuell auf Dich`}
+            title={m.components_projectdetails_collaborationColumn_supportTeam()}
+            subtitle={`${opportunities.length} ${m.components_projectdetails_collaborationColumn_waitingInquiries()}`}
             sectionId="opportunities-section"
-            buttonText="Teilnehmen"
+            buttonText={m.components_projectdetails_collaborationColumn_participate()}
             handleCollaborationClick={handleCollaborationClick}
           />
         </CardContent>

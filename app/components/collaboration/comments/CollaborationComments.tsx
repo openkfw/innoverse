@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 
 import { Comment } from '@/common/types';
 import { TransparentButton } from '@/components/common/TransparentButton';
+import * as m from '@/src/paraglide/messages.js';
 
 import { CollaborationCommentThread } from './CollaborationCommentThread';
 
@@ -64,7 +65,7 @@ export const CollaborationComments = (props: CommentsProps) => {
           startIcon={<AddIcon color="secondary" fontSize="large" />}
           style={{ marginLeft: '1.5em', marginBottom: 2 }}
         >
-          weitere Kommentare anzeigen ({lengthOfNotShownComments})
+          {m.components_collaboration_comments_collaborationComments_showMoreComments()} ({lengthOfNotShownComments})
         </TransparentButton>
       )}
     </Stack>

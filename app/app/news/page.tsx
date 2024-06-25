@@ -7,6 +7,7 @@ import Stack from '@mui/material/Stack';
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';
 import NewsFeedContainer from '@/components/newsFeed/NewsFeedContainer';
+import * as m from '@/src/paraglide/messages.js';
 import { getNewsFeed } from '@/utils/newsFeed/redis/redisService';
 
 import { NewsFeed } from '../../components/newsPage/NewsFeed';
@@ -26,7 +27,7 @@ async function NewsFeedPage() {
     <Stack spacing={8} useFlexGap direction="column">
       <Image
         src={backgroundImage}
-        alt="news-background"
+        alt={m.app_news_page_imageAlt()}
         sizes="33vw"
         style={{
           position: 'absolute',
@@ -39,7 +40,7 @@ async function NewsFeedPage() {
       />
       <Container>
         <Box style={{ position: 'relative' }}>
-          <BreadcrumbsNav activePage="News" />
+          <BreadcrumbsNav activePage={m.app_news_page_news()} />
         </Box>
 
         <NewsFeedContextProvider initiallyLoadedNews={initialNewsData} allNews={allNewsData}>

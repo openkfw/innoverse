@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
 import ErrorPage from '@/components/error/ErrorPage';
+import * as m from '@/src/paraglide/messages.js';
 
 import { LandingPageSection } from '../LandingPageSection';
 
@@ -22,11 +23,11 @@ export const NewsSection = ({ updates }: NewsProps) => {
   return (
     <LandingPageSection
       id="news"
-      title="Innovationsnews"
-      subtitle="Aktuelles aus den Initiativen"
+      title={m.components_landing_newsSection_newsSection_titleNews()}
+      subtitle={m.components_landing_newsSection_newsSection_subtitleNews()}
       topRightMenu={
         <Link href="news">
-          <CustomButton>Mehr news</CustomButton>
+          <CustomButton>{m.components_landing_newsSection_newsSection_moreNews()}</CustomButton>
         </Link>
       }
     >

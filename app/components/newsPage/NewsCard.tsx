@@ -15,6 +15,7 @@ import InteractionButton, { InteractionType } from '@/components/common/Interact
 import { LinkWithArrowLeft } from '@/components/common/LinkWithArrowLeft';
 import { UpdateCardContent } from '@/components/common/UpdateCardText';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/cards/UpdateEmojiReactionCard';
@@ -60,7 +61,7 @@ const UpdateCardActions = (props: UpdateCardActionsProps) => {
       }
     } catch (error) {
       console.error('Error toggling follow status:', error);
-      errorMessage({ message: 'Failed to toggle follow status. Please try again later.' });
+      errorMessage({ message: m.components_newsPage_newsCard_error() });
       appInsights.trackException({
         exception: new Error('Failed to toggle follow status.', { cause: error }),
         severityLevel: SeverityLevel.Error,

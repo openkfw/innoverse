@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
 import ContinueIcon from '@/components/icons/ContinueIcon';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { parseStringForLinks } from '../common/LinkString';
@@ -42,7 +43,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
   return (
     <>
       <Typography variant="overline" sx={titleStyles}>
-        Info & Status der Initiative
+        {m.components_projectdetails_projectStageCard_infoStatus()}
       </Typography>
       <Card sx={{ height: project?.team?.length > 2 ? '209px' : 'fit-content', ...cardStyles }} elevation={0}>
         <CardContent sx={cardContentStyles}>
@@ -53,7 +54,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
             </Typography>
             <Button onClick={readMore} sx={buttonStyles} startIcon={<ContinueIcon />}>
               <Typography variant="button" sx={buttonTextStyles}>
-                Weiterlesen
+                {m.components_projectdetails_projectStageCard_readMore()}
               </Typography>
             </Button>
           </Stack>

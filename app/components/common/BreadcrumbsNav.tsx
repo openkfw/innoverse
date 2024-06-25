@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Typography from '@mui/material/Typography';
 
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import ChevronRightIcon from '../icons/ChevronRightIcon';
@@ -22,7 +23,7 @@ export default function BreadcrumbsNav({ activePage }: BreadcrumbsNavProps) {
   const breadcrumbs = [
     <Link key="1" href="/" style={{ textDecoration: 'none' }}>
       <Typography variant="caption" color="common.white" sx={typographyStyles}>
-        Startseite
+        {m.components_common_breadCrumbsNav_breadcrumbs()}
       </Typography>
     </Link>,
     <Link key="2" href="/" style={{ textDecoration: 'none', pointerEvents: 'none' }} onClick={handleClick}>

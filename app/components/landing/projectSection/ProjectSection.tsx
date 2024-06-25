@@ -3,6 +3,7 @@
 import Image from 'next/image';
 
 import { BasicProject } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 
 import { LandingPageSection } from '../LandingPageSection';
 
@@ -20,8 +21,8 @@ export const ProjectSection = ({ projects }: ProjectProps) => {
   return (
     <LandingPageSection
       id="initiativen"
-      title="Innovationsinitiativen"
-      subtitle="Aktuelle Pipeline"
+      title={m.components_landing_projectSection_projectSection_title()}
+      subtitle={m.components_landing_projectSection_projectSection_subtitle()}
       beforeContent={
         <div
           style={{
@@ -36,7 +37,13 @@ export const ProjectSection = ({ projects }: ProjectProps) => {
             mixBlendMode: 'lighten',
           }}
         >
-          <Image src={bgBubble} alt="background bubble" fill style={{ objectFit: 'cover' }} sizes="33vw" />
+          <Image
+            src={bgBubble}
+            alt={m.components_landing_projectSection_projectSection_imageAlt()}
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="33vw"
+          />
         </div>
       }
     >

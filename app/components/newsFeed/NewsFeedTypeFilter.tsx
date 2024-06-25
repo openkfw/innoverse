@@ -5,6 +5,7 @@ import React from 'react';
 import { NewsFeedFilters, useNewsFeed } from '@/app/contexts/news-feed-context';
 import { ObjectType } from '@/common/types';
 import FilterSelect, { FilterOption } from '@/components/common/FilterSelect';
+import * as m from '@/src/paraglide/messages.js';
 
 type NewsFeedTypeFilterProps = {
   filters: NewsFeedFilters;
@@ -23,24 +24,24 @@ export default function NewsFeedTypeFilter(props: NewsFeedTypeFilterProps) {
   const getLabel = (objectType: ObjectType) => {
     switch (objectType) {
       case ObjectType.COLLABORATION_COMMENT:
-        return 'Kommentare';
+        return m.components_newsFeed_newsFeedTypeFilter_comments();
       case ObjectType.EVENT:
-        return 'Events';
+        return m.components_newsFeed_newsFeedTypeFilter_events();
       case ObjectType.COLLABORATION_QUESTION:
-        return 'Fragen';
+        return m.components_newsFeed_newsFeedTypeFilter_questions();
       case ObjectType.OPPORTUNITY:
-        return 'Opportunity';
+        return m.components_newsFeed_newsFeedTypeFilter_opportunities();
       case ObjectType.POST:
-        return 'Posts';
+        return m.components_newsFeed_newsFeedTypeFilter_posts();
       case ObjectType.PROJECT:
-        return 'Projekte';
+        return m.components_newsFeed_newsFeedTypeFilter_projects();
       case ObjectType.SURVEY_QUESTION:
-        return 'Umfragen';
+        return m.components_newsFeed_newsFeedTypeFilter_surveys();
       case ObjectType.UPDATE:
-        return 'Updates';
+        return m.components_newsFeed_newsFeedTypeFilter_updates();
       case ObjectType.COLLABORATION_COMMENT:
       default:
-        return 'Andere';
+        return m.components_newsFeed_newsFeedTypeFilter_others();
     }
   };
 

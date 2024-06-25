@@ -13,6 +13,7 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
+import * as m from '@/src/paraglide/messages.js';
 import { getProviderLabel } from '@/utils/helpers';
 
 import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
@@ -52,7 +53,7 @@ export default function UserSuggestionRow(props: UserSuggestionRowProps) {
           <Grid item>
             {image ? (
               <Avatar sx={{ width: 40, height: 40, border: '2px solid white' }}>
-                <Image src={image} alt="avatar" fill sizes="33vw" />
+                <Image src={image} alt={m.app_contexts_newsFilterContext_refetchingNewsError()} fill sizes="33vw" />
               </Avatar>
             ) : (
               <AvatarInitialsIcon name={name} size={40} sx={{ border: '2px solid white' }} />
@@ -83,15 +84,15 @@ export default function UserSuggestionRow(props: UserSuggestionRowProps) {
       <Divider textAlign="left" />
       <Grid container onClick={handleToggleCollapse}>
         <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 300 }}>
-          Nicht du? Mit einem anderen Account einloggen.
+          {m.components_login_userSuggestionRow_notYouSuggestion()}
         </Typography>
         {open ? <ExpandLess /> : <ExpandMore />}
       </Grid>
       <CustomDialog
         open={confirmationDialogOpen}
         handleClose={handleCloseConfirmationDialog}
-        title="Confirmation"
-        subtitle="Bitte bestätige das Entfernen von dem User "
+        title={m.components_login_userSuggestionRow_confirmation()}
+        subtitle={m.components_login_userSuggestionRow_confirmationMessage()}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>
           <InteractionButton interactionType={InteractionType.CLEAR} onClick={handleConfirm} sx={{ width: '200px' }} />

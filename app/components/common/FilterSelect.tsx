@@ -10,6 +10,7 @@ import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
 
 import useHydration from '@/components/common/Hydration';
+import * as m from '@/src/paraglide/messages.js';
 
 export type FilterOption = { name: string; label: string; count: number };
 
@@ -67,7 +68,7 @@ export default function FilterSelect(props: {
           ))}
           {options.length > maxOptionsToDisplayCollapsed && !expanded && (
             <Typography onClick={toggleExpand} color="secondary" sx={{ textDecoration: 'underline' }}>
-              Mehr anzeigen
+              {m.components_common_filterSelect_showMore()}
             </Typography>
           )}
           <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -81,7 +82,7 @@ export default function FilterSelect(props: {
             ))}
             {options.length > maxOptionsToDisplayCollapsed && expanded && (
               <Typography onClick={toggleExpand} color="secondary" sx={{ textDecoration: 'underline' }}>
-                Weniger anzeigen
+                {m.components_common_filterSelect_showLess()}
               </Typography>
             )}
           </Collapse>

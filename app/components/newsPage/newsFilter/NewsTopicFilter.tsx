@@ -5,6 +5,7 @@ import React from 'react';
 import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import { NewsFilterProps } from '@/common/types';
 import FilterSelect, { FilterOption } from '@/components/common/FilterSelect';
+import * as m from '@/src/paraglide/messages.js';
 
 export default function NewsTopicFilter(props: NewsFilterProps) {
   const { filters, setFilters } = props;
@@ -20,5 +21,12 @@ export default function NewsTopicFilter(props: NewsFilterProps) {
     label: topic,
     count: amountOfNewsTopic[topic],
   }));
-  return <FilterSelect title="Themen" options={options} maxOptionsToDisplayCollapsed={3} onSelect={updateFilters} />;
+  return (
+    <FilterSelect
+      title={m.components_newsPage_newsFilter_newsTopicFilter_topics()}
+      options={options}
+      maxOptionsToDisplayCollapsed={3}
+      onSelect={updateFilters}
+    />
+  );
 }

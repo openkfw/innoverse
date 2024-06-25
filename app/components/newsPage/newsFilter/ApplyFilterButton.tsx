@@ -3,6 +3,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
+import * as m from '@/src/paraglide/messages.js';
+
 export const APPLY_BUTTON = {
   ENABLED: 'enabled',
   DISABLED: 'disabled',
@@ -29,7 +31,7 @@ export default function ApplyFilterButton(props: ApplyFilterButtonProps) {
           disabled
         >
           <Typography variant="subtitle1" sx={typographyStyle}>
-            Apply selection
+            {m.components_newsPage_newsFilter_applyFilterButton_apply()}
           </Typography>
         </Button>
       ) : (
@@ -42,7 +44,7 @@ export default function ApplyFilterButton(props: ApplyFilterButtonProps) {
           onClick={onClick}
         >
           <Typography variant="subtitle1" sx={typographyStyle}>
-            Apply selection
+            {m.components_newsPage_newsFilter_applyFilterButton_apply()}
           </Typography>
         </Button>
       )}

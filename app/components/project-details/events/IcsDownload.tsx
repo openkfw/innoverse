@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 
 import { TransparentButton } from '@/components/common/TransparentButton';
 import AddToCalendarIcon from '@/components/icons/AddToCalendarIcon';
+import * as m from '@/src/paraglide/messages.js';
 import palette from '@/styles/palette';
 
 import { Event } from '../../../common/types';
@@ -30,7 +31,7 @@ const IcsDownload = ({ event, disabled = false }: IcsDownloadProps) => {
       <Stack sx={{ alignItems: 'center' }}>
         <AddToCalendarIcon color={color} />
         <Typography variant="caption" sx={{ fontSize: '10px', fontWeight: 500, mt: '2px' }} color={color}>
-          Eintragen
+          {m.components_projectdetails_events_icsDownload_subscribe()}
         </Typography>
       </Stack>
     </TransparentButton>

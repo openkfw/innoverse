@@ -12,6 +12,7 @@ import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { BasicProject } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 
@@ -87,7 +88,7 @@ const Slide = ({ content, index, setSelected }: SlideProps) => {
           src={image}
           width={0}
           height={0}
-          alt="Project"
+          alt={m.components_landing_featuredProjectSection_featuredProjectSldier_imageAlt()}
           sizes="50vw"
           className="slider-image"
           style={{ objectFit: 'contain', objectPosition: 'center' }}

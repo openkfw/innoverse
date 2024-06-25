@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import { User } from '@/common/types';
 import { UserAvatar, UserAvatarProps } from '@/components/common/UserAvatar';
+import * as m from '@/src/paraglide/messages.js';
 
 import badgeIcon from '/public/images/icons/badge.svg';
 
@@ -26,7 +27,7 @@ export const CommentCardHeaderSecondary = ({ author, avatar, sx }: CommentCardHe
           <Typography variant="subtitle2" color="primary.dark">
             {author.name}
           </Typography>
-          {author.badge && <Image src={badgeIcon} alt="badge" />}
+          {author.badge && <Image src={badgeIcon} alt={m.components_common_commentCardHeaderSecondary_imageAlt()} />}
           <Typography variant="subtitle2" color="text.secondary">
             {author.role}
           </Typography>

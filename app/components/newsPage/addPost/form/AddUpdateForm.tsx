@@ -51,11 +51,11 @@ export default function AddUpdateForm({
       const response = await handlePost(formData);
       if (response.status === StatusCodes.OK) {
         refetchUpdates({ fullRefetch: true });
-        successMessage({ message: 'Neuigkeit wurde erstellt' });
+        successMessage({ message: m.components_newsPage_addPost_form_addUpdateForm_success() });
         handleClose();
       } else {
         errorMessage({
-          message: 'Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuchen sie es erneut',
+          message: m.components_newsPage_addPost_form_addUpdateForm_error(),
         });
       }
     }
@@ -67,8 +67,8 @@ export default function AddUpdateForm({
         <MultilineTextInputField
           name={COMMENT}
           control={control}
-          label="Update"
-          placeholder="Geben Sie hier das Update ein"
+          label={m.components_newsPage_addPost_form_addUpdateForm_updateLabel()}
+          placeholder={m.components_newsPage_addPost_form_addUpdateForm_placeholder()}
           sx={{ width: '100%' }}
         />
       </form>

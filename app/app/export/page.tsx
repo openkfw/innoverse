@@ -5,6 +5,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import ExportFeedback from '@/components/export/ExportFeedback';
+import * as m from '@/src/paraglide/messages.js';
 
 const ExportFeedbackPage = () => {
   return (
@@ -20,7 +21,7 @@ const ExportFeedbackPage = () => {
     >
       <Grid item xs={3}>
         <Stack spacing={3}>
-          <Typography variant="h4">Export</Typography>
+          <Typography variant="h4">{m.app_export_page_export()}</Typography>
           <ExportFeedback />
         </Stack>
       </Grid>

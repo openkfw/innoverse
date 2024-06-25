@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import { useProject } from '@/app/contexts/project-context';
 import { CollaborationQuestion, Comment } from '@/common/types';
 import { UserAvatar } from '@/components/common/UserAvatar';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 
@@ -80,7 +81,7 @@ export const CollaborationQuestionCard = ({
       const { data: newComment } = await addProjectCollaborationComment({ projectId, questionId, comment });
       if (!newComment) {
         console.error('No comment was returned by the server.');
-        errorMessage({ message: 'Failed to post the comment. Please try again.' });
+        errorMessage({ message: m.components_collaboration_collaborationQuestionCard_postError() });
         appInsights.trackException({
           exception: new Error('Failed to post the comment.'),
           severityLevel: SeverityLevel.Error,
@@ -92,7 +93,7 @@ export const CollaborationQuestionCard = ({
       setCollaborationCommentsAmount(newComments.length);
     } catch (error) {
       console.error('Failed to submit comment:', error);
-      errorMessage({ message: 'Failed to submit your comment. Please try again.' });
+      errorMessage({ message: m.components_collaboration_collaborationQuestionCard_submitError() });
       appInsights.trackException({
         exception: new Error('Failed to submit comment.'),
         severityLevel: SeverityLevel.Error,
@@ -115,14 +116,14 @@ export const CollaborationQuestionCard = ({
         </Grid>
         <Grid item>
           <Typography variant="overline" color="primary.main">
-            Frage von
+            {m.components_collaboration_collaborationQuestionCard_question()}
           </Typography>
           <AvatarGroup sx={avatarGroupStyle}>
             {authors.length > 0 ? (
               authors.map((author, idx) => <UserAvatar key={idx} size={48} user={author} allowAnimation />)
             ) : (
               <Typography variant="caption" color="text.disabled">
-                Niemand zugewiesen
+                {m.components_collaboration_collaborationQuestionCard_noAssigned()}
               </Typography>
             )}
           </AvatarGroup>

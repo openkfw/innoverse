@@ -13,6 +13,7 @@ import { SWRProvider } from '@/app/swr-provider';
 import ThemeRegistry from '@/app/ThemeRegistry';
 import CustomToastContainer from '@/components/common/CustomToast';
 import ErrorPage from '@/components/error/ErrorPage';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { reactPlugin } from '@/utils/instrumentation/AppInsights';
 
@@ -26,9 +27,9 @@ export type Headers = {
 };
 
 const pages: Headers[] = [
-  { text: 'Initiativen', link: '/#initiativen' },
-  { text: 'News', link: '/news' },
-  { text: 'AI Assistant' },
+  { text: m.components_layout_layout_initiatives(), link: '/#initiativen' },
+  { text: m.components_layout_layout_news(), link: '/news' },
+  { text: m.components_layout_layout_aiAssistant() },
 ];
 
 function AppLayout({ children }: PropsWithChildren) {

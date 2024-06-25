@@ -1,6 +1,375 @@
 {
-    "$schema": "https://inlang.com/schema/inlang-message-format",
+  "$schema": "https://inlang.com/schema/inlang-message-format",
 
-    "hello_world": "Hello World!",
-	"greetings": "Greetings {name}."
+  "app_contexts_newsFilterContext_refetchingNewsError": "Fehler beim Abrufen der Nachrichten. Bitte prüfe deine Verbindung und versuche es noch einmal.",
+
+  "app_export_page_export": "Export",
+
+  "app_news_page_news": "News",
+  "app_news_page_imageAlt": "News Hintergrund",
+
+  "app_projects_page_projectsNotFoundError": "Projekt konnte nicht abgerufen werden. Bitte versuche es später noch einmal.",
+
+  "app_layout_title": "InnoVerse",
+  "app_layout_content": "***STRING_REMOVED***  Innovations Plattform",
+
+  "app_notFound_errorMessage": "Die Seite wurde nicht gefunden",
+  "app_notFound_homepageLink": "Zur Startseite",
+
+  "components_collaboration_collaborationQuestionCard_postError": "Kommentar konnte nicht gepostet werden. Bitte versuche es noch einmal.",
+  "components_collaboration_collaborationQuestionCard_submitError": "Kommentar konnte nicht gesendet werden. Bitte versuche es noch einmal.",
+  "components_collaboration_collaborationQuestionCard_question": "Frage von",
+  "components_collaboration_collaborationQuestionCard_noAssigned": "Niemand zugewiesen",
+
+  "components_collaboration_collaborationTab_errorMessage": "Momentan scheint es hier nichts zu geben. Schaue später nochmal um zu sehen was sich noch ändert! Verpasse es nicht! 😉",
+  "components_collaboration_collaborationTab_opportunities": "Möglichkeiten",
+  "components_collaboration_collaborationTab_survey": "Umfrage",
+  "components_collaboration_collaborationTab_helpUs": "Hilf uns bei diesen Fragen",
+
+  "components_collaboration_shareOpinionCard_imageAlt": "avatar",
+
+  "components_collaboration_comments_collaborationCommentCard_upvoteError": "Der Kommentar konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",
+  "components_collaboration_comments_collaborationCommentCard_updateError": "Der Kommentar konnte nicht aktualisiert werden. Bitte versuche es später noch einmal.",
+  "components_collaboration_comments_collaborationCommentCard_deleteError": "Der Kommentar konnte nicht gelöscht werden. Bitte versuche es später noch einmal.",
+
+  "components_collaboration_comments_collaborationCommentResponseCard_updateError": "Die Antwort konnte nicht aktualisiert werden. Bitte versuche es später noch einmal.",
+  "components_collaboration_comments_collaborationCommentResponseCard_upvoteError": "Die Antwort konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",
+  "components_collaboration_comments_collaborationCommentResponseCard_deleteError": "Die Antwort konnte nicht gelöscht werden. Bitte versuche es später noch einmal.",
+
+  "components_collaboration_comments_collaborationComments_showMoreComments": "weitere Kommentare anzeigen",
+
+  "components_collaboration_comments_collaborationCommentThread_showComments": "Kommentare anzeigen",
+  "components_collaboration_comments_collaborationCommentThread_loadError": "Antworten konnten nicht geladen werden. Bitte versuche es noch einmal.",
+  "components_collaboration_comments_collaborationCommentThread_submitError": "Deine Antwort konnte nicht gesendet werden. Bitte versuche es noch einmal.",
+
+  "components_collaboration_emojiReactions_itemEmojiReactionCard_updateError": "Deine Reaktion konnte nicht aktualisiert werden. Bitte versuche es noch einmal.",
+
+  "components_collaboration_emojiReactions_cards_emojiReactionCard_updateError": "Deine Reaktion konnte nicht aktualisiert werden. Bitte versuche es noch einmal.",
+  "components_collaboration_emojiReactions_cards_emojiReactionCard_reactButton": "Reagiere mit einem Emoji",
+  "components_collaboration_emojiReactions_cards_emojiReactionCard_addButton": "Füge eine neue Reaktion hinzu",
+
+  "components_collaboration_emojiReactions_cards_eventEmojiReactionCard_updateError": "Deine Reaktion konnte nicht aktualisiert werden. Bitte versuche es noch einmal.",
+
+  "components_collaboration_emojiReactions_cards_updateEmojiReactionCard_updateError": "Deine Reaktion konnte nicht aktualisiert werden. Bitte versuche es noch einmal.",
+
+  "components_collaboration_opportunities_opportunityCard_applyError": "Die Bewerbung für die Möglichkeit konnte nicht gesendet werden. Bitte versuche es noch einmal.",
+  "components_collaboration_opportunities_opportunityCard_expense": "Aufwand:",
+  "components_collaboration_opportunities_opportunityCard_contactPerson": "Kontaktperson",
+  "components_collaboration_opportunities_opportunityCard_noAssigned": "Niemand zugewiesen",
+
+  "components_collaboration_survey_surveyCard_submitError": "Deine Abstimmung konnte nicht gesendet werden. Bitte versuche es noch einmal.",
+
+  "components_collaboration_survey_voteResultCard_deleteVote": "Mein Votum entfernen",
+  "components_collaboration_survey_voteResultCard_showResults": "Um die Ergebnisse zu sehen, bitte gib deine Stimme ab.",
+
+  "components_common_avatarIcon_imageAlt": "avatar",
+
+  "components_common_breadCrumbsNav_breadcrumbs": "Startseite",
+
+  "components_common_commentCardHeaderSecondary_imageAlt": "badge",
+
+  "components_common_filterSelect_showMore": "Mehr anzeigen",
+  "components_common_filterSelect_showLess": "Weniger anzeigen",
+
+  "components_common_interactionButton_like": "Gefällt mir",
+  "components_common_interactionButton_follow": "Folgen",
+  "components_common_interactionButton_collaboration": "Hilf uns!",
+  "components_common_interactionButton_commentSend": "Senden",
+  "components_common_interactionButton_shareOpinion": "Teile Deine Erfahrung",
+  "components_common_interactionButton_apply": "Ich bin dabei",
+  "components_common_interactionButton_recommend": "Ich kenne jemanden",
+  "components_common_interactionButton_feedback": "Feedback",
+  "components_common_interactionButton_logIn": "Log in",
+  "components_common_interactionButton_clear": "Entfernen",
+  "components_common_interactionButton_addUpdate": "Beitrag hinzufügen",
+  "components_common_interactionButton_liked": "Gefällt mir",
+  "components_common_interactionButton_unfollow": "Entfolgen",
+  "components_common_interactionButton_applied": "Angewandt",
+
+  "components_common_textCard_showAll": "... alles anzeigen",
+
+  "components_common_updateCardText_knowMore": "Mehr erfahren",
+
+  "components_common_userTooltip_webexChat": "Chat über Webex",
+
+  "components_common_comments_commentCard_done": "Fertig",
+
+  "components_common_editing_unsavedChangesDialog_edit": "Bearbeitung",
+  "components_common_editing_unsavedChangesDialog_throw": "Möchtest du diese Bearbeitung verwerfen?",
+  "components_common_editing_unsavedChangesDialog_cancel": "Abbrechen",
+  "components_common_editing_unsavedChangesDialog_confirmThrow": "Verwerfen",
+
+  "components_common_editing_controls_editControls_edit": "bearbeiten",
+  "components_common_editing_controls_editControls_delete": "löschen",
+
+  "components_common_editing_controls_editMoreDialog_edit": "bearbeiten",
+  "components_common_editing_controls_editMoreDialog_delete": "löschen",
+
+  "components_common_editing_controls_responseControl_answer": "antworten",
+
+  "components_common_editing_writetext_writeTextCard_failedSubmit": "Dein Beitrag konnte nicht veröffentlicht werden. Bitte versuche es später noch einmal.",
+  "components_common_editing_writetext_writeTextCard_placeholder": "Teile deine Ratschläge und Gedanken zu diesem Thema mit, damit deine Kollegen von deiner Expertise profitieren können.",
+  "components_common_editing_writetext_writeTextCard_throw": "Verwerfen",
+
+  "components_common_form_autoCompleteDropdownField_helpText": "Falls dein Beitrag projektbezogen ist, wähle bitte das entsprechende Projekt aus.",
+  "components_common_form_autoCompleteDropdownField_noOptionText": "Keine Optionen",
+
+  "components_error_errorPage_loadError": "Die Daten konnten nicht geladen werden. Bitte versuche es später noch einmal.",
+
+  "components_export_exportFeedback_invalidCredentials": "Ungültige Anmeldeinformationen!",
+  "components_export_exportFeedback_downloadFeedback": "Das Feedback sollte jetzt heruntergeladen werden!",
+  "components_export_exportFeedback_downloadPlatformStats": "Die Gesamtstatistik sollte jetzt heruntergeladen werden!",
+  "components_export_exportFeedback_downloadProjectStats": "Die Projektstatistiken sollten jetzt heruntergeladen werden!",
+  "components_export_exportFeedback_username": "Benutzername",
+  "components_export_exportFeedback_password": "Passwort",
+  "components_export_exportFeedback_platformFeedback": "Download Plattformfeedback",
+  "components_export_exportFeedback_overallStats": "Download Gesamtstatistik",
+  "components_export_exportFeedback_projectStats": "Download Projektstatistiken",
+
+  "components_landing_eventsSection_eventCard_imageAlt": "Event Bild",
+
+  "components_landing_eventsSection_eventCard_moreDetails": "Mehr Details",
+
+  "components_landing_eventsSection_eventsSection_events": "Events",
+  "components_landing_eventsSection_eventsSection_currentEvents": "Aktuelle Events",
+
+  "components_landing_featuredProjectSection_featuredProjectSldier_imageAlt": "Projekt",
+
+  "components_landing_featuredProjectSection_slider_featuredProjectContent_featured": "Featured",
+
+  "components_landing_featuredProjectSection_slider_sliderPill_projectNum": "Projekt #",
+  "components_landing_featuredProjectSection_slider_sliderPill_hashtag": "#",
+
+  "components_landing_feedbackSection_feedbackSection_toastSuccess": "Danke für Dein Feedback",
+  "components_landing_feedbackSection_feedbackSection_toastError": "Feedback konnte nicht gespeichert werden! Bitte versuche es später erneut.",
+  "components_landing_feedbackSection_feedbackSection_giveFeedback": "Gib uns Feedback",
+  "components_landing_feedbackSection_feedbackSection_importantFeedbackMessage": "Dein Feedback ist wichtig! Teile uns deine Erfahrungen mit der neuen Innovationsplattform mit, um sie zu verbessern und zu optimieren. Jegliches Feedback ist willkommen!",
+  "components_landing_feedbackSection_feedbackSection_placeholderFeedback": "Du kannst hier Dein Feedback eingeben.",
+  "components_landing_feedbackSection_feedbackSection_administratorFeedback": "Dein Feedback wird an die Administrator:innen der",
+  "components_landing_feedbackSection_feedbackSection_projectpage": "Projektseite",
+  "components_landing_feedbackSection_feedbackSection_innoPlatform": "InnoPlattform",
+  "components_landing_feedbackSection_feedbackSection_yourData": "gesendet. Deine Daten (Name) werden mitgesendet.",
+  "components_landing_feedbackSection_feedbackSection_myfeedback": "Mein Feedback soll zusätzlich auf der",
+  "components_landing_feedbackSection_feedbackSection_initiativePage": "Initiativenseite der Innovationsplattform",
+  "components_landing_feedbackSection_feedbackSection_discussion": "zur Diskussion gepostet werden.",
+
+  "components_landing_mappingProjectsSection_mappingProjectsCard_exploration": "Exploration",
+  "components_landing_mappingProjectsSection_mappingProjectsCard_explorationDesc": "Basierend auf dem strategischen Zielsystem ***STRING_REMOVED***  untersuchen wir mögliche Handlungsfelder für ***STRING_REMOVED***  und berücksichtigen dabei externe Entwicklungen und interne Leitplanken.",
+  "components_landing_mappingProjectsSection_mappingProjectsCard_conception": "Konzeption",
+  "components_landing_mappingProjectsSection_mappingProjectsCard_conceptionDesc": "In der Konzeptionsphase sind wir im engen Austausch mit der Zielgruppe: Aus erster Hand verstehen wir zunächst die Probleme, um basierend darauf Lösungskonzepte zu erarbeiten und mit der Zielgruppe zu validieren.",
+  "components_landing_mappingProjectsSection_mappingProjectsCard_poc": "Proof of Concept",
+  "components_landing_mappingProjectsSection_mappingProjectsCard_pocDesc": "Im PoC testen wir mittels Lean Experiments die Attraktivität, Machbarkeit und Rentabilität der Lösungskonzepte - auch hier direkt mit der Zielgruppe.",
+  "components_landing_mappingProjectsSection_mappingProjectsCard_stratInno": "Strategische Innovation @ ***STRING_REMOVED*** ",
+  "components_landing_mappingProjectsSection_mappingProjectsCard_imageAlt": "Hintergrund Bubble",
+
+  "components_landing_mappingProjectsSection_projectLinks_initiatives": "Initiativen",
+  "components_landing_mappingProjectsSection_projectLinks_showMore": "weitere anzeigen",
+  "components_landing_mappingProjectsSection_projectLinks_showLess": "Initiativen wieder ausblenden",
+
+  "components_landing_newsSection_newsCarousel_moreNews": "Mehr News",
+
+  "components_landing_newsSection_newsSection_titleNews": "Innovationsnews",
+  "components_landing_newsSection_newsSection_subtitleNews": "Aktuelles aus den Initiativen",
+  "components_landing_newsSection_newsSection_moreNews": "Mehr News",
+
+  "components_landing_projectSection_arrowController_previousSlide": "Vorherige Folie",
+  "components_landing_projectSection_arrowController_nextSlide": "Nächste Folie",
+
+  "components_landing_projectSection_projectCard_imageAlt": "Projekt",
+
+  "components_landing_projectSection_projectSection_title": "Innovationsinitiativen",
+  "components_landing_projectSection_projectSection_subtitle": "Aktuelle Pipeline",
+  "components_landing_projectSection_projectSection_imageAlt": "Hintergrund Bubble",
+
+  "components_layout_footer_***STRING_REMOVED*** ": "© ***STRING_REMOVED*** ",
+
+  "components_layout_layout_initiatives": "Initiativen",
+  "components_layout_layout_news": "News",
+  "components_layout_layout_aiAssistant": "AI Assistent",
+
+  "components_layout_loggedInMenu_imageAlt": "avatar",
+
+  "components_layout_topBar_imageAlt": "***STRING_REMOVED***  Logo",
+
+  "components_layout_topBarMobile_signOut": "Ausloggen",
+  "components_layout_topBarMobile_closeMenu": "Menü schließen",
+  "components_layout_topBarMobile_openMenu": "Menü öffnen",
+  "components_layout_topBarMobile_imageAlt": "***STRING_REMOVED***  Logo",
+
+  "components_layout_userMenu_contentEditor": "Content Editor",
+  "components_layout_userMenu_profile": "Profil",
+  "components_layout_userMenu_notification": "Benachrichtigungen",
+  "components_layout_userMenu_signOut": "Ausloggen",
+
+  "components_login_credentialsLoginForm_useOtherAccount": "Anderen Account verwenden",
+  "components_login_credentialsLoginForm_username": "Benutzername",
+  "components_login_credentialsLoginForm_password": "Passwort",
+  "components_login_credentialsLoginForm_error": "Fehler:",
+  "components_login_credentialsLoginForm_login": "Login",
+
+  "components_login_loginDialog_login": "Einloggen",
+  "components_login_loginDialog_loginMessage": "Melde dich an um fortzufahren",
+
+  "components_login_mobileUserSuggestionRow_imageAlt": "avatar",
+  "components_login_mobileUserSuggestionRow_notYouSuggestion": "Nicht du? Mit einem anderen Account einloggen.",
+  "components_login_mobileUserSuggestionRow_confirmation": "Bestätigung",
+  "components_login_mobileUserSuggestionRow_confirmationMessage": "Bitte bestätige das Entfernen von dem User",
+
+  "components_login_signInOptions_failedSignInError": "Login Daten konnten nicht geladen werden. Bitte versuche es später noch einmal.",
+  "components_login_signInOptions_signInProviderError": "Es konnten keine Login Provider gefunden werden. Bitte versuche es später noch einmal.",
+  "components_login_signInOptions_sessionInfoError": "Es konnten keine Session Informationen abgerufen werden. Bitte versuche es später noch einmal.",
+
+  "components_login_userSuggestionRow_imageAlt": "avatar",
+  "components_login_userSuggestionRow_notYouSuggestion": "Nicht du? Mit einem anderen Account einloggen.",
+  "components_login_userSuggestionRow_confirmation": "Bestätigung",
+  "components_login_userSuggestionRow_confirmationMessage": "Bitte bestätige das Entfernen von dem User",
+
+  "components_newsFeed_newsFeedContainer_news": "News",
+  "components_newsFeed_newsFeedContainer_allNewsText": "Alle Neuigkeiten im Überblick: Aktuelle Nachrichten, neue Projekte und alle Ereignisse.",
+  "components_newsFeed_newsFeedContainer_filter": "Filter",
+
+  "components_newsFeed_newsFeedTypeFilter_comments": "Kommentare",
+  "components_newsFeed_newsFeedTypeFilter_events": "Events",
+  "components_newsFeed_newsFeedTypeFilter_questions": "Fragen",
+  "components_newsFeed_newsFeedTypeFilter_opportunities": "Möglichkeiten",
+  "components_newsFeed_newsFeedTypeFilter_posts": "Beiträge",
+  "components_newsFeed_newsFeedTypeFilter_projects": "Projekte",
+  "components_newsFeed_newsFeedTypeFilter_surveys": "Umfragen",
+  "components_newsFeed_newsFeedTypeFilter_updates": "Updates",
+  "components_newsFeed_newsFeedTypeFilter_others": "Andere",
+
+  "components_newsPage_news_dataReceived": "Alle Daten wurden geladen",
+
+  "components_newsPage_newsCard_error": "Folgen aktuell nicht möglich. Bitte versuche es später noch einmal.",
+
+  "components_newsPage_newsFeed_dataReceived": "Alle Daten wurden geladen",
+
+  "components_newsPage_addPost_addPostDialog_addPost": "Beitrag hinzufügen",
+
+  "components_newsPage_addPost_form_addPostForm_label": "-optional-",
+  "components_newsPage_addPost_form_addPostForm_postCreated": "Neuigkeit wurde erstellt",
+  "components_newsPage_addPost_form_addPostForm_createError": "Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuchen sie es erneut",
+  "components_newsPage_addPost_form_addPostForm_addPost": "Hier kannst du deinen Beitrag hinzufügen …",
+  "components_newsPage_addPost_form_addPostForm_projectLabel": "Projekt",
+
+  "components_newsPage_addPost_form_addUpdateForm_success": "Neuigkeit wurde erstellt",
+  "components_newsPage_addPost_form_addUpdateForm_error": "Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuche es erneut.",
+  "components_newsPage_addPost_form_addUpdateForm_updateLabel": "Update",
+  "components_newsPage_addPost_form_addUpdateForm_placeholder": "Gib hier das Update ein...",
+
+  "components_newsPage_addUpdate_addUpdateDialog_addUpdate": "Beitrag hinzufügen",
+
+  "components_newsPage_addUpdate_form_addUpdateForm_postCreated": "Neuigkeit wurde erstellt",
+  "components_newsPage_addUpdate_form_addUpdateForm_error": "Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuche es erneut.",
+  "components_newsPage_addUpdate_form_addUpdateForm_updateLabel": "Update",
+  "components_newsPage_addUpdate_form_addUpdateForm_placeholder": "Gib hier das Update ein...",
+
+  "components_newsPage_cards_collabCommentCard_postError": "Der Kommentar konnte nicht gepostet werden. Bitte versuche es noch einmal.",
+  "components_newsPage_cards_collabCommentCard_submitError": "Der Kommentar konnte nicht erstellt werden. Bitte versuche es noch einmal.",
+  "components_newsPage_cards_collabCommentCard_answer": "antworten",
+  "components_newsPage_cards_collabCommentCard_showComments": "Kommentare anzeigen",
+
+  "components_newsPage_cards_eventCard_imageAlt": "Event Bild",
+
+  "components_newsPage_cards_projectCard_imageAlt": "projekt",
+
+  "components_newsPage_cards_common_newsCardAction_error": "Folge Status könnte nicht geändert werden. Bitte versuche es noch einmal.",
+
+  "components_newsPage_cards_common_newsCardReaction_error": "Deine Reaktion konnte nicht aktualisiert werden. Bitte versuche es noch einmal",
+
+  "components_newsPage_cards_common_newsFeedItemFollowControl_error": "Folge Status konnte nicht geändert werden. Bitte versuche es noch einmal.",
+
+  "components_newsPage_cards_common_newsFeedItemReactionControl_error": "Deine Reaktion konnte nicht aktualisiert werden. Bitte versuche es noch einmal.",
+
+  "components_newsPage_cards_common_writeCommentCard_done": "Fertig",
+
+  "components_newsPage_cards_common_threads_itemWithCommentsThread_showMore": "weitere Kommentare anzeigen",
+
+  "components_newsPage_newsFilter_applyFilterButton_apply": "Auswahl bestätigen",
+
+  "components_newsPage_newsFilter_mobileNewsFilter_filter": "Filtern",
+
+  "components_newsPage_newsFilter_newsTopicFilter_topics": "Themen",
+
+  "components_notifications_notificationBanner_notificationError": "Dein Browser verhindert die Aktivierung von Benachrichtigungen. Bitte gehe zu den Einstellungen, um die Aktivierung zu ermöglichen um Benachrichtigungen zu erhalten: Settings → Cookies and site permissions → Notifications",
+  "components_notifications_notificationBanner_dismiss": "Später erinnern",
+  "components_notifications_notificationBanner_done": "Erledigt",
+  "components_notifications_notificationBanner_sendNotification": "Dürfen wir dir Benachrichtigungen senden?",
+  "components_notifications_notificationBanner_no": "Nein",
+  "components_notifications_notificationBanner_yes": "Ja",
+  "components_notifications_notificationBanner_imageAlt": "Benachrichtigungseinstellungen",
+
+  "components_projectdetails_authorinformation_chatWebex": "Chat über Webex",
+
+  "components_projectdetails_collaborationColumn_collaboration": "Zusammenarbeit",
+  "components_projectdetails_collaborationColumn_helpTeam": "Hilf dem Team mit Deinem Wissen",
+  "components_projectdetails_collaborationColumn_questionInput": "Frage(n) brauchen Deinen Input",
+  "components_projectdetails_collaborationColumn_toQuestions": "Zu den Fragen",
+  "components_projectdetails_collaborationColumn_surveys": "Aktuelle Umfragen",
+  "components_projectdetails_collaborationColumn_openSurveys": "Umfrage(n) offen",
+  "components_projectdetails_collaborationColumn_vote": "Abstimmen",
+  "components_projectdetails_collaborationColumn_supportTeam": "Unterstütze das Team",
+  "components_projectdetails_collaborationColumn_waitingInquiries": "Anfrage(n) warten aktuell auf Dich",
+  "components_projectdetails_collaborationColumn_participate": "Teilnehmen",
+
+  "components_projectdetails_heroSection_imageAlt": "Projekt",
+  "components_projectdetails_heroSection_status": "Status",
+
+  "components_projectdetails_projectInfoCardSmall_info": "Info",
+  "components_projectdetails_projectInfoCardSmall_team": "Team",
+  "components_projectdetails_projectInfoCardSmall_collaboration": "Zusammenarbeit",
+  "components_projectdetails_projectInfoCardSmall_news": "News",
+
+  "components_projectDetails_projectProgress_imageAlt": "Bild",
+
+  "components_projectdetails_projectStageCard_infoStatus": "Info & Status der Initiative",
+  "components_projectdetails_projectStageCard_readMore": "Weiterlesen",
+
+  "components_projectdetails_tabView_innoInfos": "Inno-Infos",
+  "components_projectdetails_tabView_collaboration": "Zusammenarbeit",
+  "components_projectdetails_tabView_news": "News",
+  "components_projectdetails_tabView_events": "Events",
+
+  "components_projectdetails_teamMembersColumn_team": "Unser Team",
+  "components_projectdetails_teamMembersColumn_showAll": "Alle anzeigen",
+  "components_projectdetails_teamMembersColumn_allMembers": "Alle Teammitglieder",
+  "components_projectdetails_teamMembersColumn_chatWebex": "Chat über Webex",
+
+  "components_projectdetails_updateCard_newUpdates": "Neueste Updates",
+  "components_projectdetails_updateCard_showMore": "Mehr erfahren",
+  "components_projectdetails_updateCard_showAll": "... alles anzeigen",
+  "components_projectdetails_updateCard_allUpdates": "Alle Updates",
+
+  "components_projectdetails_comments_commentsSection_opinion": "Deine Meinung ist gefragt",
+  "components_projectdetails_comments_commentsSection_comments": "Kommentare",
+
+  "components_projectdetails_comments_projectCommentCard_updateError": "Der Kommentar konnte nicht aktualisiert werden. Bitte versuche es später noch einmal.",
+
+  "components_projectdetails_comments_voteComponent_upvoteError": "Der Kommentar konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",
+  "components_projectdetails_comments_voteComponent_answer": "antworten",
+
+  "components_projectDetails_events_eventCard_imageAlt": "Event Bild",
+
+  "components_projectdetails_events_eventFilterException_filterNoEvents": "Mit diesem Filter wurden keine Events gefunden.",
+  "components_projectdetails_events_eventFilterException_resetFilters": "Alle Filter zurücksetzen",
+  "components_projectdetails_events_eventFilterException_noEvents": "Leider gibt es noch keine Events. Bitte schaue später noch einmal vorbei.",
+  "components_projectdetails_events_eventFilterException_noFutureEvents": "Es gibt zurzeit leider keine Events in der Zukunft.",
+  "components_projectdetails_events_eventFilterException_previousEvents": "Vergangene Events anzeigen",
+
+  "components_projectdetails_events_eventList_dataLoaded": "Alle Daten wurden geladen",
+
+  "components_projectdetails_events_eventsTab_message": "Momentan scheint es hier nichts zu geben. Du kannst dieser Seite folgen, um benachrichtigt zu werden, falls sich hier etwas ändert. Verpasse es nicht! 😉",
+
+  "components_projectdetails_events_filteringPanel_searchPlaceholder": "Suche",
+  "components_projectdetails_events_filteringPanel_topic": "Themen",
+  "components_projectdetails_events_filteringPanel_noTopics": "Die Events haben noch keine Themen.",
+  "components_projectdetails_events_filteringPanel_previousTopics": "Vergangene Events anzeigen",
+
+  "components_projectdetails_events_icsDownload_subscribe": "Eintragen",
+
+  "components_updates_projectTimeLineDate_kickoff": "Projekt Kickoff",
+
+  "components_updates_updatesTab_refetchError": "Projektupdates konnten nicht erneut abgerufen werden. Bitte versuche es später noch einmal.",
+  "components_updates_updatesTab_noNews": "Es gibt noch keine Neuigkeiten zu diesem Projekt. Klick hier um eine hinzuzufügen.",
+  "components_updates_updatesTab_addNewNews": "Halte Dein Publikum auf dem Laufenden! Klicke hier, um eine Neuigkeit hinzuzufügen."
 }

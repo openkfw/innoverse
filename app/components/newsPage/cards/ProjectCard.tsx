@@ -11,6 +11,7 @@ import { Project } from '@/common/types';
 import ProgressBar from '@/components/common/ProgressBar';
 import { defaultImage } from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
 import VisibleContributors from '@/components/project-details/VisibleContributors';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 
@@ -42,7 +43,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
             src={image}
             width={280}
             height={0}
-            alt="project"
+            alt={m.components_newsPage_cards_projectCard_imageAlt()}
             style={{ objectFit: 'cover', width: isWideScreen ? 270 : '100%', height: '100%' }}
           />
         </CardMedia>

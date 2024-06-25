@@ -4,6 +4,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { Comment } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
@@ -41,7 +42,7 @@ export function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardP
       setIsUpvoted((upvoted) => !upvoted);
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
-      errorMessage({ message: 'Failed to update collaboration comment response. Please try again later.' });
+      errorMessage({ message: m.components_projectdetails_comments_projectCommentCard_updateError() });
       appInsights.trackException({
         exception: new Error('Failed to update collaboration comment response.', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -54,7 +55,7 @@ export function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardP
       updateProjectComment({ commentId: comment.id, updatedText });
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
-      errorMessage({ message: 'Failed to update collaboration comment response. Please try again later.' });
+      errorMessage({ message: m.components_projectdetails_comments_projectCommentCard_updateError() });
       appInsights.trackException({
         exception: new Error('Failed to update collaboration comment response.', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -68,7 +69,7 @@ export function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardP
       onDelete && onDelete();
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
-      errorMessage({ message: 'Failed to update collaboration comment response. Please try again later.' });
+      errorMessage({ message: m.components_projectdetails_comments_projectCommentCard_updateError() });
       appInsights.trackException({
         exception: new Error('Failed to update collaboration comment response.', { cause: error }),
         severityLevel: SeverityLevel.Error,

@@ -11,6 +11,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import { Project, ProjectUpdateWithAdditionalData } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
@@ -166,7 +167,7 @@ export default function TabView(props: BasicTabsProps) {
         <CustomTab
           label={
             <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
-              Inno-Infos
+              {m.components_projectdetails_tabView_innoInfos()}
             </Typography>
           }
           id="tab-project-progress"
@@ -179,7 +180,7 @@ export default function TabView(props: BasicTabsProps) {
                 {collaborationActivities}
               </Typography>
               <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
-                Zusammenarbeit
+                {m.components_projectdetails_tabView_collaboration()}
               </Typography>
             </Stack>
           }
@@ -193,7 +194,7 @@ export default function TabView(props: BasicTabsProps) {
                 {updates.length}
               </Typography>
               <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
-                News
+                {m.components_projectdetails_tabView_news()}
               </Typography>
             </Stack>
           }
@@ -207,7 +208,7 @@ export default function TabView(props: BasicTabsProps) {
                 {futureEvents?.length}
               </Typography>
               <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
-                Events
+                {m.components_projectdetails_tabView_events()}
               </Typography>
             </Stack>
           }

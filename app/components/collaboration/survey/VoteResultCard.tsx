@@ -4,6 +4,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { CustomIconButton } from '@/components/common/CustomIconButton';
+import * as m from '@/src/paraglide/messages.js';
 
 interface VoteResultCardProps {
   handleVote: (vote: string) => Promise<void>;
@@ -27,12 +28,12 @@ export const VoteResultCard = ({ handleVote, selectedOption, votesPerOption }: V
             sx={removeVoteStyle}
             textSx={removeVoteTypographyStyle}
           >
-            Mein Votum entfernen
+            {m.components_collaboration_survey_voteResultCard_deleteVote()}
           </CustomIconButton>
         </>
       ) : (
         <Typography variant="caption" color="primary.main">
-          Um die Ergebnisse zu sehen, bitte gib deine Stimme ab.
+          {m.components_collaboration_survey_voteResultCard_showResults()}
         </Typography>
       )}
     </Box>

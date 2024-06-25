@@ -17,6 +17,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { useExpandableContainer } from '../common/expandableContainer/ExpandableContainer';
@@ -152,7 +153,13 @@ const InfoItemRight = ({ title, summary }: InfoItemProps) => {
       <Divider sx={infoItemDividerStyle} />
 
       <CardMedia sx={{ px: '18px' }}>
-        <Image src={robotic_hand} alt="image" width={0} height={0} style={{ width: '100%', height: 'auto' }} />
+        <Image
+          src={robotic_hand}
+          alt={m.components_projectDetails_projectProgress_imageAlt()}
+          width={0}
+          height={0}
+          style={{ width: '100%', height: 'auto' }}
+        />
       </CardMedia>
       <CardContent sx={{ p: '18px' }}>
         <Typography variant="subtitle2" color="#5A6166" sx={textOverflowStyle}>

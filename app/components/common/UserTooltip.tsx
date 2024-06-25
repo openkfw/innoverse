@@ -2,6 +2,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import { User } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 import { openWebex } from '@/utils/openWebex';
 
 import InteractionButton, { InteractionType } from './InteractionButton';
@@ -30,7 +31,7 @@ export const UserTooltip = (props: UserTooltipProps) => {
         <InteractionButton
           projectName={projectName}
           interactionType={InteractionType.COMMENT}
-          tooltip="Chat über Webex"
+          tooltip={m.components_common_userTooltip_webexChat()}
           onClick={() => openWebex(user.email)}
           sx={{ marginLeft: 1 }}
         />

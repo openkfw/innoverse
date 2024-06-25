@@ -11,6 +11,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import ProgressBar from '@/components/common/ProgressBar';
 import VisibleContributors from '@/components/project-details/VisibleContributors';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 interface ProjectCardProps {
@@ -35,7 +36,7 @@ export default function ProjectCard(props: ProjectCardProps) {
             src={img}
             width={isWideScreen ? 418 : 500}
             height={isWideScreen ? 237 : 175}
-            alt="project"
+            alt={m.components_landing_projectSection_projectCard_imageAlt()}
             style={{
               width: '100%',
               objectFit: 'cover',

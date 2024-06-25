@@ -6,6 +6,7 @@ import { NewsFeedEntry, ObjectType } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import FollowButtonWithLink from '@/components/common/FollowButtonWithLink';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
+import * as m from '@/src/paraglide/messages.js';
 
 interface NewsFeedItemFollowControlProps {
   entry: NewsFeedEntry;
@@ -27,7 +28,7 @@ export const NewsFeedItemFollowControl = ({ entry }: NewsFeedItemFollowControlPr
       }
     } catch (error) {
       console.error('Error toggling follow status:', error);
-      errorMessage({ message: 'Failed to toggle follow status. Please try again later.' });
+      errorMessage({ message: m.components_newsPage_cards_common_newsFeedItemFollowControl_error() });
       appInsights.trackException({
         exception: new Error('Failed to toggle follow status.', { cause: error }),
         severityLevel: SeverityLevel.Error,

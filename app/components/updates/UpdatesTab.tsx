@@ -9,6 +9,7 @@ import { SxProps } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { Project, ProjectUpdateWithAdditionalData } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
 
@@ -39,7 +40,7 @@ export const UpdatesTab = ({ project, onUpdate }: UpdatesTabProps) => {
       }
     } catch (error) {
       console.error('Error refetching project updates:', error);
-      errorMessage({ message: 'Failed to refetch project updates. Please try again later.' });
+      errorMessage({ message: m.components_updates_updatesTab_refetchError() });
       appInsights.trackException({
         exception: new Error('Failed to refetch project updates.', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -55,7 +56,7 @@ export const UpdatesTab = ({ project, onUpdate }: UpdatesTabProps) => {
           cardSx={{ background: 'transparent', boxShadow: 'none' }}
           project={project}
           refetchUpdates={refetchUpdates}
-          text={'Es gibt noch keine Neuigkeiten zu diesem Projekt. Klick hier um eine hinzuzufügen.'}
+          text={m.components_updates_updatesTab_noNews()}
         />
       </Card>
     );
@@ -71,7 +72,7 @@ export const UpdatesTab = ({ project, onUpdate }: UpdatesTabProps) => {
             wrapSx={updateCardWrapperStyles}
             project={project}
             refetchUpdates={refetchUpdates}
-            text={'Halten Dein Publikum auf dem Laufenden! Klick hier, um eine Neuigkeit hinzuzufügen.'}
+            text={m.components_updates_updatesTab_addNewNews()}
           />
           <Box flexGrow="1">
             <ProjectTimeLine widthOfDateColumn={isSmallScreen ? '83px' : '273px'} projectUpdates={project.updates} />

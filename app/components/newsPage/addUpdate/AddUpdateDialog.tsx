@@ -1,6 +1,7 @@
 import { Option } from '@/common/formTypes';
 import { Filters } from '@/common/types';
 import CustomDialog from '@/components/common/CustomDialog';
+import * as m from '@/src/paraglide/messages.js';
 
 import AddUpdateForm, { UpdateFormData } from './form/AddUpdateForm';
 
@@ -23,7 +24,7 @@ export default function AddUpdateDialog(props: AddUpdateDialogProps) {
     <CustomDialog
       open={open}
       handleClose={handleClose}
-      title="Beitrag hinzufügen"
+      title={m.components_newsPage_addUpdate_addUpdateDialog_addUpdate()}
       sx={{ width: { xs: '100%' }, maxWidth: { xs: '500px' } }}
     >
       <AddUpdateForm

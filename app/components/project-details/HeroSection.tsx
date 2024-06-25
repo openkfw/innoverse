@@ -10,6 +10,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { Project } from '@/common/types';
 import { UserAvatar } from '@/components/common/UserAvatar';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 
@@ -32,7 +33,7 @@ export default function HeroSection(props: HeroSectionProps) {
         <Box sx={imageWrapperStyles}>
           <Image
             src={heroImage}
-            alt="Project"
+            alt={m.components_projectdetails_heroSection_imageAlt()}
             width={0}
             height={0}
             sizes="50vw"
@@ -71,7 +72,7 @@ export default function HeroSection(props: HeroSectionProps) {
             )}
             <Grid item sx={statusContainerStyles}>
               <Typography variant="overline" sx={statusStyles}>
-                Status
+                {m.components_projectdetails_heroSection_status()}
               </Typography>
               <ProgressBar active={status} />
             </Grid>

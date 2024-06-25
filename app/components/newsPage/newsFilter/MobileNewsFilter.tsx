@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import { closeIconButtonStyle } from '@/components/common/CustomDialog';
 import CloseIcon from '@/components/icons/CloseIcon';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import ApplyFilterButton, { APPLY_BUTTON } from './ApplyFilterButton';
@@ -65,7 +66,7 @@ export default function MobileNewsFilter(props: MobileNewsFilterProps) {
         </Box>
 
         <Box sx={drawerBoxStyle}>
-          <Typography variant="overline">Filtern</Typography>
+          <Typography variant="overline">{m.components_newsPage_newsFilter_mobileNewsFilter_filter()}</Typography>
           <Card sx={cardStyles}>
             <NewsProjectsFilter filters={newFilters} setFilters={setNewFilters} />
             <NewsTopicFilter filters={newFilters} setFilters={setNewFilters} />

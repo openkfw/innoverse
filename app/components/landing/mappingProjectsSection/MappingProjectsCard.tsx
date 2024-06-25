@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import ExplorationIcon from '@/components/icons/ExplorationIcon';
 import KonzeptionIcon from '@/components/icons/KonzeptionIcon';
 import ProofOfConceptIcon from '@/components/icons/ProofOfConceptIcon';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { ProjectProps } from '../projectSection/ProjectSection';
@@ -30,22 +31,19 @@ export interface MappingDataProps {
 const mappingData: MappingDataProps[] = [
   {
     isFirstStep: true,
-    title: 'Exploration',
+    title: m.components_landing_mappingProjectsSection_mappingProjectsCard_exploration(),
     icon: <ExplorationIcon />,
-    description:
-      'Basierend auf dem strategischen Zielsystem ***STRING_REMOVED***  untersuchen wir mögliche Handlungsfelder für ***STRING_REMOVED***  und berücksichtigen dabei externe Entwicklungen und interne Leitplanken.',
+    description: m.components_landing_mappingProjectsSection_mappingProjectsCard_explorationDesc(),
   },
   {
-    title: 'Konzeption',
+    title: m.components_landing_mappingProjectsSection_mappingProjectsCard_conception(),
     icon: <KonzeptionIcon />,
-    description:
-      'In der Konzeptionsphase sind wir im engen Austausch mit der Zielgruppe: Aus erster Hand verstehen wir zunächst die Probleme, um basierend darauf Lösungskonzepte zu erarbeiten und mit der Zielgruppe zu validieren.',
+    description: m.components_landing_mappingProjectsSection_mappingProjectsCard_conceptionDesc(),
   },
   {
-    title: 'Proof of Concept',
+    title: m.components_landing_mappingProjectsSection_mappingProjectsCard_poc(),
     icon: <ProofOfConceptIcon />,
-    description:
-      'Im PoC testen wir mittels Lean Experiments die Attraktivität, Machbarkeit und Rentabilität der Lösungskonzepte - auch hier direkt mit der Zielgruppe.',
+    description: m.components_landing_mappingProjectsSection_mappingProjectsCard_pocDesc(),
   },
 ];
 
@@ -66,7 +64,11 @@ export const MappingProjectsCard = (props: ProjectProps) => {
           <CardHeader
             sx={{ textAlign: 'left', mb: '35px' }}
             style={{ padding: 0 }}
-            title={<Typography variant="h4">Strategische Innovation @ ***STRING_REMOVED*** </Typography>}
+            title={
+              <Typography variant="h4">
+                {m.components_landing_mappingProjectsSection_mappingProjectsCard_stratInno()}
+              </Typography>
+            }
           />
           <CardContent style={{ padding: 0 }}>
             <PhaseColumns projects={projects} mappingData={mappingData} />
@@ -80,7 +82,7 @@ export const MappingProjectsCard = (props: ProjectProps) => {
 const BubbleImage = () => (
   <Image
     src={bgBubble}
-    alt="background-bubble"
+    alt={m.components_landing_mappingProjectsSection_mappingProjectsCard_imageAlt()}
     sizes="33vw"
     style={{
       position: 'absolute',

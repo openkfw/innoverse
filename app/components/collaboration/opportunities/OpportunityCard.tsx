@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import { Opportunity } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import { UserAvatar } from '@/components/common/UserAvatar';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import InteractionButton, { InteractionType } from '../../common/InteractionButton';
@@ -36,7 +37,7 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
       setHasApplied(data ?? false);
     } catch (error) {
       console.error('Failed to apply for the opportunity:', error);
-      errorMessage({ message: 'Applying for the opportunity failed. Please try again.' });
+      errorMessage({ message: m.components_collaboration_opportunities_opportunityCard_applyError() });
       appInsights.trackException({
         exception: new Error('Failed to apply for the opportunity.', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -74,20 +75,20 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
         </Grid>
         <Grid item>
           <Typography variant="overline" color="primary.main">
-            Aufwand: {opportunity.expense}
+            {m.components_collaboration_opportunities_opportunityCard_expense()} {opportunity.expense}
           </Typography>
         </Grid>
 
         {opportunity.contactPerson && (
           <Grid item>
             <Typography variant="overline" color="primary.main">
-              Contact Person
+              {m.components_collaboration_opportunities_opportunityCard_contactPerson()}
             </Typography>
             {opportunity.contactPerson ? (
               <UserAvatar sx={{ width: '10%' }} size={48} user={opportunity.contactPerson} allowAnimation />
             ) : (
               <Typography variant="caption" color="text.disabled">
-                Niemand zugewiesen
+                {m.components_collaboration_opportunities_opportunityCard_noAssigned()}
               </Typography>
             )}
           </Grid>

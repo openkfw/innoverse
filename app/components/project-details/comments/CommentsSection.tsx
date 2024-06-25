@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 
 import { Comment, Project, ProjectQuestion } from '@/common/types';
 import { UnsavedEditingChangesDialog } from '@/components/common/editing/UnsavedChangesDialog';
+import * as m from '@/src/paraglide/messages.js';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 
 import WriteTextCard from '../../common/editing/writeText/WriteTextCard';
@@ -33,7 +34,7 @@ const CommentsSection = ({ project }: { project: Project }) => {
     <Stack sx={containerStyles} direction="column">
       <Stack>
         <Typography variant="overline" color="primary.light">
-          Deine Meinung ist gefragt
+          {m.components_projectdetails_comments_commentsSection_opinion()}
         </Typography>
 
         <List sx={listStyle}>
@@ -52,7 +53,7 @@ const CommentsSection = ({ project }: { project: Project }) => {
       </Stack>
 
       <Typography variant="caption" color="text.secondary" sx={{ marginTop: 1, marginBottom: 3 }}>
-        {comments.length} Kommentare
+        {comments.length} {m.components_projectdetails_comments_commentsSection_comments()}
       </Typography>
 
       <Stack spacing={3}>

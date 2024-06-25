@@ -6,6 +6,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { CommentResponse } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 import { isProjectCollaborationCommentResponseUpvotedBy } from '@/utils/requests/collaborationComments/requests';
 
 import { CommentCard } from '../../common/comments/CommentCard';
@@ -52,7 +53,7 @@ function useCollaborationCommentResponseCard({ response, onDelete }: Collaborati
         setIsUpvoted(result.data);
       } catch (error) {
         console.error('Error updating collaboration comment:', error);
-        errorMessage({ message: 'Failed to update collaboration comment response. Please try again later.' });
+        errorMessage({ message: m.components_collaboration_comments_collaborationCommentResponseCard_updateError() });
         appInsights.trackException({
           exception: new Error('Failed to update collaboration comment.', { cause: error }),
           severityLevel: SeverityLevel.Error,
@@ -69,7 +70,7 @@ function useCollaborationCommentResponseCard({ response, onDelete }: Collaborati
       setIsUpvoted((upvoted) => !upvoted);
     } catch (error) {
       console.error('Error upvote collaboration comment response:', error);
-      errorMessage({ message: 'Failed to upvote collaboration comment response. Please try again later.' });
+      errorMessage({ message: m.components_collaboration_comments_collaborationCommentResponseCard_upvoteError() });
       appInsights.trackException({
         exception: new Error('Failed to upvote collaboration comment response.', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -82,7 +83,7 @@ function useCollaborationCommentResponseCard({ response, onDelete }: Collaborati
       updateProjectCollaborationCommentResponse({ responseId: response.id, updatedText });
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
-      errorMessage({ message: 'Failed to update collaboration comment response. Please try again later.' });
+      errorMessage({ message: m.components_collaboration_comments_collaborationCommentResponseCard_updateError() });
       appInsights.trackException({
         exception: new Error('Failed to update collaboration comment response.', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -96,7 +97,7 @@ function useCollaborationCommentResponseCard({ response, onDelete }: Collaborati
       onDelete && onDelete();
     } catch (error) {
       console.error('Error deleting collaboration comment:', error);
-      errorMessage({ message: 'Failed to delete collaboration comment response. Please try again later.' });
+      errorMessage({ message: m.components_collaboration_comments_collaborationCommentResponseCard_deleteError() });
       appInsights.trackException({
         exception: new Error('Failed to delete collaboration comment response.', { cause: error }),
         severityLevel: SeverityLevel.Error,

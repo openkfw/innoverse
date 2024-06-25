@@ -7,6 +7,8 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
+import * as m from '@/src/paraglide/messages.js';
+
 const PillBox = ({ children, sx }: { children: ReactNode; sx?: SxProps }) => {
   const style = {
     border: '0.50px white solid',
@@ -47,7 +49,10 @@ const ActiveSliderPill = (props: { itemNumber: string; title: string; projectSta
       <Stack direction="row">
         <Stack>
           <PillBox sx={{ pl: '13px', pr: '24px' }}>
-            <Typography variant="overline">Project #{itemNumber}</Typography>
+            <Typography variant="overline">
+              {m.components_landing_featuredProjectSection_slider_sliderPill_projectNum()}
+              {itemNumber}
+            </Typography>
           </PillBox>
           <PillBox sx={{ pl: '13px', pr: '24px', borderTop: 0 }}>
             <Typography variant="overline">{projectStart}</Typography>
@@ -86,7 +91,10 @@ const NonActiveSliderPill = (props: { itemNumber: string; title: string; project
       onMouseLeave={() => setHover(false)}
     >
       <PillBox sx={pillBoxStyle}>
-        <Typography variant="overline">#{itemNumber}</Typography>
+        <Typography variant="overline">
+          {m.components_landing_featuredProjectSection_slider_sliderPill_hashtag()}
+          {itemNumber}
+        </Typography>
       </PillBox>
       <PillBox sx={pillBoxStyle}>
         <Typography variant="h6" noWrap>

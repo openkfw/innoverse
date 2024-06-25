@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import { ArrowLeftIcon } from '@mui/x-date-pickers';
 
 import CustomButton from '@/components/common/CustomButton';
+import * as m from '@/src/paraglide/messages.js';
 
 interface CredentialsLoginFormProps {
   providerId: string;
@@ -64,26 +65,26 @@ export const CredentialsLoginForm = ({ providerId, onNavigateBack }: Credentials
         onClick={onNavigateBack}
       >
         <ArrowLeftIcon color="action" />
-        <Typography color={'text.primary'}>Anderen Account verwenden</Typography>
+        <Typography color={'text.primary'}>{m.components_login_credentialsLoginForm_useOtherAccount()}</Typography>
       </Stack>
       <TextField
-        label="Benutzername"
+        label={m.components_login_credentialsLoginForm_username()}
         value={username}
         onChange={handleUsernameChange}
         InputLabelProps={{ sx: inputLabelStyles }}
       />
       <TextField
-        label="Passwort"
+        label={m.components_login_credentialsLoginForm_password()}
         type="password"
         value={password}
         onChange={handlePasswordChange}
         InputLabelProps={{ sx: inputLabelStyles }}
       />
       <Typography variant="caption" sx={{ visibility: error ? 'visible' : 'hidden' }} color="error.main">
-        Fehler: {error}
+        {m.components_login_credentialsLoginForm_error()} {error}
       </Typography>
       <CustomButton sx={{ color: 'black' }} disabled={!username || !password} onClick={handleSubmit}>
-        Login
+        {m.components_login_credentialsLoginForm_login()}
       </CustomButton>
     </Stack>
   );

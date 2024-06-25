@@ -13,6 +13,7 @@ import { Option } from '@/common/formTypes';
 import { Filters } from '@/common/types';
 import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { AutocompleteDropdownField } from '@/components/common/form/AutocompleteDropdownField';
+import * as m from '@/src/paraglide/messages.js';
 
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
 
@@ -72,11 +73,11 @@ export default function AddUpdateForm({
       const response = await handleProjectUpdate(formData);
       if (response.status === StatusCodes.OK) {
         refetchUpdates({ fullRefetch: true });
-        successMessage({ message: 'Neuigkeit wurde erstellt' });
+        successMessage({ message: m.components_newsPage_addUpdate_form_addUpdateForm_postCreated() });
         handleClose();
       } else {
         errorMessage({
-          message: 'Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuchen sie es erneut',
+          message: m.components_newsPage_addUpdate_form_addUpdateForm_error(),
         });
       }
     }
@@ -88,8 +89,8 @@ export default function AddUpdateForm({
         <MultilineTextInputField
           name={COMMENT}
           control={control}
-          label="Update"
-          placeholder="Geben Sie hier das Update ein"
+          label={m.components_newsPage_addUpdate_form_addUpdateForm_updateLabel()}
+          placeholder={m.components_newsPage_addUpdate_form_addUpdateForm_placeholder()}
           sx={{ width: '100%' }}
         />
       </form>

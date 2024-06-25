@@ -10,6 +10,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { User } from '@/common/types';
 import { UserAvatar } from '@/components/common/UserAvatar';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { openWebex } from '@/utils/openWebex';
 
@@ -29,7 +30,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
   return (
     <>
       <Typography variant="overline" sx={titleStyles}>
-        Unser Team
+        {m.components_projectdetails_teamMembersColumn_team()}
       </Typography>
 
       <Card sx={cardStyles} elevation={0}>
@@ -49,7 +50,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
                 <InteractionButton
                   projectName={projectName}
                   interactionType={InteractionType.COMMENT}
-                  tooltip="Chat über Webex"
+                  tooltip={m.components_projectdetails_teamMembersColumn_chatWebex()}
                   onClick={() => openWebex(teamMember.email)}
                 />
               </Box>
@@ -59,14 +60,18 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
           {team.length > maxTeamMembers && (
             <Button onClick={() => setOpen(true)} sx={showAllButtonStyles}>
               <Typography variant="button" color="action.active">
-                Alle anzeigen
+                {m.components_projectdetails_teamMembersColumn_showAll()}
               </Typography>
             </Button>
           )}
         </CardContent>
       </Card>
 
-      <CustomDialog open={open} handleClose={() => setOpen(false)} title="Alle Teammitglieder">
+      <CustomDialog
+        open={open}
+        handleClose={() => setOpen(false)}
+        title={m.components_projectdetails_teamMembersColumn_allMembers()}
+      >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {team.map((teamMember, index) => (
             <Stack key={index} sx={rowStyles} spacing={5} direction="row">
@@ -86,7 +91,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
                 <InteractionButton
                   projectName={projectName}
                   interactionType={InteractionType.COMMENT}
-                  tooltip="Chat über Webex"
+                  tooltip={m.components_projectdetails_teamMembersColumn_chatWebex()}
                   onClick={() => openWebex(teamMember.email)}
                 />
               </Box>

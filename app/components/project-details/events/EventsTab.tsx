@@ -8,6 +8,7 @@ import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
 
 import { EventWithAdditionalData, Project } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getAllEventsForProjectFilter } from '@/utils/requests/events/requests';
 
@@ -165,7 +166,7 @@ export const EventsTab: React.FC<EventsTabProps> = (props) => {
         <EmptyTabContent
           {...otherProps}
           project={project}
-          message="Momentan scheint es hier nichts zu geben. Du folgst dieser Seite, und wirst benachrichtigt, falls sich hier etwas ändert. Verpasse es nicht! 😉"
+          message={m.components_projectdetails_events_eventsTab_message()}
         />
       </Card>
     );

@@ -8,6 +8,7 @@ import { CommentFooter } from '@/components/common/comments/CommentFooter';
 import CustomButton from '@/components/common/CustomButton';
 import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
 import WriteTextCard from '@/components/common/editing/writeText/WriteTextCard';
+import * as m from '@/src/paraglide/messages.js';
 
 import { TextCard } from '../TextCard';
 
@@ -53,7 +54,7 @@ export const CommentCard = (props: CommentCardProps) => {
           startIcon={<CheckIcon style={{ marginRight: 0 }} sx={{ ml: 1, pr: 0 }} />}
           endIcon={<></>}
         >
-          Fertig
+          {m.components_common_comments_commentCard_done()}
         </CustomButton>
       }
     />

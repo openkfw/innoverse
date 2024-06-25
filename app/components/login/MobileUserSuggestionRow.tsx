@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import * as m from '@/src/paraglide/messages.js';
 import { getProviderLabel } from '@/utils/helpers';
 
 import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
@@ -43,7 +44,7 @@ export default function MobileUserSuggestionRow(props: UserSuggestionRowProps) {
       <Stack direction="row" spacing={1}>
         {image ? (
           <Avatar sx={{ width: 25, height: 25, border: '2px solid white' }}>
-            <Image src={image} alt="avatar" fill sizes="33vw" />
+            <Image src={image} alt={m.components_login_mobileUserSuggestionRow_imageAlt()} fill sizes="33vw" />
           </Avatar>
         ) : (
           <AvatarInitialsIcon name={name} size={25} sx={{ border: '2px solid white' }} />
@@ -71,15 +72,15 @@ export default function MobileUserSuggestionRow(props: UserSuggestionRowProps) {
       <Divider textAlign="left" />
       <Stack onClick={handleToggleCollapse} direction="row">
         <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 300, fontSize: '13px' }}>
-          Nicht du? Mit einem anderen Account einloggen.
+          {m.components_login_mobileUserSuggestionRow_notYouSuggestion()}
         </Typography>
         {open ? <ExpandLess /> : <ExpandMore />}
       </Stack>
       <CustomDialog
         open={confirmationDialogOpen}
         handleClose={handleCloseConfirmationDialog}
-        title="Confirmation"
-        subtitle="Bitte bestätige das Entfernen von dem User "
+        title={m.components_login_mobileUserSuggestionRow_confirmation()}
+        subtitle={m.components_login_mobileUserSuggestionRow_confirmationMessage()}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>
           <InteractionButton interactionType={InteractionType.CLEAR} onClick={handleConfirm} sx={{ width: '150px' }} />

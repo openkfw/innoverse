@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { FormInputProps, Option } from '@/common/formTypes';
+import * as m from '@/src/paraglide/messages.js';
 
 import { formLabelStyle } from './formStyle';
 
@@ -46,13 +47,13 @@ export const AutocompleteDropdownField = ({
                   {...params}
                   label={label}
                   sx={{ color: 'text.primary' }}
-                  helperText="Falls dein Beitrag projektbezogen ist, wähle bitte das entsprechende Projekt aus."
+                  helperText={m.components_common_form_autoCompleteDropdownField_helpText()}
                   FormHelperTextProps={{ sx: helperTextStyles }}
                   error={!!error}
                   InputProps={{ ...params.InputProps, startAdornment }}
                 />
               )}
-              noOptionsText="Keine Optionen"
+              noOptionsText={m.components_common_form_autoCompleteDropdownField_noOptionText()}
               readOnly={readOnly}
               sx={sx}
             />

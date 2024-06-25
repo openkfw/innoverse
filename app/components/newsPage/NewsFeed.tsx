@@ -20,6 +20,7 @@ import {
   SurveyQuestion,
 } from '@/common/types';
 import { NewsSkeleton } from '@/components/newsPage/skeletons/NewsSkeleton';
+import * as m from '@/src/paraglide/messages.js';
 
 import NewsCollabCommentCard from './cards/CollabCommentCard';
 import NewsCollabQuestionCard from './cards/CollabQuestionCard';
@@ -56,7 +57,7 @@ export const NewsFeed = (props: NewsProps) => {
           }
           endMessage={
             <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 2 }}>
-              Alle Daten wurden geladen
+              {m.components_newsPage_newsFeed_dataReceived()}
             </Typography>
           }
         >

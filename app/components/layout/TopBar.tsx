@@ -10,6 +10,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 import { useUser } from '@/app/contexts/user-context';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { Headers } from './Layout';
@@ -62,7 +63,7 @@ export default function TopBar({ pages }: TopBarProps) {
               <Link href="/">
                 <Image
                   src={logo}
-                  alt="***STRING_REMOVED***  Logo"
+                  alt={m.components_layout_topBar_imageAlt()}
                   sizes="100vw"
                   style={{
                     width: '70%',

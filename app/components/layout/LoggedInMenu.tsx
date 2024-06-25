@@ -10,6 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 
 import { UserSession } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import UserMenu from './UserMenu';
@@ -58,7 +59,11 @@ export default function LoggedInMenu({ user, isUserLoading }: LoggedInMenuProps)
           <IconButton sx={menuItemStyle} onClick={handleOpenUserMenu}>
             <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'top', horizontal: 'right' }} variant="dot">
               {user.image ? (
-                <Avatar sx={{ width: 32, height: 32 }} src={user.image} alt="avatar" />
+                <Avatar
+                  sx={{ width: 32, height: 32 }}
+                  src={user.image}
+                  alt={m.components_layout_loggedInMenu_imageAlt()}
+                />
               ) : (
                 <Avatar sx={{ width: 32, height: 32 }}>
                   <AccountCircleIcon fontSize="large" sx={{ fill: 'black' }} />

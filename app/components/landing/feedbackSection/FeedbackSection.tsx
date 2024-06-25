@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography';
 import CustomDialog from '@/components/common/CustomDialog';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import { saveFeedback } from '@/components/landing/feedbackSection/actions';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getPlatformFeedbackCollaborationQuestion } from '@/utils/requests/collaborationQuestions/requests';
 
@@ -75,11 +76,11 @@ function FeedbackSection() {
   const submitFeedback = async () => {
     const result = await saveFeedback({ feedback: feedbackText, showOnProjectPage: showFeedbackOnProjectPage });
     if (result.status === StatusCodes.OK) {
-      toast.success('Danke für Dein Feedback');
+      toast.success(m.components_landing_feedbackSection_feedbackSection_toastSuccess());
       handleClose();
       hideFeedbackButton();
     } else {
-      toast.error('Feedback konnte nicht gespeichert werden! Versuche es später erneut.');
+      toast.error(m.components_landing_feedbackSection_feedbackSection_toastError());
     }
   };
 
@@ -98,13 +99,12 @@ function FeedbackSection() {
         handleClose={handleClose}
         title={
           <Typography variant="caption" sx={titleStyles} component="div">
-            Gib uns Feedback
+            {m.components_landing_feedbackSection_feedbackSection_giveFeedback()}
           </Typography>
         }
         subtitle={
           <Typography variant="subtitle1" sx={subtitleStyles} component="div">
-            Dein Feedback ist wichtig! Teile uns deine Erfahrungen mit der neuen Innovationsplattform mit, um sie zu
-            verbessern und zu optimieren. Jegliches Feedback ist willkommen!
+            {m.components_landing_feedbackSection_feedbackSection_importantFeedbackMessage()}
           </Typography>
         }
       >
@@ -114,14 +114,17 @@ function FeedbackSection() {
             rows={6}
             multiline
             sx={textFieldStyles}
-            placeholder="Du kannst hier Dein Feedback eingeben."
+            placeholder={m.components_landing_feedbackSection_feedbackSection_placeholderFeedback()}
           />
         </Box>
         <FormGroup>
           <Typography color={'text.primary'} fontSize={'12px'}>
-            Dein Feedback wird an die Administrator:innen der{' '}
-            <ProjectLink projectId={projectId}>Projektseite &quot;InnoPlattform&quot;</ProjectLink> gesendet. Deine
-            Daten (Name) werden mitgesendet.
+            {m.components_landing_feedbackSection_feedbackSection_administratorFeedback()}{' '}
+            <ProjectLink projectId={projectId}>
+              {m.components_landing_feedbackSection_feedbackSection_projectpage()} &quot;
+              {m.components_landing_feedbackSection_feedbackSection_innoPlatform()}&quot;
+            </ProjectLink>{' '}
+            {m.components_landing_feedbackSection_feedbackSection_yourData()}
           </Typography>
           <Stack direction={'row'} sx={{ mt: 1 }}>
             <FormControlLabel
@@ -141,11 +144,11 @@ function FeedbackSection() {
               }
               label={
                 <Typography color={'text.primary'} fontSize={'12px'}>
-                  Mein Feedback soll zusätzlich auf der{' '}
+                  {m.components_landing_feedbackSection_feedbackSection_myfeedback()}{' '}
                   <ProjectLink projectId={projectId} navigateToCollaborationTab={true}>
-                    Initiativenseite der Innovationsplattform
+                    {m.components_landing_feedbackSection_feedbackSection_initiativePage()}
                   </ProjectLink>{' '}
-                  zur Diskussion gepostet werden
+                  {m.components_landing_feedbackSection_feedbackSection_discussion()}
                 </Typography>
               }
               labelPlacement="end"
