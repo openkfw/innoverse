@@ -24,7 +24,11 @@ import { mapReaction } from '@/utils/newsFeed/redis/redisMappings';
 import { isProjectFollowedByUser } from '@/utils/requests/project/requests';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { mapToProjectUpdate } from '@/utils/requests/updates/mappings';
-import { CreateProjectUpdateMutation, UpdateProjectUpdateMutation } from '@/utils/requests/updates/mutations';
+import {
+  CreateProjectUpdateMutation,
+  DeleteProjectUpdateMutation,
+  UpdateProjectUpdateMutation,
+} from '@/utils/requests/updates/mutations';
 import {
   GetUpdateByIdQuery,
   GetUpdateCountQuery,
@@ -115,6 +119,19 @@ export async function createProjectUpdateInStrapi(body: {
     return update;
   } catch (err) {
     const error = strapiError('Trying to to create project update', err as RequestError, body.projectId);
+    logger.error(error);
+  }
+}
+
+export async function deleteProjectUpdateInStrapi(id: string) {
+  try {
+    const response = await strapiGraphQLFetcher(DeleteProjectUpdateMutation, { updateId: id });
+    const updateData = response.deleteUpdate?.data;
+    if (!updateData) throw new Error('Response contained no removed project update');
+    const removedUpdate = mapToProjectUpdate(updateData);
+    return removedUpdate;
+  } catch (err) {
+    const error = strapiError('Removing project update', err as RequestError, id);
     logger.error(error);
   }
 }

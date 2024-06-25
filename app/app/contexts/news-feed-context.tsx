@@ -4,11 +4,11 @@ import React, { createContext, useCallback, useContext, useMemo, useState } from
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
-import { AmountOfNews, Filters, NewsFeedEntry, ObjectType } from '@/common/types';
+import { AmountOfNews, NewsFeedEntry, ObjectType } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import { NewsType } from '@/utils/newsFeed/redis/models';
 import { getNewsFeed } from '@/utils/newsFeed/redis/redisService';
-import { getProjectTitleByIds } from '@/utils/requests/project/requests';
+import { getProjectTitleById, getProjectTitleByIds } from '@/utils/requests/project/requests';
 
 export enum SortValues {
   DESC = 'desc',
@@ -60,6 +60,14 @@ const getProjectsWithTitles = async (entries: NewsFeedEntry[]) => {
   return (await getProjectTitleByIds(projectIds)) ?? [];
 };
 
+const safeIncrement = (dictionary: { [key: string]: number }, key: string, increment: 1 | -1) => {
+  const defaultCount = increment === 1 ? 0 : 1;
+  if (!dictionary[key]) dictionary[key] = defaultCount;
+  dictionary[key] = dictionary[key] + increment;
+  if (dictionary[key] === 0) delete dictionary[key];
+  return dictionary;
+};
+
 const getNewsTypeByString = (type: string) => {
   switch (type) {
     case ObjectType.COLLABORATION_COMMENT:
@@ -84,38 +92,38 @@ const getNewsTypeByString = (type: string) => {
 };
 
 interface NewsFeedContextInterface {
-  refetchNews: (options?: { filters?: Filters; fullRefetch?: boolean }) => void;
-  removeEntry: (entry: NewsFeedEntry) => void;
   feed: NewsFeedEntry[];
-  filters: NewsFeedFilters;
-  setFilters: (filters: NewsFeedFilters) => void;
   sort: SortValues;
-  toggleSort: () => void;
+  filters: NewsFeedFilters;
   isLoading: boolean;
-  projects?: ProjectWithTitle[];
-  types: ObjectType[];
-  refetchFeed: () => Promise<void>;
+  hasMore: boolean;
   amountOfEntriesByProjectTitle: {
     [projectTitle: string]: number;
   };
   amountOfEntriesByType: {
     [type: string]: number;
   };
+  projects?: ProjectWithTitle[];
+  types: ObjectType[];
+  addEntry: (entry: NewsFeedEntry) => void;
+  removeEntry: (entry: NewsFeedEntry) => void;
+  refetchFeed: () => Promise<void>;
+  toggleSort: () => void;
+  setFilters: (filters: NewsFeedFilters) => void;
   loadNextPage: () => Promise<void>;
-  hasMore: boolean;
 }
 
 const defaultState: NewsFeedContextInterface = {
   feed: [],
   sort: SortValues.DESC,
-  refetchNews: () => {},
-  removeEntry: (_: NewsFeedEntry) => {},
   filters: { projectIds: [], types: [] },
   types: [],
   amountOfEntriesByProjectTitle: {},
   amountOfEntriesByType: {},
   isLoading: false,
   hasMore: true,
+  addEntry: (_: NewsFeedEntry) => {},
+  removeEntry: (_: NewsFeedEntry) => {},
   refetchFeed: () => Promise.resolve(),
   toggleSort: () => {},
   setFilters: () => {},
@@ -131,7 +139,7 @@ interface NewsFeedContextProviderProps {
 const NewsFeedContext = createContext(defaultState);
 
 export const NewsFeedContextProvider = ({ children, initiallyLoadedNews, allNews }: NewsFeedContextProviderProps) => {
-  const [allNewsFeedEntries, setAllNewsFeedEntries] = useState<NewsFeedEntry[]>(allNews);
+  const [allNewsFeedEntries, _] = useState<NewsFeedEntry[]>(allNews);
   const [newsFeedEntries, setNewsFeedEntries] = useState<NewsFeedEntry[]>(initiallyLoadedNews);
   const [sort, setSort] = useState<SortValues.ASC | SortValues.DESC>(defaultState.sort);
   const [filters, setFilters] = useState<NewsFeedFilters>(defaultState.filters);
@@ -148,8 +156,67 @@ export const NewsFeedContextProvider = ({ children, initiallyLoadedNews, allNews
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState<boolean>(defaultState.hasMore);
 
-  const removeEntry = (entry: NewsFeedEntry) => {
-    setAllNewsFeedEntries((prev) => prev.filter((e) => e.item.id !== entry.item.id));
+  const filtersAreSet = filters.projectIds.length || filters.types.length;
+
+  const getProjectId = (entry: NewsFeedEntry) => {
+    return entry.type === ObjectType.PROJECT ? entry.item.id : entry.item.projectId;
+  };
+
+  const addEntry = (entry: NewsFeedEntry) => {
+    const projectId = getProjectId(entry);
+    const entryIsVisible =
+      !filtersAreSet ||
+      filters.projectIds.some((id) => id === projectId) ||
+      filters.types.some((type) => type === entry.type);
+
+    if (entryIsVisible) {
+      setNewsFeedEntries((prev) => [entry, ...prev]);
+    }
+
+    incrementAmountOfEntries(entry, 1);
+  };
+
+  const removeEntry = async (entry: NewsFeedEntry) => {
+    const filteredEntries = newsFeedEntries.filter((e) => e.item.id !== entry.item.id);
+    setNewsFeedEntries(filteredEntries);
+    incrementAmountOfEntries(entry, -1);
+
+    if (filtersAreSet && !filteredEntries.length) {
+      setPageNumber(1);
+      setFilters(defaultState.filters);
+      await refetchFeed({ filters: defaultState.filters, page: 1 });
+    }
+  };
+
+  const incrementAmountOfEntries = async (entry: NewsFeedEntry, increment: 1 | -1) => {
+    const getProject = async (projectId: string) => {
+      // Get from project array
+      let project = projects?.find((project) => project.id === projectId);
+      if (project) return project;
+      // Get from strapi and then add to project array
+      const projectTitle = await getProjectTitleById(projectId);
+      if (projectTitle === undefined) return;
+      project = { id: projectId, title: projectTitle };
+      setProjects((prev) => [...(prev ?? []), project]);
+      return project;
+    };
+
+    // Update filter counts for types
+    if (!types.some((type) => type === entry.type)) setTypes((prev) => [...prev, entry.type]);
+    const newAmountOfEntriesByType = safeIncrement(amountOfEntriesByType, entry.type, increment);
+    if (!newAmountOfEntriesByType[entry.type]) setTypes((prev) => prev?.filter((type) => type !== entry.type));
+    setAmountOfEntriesByType({ ...newAmountOfEntriesByType });
+
+    // Update filter counts for project
+    const projectId = getProjectId(entry);
+    if (!projectId) return;
+
+    const project = await getProject(projectId);
+    if (!project) return;
+
+    const newAmountOfEntriesByProject = safeIncrement(amountOfEntriesByProjectTitle, project.title, increment);
+    if (!newAmountOfEntriesByProject[project.title]) setProjects((prev) => prev?.filter((p) => p.id !== project.id));
+    setAmountOfEntriesByProjectTitle({ ...newAmountOfEntriesByProject });
   };
 
   const appInsights = useAppInsightsContext();
@@ -230,17 +297,17 @@ export const NewsFeedContextProvider = ({ children, initiallyLoadedNews, allNews
     feed: newsFeedEntries,
     sort,
     filters,
-    projects,
-    types,
+    projects: projects?.sort((a, b) => a.title.localeCompare(b.title)),
+    types: types.sort((a, b) => a.localeCompare(b)),
     amountOfEntriesByProjectTitle,
     amountOfEntriesByType,
     isLoading,
-    refetchNews: () => refetchFeed({ filters, page: pageNumber }),
-    removeEntry,
     hasMore,
+    refetchFeed: () => refetchFeed({ filters, page: pageNumber }),
+    addEntry,
+    removeEntry,
     toggleSort,
     setFilters: updateFilters,
-    refetchFeed: () => refetchFeed({ filters, page: pageNumber }),
     loadNextPage,
   };
 

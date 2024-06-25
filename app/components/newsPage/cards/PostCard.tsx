@@ -26,7 +26,7 @@ function NewsPostCard(props: NewsPostCardProps) {
   const userIsAuthor = user?.providerId === post.author.providerId;
 
   const handleDelete = async () => {
-    await deletePost({ postId: post.id });
+    deletePost({ postId: post.id });
     onDelete();
   };
 

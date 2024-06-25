@@ -6,7 +6,7 @@ import { useEditingInteractions, useEditingState } from '@/components/common/edi
 import { UpdateCardContent } from '@/components/common/UpdateCardText';
 import { UpdateCardActions } from '@/components/newsPage/cards/common/NewsUpdateCardActions';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
-import { updateProjectUpdate } from '@/services/updateService';
+import { deleteProjectUpdate, updateProjectUpdate } from '@/services/updateService';
 
 interface UpdateCardProps {
   update: ProjectUpdate;
@@ -26,6 +26,11 @@ export const NewsUpdateCard = (props: UpdateCardProps) => {
     await updateProjectUpdate({ updateId: update.id, comment: updatedText });
   };
 
+  const handleDelete = async () => {
+    deleteProjectUpdate(update.id);
+    onDelete();
+  };
+
   return state.isEditing(update) ? (
     <WriteCommentCard content={update} onSubmit={handleUpdate} onDiscard={interactions.onCancelEdit} />
   ) : (
@@ -34,7 +39,7 @@ export const NewsUpdateCard = (props: UpdateCardProps) => {
       <UpdateCardContent update={update} noClamp={noClamp} />
       <UpdateCardActions
         update={update}
-        onDelete={onDelete}
+        onDelete={handleDelete}
         onEdit={() => interactions.onStartEdit(update)}
         onResponse={() => interactions.onStartResponse(update)}
       />

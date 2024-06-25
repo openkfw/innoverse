@@ -1,9 +1,9 @@
 import { ResultOf } from 'gql.tada';
 
 import { ProjectUpdate } from '@/common/types';
+import { toDate } from '@/utils/helpers';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { ProjectUpdateFragment } from '@/utils/requests/updates/queries';
-import { toDate } from '@/utils/helpers';
 
 export function mapToProjectUpdate(updateData: ResultOf<typeof ProjectUpdateFragment>): ProjectUpdate {
   const attributes = updateData.attributes;

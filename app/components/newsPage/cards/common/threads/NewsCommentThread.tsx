@@ -4,8 +4,8 @@ import Stack from '@mui/material/Stack';
 
 import { CommentWithResponses, NewsComment, PostComment } from '@/common/types';
 import { useEditingInteractions } from '@/components/common/editing/editing-context';
+import { NewsCommentCard } from '@/components/newsPage/cards/CommentCard';
 import { WriteCommentResponseCard } from '@/components/newsPage/cards/common/WriteCommentResponseCard';
-import { NewsCommentCard } from '@/components/newsPage/cards/NewsCommentCard';
 
 interface NewsCommentThreadProps {
   item: { id: string };
