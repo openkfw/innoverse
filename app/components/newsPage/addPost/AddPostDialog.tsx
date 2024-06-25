@@ -1,5 +1,5 @@
 import { Option } from '@/common/formTypes';
-import { Filters } from '@/common/types';
+import { Post, ProjectUpdate } from '@/common/types';
 import CustomDialog from '@/components/common/CustomDialog';
 
 import AddPostForm, { FormData } from './form/AddPostForm';
@@ -7,13 +7,14 @@ import AddPostForm, { FormData } from './form/AddPostForm';
 interface AddPostDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  refetchUpdates: (options?: { filters?: Filters; fullRefetch?: boolean }) => void;
+  onAddPost: (post: Post) => void;
+  onAddUpdate: (update: ProjectUpdate) => void;
   defaultFormValues?: FormData;
   projectOptions: Option[];
 }
 
 export default function AddPostDialog(props: AddPostDialogProps) {
-  const { open, setOpen, refetchUpdates, defaultFormValues, projectOptions } = props;
+  const { open, setOpen, onAddPost, onAddUpdate, defaultFormValues, projectOptions } = props;
 
   function handleClose() {
     setOpen(false);
@@ -31,7 +32,8 @@ export default function AddPostDialog(props: AddPostDialogProps) {
         handleClose={handleClose}
         defaultFormValues={defaultFormValues}
         projectOptions={projectOptions}
-        refetchUpdates={refetchUpdates}
+        onAddPost={onAddPost}
+        onAddUpdate={onAddUpdate}
       />
     </CustomDialog>
   );

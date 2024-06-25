@@ -11,6 +11,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { Option } from '@/common/formTypes';
+import { NewsFeedEntry, ObjectType, Post, ProjectUpdate } from '@/common/types';
+import { UnsavedEditingChangesDialog } from '@/components/common/editing/UnsavedChangesDialog';
 import InteractionButton, { interactionButtonStyles, InteractionType } from '@/components/common/InteractionButton';
 import SecondaryIconButton from '@/components/common/SecondaryIconButton';
 import NewsFeedFilter from '@/components/newsFeed/NewsFeedFilter';
@@ -25,14 +27,30 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
   const [addUpdateDialogOpen, setAddUpdateDialogOpen] = useState(false);
   const [projectOptions, setProjectOptions] = useState<Option[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { refetchFeed } = useNewsFeed();
+  const { addEntry } = useNewsFeed();
 
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  const handleAddUpdate = async () => {
+  const handleOpenAddUpdateDialog = async () => {
     const projectOptions = await getProjectsOptions();
     setProjectOptions(projectOptions);
     setAddUpdateDialogOpen(true);
+  };
+
+  const handleAddPost = (post: Post) => {
+    const entry: NewsFeedEntry = {
+      type: ObjectType.POST,
+      item: post,
+    };
+    addEntry(entry);
+  };
+
+  const handleAddUpdate = (update: ProjectUpdate) => {
+    const entry: NewsFeedEntry = {
+      type: ObjectType.UPDATE,
+      item: update,
+    };
+    addEntry(entry);
   };
 
   return (
@@ -50,7 +68,7 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
             </Card>
 
             <InteractionButton
-              onClick={handleAddUpdate}
+              onClick={handleOpenAddUpdateDialog}
               interactionType={InteractionType.ADD_UPDATE}
               sx={{ ...interactionButtonStyles, ...buttonStyles }}
             />
@@ -74,9 +92,11 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
       <AddPostDialog
         open={addUpdateDialogOpen}
         setOpen={setAddUpdateDialogOpen}
-        refetchUpdates={refetchFeed}
+        onAddPost={handleAddPost}
+        onAddUpdate={handleAddUpdate}
         projectOptions={projectOptions}
       />
+      <UnsavedEditingChangesDialog />
     </EditingContextProvider>
   );
 }

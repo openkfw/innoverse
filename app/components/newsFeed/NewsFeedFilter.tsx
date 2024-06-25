@@ -18,7 +18,7 @@ export default function NewsFeedFilter() {
     setFilters(updatedFilters);
   };
 
-  const options: FilterOption[] | undefined = projects?.map((project) => ({
+  const projectOptions: FilterOption[] | undefined = projects?.map((project) => ({
     name: project.id,
     label: project.title,
     count: entriesByProjectTitle[project.title],
@@ -26,8 +26,8 @@ export default function NewsFeedFilter() {
 
   return (
     <Card sx={cardStyles} data-testid="news-filter">
-      <NewsFeedProjectsFilter isLoading={!options} onSelect={updateFilters} options={options} />
-      <NewsFeedTypeFilter filters={filters} isLoading={!options} setFilters={setFilters} />
+      <NewsFeedProjectsFilter isLoading={!projectOptions} onSelect={updateFilters} options={projectOptions} />
+      <NewsFeedTypeFilter isLoading={!projectOptions} filters={filters} setFilters={setFilters} />
     </Card>
   );
 }

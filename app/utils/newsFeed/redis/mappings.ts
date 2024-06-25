@@ -220,7 +220,7 @@ const mapToRedisProject = (
   };
 };
 
-const mapToRedisProjectUpdate = (
+export const mapToRedisProjectUpdate = (
   update: ProjectUpdate,
   reactions: RedisReaction[],
   followedBy: RedisUser[],

@@ -2,7 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { User, UserSession } from '@/common/types';
+import { UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import { createProjectUpdate } from '@/services/updateService';
 import { withAuth } from '@/utils/auth';
@@ -19,25 +19,30 @@ const logger = getLogger();
 export const handleProjectUpdate = withAuth(
   async (user: UserSession, body: Omit<AddUpdateData, 'authorId' | 'author'>) => {
     const validatedParams = validateParams(handleProjectUpdateSchema, body);
-    if (validatedParams.status === StatusCodes.OK) {
-      const author = (await getInnoUserByProviderId(user.providerId)) as User;
-      if (author) {
-        const newUpdate = await createProjectUpdate({ ...body, authorId: author.id });
-        return {
-          status: StatusCodes.OK,
-          data: {
-            ...newUpdate,
-            author: user,
-          },
-        };
-      }
+
+    if (validatedParams.status !== StatusCodes.OK) {
+      return {
+        status: validatedParams.status,
+        errors: validatedParams.errors,
+        message: validatedParams.message,
+      };
+    }
+
+    const createInnoPlatformError = (errorMessage: string) => {
       const error: InnoPlatformError = strapiError(
         `Creating a project update by user ${user.providerId}`,
         {
-          info: 'InnoUser does not exist',
+          info: errorMessage,
         } as RequestError,
         body.projectId,
       );
+      return error;
+    };
+
+    const author = await getInnoUserByProviderId(user.providerId);
+
+    if (!author) {
+      const error = createInnoPlatformError('InnoUser does not exist');
       logger.error(error);
       return {
         status: StatusCodes.INTERNAL_SERVER_ERROR,
@@ -45,10 +50,21 @@ export const handleProjectUpdate = withAuth(
       };
     }
 
+    const newUpdate = await createProjectUpdate({ ...body, authorId: author.id });
+
+    if (!newUpdate) {
+      return {
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        errors: 'Creating a project update failed',
+      };
+    }
+
     return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
-      message: validatedParams.message,
+      status: StatusCodes.OK,
+      data: {
+        ...newUpdate,
+        author: user,
+      },
     };
   },
 );
