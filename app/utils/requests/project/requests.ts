@@ -55,7 +55,8 @@ export async function getProjectTitleById(id: string) {
 export async function getProjectTitleByIds(ids: string[], page: number, pageSize: number) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectTitleByIdsQuery, { ids, page, pageSize });
-    const data = response.projects?.data ?? [];
+    const data = response.projects?.data;
+    if (!data) throw 'Response contained no project data';
     const projectTitles = data.map((project) => ({ id: project.id, title: project.attributes.title }));
     return projectTitles;
   } catch (err) {

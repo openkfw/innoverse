@@ -176,7 +176,7 @@ export const countNewsFeedEntriesByProjectIds = async () => {
         const count = parseInt(objectWithoutNullPrototype.count);
         return { projectId: objectWithoutNullPrototype.projectId, count };
       })
-      .filter((entry): entry is { projectId: string; count: number } => entry.projectId !== null);
+      .filter((entry): entry is { projectId: string; count: number } => !!entry.projectId);
 
     return values;
   } catch (err) {
