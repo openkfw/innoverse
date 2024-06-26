@@ -1,15 +1,14 @@
 'use client';
 
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { AmountOfNews, NewsFeedEntry, ObjectType } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
-import { fetchPages } from '@/utils/helpers';
 import { NewsType } from '@/utils/newsFeed/redis/models';
 import { getNewsFeed } from '@/utils/newsFeed/redis/redisService';
-import { getProjectTitleById, getProjectTitleByIds } from '@/utils/requests/project/requests';
+import { getProjectTitleById } from '@/utils/requests/project/requests';
 
 export enum SortValues {
   DESC = 'desc',
@@ -96,31 +95,27 @@ const defaultState: NewsFeedContextInterface = {
 };
 
 interface NewsFeedContextProviderProps {
-  initiallyLoadedNews: NewsFeedEntry[];
-  countByProjectIds: { projectId: string; count: number }[];
-  countByType: { type: ObjectType; count: number }[];
+  initiallyLoadedNewsFeed: NewsFeedEntry[];
+  countByProjectTitle: AmountOfNews;
+  countByType: AmountOfNews;
+  projects: ProjectWithTitle[];
   children: React.ReactNode;
 }
 
 const NewsFeedContext = createContext(defaultState);
 
-export const NewsFeedContextProvider = ({
-  initiallyLoadedNews,
-  countByProjectIds,
-  countByType,
-  children,
-}: NewsFeedContextProviderProps) => {
-  const [newsFeedEntries, setNewsFeedEntries] = useState<NewsFeedEntry[]>(initiallyLoadedNews);
+export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextProviderProps) => {
+  const [newsFeedEntries, setNewsFeedEntries] = useState<NewsFeedEntry[]>(props.initiallyLoadedNewsFeed);
   const [sort, setSort] = useState<SortValues.ASC | SortValues.DESC>(defaultState.sort);
   const [filters, setFilters] = useState<NewsFeedFilters>(defaultState.filters);
   const [pageNumber, setPageNumber] = useState<number>(1);
 
-  const [projects, setProjects] = useState<ProjectWithTitle[]>();
+  const [projects, setProjects] = useState<ProjectWithTitle[]>(props.projects);
   const [types, setTypes] = useState<ObjectType[]>(defaultState.types);
 
-  const [amountOfEntriesByType, setAmountOfEntriesByType] = useState<AmountOfNews>(defaultState.amountOfEntriesByType);
+  const [amountOfEntriesByType, setAmountOfEntriesByType] = useState<AmountOfNews>(props.countByType);
   const [amountOfEntriesByProjectTitle, setAmountOfEntriesByProjectTitle] = useState<AmountOfNews>(
-    defaultState.amountOfEntriesByProjectTitle,
+    props.countByProjectTitle,
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -250,31 +245,6 @@ export const NewsFeedContextProvider = ({
     setPageNumber(page);
     refetchFeed({ page, filters });
   };
-
-  useMemo(async () => {
-    const projectIds = countByProjectIds.map((entry) => entry.projectId);
-    const projects = await fetchPages({
-      fetcher: async (page, pageSize) => (await getProjectTitleByIds(projectIds, page, pageSize)) ?? [],
-    });
-
-    const dictionary: { [projectId: string]: number } = {};
-    countByProjectIds.forEach((entry) => {
-      const project = projects.find((project) => project.id === entry.projectId);
-      if (!project) return;
-      dictionary[project.title] = entry.count;
-    });
-
-    setProjects(projects);
-    setAmountOfEntriesByProjectTitle(dictionary);
-  }, [countByProjectIds]);
-
-  useMemo(() => {
-    const types = countByType.map((entry) => entry.type);
-    const dictionary: { [type: string]: number } = {};
-    countByType.forEach((entry) => (dictionary[entry.type] = entry.count));
-    setTypes(types);
-    setAmountOfEntriesByType(dictionary);
-  }, [countByType]);
 
   const contextObject: NewsFeedContextInterface = {
     feed: newsFeedEntries,

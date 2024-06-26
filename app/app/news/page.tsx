@@ -7,11 +7,7 @@ import Stack from '@mui/material/Stack';
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';
 import NewsFeedContainer from '@/components/newsFeed/NewsFeedContainer';
-import {
-  countNewsFeedEntriesByProjectIds,
-  countNewsFeedEntriesByType,
-  getNewsFeed,
-} from '@/utils/newsFeed/redis/redisService';
+import { getNewsFeedPageProps } from '@/utils/requests/newsFeedEntries/requests';
 
 import { NewsFeed } from '../../components/newsPage/NewsFeed';
 import { NewsFeedContextProvider } from '../contexts/news-feed-context';
@@ -21,11 +17,9 @@ import backgroundImage from '/public/images/news-background.png';
 export const dynamic = 'force-dynamic';
 
 async function NewsFeedPage() {
-  const newsFeedEntriesByType = await countNewsFeedEntriesByType();
-  const newsFeedEntriesByProjectId = await countNewsFeedEntriesByProjectIds();
-  const initialNewsData = await getNewsFeed();
+  const props = await getNewsFeedPageProps();
 
-  if (!initialNewsData) return <ErrorPage />;
+  if (!props?.initialNewsFeed) return <ErrorPage />;
 
   return (
     <Stack spacing={8} useFlexGap direction="column">
@@ -48,9 +42,10 @@ async function NewsFeedPage() {
         </Box>
 
         <NewsFeedContextProvider
-          initiallyLoadedNews={initialNewsData}
-          countByProjectIds={newsFeedEntriesByProjectId}
-          countByType={newsFeedEntriesByType}
+          initiallyLoadedNewsFeed={props.initialNewsFeed}
+          countByProjectTitle={props.newsFeedEntriesByProject}
+          countByType={props.newsFeedEntriesByType}
+          projects={props.projects}
         >
           <NewsFeedContainer>
             <NewsFeed />
