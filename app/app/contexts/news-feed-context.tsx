@@ -99,6 +99,7 @@ interface NewsFeedContextProviderProps {
   countByProjectTitle: AmountOfNews;
   countByType: AmountOfNews;
   projects: ProjectWithTitle[];
+  types: ObjectType[];
   children: React.ReactNode;
 }
 
@@ -111,7 +112,7 @@ export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextP
   const [pageNumber, setPageNumber] = useState<number>(1);
 
   const [projects, setProjects] = useState<ProjectWithTitle[]>(props.projects);
-  const [types, setTypes] = useState<ObjectType[]>(defaultState.types);
+  const [types, setTypes] = useState<ObjectType[]>(props.types);
 
   const [amountOfEntriesByType, setAmountOfEntriesByType] = useState<AmountOfNews>(props.countByType);
   const [amountOfEntriesByProjectTitle, setAmountOfEntriesByProjectTitle] = useState<AmountOfNews>(
