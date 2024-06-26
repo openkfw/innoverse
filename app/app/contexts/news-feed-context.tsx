@@ -6,6 +6,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { AmountOfNews, NewsFeedEntry, ObjectType } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import { fetchPages } from '@/utils/helpers';
 import { NewsType } from '@/utils/newsFeed/redis/models';
 import { getNewsFeed } from '@/utils/newsFeed/redis/redisService';
 import { getProjectTitleById, getProjectTitleByIds } from '@/utils/requests/project/requests';
@@ -23,41 +24,6 @@ export type NewsFeedFilters = {
 type ProjectWithTitle = {
   id: string;
   title: string;
-};
-
-const countEntriesByType = (entries: NewsFeedEntry[]) => {
-  const initial: { [type: string]: number } = {};
-  const uniqueTypes = entries.map((entry) => entry.type).filter((value, index, self) => self.indexOf(value) === index);
-  const countByType = entries.reduce((entriesByType, entry) => {
-    const typeName = entry.type.toString();
-    entriesByType[typeName] = entriesByType[typeName] + 1 || 1;
-    return entriesByType;
-  }, initial);
-  return { countByType, types: uniqueTypes };
-};
-
-const countEntriesByProjectTitle = async (entries: NewsFeedEntry[]) => {
-  const projects = await getProjectsWithTitles(entries);
-  const initial: { [projectTitle: string]: number } = {};
-
-  const countByProjectTitle = entries.reduce((countByProjectTitle, entry) => {
-    const project = projects.find((project) => project.id === entry.item.projectId);
-    if (project) {
-      countByProjectTitle[project.title] = countByProjectTitle[project.title] + 1 || 1;
-    }
-    return countByProjectTitle;
-  }, initial);
-
-  return { countByProjectTitle, projects };
-};
-
-const getProjectsWithTitles = async (entries: NewsFeedEntry[]) => {
-  const projectIds = entries
-    .map((entry) => entry.item.projectId)
-    .filter((projectId): projectId is string => projectId !== undefined)
-    .filter((value, index, self) => self.indexOf(value) === index);
-
-  return (await getProjectTitleByIds(projectIds)) ?? [];
 };
 
 const safeIncrement = (dictionary: { [key: string]: number }, key: string, increment: 1 | -1) => {
@@ -90,7 +56,6 @@ const getNewsTypeByString = (type: string) => {
       throw Error(`Unknown new feed object type '${type}'`);
   }
 };
-
 interface NewsFeedContextInterface {
   feed: NewsFeedEntry[];
   sort: SortValues;
@@ -132,14 +97,19 @@ const defaultState: NewsFeedContextInterface = {
 
 interface NewsFeedContextProviderProps {
   initiallyLoadedNews: NewsFeedEntry[];
-  allNews: NewsFeedEntry[];
+  countByProjectIds: { projectId: string; count: number }[];
+  countByType: { type: ObjectType; count: number }[];
   children: React.ReactNode;
 }
 
 const NewsFeedContext = createContext(defaultState);
 
-export const NewsFeedContextProvider = ({ children, initiallyLoadedNews, allNews }: NewsFeedContextProviderProps) => {
-  const [allNewsFeedEntries, _] = useState<NewsFeedEntry[]>(allNews);
+export const NewsFeedContextProvider = ({
+  initiallyLoadedNews,
+  countByProjectIds,
+  countByType,
+  children,
+}: NewsFeedContextProviderProps) => {
   const [newsFeedEntries, setNewsFeedEntries] = useState<NewsFeedEntry[]>(initiallyLoadedNews);
   const [sort, setSort] = useState<SortValues.ASC | SortValues.DESC>(defaultState.sort);
   const [filters, setFilters] = useState<NewsFeedFilters>(defaultState.filters);
@@ -282,16 +252,29 @@ export const NewsFeedContextProvider = ({ children, initiallyLoadedNews, allNews
   };
 
   useMemo(async () => {
-    const { countByProjectTitle, projects } = await countEntriesByProjectTitle(allNewsFeedEntries);
-    setAmountOfEntriesByProjectTitle(countByProjectTitle);
+    const projectIds = countByProjectIds.map((entry) => entry.projectId);
+    const projects = await fetchPages({
+      fetcher: async (page, pageSize) => (await getProjectTitleByIds(projectIds, page, pageSize)) ?? [],
+    });
+
+    const dictionary: { [projectId: string]: number } = {};
+    countByProjectIds.forEach((entry) => {
+      const project = projects.find((project) => project.id === entry.projectId);
+      if (!project) return;
+      dictionary[project.title] = entry.count;
+    });
+
     setProjects(projects);
-  }, [allNewsFeedEntries]);
+    setAmountOfEntriesByProjectTitle(dictionary);
+  }, [countByProjectIds]);
 
   useMemo(() => {
-    const { countByType, types } = countEntriesByType(allNewsFeedEntries);
-    setAmountOfEntriesByType(countByType);
+    const types = countByType.map((entry) => entry.type);
+    const dictionary: { [type: string]: number } = {};
+    countByType.forEach((entry) => (dictionary[entry.type] = entry.count));
     setTypes(types);
-  }, [allNewsFeedEntries]);
+    setAmountOfEntriesByType(dictionary);
+  }, [countByType]);
 
   const contextObject: NewsFeedContextInterface = {
     feed: newsFeedEntries,

@@ -22,7 +22,7 @@ function FollowButtonWithLink(props: FollowButtonWithLinkProps) {
   const { entry, onIconClick, isSelected = false } = props;
   const { projects } = useNewsFeed();
   const projectId = getNewsTypeProjectId(entry);
-  const projectName = projects?.find((project) => project.id === entry.item.projectId)?.title;
+  const projectName = projects?.find((project) => project.id === projectId)?.title;
 
   if (projectId && !projectName) {
     return <Skeleton variant="rounded" height={25} width={170} />;

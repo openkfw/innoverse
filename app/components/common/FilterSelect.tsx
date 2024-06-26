@@ -7,6 +7,7 @@ import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import FormLabel from '@mui/material/FormLabel';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import useHydration from '@/components/common/Hydration';
@@ -75,14 +76,16 @@ export default function FilterSelect(props: {
               </Typography>
             )}
             <Collapse in={expanded} timeout="auto" unmountOnExit>
-              {options.slice(maxOptionsToDisplayCollapsed).map((option, key) => (
-                <FormControlLabel
-                  key={key}
-                  control={<Checkbox name={option.name} checked={filterIsChecked(option)} onChange={selectFilter} />}
-                  label={getFilterLabel(option)}
-                  disabled={!hydrated}
-                />
-              ))}
+              <Stack direction={'column'}>
+                {options.slice(maxOptionsToDisplayCollapsed).map((option, key) => (
+                  <FormControlLabel
+                    key={key}
+                    control={<Checkbox name={option.name} checked={filterIsChecked(option)} onChange={selectFilter} />}
+                    label={getFilterLabel(option)}
+                    disabled={!hydrated}
+                  />
+                ))}
+              </Stack>
               {options.length > maxOptionsToDisplayCollapsed && expanded && (
                 <Typography onClick={toggleExpand} color="secondary" sx={{ textDecoration: 'underline' }}>
                   Weniger anzeigen

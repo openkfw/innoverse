@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
 import { handleSurveyQuestionVote } from '@/repository/db/survey_votes';
-import { handleSurveyVoteInCache } from '@/services/surveyQuestionVoteService';
+import { handleSurveyVoteInCache } from '@/services/surveyQuestionService';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';

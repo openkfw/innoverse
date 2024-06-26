@@ -2,7 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { BasicCollaborationQuestion, ObjectType, UserSession } from '@/common/types';
+import { BasicCollaborationQuestion, ObjectType, StartPagination, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import { getCollaborationCommentIsUpvotedBy } from '@/repository/db/collaboration_comment';
 import dbClient from '@/repository/db/prisma/prisma';
@@ -83,9 +83,13 @@ export async function getBasicCollaborationQuestionByIdWithAdditionalData(id: st
   }
 }
 
-export async function getBasicCollaborationQuestionStartingFromWithAdditionalData(from: Date) {
+export async function getBasicCollaborationQuestionStartingFromWithAdditionalData({
+  from,
+  page,
+  pageSize,
+}: StartPagination) {
   try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestsionsStartingFromQuery, { from });
+    const response = await strapiGraphQLFetcher(GetCollaborationQuestsionsStartingFromQuery, { from, page, pageSize });
     const data = response.collaborationQuestions?.data;
     if (!data) throw new Error('Response contained no collaboration question data');
 

@@ -19,6 +19,27 @@ export async function getPromiseResults<T>(promises: Promise<T>[]) {
   return getFulfilledResults(results);
 }
 
+export const fetchPages = async <T>({
+  fetcher,
+  pageSize = 100,
+}: {
+  fetcher: (page: number, pageSize: number) => Promise<T[]>;
+  pageSize?: number;
+}): Promise<T[]> => {
+  let pageNumber = 1;
+  let itemsOnPage = 0;
+  const items: T[] = [];
+
+  while (pageNumber === 1 || itemsOnPage >= pageSize) {
+    const page = await fetcher(pageNumber, pageSize);
+    items.push(...page);
+    itemsOnPage = page.length;
+    pageNumber++;
+  }
+
+  return items;
+};
+
 export const groupBy = <T, K extends (string | number | symbol) & keyof T>(array: T[], key: K) => {
   const map = new Map<T[K], T[]>();
 

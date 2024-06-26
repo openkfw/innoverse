@@ -11,7 +11,7 @@ import { getSurveyQuestionById } from '@/utils/requests/surveyQuestions/requests
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import { NewsType, RedisSurveyQuestion, RedisSurveyVote } from '@/utils/newsFeed/redis/models';
-import { ObjectType } from '@/common/types';
+import { ObjectType, SurveyQuestion } from '@/common/types';
 
 const logger = getLogger();
 
@@ -24,9 +24,8 @@ export const handleSurveyVoteInCache = async (surveyQuestion: {
 }) => {
   const { surveyQuestionId, votedBy, vote, id } = surveyQuestion;
   const redisClient = await getRedisClient();
-  const newsFeedEntry = await getNewsFeedEntryForEntity(redisClient, {
-    objectId: surveyQuestionId,
-    objectType: NewsType.SURVEY_QUESTION,
+  const newsFeedEntry = await getNewsFeedEntryForSurveyQuestion(redisClient, {
+    surveyId: surveyQuestionId,
   });
 
   if (!newsFeedEntry) {
@@ -72,24 +71,31 @@ export const removeVoteFromCache = async (
   });
 };
 
-const getNewsFeedEntryForEntity = async (
+export const getNewsFeedEntryForSurveyQuestion = async (
   redisClient: RedisClient,
-  survey: { objectId: string; objectType: NewsType },
+  { surveyId }: { surveyId: string },
 ) => {
-  const redisKey = `${survey.objectType}:${survey.objectId}`;
+  const redisKey = getRedisKey(surveyId);
   const cacheEntry = await getNewsFeedEntryByKey(redisClient, redisKey);
-  return cacheEntry ?? (await createNewsFeedEntryForEntity(survey.objectId));
+  return cacheEntry ?? (await createNewsFeedEntryForSurveyQuestionById(surveyId));
 };
 
-const createNewsFeedEntryForEntity = async (objectId: string) => {
+export const createNewsFeedEntryForSurveyQuestionById = async (objectId: string) => {
   const survey = await getSurveyQuestionById(objectId);
 
   if (!survey) {
     logger.warn(`Failed to create news feed cache entry for survey question with id '${objectId}'`);
     return null;
   }
-  const surveyReactions = await getReactionsForEntity(dbClient, ObjectType.SURVEY_QUESTION, objectId);
+
+  return await createNewsFeedEntryForSurveyQuestion(survey);
+};
+
+export const createNewsFeedEntryForSurveyQuestion = async (survey: SurveyQuestion) => {
+  const surveyReactions = await getReactionsForEntity(dbClient, ObjectType.SURVEY_QUESTION, survey.id);
   const surveyFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.SURVEY_QUESTION, survey.id);
   const mappedSurveyFollowedBy = await mapToRedisUsers(surveyFollowedBy);
   return mapSurveyQuestionToRedisNewsFeedEntry(survey, surveyReactions, mappedSurveyFollowedBy);
 };
+
+const getRedisKey = (id: string) => `${NewsType.SURVEY_QUESTION}:${id}`;

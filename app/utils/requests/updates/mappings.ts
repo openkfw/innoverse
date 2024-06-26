@@ -5,6 +5,10 @@ import { toDate } from '@/utils/helpers';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { ProjectUpdateFragment } from '@/utils/requests/updates/queries';
 
+export async function mapToProjectUpdates(updates: ResultOf<typeof ProjectUpdateFragment>[] | undefined) {
+  return updates?.map(mapToProjectUpdate) ?? [];
+}
+
 export function mapToProjectUpdate(updateData: ResultOf<typeof ProjectUpdateFragment>): ProjectUpdate {
   const attributes = updateData.attributes;
   const author = attributes.author?.data;

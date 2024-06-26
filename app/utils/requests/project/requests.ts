@@ -2,7 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { Comment, ObjectType, UserSession } from '@/common/types';
+import { Comment, ObjectType, StartPagination, UserSession } from '@/common/types';
 import { getCommentsSchema } from '@/components/project-details/comments/validationSchema';
 import { RequestError } from '@/entities/error';
 import { getCollaborationCommentResponseCount } from '@/repository/db/collaboration_comment_response';
@@ -19,11 +19,12 @@ import { mapFollow } from '@/utils/newsFeed/redis/redisMappings';
 import { getCollaborationQuestionsByProjectId } from '@/utils/requests/collaborationQuestions/requests';
 import { getEventsWithAdditionalData, getProjectEventsPage } from '@/utils/requests/events/requests';
 import { getOpportunitiesByProjectId } from '@/utils/requests/opportunities/requests';
-import { mapToBasicProject, mapToProject } from '@/utils/requests/project/mappings';
+import { mapToBasicProject, mapToProject, mapToProjects } from '@/utils/requests/project/mappings';
 import {
   GetProjectAuthorIdByProjectIdQuery,
   GetProjectByIdQuery,
   GetProjectsQuery,
+  GetProjectsStartingFromQuery,
   GetProjectTitleByIdQuery,
   GetProjectTitleByIdsQuery,
 } from '@/utils/requests/project/queries';
@@ -51,9 +52,9 @@ export async function getProjectTitleById(id: string) {
   }
 }
 
-export async function getProjectTitleByIds(ids: string[]) {
+export async function getProjectTitleByIds(ids: string[], page: number, pageSize: number) {
   try {
-    const response = await strapiGraphQLFetcher(GetProjectTitleByIdsQuery, { ids });
+    const response = await strapiGraphQLFetcher(GetProjectTitleByIdsQuery, { ids, page, pageSize });
     const data = response.projects?.data ?? [];
     const projectTitles = data.map((project) => ({ id: project.id, title: project.attributes.title }));
     return projectTitles;
@@ -275,6 +276,17 @@ export async function getProjectByIdWithReactions(id: string) {
     return { ...project, reactions };
   } catch (err) {
     const error = strapiError('Getting project', err as RequestError);
+    logger.error(error);
+  }
+}
+
+export async function getProjectsStartingFrom({ from, page, pageSize }: StartPagination) {
+  try {
+    const response = await strapiGraphQLFetcher(GetProjectsStartingFromQuery, { from, page, pageSize });
+    const projects = mapToProjects(response.projects?.data);
+    return projects;
+  } catch (err) {
+    const error = strapiError('Getting upcoming projects', err as RequestError);
     logger.error(error);
   }
 }

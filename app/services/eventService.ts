@@ -1,6 +1,6 @@
 'use server';
 
-import { ObjectType } from '@/common/types';
+import { Event, ObjectType } from '@/common/types';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
@@ -16,16 +16,20 @@ const logger = getLogger();
 export const getNewsFeedEntryForProjectEvent = async (redisClient: RedisClient, eventId: string) => {
   const redisKey = getRedisKey(eventId);
   const cacheEntry = await getNewsFeedEntryByKey(redisClient, redisKey);
-  return cacheEntry ?? (await createNewsFeedEntryForProjectEvent(eventId));
+  return cacheEntry ?? (await createNewsFeedEntryForEventById(eventId));
 };
 
-const createNewsFeedEntryForProjectEvent = async (eventId: string) => {
+const createNewsFeedEntryForEventById = async (eventId: string) => {
   const event = await getEventById(eventId);
   if (!event) {
     logger.warn(`Failed to create news feed cache entry for event with id '${eventId}': Event not found`);
     return null;
   }
-  const eventReactions = await getReactionsForEntity(dbClient, ObjectType.EVENT, eventId);
+  return await createNewsFeedEntryForEvent(event);
+};
+
+export const createNewsFeedEntryForEvent = async (event: Event) => {
+  const eventReactions = await getReactionsForEntity(dbClient, ObjectType.EVENT, event.id);
   const eventFollowedBy = await mapToRedisUsers(await getFollowedByForEntity(dbClient, ObjectType.EVENT, event.id));
   return mapEventToRedisNewsFeedEntry(event, eventReactions, eventFollowedBy);
 };

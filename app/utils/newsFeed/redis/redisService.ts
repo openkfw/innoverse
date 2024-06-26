@@ -1,13 +1,13 @@
 'use server';
 
-import { SearchOptions } from 'redis';
+import { AggregateGroupByReducers, AggregateSteps, SearchOptions } from 'redis';
 
 import { redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
-import { RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
+import { NewsType, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
 
-import { mapRedisNewsFeedEntries } from './redisMappings';
+import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
 
 interface RedisJson {
   [key: string]: any;
@@ -67,13 +67,13 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     if (filterBy?.projectIds?.length) {
       const projectIds = filterBy.projectIds.join('|');
       filters.push(`@projectId:{${projectIds}}`);
-      index = RedisIndex.TYPE_PROJECT_ID;
+      index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID;
     }
     // Get news feed entries by type (Update/Event/...)
     if (filterBy?.types?.length) {
       const types = filterBy.types.map(escapeString).join('|');
       filters.push(`@type:{${types}}`);
-      index = RedisIndex.TYPE_PROJECT_ID;
+      index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID;
     }
     if (!filters.length) {
       // Get all news feed entries
@@ -90,7 +90,7 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
 
   const getPaginationOptions = (): SearchOptions['LIMIT'] => {
     const page = options?.pagination?.page ?? 1;
-    const pageSize = options?.pagination?.pageSize ?? 30;
+    const pageSize = options?.pagination?.pageSize ?? 10;
     return {
       from: (page - 1) * pageSize,
       size: pageSize,
@@ -112,6 +112,77 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     const error = err as Error;
     error.cause = `${error.message}; Index: ${index}; Query: ${query}`;
     const extendedError = redisError('Failed to get items from redis', err as Error);
+    throw extendedError;
+  }
+};
+
+export const countNewsFeedEntriesByType = async () => {
+  try {
+    const client = await getRedisClient();
+    const { results } = await client.ft.AGGREGATE(RedisIndex.UPDATED_AT_TYPE_PROJECT_ID, '*', {
+      STEPS: [
+        {
+          type: AggregateSteps.GROUPBY,
+          properties: ['@type'],
+          REDUCE: [
+            {
+              type: AggregateGroupByReducers.COUNT,
+              AS: 'count',
+            },
+          ],
+        },
+      ],
+    });
+
+    const values = results
+      .map((entry) => {
+        const objectWithoutNullPrototype = Object.assign({}, entry) as { type: NewsType | null; count: string };
+        const count = parseInt(objectWithoutNullPrototype.count);
+        return { type: objectWithoutNullPrototype.type, count };
+      })
+      .filter((entry): entry is { type: NewsType; count: number } => entry.type !== null)
+      .map((entry) => ({ type: MappedRedisType[entry.type], count: entry.count }));
+
+    return values;
+  } catch (err) {
+    const error = err as Error;
+    error.cause = error.message;
+    const extendedError = redisError('Failed to count redis news feed entries by type', err as Error);
+    throw extendedError;
+  }
+};
+
+export const countNewsFeedEntriesByProjectIds = async () => {
+  try {
+    const client = await getRedisClient();
+    const { results } = await client.ft.AGGREGATE(RedisIndex.UPDATED_AT_TYPE_PROJECT_ID, '*', {
+      STEPS: [
+        {
+          type: AggregateSteps.GROUPBY,
+          properties: ['@projectId'],
+          REDUCE: [
+            {
+              type: AggregateGroupByReducers.COUNT,
+              AS: 'count',
+            },
+          ],
+        },
+      ],
+    });
+
+    const values = results
+      .map((entry) => {
+        const objectWithoutNullPrototype = Object.assign({}, entry) as { projectId: string | null; count: string };
+        const count = parseInt(objectWithoutNullPrototype.count);
+        return { projectId: objectWithoutNullPrototype.projectId, count };
+      })
+      .filter((entry): entry is { projectId: string; count: number } => entry.projectId !== null);
+
+    return values;
+  } catch (err) {
+    const error = err as Error;
+    error.cause = error.message;
+    const extendedError = redisError('Failed to count redis news feed entries by type', err as Error);
     throw extendedError;
   }
 };
@@ -166,8 +237,6 @@ export const performRedisTransaction = async (
   return results;
 };
 
-const getKeyForNewsFeedEntry = (entry: RedisNewsFeedEntry) => `${entry.type}:${entry.item.id}`;
-
 export const getNewsFeed = async (options?: GetItemsOptions) => {
   const client = await getRedisClient();
   const entries = await getNewsFeedEntries(client, options);
@@ -176,3 +245,5 @@ export const getNewsFeed = async (options?: GetItemsOptions) => {
   const data = JSON.parse(JSON.stringify(newsFeedEntries, null, 2)) as RedisNewsFeedEntry[];
   return await mapRedisNewsFeedEntries(data);
 };
+
+const getKeyForNewsFeedEntry = (entry: RedisNewsFeedEntry) => `${entry.type}:${entry.item.id}`;
