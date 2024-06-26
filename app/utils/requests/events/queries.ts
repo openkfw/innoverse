@@ -128,8 +128,11 @@ export const GetFutureEventCountQuery = graphql(`
 
 export const GetEventsStartingFromQuery = graphql(
   `
-    query GetUpdatedEvents($from: DateTime) {
-      events(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
+    query GetUpdatedEvents($from: DateTime, $page: Int, $pageSize: Int) {
+      events(
+        filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
+        pagination: { page: $page, pageSize: $pageSize }
+      ) {
         data {
           ...Event
         }

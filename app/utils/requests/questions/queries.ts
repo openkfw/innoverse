@@ -26,7 +26,7 @@ export const GetQuestionsByProjectIdQuery = graphql(
 export const GetUpdatedQuestionsQuery = graphql(
   `
     query GetUpdatedQuestions($from: DateTime) {
-      questions(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
+      questions(filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }) {
         data {
           id
           attributes {

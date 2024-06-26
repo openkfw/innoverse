@@ -7,7 +7,11 @@ import Stack from '@mui/material/Stack';
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';
 import NewsFeedContainer from '@/components/newsFeed/NewsFeedContainer';
-import { getNewsFeed } from '@/utils/newsFeed/redis/redisService';
+import {
+  countNewsFeedEntriesByProjectIds,
+  countNewsFeedEntriesByType,
+  getNewsFeed,
+} from '@/utils/newsFeed/redis/redisService';
 
 import { NewsFeed } from '../../components/newsPage/NewsFeed';
 import { NewsFeedContextProvider } from '../contexts/news-feed-context';
@@ -17,10 +21,11 @@ import backgroundImage from '/public/images/news-background.png';
 export const dynamic = 'force-dynamic';
 
 async function NewsFeedPage() {
+  const newsFeedEntriesByType = await countNewsFeedEntriesByType();
+  const newsFeedEntriesByProjectId = await countNewsFeedEntriesByProjectIds();
   const initialNewsData = await getNewsFeed();
-  const allNewsData = await getNewsFeed();
 
-  if (!allNewsData || !initialNewsData) return <ErrorPage />;
+  if (!initialNewsData) return <ErrorPage />;
 
   return (
     <Stack spacing={8} useFlexGap direction="column">
@@ -42,7 +47,11 @@ async function NewsFeedPage() {
           <BreadcrumbsNav activePage="News" />
         </Box>
 
-        <NewsFeedContextProvider initiallyLoadedNews={initialNewsData} allNews={allNewsData}>
+        <NewsFeedContextProvider
+          initiallyLoadedNews={initialNewsData}
+          countByProjectIds={newsFeedEntriesByProjectId}
+          countByType={newsFeedEntriesByType}
+        >
           <NewsFeedContainer>
             <NewsFeed />
           </NewsFeedContainer>

@@ -87,8 +87,11 @@ export const GetCollaborationQuestionsCountProjectIdQuery = graphql(`
 
 export const GetCollaborationQuestsionsStartingFromQuery = graphql(
   `
-    query GetUpdatedCollaborationQuestions($from: DateTime) {
-      collaborationQuestions(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
+    query GetUpdatedCollaborationQuestions($from: DateTime, $page: Int, $pageSize: Int) {
+      collaborationQuestions(
+        filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
+        pagination: { page: $page, pageSize: $pageSize }
+      ) {
         data {
           ...CollaborationQuestion
         }

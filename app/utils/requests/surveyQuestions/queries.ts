@@ -6,6 +6,7 @@ export const SurveyQuestionFragment = graphql(`
     attributes {
       question
       updatedAt
+      createdAt
       responseOptions {
         responseOption
       }
@@ -29,6 +30,7 @@ export const GetSurveyQuestionByIdQuery = graphql(`
         attributes {
           question
           updatedAt
+          createdAt
           responseOptions {
             responseOption
           }
@@ -55,6 +57,7 @@ export const GetSurveyQuestionsByProjectIdQuery = graphql(`
           updatedAt
           question
           updatedAt
+          createdAt
           responseOptions {
             responseOption
           }
@@ -101,3 +104,19 @@ export const GetUpdatedSurveysQuery = graphql(`
     }
   }
 `);
+
+export const GetSurveysStartingFromQuery = graphql(
+  `
+    query GetSurveyQuestions($from: DateTime, $page: Int, $pageSize: Int) {
+      surveyQuestions(
+        filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
+        pagination: { page: $page, pageSize: $pageSize }
+      ) {
+        data {
+          ...SurveyQuestion
+        }
+      }
+    }
+  `,
+  [SurveyQuestionFragment],
+);

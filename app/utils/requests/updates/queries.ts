@@ -148,8 +148,11 @@ export const GetUpdateCountQuery = graphql(`
 
 export const GetUpdatesStartingFromQuery = graphql(
   `
-    query GetUpdatesStartingFrom($from: DateTime) {
-      updates(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
+    query GetUpdatesStartingFrom($from: DateTime, $page: Int, $pageSize: Int) {
+      updates(
+        filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
+        pagination: { page: $page, pageSize: $pageSize }
+      ) {
         data {
           ...ProjectUpdate
         }

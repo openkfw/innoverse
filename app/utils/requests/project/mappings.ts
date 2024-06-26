@@ -18,6 +18,10 @@ import { formatDate, toDate } from '@/utils/helpers';
 import { mapToImageUrl, mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { ProjectFragment } from '@/utils/requests/project/queries';
 
+export async function mapToProjects(projects: ResultOf<typeof ProjectFragment>[] | undefined): Promise<BasicProject[]> {
+  return projects?.map(mapToBasicProject) ?? [];
+}
+
 export const mapToProject = ({
   projectBaseData,
   ...otherProps

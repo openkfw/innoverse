@@ -1,5 +1,6 @@
 'use server';
 
+import type { Post as PrismaPost } from '@prisma/client';
 import { ObjectType, Post, User, UserSession } from '@/common/types';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import { countPostResponses } from '@/repository/db/post_comment';
@@ -92,10 +93,10 @@ export const getNewsFeedEntryForPost = async (
 ) => {
   const redisKey = getRedisKey(postId);
   const cacheEntry = await getNewsFeedEntryByKey(redisClient, redisKey);
-  return cacheEntry ?? (await createNewsFeedEntryForPost(postId, user));
+  return cacheEntry ?? (await createNewsFeedEntryForPostById(postId, user));
 };
 
-export const createNewsFeedEntryForPost = async (postId: string, author?: User) => {
+export const createNewsFeedEntryForPostById = async (postId: string, author?: User) => {
   const post = await getPostById(dbClient, postId);
 
   if (!post) {
@@ -103,6 +104,10 @@ export const createNewsFeedEntryForPost = async (postId: string, author?: User) 
     return null;
   }
 
+  return await createNewsFeedEntryForPost(post, author);
+};
+
+export const createNewsFeedEntryForPost = async (post: PrismaPost, author?: User) => {
   const reactions = await getReactionsForEntity(dbClient, ObjectType.POST, post.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
   const followers = await mapToRedisUsers(followerIds);

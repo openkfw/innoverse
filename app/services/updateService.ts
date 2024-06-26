@@ -88,7 +88,7 @@ const createNewsFeedEntryForProjectUpdateById = async (updateId: string) => {
   return await createNewsFeedEntryForProjectUpdate(update);
 };
 
-const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate) => {
+export const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate) => {
   const updateReactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
   const updateFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.UPDATE, update.id);
   const mappedUpdateFollowedBy = await mapToRedisUsers(updateFollowedBy);

@@ -2,7 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { Event, EventWithAdditionalData, ObjectType, UserSession } from '@/common/types';
+import { Event, EventWithAdditionalData, ObjectType, StartPagination, UserSession } from '@/common/types';
 import { eventSchema, projectFilterSchema } from '@/components/project-details/events/validationSchema';
 import { RequestError } from '@/entities/error';
 import dbClient from '@/repository/db/prisma/prisma';
@@ -52,9 +52,9 @@ export async function getEventByIdWithReactions(id: string) {
   }
 }
 
-export async function getEventsStartingFrom({ from }: { from: Date }) {
+export async function getEventsStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
-    const response = await strapiGraphQLFetcher(GetEventsStartingFromQuery, { from });
+    const response = await strapiGraphQLFetcher(GetEventsStartingFromQuery, { from, page, pageSize });
     const events = mapToEvents(response.events?.data);
     return events;
   } catch (err) {
