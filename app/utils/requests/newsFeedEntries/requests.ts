@@ -22,6 +22,7 @@ export const getNewsFeedPageProps = async () => {
       fetcher: async (page, pageSize) => (await getProjectTitleByIds(projectIds, page, pageSize)) ?? [],
     });
 
+    const types = countByType.map((entry) => entry.type);
     const newsFeedEntriesByType: { [type: string]: number } = {};
     countByType.forEach((entry) => (newsFeedEntriesByType[entry.type] = entry.count));
 
@@ -37,6 +38,7 @@ export const getNewsFeedPageProps = async () => {
       newsFeedEntriesByType,
       newsFeedEntriesByProject,
       projects,
+      types,
     };
   } catch (error) {
     logger.error('Faield to get news feed page props', error);

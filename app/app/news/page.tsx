@@ -46,6 +46,7 @@ async function NewsFeedPage() {
           countByProjectTitle={props.newsFeedEntriesByProject}
           countByType={props.newsFeedEntriesByType}
           projects={props.projects}
+          types={props.types}
         >
           <NewsFeedContainer>
             <NewsFeed />
