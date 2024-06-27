@@ -22,6 +22,7 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
   const state = useEditingState();
   const interactions = useEditingInteractions();
   const { user } = useUser();
+  const userIsAuthor = user?.providerId === comment.author.providerId;
 
   const handleDelete = async (user: UserSession) => {
     await removeComment({ user, commentId: comment.commentId, commentType });
@@ -43,7 +44,12 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
       footer={
         <Stack direction={'row'} sx={{ mt: 0 }} style={{ marginTop: '8px', marginLeft: '-8px' }}>
           <ResponseControls onResponse={() => interactions.onStartResponse(comment)} />
-          <EditControls onEdit={() => interactions.onStartEdit(comment)} onDelete={() => user && handleDelete(user)} />
+          {userIsAuthor && (
+            <EditControls
+              onEdit={() => interactions.onStartEdit(comment)}
+              onDelete={() => user && handleDelete(user)}
+            />
+          )}
         </Stack>
       }
     />

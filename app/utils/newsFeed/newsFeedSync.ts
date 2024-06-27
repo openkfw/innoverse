@@ -2,32 +2,27 @@ import dayjs from 'dayjs';
 
 import { ObjectType } from '@/common/types';
 import { getCollaborationCommentStartingFrom } from '@/repository/db/collaboration_comment';
-import { getCollaborationCommentResponseCount } from '@/repository/db/collaboration_comment_response';
 import { getFollowedByForEntity } from '@/repository/db/follow';
-import { countPostResponses } from '@/repository/db/post_comment';
 import { getPostsStartingFrom } from '@/repository/db/posts';
 import dbClient from '@/repository/db/prisma/prisma';
-import { getReactionsForEntity } from '@/repository/db/reaction';
+import { createNewsFeedEntryForComment } from '@/services/collaborationCommentService';
+import { createNewsFeedEntryForEvent } from '@/services/eventService';
+import { createNewsFeedEntryForPost } from '@/services/postService';
+import { createNewsFeedEntryForProject } from '@/services/projectService';
+import { createNewsFeedEntryForSurveyQuestion } from '@/services/surveyQuestionService';
+import { createNewsFeedEntryForProjectUpdate } from '@/services/updateService';
 import { redisError } from '@/utils/errors';
-import { getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
+import { fetchPages, getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import * as mappings from '@/utils/newsFeed/redis/mappings';
-import {
-  NewsType,
-  RedisNewsFeedEntry,
-  RedisProjectEvent,
-  RedisProjectUpdate,
-  RedisSync,
-} from '@/utils/newsFeed/redis/models';
+import { NewsType, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
-import { getProjectsEvents } from '@/utils/newsFeed/redis/requests/events';
-import { getProjectsUpdates } from '@/utils/newsFeed/redis/requests/projectUpdates';
-import {
-  getBasicCollaborationQuestionById,
-  getBasicCollaborationQuestionStartingFromWithAdditionalData,
-} from '@/utils/requests/collaborationQuestions/requests';
-import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
-import { getProjectTitleById } from '@/utils/requests/project/requests';
+import { getBasicCollaborationQuestionStartingFromWithAdditionalData } from '@/utils/requests/collaborationQuestions/requests';
+import { getProjectsStartingFrom } from '@/utils/requests/project/requests';
+
+import { getEventsStartingFrom } from '../requests/events/requests';
+import { getSurveyQuestionsStartingFrom } from '../requests/surveyQuestions/requests';
+import { getProjectUpdatesStartingFrom } from '../requests/updates/requests';
 
 import {
   getLatestSuccessfulNewsFeedSync,
@@ -54,6 +49,8 @@ export const sync = async (retry?: number): Promise<RedisSync> => {
     logger.info(`Sync news feed items starting from ${syncFrom.toISOString()} ...`);
 
     const getItems = [
+      aggregateProjects({ from: syncFrom }),
+      aggregateSurveyQuestions({ from: syncFrom }),
       aggregateProjectUpdates({ from: syncFrom }),
       aggregateProjectEvents({ from: syncFrom }),
       aggregatePosts({ from: syncFrom }),
@@ -75,7 +72,7 @@ export const sync = async (retry?: number): Promise<RedisSync> => {
     }
 
     const affectedKeys = await getNewsFeedEntryKeys({ redisClient, from: syncFrom, to: now });
-    const entriesToAdd = [...itemsToSync[0], ...itemsToSync[1], ...itemsToSync[2], ...itemsToSync[3]];
+    const entriesToAdd = itemsToSync.flatMap((items) => items);
 
     if (!affectedKeys.length && !entriesToAdd.length) {
       logger.info('Found no items to delete or add, saving sync to redis and stopping ...');
@@ -110,28 +107,20 @@ export const sync = async (retry?: number): Promise<RedisSync> => {
 };
 
 const getNewsFeedEntryKeys = async ({ redisClient, from, to }: { redisClient: RedisClient; from: Date; to: Date }) => {
-  const keys: string[] = [];
-  const pageSize = 100;
-  let page = 1;
-  let retrievedEntries = 0;
-
-  while (page === 1 || retrievedEntries >= pageSize) {
-    logger.info(`Fetching page ${page} of news feed entry keys from ${from} to ${to} ...`);
-    const entries = await getNewsFeedEntries(redisClient, {
-      filterBy: { updatedAt: { from, to } },
-      pagination: { page, pageSize },
-      sortBy: {
-        updatedAt: 'DESC',
-      },
-    });
-
-    const newKeys = entries.documents.map((document) => document.id);
-    keys.push(...newKeys);
-    retrievedEntries = keys.length;
-    page++;
-  }
-
-  return keys;
+  return await fetchPages({
+    fetcher: async (page, pageSize) => {
+      logger.info(`Fetching page ${page} of news feed entry keys from ${from} to ${to} ...`);
+      const entries = await getNewsFeedEntries(redisClient, {
+        filterBy: { updatedAt: { from, to } },
+        pagination: { page, pageSize },
+        sortBy: {
+          updatedAt: 'DESC',
+        },
+      });
+      const keys = entries.documents.map((document) => document.id);
+      return keys;
+    },
+  });
 };
 
 const createSuccessfulSync = (timestamp: Date, syncedItemCount: number): RedisSync => {
@@ -162,74 +151,85 @@ const removeKeysAndSaveNewEntriesAsTransaction = async (
 };
 
 const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
+  // posts fetched from prisma, hence no pagination required
   const posts = await getPostsStartingFrom(dbClient, from);
-  const mapToRediPosts = posts.map(async (post) => {
-    const reactions = await getReactionsForEntity(dbClient, ObjectType.POST, post.id);
-    const author = await getInnoUserByProviderId(post.author);
-    const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
-    const followers = await mappings.mapToRedisUsers(followerIds);
-    const responseCount = await countPostResponses(dbClient, post.id);
-    return mappings.mapToRedisPost({ ...post, author, responseCount }, reactions, followers);
-  });
-  const redisPosts = await Promise.all(mapToRediPosts);
-  return redisPosts.map((post) => ({
-    type: NewsType.POST,
-    updatedAt: post.updatedAt,
-    item: post,
-  }));
+  const mapEntries = posts.map(async (post) => createNewsFeedEntryForPost(post));
+  const newsFeedEntries = await getPromiseResults(mapEntries);
+  return newsFeedEntries.filter((entry): entry is RedisNewsFeedEntry => entry !== null);
 };
 
 export const aggregateCollaborationComments = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
+  // collaboration comments fetched from prisma, hence no pagination required
   const comments = await getCollaborationCommentStartingFrom(dbClient, from);
-
-  const mapToNewsFeedEntries = comments.map(async (comment) => {
-    const question = await getBasicCollaborationQuestionById(comment.questionId);
-    if (!question) return null;
-
-    const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
-    const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_COMMENT, comment.id);
-    const author = await getInnoUserByProviderId(comment.author);
-    const followerIds = await getFollowedByForEntity(dbClient, ObjectType.COLLABORATION_COMMENT, comment.id);
-    const followers = await mappings.mapToRedisUsers(followerIds);
-    const projectName = await getProjectTitleById(comment.projectId);
-    return mappings.mapCollaborationCommentToRedisNewsFeedEntry(
-      { ...comment, projectName: projectName ?? '', author, responseCount },
-      question,
-      reactions,
-      followers,
-    );
-  });
-
-  return (await Promise.all(mapToNewsFeedEntries)).filter((entry): entry is RedisNewsFeedEntry => entry !== null);
+  const mapToNewsFeedEntries = comments.map(async (comment) => createNewsFeedEntryForComment(comment));
+  const newsFeedEntries = await getPromiseResults(mapToNewsFeedEntries);
+  return newsFeedEntries.filter((entry): entry is RedisNewsFeedEntry => entry !== null);
 };
 
 const aggregateProjectUpdates = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
-  const projectUpdates: RedisProjectUpdate[] = await getProjectsUpdates({ from });
+  const projectUpdates = await fetchPages({
+    fetcher: async (page, pageSize) => {
+      return (await getProjectUpdatesStartingFrom({ from, page, pageSize })) ?? [];
+    },
+  });
 
-  return projectUpdates.map((update) => ({
-    type: NewsType.UPDATE,
-    updatedAt: update.updatedAt,
-    item: update,
-  }));
+  const createdProjectUpdates = projectUpdates.map((update) => createNewsFeedEntryForProjectUpdate(update));
+  const newsFeedEntries = await getPromiseResults(createdProjectUpdates);
+  return newsFeedEntries;
 };
 
 const aggregateProjectEvents = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
-  const events: RedisProjectEvent[] = await getProjectsEvents({ from });
-  return events.map((event) => ({
-    type: NewsType.EVENT,
-    updatedAt: event.updatedAt,
-    item: event,
-  }));
+  const events = await fetchPages({
+    fetcher: async (page, pageSize) => {
+      return (await getEventsStartingFrom({ from, page, pageSize })) ?? [];
+    },
+  });
+
+  const createdEvents = events.map((event) => createNewsFeedEntryForEvent(event));
+  const newsFeedEntries = await getPromiseResults(createdEvents);
+  return newsFeedEntries;
+};
+
+const aggregateProjects = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
+  const projects = await fetchPages({
+    fetcher: async (page, pageSize) => {
+      const projectsPage = (await getProjectsStartingFrom({ from, page, pageSize })) ?? [];
+      return projectsPage;
+    },
+  });
+
+  const createdProjects = projects.map((project) => createNewsFeedEntryForProject(project));
+  const newsFeedEntries = await getPromiseResults(createdProjects);
+  return newsFeedEntries;
+};
+
+const aggregateSurveyQuestions = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
+  const surveys = await fetchPages({
+    fetcher: async (page, pageSize) => {
+      return (await getSurveyQuestionsStartingFrom({ from, page, pageSize })) ?? [];
+    },
+  });
+
+  const createNewsFeedEntries = surveys.map((survey) => createNewsFeedEntryForSurveyQuestion(survey));
+  const newsFeedEntries = await getPromiseResults(createNewsFeedEntries);
+  return newsFeedEntries;
 };
 
 const aggregateCollaborationQuestions = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
-  const questions = (await getBasicCollaborationQuestionStartingFromWithAdditionalData(from)) ?? [];
+  const questions = await fetchPages({
+    fetcher: async (page, pageSize) => {
+      return (await getBasicCollaborationQuestionStartingFromWithAdditionalData({ from, page, pageSize })) ?? [];
+    },
+  });
+
   const mapToRedisQuestions = questions.map(async (question) => {
     const followerIds = await getFollowedByForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, question.id);
     const followers = await mappings.mapToRedisUsers(followerIds);
     return mappings.mapToRedisCollaborationQuestion(question, question.reactions, followers);
   });
-  const redisQuestions = await Promise.all(mapToRedisQuestions);
+
+  const redisQuestions = await getPromiseResults(mapToRedisQuestions);
+
   return redisQuestions.map((question) => ({
     type: NewsType.COLLABORATION_QUESTION,
     updatedAt: question.updatedAt,

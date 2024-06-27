@@ -19,6 +19,46 @@ export async function getPromiseResults<T>(promises: Promise<T>[]) {
   return getFulfilledResults(results);
 }
 
+export const fetchPages = async <T>({
+  fetcher,
+  pageSize = 100,
+}: {
+  fetcher: (page: number, pageSize: number) => Promise<T[]>;
+  pageSize?: number;
+}): Promise<T[]> => {
+  let pageNumber = 1;
+  let itemsOnPage = 0;
+  const items: T[] = [];
+
+  while (pageNumber === 1 || itemsOnPage >= pageSize) {
+    const page = await fetcher(pageNumber, pageSize);
+    items.push(...page);
+    itemsOnPage = page.length;
+    pageNumber++;
+  }
+
+  return items;
+};
+
+export const groupBy = <T, K extends (string | number | symbol) & keyof T>(array: T[], key: K) => {
+  const map = new Map<T[K], T[]>();
+
+  for (const item of array) {
+    const value = item[key];
+    if (!map.has(value)) {
+      map.set(value, []);
+    }
+    map.get(value)!.push(item);
+  }
+
+  const result: { key: T[K]; items: T[] }[] = [];
+  map.forEach((items, key) => {
+    result.push({ key, items });
+  });
+
+  return result;
+};
+
 export async function processAsBatch<T, R>(
   items: Array<T>,
   limit: number,
@@ -69,8 +109,11 @@ export function getProviderLabel(provider: { name: string; id: string }) {
 }
 
 export function getImageByBreakpoint(isSmallScreen: boolean, image?: ImageFormats) {
-  if (!image || !image.small || !image.large) {
+  if (!image) {
     return undefined;
+  }
+  if (!image.small?.url || !image.large?.url) {
+    return image.thumbnail?.url;
   }
   return isSmallScreen ? image.small?.url : image.large?.url;
 }

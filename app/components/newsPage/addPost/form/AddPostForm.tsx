@@ -9,7 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 
 import { Option } from '@/common/formTypes';
-import { Filters } from '@/common/types';
+import { Post, ProjectUpdate } from '@/common/types';
 import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { AutocompleteDropdownField } from '@/components/common/form/AutocompleteDropdownField';
 import { inputStyle } from '@/components/common/form/formStyle';
@@ -40,14 +40,15 @@ const defaultValues = {
 const { PROJECT, CONTENT } = formFieldNames;
 
 interface AddUpdateFormProps {
-  refetchUpdates: (options?: { filters?: Filters; fullRefetch?: boolean }) => void;
+  onAddPost: (post: Post) => void;
+  onAddUpdate: (update: ProjectUpdate) => void;
   handleClose: () => void;
   defaultFormValues?: FormData;
   projectOptions: Option[];
 }
 
 export default function AddPostForm(props: AddUpdateFormProps) {
-  const { refetchUpdates, handleClose, defaultFormValues, projectOptions } = props;
+  const { onAddPost, onAddUpdate, handleClose, defaultFormValues, projectOptions } = props;
 
   const { handleSubmit, control, formState } = useForm<FormData>({
     defaultValues: defaultFormValues || defaultValues,
@@ -60,9 +61,9 @@ export default function AddPostForm(props: AddUpdateFormProps) {
 
     if (project && project.id) {
       const response = await handleProjectUpdate({ comment: content, projectId: project.id });
-      if (response.status === StatusCodes.OK) {
-        refetchUpdates({ fullRefetch: true });
-        successMessage({ message: m.components_newsPage_addPost_form_addPostForm_postCreated() });
+      if (response.status === StatusCodes.OK && response.data) {
+        successMessage({ message: 'Neuigkeit wurde erstellt' });
+        onAddUpdate(response.data);
         handleClose();
       } else {
         errorMessage({
@@ -71,9 +72,10 @@ export default function AddPostForm(props: AddUpdateFormProps) {
       }
     } else {
       const response = await handlePost({ content });
-      if (response.status === StatusCodes.OK) {
-        refetchUpdates({ fullRefetch: true });
-        successMessage({ message: m.components_newsPage_addPost_form_addPostForm_postCreated() });
+      if (response.status === StatusCodes.OK && response.data) {
+        const post: Post = { ...response.data, responseCount: 0 };
+        successMessage({ message: 'Post wurde erstellt' });
+        onAddPost(post);
         handleClose();
       } else {
         errorMessage({

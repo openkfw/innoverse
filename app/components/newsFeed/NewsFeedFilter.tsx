@@ -5,16 +5,29 @@ import React from 'react';
 import Card from '@mui/material/Card';
 
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
+import { FilterOption } from '@/components/common/FilterSelect';
 
 import NewsFeedProjectsFilter from './NewsFeedProjectsFilter';
 import NewsFeedTypeFilter from './NewsFeedTypeFilter';
 
 export default function NewsFeedFilter() {
-  const { filters, setFilters } = useNewsFeed();
+  const { projects, amountOfEntriesByProjectTitle: entriesByProjectTitle, filters, setFilters } = useNewsFeed();
+
+  const updateFilters = (projectIds: string[]) => {
+    const updatedFilters = { ...filters, projectIds };
+    setFilters(updatedFilters);
+  };
+
+  const projectOptions: FilterOption[] | undefined = projects?.map((project) => ({
+    name: project.id,
+    label: project.title,
+    count: entriesByProjectTitle[project.title],
+  }));
+
   return (
     <Card sx={cardStyles} data-testid="news-filter">
-      <NewsFeedProjectsFilter filters={filters} setFilters={setFilters} />
-      <NewsFeedTypeFilter filters={filters} setFilters={setFilters} />
+      <NewsFeedProjectsFilter isLoading={!projectOptions} onSelect={updateFilters} options={projectOptions} />
+      <NewsFeedTypeFilter isLoading={!projectOptions} filters={filters} setFilters={setFilters} />
     </Card>
   );
 }

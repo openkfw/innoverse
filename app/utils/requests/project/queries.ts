@@ -83,8 +83,8 @@ export const GetProjectTitleByIdQuery = graphql(`
 `);
 
 export const GetProjectTitleByIdsQuery = graphql(`
-  query GetProjectTitlesByIds($ids: [ID!]) {
-    projects(filters: { id: { in: $ids } }) {
+  query GetProjectTitlesByIds($ids: [ID!], $page: Int, $pageSize: Int) {
+    projects(filters: { id: { in: $ids } }, pagination: { page: $page, pageSize: $pageSize }) {
       data {
         id
         attributes {
@@ -124,3 +124,19 @@ export const GetProjectAuthorIdByProjectIdQuery = graphql(`
     }
   }
 `);
+
+export const GetProjectsStartingFromQuery = graphql(
+  `
+    query GetProjects($from: DateTime, $page: Int, $pageSize: Int) {
+      projects(
+        filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
+        pagination: { page: $page, pageSize: $pageSize }
+      ) {
+        data {
+          ...Project
+        }
+      }
+    }
+  `,
+  [ProjectFragment],
+);

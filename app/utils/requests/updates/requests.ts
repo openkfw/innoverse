@@ -9,6 +9,7 @@ import {
   ProjectUpdate,
   ProjectUpdateWithAdditionalData,
   SortValues,
+  StartPagination,
   UserSession,
 } from '@/common/types';
 import { handleProjectUpdatesSchema } from '@/components/updates/validationSchema';
@@ -23,8 +24,12 @@ import getLogger from '@/utils/logger';
 import { mapReaction } from '@/utils/newsFeed/redis/redisMappings';
 import { isProjectFollowedByUser } from '@/utils/requests/project/requests';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { mapToProjectUpdate } from '@/utils/requests/updates/mappings';
-import { CreateProjectUpdateMutation, UpdateProjectUpdateMutation } from '@/utils/requests/updates/mutations';
+import { mapToProjectUpdate, mapToProjectUpdates } from '@/utils/requests/updates/mappings';
+import {
+  CreateProjectUpdateMutation,
+  DeleteProjectUpdateMutation,
+  UpdateProjectUpdateMutation,
+} from '@/utils/requests/updates/mutations';
 import {
   GetUpdateByIdQuery,
   GetUpdateCountQuery,
@@ -34,6 +39,7 @@ import {
   GetUpdatesPageByTopicsQuery,
   GetUpdatesPageQuery,
   GetUpdatesQuery,
+  GetUpdatesStartingFromQuery,
 } from '@/utils/requests/updates/queries';
 import { validateParams } from '@/utils/validationHelper';
 
@@ -115,6 +121,19 @@ export async function createProjectUpdateInStrapi(body: {
     return update;
   } catch (err) {
     const error = strapiError('Trying to to create project update', err as RequestError, body.projectId);
+    logger.error(error);
+  }
+}
+
+export async function deleteProjectUpdateInStrapi(id: string) {
+  try {
+    const response = await strapiGraphQLFetcher(DeleteProjectUpdateMutation, { updateId: id });
+    const updateData = response.deleteUpdate?.data;
+    if (!updateData) throw new Error('Response contained no removed project update');
+    const removedUpdate = mapToProjectUpdate(updateData);
+    return removedUpdate;
+  } catch (err) {
+    const error = strapiError('Removing project update', err as RequestError, id);
     logger.error(error);
   }
 }
@@ -298,3 +317,14 @@ export const countUpdatesForProject = withAuth(async (user: UserSession, body: {
     throw err;
   }
 });
+
+export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: StartPagination) {
+  try {
+    const response = await strapiGraphQLFetcher(GetUpdatesStartingFromQuery, { from, page, pageSize });
+    const updates = mapToProjectUpdates(response.updates?.data);
+    return updates;
+  } catch (err) {
+    const error = strapiError('Getting updates', err as RequestError);
+    logger.error(error);
+  }
+}

@@ -220,7 +220,7 @@ const mapToRedisProject = (
   };
 };
 
-const mapToRedisProjectUpdate = (
+export const mapToRedisProjectUpdate = (
   update: ProjectUpdate,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
@@ -251,11 +251,11 @@ const mapToRedisProjectEvent = (
   };
 };
 
-export const mapToRedisUsers = async (followedBy: string[]) => {
-  return await getPromiseResults(followedBy.map(mapIdToUser));
+export const mapToRedisUsers = async (userIds: string[]) => {
+  return await getPromiseResults(userIds.map(mapToRedisUser));
 };
 
-export const mapIdToUser = async (userId: string): Promise<RedisUser> => {
+export const mapToRedisUser = async (userId: string): Promise<RedisUser> => {
   // TODO: Run this against Redis.
   const user = await getInnoUserByProviderId(userId);
   return user;

@@ -8,7 +8,7 @@ import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';
 import NewsFeedContainer from '@/components/newsFeed/NewsFeedContainer';
 import * as m from '@/src/paraglide/messages.js';
-import { getNewsFeed } from '@/utils/newsFeed/redis/redisService';
+import { getNewsFeedPageProps } from '@/utils/requests/newsFeedEntries/requests';
 
 import { NewsFeed } from '../../components/newsPage/NewsFeed';
 import { NewsFeedContextProvider } from '../contexts/news-feed-context';
@@ -18,10 +18,9 @@ import backgroundImage from '/public/images/news-background.png';
 export const dynamic = 'force-dynamic';
 
 async function NewsFeedPage() {
-  const initialNewsData = await getNewsFeed();
-  const allNewsData = await getNewsFeed();
+  const props = await getNewsFeedPageProps();
 
-  if (!allNewsData || !initialNewsData) return <ErrorPage />;
+  if (!props?.initialNewsFeed) return <ErrorPage />;
 
   return (
     <Stack spacing={8} useFlexGap direction="column">
@@ -43,7 +42,13 @@ async function NewsFeedPage() {
           <BreadcrumbsNav activePage={m.app_news_page_news()} />
         </Box>
 
-        <NewsFeedContextProvider initiallyLoadedNews={initialNewsData} allNews={allNewsData}>
+        <NewsFeedContextProvider
+          initiallyLoadedNewsFeed={props.initialNewsFeed}
+          countByProjectTitle={props.newsFeedEntriesByProject}
+          countByType={props.newsFeedEntriesByType}
+          projects={props.projects}
+          types={props.types}
+        >
           <NewsFeedContainer>
             <NewsFeed />
           </NewsFeedContainer>

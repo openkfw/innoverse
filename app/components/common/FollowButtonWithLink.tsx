@@ -4,10 +4,12 @@ import BookmarkAddedOutlinedIcon from '@mui/icons-material/BookmarkAddedOutlined
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import Box from '@mui/material/Box';
 import Button, { ButtonProps } from '@mui/material/Button';
+import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 
+import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { NewsFeedEntry } from '@/common/types';
-import { getNewsTypeProjectId, getNewsTypeProjectName } from '@/utils/helpers';
+import { getNewsTypeProjectId } from '@/utils/helpers';
 
 export interface FollowButtonWithLinkProps extends ButtonProps {
   entry: NewsFeedEntry;
@@ -18,29 +20,34 @@ export interface FollowButtonWithLinkProps extends ButtonProps {
 
 function FollowButtonWithLink(props: FollowButtonWithLinkProps) {
   const { entry, onIconClick, isSelected = false } = props;
-  const item = entry.item as { title?: string; projectId?: string };
-  const title = item.title;
+  const { projects } = useNewsFeed();
   const projectId = getNewsTypeProjectId(entry);
-  const projectName = getNewsTypeProjectName(entry);
+  const projectName = projects?.find((project) => project.id === projectId)?.title;
+
+  if (projectId && !projectName) {
+    return <Skeleton variant="rounded" height={25} width={170} />;
+  }
 
   return (
-    <Box sx={containerStyles}>
-      {projectName && projectId && (
-        <Link href={`/projects/${projectId}?tab=2`} style={linkStyles}>
-          <Typography variant="subtitle2" sx={labelStyles}>
-            {title}
-          </Typography>
-        </Link>
-      )}
-
-      <Button onClick={onIconClick} sx={{ ...buttonStyles, backgroundColor: isSelected ? '#D4FCCA' : 'white' }}>
-        {isSelected ? (
-          <BookmarkAddedOutlinedIcon fontSize="small" style={{ color: '#266446' }} />
-        ) : (
-          <BookmarkAddOutlinedIcon fontSize="small" style={{ color: '#266446' }} />
+    <>
+      <Box sx={containerStyles}>
+        {projectId && (
+          <Link href={`/projects/${projectId}?tab=2`} style={linkStyles}>
+            <Typography variant="subtitle2" sx={labelStyles}>
+              {projectName}
+            </Typography>
+          </Link>
         )}
-      </Button>
-    </Box>
+
+        <Button onClick={onIconClick} sx={{ ...buttonStyles, backgroundColor: isSelected ? '#D4FCCA' : 'white' }}>
+          {isSelected ? (
+            <BookmarkAddedOutlinedIcon fontSize="small" style={{ color: '#266446' }} />
+          ) : (
+            <BookmarkAddOutlinedIcon fontSize="small" style={{ color: '#266446' }} />
+          )}
+        </Button>
+      </Box>
+    </>
   );
 }
 

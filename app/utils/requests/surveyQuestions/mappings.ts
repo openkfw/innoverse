@@ -1,30 +1,8 @@
+import { ResultOf } from 'gql.tada';
+
 import { BasicSurveyQuestion, SurveyQuestion, SurveyVote } from '@/common/types';
 import { toDate } from '@/utils/helpers';
-import { ResultOf } from 'gql.tada';
 import { SurveyQuestionFragment } from '@/utils/requests/surveyQuestions/queries';
-
-type SurveyQuestionData = {
-  id: string;
-  attributes: {
-    question: string;
-    updatedAt: string | Date | null;
-    responseOptions: ({
-      responseOption: string;
-    } | null)[];
-  };
-};
-
-type BasicSurveyQuestionData = {
-  attributes: {
-    project: {
-      data: {
-        id: string;
-      } | null;
-    } | null;
-    question: string;
-  };
-  id: string;
-};
 
 export const mapToSurveyQuestion = (
   surveyQuestionData: ResultOf<typeof SurveyQuestionFragment>,
@@ -46,15 +24,20 @@ export const mapToSurveyQuestion = (
     votes,
     userVote: userVote?.vote,
     updatedAt: toDate(attributes.updatedAt),
+    createdAt: toDate(attributes.createdAt),
   };
 };
 
-export const mapToBasicSurveyQuestion = (surveyQuestionData: BasicSurveyQuestionData): BasicSurveyQuestion => {
+export const mapToBasicSurveyQuestion = (
+  surveyQuestionData: ResultOf<typeof SurveyQuestionFragment>,
+): BasicSurveyQuestion => {
   const attributes = surveyQuestionData.attributes;
 
   return {
     id: surveyQuestionData.id,
     question: attributes.question,
     projectId: attributes.project?.data?.id,
+    updatedAt: toDate(attributes.updatedAt),
+    createdAt: toDate(attributes.createdAt),
   };
 };

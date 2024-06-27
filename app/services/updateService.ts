@@ -9,9 +9,10 @@ import getLogger from '@/utils/logger';
 import { mapToRedisUsers, mapUpdateToRedisNewsFeedEntry } from '@/utils/newsFeed/redis/mappings';
 import { NewsType, RedisProjectUpdate } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
-import { getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
+import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import {
   createProjectUpdateInStrapi,
+  deleteProjectUpdateInStrapi,
   getProjectUpdateById,
   updateProjectUpdateInStrapi,
 } from '@/utils/requests/updates/requests';
@@ -39,10 +40,22 @@ export const updateProjectUpdate = async ({ updateId, comment }: UpdateProjectUp
   return updated;
 };
 
+export const deleteProjectUpdate = async (updateId: string) => {
+  const deletedUpdate = await deleteProjectUpdateInStrapi(updateId);
+  await deleteProjectUpdateInCache(updateId);
+  return deletedUpdate;
+};
+
 export const createProjectUpdateInCache = async (update: ProjectUpdate) => {
   const redisClient = await getRedisClient();
   const newsFeedEntry = await createNewsFeedEntryForProjectUpdate(update);
   await saveNewsFeedEntry(redisClient, newsFeedEntry);
+};
+
+export const deleteProjectUpdateInCache = async (updateId: string) => {
+  const redisClient = await getRedisClient();
+  const redisKey = getRedisKey(updateId);
+  await deleteItemFromRedis(redisClient, redisKey);
 };
 
 export const updateProjectUpdateInCache = async ({ update }: UpdateUpdateInCache) => {
@@ -75,7 +88,7 @@ const createNewsFeedEntryForProjectUpdateById = async (updateId: string) => {
   return await createNewsFeedEntryForProjectUpdate(update);
 };
 
-const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate) => {
+export const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate) => {
   const updateReactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
   const updateFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.UPDATE, update.id);
   const mappedUpdateFollowedBy = await mapToRedisUsers(updateFollowedBy);

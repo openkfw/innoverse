@@ -2,7 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { ObjectType, SurveyVote, UserSession } from '@/common/types';
+import { ObjectType, StartPagination, SurveyVote, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getSurveyVotes } from '@/repository/db/survey_votes';
@@ -15,6 +15,7 @@ import { mapToBasicSurveyQuestion, mapToSurveyQuestion } from '@/utils/requests/
 import {
   GetSurveyQuestionsByProjectIdQuery,
   GetSurveyQuestionsCountByProjectIdQuery,
+  GetSurveysStartingFromQuery,
 } from '@/utils/requests/surveyQuestions/queries';
 
 import { GetSurveyQuestionByIdQuery } from './queries';
@@ -106,6 +107,27 @@ export async function getSurveyQuestionById(id: string) {
     return surveyQuestion;
   } catch (err) {
     const error = strapiError('Getting project update by id', err as RequestError, id);
+    logger.error(error);
+  }
+}
+
+export async function getSurveyQuestionsStartingFrom({ from, page, pageSize }: StartPagination) {
+  try {
+    const response = await strapiGraphQLFetcher(GetSurveysStartingFromQuery, { from, page, pageSize });
+    const surveyQuestionsData = response.surveyQuestions;
+
+    if (!surveyQuestionsData?.data) throw new Error('Response contained no survey question data');
+
+    const mapToEntities = surveyQuestionsData.data.map(async (surveyQuestionData) => {
+      const votes = await getSurveyVotes(dbClient, surveyQuestionData.id);
+      const surveyQuestion = mapToSurveyQuestion(surveyQuestionData, votes);
+      return surveyQuestion;
+    });
+
+    const surveyQuestions = await getPromiseResults(mapToEntities);
+    return surveyQuestions;
+  } catch (err) {
+    const error = strapiError('Getting upcoming survey questions', err as RequestError);
     logger.error(error);
   }
 }

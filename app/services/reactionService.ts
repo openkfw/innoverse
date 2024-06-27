@@ -1,5 +1,3 @@
-'use server';
-
 import { ObjectType, Reaction, User } from '@/common/types';
 import dbClient from '@/repository/db/prisma/prisma';
 import { addReactionToDb, removeReactionFromDb } from '@/repository/db/reaction';
@@ -13,7 +11,8 @@ import { RedisReaction } from '@/utils/newsFeed/redis/models';
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 
-import { getNewsFeedEntryForEntity } from './commonService';
+import { getNewsFeedEntryForProject } from './projectService';
+import { getNewsFeedEntryForSurveyQuestion } from './surveyQuestionService';
 
 const logger = getLogger();
 
@@ -46,7 +45,7 @@ export const addReaction = async ({ user, reaction }: AddReaction) => {
     reaction.shortCode,
     reaction.nativeSymbol,
   );
-  await addReactionToCache({ ...createdReaction, objectType: createdReaction.objectType as ObjectType }, user);
+  addReactionToCache({ ...createdReaction, objectType: createdReaction.objectType as ObjectType }, user);
   return createdReaction;
 };
 
@@ -57,7 +56,7 @@ export const removeReaction = async ({ user, reaction }: RemoveReaction) => {
     reaction.objectType,
     reaction.objectId,
   );
-  await removeReactionFromCache({
+  removeReactionFromCache({
     reaction: { ...removedReaction, objectType: removedReaction.objectType as ObjectType },
     user,
   });
@@ -66,15 +65,13 @@ export const removeReaction = async ({ user, reaction }: RemoveReaction) => {
 
 export const addReactionToCache = async (reaction: Reaction, user: User) => {
   const redisClient = await getRedisClient();
-  const newsFeedEntry = await getNewsFeedEntryForEntity(redisClient, reaction, user);
+  const newsFeedEntry = await getItemForEntityWithReactions(reaction, user);
 
   if (!newsFeedEntry) {
     return;
   }
 
-  const updatedReactions = newsFeedEntry.item.reactions.filter(
-    (reaction: RedisReaction) => reaction.id !== reaction.id,
-  );
+  const updatedReactions = newsFeedEntry.item.reactions.filter((r: RedisReaction) => r.reactedBy !== user.providerId);
   updatedReactions.push(reaction);
   newsFeedEntry.item.reactions = updatedReactions;
   await saveNewsFeedEntry(redisClient, newsFeedEntry);
@@ -82,15 +79,13 @@ export const addReactionToCache = async (reaction: Reaction, user: User) => {
 
 export const removeReactionFromCache = async ({ reaction, user }: RemoveReaction) => {
   const redisClient = await getRedisClient();
-  const newsFeedEntry = await getNewsFeedEntryForEntity(redisClient, reaction, user);
+  const newsFeedEntry = await getItemForEntityWithReactions(reaction, user);
 
   if (!newsFeedEntry) {
     return;
   }
 
-  const updatedReactions = newsFeedEntry.item.reactions.filter(
-    (reaction: RedisReaction) => reaction.id !== reaction.id,
-  );
+  const updatedReactions = newsFeedEntry.item.reactions.filter((r: RedisReaction) => r.reactedBy !== user.providerId);
   newsFeedEntry.item.reactions = updatedReactions;
   await saveNewsFeedEntry(redisClient, newsFeedEntry);
 };
@@ -111,8 +106,12 @@ export const getItemForEntityWithReactions = async (
       return await getNewsFeedEntryForCollaborationQuestion(redisClient, reaction.objectId);
     case ObjectType.POST:
       return await getNewsFeedEntryForPost(redisClient, { user, postId: reaction.objectId });
+    case ObjectType.PROJECT:
+      return await getNewsFeedEntryForProject(redisClient, { projectId: reaction.objectId });
+    case ObjectType.SURVEY_QUESTION:
+      return await getNewsFeedEntryForSurveyQuestion(redisClient, { surveyId: reaction.objectId });
     default:
-      logger.warn(`Could not add reaction to news feed cache: Unknown object type '${reaction.objectId}'`);
+      logger.warn(`Could not add reaction to news feed cache: Unknown object type '${reaction.objectType}'`);
       return null;
   }
 };

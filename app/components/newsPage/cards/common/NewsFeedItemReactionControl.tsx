@@ -28,8 +28,14 @@ export function NewsFeedItemReactionControl({ entry }: NewsFeedItemReactionContr
       if (response.status !== StatusCodes.OK || !response.data) return;
 
       if (operation === 'delete') {
-        const reactions = card.item.reactions?.filter((r) => r.id !== response.data?.id);
-        setCard({ type: card.type, item: { ...card.item, reactionForUser: undefined, reactions } } as NewsFeedEntry);
+        setCard((card) => {
+          const reactionsBefore = (card.item.reactions ?? []).filter((r) => r.id !== reaction.id);
+          return {
+            type: card.type,
+            item: { ...card.item, reactions: reactionsBefore, reactionForUser: undefined },
+          } as NewsFeedEntry;
+        });
+
         return;
       }
 
@@ -38,11 +44,13 @@ export function NewsFeedItemReactionControl({ entry }: NewsFeedItemReactionContr
         objectType: card.type,
       };
 
-      const reactionsBefore = (card.item.reactions ?? []).filter((r) => r.id !== reaction.id);
-      setCard({
-        type: card.type,
-        item: { ...card.item, reactions: [...reactionsBefore, reaction], reactionForUser: reaction },
-      } as NewsFeedEntry);
+      setCard((card) => {
+        const reactionsBefore = (card.item.reactions ?? []).filter((r) => r.id !== reaction.id);
+        return {
+          type: card.type,
+          item: { ...card.item, reactions: [...reactionsBefore, reaction], reactionForUser: reaction },
+        } as NewsFeedEntry;
+      });
     } catch (error) {
       console.error('Failed to handle reaction on the update:', error);
       errorMessage({ message: m.components_newsPage_cards_common_newsFeedItemReactionControl_error() });

@@ -41,6 +41,24 @@ export async function getUserFollowers(client: PrismaClient, followedBy: string,
   return client.follow.findMany(query);
 }
 
+export async function findFollowedObjectIds(
+  client: PrismaClient,
+  objectType: ObjectType,
+  objectIds: string[],
+  followedBy: string,
+) {
+  const followedObjects = await client.follow.findMany({
+    where: {
+      objectId: { in: objectIds },
+      objectType: objectType as PrismaObjectType,
+      followedBy,
+    },
+    select: { objectId: true },
+  });
+
+  return followedObjects.map((object) => object.objectId);
+}
+
 export async function isFollowedBy(client: PrismaClient, objectType: ObjectType, objectId: string, followedBy: string) {
   const followedObjectCount = await client.follow.count({
     where: {

@@ -92,10 +92,12 @@ export type SurveyQuestion = CommonNewsFeedProps & {
   userVote?: string;
 };
 
-export type BasicSurveyQuestion = {
+export type BasicSurveyQuestion = CommonNewsFeedProps & {
   id: string;
   question: string;
   projectId?: string;
+  responseOptions?: ResponseOption[];
+  votes?: SurveyVote[];
 };
 
 export type SurveyVote = {
@@ -435,3 +437,9 @@ export enum SortValues {
   DESC = 'DESC',
   ASC = 'ASC',
 }
+
+export type StartPagination = {
+  from: Date;
+  page: number;
+  pageSize: number;
+};
