@@ -54,7 +54,7 @@ async function NewsFeedPage() {
           </NewsFeedContainer>
         </NewsFeedContextProvider>
       </Container>
-    </Stack>
+    </Stack>    
   );
 }
 
