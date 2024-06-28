@@ -5,6 +5,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { EventWithAdditionalData } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 
 interface EventFilterAction {
   text: string;
@@ -56,17 +57,17 @@ const EventFilterException: React.FC<EventFilterExceptionProps> = ({
     filtersApplied;
 
   if (noEventsFound) {
-    text = 'Mit diesem Filter wurden keine Events gefunden.';
+    text = m.components_projectdetails_events_eventFilterException_filterNoEvents();
     action = {
-      text: 'Alle Filter zurücksetzen',
+      text: m.components_projectdetails_events_eventFilterException_resetFilters(),
       onClick: clearFilters,
     };
   } else if (noEventsAvailable) {
-    text = 'Leider gibt es noch keine Events. Bitte schau später noch einmal vorbei.';
+    text = m.components_projectdetails_events_eventFilterException_noEvents();
   } else if (noFutureEvents) {
-    text = 'Es gibt zurzeit leider keine Events in der Zukunft.';
+    text = m.components_projectdetails_events_eventFilterException_noFutureEvents();
     action = {
-      text: 'Vergangene Events anzeigen',
+      text: m.components_projectdetails_events_eventFilterException_previousEvents(),
       onClick: () => setCurrentFilters((old) => ({ ...old, pastEventsShown: true })),
     };
   }

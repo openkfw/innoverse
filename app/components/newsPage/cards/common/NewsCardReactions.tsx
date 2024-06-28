@@ -7,6 +7,7 @@ import { getNewsFeedItemWithReactions, handleNewReaction } from '@/components/co
 import { EmojiReactionCard } from '@/components/collaboration/emojiReactions/cards/EmojiReactionCard';
 import { Emoji, ReactionCount } from '@/components/collaboration/emojiReactions/emojiReactionTypes';
 import { errorMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 
 export interface NewsCardReactionsProps {
   entry: NewsFeedEntry;
@@ -32,7 +33,7 @@ export function NewsCardReactions({ entry }: NewsCardReactionsProps) {
       }
     } catch (error) {
       console.error('Failed to handle reaction on the update:', error);
-      errorMessage({ message: 'Updating your reaction failed. Please try again.' });
+      errorMessage({ message: m.components_newsPage_cards_common_newsCardReaction_error() });
       appInsights.trackException({
         exception: new Error('Failed to update reaction on the update', { cause: error }),
         severityLevel: SeverityLevel.Error,

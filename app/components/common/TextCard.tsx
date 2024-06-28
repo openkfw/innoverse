@@ -10,6 +10,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { parseStringForLinks } from '@/components/common/LinkString';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 interface TextCardProps {
@@ -50,7 +51,7 @@ export const TextCard = ({ text, header, footer, sx }: TextCardProps) => {
             </Typography>
             {!isCollapsed && (
               <Typography variant="subtitle2" onClick={handleToggle} sx={buttonOverlayStyle}>
-                ... alles anzeigen
+                {m.components_common_textCard_showAll()}
               </Typography>
             )}
           </Box>

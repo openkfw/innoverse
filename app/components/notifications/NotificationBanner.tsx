@@ -10,6 +10,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
+import * as m from '@/src/paraglide/messages.js';
 
 interface NotificationBannerProps {
   registerPushNotifications: () => void;
@@ -91,25 +92,25 @@ export const NotificationBanner = (props: NotificationBannerProps) => {
     ? BuildNotificationBanner({
         dismissAction: () => hidePushSubscriptionAlert({ rememberAfterPageReload: false }),
         action: registerPushNotifications,
-        text: 'Dein Browser verhindert die Aktivierung von Benachrichtigungen. Bitte gehe zu den Einstellungen, um die Aktivierung zu ermöglichen um Benachrichtigungen zu erhalten: Settings → Cookies and site permissions → Notifications',
-        dismissText: 'Später erinnern',
-        okText: 'Erledigt',
+        text: m.components_notifications_notificationBanner_notificationError(),
+        dismissText: m.components_notifications_notificationBanner_dismiss(),
+        okText: m.components_notifications_notificationBanner_done(),
         icon: <SettingsIcon />,
         image: () => (
           <Image
             src={'/images/manually_enable_notifications.png'}
             width={550}
             height={80}
-            alt={'Notification Settings'}
+            alt={m.components_notifications_notificationBanner_imageAlt()}
           />
         ),
       })
     : BuildNotificationBanner({
         dismissAction: () => hidePushSubscriptionAlert({ rememberAfterPageReload: true }),
         action: registerPushNotifications,
-        text: 'Dürfen wir dir Benachrichtigungen senden?',
-        dismissText: 'Nein',
-        okText: 'Ja',
+        text: m.components_notifications_notificationBanner_sendNotification(),
+        dismissText: m.components_notifications_notificationBanner_no(),
+        okText: m.components_notifications_notificationBanner_yes(),
         icon: <NotificationsNoneOutlinedIcon />,
         image: () => simpleNotificationBanner(),
       });

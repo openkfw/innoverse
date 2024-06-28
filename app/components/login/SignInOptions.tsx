@@ -11,6 +11,7 @@ import { destroyCookie, parseCookies } from 'nookies';
 import Collapse from '@mui/material/Collapse';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { errorMessage } from '../common/CustomToast';
@@ -48,7 +49,7 @@ export default function SignInOptions({ providers: providersForPage }: SignInOpt
         }
       } catch (error) {
         console.error('Failed to fetch sign-in providers:', error);
-        errorMessage({ message: 'Failed to load sign-in options. Please try again later.' });
+        errorMessage({ message: m.components_login_signInOptions_failedSignInError() });
         appInsights.trackException({
           exception: new Error('Failed to fetch sign-in providers', { cause: error }),
           severityLevel: SeverityLevel.Error,
@@ -61,7 +62,7 @@ export default function SignInOptions({ providers: providersForPage }: SignInOpt
 
   const handleNoProvider = () => {
     console.error('No sign-in providers found');
-    errorMessage({ message: 'No sign-in providers found. Please try again later.' });
+    errorMessage({ message: m.components_login_signInOptions_signInProviderError() });
   };
 
   const getCookieData = () => {
@@ -75,7 +76,7 @@ export default function SignInOptions({ providers: providersForPage }: SignInOpt
       };
     } catch (error) {
       console.error('Failed to parse session cookie:', error);
-      errorMessage({ message: 'Failed to retrieve session information. Please refresh the page.' });
+      errorMessage({ message: m.components_login_signInOptions_sessionInfoError() });
       appInsights.trackException({
         exception: new Error('Failed to retrieve session information.', { cause: error }),
         severityLevel: SeverityLevel.Error,

@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 
 import { SurveyQuestion } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { handleSurveyVote } from './actions';
@@ -137,7 +138,7 @@ function useSurveyCard({ projectId, surveyQuestion }: SurveyCardProps) {
       await handleSurveyVote({ projectId, surveyQuestionId: surveyQuestion.id, vote });
     } catch (error) {
       console.error('Failed to handle vote:', error);
-      errorMessage({ message: 'Failed to submit your vote. Please try again.' });
+      errorMessage({ message: m.components_collaboration_survey_surveyCard_submitError() });
       appInsights.trackException({
         exception: new Error('Failed to submit vote.', { cause: error }),
         severityLevel: SeverityLevel.Error,

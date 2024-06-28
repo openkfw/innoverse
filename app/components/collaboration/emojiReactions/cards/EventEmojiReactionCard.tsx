@@ -8,6 +8,7 @@ import { SxProps } from '@mui/material/styles';
 
 import { EventWithAdditionalData, ObjectType, ProjectUpdateWithAdditionalData } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 
 import { handleNewReaction } from '../actions';
 import { Emoji } from '../emojiReactionTypes';
@@ -31,7 +32,7 @@ export default function ItemEmojiReactionCard({ item, type, sx }: ItemEmojiReact
       setCurrentItem(item);
     } catch (error) {
       console.error('Failed to handle reaction:', error);
-      errorMessage({ message: 'Failed to update reaction. Please try again.' });
+      errorMessage({ message: m.components_collaboration_emojiReactions_cards_eventEmojiReactionCard_updateError() });
       appInsights.trackException({
         exception: new Error('Failed to update reaction.', { cause: error }),
         severityLevel: SeverityLevel.Error,

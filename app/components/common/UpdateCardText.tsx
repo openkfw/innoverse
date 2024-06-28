@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 
 import { ProjectUpdate } from '@/common/types';
 import { parseStringForLinks } from '@/components/common/LinkString';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 interface UpdateCardContentProps {
@@ -25,7 +26,7 @@ export const UpdateCardContent = (props: UpdateCardContentProps) => {
           {linkToCollaborationTab && (
             <Link style={linkStyles} href={`/projects/${projectId}?tab=1#moredetails`}>
               {' '}
-              Mehr erfahren
+              {m.components_common_updateCardText_knowMore()}
             </Link>
           )}
         </Typography>

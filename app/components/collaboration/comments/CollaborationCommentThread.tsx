@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import { Comment, CommentResponse } from '@/common/types';
 import { TransparentAddButton } from '@/components/common/AddItemButton';
 import { errorMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 import { getProjectCollaborationCommentResponses } from '@/utils/requests/collaborationComments/requests';
 
 import WriteCommentResponseCard from '../../common/comments/WriteCommentResponseCard';
@@ -39,7 +40,7 @@ export const CollaborationCommentThread = (props: CollaborationCommentThreadProp
 
       {!displayResponses && comment.responseCount > 0 && (
         <TransparentAddButton onClick={() => setDisplayResponses(true)}>
-          Kommentare anzeigen ({comment.responseCount})
+          {m.components_collaboration_comments_collaborationCommentThread_showComments()} ({comment.responseCount})
         </TransparentAddButton>
       )}
 
@@ -79,7 +80,7 @@ export function useCollaborationCommentThread({ comment }: useCollaborationComme
           setResponses(loadingResult.data ?? []);
         } catch (error) {
           console.error('Failed to load responses:', error);
-          errorMessage({ message: 'Failed to load comment responses. Please try again.' });
+          errorMessage({ message: m.components_collaboration_comments_collaborationCommentThread_loadError() });
           appInsights.trackException({
             exception: new Error('Failed to load comment responses.', { cause: error }),
             severityLevel: SeverityLevel.Error,
@@ -110,7 +111,7 @@ export function useCollaborationCommentThread({ comment }: useCollaborationComme
       }
     } catch (error) {
       console.error('Failed to submit response:', error);
-      errorMessage({ message: 'Submitting your response failed. Please try again.' });
+      errorMessage({ message: m.components_collaboration_comments_collaborationCommentThread_submitError() });
       appInsights.trackException({
         exception: new Error('Failed to submit response.', { cause: error }),
         severityLevel: SeverityLevel.Error,

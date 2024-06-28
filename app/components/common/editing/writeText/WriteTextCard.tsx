@@ -14,6 +14,7 @@ import { useUser } from '@/app/contexts/user-context';
 import CustomButton from '@/components/common/CustomButton';
 import { errorMessage } from '@/components/common/CustomToast';
 import { UserAvatarProps } from '@/components/common/UserAvatar';
+import * as m from '@/src/paraglide/messages.js';
 
 import AvatarIcon from '../../AvatarIcon';
 import { MultilineTextInputField } from '../../form/MultilineTextInputField';
@@ -70,7 +71,7 @@ const WriteTextCard = ({
       form.reset();
     } catch (error) {
       console.error('Failed to submit text:', error);
-      errorMessage({ message: 'Failed to submit your contribution. Please try again.' });
+      errorMessage({ message: m.components_common_editing_writetext_writeTextCard_failedSubmit() });
       appInsights.trackException({
         exception: new Error('Failed to submit text.', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -82,8 +83,7 @@ const WriteTextCard = ({
     onDiscard && onDiscard({ isDirty: formState.isDirty });
   };
 
-  const placeholder =
-    'Teil deine Ratschläge und Gedanken zu diesem Thema, damit deine Kollegen von deiner Expertise profitieren können.';
+  const placeholder = m.components_common_editing_writetext_writeTextCard_placeholder();
 
   return (
     <>
@@ -117,7 +117,7 @@ const WriteTextCard = ({
               endIcon={<></>}
               onClick={discard}
             >
-              Verwerfen
+              {m.components_common_editing_writetext_writeTextCard_throw()}
             </CustomButton>
           )}
           <div onClick={form.handleSubmit(submit)}>

@@ -7,6 +7,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { EventWithAdditionalData } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 
 import EventCard from './EventCard';
 
@@ -86,7 +87,7 @@ const EventList: React.FC<EventListProps> = ({
             }
             endMessage={
               <Typography color="primary.main" sx={{ textAlign: 'center', mt: 1 }}>
-                Alle Daten wurden geladen
+                {m.components_projectdetails_events_eventList_dataLoaded()}
               </Typography>
             }
           >

@@ -6,6 +6,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { Comment } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
@@ -50,7 +51,7 @@ export function useCollaborationCommentCardProps({ comment, onDelete }: Collabor
       setIsUpvoted((upvoted) => !upvoted);
     } catch (error) {
       console.error('Error upvoting collaboration comment:', error);
-      errorMessage({ message: 'Failed to upvote collaboration comment. Please try again later.' });
+      errorMessage({ message: m.components_collaboration_comments_collaborationCommentCard_upvoteError() });
       appInsights.trackException({
         exception: new Error('Failed to upvote collaboration comment', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -63,7 +64,7 @@ export function useCollaborationCommentCardProps({ comment, onDelete }: Collabor
       updateProjectCollaborationComment({ commentId: comment.id, updatedText });
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
-      errorMessage({ message: 'Failed to update collaboration comment. Please try again later.' });
+      errorMessage({ message: m.components_collaboration_comments_collaborationCommentCard_updateError() });
       appInsights.trackException({
         exception: new Error('Failed to update collaboration comment', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -77,7 +78,7 @@ export function useCollaborationCommentCardProps({ comment, onDelete }: Collabor
       onDelete && onDelete();
     } catch (error) {
       console.error('Error deleting collaboration comment:', error);
-      errorMessage({ message: 'Failed to delete collaboration comment. Please try again later.' });
+      errorMessage({ message: m.components_collaboration_comments_collaborationCommentCard_deleteError() });
       appInsights.trackException({
         exception: new Error('Failed to delete collaboration comment.', { cause: error }),
         severityLevel: SeverityLevel.Error,

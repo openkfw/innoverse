@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography';
 
 import { useUser } from '@/app/contexts/user-context';
 import { clientConfig } from '@/config/client';
+import * as m from '@/src/paraglide/messages.js';
 
 import FeedbackSection from '../landing/feedbackSection/FeedbackSection';
 
@@ -78,7 +79,7 @@ export default function TopBarMobile({ pages }: TopBarProps) {
             <ListItem sx={listItemStyles}>Content Editor</ListItem>
           </Link>
           <ListItem sx={listItemStyles} onClick={() => signOut()}>
-            Sign out
+            {m.components_layout_topBarMobile_signOut()}
           </ListItem>
         </List>
       </nav>
@@ -96,7 +97,7 @@ export default function TopBarMobile({ pages }: TopBarProps) {
           <Link href="/">
             <Image
               src={logo}
-              alt="***STRING_REMOVED***  Logo"
+              alt={m.components_layout_topBarMobile_imageAlt()}
               sizes="100vw"
               style={{
                 width: '70%',
@@ -109,7 +110,9 @@ export default function TopBarMobile({ pages }: TopBarProps) {
         <IconButton
           onClick={handleMenuToggle}
           style={{ color: 'white' }}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-label={
+            menuOpen ? m.components_layout_topBarMobile_closeMenu() : m.components_layout_topBarMobile_openMenu()
+          }
         >
           {menuOpen ? <CloseIcon /> : <MenuIcon />}
         </IconButton>

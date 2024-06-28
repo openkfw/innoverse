@@ -5,6 +5,8 @@ import ArrowRightIcon from '@mui/icons-material/ArrowForward';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 
+import * as m from '@/src/paraglide/messages.js';
+
 interface ArrowControllersProps {
   currentSlide: number;
   slidesLength: number;
@@ -38,12 +40,22 @@ export default function ArrowControllers(props: ArrowControllersProps) {
   return (
     <Grid container p={0} spacing={0} sx={{ width: '50%' }}>
       <Grid item>
-        <IconButton disabled={currentSlide == 0} onClick={prev} sx={iconStyles} aria-label="Previous Slide">
+        <IconButton
+          disabled={currentSlide == 0}
+          onClick={prev}
+          sx={iconStyles}
+          aria-label={m.components_landing_projectSection_arrowController_previousSlide()}
+        >
           <ArrowLeftIcon style={{ fontSize: 40 }} />
         </IconButton>
       </Grid>
       <Grid item>
-        <IconButton disabled={currentSlide == slidesLength} onClick={next} sx={iconStyles} aria-label="Next Slide">
+        <IconButton
+          disabled={currentSlide == slidesLength}
+          onClick={next}
+          sx={iconStyles}
+          aria-label={m.components_landing_projectSection_arrowController_nextSlide()}
+        >
           <ArrowRightIcon style={{ fontSize: 40 }} />
         </IconButton>
       </Grid>

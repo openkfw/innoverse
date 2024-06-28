@@ -5,6 +5,7 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 
 import { useUser } from '@/app/contexts/user-context';
+import * as m from '@/src/paraglide/messages.js';
 
 import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
@@ -26,7 +27,12 @@ export const ShareOpinionCard = ({ projectName, handleClick }: ShareOpinionCardP
             avatar={
               user.image ? (
                 <Avatar sx={avatarStyles}>
-                  <Image src={user.image} alt="avatar" fill sizes="33vw" />
+                  <Image
+                    src={user.image}
+                    alt={m.components_collaboration_shareOpinionCard_imageAlt()}
+                    fill
+                    sizes="33vw"
+                  />
                 </Avatar>
               ) : (
                 <AvatarInitialsIcon name={user.name} size={32} />

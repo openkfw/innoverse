@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Avatar from '@mui/material/Avatar';
 
 import { User, UserSession } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 
 import AvatarInitialsIcon from './AvatarInitialsIcon';
 
@@ -39,7 +40,7 @@ const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, 
     >
       {user.image ? (
         <Avatar sx={{ width: size, height: size }}>
-          <Image src={user.image} alt="avatar" fill sizes="33vw" />
+          <Image src={user.image} alt={m.components_common_avatarIcon_imageAlt()} fill sizes="33vw" />
         </Avatar>
       ) : (
         <AvatarInitialsIcon name={user.name} size={size} sx={{ border: '2px solid white' }} />

@@ -8,6 +8,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { Event } from '@/common/types';
 import EventCardHeader from '@/components/landing/eventsSection/EventCardHeader';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 
@@ -27,7 +28,14 @@ function NewsEventCard(props: NewsSurveyCardProps) {
       <CardHeader sx={cardHeaderStyles} title={<EventCardHeader event={event} />} />
       <CardContent sx={cardContentStyles}>
         {!isSmallScreen && (
-          <Image width={0} height={0} sizes="50vw" src={image} alt="Event image" style={titleImageStyles} />
+          <Image
+            width={0}
+            height={0}
+            sizes="50vw"
+            src={image}
+            alt={m.components_newsPage_cards_eventCard_imageAlt()}
+            style={titleImageStyles}
+          />
         )}
 
         <Stack>

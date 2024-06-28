@@ -7,6 +7,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import NewsCard from '../../newsPage/NewsCard';
@@ -36,7 +37,7 @@ export default function NewsCarousel({ updates }: NewsSliderProps) {
       )}
       moreButton={
         <Link href="news">
-          <CustomButton>Mehr News</CustomButton>
+          <CustomButton>{m.components_landing_newsSection_newsCarousel_moreNews()}</CustomButton>
         </Link>
       }
       sx={{ zIndex: 3, minHeight: '272px' }}

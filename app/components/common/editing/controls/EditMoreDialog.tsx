@@ -2,6 +2,8 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Popper from '@mui/material/Popper';
 import Stack from '@mui/material/Stack';
 
+import * as m from '@/src/paraglide/messages.js';
+
 import DeleteFilledIcon from '../../../icons/DeleteFilled';
 import EditFilledIcon from '../../../icons/EditFilled';
 import { CustomIconButton } from '../../CustomIconButton';
@@ -28,14 +30,14 @@ export const EditMoreDialog = ({ open, anchorEl, onClickAway, onEdit, onDelete }
             startIcon={<EditFilledIcon />}
             sx={{ p: 2, width: '140px', maxWidth: '100%' }}
           >
-            bearbeiten
+            {m.components_common_editing_controls_editMoreDialog_edit()}
           </CustomIconButton>
           <CustomIconButton
             onClick={onDelete}
             startIcon={<DeleteFilledIcon />}
             sx={{ p: 2, width: '140px', maxWidth: '100%' }}
           >
-            löschen
+            l{m.components_common_editing_controls_editMoreDialog_delete()}
           </CustomIconButton>
         </Stack>
       </ClickAwayListener>

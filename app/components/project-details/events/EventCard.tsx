@@ -13,6 +13,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import ItemEmojiReactionCard from '@/components/collaboration/emojiReactions/cards/EventEmojiReactionCard';
 import EventCardHeader from '@/components/landing/eventsSection/EventCardHeader';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { EventWithAdditionalData, ObjectType } from '../../../common/types';
@@ -42,7 +43,7 @@ const EventCard = ({ event, disabled, arrow = true }: EventCardProps) => {
               quality={60}
               sizes="25vw"
               src={event.image?.medium?.url || defaultImageForEvents}
-              alt={'Event Image'}
+              alt={m.components_projectDetails_events_eventCard_imageAlt()}
               style={{
                 borderRadius: '.4em',
                 objectFit: 'contain',

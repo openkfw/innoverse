@@ -6,6 +6,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { ObjectType, ProjectUpdateWithAdditionalData } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 import { getUpdateWithAdditionalData } from '@/utils/requests/updates/requests';
 
 import { Emoji } from '../emojiReactionTypes';
@@ -33,7 +34,7 @@ export function UpdateEmojiReactionCard(props: UpdateEmojiReactionCardProps) {
       setCurrentUpdate(updateWithAdditionalData);
     } catch (error) {
       console.error('Failed to handle reaction on the update:', error);
-      errorMessage({ message: 'Updating your reaction failed. Please try again.' });
+      errorMessage({ message: m.components_collaboration_emojiReactions_cards_updateEmojiReactionCard_updateError() });
       appInsights.trackException({
         exception: new Error('Failed to update reaction on the update', { cause: error }),
         severityLevel: SeverityLevel.Error,

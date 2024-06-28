@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography';
 
 import CustomDialog from '@/components/common/CustomDialog';
 import SignInOptions from '@/components/login/SignInOptions';
+import * as m from '@/src/paraglide/messages.js';
 
 interface LoginDialogProps {
   providers: string[];
@@ -12,7 +13,7 @@ export default function LoginDialog({ providers }: LoginDialogProps) {
   return (
     <CustomDialog
       open={true}
-      title="Einloggen"
+      title={m.components_login_loginDialog_login()}
       closeIcon={false}
       sx={{
         backdropFilter: 'blur(4px)',
@@ -26,7 +27,7 @@ export default function LoginDialog({ providers }: LoginDialogProps) {
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, lg: 2 } }}>
         <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 700, mb: 1 }}>
-          Melden Sie sich an, um fortzufahren
+          {m.components_login_loginDialog_loginMessage()}
         </Typography>
         <SignInOptions providers={providers} />
       </Box>

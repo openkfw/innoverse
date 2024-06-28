@@ -14,6 +14,7 @@ import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { AutocompleteDropdownField } from '@/components/common/form/AutocompleteDropdownField';
 import { inputStyle } from '@/components/common/form/formStyle';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
+import * as m from '@/src/paraglide/messages.js';
 
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
 import { handleProjectUpdate } from '../../addUpdate/form/actions';
@@ -33,7 +34,7 @@ export interface PostFormData {
 
 const defaultValues = {
   content: '',
-  project: { id: '', label: '-optional-' },
+  project: { id: '', label: m.components_newsPage_addPost_form_addPostForm_label() },
 };
 
 const { PROJECT, CONTENT } = formFieldNames;
@@ -66,7 +67,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
         handleClose();
       } else {
         errorMessage({
-          message: 'Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuchen sie es erneut',
+          message: m.components_newsPage_addPost_form_addPostForm_createError(),
         });
       }
     } else {
@@ -78,7 +79,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
         handleClose();
       } else {
         errorMessage({
-          message: 'Es ist ein Fehler beim Erstellen der Post aufgetreten. Bitte versuchen sie es erneut',
+          message: m.components_newsPage_addPost_form_addPostForm_createError(),
         });
       }
     }
@@ -90,7 +91,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
         <MultilineTextInputField
           name={CONTENT}
           control={control}
-          placeholder="Hier kannst du deinen Beitrag hinzufügen …"
+          placeholder={m.components_newsPage_addPost_form_addPostForm_addPost()}
           sx={multilineTextStyles}
           inputPropsSx={inputPropsStyles}
         />
@@ -101,7 +102,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
           <AutocompleteDropdownField
             name={PROJECT}
             control={control}
-            label="Projekt"
+            label={m.components_newsPage_addPost_form_addPostForm_projectLabel()}
             options={[{ label: '-optional-', id: '' }, ...projectOptions]}
             readOnly={!projectOptions}
             startAdornment={

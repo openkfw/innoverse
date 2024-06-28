@@ -12,6 +12,7 @@ import { errorMessage } from '@/components/common/CustomToast';
 import WriteTextCard from '@/components/common/editing/writeText/WriteTextCard';
 import { TransparentButton } from '@/components/common/TransparentButton';
 import ReplyIcon from '@/components/icons/ReplyIcon';
+import * as m from '@/src/paraglide/messages.js';
 import { sortDateByCreatedAt } from '@/utils/helpers';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
 
@@ -38,7 +39,7 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
       });
       if (!newComment) {
         console.error('No comment was returned by the server.');
-        errorMessage({ message: 'Failed to post the comment. Please try again.' });
+        errorMessage({ message: m.components_newsPage_cards_collabCommentCard_postError() });
         appInsights.trackException({
           exception: new Error('Failed to post the comment.'),
           severityLevel: SeverityLevel.Error,
@@ -49,7 +50,7 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
       setComments(newComments);
     } catch (error) {
       console.error('Failed to submit comment:', error);
-      errorMessage({ message: 'Failed to submit your comment. Please try again.' });
+      errorMessage({ message: m.components_newsPage_cards_collabCommentCard_submitError() });
       appInsights.trackException({
         exception: new Error('Failed to submit comment.'),
         severityLevel: SeverityLevel.Error,
@@ -67,7 +68,7 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
       ) : (
         <Button variant="outlined" onClick={() => setWriteNewComment(true)} startIcon={<ReplyIcon />} sx={buttonStyle}>
           <Typography variant="subtitle2" sx={typographyStyles}>
-            antworten
+            {m.components_newsPage_cards_collabCommentCard_answer()}
           </Typography>
         </Button>
       )}
@@ -78,7 +79,7 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
           startIcon={<AddIcon color="secondary" fontSize="large" />}
           style={{ marginTop: '1em', marginLeft: '1.5em', marginBottom: 2 }}
         >
-          Kommentare anzeigen ({question?.comments?.length})
+          {m.components_newsPage_cards_collabCommentCard_showComments()} ({question?.comments?.length})
         </TransparentButton>
       )}
 

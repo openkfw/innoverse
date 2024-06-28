@@ -6,6 +6,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Stack from '@mui/material/Stack';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import DeleteFilledIcon from '../../../icons/DeleteFilled';
@@ -53,10 +54,10 @@ export const EditControls = (props: EditControlsProps) => {
       {!useMobileMenu && (
         <>
           <CustomIconButton onClick={onEdit} startIcon={<EditFilledIcon />}>
-            bearbeiten
+            {m.components_common_editing_controls_editControls_edit()}
           </CustomIconButton>
           <CustomIconButton onClick={onDelete} startIcon={<DeleteFilledIcon />}>
-            löschen
+            {m.components_common_editing_controls_editControls_delete()}
           </CustomIconButton>
         </>
       )}

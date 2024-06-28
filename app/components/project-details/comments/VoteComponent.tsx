@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import { useUser } from '@/app/contexts/user-context';
 import { User } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 import { AuthResponse } from '@/utils/auth';
 
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
@@ -41,7 +42,7 @@ export const CommentVoteComponent = ({
       await handleUpvote({ commentId });
     } catch (error) {
       console.error('Error upvoting comment:', error);
-      errorMessage({ message: 'Failed to upvote comment. Please try again later.' });
+      errorMessage({ message: m.components_projectdetails_comments_voteComponent_upvoteError() });
       appInsights.trackException({
         exception: new Error('Failed to upvote comment.', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -103,7 +104,7 @@ export const VoteComponent = ({ isUpvoted, upvoteCount, handleUpvote, handleClic
       {handleClickOnResponse && (
         <Button variant="outlined" onClick={handleClickOnResponse} startIcon={<ReplyIcon />} sx={buttonStyle}>
           <Typography variant="subtitle2" sx={typographyStyles}>
-            antworten
+            {m.components_projectdetails_comments_voteComponent_answer()}
           </Typography>
         </Button>
       )}

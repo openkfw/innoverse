@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 
 import CollaborationColumn from './CollaborationColumn';
 import ProjectStageCard from './ProjectStageCard';
@@ -48,7 +49,12 @@ const SliderNavigation = (props: SliderNavigationProps) => {
       </IconButton>
 
       <Box ref={navRef} style={navigationStyles}>
-        {['Info', 'Team', 'Zusammenarbeit', 'News'].map((item, index) => (
+        {[
+          m.components_projectdetails_projectInfoCardSmall_info(),
+          m.components_projectdetails_projectInfoCardSmall_team(),
+          m.components_projectdetails_projectInfoCardSmall_collaboration(),
+          m.components_projectdetails_projectInfoCardSmall_news(),
+        ].map((item, index) => (
           <Typography
             key={index}
             variant="overline"

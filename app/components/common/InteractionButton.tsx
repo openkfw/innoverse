@@ -21,6 +21,7 @@ import ApplyIcon from '@/components/icons/ApplyIcon';
 import ChatIcon from '@/components/icons/ChatIcon';
 import CloseIcon from '@/components/icons/CloseIcon';
 import RecommendIcon from '@/components/icons/RecommendIcon';
+import * as m from '@/src/paraglide/messages.js';
 import palette from '@/styles/palette';
 
 import CustomTooltip from './CustomTooltip';
@@ -103,26 +104,26 @@ export default function InteractionButton(props: InteractionButtonProps) {
 
   const getButtonText = () => {
     if (label) return label;
-    if (interactionType === InteractionType.LIKE) return 'Like';
-    if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Folgen';
-    if (interactionType === InteractionType.COLLABORATION) return 'Hilf uns!';
-    if (interactionType === InteractionType.COMMENT_SEND) return 'Senden';
-    if (interactionType === InteractionType.SHARE_OPINION) return 'Teile Deine Erfahrung';
+    if (interactionType === InteractionType.LIKE) return m.components_common_interactionButton_like();
+    if (interactionType === InteractionType.PROJECT_FOLLOW) return m.components_common_interactionButton_follow();
+    if (interactionType === InteractionType.COLLABORATION) return m.components_common_interactionButton_collaboration();
+    if (interactionType === InteractionType.COMMENT_SEND) return m.components_common_interactionButton_commentSend();
+    if (interactionType === InteractionType.SHARE_OPINION) return m.components_common_interactionButton_shareOpinion();
     if (interactionType === InteractionType.COMMENT) return;
-    if (interactionType === InteractionType.OPPORTUNITY_APPLY) return 'Ich bin dabei';
-    if (interactionType === InteractionType.RECOMMEND) return 'Ich kenne jemanden';
-    if (interactionType === InteractionType.FEEDBACK) return 'FEEDBACK';
-    if (interactionType === InteractionType.LOG_IN) return 'Log in';
-    if (interactionType === InteractionType.CLEAR) return 'Entfernen';
-    if (interactionType === InteractionType.ADD_UPDATE) return 'Beitrag hinzufügen';
-    if (interactionType === InteractionType.ADD_POST) return 'Beitrag hinzufügen';
+    if (interactionType === InteractionType.OPPORTUNITY_APPLY) return m.components_common_interactionButton_apply();
+    if (interactionType === InteractionType.RECOMMEND) return m.components_common_interactionButton_recommend();
+    if (interactionType === InteractionType.FEEDBACK) return m.components_common_interactionButton_feedback();
+    if (interactionType === InteractionType.LOG_IN) return m.components_common_interactionButton_logIn();
+    if (interactionType === InteractionType.CLEAR) return m.components_common_interactionButton_clear();
+    if (interactionType === InteractionType.ADD_UPDATE) return m.components_common_interactionButton_addUpdate();
+    if (interactionType === InteractionType.ADD_POST) return m.components_common_interactionButton_addUpdate();
   };
 
   const getButtonTextClicked = () => {
     if (label) return label;
-    if (interactionType === InteractionType.LIKE) return 'Liked';
-    if (interactionType === InteractionType.PROJECT_FOLLOW) return 'Entfolgen';
-    if (interactionType === InteractionType.OPPORTUNITY_APPLY) return 'Angewandt';
+    if (interactionType === InteractionType.LIKE) return m.components_common_interactionButton_liked();
+    if (interactionType === InteractionType.PROJECT_FOLLOW) return m.components_common_interactionButton_unfollow();
+    if (interactionType === InteractionType.OPPORTUNITY_APPLY) return m.components_common_interactionButton_applied();
     else return getButtonText();
   };
 

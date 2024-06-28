@@ -3,6 +3,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { ProjectUpdateWithAdditionalData } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 
 import { DateField } from './DateField';
 
@@ -29,7 +30,7 @@ export const ProjectTimeLineDate = ({ update, showDivider, sx }: ProjectTimeLine
         {update.projectStart && (
           <Box sx={projectStartStyles}>
             <Typography variant="subtitle2" color="primary.main">
-              Project Kickoff
+              {m.components_updates_projectTimeLineDate_kickoff()}
             </Typography>
           </Box>
         )}

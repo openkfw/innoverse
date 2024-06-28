@@ -12,6 +12,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { errorMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 
 import EmojiPickerCard from '../EmojiPicker';
 import { Emoji, Reaction, ReactionCount } from '../emojiReactionTypes';
@@ -52,7 +53,7 @@ export function EmojiReactionCard(props: EmojiReactionCardProps) {
       handleReaction(emoji, operation);
     } catch (error) {
       console.error('Failed to update reaction:', error);
-      errorMessage({ message: 'Updating your reaction failed. Please try again.' });
+      errorMessage({ message: m.components_collaboration_emojiReactions_cards_emojiReactionCard_updateError() });
       appInsights.trackException({
         exception: new Error('Updating reactions failed.', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -83,7 +84,7 @@ export function EmojiReactionCard(props: EmojiReactionCardProps) {
                     ? activeReactionCardButtonStyles
                     : reactionCardButtonStyles
                 }
-                aria-label="React with emoji"
+                aria-label={m.components_collaboration_emojiReactions_cards_emojiReactionCard_reactButton()}
               >
                 {reaction.emoji.nativeSymbol || 'X'}
                 <Typography variant="caption" sx={{ color: 'text.primary' }}>
@@ -99,7 +100,7 @@ export function EmojiReactionCard(props: EmojiReactionCardProps) {
             sx={addNewReactionButtonStyles}
             data-user-interaction-id={`open-emoji-picker-button`}
             onClick={() => setIsEmojiPickerClicked((isClicked) => !isClicked)}
-            aria-label="Add new reaction"
+            aria-label={m.components_collaboration_emojiReactions_cards_emojiReactionCard_addButton()}
           >
             <AddReactionOutlinedIcon sx={{ fontSize: 24 }} />
           </Button>

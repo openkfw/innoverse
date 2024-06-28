@@ -4,6 +4,7 @@ import { User } from '@/common/types';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import CustomButton from '@/components/common/CustomButton';
 import WriteTextCard from '@/components/common/editing/writeText/WriteTextCard';
+import * as m from '@/src/paraglide/messages.js';
 
 interface WriteCommentCardProps {
   content: { author: User; updatedAt: Date; comment: string };
@@ -29,7 +30,7 @@ export const WriteCommentCard = ({ content, onSubmit, onDiscard }: WriteCommentC
             startIcon={<CheckIcon style={{ marginRight: 0 }} sx={{ ml: 1, pr: 0 }} />}
             endIcon={<></>}
           >
-            Fertig
+            {m.components_newsPage_cards_common_writeCommentCard_done()}
           </CustomButton>
         }
       />

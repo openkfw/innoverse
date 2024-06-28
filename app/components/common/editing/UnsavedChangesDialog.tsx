@@ -7,6 +7,8 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
+import * as m from '@/src/paraglide/messages.js';
+
 import CustomButton from '../CustomButton';
 
 import { useUnsavedEditingChangesDialog } from './editing-context';
@@ -31,10 +33,10 @@ export const UnsavedChangesDialog = ({ open, onProceed, onDismiss }: UnsavedChan
       <ClickAwayListener onClickAway={onDismiss}>
         <Box sx={containerStyle}>
           <Typography variant="overline" color="primary.main" sx={{ fontSize: 14 }}>
-            Bearbeitung
+            {m.components_common_editing_unsavedChangesDialog_edit()}
           </Typography>
           <Typography variant="body2" color="text.primary" sx={textStyle}>
-            Möchtest Du deine Änderungen verwerfen?
+            {m.components_common_editing_unsavedChangesDialog_throw()}
           </Typography>
           <Stack direction={'row'} spacing={1} rowGap={1} justifyContent={'end'} flexWrap={'wrap'}>
             <CustomButton
@@ -44,7 +46,7 @@ export const UnsavedChangesDialog = ({ open, onProceed, onDismiss }: UnsavedChan
               onClick={onDismiss}
               sx={buttonStyle}
             >
-              Abbrechen
+              {m.components_common_editing_unsavedChangesDialog_cancel()}
             </CustomButton>
             <CustomButton
               themeVariant="secondary"
@@ -53,7 +55,7 @@ export const UnsavedChangesDialog = ({ open, onProceed, onDismiss }: UnsavedChan
               onClick={onProceed}
               sx={buttonStyle}
             >
-              Verwerfen
+              {m.components_common_editing_unsavedChangesDialog_confirmThrow()}
             </CustomButton>
           </Stack>
         </Box>

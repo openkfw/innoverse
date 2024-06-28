@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 
 import { CollaborationTag } from '@/common/types';
 import CustomChip from '@/components/common/CustomChip';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 const FeaturedProjectContent = (props: {
@@ -19,7 +20,7 @@ const FeaturedProjectContent = (props: {
   return (
     <Box sx={wrapperStyles}>
       <Typography variant="overline" sx={featuredTypographyStyles}>
-        Featured
+        {m.components_landing_featuredProjectSection_slider_featuredProjectContent_featured()}
       </Typography>
       <Link href={`/projects/${projectId}`} style={{ ...linkStyle }}>
         <Typography sx={titleStyles} variant="h2">

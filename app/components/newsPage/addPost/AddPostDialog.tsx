@@ -1,6 +1,7 @@
 import { Option } from '@/common/formTypes';
 import { Post, ProjectUpdate } from '@/common/types';
 import CustomDialog from '@/components/common/CustomDialog';
+import * as m from '@/src/paraglide/messages.js';
 
 import AddPostForm, { FormData } from './form/AddPostForm';
 
@@ -24,7 +25,7 @@ export default function AddPostDialog(props: AddPostDialogProps) {
     <CustomDialog
       open={open}
       handleClose={handleClose}
-      title="Beitrag hinzufügen"
+      title={m.components_newsPage_addPost_addPostDialog_addPost()}
       sx={dialogStyles}
       titleSx={dialogTitleStyles}
     >

@@ -6,6 +6,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Project } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { UnsavedEditingChangesDialog } from '../common/editing/UnsavedChangesDialog';
@@ -31,7 +32,7 @@ export const CollaborationTab = ({ project, ...otherProps }: CollaborationTabPro
     return (
       <Card sx={containerStyles}>
         <EmptyTabContent
-          message="Momentan scheint es hier nichts zu geben. Schaue später nochmal um zu sehen was sich noch ändert! Verpasse es nicht! 😉"
+          message={m.components_collaboration_collaborationTab_errorMessage()}
           project={project}
           {...otherProps}
         />
@@ -62,7 +63,7 @@ const OpportunitiesSection = ({ project }: { project: Project }) => {
   return (
     <>
       <Typography color="primary.main" sx={titleStyles} id="opportunities-section">
-        Opportunities
+        {m.components_collaboration_collaborationTab_opportunities()}
       </Typography>
 
       <Stack sx={gridStyles} spacing={{ xs: 6, md: 10 }}>
@@ -82,7 +83,7 @@ const SurveyQuestionsSection = ({ project }: { project: Project }) => {
   return (
     <>
       <Typography color="primary.main" sx={titleStyles} id="surveys-section">
-        Umfrage
+        {m.components_collaboration_collaborationTab_survey()}
       </Typography>
 
       <Stack sx={gridStyles} spacing={20}>
@@ -102,7 +103,7 @@ const CollaborationQuestionsSection = ({ project }: { project: Project }) => {
   return (
     <>
       <Typography color="primary.main" sx={titleStyles} id="collaboration-questions-section">
-        Hilf uns bei diesen Fragen
+        {m.components_collaboration_collaborationTab_helpUs()}
       </Typography>
       <Stack sx={gridStyles} spacing={{ xs: 6, md: 12 }}>
         {project.collaborationQuestions.map((question, idx) => (

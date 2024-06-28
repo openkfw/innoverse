@@ -16,6 +16,7 @@ import { UserAvatar } from '@/components/common/UserAvatar';
 import AllUpdatesIcon from '@/components/icons/AllUpdatesIcon';
 import ArrowLeftIcon from '@/components/icons/ArrowLeftIcon';
 import ArrowRightIcon from '@/components/icons/ArrowRightIcon';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/helpers';
 
@@ -95,7 +96,7 @@ const UpdateCard = (props: UpdateCardProps) => {
   return (
     <>
       <Typography variant="overline" sx={titleStyles}>
-        Neueste Updates
+        {m.components_projectdetails_updateCard_newUpdates()}
       </Typography>
 
       <Card sx={cardStyles} elevation={0}>
@@ -122,7 +123,7 @@ const UpdateCard = (props: UpdateCardProps) => {
               {update.linkToCollaborationTab && (
                 <Link style={linkStyles} href={`/projects/${update.projectId}?tab=1#moredetails`}>
                   {' '}
-                  Mehr erfahren
+                  {m.components_projectdetails_updateCard_showMore()}
                 </Link>
               )}
             </Typography>
@@ -133,7 +134,7 @@ const UpdateCard = (props: UpdateCardProps) => {
                 onClick={readMore}
                 sx={{ ...buttonOverlayStyle, display: 'inline', cursor: 'pointer' }}
               >
-                ... alles anzeigen
+                {m.components_projectdetails_updateCard_showAll()}
               </Typography>
             )}
           </Box>
@@ -144,7 +145,7 @@ const UpdateCard = (props: UpdateCardProps) => {
           <Box sx={footerStyles}>
             <Button sx={buttonStyles} startIcon={<AllUpdatesIcon />} onClick={() => handleUpdatesClick(125)}>
               <Typography variant="button" sx={typographyStyles}>
-                Alle Updates
+                {m.components_projectdetails_updateCard_allUpdates()}
               </Typography>
             </Button>
 

@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import { BasicProject } from '@/common/types';
 import { TransparentButton } from '@/components/common/TransparentButton';
+import * as m from '@/src/paraglide/messages.js';
 
 export const ProjectLinks = ({ projects }: { projects: BasicProject[] }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -16,7 +17,7 @@ export const ProjectLinks = ({ projects }: { projects: BasicProject[] }) => {
   return (
     <>
       <Typography variant="body1" sx={{ mt: 2, mb: 2 }}>
-        Initiativen
+        {m.components_landing_mappingProjectsSection_projectLinks_initiatives()}
       </Typography>
       <Stack spacing={1}>
         {visibleProjects.map((project) => (
@@ -48,7 +49,9 @@ export const ProjectLinks = ({ projects }: { projects: BasicProject[] }) => {
           onClick={() => setIsCollapsed(false)}
           disableRipple={true}
         >
-          {isCollapsed ? `(${notShownProjectCount}) weitere anzeigen` : 'Initiativen wieder ausblenden'}
+          {isCollapsed
+            ? `(${notShownProjectCount}) ${m.components_landing_mappingProjectsSection_projectLinks_showMore()}`
+            : m.components_landing_mappingProjectsSection_projectLinks_showLess()}
         </TransparentButton>
       )}
     </>

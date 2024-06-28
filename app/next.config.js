@@ -1,8 +1,7 @@
-require('./config/server');
-
 const { clientConfig } = require('./config/client');
 const withFonts = require('next-fonts');
 const withBundleAnalyzer = require('@next/bundle-analyzer')();
+const { paraglide } = require('@inlang/paraglide-next/plugin');
 
 const nextConfig = {
   output: 'standalone',
@@ -78,6 +77,22 @@ const nextConfig = {
       allowedOrigins: ['***URL_REMOVED***', '***URL_REMOVED***'],
     },
   },
+  i18n: {
+    locales: ['de'],
+    defaultLocale: 'de',
+  },
 };
 
-module.exports = process.env.ANALYZE === 'true' ? withBundleAnalyzer(nextConfig) : withFonts(nextConfig);
+module.exports = process.env.ANALYZE === 'true' ? withBundleAnalyzer(paraglide({
+  paraglide: {
+    project: './project.inlang',
+    outdir: './src/paraglide'
+  },
+  ...nextConfig
+})) : withFonts(paraglide({
+  paraglide: {
+    project: './project.inlang',
+    outdir: './src/paraglide'
+  },
+  ...nextConfig
+}));

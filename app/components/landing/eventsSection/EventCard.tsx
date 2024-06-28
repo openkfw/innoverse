@@ -10,6 +10,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { EventWithAdditionalData, ObjectType } from '@/common/types';
 import EventEmojiReactionCard from '@/components/collaboration/emojiReactions/cards/EventEmojiReactionCard';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { getImageByBreakpoint } from '../../../utils/helpers';
@@ -34,13 +35,23 @@ export const EventCard = ({ event }: EventCardProps) => {
           <Typography variant="h6" sx={titleStyles}>
             {event.title}
           </Typography>
-          <Image width={0} height={0} sizes="50vw" src={image} alt="Event image" style={titleImageStyles} />
+          <Image
+            width={0}
+            height={0}
+            sizes="50vw"
+            src={image}
+            alt={m.components_landing_eventsSection_eventCard_imageAlt()}
+            style={titleImageStyles}
+          />
         </Stack>
       </CardContent>
 
       <CardActions sx={cardActionsStyles}>
         <Stack direction="column">
-          <LinkWithArrowLeft title="Mehr Details" href={`/projects/${encodeURIComponent(event.projectId)}?tab=3`} />
+          <LinkWithArrowLeft
+            title={m.components_landing_eventsSection_eventCard_moreDetails()}
+            href={`/projects/${encodeURIComponent(event.projectId)}?tab=3`}
+          />
           <EventEmojiReactionCard item={event} type={ObjectType.EVENT} />
         </Stack>
       </CardActions>

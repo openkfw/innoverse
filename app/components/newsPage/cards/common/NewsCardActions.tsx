@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 
 import { NewsFeedEntry } from '@/common/types';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { errorMessage } from '../../../common/CustomToast';
@@ -34,7 +35,7 @@ export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
       }
     } catch (error) {
       console.error('Error toggling follow status:', error);
-      errorMessage({ message: 'Failed to toggle follow status. Please try again later.' });
+      errorMessage({ message: m.components_newsPage_cards_common_newsCardAction_error() });
       appInsights.trackException({
         exception: new Error('Failed to toggle follow status.', { cause: error }),
         severityLevel: SeverityLevel.Error,

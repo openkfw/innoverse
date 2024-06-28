@@ -17,6 +17,7 @@ import SecondaryIconButton from '@/components/common/SecondaryIconButton';
 import MobileNewsFeedFilter from '@/components/newsFeed/MobileNewsFeedFilter';
 import NewsFeedFilter from '@/components/newsFeed/NewsFeedFilter';
 import AddPostDialog from '@/components/newsPage/addPost/AddPostDialog';
+import * as m from '@/src/paraglide/messages.js';
 import { getProjectsOptions } from '@/utils/requests/project/requests';
 
 import { EditingContextProvider } from '../common/editing/editing-context';
@@ -56,10 +57,10 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
           <Box display="flex" flexDirection="column">
             <Card sx={cardStyles}>
               <Typography variant="h2" sx={cardTitleStyles}>
-                News
+                {m.components_newsFeed_newsFeedContainer_news()}
               </Typography>
               <Typography variant="subtitle1" sx={{ mt: 1, fontSize: 16 }}>
-                Alle Neuigkeiten im Überblick: Aktuelle Nachrichten, neue Projekte und alle Ereignisse.
+                {m.components_newsFeed_newsFeedContainer_allNewsText()}
               </Typography>
             </Card>
 
@@ -72,7 +73,7 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
             <Box sx={{ display: { xs: 'block', md: 'none' } }}>
               <Grid item>
                 <SecondaryIconButton
-                  label="Filtern"
+                  label={m.components_newsFeed_newsFeedContainer_filter()}
                   icon={<FilterIcon sx={{ color: 'secondary.main' }} />}
                   onClick={() => setDrawerOpen(true)}
                 />

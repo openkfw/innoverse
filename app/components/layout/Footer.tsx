@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 const footerNav = [
@@ -14,7 +15,9 @@ function Footer() {
   return (
     <Grid container spacing={3} sx={footerStyle}>
       <Grid item>
-        <Typography sx={typographyStyle}>© ***STRING_REMOVED***  {new Date().getFullYear()} </Typography>
+        <Typography sx={typographyStyle}>
+          {m.components_layout_footer_***STRING_REMOVED*** ()} {new Date().getFullYear()}{' '}
+        </Typography>
       </Grid>
       {footerNav.map((item, key) => (
         <Grid key={key} item>

@@ -6,6 +6,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { AmountOfNews, Filters, ProjectUpdateWithAdditionalData, SortValues } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 import { getProjectUpdates, getProjectUpdatesPage } from '@/utils/requests/updates/requests';
 
 interface NewsFilterContextInterface {
@@ -87,7 +88,7 @@ export const NewsFilterContextProvider = ({
         result.length > 0 ? setHasMoreValue(true) : setHasMoreValue(false);
       }
     } catch (error) {
-      errorMessage({ message: 'Error refetching news. Please check your connection and try again.' });
+      errorMessage({ message: m.app_contexts_newsFilterContext_refetchingNewsError() });
       console.error('Error refetching news:', error);
       appInsights.trackException({
         exception: new Error('Error refetching news', { cause: error }),

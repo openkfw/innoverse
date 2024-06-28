@@ -13,6 +13,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { EventWithAdditionalData } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 
 import { CountOfTheme } from './EventsTab';
 
@@ -118,7 +119,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
           id="outlined-basic-search"
           variant="outlined"
           value={currentFilters.searchTerm}
-          placeholder="Suche"
+          placeholder={m.components_projectdetails_events_filteringPanel_searchPlaceholder()}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -138,7 +139,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
       <FormControl sx={{ m: 2 }} component="fieldset" variant="standard">
         <FormLabel component="legend">
           <Typography variant="body2" color="text.primary">
-            Themen
+            {m.components_projectdetails_events_filteringPanel_topic()}
           </Typography>
         </FormLabel>
         <FormGroup>
@@ -171,7 +172,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
             })
           ) : (
             <Typography variant="body1" color="text.primary">
-              Die Events haben noch keine Themen.
+              {m.components_projectdetails_events_filteringPanel_noTopics()}
             </Typography>
           )}
         </FormGroup>
@@ -185,7 +186,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
             checked={currentFilters.pastEventsShown}
             label={
               <Typography variant="body1" color={'text.primary'}>
-                Vergangene Events anzeigen
+                {m.components_projectdetails_events_filteringPanel_previousTopics()}
               </Typography>
             }
           />

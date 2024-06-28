@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import { ProjectUpdateWithAdditionalData } from '@/common/types';
 import { CardSkeletons } from '@/components/skeletons/CardSkeletons';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getProjectUpdatesPage } from '@/utils/requests/updates/requests';
 
@@ -79,7 +80,7 @@ export const CustomInfiniteScroll = (props: CustomInfiniteScrollProps) => {
           }
           endMessage={
             <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 2 }}>
-              Alle Daten wurden geladen
+              {m.components_newsPage_news_dataReceived()}
             </Typography>
           }
         >

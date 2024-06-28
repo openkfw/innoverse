@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 
 import { UserSession } from '@/common/types';
 import { clientConfig } from '@/config/client';
+import * as m from '@/src/paraglide/messages.js';
 
 interface UserMenuProps {
   user: UserSession;
@@ -47,18 +48,18 @@ export default function UserMenu(props: UserMenuProps) {
       <MenuItem>
         <Link href={clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT} target="_blank" style={{ textDecoration: 'none' }}>
           <Typography variant="body2" color="text.primary">
-            Content Editor
+            {m.components_layout_userMenu_contentEditor()}
           </Typography>
         </Link>
       </MenuItem>
       <MenuItem disabled>
         <Typography variant="body2" color="text.primary">
-          Profil
+          {m.components_layout_userMenu_profile()}
         </Typography>
       </MenuItem>
       <MenuItem disabled>
         <Typography variant="body2" color="text.primary">
-          Notification
+          {m.components_layout_userMenu_notification()}
         </Typography>
         <Badge
           badgeContent={4}
@@ -73,7 +74,7 @@ export default function UserMenu(props: UserMenuProps) {
       </MenuItem>
       <MenuItem onClick={() => signOut()}>
         <Typography variant="body2" color="text.primary">
-          Sign out
+          {m.components_layout_userMenu_signOut()}
         </Typography>
       </MenuItem>
     </Menu>

@@ -10,6 +10,7 @@ import { useEditingInteractions } from '@/components/common/editing/editing-cont
 import { NewsCommentThread } from '@/components/newsPage/cards/common/threads/NewsCommentThread';
 import { WriteCommentResponseCard } from '@/components/newsPage/cards/common/WriteCommentResponseCard';
 import { CommentThreadSkeleton } from '@/components/newsPage/cards/skeletons/CommentThreadSkeleton';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 interface ItemWithCommentsThreadProps {
@@ -73,7 +74,7 @@ export const ItemWithCommentsThread = ({ item, card, commentType, fetchResponses
           }}
           style={{ marginBottom: 2, marginLeft: '-0.5em' }}
         >
-          weitere Kommentare anzeigen ({item.responseCount})
+          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} ({item.responseCount})
         </Button>
       )}
       {displayResponses === 'loading' && <CommentThreadSkeleton />}

@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from 'react';
 import { StatusCodes } from 'http-status-codes';
 
@@ -9,6 +8,7 @@ import TextField from '@mui/material/TextField';
 
 import { generatePlatformStatistics, generateProjectsStatistics } from '@/app/export/actions';
 import { errorMessage, infoMessage } from '@/components/common/CustomToast';
+import * as m from '@/src/paraglide/messages.js';
 import { getFeedback } from '@/utils/requests/statistics/requests';
 
 const ExportFeedback = () => {
@@ -29,10 +29,10 @@ const ExportFeedback = () => {
       password,
     });
     if (feedback.status === StatusCodes.UNAUTHORIZED) {
-      errorMessage({ message: 'Invalid credentials!' });
+      errorMessage({ message: m.components_export_exportFeedback_invalidCredentials() });
       return;
     }
-    infoMessage({ message: 'Feedback should be downloaded now!' });
+    infoMessage({ message: m.components_export_exportFeedback_downloadFeedback() });
     const link = document.createElement('a');
     link.href = 'data:text/csv;charset=utf-8,' + feedback.data;
     link.download = 'platform_feedback.csv';
@@ -45,10 +45,10 @@ const ExportFeedback = () => {
       password,
     });
     if (platformStats.status === StatusCodes.UNAUTHORIZED) {
-      errorMessage({ message: 'Invalid credentials!' });
+      errorMessage({ message: m.components_export_exportFeedback_invalidCredentials() });
       return;
     }
-    infoMessage({ message: 'Platform statistics should be downloaded now!' });
+    infoMessage({ message: m.components_export_exportFeedback_downloadPlatformStats() });
     const link = document.createElement('a');
     link.href = 'data:text/csv;charset=utf-8,' + platformStats.data;
     link.download = 'overall_platform_statistics.csv';
@@ -64,7 +64,7 @@ const ExportFeedback = () => {
       errorMessage({ message: 'Invalid credentials!' });
       return;
     }
-    infoMessage({ message: 'Project statistics should be downloaded now!' });
+    infoMessage({ message: m.components_export_exportFeedback_downloadProjectStats() });
     const link = document.createElement('a');
     link.href = 'data:text/csv;charset=utf-8,' + projectStats.data;
     link.download = 'project_statistics.csv';
@@ -75,26 +75,26 @@ const ExportFeedback = () => {
     <>
       <TextField
         inputProps={{ style: { color: 'white' } }}
-        label="Username"
+        label={m.components_export_exportFeedback_username()}
         value={username}
         onChange={handleUsernameChange}
       />
       <TextField
         inputProps={{ style: { color: 'white' } }}
-        label="Password"
+        label={m.components_export_exportFeedback_password()}
         type="password"
         value={password}
         onChange={handlePasswordChange}
       />
       <Stack spacing={'10px'}>
         <Button variant="contained" color="primary" onClick={handleDownloadPlatformFeedback}>
-          Download Platform Feedbacks
+          {m.components_export_exportFeedback_platformFeedback()}
         </Button>
         <Button variant="contained" color="primary" onClick={handleDownloadOverallStats}>
-          Download Overall Statistics
+          {m.components_export_exportFeedback_overallStats()}
         </Button>
         <Button variant="contained" color="primary" onClick={handleDownloadProjectStats}>
-          Download Statistics for Projects
+          {m.components_export_exportFeedback_projectStats()}
         </Button>
       </Stack>
     </>
