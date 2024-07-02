@@ -40,6 +40,7 @@ const cardContentStyles = {
   padding: 0,
   margin: 0,
   textAlign: 'left',
+  wordBreak: 'break-word',
 };
 
 const titleWrapperStyles = {

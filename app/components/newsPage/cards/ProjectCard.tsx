@@ -88,6 +88,7 @@ const cardContentStyles = {
   justifyContent: 'flex-start',
   margin: 0,
   padding: '0 !important',
+  wordBreak: 'break-word',
 
   [theme.breakpoints.down('sm')]: {
     marginTop: 1,

@@ -66,6 +66,7 @@ const cardContentStyles = {
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
   gap: 3,
+  wordBreak: 'break-word',
 };
 
 const titleStyles = {
