@@ -1,12 +1,23 @@
+import { Follow as PrismaFollow } from '@prisma/client';
 import { PushSubscription as WebPushSubscription } from 'web-push';
 
+import dbClient from '@/repository/db/prisma/prisma';
+import { getPushSubscriptionsForUser } from '@/repository/db/push_subscriptions';
 import { PushNotification } from '@/types/notification';
+import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { sendPushNotification } from '@/utils/notification/pushNotification';
 
 const logger = getLogger();
 
-type NotificationTopic = 'project' | 'opportunity' | 'collaboration-question' | 'survey-question' | 'event' | 'update';
+export type NotificationTopic =
+  | 'project'
+  | 'opportunity'
+  | 'collaboration-question'
+  | 'survey-question'
+  | 'event'
+  | 'update'
+  | 'post';
 
 export type NotificationRequest = {
   subscriptions: WebPushSubscription[];
@@ -16,6 +27,20 @@ export type NotificationRequest = {
     body: string;
     url: string;
   };
+};
+
+export const notifyFollowers = async (follows: PrismaFollow[], topic: NotificationTopic, text: string, url: string) => {
+  try {
+    const buildNotifications = follows.map((follow) => createNotificationForFollow(follow, topic, text, url));
+    const notifications = await getPromiseResults(buildNotifications);
+    sendPushNotifications(notifications);
+  } catch (err) {
+    logger.error(
+      `Failed to notify followers with ids (Topic: '${topic}', text: '${text}', url: '${url}'): ${follows.map((follow) => follow.followedBy)}`,
+      follows,
+      err,
+    );
+  }
 };
 
 export const sendPushNotifications = (notifications: NotificationRequest[]) => {
@@ -38,4 +63,23 @@ export const sendPushNotifications = (notifications: NotificationRequest[]) => {
       sendPushNotification(subscription, pushNotification);
     }
   }
+};
+
+const createNotificationForFollow = async (
+  follow: PrismaFollow,
+  topic: NotificationTopic,
+  text: string,
+  url: string,
+): Promise<NotificationRequest> => {
+  const subscriptions = await getPushSubscriptionsForUser(dbClient, follow.followedBy);
+
+  return {
+    subscriptions: subscriptions,
+    userId: follow.followedBy,
+    notification: {
+      topic,
+      body: text,
+      url,
+    },
+  };
 };

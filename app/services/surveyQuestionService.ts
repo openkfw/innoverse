@@ -1,27 +1,49 @@
-import getLogger from '@/utils/logger';
+import { SurveyVote as PrismaSurveyVote } from '@prisma/client';
+
+import { ObjectType, SurveyQuestion } from '@/common/types';
+import { getFollowedByForEntity, getFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
+import { getReactionsForEntity } from '@/repository/db/reaction';
+import { handleSurveyQuestionVoteInDb } from '@/repository/db/survey_votes';
+import getLogger from '@/utils/logger';
 import { mapSurveyQuestionToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
-import { RedisClient, RedisTransactionClient, getRedisClient } from '@/utils/newsFeed/redis/redisClient';
+import { NewsType, RedisSurveyQuestion, RedisSurveyVote } from '@/utils/newsFeed/redis/models';
+import { getRedisClient, RedisClient, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
 import {
   getNewsFeedEntryByKey,
   performRedisTransaction,
   transactionalSaveNewsFeedEntry,
 } from '@/utils/newsFeed/redis/redisService';
 import { getSurveyQuestionById } from '@/utils/requests/surveyQuestions/requests';
-import { getReactionsForEntity } from '@/repository/db/reaction';
-import { getFollowedByForEntity } from '@/repository/db/follow';
-import { NewsType, RedisSurveyQuestion, RedisSurveyVote } from '@/utils/newsFeed/redis/models';
-import { ObjectType, SurveyQuestion } from '@/common/types';
+
+import { notifyFollowers } from '../utils/notification/notificationSender';
 
 const logger = getLogger();
 
-export const handleSurveyVoteInCache = async (surveyQuestion: {
-  id: string;
+export const handleSurveyQuestionVote = async (surveyQuestion: {
+  projectId: string;
   surveyQuestionId: string;
-  votedBy: string;
-  createdAt: Date;
+  providerId: string;
   vote: string;
 }) => {
+  const { operation, vote: surveyVote } = await handleSurveyQuestionVoteInDb(
+    dbClient,
+    surveyQuestion.projectId,
+    surveyQuestion.surveyQuestionId,
+    surveyQuestion.providerId,
+    surveyQuestion.vote,
+  );
+
+  handleSurveyVoteInCache(surveyVote);
+
+  if (operation !== 'deleted') {
+    notifySurveyFollowers(surveyQuestion.surveyQuestionId);
+  }
+
+  return surveyVote;
+};
+
+const handleSurveyVoteInCache = async (surveyQuestion: PrismaSurveyVote) => {
   const { surveyQuestionId, votedBy, vote, id } = surveyQuestion;
   const redisClient = await getRedisClient();
   const newsFeedEntry = await getNewsFeedEntryForSurveyQuestion(redisClient, {
@@ -44,7 +66,7 @@ export const handleSurveyVoteInCache = async (surveyQuestion: {
   });
 };
 
-export const addVoteToCache = async (
+const addVoteToCache = async (
   transactionClient: RedisTransactionClient,
   survey: RedisSurveyQuestion,
   vote: RedisSurveyVote,
@@ -57,7 +79,7 @@ export const addVoteToCache = async (
   });
 };
 
-export const removeVoteFromCache = async (
+const removeVoteFromCache = async (
   transactionClient: RedisTransactionClient,
   survey: RedisSurveyQuestion,
   vote: RedisSurveyVote,
@@ -96,6 +118,16 @@ export const createNewsFeedEntryForSurveyQuestion = async (survey: SurveyQuestio
   const surveyFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.SURVEY_QUESTION, survey.id);
   const mappedSurveyFollowedBy = await mapToRedisUsers(surveyFollowedBy);
   return mapSurveyQuestionToRedisNewsFeedEntry(survey, surveyReactions, mappedSurveyFollowedBy);
+};
+
+const notifySurveyFollowers = async (surveyQuestionId: string) => {
+  const followers = await getFollowers(dbClient, ObjectType.SURVEY_QUESTION, surveyQuestionId);
+  await notifyFollowers(
+    followers,
+    'survey-question',
+    'Auf eine Umfrage, der du folgst, wurde eine neue Stimme abgegeben.',
+    '/news',
+  );
 };
 
 const getRedisKey = (id: string) => `${NewsType.SURVEY_QUESTION}:${id}`;

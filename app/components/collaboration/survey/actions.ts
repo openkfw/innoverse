@@ -2,14 +2,11 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
-import { handleSurveyQuestionVote } from '@/repository/db/survey_votes';
-import { handleSurveyVoteInCache } from '@/services/surveyQuestionService';
+import { handleSurveyQuestionVote } from '@/services/surveyQuestionService';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { validateParams } from '@/utils/validationHelper';
-
-import dbClient from '../../../repository/db/prisma/prisma';
 
 import { handleSurveyVoteSchema } from './validationSchema';
 
@@ -20,15 +17,13 @@ export const handleSurveyVote = withAuth(
     try {
       const validatedParams = validateParams(handleSurveyVoteSchema, body);
       if (validatedParams.status === StatusCodes.OK) {
-        const surveyVote = await handleSurveyQuestionVote(
-          dbClient,
-          body.projectId,
-          body.surveyQuestionId,
-          user.providerId,
-          body.vote,
-        );
+        const surveyVote = await handleSurveyQuestionVote({
+          projectId: body.projectId,
+          providerId: user.providerId,
+          surveyQuestionId: body.surveyQuestionId,
+          vote: body.vote,
+        });
 
-        await handleSurveyVoteInCache(surveyVote);
         return {
           status: StatusCodes.OK,
           data: surveyVote,

@@ -183,6 +183,6 @@ import * as gqlTada from 'gql.tada';
 
 declare module 'gql.tada' {
   interface setupSchema {
-    introspection: introspection;
+    introspection: introspection
   }
 }

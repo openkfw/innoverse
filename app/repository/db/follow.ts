@@ -16,6 +16,23 @@ export async function getFollowers(client: PrismaClient, objectType: ObjectType,
   return client.follow.findMany(query);
 }
 
+export async function getFollowedByForEntity(
+  client: PrismaClient,
+  objectType: ObjectType,
+  objectId: string,
+): Promise<string[]> {
+  const followedBy = await client.follow.findMany({
+    where: {
+      objectId,
+      objectType: objectType as PrismaObjectType,
+    },
+    select: {
+      followedBy: true,
+    },
+  });
+  return followedBy.map((follow) => follow.followedBy);
+}
+
 export async function getProjectFollowers(client: PrismaClient, objectId: string, limit?: number) {
   const query: any = {
     where: {
@@ -125,21 +142,4 @@ export async function addFollowToDb(
       followedBy,
     },
   });
-}
-
-export async function getFollowedByForEntity(
-  client: PrismaClient,
-  objectType: ObjectType,
-  objectId: string,
-): Promise<string[]> {
-  const followedBy = await client.follow.findMany({
-    where: {
-      objectId,
-      objectType: objectType as PrismaObjectType,
-    },
-    select: {
-      followedBy: true,
-    },
-  });
-  return followedBy.map((follow) => follow.followedBy);
 }
