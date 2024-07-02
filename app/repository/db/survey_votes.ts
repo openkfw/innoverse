@@ -17,19 +17,21 @@ export async function findUserSurveyVote(client: PrismaClient, surveyQuestionId:
   });
 }
 
-export async function handleSurveyQuestionVote(
+export async function handleSurveyQuestionVoteInDb(
   client: PrismaClient,
   projectId: string,
   surveyQuestionId: string,
   votedBy: string,
   vote: string,
-): Promise<SurveyVote> {
+): Promise<{ operation: 'updated' | 'deleted'; vote: SurveyVote }> {
   return await client.$transaction(async (tx) => {
-    const result = await tx.surveyVote.findFirst({
+    let operation: 'updated' | 'deleted' = 'updated';
+    let result = await tx.surveyVote.findFirst({
       where: { projectId, surveyQuestionId, votedBy },
     });
 
     if (result?.votedBy) {
+      operation = 'deleted';
       await tx.surveyVote.deleteMany({
         where: {
           projectId,
@@ -40,7 +42,8 @@ export async function handleSurveyQuestionVote(
     }
 
     if (result?.vote !== vote) {
-      return await tx.surveyVote.create({
+      operation = 'updated';
+      result = await tx.surveyVote.create({
         data: {
           projectId,
           surveyQuestionId,
@@ -49,7 +52,11 @@ export async function handleSurveyQuestionVote(
         },
       });
     }
-    return result;
+
+    return {
+      operation: operation,
+      vote: result,
+    };
   });
 }
 

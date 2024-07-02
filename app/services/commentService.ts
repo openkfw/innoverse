@@ -2,7 +2,8 @@
 
 import { CommentType } from '@prisma/client';
 
-import { UserSession } from '@/common/types';
+import { ObjectType, UserSession } from '@/common/types';
+import { getFollowers } from '@/repository/db/follow';
 import {
   addNewsCommentToDb,
   countNewsResponses,
@@ -18,6 +19,7 @@ import {
 import dbClient from '@/repository/db/prisma/prisma';
 import { updatePostInCache } from '@/services/postService';
 import { updateProjectUpdateInCache } from '@/services/updateService';
+import { notifyFollowers } from '@/utils/notification/notificationSender';
 import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
 
 interface AddComment {
@@ -44,11 +46,13 @@ export const addComment = async ({ author, objectId, comment, commentType, paren
   switch (commentType) {
     case 'POST_COMMENT':
       const postCommentDb = await addPostCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
-      await updatePostCommentInCache(postCommentDb, author);
+      updatePostCommentInCache(postCommentDb, author);
+      notifyPostFollowers(objectId);
       return await mapToPostComment(postCommentDb);
     case 'NEWS_COMMENT':
       const newsCommentDb = await addNewsCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
-      await updateNewsCommentInCache(newsCommentDb);
+      updateNewsCommentInCache(newsCommentDb);
+      notifyUpdateFollowers(objectId);
       return await mapToNewsComment(newsCommentDb);
     default:
       throw Error(`Failed to add comment: Unknown comment type '${commentType}'`);
@@ -111,4 +115,14 @@ const removeNewsCommenInCache = async (newsId: string) => {
     const responseCount = await countNewsResponses(dbClient, newsId);
     await updateProjectUpdateInCache({ update: { id: newsId, responseCount } });
   }
+};
+
+const notifyUpdateFollowers = async (updateId: string) => {
+  const follows = await getFollowers(dbClient, ObjectType.UPDATE, updateId);
+  await notifyFollowers(follows, 'update', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
+};
+
+const notifyPostFollowers = async (postId: string) => {
+  const follows = await getFollowers(dbClient, ObjectType.POST, postId);
+  await notifyFollowers(follows, 'post', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
 };

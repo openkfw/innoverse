@@ -1,15 +1,16 @@
-import { ObjectType, User, Follow } from '@/common/types';
+import { Follow, ObjectType, User } from '@/common/types';
+import { addFollowToDb, removeFollowFromDb } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
+import getLogger from '@/utils/logger';
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
-import { addFollowToDb, removeFollowFromDb } from '@/repository/db/follow';
-import { getNewsFeedEntryForProjectEvent } from './eventService';
-import { getNewsFeedEntryForProjectUpdate } from './updateService';
-import { getNewsFeedEntryForCollaborationQuestion } from './collaborationQuestionService';
+
 import { getNewsFeedEntryForComment } from './collaborationCommentService';
+import { getNewsFeedEntryForCollaborationQuestion } from './collaborationQuestionService';
+import { getNewsFeedEntryForProjectEvent } from './eventService';
 import { getNewsFeedEntryForPost } from './postService';
 import { getNewsFeedEntryForProject } from './projectService';
-import getLogger from '@/utils/logger';
+import { getNewsFeedEntryForProjectUpdate } from './updateService';
 
 const logger = getLogger();
 
