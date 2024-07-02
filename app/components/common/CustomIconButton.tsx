@@ -11,7 +11,7 @@ type CustomIconButtonProps = PropsWithChildren &
 
 export const CustomIconButton = ({ children, sx, buttonRef, textSx, ...buttonProps }: CustomIconButtonProps) => {
   return (
-    <Button variant="outlined" sx={mergeStyles(iconButtonStyles, sx)} ref={buttonRef} {...buttonProps}>
+    <Button variant="text" sx={mergeStyles(iconButtonStyles, sx)} ref={buttonRef} {...buttonProps}>
       <Typography variant="subtitle2" sx={mergeStyles(iconButtonTypographyStyle, textSx)}>
         {children}
       </Typography>
