@@ -1,6 +1,7 @@
 'use server';
 
 import type { Post as PrismaPost } from '@prisma/client';
+
 import { ObjectType, Post, User, UserSession } from '@/common/types';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import { countPostResponses } from '@/repository/db/post_comment';
@@ -13,6 +14,7 @@ import {
 } from '@/repository/db/posts';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
+import { getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapPostToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
 import { NewsType, RedisPost } from '@/utils/newsFeed/redis/models';
@@ -77,6 +79,7 @@ export const updatePostInCache = async ({ post, user }: UpdatePostInCache) => {
   cachedItem.upvotedBy = post.upvotedBy ?? cachedItem.upvotedBy;
   cachedItem.responseCount = post.responseCount ?? cachedItem.responseCount;
   newsFeedEntry.item = cachedItem;
+  newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
 
   await saveNewsFeedEntry(redisClient, newsFeedEntry);
 };
