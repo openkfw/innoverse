@@ -9,6 +9,7 @@ import { SxProps } from '@mui/material/styles';
 import { EventWithAdditionalData, ObjectType, ProjectUpdateWithAdditionalData } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import * as m from '@/src/paraglide/messages.js';
+import { optimisticUpdateForProjectUpdate } from '@/utils/optimisticUpdateForProjectUpdateWithAdditionalData';
 
 import { EmojiReactionCard } from './cards/EmojiReactionCard';
 import { handleNewReaction } from './actions';
@@ -26,17 +27,20 @@ export default function ItemEmojiReactionCard({ item, type, sx }: ItemEmojiReact
   const appInsights = useAppInsightsContext();
 
   const handleReactionOnEvent = async (emoji: Emoji, operation: 'upsert' | 'delete') => {
-    try {
-      await handleNewReaction({ emoji: emoji, objectId: id, objectType: type, operation: operation });
-      setCurrentItem(item);
-    } catch (error) {
-      console.error('Failed to handle reaction:', error);
-      errorMessage({ message: m.components_collaboration_emojiReactions_itemEmojiReactionCard_updateError() });
-      appInsights.trackException({
-        exception: new Error('Failed to update reaction.', { cause: error }),
-        severityLevel: SeverityLevel.Error,
-      });
-    }
+    optimisticUpdateForProjectUpdate({
+      currentState: currentItem,
+      setCurrentState: setCurrentItem,
+      performOperation: () => handleNewReaction({ emoji, objectId: id, objectType: type, operation }),
+      emoji,
+      operation,
+      handleError: (error) => {
+        errorMessage({ message: m.components_collaboration_emojiReactions_itemEmojiReactionCard_updateError() });
+        appInsights.trackException({
+          exception: new Error('Failed to update reaction.', { cause: error }),
+          severityLevel: SeverityLevel.Error,
+        });
+      },
+    });
   };
 
   return (
