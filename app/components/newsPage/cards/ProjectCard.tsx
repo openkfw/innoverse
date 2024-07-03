@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -23,9 +24,21 @@ interface NewsProjectCardProps {
 
 function NewsProjectCard(props: NewsProjectCardProps) {
   const { project } = props;
+  const [imageHeight, setImageHeight] = useState(0);
 
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
   const image = getImageByBreakpoint(!isWideScreen, project.image) || defaultImage;
+
+  const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const height = (event.target as HTMLImageElement).offsetHeight;
+    setImageHeight(height);
+  };
+
+  let linesBasedOnImageHeight = Math.floor(imageHeight / 32);
+
+  if (project.title.length > 25) {
+    linesBasedOnImageHeight = Math.floor((imageHeight - 55.92) / 32);
+  }
 
   if (project?.comments?.length > 0) {
     return (
@@ -44,7 +57,13 @@ function NewsProjectCard(props: NewsProjectCardProps) {
             width={280}
             height={0}
             alt={m.components_newsPage_cards_projectCard_imageAlt()}
-            style={{ objectFit: 'cover', width: isWideScreen ? 270 : '100%', height: '100%' }}
+            style={{
+              objectFit: 'cover',
+              objectPosition: 'center',
+              width: 270,
+              height: '100%',
+            }}
+            onLoad={handleImageLoad}
           />
         </CardMedia>
 
@@ -55,7 +74,10 @@ function NewsProjectCard(props: NewsProjectCardProps) {
               {project.title}
             </Link>
           </Typography>
-          <Typography variant="subtitle1" sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? 2 : 6 }}>
+          <Typography
+            variant="subtitle1"
+            sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? linesBasedOnImageHeight : 6 }}
+          >
             {project.summary}
           </Typography>
         </CardContent>
