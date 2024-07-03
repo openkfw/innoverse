@@ -37,7 +37,7 @@ export const SurveyResponsePicker = ({
         exclusive
         orientation="vertical"
         size="small"
-        sx={{ ...toggleButonStyle, width: fill ? '1000px' : '360px' }}
+        sx={{ ...toggleButonStyle, width: fill ? '500px' : '360px' }}
         onChange={(_, vote) => handleVote(vote)}
       >
         {responseOptions.map((response, idx) => (
