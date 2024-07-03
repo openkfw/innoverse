@@ -37,6 +37,7 @@ interface RemoveComment {
 }
 
 interface UpdateComment {
+  author: UserSession;
   commentId: string;
   commentType: CommentType;
   content: string;
@@ -59,13 +60,15 @@ export const addComment = async ({ author, objectId, comment, commentType, paren
   }
 };
 
-export const updateComment = async ({ commentId, content, commentType }: UpdateComment) => {
+export const updateComment = async ({ author, commentId, content, commentType }: UpdateComment) => {
   switch (commentType) {
     case 'POST_COMMENT':
       const postCommentDb = await updatePostCommentInDb(dbClient, commentId, content);
+      await updatePostCommentInCache(postCommentDb, author);
       return await mapToPostComment(postCommentDb);
     case 'NEWS_COMMENT':
       const newsCommentDb = await updateNewsCommentInDb(dbClient, commentId, content);
+      await updateNewsCommentInCache(newsCommentDb);
       return await mapToNewsComment(newsCommentDb);
     default:
       throw Error(`Failed to add comment: Unknown comment type '${commentType}'`);

@@ -32,7 +32,7 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
   const handleUpdate = async (updatedText: string) => {
     interactions.onSubmitEdit();
     onUpdate(updatedText);
-    await updateComment({ commentId: comment.commentId, content: updatedText, commentType });
+    user && (await updateComment({ author: user, commentId: comment.commentId, content: updatedText, commentType }));
   };
 
   return state.isEditing(comment) ? (

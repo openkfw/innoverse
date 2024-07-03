@@ -5,6 +5,7 @@ import { getFollowedByForEntity } from '@/repository/db/follow';
 import { countNewsResponses } from '@/repository/db/news_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
+import { getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapToRedisUsers, mapUpdateToRedisNewsFeedEntry } from '@/utils/newsFeed/redis/mappings';
 import { NewsType, RedisProjectUpdate } from '@/utils/newsFeed/redis/models';
@@ -67,6 +68,7 @@ export const updateProjectUpdateInCache = async ({ update }: UpdateUpdateInCache
   cachedItem.responseCount = update.responseCount ?? cachedItem.responseCount;
   cachedItem.comment = update.comment ?? cachedItem.comment;
   newsFeedEntry.item = cachedItem;
+  newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
 
   await saveNewsFeedEntry(redisClient, newsFeedEntry);
 };
