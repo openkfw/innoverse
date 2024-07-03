@@ -16,7 +16,7 @@ function NewsCollabQuestionCard(props: NewsCollabQuestionCardProps) {
         {title}
       </Typography>
 
-      <Typography variant="body1" color="secondary.contrastText">
+      <Typography variant="body1" color="secondary.contrastText" sx={descriptionStyles}>
         {parseStringForLinks(description)}
       </Typography>
     </>
@@ -28,4 +28,9 @@ export default NewsCollabQuestionCard;
 // News Collab Question Card Styles
 const titleStyles = {
   marginBottom: 2,
+  wordBreak: 'break-word',
+};
+
+const descriptionStyles = {
+  wordBreak: 'break-word',
 };
