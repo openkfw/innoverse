@@ -38,13 +38,17 @@ function NewsProjectCard(props: NewsProjectCardProps) {
   return (
     <>
       <Box sx={bodyStyles}>
-        <CardMedia>
+        <CardMedia sx={cardMediaStyles}>
           <Image
             src={image}
             width={280}
             height={0}
             alt={m.components_newsPage_cards_projectCard_imageAlt()}
-            style={{ objectFit: 'cover', width: isWideScreen ? 270 : '100%', height: '100%' }}
+            style={{
+              objectFit: 'cover',
+              width: isWideScreen ? 270 : '100%',
+              height: isWideScreen ? 132 : 177,
+            }}
           />
         </CardMedia>
 
@@ -55,7 +59,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
               {project.title}
             </Link>
           </Typography>
-          <Typography variant="subtitle1" sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? 2 : 6 }}>
+          <Typography variant="body1" sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? 2 : 6 }}>
             {project.summary}
           </Typography>
         </CardContent>
@@ -69,6 +73,13 @@ function NewsProjectCard(props: NewsProjectCardProps) {
 }
 
 export default NewsProjectCard;
+
+const cardMediaStyles = {
+  [theme.breakpoints.down('sm')]: {
+    height: '100%',
+    width: '100%',
+  },
+};
 
 // News Project Card Styles
 const bodyStyles = {
@@ -101,6 +112,7 @@ const titleStyles = {
   WebkitBoxOrient: 'vertical',
   width: 'fit-content',
   color: 'text.primary',
+  fontSize: '20px',
 
   [theme.breakpoints.down('sm')]: {
     margin: '8px 0',
