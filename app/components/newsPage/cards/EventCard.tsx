@@ -1,8 +1,9 @@
 import Image from 'next/image';
 
+import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
-import Stack from '@mui/material/Stack';
+import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -21,42 +22,63 @@ function NewsEventCard(props: NewsSurveyCardProps) {
 
   const defaultImage = '/images/energy_01.png';
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
   const image = getImageByBreakpoint(isSmallScreen, event?.image) || defaultImage;
 
   return (
     <>
       <CardHeader sx={cardHeaderStyles} title={<EventCardHeader event={event} />} />
-      <CardContent sx={cardContentStyles}>
-        {!isSmallScreen && (
+      <Box sx={bodyStyles}>
+        <CardMedia sx={cardMediaStyles}>
           <Image
-            width={0}
-            height={0}
-            sizes="50vw"
             src={image}
+            width={280}
+            height={0}
             alt={m.components_newsPage_cards_eventCard_imageAlt()}
-            style={titleImageStyles}
+            style={{
+              objectFit: 'cover',
+              width: isWideScreen ? 270 : '100%',
+              height: isWideScreen ? 132 : 177,
+            }}
           />
-        )}
-
-        <Stack>
+        </CardMedia>
+        <CardContent sx={cardContentStyles}>
           <Typography variant="h6" sx={titleStyles}>
             {event.title}
           </Typography>
           <Typography variant="body1" sx={descriptionStyles}>
             {event.description}
           </Typography>
-        </Stack>
-      </CardContent>
+        </CardContent>
+      </Box>
     </>
   );
 }
 
 export default NewsEventCard;
 
+const cardMediaStyles = {
+  [theme.breakpoints.down('sm')]: {
+    height: '100%',
+    width: '100%',
+  },
+};
+
 // News Survey Card Styles
 const cardHeaderStyles = {
   textAlign: 'left',
   padding: 0,
+};
+
+const bodyStyles = {
+  display: 'flex',
+  alignItems: 'flex-start',
+  columnGap: 3,
+  margin: 0,
+  padding: 0,
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+  },
 };
 
 const cardContentStyles = {
@@ -66,20 +88,17 @@ const cardContentStyles = {
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
   gap: 3,
+  wordBreak: 'break-word',
 };
 
 const titleStyles = {
-  color: 'text.primary',
-  fontFamily: 'PFCentroSansProMed',
-  fontSize: '17px',
-  fontWeight: 900,
-  lineHeight: '140%',
   display: '-webkit-box',
-  WebkitBoxOrient: 'vertical',
   overflow: 'hidden',
-  WebkitLineClamp: 3,
-  lineClamp: 3,
-  marginBottom: 1,
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+  width: 'fit-content',
+  color: 'text.primary',
+  fontSize: '16px',
 };
 
 const descriptionStyles = {
@@ -90,11 +109,4 @@ const descriptionStyles = {
   overflow: 'hidden',
   WebkitLineClamp: 5,
   lineClamp: 5,
-};
-
-const titleImageStyles: React.CSSProperties = {
-  objectFit: 'cover',
-  objectPosition: 'center',
-  height: 150,
-  width: 270,
 };

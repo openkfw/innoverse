@@ -162,7 +162,14 @@ const InfoItemRight = ({ title, summary }: InfoItemProps) => {
         />
       </CardMedia>
       <CardContent sx={{ p: '18px' }}>
-        <Typography variant="subtitle2" color="#5A6166" sx={textOverflowStyle}>
+        <Typography
+          variant="subtitle2"
+          color="#5A6166"
+          sx={{
+            ...textOverflowStyle,
+            ...subtitleStyle,
+          }}
+        >
           {parseStringForLinks(summary)}
         </Typography>
       </CardContent>
@@ -232,6 +239,12 @@ const textOverflowStyle = {
   MozHyphens: 'auto',
   WebkitLocale: 'de-DE',
   locale: 'de-DE',
+};
+
+const subtitleStyle = {
+  fontSize: '14px',
+  lineHeight: '157%',
+  letterSpacing: '0.1px',
 };
 
 const listItemStyle = {

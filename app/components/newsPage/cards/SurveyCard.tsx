@@ -21,4 +21,5 @@ const surveyStyles = {
   justifyContent: 'center',
   alignItems: 'center',
   gap: 2,
+  wordBreak: 'break-word',
 };

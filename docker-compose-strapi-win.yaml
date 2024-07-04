@@ -1,0 +1,56 @@
+version: "3.5"
+
+services:
+  database:
+    container_name: DB
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=innohub,strapi
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    restart: on-failure
+    networks: 
+      - strapi
+
+  strapi:
+    container_name: strapi
+    build: ./strapi
+    restart: unless-stopped
+    env_file: ./strapi/.env
+    environment:
+      DATABASE_HOST: database
+      NODE_ENV: ${NODE_ENV}
+    volumes:
+      - ./strapi/config:/opt/app/config
+      - ./strapi/src:/opt/app/src
+      - ./strapi/package.json:/opt/package.json
+      - ./strapi/yarn.lock:/opt/yarn.lock
+      - ./strapi/.env:/opt/app/.env
+      - ./strapi/public/uploads:/opt/app/public/uploads
+      - ./strapi/types:/opt/app/types
+    ports:
+      - "1337:1337"
+    depends_on:
+      - database
+      - cache
+    networks: 
+      - strapi
+
+  cache:
+    image: redis/redis-stack:latest
+    restart: always
+    ports:
+      - 8001:8001
+      - 6379:6379
+    volumes:
+      - ./cache:/data
+
+networks:
+  strapi:
+    name: Strapi
+    driver: bridge

@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -24,21 +23,9 @@ interface NewsProjectCardProps {
 
 function NewsProjectCard(props: NewsProjectCardProps) {
   const { project } = props;
-  const [imageHeight, setImageHeight] = useState(0);
 
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
   const image = getImageByBreakpoint(!isWideScreen, project.image) || defaultImage;
-
-  const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    const height = (event.target as HTMLImageElement).offsetHeight;
-    setImageHeight(height);
-  };
-
-  let linesBasedOnImageHeight = Math.floor(imageHeight / 32);
-
-  if (project.title.length > 25) {
-    linesBasedOnImageHeight = Math.floor((imageHeight - 55.92) / 32);
-  }
 
   if (project?.comments?.length > 0) {
     return (
@@ -51,7 +38,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
   return (
     <>
       <Box sx={bodyStyles}>
-        <CardMedia>
+        <CardMedia sx={cardMediaStyles}>
           <Image
             src={image}
             width={280}
@@ -59,11 +46,9 @@ function NewsProjectCard(props: NewsProjectCardProps) {
             alt={m.components_newsPage_cards_projectCard_imageAlt()}
             style={{
               objectFit: 'cover',
-              objectPosition: 'center',
-              width: 270,
-              height: '100%',
+              width: isWideScreen ? 270 : '100%',
+              height: isWideScreen ? 132 : 177,
             }}
-            onLoad={handleImageLoad}
           />
         </CardMedia>
 
@@ -74,10 +59,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
               {project.title}
             </Link>
           </Typography>
-          <Typography
-            variant="subtitle1"
-            sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? linesBasedOnImageHeight : 6 }}
-          >
+          <Typography variant="body1" sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? 2 : 6 }}>
             {project.summary}
           </Typography>
         </CardContent>
@@ -91,6 +73,13 @@ function NewsProjectCard(props: NewsProjectCardProps) {
 }
 
 export default NewsProjectCard;
+
+const cardMediaStyles = {
+  [theme.breakpoints.down('sm')]: {
+    height: '100%',
+    width: '100%',
+  },
+};
 
 // News Project Card Styles
 const bodyStyles = {
@@ -110,6 +99,7 @@ const cardContentStyles = {
   justifyContent: 'flex-start',
   margin: 0,
   padding: '0 !important',
+  wordBreak: 'break-word',
 
   [theme.breakpoints.down('sm')]: {
     marginTop: 1,
@@ -123,6 +113,7 @@ const titleStyles = {
   WebkitBoxOrient: 'vertical',
   width: 'fit-content',
   color: 'text.primary',
+  fontSize: '20px',
 
   [theme.breakpoints.down('sm')]: {
     margin: '8px 0',
