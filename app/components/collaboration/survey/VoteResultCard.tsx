@@ -16,10 +16,10 @@ export const VoteResultCard = ({ handleVote, selectedOption, votesPerOption }: V
   const totalVotes = votesPerOption.reduce((total, entry) => total + entry.votes, 0);
 
   return (
-    <Box sx={votesCardStyle} display={'block'}>
+    <Box sx={votesCardStyle} display={'flex'}>
       {!!selectedOption ? (
         <>
-          <Typography variant="subtitle1" color="primary.main" sx={{ pb: '1px' }}>
+          <Typography variant="subtitle1" color="primary.main" sx={{ pb: '1px', fontWeight: '500' }}>
             {`${totalVotes} Abstimmungen`}
           </Typography>
           <CustomIconButton
@@ -49,6 +49,7 @@ const votesCardStyle: SxProps = {
   alignItems: 'flex-start',
   gap: 'var(--1, 8px)',
   flexShrink: 0,
+  height: 120,
   borderRadius: 'var(--1, 8px)',
   background: 'rgba(0, 90, 140, 0.10)',
   '@media (max-width: 1360px)': {
