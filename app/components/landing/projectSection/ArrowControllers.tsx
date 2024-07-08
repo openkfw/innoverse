@@ -12,10 +12,11 @@ interface ArrowControllersProps {
   slidesLength: number;
   prevSlide: () => void;
   nextSlide: () => void;
+  parentDisabled: boolean;
 }
 
 export default function ArrowControllers(props: ArrowControllersProps) {
-  const { currentSlide, slidesLength, prevSlide, nextSlide } = props;
+  const { currentSlide, slidesLength, prevSlide, nextSlide, parentDisabled } = props;
 
   const iconStyles = {
     color: 'common.white',
@@ -41,7 +42,7 @@ export default function ArrowControllers(props: ArrowControllersProps) {
     <Grid container p={0} spacing={0} sx={{ width: '50%' }}>
       <Grid item>
         <IconButton
-          disabled={currentSlide == 0}
+          disabled={currentSlide == 0 || parentDisabled}
           onClick={prev}
           sx={iconStyles}
           aria-label={m.components_landing_projectSection_arrowController_previousSlide()}
@@ -51,7 +52,7 @@ export default function ArrowControllers(props: ArrowControllersProps) {
       </Grid>
       <Grid item>
         <IconButton
-          disabled={currentSlide == slidesLength}
+          disabled={currentSlide == slidesLength || parentDisabled}
           onClick={next}
           sx={iconStyles}
           aria-label={m.components_landing_projectSection_arrowController_nextSlide()}

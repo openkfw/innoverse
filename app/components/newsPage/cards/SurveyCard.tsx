@@ -22,4 +22,5 @@ const surveyStyles = {
   alignItems: 'center',
   gap: 2,
   wordBreak: 'break-word',
+  borderRadius: 100,
 };

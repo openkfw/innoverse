@@ -19,7 +19,7 @@ export const CommentCardHeader = ({ content, avatar }: CommentCardHeaderProps) =
       avatar={<UserAvatar user={author} size={24} {...avatar} />}
       title={
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography variant="subtitle2" color="secondary.contrastText" sx={{ fontSize: '14px' }} data-testid="author">
+          <Typography variant="subtitle2" color="primary.dark" sx={{ fontSize: '14px' }} data-testid="author">
             {author.name}
           </Typography>
           <Typography variant="caption" color="secondary.contrastText" data-testid="date">

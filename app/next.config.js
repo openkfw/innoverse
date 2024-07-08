@@ -74,7 +74,7 @@ const nextConfig = {
     },
     instrumentationHook: true,
     serverActions: {
-      allowedOrigins: ['***URL_REMOVED***', '***URL_REMOVED***'],
+      allowedOrigins: ['***URL_REMOVED***', '***URL_REMOVED***', '***URL_REMOVED***'],
     },
   },
   i18n: {

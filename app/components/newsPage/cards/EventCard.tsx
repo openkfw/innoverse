@@ -99,7 +99,11 @@ const titleStyles = {
   WebkitBoxOrient: 'vertical',
   width: 'fit-content',
   color: 'text.primary',
-  fontSize: '16px',
+  fontSize: 16,
+  fontStyle: 'normal',
+  fontWeight: 900,
+  lineHeight: '140%',
+  letterSpacing: -0.5,
 };
 
 const descriptionStyles = {
