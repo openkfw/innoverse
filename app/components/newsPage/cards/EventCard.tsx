@@ -113,5 +113,4 @@ const descriptionStyles = {
   WebkitBoxOrient: 'vertical',
   overflow: 'hidden',
   WebkitLineClamp: 3,
-  lineClamp: 5,
 };
