@@ -96,7 +96,9 @@ export default function Carousel<T extends CarouselItem>({
           slidesLength={items.length - 1}
           prevSlide={() => sliderRef?.current?.slickPrev()}
           nextSlide={() => sliderRef?.current?.slickNext()}
+          parentDisabled={isWideScreen ? !(items.length > 2) : items.length == 1}
         />
+
         <Box sx={buttonStyles}>{moreButton}</Box>
       </Box>
     </Grid>
