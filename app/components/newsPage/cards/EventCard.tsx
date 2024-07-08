@@ -68,6 +68,7 @@ const cardMediaStyles = {
 const cardHeaderStyles = {
   textAlign: 'left',
   padding: 0,
+  mb: 1.5,
 };
 
 const bodyStyles = {
@@ -83,17 +84,18 @@ const bodyStyles = {
 
 const cardContentStyles = {
   padding: 0,
+  margin: 0,
   display: 'flex',
   justifyContent: 'flex-start',
+  flexDirection: 'column',
   alignItems: 'flex-start',
-  gap: 3,
   wordBreak: 'break-word',
 };
 
 const titleStyles = {
   display: '-webkit-box',
   overflow: 'hidden',
-  WebkitLineClamp: 2,
+  WebkitLineClamp: 3,
   WebkitBoxOrient: 'vertical',
   width: 'fit-content',
   color: 'text.primary',
@@ -110,6 +112,5 @@ const descriptionStyles = {
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
   overflow: 'hidden',
-  WebkitLineClamp: 5,
-  lineClamp: 5,
+  WebkitLineClamp: 3,
 };
