@@ -160,18 +160,52 @@ function FirstStep({ idx, step, activeStep }: ProgressStepProps) {
   const stepIsDone = isStepDone(idx, activeStep);
   const statusLabel = getStepStatusLabel(stepIsDone, active);
 
+  const labelSize = 0.6 * 14 * label.length + (idx + 1) * 10;
+
   return (
     <CustomTooltip tooltip={`${label}: ${statusLabel}`}>
       <Box sx={stepStyles}>
         {active ? (
           <>
             <ActiveStepLabel label={label} />
-            <svg xmlns="http://www.w3.org/2000/svg" width="159" height="28" viewBox="0 0 159 28" fill="none">
-              <path
-                d="M1.08458 6.47128C-0.97754 3.84677 0.892129 0 4 0H146.11C147.275 0 148.381 0.507478 149.141 1.38991L157 11.3899C159.044 12.8902 159.044  15.1098 157.752 16.6101L149.141 26.6101C27.3814 27.4925 26.2747 28 25.1102 28H4C1.79086 28 0 26.2091 0 24V4Z"
-                fill="#6D767D"
-              />
-            </svg>
+            <Box>
+              <svg
+                style={{ padding: 0 }}
+                width="6"
+                height="28"
+                viewBox="0 0 6 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.77735 0H4.00745C0.669682 0 -1.19995 3.8468 0.862187 6.47131L4.83582 11.5287C5.97547 12.9791 5.97547 15.0209 4.83582 16.4713L0.862187 21.5287C-1.19995 24.1532 0.669682 28 4.00745 28H5.77735V0Z"
+                  fill={isLive(step) ? theme.palette.secondary.main : '#6D767D'}
+                />
+              </svg>
+
+              <svg
+                style={{ marginRight: -1, marginLeft: -1.2 }}
+                width={labelSize}
+                height="28"
+                viewBox="0 0 {labelSize} 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="0.777344"
+                  width={labelSize}
+                  height="28"
+                  fill={isLive(step) ? theme.palette.secondary.main : '#6D767D'}
+                />
+              </svg>
+
+              <svg width="14" height="28" viewBox="0 0 14 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M0.777344 28H0.887817C2.05237 28 3.15906 27.4926 3.91895 26.6101L12.53 16.6101C13.8219 15.1099 13.8219 12.8901 12.53 11.3899L3.91895 1.38989C3.15906 0.507446 2.05237 0 0.887817 0H0.777344V28Z"
+                  fill={isLive(step) ? theme.palette.secondary.main : '#6D767D'}
+                />
+              </svg>
+            </Box>
           </>
         ) : (
           <>
@@ -195,18 +229,52 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
   const stepIsDone = isStepDone(idx, activeStep);
   const statusLabel = getStepStatusLabel(stepIsDone, active);
 
+  const labelSize = 0.6 * 14 * label.length + idx * 10;
+
   return (
     <CustomTooltip tooltip={`${label}: ${statusLabel}`}>
       <Box sx={stepStyles}>
         {active ? (
           <>
             <ActiveStepLabel label={label} />
-            <svg xmlns="http://www.w3.org/2000/svg" width="159" height="28" viewBox="0 0 159 28" fill="none">
-              <path
-                d="M1.08458 6.47128C-0.97754 3.84677 0.892129 0 4.22986 0H146.11C147.275 0 148.381 0.507479 149.141 1.38991L157.752 11.3899C159.044 12.8902 159.044 15.1098 157.752 16.6101L149.141 26.6101C148.381 27.4925 147.275 28 146.11 28H4.22986C0.892138 28 -0.977536 24.1532 1.08458 21.5287L5.05828 16.4713C6.19791 15.0208 6.19791 12.9792 5.05828 11.5287L1.08458 6.47128Z"
-                fill={isLive(step) ? theme.palette.secondary.main : '#6D767D'}
-              />
-            </svg>
+            <Box>
+              <svg
+                style={{ padding: 0 }}
+                width="6"
+                height="28"
+                viewBox="0 0 6 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.77735 0H4.00745C0.669682 0 -1.19995 3.8468 0.862187 6.47131L4.83582 11.5287C5.97547 12.9791 5.97547 15.0209 4.83582 16.4713L0.862187 21.5287C-1.19995 24.1532 0.669682 28 4.00745 28H5.77735V0Z"
+                  fill={isLive(step) ? theme.palette.secondary.main : '#6D767D'}
+                />
+              </svg>
+
+              <svg
+                style={{ marginRight: -1, marginLeft: -1.2 }}
+                width={labelSize}
+                height="28"
+                viewBox="0 0 {labelSize} 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="0.777344"
+                  width={labelSize}
+                  height="28"
+                  fill={isLive(step) ? theme.palette.secondary.main : '#6D767D'}
+                />
+              </svg>
+
+              <svg width="14" height="28" viewBox="0 0 14 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M0.777344 28H0.887817C2.05237 28 3.15906 27.4926 3.91895 26.6101L12.53 16.6101C13.8219 15.1099 13.8219 12.8901 12.53 11.3899L3.91895 1.38989C3.15906 0.507446 2.05237 0 0.887817 0H0.777344V28Z"
+                  fill={isLive(step) ? theme.palette.secondary.main : '#6D767D'}
+                />
+              </svg>
+            </Box>
           </>
         ) : (
           <>
