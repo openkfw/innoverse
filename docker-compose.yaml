@@ -37,6 +37,8 @@ services:
 
   cache:
     image: redis/redis-stack:latest
+    environment:
+      - REDIS_ARGS=--appendonly yes --appendfsync everysec
     restart: always
     ports:
       - 8001:8001
