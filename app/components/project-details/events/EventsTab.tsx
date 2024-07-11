@@ -160,12 +160,15 @@ export const EventsTab: React.FC<EventsTabProps> = (props) => {
     setFiltersApplied(false);
   }
 
-  if (futureEvents?.length === 0) {
+  if (futureEvents?.length === 0 && !currentFilters.pastEventsShown) {
     return (
       <Card sx={cardStyles}>
         <EmptyTabContent
           {...otherProps}
           project={project}
+          pastEventsAvailable={pastEvents.length > 0}
+          currentFilters={currentFilters}
+          setCurrentFilters={setCurrentFilters}
           message={m.components_projectdetails_events_eventsTab_message()}
         />
       </Card>
@@ -223,7 +226,7 @@ const cardStyles = {
   borderRadius: '24px',
   background: '#FFF',
   position: 'relative',
-  overflow: 'scroll',
+  overflow: 'hidden',
   zIndex: 0,
   boxShadow:
     '0px 8px 15px -7px rgba(0, 0, 0, 0.10), 0px 12px 38px 3px rgba(0, 0, 0, 0.03), 0px 9px 46px 8px rgba(0, 0, 0, 0.35)',
