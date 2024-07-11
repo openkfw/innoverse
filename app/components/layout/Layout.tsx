@@ -39,7 +39,7 @@ function AppLayout({ children }: PropsWithChildren) {
       <CustomToastContainer />
       <ThemeRegistry options={{ key: 'mui' }}>
         {isSmallScreen ? <TopBarMobile pages={pages} /> : <TopBar pages={pages} />}
-        <Box sx={{ position: 'relative', overflow: 'hidden' }}>
+        <Box sx={{ position: 'relative' }}>
           <Box>{children}</Box>
           <Footer />
         </Box>

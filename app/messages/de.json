@@ -68,7 +68,7 @@
 
   "components_common_commentCardHeaderSecondary_imageAlt": "badge",
 
-  "components_common_filterSelect_showMore": "Mehr anzeigen",
+  "components_common_filterSelect_showMore": "{count} weitere anzeigen",
   "components_common_filterSelect_showLess": "Weniger anzeigen",
 
   "components_common_interactionButton_like": "Gefällt mir",

@@ -29,7 +29,7 @@ async function NewsFeedPage() {
         alt={m.app_news_page_imageAlt()}
         sizes="33vw"
         style={{
-          position: 'absolute',
+          position: 'fixed',
           width: '100%',
           height: 264,
           zIndex: -1,
