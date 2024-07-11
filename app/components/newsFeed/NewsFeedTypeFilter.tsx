@@ -58,7 +58,7 @@ export default function NewsFeedTypeFilter(props: NewsFeedTypeFilterProps) {
       isLoading={isLoading}
       options={options}
       onSelect={updateFilters}
-      maxOptionsToDisplayCollapsed={3}
+      maxOptionsToDisplayCollapsed={5}
     />
   );
 }
