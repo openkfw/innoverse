@@ -18,13 +18,45 @@ export enum RedisIndex {
 
 export const getRedisClient = async () => {
   if (!client) {
-    const _client = await createClient({ url: serverConfig.REDIS_URL })
-      .on('error', (error) => logger.error('Redis Client Error', error))
-      .connect();
-    client = _client;
+    client = await createRedisClient();
     await createIndices(client);
+    return client;
   }
+
+  if (!client.isOpen || !client.isReady) {
+    client = await client.connect();
+  }
+
   return client;
+};
+
+const createRedisClient = async () => {
+  return await createClient({
+    url: serverConfig.REDIS_URL,
+    socket: {
+      // Redis server's default keep-alive (config key 'tcp-keepalive') is 300 seconds
+      keepAlive: 60 * 1000,
+      reconnectStrategy: (retries, cause) => {
+        if (retries > 3) {
+          logger.error(`Failed to connect to redis after a total of ${retries} attempts:`, cause);
+          return false;
+        }
+
+        const retryDelayInMs = 500 * Math.pow(2, retries);
+        logger.warn(`Reconnecting to redis in ${retryDelayInMs} ms (retry: ${retries + 1})`);
+        return retryDelayInMs;
+      },
+    },
+  })
+    .on('error', (error: Error) => {
+      if (client && !client.isReady) {
+        // Connection errors will trigger the reconnect strategy
+        logger.warn(`Redis client connection error: ${error.message}`);
+        return;
+      }
+      logger.error('Redis client error:', error);
+    })
+    .connect();
 };
 
 const createIndices = async (client: RedisClient) => {
