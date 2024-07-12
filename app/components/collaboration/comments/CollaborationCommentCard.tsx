@@ -23,8 +23,8 @@ interface CollaborationCommentCardProps {
 }
 
 export const CollaborationCommentCard = (props: CollaborationCommentCardProps) => {
-  const { comment, projectName } = props;
-  const { isUpvoted, toggleCommentUpvote, updateComment, deleteComment } = useCollaborationCommentCardProps(props);
+  const { comment, projectName, isUpvoted, toggleCommentUpvote, updateComment, deleteComment } =
+    useCollaborationCommentCardProps(props);
 
   return (
     <>
@@ -41,7 +41,10 @@ export const CollaborationCommentCard = (props: CollaborationCommentCardProps) =
   );
 };
 
-export function useCollaborationCommentCardProps({ comment, onDelete }: CollaborationCommentCardProps) {
+function useCollaborationCommentCardProps(props: CollaborationCommentCardProps) {
+  const { projectName, onDelete } = props;
+
+  const [comment, setComment] = useState(props.comment);
   const [isUpvoted, setIsUpvoted] = useState<boolean>(comment.isUpvotedByUser || false);
   const appInsights = useAppInsightsContext();
 
@@ -59,9 +62,10 @@ export function useCollaborationCommentCardProps({ comment, onDelete }: Collabor
     }
   };
 
-  const updateComment = (updatedText: string) => {
+  const updateComment = async (updatedText: string) => {
     try {
-      updateProjectCollaborationComment({ commentId: comment.id, updatedText });
+      await updateProjectCollaborationComment({ commentId: comment.id, updatedText });
+      setComment({ ...comment, comment: updatedText });
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
       errorMessage({ message: m.components_collaboration_comments_collaborationCommentCard_updateError() });
@@ -87,6 +91,8 @@ export function useCollaborationCommentCardProps({ comment, onDelete }: Collabor
   };
 
   return {
+    comment,
+    projectName,
     isUpvoted,
     toggleCommentUpvote,
     updateComment,

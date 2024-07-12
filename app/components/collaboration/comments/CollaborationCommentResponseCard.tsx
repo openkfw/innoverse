@@ -6,6 +6,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { CommentResponse } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import { useEditingInteractions } from '@/components/common/editing/editing-context';
 import * as m from '@/src/paraglide/messages.js';
 import { isProjectCollaborationCommentResponseUpvotedBy } from '@/utils/requests/collaborationComments/requests';
 
@@ -20,12 +21,12 @@ import {
 interface CollaborationCommentResponseCardProps {
   response: CommentResponse;
   projectName?: string;
-  onDelete?: () => void;
+  onDelete: () => void;
 }
 
 export const CollaborationCommentResponseCard = (props: CollaborationCommentResponseCardProps) => {
-  const { response, projectName } = props;
-  const { isUpvoted, toggleResponseUpvote, updateResponse, deleteResponse } =
+  const { projectName } = props;
+  const { response, isUpvoted, toggleResponseUpvote, updateResponse, deleteResponse } =
     useCollaborationCommentResponseCard(props);
 
   return (
@@ -42,9 +43,11 @@ export const CollaborationCommentResponseCard = (props: CollaborationCommentResp
   );
 };
 
-function useCollaborationCommentResponseCard({ response, onDelete }: CollaborationCommentResponseCardProps) {
+export function useCollaborationCommentResponseCard(props: CollaborationCommentResponseCardProps) {
+  const [response, setResponse] = useState(props.response);
   const [isUpvoted, setIsUpvoted] = useState<boolean>();
   const appInsights = useAppInsightsContext();
+  const interactions = useEditingInteractions();
 
   useEffect(() => {
     async function loadAndSetIsUpvoted() {
@@ -78,9 +81,11 @@ function useCollaborationCommentResponseCard({ response, onDelete }: Collaborati
     }
   };
 
-  const updateResponse = (updatedText: string) => {
+  const updateResponse = async (updatedText: string) => {
     try {
-      updateProjectCollaborationCommentResponse({ responseId: response.id, updatedText });
+      await updateProjectCollaborationCommentResponse({ responseId: response.id, updatedText });
+      setResponse({ ...response, response: updatedText });
+      interactions.onSubmitEdit();
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
       errorMessage({ message: m.components_collaboration_comments_collaborationCommentResponseCard_updateError() });
@@ -94,7 +99,7 @@ function useCollaborationCommentResponseCard({ response, onDelete }: Collaborati
   const deleteResponse = () => {
     try {
       deleteProjectCollaborationCommentResponse({ responseId: response.id });
-      onDelete && onDelete();
+      props.onDelete();
     } catch (error) {
       console.error('Error deleting collaboration comment:', error);
       errorMessage({ message: m.components_collaboration_comments_collaborationCommentResponseCard_deleteError() });
@@ -106,6 +111,7 @@ function useCollaborationCommentResponseCard({ response, onDelete }: Collaborati
   };
 
   return {
+    response,
     isUpvoted,
     toggleResponseUpvote,
     updateResponse,

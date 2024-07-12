@@ -13,7 +13,7 @@ import { ObjectType, ProjectUpdateWithAdditionalData } from '@/common/types';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import { LinkWithArrowLeft } from '@/components/common/LinkWithArrowLeft';
-import { UpdateCardContent } from '@/components/common/UpdateCardText';
+import { UpdateCardContent } from '@/components/common/UpdateCardContent';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';

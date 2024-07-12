@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 
 import theme from '@/styles/theme';
 
-export const NewsCardActionsWrapper = ({ children }: PropsWithChildren) => {
+export const NewsCardControls = ({ children }: PropsWithChildren) => {
   return (
     <CardActions sx={cardActionsStyles}>
       <Stack direction={'row'} sx={footerStyles}>

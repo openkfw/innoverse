@@ -3,7 +3,7 @@
 import { User } from 'next-auth';
 import { StatusCodes } from 'http-status-codes';
 
-import { Comment, CommentResponse, UserSession } from '@/common/types';
+import { CollaborationComment, Comment, CommentResponse, UserSession } from '@/common/types';
 import {
   collaborationCommentResponseUpvotedBySchema,
   getCollaborationCommentResponsesSchema,
@@ -18,7 +18,7 @@ import {
 import dbClient from '@/repository/db/prisma/prisma';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
-import { getPromiseResults, sortDateByCreatedAt } from '@/utils/helpers';
+import { getPromiseResults, sortDateByCreatedAtAsc } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 import { validateParams } from '@/utils/validationHelper';
@@ -31,7 +31,7 @@ export const getProjectCollaborationComments = async (body: { projectId: string;
 
     if (validatedParams.status === StatusCodes.OK) {
       const questionComments = await getCollaborationQuestionComments(dbClient, body.projectId, body.questionId);
-      const sortedComments = sortDateByCreatedAt(questionComments);
+      const sortedComments = sortDateByCreatedAtAsc(questionComments);
 
       const getComments = sortedComments.map(async (comment) => {
         const author = await getInnoUserByProviderId(comment.author);
@@ -70,7 +70,7 @@ export const getProjectCollaborationComments = async (body: { projectId: string;
 };
 
 export const getProjectCollaborationCommentResponses = withAuth(
-  async (user: UserSession, body: { comment: Comment }) => {
+  async (user: UserSession, body: { comment: Comment | CollaborationComment }) => {
     const validatedParams = validateParams(getCollaborationCommentResponsesSchema, body);
 
     if (validatedParams.status !== StatusCodes.OK) {
@@ -99,7 +99,7 @@ export const getProjectCollaborationCommentResponses = withAuth(
 
     return {
       status: StatusCodes.OK,
-      data: sortDateByCreatedAt(commentResponses),
+      data: sortDateByCreatedAtAsc(commentResponses),
     };
   },
 );

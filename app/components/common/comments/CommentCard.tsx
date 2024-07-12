@@ -14,12 +14,12 @@ import { TextCard } from '../TextCard';
 
 interface CommentCardProps {
   comment: BasicComment;
-  projectName?: string;
   isUpvoted: boolean;
-  onUpvoteToggle: () => void;
-  onEdit?: (updatedText: string) => void;
-  onDelete?: () => void;
+  projectName?: string;
   enableResponses?: boolean;
+  onUpvoteToggle: () => void;
+  onEdit?: (updatedText: string) => Promise<void>;
+  onDelete?: () => void;
 }
 
 interface BasicComment {
@@ -30,13 +30,15 @@ interface BasicComment {
 }
 
 export const CommentCard = (props: CommentCardProps) => {
-  const { comment, isUpvoted, onUpvoteToggle, projectName, enableResponses = false, onDelete, onEdit } = props;
+  const { comment, isUpvoted, projectName, enableResponses = false, onUpvoteToggle, onEdit, onDelete } = props;
 
   const state = useEditingState();
   const interactions = useEditingInteractions();
 
   const updateComment = async (updatedText: string) => {
-    onEdit && onEdit(updatedText);
+    if (onEdit) {
+      await onEdit(updatedText);
+    }
     interactions.onSubmitEdit();
   };
 

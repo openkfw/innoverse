@@ -8,10 +8,15 @@ import { parseStringForLinks } from '@/components/common/LinkString';
 interface CommentOverviewProps {
   title: string;
   description: string;
+  projectId?: string;
   image?: string;
 }
 
 function CommentOverview(props: CommentOverviewProps) {
+  return <CommentOverviewContent {...props} />;
+}
+
+const CommentOverviewContent = (props: CommentOverviewProps) => {
   const { title, description, image } = props;
 
   return (
@@ -22,13 +27,14 @@ function CommentOverview(props: CommentOverviewProps) {
         <Typography variant="h5" sx={titleStyles}>
           {title}
         </Typography>
+
         <Typography variant="body1" sx={descriptionStyles}>
           {parseStringForLinks(description)}
         </Typography>
       </Box>
     </Box>
   );
-}
+};
 
 export default CommentOverview;
 
@@ -61,6 +67,7 @@ const titleStyles = {
   fontWeight: 900,
   lineHeight: '140%',
   letterSpacing: '-0.5px',
+  width: '100%',
 };
 
 const descriptionStyles = {

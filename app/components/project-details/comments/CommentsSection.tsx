@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import { Comment, Project, ProjectQuestion } from '@/common/types';
 import { UnsavedEditingChangesDialog } from '@/components/common/editing/UnsavedChangesDialog';
 import * as m from '@/src/paraglide/messages.js';
-import { sortDateByCreatedAt } from '@/utils/helpers';
+import { sortDateByCreatedAtAsc } from '@/utils/helpers';
 
 import WriteTextCard from '../../common/editing/writeText/WriteTextCard';
 
@@ -27,7 +27,7 @@ const CommentsSection = ({ project }: { project: Project }) => {
   const addComment = async (comment: string) => {
     const { data: newComment } = await addProjectComment({ projectId: project.id, comment: comment });
     if (!newComment) return;
-    setComments((comments) => sortDateByCreatedAt([...comments, newComment]));
+    setComments((comments) => sortDateByCreatedAtAsc([...comments, newComment]));
   };
 
   return (

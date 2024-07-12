@@ -2,7 +2,7 @@
 
 import { CommentType } from '@prisma/client';
 
-import { ObjectType, UserSession } from '@/common/types';
+import { NewsComment, ObjectType, PostComment, UserSession } from '@/common/types';
 import { getFollowers } from '@/repository/db/follow';
 import {
   addNewsCommentToDb,
@@ -43,18 +43,22 @@ interface UpdateComment {
   content: string;
 }
 
-export const addComment = async ({ author, objectId, comment, commentType, parentCommentId }: AddComment) => {
+export const addComment = async (body: AddComment): Promise<NewsComment | PostComment> => {
+  const { comment, commentType, author, objectId, parentCommentId } = body;
+
   switch (commentType) {
     case 'POST_COMMENT':
       const postCommentDb = await addPostCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
       updatePostCommentInCache(postCommentDb, author);
       notifyPostFollowers(objectId);
-      return await mapToPostComment(postCommentDb);
+      const postComment = await mapToPostComment(postCommentDb);
+      return postComment;
     case 'NEWS_COMMENT':
       const newsCommentDb = await addNewsCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
       updateNewsCommentInCache(newsCommentDb);
       notifyUpdateFollowers(objectId);
-      return await mapToNewsComment(newsCommentDb);
+      const newsComment = await mapToNewsComment(newsCommentDb);
+      return newsComment;
     default:
       throw Error(`Failed to add comment: Unknown comment type '${commentType}'`);
   }

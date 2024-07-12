@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { SxProps } from '@mui/material/styles';
 
@@ -15,16 +15,21 @@ interface WriteCommentResponseCardProps {
 }
 
 const WriteCommentResponseCard = ({ comment, projectName, onRespond, sx }: WriteCommentResponseCardProps) => {
+  const [disabled, setDisabled] = useState(false);
   const editingState = useEditingState();
   const editingInteractions = useEditingInteractions();
 
   const handleResponse = async (comment: string) => {
+    setDisabled(true);
     await onRespond(comment);
     editingInteractions.onSubmitResponse();
+    setDisabled(false);
   };
 
   return (
-    editingState.isResponding(comment) && <WriteTextCard sx={sx} metadata={{ projectName }} onSubmit={handleResponse} />
+    editingState.isResponding(comment) && (
+      <WriteTextCard sx={sx} metadata={{ projectName }} onSubmit={handleResponse} disabled={disabled} />
+    )
   );
 };
 

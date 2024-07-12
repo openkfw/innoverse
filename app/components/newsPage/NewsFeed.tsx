@@ -20,16 +20,16 @@ import {
   SurveyQuestion,
 } from '@/common/types';
 import { NewsSkeleton } from '@/components/newsPage/skeletons/NewsSkeleton';
+import { NewsCollaborationCommentThread } from '@/components/newsPage/threads/NewsCollaborationCommentThread';
 import * as m from '@/src/paraglide/messages.js';
 
-import NewsCollabCommentCard from './cards/CollabCommentCard';
-import NewsCollabQuestionCard from './cards/CollabQuestionCard';
 import NewsCardWrapper from './cards/common/NewsCardWrapper';
-import { NewsPostThread } from './cards/common/threads/NewsPostThread';
-import { NewsUpdateThread } from './cards/common/threads/NewsUpdateThread';
-import NewsEventCard from './cards/EventCard';
-import NewsProjectCard from './cards/ProjectCard';
-import NewsSurveyCard from './cards/SurveyCard';
+import NewsCollabQuestionCard from './cards/NewsCollabQuestionCard';
+import NewsEventCard from './cards/NewsEventCard';
+import NewsProjectCard from './cards/NewsProjectCard';
+import NewsSurveyCard from './cards/NewsSurveyCard';
+import { NewsPostThread } from './threads/NewsPostThread';
+import { NewsUpdateThread } from './threads/NewsUpdateThread';
 
 interface NewsProps {
   sx?: SxProps;
@@ -82,7 +82,13 @@ export const NewsFeed = (props: NewsProps) => {
                     case ObjectType.COLLABORATION_QUESTION:
                       return <NewsCollabQuestionCard question={entry.item as CollaborationQuestion} />;
                     case ObjectType.COLLABORATION_COMMENT:
-                      return <NewsCollabCommentCard item={entry.item as CollaborationComment} />;
+                      const collaborationComment = entry.item as CollaborationComment;
+                      return (
+                        <NewsCollaborationCommentThread
+                          comment={collaborationComment}
+                          onDelete={() => removeEntry(entry)}
+                        />
+                      );
                     case ObjectType.SURVEY_QUESTION:
                       return <NewsSurveyCard surveyQuestion={entry.item as SurveyQuestion} />;
                     case ObjectType.POST:

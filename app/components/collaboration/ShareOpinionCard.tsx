@@ -17,7 +17,6 @@ type ShareOpinionCardProps = {
 
 export const ShareOpinionCard = ({ projectName, handleClick }: ShareOpinionCardProps) => {
   const { user } = useUser();
-
   return (
     <>
       {user && (

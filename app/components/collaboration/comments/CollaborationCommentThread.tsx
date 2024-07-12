@@ -1,133 +1,34 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
-import { SeverityLevel } from '@microsoft/applicationinsights-web';
+import { Comment } from '@/common/types';
+import { CollaborationCommentCard } from '@/components/collaboration/comments/CollaborationCommentCard';
+import { CollaborationCommentResponseThread } from '@/components/collaboration/comments/CollaborationCommentResponseThread';
+import { CommentThread } from '@/components/newsPage/threads/CommentThread';
+import { useCollaborationCommentThread } from '@/components/newsPage/threads/NewsCollaborationCommentThread';
 
-import Stack from '@mui/material/Stack';
-
-import { Comment, CommentResponse } from '@/common/types';
-import { TransparentAddButton } from '@/components/common/AddItemButton';
-import { errorMessage } from '@/components/common/CustomToast';
-import * as m from '@/src/paraglide/messages.js';
-import { getProjectCollaborationCommentResponses } from '@/utils/requests/collaborationComments/requests';
-
-import WriteCommentResponseCard from '../../common/comments/WriteCommentResponseCard';
-
-import { addProjectCollaborationCommentResponse } from './actions';
-import { CollaborationCommentCard } from './CollaborationCommentCard';
-import { CollaborationCommentResponseCard } from './CollaborationCommentResponseCard';
-
-type CollaborationCommentThreadProps = {
+interface CollaborationCommentThreadProps {
   comment: Comment;
-  onDeleteComment: () => void;
   projectName?: string;
-};
-
-interface useCollaborationCommentThreadProps {
-  comment: Comment;
+  onDelete: () => void;
 }
 
 export const CollaborationCommentThread = (props: CollaborationCommentThreadProps) => {
-  const { comment, onDeleteComment, projectName } = props;
-  const { responses, displayResponses, setDisplayResponses, handleResponse, removeResponse } =
-    useCollaborationCommentThread({
-      comment: comment,
-    });
+  const { comment, projectName, onDelete } = props;
+  const { fetchResponses, addResponse } = useCollaborationCommentThread(props);
 
   return (
-    <Stack spacing={3}>
-      <CollaborationCommentCard comment={comment} projectName={projectName} onDelete={onDeleteComment} />
-
-      {!displayResponses && comment.responseCount > 0 && (
-        <TransparentAddButton onClick={() => setDisplayResponses(true)}>
-          {m.components_collaboration_comments_collaborationCommentThread_showComments()} ({comment.responseCount})
-        </TransparentAddButton>
+    <CommentThread
+      comment={comment}
+      card={<CollaborationCommentCard comment={comment} projectName={projectName} onDelete={onDelete} />}
+      fetchResponses={fetchResponses}
+      addResponse={addResponse}
+      renderResponse={(response, idx, deleteResponse) => (
+        <CollaborationCommentResponseThread
+          key={`${idx}-${response.id}`}
+          response={response}
+          onDelete={deleteResponse}
+        />
       )}
-
-      <WriteCommentResponseCard
-        comment={comment}
-        projectName={projectName}
-        onRespond={handleResponse}
-        sx={{ paddingLeft: '2.5em' }}
-      />
-
-      {responses.length > 0 && (
-        <Stack spacing={3} sx={{ paddingLeft: '2.5em' }}>
-          {responses.map((response) => (
-            <CollaborationCommentResponseCard
-              key={response.id}
-              response={response}
-              projectName={projectName}
-              onDelete={() => removeResponse(response)}
-            />
-          ))}
-        </Stack>
-      )}
-    </Stack>
+      disableDivider={true}
+      indentResponses={'3em'}
+    />
   );
 };
-
-export function useCollaborationCommentThread({ comment }: useCollaborationCommentThreadProps) {
-  const [displayResponses, setDisplayResponses] = useState(false);
-  const [responses, setResponses] = useState<CommentResponse[]>([]);
-  const appInsights = useAppInsightsContext();
-
-  useEffect(
-    function loadResponseseIfTheyAreDisplayed() {
-      async function loadResponses() {
-        try {
-          const loadingResult = await getProjectCollaborationCommentResponses({ comment });
-          setResponses(loadingResult.data ?? []);
-        } catch (error) {
-          console.error('Failed to load responses:', error);
-          errorMessage({ message: m.components_collaboration_comments_collaborationCommentThread_loadError() });
-          appInsights.trackException({
-            exception: new Error('Failed to load comment responses.', { cause: error }),
-            severityLevel: SeverityLevel.Error,
-          });
-        }
-      }
-
-      if (displayResponses) {
-        loadResponses();
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [comment, displayResponses],
-  );
-
-  const handleResponse = async (response: string) => {
-    try {
-      const result = await addProjectCollaborationCommentResponse({
-        comment: comment,
-        response: response,
-      });
-
-      const commentResponse = result.data;
-
-      if (commentResponse) {
-        setDisplayResponses(true);
-        setResponses((old) => [...old, commentResponse]);
-      }
-    } catch (error) {
-      console.error('Failed to submit response:', error);
-      errorMessage({ message: m.components_collaboration_comments_collaborationCommentThread_submitError() });
-      appInsights.trackException({
-        exception: new Error('Failed to submit response.', { cause: error }),
-        severityLevel: SeverityLevel.Error,
-      });
-    }
-  };
-
-  const removeResponse = (response: CommentResponse) => {
-    setResponses((old) => old.filter((r) => r.id !== response.id));
-  };
-
-  return {
-    responses,
-    displayResponses,
-    setDisplayResponses,
-    handleResponse,
-    removeResponse,
-  };
-}

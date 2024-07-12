@@ -13,7 +13,7 @@ import { getComments, isCommentUpvotedBy } from '@/repository/db/project_comment
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
-import { getFulfilledResults, getPromiseResults, sortDateByCreatedAt } from '@/utils/helpers';
+import { getFulfilledResults, getPromiseResults, sortDateByCreatedAtAsc } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapFollow } from '@/utils/newsFeed/redis/redisMappings';
 import { getCollaborationQuestionsByProjectId } from '@/utils/requests/collaborationQuestions/requests';
@@ -218,7 +218,7 @@ export const getProjectComments = async (body: { projectId: string }) => {
       const result = await getComments(dbClient, body.projectId);
 
       const comments = await Promise.allSettled(
-        sortDateByCreatedAt(result).map(async (comment) => {
+        sortDateByCreatedAtAsc(result).map(async (comment) => {
           const author = await getInnoUserByProviderId(comment.author);
           const upvotes = await Promise.allSettled(
             comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote)),
