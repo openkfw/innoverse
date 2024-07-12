@@ -6,7 +6,7 @@ import GitLabProvider from 'next-auth/providers/gitlab';
 
 import { UserSession } from '@/common/types';
 import { serverConfig } from '@/config/server';
-import { createInnoUserIfNotExist } from '@/utils/requests/innoUsers/requests';
+import { createInnoUserIfNotExist, getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 
 const loadProviders = () => {
   // Only checking if one of the required variables is set, the ENV validation does the rest.
@@ -71,15 +71,23 @@ export const options: NextAuthOptions = {
     },
     async jwt({ token, account }) {
       if (account && token.name && token.email) {
+        const providerId = token.sub ?? account.providerAccountId;
+        const strapiImage = await getStrapiUserImage(providerId);
+        const userImage = strapiImage ?? token.picture;
+
         token.accessToken = account.access_token;
         token.provider = account.provider;
+        token.picture = userImage;
+
         const user: UserSession = {
           name: token.name,
           email: token.email,
-          providerId: token.sub as string,
+          providerId: providerId,
           provider: token.provider as string,
+          image: userImage ?? undefined,
         };
-        await createInnoUserIfNotExist(user, token.picture);
+
+        await createInnoUserIfNotExist(user, userImage);
       }
       return token;
     },
@@ -107,6 +115,15 @@ export const options: NextAuthOptions = {
   jwt: {
     maxAge: 1 * 24 * 60 * 60, // 1 day
   },
+};
+
+const getStrapiUserImage = async (providerId: string) => {
+  try {
+    const strapiUser = await getInnoUserByProviderId(providerId);
+    return strapiUser.image;
+  } catch (_: unknown) {
+    return undefined;
+  }
 };
 
 const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
