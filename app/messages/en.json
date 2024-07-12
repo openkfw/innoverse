@@ -285,6 +285,18 @@
 
   "components_newsPage_cards_common_threads_itemWithCommentsThread_showMore": "Show more comments",
 
+  "components_newsPage_cards_newsCard_error_update": "Failed to update news. Please try again.",
+
+  "components_newsPage_cards_newsCard_error_delete": "Failed to delete news. Please try again.",
+
+  "components_newsPage_cards_commentCard_error_update": "Failed to update comment. Please try again.",
+
+  "components_newsPage_cards_commentCard_error_delete": "Failed to delete comment. Please try again.",
+
+  "components_newsPage_thread_fetch_error": "Failed to load comments. Please try again.",
+
+  "components_newsPage_thread_add_response_error": "Failed to add comment. Please try again.",
+
   "components_newsPage_newsFilter_applyFilterButton_apply": "Apply selection",
 
   "components_newsPage_newsFilter_mobileNewsFilter_filter": "Filter",

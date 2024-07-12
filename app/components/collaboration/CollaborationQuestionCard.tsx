@@ -16,7 +16,7 @@ import { CollaborationQuestion, Comment } from '@/common/types';
 import { UserAvatar } from '@/components/common/UserAvatar';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
-import { sortDateByCreatedAt } from '@/utils/helpers';
+import { sortDateByCreatedAtDesc } from '@/utils/helpers';
 
 import { errorMessage } from '../common/CustomToast';
 import WriteTextCard from '../common/editing/writeText/WriteTextCard';
@@ -41,7 +41,9 @@ export const CollaborationQuestionCard = ({
 }: CollaborationQuestionCardProps) => {
   const { title, description, authors, comments: projectComments } = content;
   const { setCollaborationCommentsAmount } = useProject();
-  const [comments, setComments] = useState<Comment[]>(projectComments);
+  const sortedProjectComments = sortDateByCreatedAtDesc(projectComments);
+
+  const [comments, setComments] = useState<Comment[]>(sortedProjectComments);
   const [writeNewComment, setWriteNewComment] = useState(false);
   const appInsights = useAppInsightsContext();
 
@@ -88,7 +90,7 @@ export const CollaborationQuestionCard = ({
         });
         return;
       }
-      const newComments = sortDateByCreatedAt([...comments, newComment]);
+      const newComments = [newComment, ...comments];
       setComments(newComments);
       setCollaborationCommentsAmount(newComments.length);
     } catch (error) {
@@ -98,6 +100,8 @@ export const CollaborationQuestionCard = ({
         exception: new Error('Failed to submit comment.'),
         severityLevel: SeverityLevel.Error,
       });
+    } finally {
+      setWriteNewComment(false);
     }
   };
 

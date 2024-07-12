@@ -63,7 +63,7 @@ export const handleProjectUpdate = withAuth(
       status: StatusCodes.OK,
       data: {
         ...newUpdate,
-        author: user,
+        author: author,
       },
     };
   },

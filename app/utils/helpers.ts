@@ -4,8 +4,12 @@ import { SxProps } from '@mui/material/styles';
 
 import { ImageFormats, NewsFeedEntry, ObjectType, Reaction } from '@/common/types';
 
-export const sortDateByCreatedAt = <T extends { createdAt: Date }>(array: T[]): T[] => {
+export const sortDateByCreatedAtAsc = <T extends { createdAt: Date }>(array: T[]): T[] => {
   return array.sort((d1: T, d2: T) => d1.createdAt.getTime() - d2.createdAt.getTime());
+};
+
+export const sortDateByCreatedAtDesc = <T extends { createdAt: Date }>(array: T[]): T[] => {
+  return array.sort((d1: T, d2: T) => d2.createdAt.getTime() - d1.createdAt.getTime());
 };
 
 export function getFulfilledResults<T>(results: PromiseSettledResult<T>[]) {

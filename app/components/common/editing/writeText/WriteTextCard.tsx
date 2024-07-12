@@ -36,6 +36,7 @@ interface WriteTextCardProps {
   avatar?: UserAvatarProps;
   submitButton?: React.ReactNode;
   disableAvatar?: boolean;
+  disabled?: boolean;
   sx?: SxProps;
 }
 
@@ -50,6 +51,7 @@ const WriteTextCard = ({
   submitButton,
   defaultValues,
   disableAvatar = false,
+  disabled = false,
   avatar,
   sx,
 }: WriteTextCardProps) => {
@@ -67,6 +69,7 @@ const WriteTextCard = ({
 
   const submit: SubmitHandler<TextFormValidationSchema> = async (data) => {
     try {
+      if (disabled) return;
       await onSubmit(data.text);
       form.reset();
     } catch (error) {
@@ -125,7 +128,7 @@ const WriteTextCard = ({
               <InteractionButton
                 projectName={metadata?.projectName}
                 interactionType={InteractionType.COMMENT_SEND}
-                disabled={!formState.isDirty || !formState.isValid}
+                disabled={!formState.isDirty || !formState.isValid || disabled}
               />
             )}
           </div>

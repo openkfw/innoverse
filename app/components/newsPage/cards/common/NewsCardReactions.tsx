@@ -13,12 +13,24 @@ export interface NewsCardReactionsProps {
   entry: NewsFeedEntry;
 }
 
-export function NewsCardReactions({ entry }: NewsCardReactionsProps) {
-  const [card, setCard] = useState<NewsFeedEntry>(entry);
+export function NewsCardReactions(props: NewsCardReactionsProps) {
+  const { newsFeedEntry, reactionCounts, handleReaction } = useNewsCardReactions(props);
+
+  return (
+    <EmojiReactionCard
+      countOfReactions={reactionCounts}
+      userReaction={newsFeedEntry.item.reactionForUser}
+      handleReaction={handleReaction}
+    />
+  );
+}
+
+const useNewsCardReactions = ({ entry }: NewsCardReactionsProps) => {
+  const [newsFeedEntry, setNewsFeedEntry] = useState<NewsFeedEntry>(entry);
   const appInsights = useAppInsightsContext();
 
   useEffect(() => {
-    setCard(entry);
+    setNewsFeedEntry(entry);
   }, [entry]);
 
   const handleReaction = async (emoji: Emoji, operation: 'upsert' | 'delete') => {
@@ -29,7 +41,7 @@ export function NewsCardReactions({ entry }: NewsCardReactionsProps) {
         objectType: entry.type,
       });
       if (newsFeedItem) {
-        setCard(newsFeedItem);
+        setNewsFeedEntry(newsFeedItem);
       }
     } catch (error) {
       console.error('Failed to handle reaction on the update:', error);
@@ -53,13 +65,11 @@ export function NewsCardReactions({ entry }: NewsCardReactionsProps) {
     return Object.values(reactionCounts);
   };
 
-  const reactionCounts = useMemo(() => aggregateReactions(card.item.reactions || []), [card]);
+  const reactionCounts = useMemo(() => aggregateReactions(newsFeedEntry.item.reactions || []), [newsFeedEntry]);
 
-  return (
-    <EmojiReactionCard
-      countOfReactions={reactionCounts}
-      userReaction={card.item.reactionForUser}
-      handleReaction={handleReaction}
-    />
-  );
-}
+  return {
+    newsFeedEntry,
+    handleReaction,
+    reactionCounts,
+  };
+};

@@ -12,17 +12,19 @@ import Typography from '@mui/material/Typography';
 import { parseStringForLinks } from '@/components/common/LinkString';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
+import { mergeStyles } from '@/utils/helpers';
 
 interface TextCardProps {
   text: string;
   header?: React.ReactNode;
   footer?: React.ReactNode;
   sx?: SxProps;
+  contentSx?: SxProps;
 }
 
 const MAX_TEXT_LENGTH = 200;
 
-export const TextCard = ({ text, header, footer, sx }: TextCardProps) => {
+export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const getText = () => {
@@ -43,7 +45,7 @@ export const TextCard = ({ text, header, footer, sx }: TextCardProps) => {
   return (
     <Card sx={{ ...cardStyle, ...sx }}>
       {header}
-      <CardContent sx={{ ...cardContentStyles }} style={{ paddingBottom: 0 }}>
+      <CardContent sx={mergeStyles(cardContentStyles, contentSx)} style={{ paddingBottom: 0 }}>
         <Stack direction="column" spacing={2}>
           <Box sx={{ ...textContainerStyle, overflowWrap: isCollapsed ? 'break-word' : 'unset' }}>
             <Typography variant="body1" sx={textStyle}>

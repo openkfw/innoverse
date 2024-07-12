@@ -40,6 +40,7 @@ export type CollaborationComment = CommonNewsFeedProps & {
   author: User;
   comment: string;
   upvotedBy: string[];
+  responseCount: number;
   projectId: string;
   projectName: string;
   question: CollaborationQuestion;
@@ -76,7 +77,7 @@ export type CommentResponse = {
   response: string;
   createdAt: Date;
   upvotedBy: User[];
-  comment: Comment;
+  comment: Comment | CollaborationComment;
 };
 
 export type ResponseOption = {

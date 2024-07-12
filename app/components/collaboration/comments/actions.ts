@@ -1,7 +1,7 @@
 'use server';
 import { StatusCodes } from 'http-status-codes';
 
-import { Comment, CommentResponse, User, UserSession } from '@/common/types';
+import { CollaborationComment, Comment, User, UserSession } from '@/common/types';
 import { getCollaborationCommentById } from '@/repository/db/collaboration_comment';
 import {
   getCollaborationCommentResponseById,
@@ -45,6 +45,7 @@ export const addProjectCollaborationComment = withAuth(
     try {
       const validatedParams = validateParams(addCollaborationCommentSchema, body);
       if (validatedParams.status === StatusCodes.OK) {
+        const author = await getInnoUserByProviderId(user.providerId);
         const newComment = await addCollaborationComment({
           comment: {
             comment: body.comment,
@@ -57,7 +58,7 @@ export const addProjectCollaborationComment = withAuth(
           status: StatusCodes.OK,
           data: {
             ...newComment,
-            author: user,
+            author,
             upvotedBy: [],
             responseCount: 0,
           },
@@ -189,7 +190,7 @@ export const handleProjectCollaborationCommentUpvotedBy = withAuth(
 );
 
 export const addProjectCollaborationCommentResponse = withAuth(
-  async (user: UserSession, body: { comment: Comment; response: string }) => {
+  async (user: UserSession, body: { comment: Comment | CollaborationComment; response: string }) => {
     const validatedParams = validateParams(addCollaborationCommentResponseSchema, body);
 
     if (validatedParams.status !== StatusCodes.OK) {
@@ -199,17 +200,16 @@ export const addProjectCollaborationCommentResponse = withAuth(
       };
     }
 
+    const author = await getInnoUserByProviderId(user.providerId);
     const response = await addCollaborationCommentResponse({ user, response: body.response, comment: body.comment });
     const getUpvoters = response.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote));
     const upvoters = await getPromiseResults(getUpvoters);
 
-    const createdResponse: CommentResponse = {
+    const createdResponse = {
       ...response,
       comment: body.comment,
       upvotedBy: upvoters.filter((u) => u) as User[],
-      author: {
-        ...user,
-      },
+      author,
     };
 
     return {

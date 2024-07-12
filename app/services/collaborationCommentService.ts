@@ -2,7 +2,7 @@
 
 import type { CollaborationComment as PrismaCollaborationComment } from '@prisma/client';
 
-import { ObjectType, User, UserSession, CollaborationComment } from '@/common/types';
+import { ObjectType, User, UserSession } from '@/common/types';
 import {
   addCollaborationCommentToDb,
   deleteCollaborationCommentInDb,
