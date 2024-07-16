@@ -10,15 +10,15 @@ import Grid from '@mui/material/Grid';
 import { SxProps, Theme } from '@mui/material/styles';
 
 import { ObjectType, ProjectUpdateWithAdditionalData } from '@/common/types';
+import { UpdateEmojiReactionCard } from '@/components/collaboration/emojiReactions/cards/UpdateEmojiReactionCard';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import { LinkWithArrowLeft } from '@/components/common/LinkWithArrowLeft';
-import { UpdateCardContent } from '@/components/common/UpdateCardText';
+import { UpdateCardContent } from '@/components/common/UpdateCardContent';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
-import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/cards/UpdateEmojiReactionCard';
 import { errorMessage } from '../common/CustomToast';
 
 interface NewsCardProps {

@@ -26,7 +26,7 @@ export const handlePost = withAuth(async (user: UserSession, body: Omit<PostForm
         status: StatusCodes.OK,
         data: {
           ...newPost,
-          author: user,
+          author,
         },
       };
     }

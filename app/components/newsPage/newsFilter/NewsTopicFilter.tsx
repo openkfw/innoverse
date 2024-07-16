@@ -25,7 +25,7 @@ export default function NewsTopicFilter(props: NewsFilterProps) {
     <FilterSelect
       title={m.components_newsPage_newsFilter_newsTopicFilter_topics()}
       options={options}
-      maxOptionsToDisplayCollapsed={3}
+      maxOptionsToDisplayCollapsed={5}
       onSelect={updateFilters}
     />
   );

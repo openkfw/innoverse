@@ -11,9 +11,8 @@ services:
       - POSTGRES_MULTIPLE_DATABASES=innohub,strapi
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    ports:
-      - 5432:5432
     restart: on-failure
+    network_mode: host
 
   strapi:
     container_name: strapi
@@ -21,7 +20,7 @@ services:
     restart: unless-stopped
     env_file: ./strapi/.env
     environment:
-      DATABASE_HOST: database
+      DATABASE_HOST: 127.0.0.1
       NODE_ENV: ${NODE_ENV}
     volumes:
       - ./strapi/config:/opt/app/config
@@ -31,7 +30,18 @@ services:
       - ./strapi/.env:/opt/app/.env
       - ./strapi/public/uploads:/opt/app/public/uploads
       - ./strapi/types:/opt/app/types
-    ports:
-      - "1337:1337"
     depends_on:
       - database
+      - cache
+    network_mode: host
+
+  cache:
+    image: redis/redis-stack:latest
+    environment:
+      - REDIS_ARGS=--appendonly yes --appendfsync everysec
+    restart: always
+    ports:
+      - 8001:8001
+      - 6379:6379
+    volumes:
+      - ./cache:/data

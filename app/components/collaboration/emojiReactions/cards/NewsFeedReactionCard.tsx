@@ -14,26 +14,37 @@ import {
 import { errorMessage } from '@/components/common/CustomToast';
 import * as m from '@/src/paraglide/messages.js';
 
-export interface NewsCardReactionsProps {
+export interface NewsFeedReactionCardProps {
   entry: NewsFeedEntry;
 }
 
-export function NewsCardReactions(props: NewsCardReactionsProps) {
-  const [entry, setEntry] = useState<NewsFeedEntry>(props.entry);
+export function NewsFeedReactionCard(props: NewsFeedReactionCardProps) {
+  const { newsFeedEntry, reactionCounts, handleReaction } = useNewsCardReactions(props);
 
+  return (
+    <EmojiReactionCard
+      countOfReactions={reactionCounts}
+      userReaction={newsFeedEntry.item.reactionForUser}
+      handleReaction={handleReaction}
+    />
+  );
+}
+
+const useNewsCardReactions = (props: NewsFeedReactionCardProps) => {
+  const [newsFeedEntry, setNewsFeedEntry] = useState<NewsFeedEntry>(props.entry);
   const appInsights = useAppInsightsContext();
 
   const { applyReaction } = useOptimisticReactions({
-    objectId: entry.item.id,
-    objectType: entry.type,
-    currentState: entry,
-    setCurrentState: setEntry,
+    objectId: newsFeedEntry.item.id,
+    objectType: newsFeedEntry.type,
+    currentState: newsFeedEntry,
+    setCurrentState: setNewsFeedEntry,
     applyReactionOffline: applyNewsFeedReactionOffline,
   });
 
   useEffect(() => {
-    setEntry(entry);
-  }, [entry]);
+    setNewsFeedEntry(props.entry);
+  }, [props.entry]);
 
   const handleReaction = async (emoji: Emoji, operation: 'upsert' | 'delete') => {
     try {
@@ -60,13 +71,11 @@ export function NewsCardReactions(props: NewsCardReactionsProps) {
     return Object.values(reactionCounts);
   };
 
-  const reactionCounts = useMemo(() => aggregateReactions(entry.item.reactions || []), [entry]);
+  const reactionCounts = useMemo(() => aggregateReactions(newsFeedEntry.item.reactions || []), [newsFeedEntry]);
 
-  return (
-    <EmojiReactionCard
-      countOfReactions={reactionCounts}
-      userReaction={entry.item.reactionForUser}
-      handleReaction={handleReaction}
-    />
-  );
-}
+  return {
+    newsFeedEntry,
+    reactionCounts,
+    handleReaction,
+  };
+};

@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 
 import useHydration from '@/components/common/Hydration';
 import { FiltersSkeleton } from '@/components/skeletons/FiltersSkeleton';
+import * as m from '@/src/paraglide/messages.js';
 
 export type FilterOption = { name: string; label: string; count: number };
 
@@ -22,10 +23,12 @@ export default function FilterSelect(props: {
   maxOptionsToDisplayCollapsed?: number;
   onSelect: (selectedFilters: string[]) => void;
 }) {
-  const { title, options, maxOptionsToDisplayCollapsed = 20, isLoading = false, onSelect } = props;
+  const { title, options, maxOptionsToDisplayCollapsed = 5, isLoading = false, onSelect } = props;
 
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [expanded, setExpanded] = useState(false);
+
+  const collapsedOptionCount = options ? options.length - maxOptionsToDisplayCollapsed : 0;
 
   const { hydrated } = useHydration();
 
@@ -71,8 +74,12 @@ export default function FilterSelect(props: {
               />
             ))}
             {options.length > maxOptionsToDisplayCollapsed && !expanded && (
-              <Typography onClick={toggleExpand} color="secondary" sx={{ textDecoration: 'underline' }}>
-                Mehr anzeigen
+              <Typography
+                onClick={toggleExpand}
+                color="secondary"
+                sx={{ textDecoration: 'underline', cursor: 'pointer' }}
+              >
+                {m.components_common_filterSelect_showMore({ count: collapsedOptionCount })}
               </Typography>
             )}
             <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -87,8 +94,12 @@ export default function FilterSelect(props: {
                 ))}
               </Stack>
               {options.length > maxOptionsToDisplayCollapsed && expanded && (
-                <Typography onClick={toggleExpand} color="secondary" sx={{ textDecoration: 'underline' }}>
-                  Weniger anzeigen
+                <Typography
+                  onClick={toggleExpand}
+                  color="secondary"
+                  sx={{ textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                  {m.components_common_filterSelect_showLess()}
                 </Typography>
               )}
             </Collapse>

@@ -50,9 +50,9 @@ export function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardP
     }
   };
 
-  const updateComment = (updatedText: string) => {
+  const updateComment = async (updatedText: string) => {
     try {
-      updateProjectComment({ commentId: comment.id, updatedText });
+      await updateProjectComment({ commentId: comment.id, updatedText });
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
       errorMessage({ message: m.components_projectdetails_comments_projectCommentCard_updateError() });

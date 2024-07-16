@@ -48,8 +48,9 @@ const StyledChip = styled(Chip)<{ voteshown: string; isselectedoption: string; f
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'stretch',
-    borderRadius: '4px',
+    borderRadius: '100px',
     fontSize: '13px',
+    fontWeight: '400',
     color: theme.palette.common.black,
     background,
     ':hover': {

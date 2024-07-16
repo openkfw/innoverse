@@ -50,6 +50,9 @@ function NewsProjectCard(props: NewsProjectCardProps) {
               height: isWideScreen ? 132 : 177,
             }}
           />
+          <Box sx={progressBarMobileStyles}>
+            <ProgressBar active={project.status} />
+          </Box>
         </CardMedia>
 
         <CardContent sx={cardContentStyles}>
@@ -59,12 +62,11 @@ function NewsProjectCard(props: NewsProjectCardProps) {
               {project.title}
             </Link>
           </Typography>
-          <Typography variant="body1" sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? 2 : 6 }}>
+          <Typography variant="body1" sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? 4 : 6 }}>
             {project.summary}
           </Typography>
         </CardContent>
       </Box>
-
       <Box sx={progressBarStyles}>
         <ProgressBar active={project.status} />
       </Box>
@@ -114,6 +116,7 @@ const titleStyles = {
   width: 'fit-content',
   color: 'text.primary',
   fontSize: '20px',
+  mb: 1,
 
   [theme.breakpoints.down('sm')]: {
     margin: '8px 0',
@@ -134,7 +137,19 @@ const descriptionStyles = {
 };
 
 const progressBarStyles = {
-  margin: 0,
-  marginTop: 2,
-  padding: 0,
+  marginTop: 1.5,
+
+  [theme.breakpoints.up('sm')]: {
+    visibility: 'hidden',
+    marginTop: -5,
+  },
+};
+
+const progressBarMobileStyles = {
+  marginTop: 1.5,
+
+  [theme.breakpoints.down('sm')]: {
+    visibility: 'hidden',
+    marginTop: -5,
+  },
 };

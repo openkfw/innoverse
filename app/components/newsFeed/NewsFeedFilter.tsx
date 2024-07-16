@@ -39,4 +39,6 @@ const cardStyles = {
   background: 'rgba(255, 255, 255, 0.10)',
   boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
   backdropFilter: 'blur(20px)',
+  overflowY: 'auto',
+  maxHeight: 'calc(100vh - 180px)',
 };

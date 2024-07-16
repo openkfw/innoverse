@@ -2,4 +2,5 @@ helm/**/charts
 
 .idea/
 .env
-.cache/
+
+/cache

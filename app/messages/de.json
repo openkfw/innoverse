@@ -68,7 +68,7 @@
 
   "components_common_commentCardHeaderSecondary_imageAlt": "badge",
 
-  "components_common_filterSelect_showMore": "Mehr anzeigen",
+  "components_common_filterSelect_showMore": "{count} weitere anzeigen",
   "components_common_filterSelect_showLess": "Weniger anzeigen",
 
   "components_common_interactionButton_like": "Gefällt mir",
@@ -284,6 +284,18 @@
   "components_newsPage_cards_common_writeCommentCard_done": "Fertig",
 
   "components_newsPage_cards_common_threads_itemWithCommentsThread_showMore": "weitere Kommentare anzeigen",
+
+  "components_newsPage_cards_newsCard_error_update": "Der Beitrag konnte nicht aktualisiert werden. Bitte versuche es noch einmal",
+
+  "components_newsPage_cards_newsCard_error_delete": "Der Beitrag konnte nicht gelöscht werden. Bitte versuche es noch einmal",
+
+  "components_newsPage_cards_commentCard_error_update": "Der Kommentar konnte nicht aktualisiert werden. Bitte versuche es noch einmal",
+
+  "components_newsPage_cards_commentCard_error_delete": "Der Kommentar konnte nicht gelöscht werden. Bitte versuche es noch einmal",
+
+  "components_newsPage_thread_fetch_error": "Kommentare konnten nicht geladen werden. Bitte versuche es noch einmal.",
+
+  "components_newsPage_thread_add_response_error": "Kommentar konnte nicht erstellt werden. Bitte versuche es noch einmal.",
 
   "components_newsPage_newsFilter_applyFilterButton_apply": "Auswahl bestätigen",
 

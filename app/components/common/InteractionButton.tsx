@@ -54,6 +54,7 @@ export enum InteractionType {
   ALLOW_NOTIFICATIONS = 'allow-notifications',
   DISMISS_NOTIFICATION_BANNER = 'dismiss-notification-banner',
   ADD_POST = 'add-post',
+  SHOW_PAST_EVENTS = 'show-past-events',
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
@@ -83,6 +84,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.PROJECT_FOLLOW) return <BookmarkAddOutlinedIcon fontSize="small" />;
     if (interactionType === InteractionType.ALLOW_NOTIFICATIONS) return <CheckOutlinedIcon fontSize="small" />;
     if (interactionType === InteractionType.DISMISS_NOTIFICATION_BANNER) return;
+    if (interactionType === InteractionType.SHOW_PAST_EVENTS) return;
   };
 
   function handleIconClick(e: React.MouseEvent) {
@@ -117,6 +119,8 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.CLEAR) return m.components_common_interactionButton_clear();
     if (interactionType === InteractionType.ADD_UPDATE) return m.components_common_interactionButton_addUpdate();
     if (interactionType === InteractionType.ADD_POST) return m.components_common_interactionButton_addUpdate();
+    if (interactionType === InteractionType.SHOW_PAST_EVENTS)
+      return m.components_projectdetails_events_filteringPanel_previousTopics();
   };
 
   const getButtonTextClicked = () => {

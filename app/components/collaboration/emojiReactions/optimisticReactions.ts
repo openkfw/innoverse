@@ -118,28 +118,31 @@ export function applyItemReactionOffline(
   operation: 'upsert' | 'delete',
 ): EventWithAdditionalData | ProjectUpdateWithAdditionalData {
   const reactionCount = item.reactionCount;
+  const userReactionIdx = reactionCount.findIndex((r) => r.emoji.shortCode === item.reactionForUser?.shortCode);
+
+  // Remove user reaction
+  if (userReactionIdx > -1) {
+    reactionCount[userReactionIdx].count--;
+    if (reactionCount[userReactionIdx].count === 0) {
+      reactionCount.splice(userReactionIdx, 1);
+    }
+  }
+
+  if (operation === 'delete') {
+    return createItem(item, reactionCount);
+  }
+
+  // Add new reaction
   const emojiIdx = reactionCount.findIndex((r) => r.emoji.shortCode === emoji.shortCode);
 
-  if (operation === 'upsert') {
-    if (emojiIdx > -1) {
-      reactionCount[emojiIdx].count++;
-    } else {
-      reactionCount.push({ emoji, count: 1 });
-    }
-
-    const userReaction = createUserReaction({ objectId: item.id, objectType: ObjectType.UPDATE, emoji });
-    return createItem(item, reactionCount, userReaction);
-  }
-
   if (emojiIdx > -1) {
-    reactionCount[emojiIdx].count--;
-
-    if (reactionCount[emojiIdx].count === 0) {
-      reactionCount.splice(emojiIdx, 1);
-    }
+    reactionCount[emojiIdx].count++;
+  } else {
+    reactionCount.push({ emoji, count: 1 });
   }
 
-  return createItem(item, reactionCount);
+  const userReaction = createUserReaction({ objectId: item.id, objectType: ObjectType.UPDATE, emoji });
+  return createItem(item, reactionCount, userReaction);
 }
 
 function createNewsFeedEntry(entry: NewsFeedEntry, reactions?: Reaction[], reactionForUser?: Reaction): NewsFeedEntry {

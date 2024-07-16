@@ -54,16 +54,15 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
     <EditingContextProvider>
       <Grid container spacing={2}>
         <Grid item xs={12} md={4} lg={3}>
-          <Box display="flex" flexDirection="column">
-            <Card sx={cardStyles}>
-              <Typography variant="h2" sx={cardTitleStyles}>
-                {m.components_newsFeed_newsFeedContainer_news()}
-              </Typography>
-              <Typography variant="subtitle1" sx={{ mt: 1, fontSize: 16 }}>
-                {m.components_newsFeed_newsFeedContainer_allNewsText()}
-              </Typography>
-            </Card>
-
+          <Card sx={cardStyles}>
+            <Typography variant="h2" sx={cardTitleStyles}>
+              {m.components_newsFeed_newsFeedContainer_news()}
+            </Typography>
+            <Typography variant="subtitle1" sx={cardSubtitleStyles}>
+              {m.components_newsFeed_newsFeedContainer_allNewsText()}
+            </Typography>
+          </Card>
+          <Box sx={stickyContainer}>
             <InteractionButton
               onClick={handleOpenAddUpdateDialog}
               interactionType={InteractionType.ADD_UPDATE}
@@ -85,7 +84,7 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
             </Box>
           </Box>
         </Grid>
-        <Grid item xs={12} md={8} lg={8}>
+        <Grid item xs={12} md={8} lg={9}>
           {children}
         </Grid>
       </Grid>
@@ -100,6 +99,7 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
     </EditingContextProvider>
   );
 }
+
 const cardStyles = {
   px: 3,
   py: 4,
@@ -114,10 +114,24 @@ const cardTitleStyles = {
   fontSize: '48px',
 };
 
+const cardSubtitleStyles = {
+  mt: 1,
+  fontSize: 16,
+};
+
+const stickyContainer = {
+  display: 'flex',
+  flexDirection: 'column',
+  position: 'sticky',
+  top: 50,
+  overflowY: 'auto',
+};
+
 const buttonStyles = {
   my: 4,
   px: '24px',
   py: '8px',
   height: '48px',
   border: '2px solid rgba(255, 255, 255, 0.40)',
+  boxShadow: 'unset',
 };

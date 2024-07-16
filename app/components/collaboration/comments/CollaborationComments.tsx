@@ -44,7 +44,7 @@ export const CollaborationComments = (props: CommentsProps) => {
           key={comment.id}
           comment={comment}
           projectName={projectName}
-          onDeleteComment={() => onDeleteComment(comment)}
+          onDelete={() => onDeleteComment(comment)}
         />
       ))}
 
@@ -55,15 +55,16 @@ export const CollaborationComments = (props: CommentsProps) => {
               key={comment.id}
               comment={comment}
               projectName={projectName}
-              onDeleteComment={() => onDeleteComment(comment)}
+              onDelete={() => onDeleteComment(comment)}
             />
           </Collapse>
         ))}
       {!isCollapsed && comments.length > MAX_NUM_OF_COMMENTS && (
         <TransparentButton
           onClick={handleToggle}
-          startIcon={<AddIcon color="secondary" fontSize="large" />}
-          style={{ marginLeft: '1.5em', marginBottom: 2 }}
+          startIcon={<AddIcon sx={{ color: 'primary.main' }} fontSize="large" />}
+          style={{ marginLeft: '-0.5em', marginBottom: 2 }}
+          textSx={{ color: 'primary.main' }}
         >
           {m.components_collaboration_comments_collaborationComments_showMoreComments()} ({lengthOfNotShownComments})
         </TransparentButton>

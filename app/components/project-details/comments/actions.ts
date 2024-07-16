@@ -13,6 +13,7 @@ import {
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
+import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
@@ -31,11 +32,12 @@ export const addProjectComment = withAuth(async (user: UserSession, body: { proj
     const validatedParams = validateParams(handleCommentSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
       const newComment = await addComment(dbClient, body.projectId, user.providerId, body.comment);
+      const author = await getInnoUserByProviderId(user.providerId);
       return {
         status: StatusCodes.OK,
         data: {
           ...newComment,
-          author: user,
+          author,
           upvotedBy: [],
           responseCount: 0,
           questionId: '',

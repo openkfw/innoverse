@@ -1,5 +1,8 @@
+import { SetStateAction } from 'react';
+
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { ObjectType, Project } from '@/common/types';
@@ -8,6 +11,7 @@ import theme from '@/styles/theme';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 import ReminderIcon from '../icons/ReminderIcon';
 
+import { CountOfTheme } from './events/EventsTab';
 import { handleFollow, handleRemoveFollower } from './likes-follows/actions';
 
 interface EmptyTabContentProps {
@@ -17,6 +21,15 @@ interface EmptyTabContentProps {
   setFollowersAmount: (amount: number) => void;
   project: Project;
   message: string;
+  pastEventsAvailable?: boolean;
+  currentFilters?: { searchTerm: string; pastEventsShown: boolean; themes: CountOfTheme[] };
+  setCurrentFilters?: React.Dispatch<
+    SetStateAction<{
+      searchTerm: string;
+      pastEventsShown: boolean;
+      themes: CountOfTheme[];
+    }>
+  >;
 }
 
 function EmptyTabContent({
@@ -26,6 +39,9 @@ function EmptyTabContent({
   setFollowersAmount,
   project,
   message,
+  pastEventsAvailable,
+  currentFilters,
+  setCurrentFilters,
 }: EmptyTabContentProps) {
   function toggleFollow() {
     if (isFollowed) {
@@ -52,12 +68,23 @@ function EmptyTabContent({
         </Grid>
       </Grid>
 
-      <InteractionButton
-        isSelected={isFollowed}
-        interactionType={InteractionType.PROJECT_FOLLOW}
-        onClick={toggleFollow}
-        sx={followButtonStyles}
-      />
+      <Stack direction={'row'} gap={1}>
+        <InteractionButton
+          isSelected={isFollowed}
+          interactionType={InteractionType.PROJECT_FOLLOW}
+          onClick={toggleFollow}
+          sx={followButtonStyles}
+        />
+
+        {pastEventsAvailable && setCurrentFilters && currentFilters && (
+          <InteractionButton
+            interactionType={InteractionType.SHOW_PAST_EVENTS}
+            onClick={() => {
+              setCurrentFilters({ ...currentFilters, pastEventsShown: true });
+            }}
+          />
+        )}
+      </Stack>
     </Box>
   );
 }
