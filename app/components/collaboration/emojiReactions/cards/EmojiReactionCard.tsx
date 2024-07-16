@@ -25,6 +25,7 @@ interface EmojiReactionCardProps {
 }
 
 const MAX_EMOJIS_SHOWN = 11;
+
 export function EmojiReactionCard(props: EmojiReactionCardProps) {
   const { userReaction, countOfReactions, handleReaction, sx } = props;
   const [isEmojiPickerClicked, setIsEmojiPickerClicked] = useState(false);

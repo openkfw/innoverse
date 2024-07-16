@@ -11,7 +11,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import ItemEmojiReactionCard from '@/components/collaboration/emojiReactions/cards/EventEmojiReactionCard';
+import EventEmojiReactionCard from '@/components/collaboration/emojiReactions/cards/EventEmojiReactionCard';
 import EventCardHeader from '@/components/landing/eventsSection/EventCardHeader';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
@@ -56,12 +56,12 @@ const EventCard = ({ event, disabled, arrow = true }: EventCardProps) => {
             />
             <Box sx={{ mt: 1 }}>
               <EventThemes themes={event.themes} sx={{ mb: 1, mt: -0.5 }} arrow={arrow} />
-              {isLargeScreen && <ItemEmojiReactionCard item={event} type={ObjectType.EVENT} />}
+              {isLargeScreen && <EventEmojiReactionCard item={event} type={ObjectType.EVENT} />}
             </Box>
           </Box>
           <Box style={{ marginTop: 0 }}>
             <EventContent event={event} sx={{ my: { xs: 2, lg: 0.5 } }} />
-            {!isLargeScreen && <ItemEmojiReactionCard item={event} type={ObjectType.EVENT} />}
+            {!isLargeScreen && <EventEmojiReactionCard item={event} type={ObjectType.EVENT} />}
           </Box>
         </Stack>
       </CardContent>

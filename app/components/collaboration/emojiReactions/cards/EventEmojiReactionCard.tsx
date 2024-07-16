@@ -7,45 +7,48 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import { SxProps } from '@mui/material/styles';
 
 import { EventWithAdditionalData, ObjectType, ProjectUpdateWithAdditionalData } from '@/common/types';
+import {
+  applyItemReactionOffline,
+  useOptimisticReactions,
+} from '@/components/collaboration/emojiReactions/optimisticReactions';
 import { errorMessage } from '@/components/common/CustomToast';
 import * as m from '@/src/paraglide/messages.js';
-import { optimisticUpdateForProjectUpdate } from '@/utils/optimisticUpdateForProjectUpdateWithAdditionalData';
 
-import { handleNewReaction } from '../actions';
 import { Emoji } from '../emojiReactionTypes';
 
 import { EmojiReactionCard } from './EmojiReactionCard';
 
-export interface ItemEmojiReactionCardProps {
+export interface EventEmojiReactionCardProps {
   item: EventWithAdditionalData | ProjectUpdateWithAdditionalData;
   type: ObjectType;
   sx?: SxProps;
 }
 
-export default function ItemEmojiReactionCard({ item, type, sx }: ItemEmojiReactionCardProps) {
+export default function EventEmojiReactionCard({ item, type, sx }: EventEmojiReactionCardProps) {
   const [currentItem, setCurrentItem] = useState(item);
   const { id, reactionForUser, reactionCount } = currentItem;
+
+  const { applyReaction } = useOptimisticReactions({
+    objectId: id,
+    objectType: type,
+    currentState: currentItem,
+    setCurrentState: setCurrentItem,
+    applyReactionOffline: applyItemReactionOffline,
+  });
+
   const appInsights = useAppInsightsContext();
 
   const handleReactionOnEvent = async (emoji: Emoji, operation: 'upsert' | 'delete') => {
-    optimisticUpdateForProjectUpdate({
-      currentState: currentItem,
-      setCurrentState: setCurrentItem,
-      performOperation: () => handleNewReaction({ emoji, objectId: id, objectType: type, operation }),
-      emoji,
-      operation,
-      handleError: (error) => {
-        errorMessage({ message: m.components_collaboration_emojiReactions_cards_eventEmojiReactionCard_updateError() });
-        appInsights.trackException({
-          exception: new Error('Failed to update reaction.', { cause: error }),
-          severityLevel: SeverityLevel.Error,
-        });
-      },
-    }).then((additionalData) => {
-      if (additionalData) {
-        setCurrentItem(item);
-      }
-    });
+    try {
+      await applyReaction({ emoji, operation });
+    } catch (error) {
+      console.error('Failed to handle reaction on project event:', error);
+      errorMessage({ message: m.components_collaboration_emojiReactions_cards_eventEmojiReactionCard_updateError() });
+      appInsights.trackException({
+        exception: new Error('Failed to handle reaction on project event:', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
+    }
   };
 
   return (

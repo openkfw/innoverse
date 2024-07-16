@@ -3,46 +3,45 @@ import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { NewsFeedEntry, Reaction } from '@/common/types';
-import { handleReaction } from '@/components/collaboration/emojiReactions/cards/actions';
 import { EmojiReactionCard } from '@/components/collaboration/emojiReactions/cards/EmojiReactionCard';
 import { Emoji, ReactionCount } from '@/components/collaboration/emojiReactions/emojiReactionTypes';
+import {
+  applyNewsFeedReactionOffline,
+  useOptimisticReactions,
+} from '@/components/collaboration/emojiReactions/optimisticReactions';
 import { errorMessage } from '@/components/common/CustomToast';
 import * as m from '@/src/paraglide/messages.js';
-import { optimisticUpdateForNewsFeedEntry } from '@/utils/optimisticUpdateForNewsFeedEntry';
 
 interface NewsFeedItemReactionControlProps {
   entry: NewsFeedEntry;
 }
 
-export function NewsFeedItemReactionControl({ entry }: NewsFeedItemReactionControlProps) {
-  const [card, setCard] = useState<NewsFeedEntry>(entry);
+export function NewsFeedItemReactionControl(props: NewsFeedItemReactionControlProps) {
+  const [entry, setEntry] = useState<NewsFeedEntry>(props.entry);
   const appInsights = useAppInsightsContext();
 
-  useEffect(() => {
-    setCard(entry);
-  }, [entry]);
+  const { applyReaction } = useOptimisticReactions({
+    objectId: entry.item.id,
+    objectType: entry.type,
+    currentState: entry,
+    setCurrentState: setEntry,
+    applyReactionOffline: applyNewsFeedReactionOffline,
+  });
 
-  console.log('NewsFeedItemReactionControl');
+  useEffect(() => {
+    setEntry(entry);
+  }, [entry]);
 
   const handleReactionOnEntry = async (emoji: Emoji, operation: 'upsert' | 'delete') => {
     try {
-      await optimisticUpdateForNewsFeedEntry({
-        currentState: card,
-        setCurrentState: setCard,
-        performOperation: () => handleReaction({ emoji, objectId: entry.item.id, objectType: entry.type, operation }),
-        emoji,
-        operation,
-        handleError: (error) => {
-          console.error('Failed to handle reaction on the update:', error);
-          errorMessage({ message: m.components_newsPage_cards_common_newsFeedItemReactionControl_error() });
-          appInsights.trackException({
-            exception: new Error('Failed to update reaction on the update', { cause: error }),
-            severityLevel: SeverityLevel.Error,
-          });
-        },
-      });
+      await applyReaction({ emoji, operation });
     } catch (error) {
-      console.error('Operation failed:', error);
+      console.error('Failed to handle reaction on news feed item:', error);
+      errorMessage({ message: m.components_newsPage_cards_common_newsFeedItemReactionControl_error() });
+      appInsights.trackException({
+        exception: new Error('Failed to update reaction on news feed item', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
     }
   };
 
@@ -58,12 +57,12 @@ export function NewsFeedItemReactionControl({ entry }: NewsFeedItemReactionContr
     return Object.values(reactionCounts);
   };
 
-  const reactionCounts = useMemo(() => aggregateReactions(card.item.reactions || []), [card]);
+  const reactionCounts = useMemo(() => aggregateReactions(entry.item.reactions || []), [entry]);
 
   return (
     <EmojiReactionCard
       countOfReactions={reactionCounts}
-      userReaction={card.item.reactionForUser}
+      userReaction={entry.item.reactionForUser}
       handleReaction={handleReactionOnEntry}
     />
   );
