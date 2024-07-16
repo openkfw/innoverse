@@ -16,7 +16,7 @@ function NewsCollabQuestionCard(props: NewsCollabQuestionCardProps) {
         {title}
       </Typography>
 
-      <Typography variant="body1" color="secondary.contrastText" sx={descriptionStyles}>
+      <Typography variant="body1" color="secondary.contrastText" sx={descriptionStyles} data-testid="text">
         {parseStringForLinks(description)}
       </Typography>
     </>

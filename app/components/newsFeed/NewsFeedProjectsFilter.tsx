@@ -13,5 +13,13 @@ type NewsFeedProjectFilterProps = {
 export default function NewsFeedProjectsFilter(props: NewsFeedProjectFilterProps) {
   const { isLoading, options, onSelect } = props;
 
-  return <FilterSelect title="Initiativen" options={options} isLoading={isLoading} onSelect={onSelect} />;
+  return (
+    <FilterSelect
+      data-testid="news-project-filter"
+      title="Initiativen"
+      options={options}
+      isLoading={isLoading}
+      onSelect={onSelect}
+    />
+  );
 }

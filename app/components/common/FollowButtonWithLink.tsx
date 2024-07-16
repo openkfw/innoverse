@@ -29,25 +29,23 @@ function FollowButtonWithLink(props: FollowButtonWithLinkProps) {
   }
 
   return (
-    <>
-      <Box sx={containerStyles}>
-        {projectId && (
-          <Link href={`/projects/${projectId}?tab=2`} style={linkStyles}>
-            <Typography variant="subtitle2" sx={labelStyles}>
-              {projectName}
-            </Typography>
-          </Link>
-        )}
+    <Box sx={containerStyles}>
+      {projectId && (
+        <Link href={`/projects/${projectId}?tab=2`} style={linkStyles} data-testid="project-link">
+          <Typography variant="subtitle2" sx={labelStyles}>
+            {projectName}
+          </Typography>
+        </Link>
+      )}
 
-        <Button onClick={onIconClick} sx={{ ...buttonStyles, backgroundColor: isSelected ? '#D4FCCA' : 'white' }}>
-          {isSelected ? (
-            <BookmarkAddedOutlinedIcon fontSize="small" style={{ color: '#266446' }} />
-          ) : (
-            <BookmarkAddOutlinedIcon fontSize="small" style={{ color: '#266446' }} />
-          )}
-        </Button>
-      </Box>
-    </>
+      <Button onClick={onIconClick} sx={{ ...buttonStyles, backgroundColor: isSelected ? '#D4FCCA' : 'white' }}>
+        {isSelected ? (
+          <BookmarkAddedOutlinedIcon fontSize="small" style={{ color: '#266446' }} />
+        ) : (
+          <BookmarkAddOutlinedIcon fontSize="small" style={{ color: '#266446' }} />
+        )}
+      </Button>
+    </Box>
   );
 }
 

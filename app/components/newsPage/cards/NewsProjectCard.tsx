@@ -62,7 +62,11 @@ function NewsProjectCard(props: NewsProjectCardProps) {
               {project.title}
             </Link>
           </Typography>
-          <Typography variant="body1" sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? 4 : 6 }}>
+          <Typography
+            variant="body1"
+            sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? 4 : 6 }}
+            data-testid="text"
+          >
             {project.summary}
           </Typography>
         </CardContent>

@@ -18,7 +18,7 @@ export class AddUpdateDialog {
   }
 
   private get commentField() {
-    return this.form.locator("textarea[name=comment]");
+    return this.form.locator("textarea[name=content]");
   }
 
   private get selectProjectField() {
@@ -26,7 +26,7 @@ export class AddUpdateDialog {
   }
 
   private get submitButton() {
-    return this.form.locator("button").getByText("speichern");
+    return this.form.locator("button").getByText("Senden");
   }
 
   private get selectProjectOptions() {
