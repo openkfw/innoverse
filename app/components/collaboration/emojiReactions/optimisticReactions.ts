@@ -37,9 +37,10 @@ export function useOptimisticReactions<T>({
 
   const applyReaction = async ({ emoji, operation }: { emoji: Emoji; operation: OperationType }) => {
     const previousState = currentState;
+
     try {
-      const stateWithReactions = applyReactionOffline(currentState, emoji, operation);
-      setCurrentState(stateWithReactions);
+      const updatedState = applyReactionOffline(currentState, emoji, operation);
+      setCurrentState(updatedState);
 
       if (operation === 'delete') {
         await awaitPendingOperation({ type: 'upsert' });
