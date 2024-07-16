@@ -9,6 +9,8 @@ import { SxProps } from '@mui/material/styles';
 import { EventWithAdditionalData, ObjectType, ProjectUpdateWithAdditionalData } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import * as m from '@/src/paraglide/messages.js';
+import { getEventWithAdditionalData } from '@/utils/requests/events/requests';
+import { getUpdateWithAdditionalData } from '@/utils/requests/updates/requests';
 
 import { EmojiReactionCard } from './cards/EmojiReactionCard';
 import { handleNewReaction } from './actions';
@@ -25,10 +27,23 @@ export default function ItemEmojiReactionCard({ item, type, sx }: ItemEmojiReact
   const { id, reactionForUser, reactionCount } = currentItem;
   const appInsights = useAppInsightsContext();
 
-  const handleReactionOnEvent = async (emoji: Emoji, operation: 'upsert' | 'delete') => {
+  const handleReaction = async (emoji: Emoji, operation: 'upsert' | 'delete') => {
     try {
       await handleNewReaction({ emoji: emoji, objectId: id, objectType: type, operation: operation });
-      setCurrentItem(item);
+
+      const itemWithReaction = await (async () => {
+        switch (type) {
+          case ObjectType.EVENT:
+            return await getEventWithAdditionalData(item as EventWithAdditionalData);
+
+          case ObjectType.UPDATE:
+            return await getUpdateWithAdditionalData(item as ProjectUpdateWithAdditionalData);
+          default:
+            throw new Error(`Unhandled type: ${type}`);
+        }
+      })();
+
+      itemWithReaction && setCurrentItem(itemWithReaction);
     } catch (error) {
       console.error('Failed to handle reaction:', error);
       errorMessage({ message: m.components_collaboration_emojiReactions_itemEmojiReactionCard_updateError() });
@@ -43,7 +58,7 @@ export default function ItemEmojiReactionCard({ item, type, sx }: ItemEmojiReact
     <EmojiReactionCard
       countOfReactions={reactionCount}
       userReaction={reactionForUser}
-      handleReaction={handleReactionOnEvent}
+      handleReaction={handleReaction}
       sx={sx}
     />
   );

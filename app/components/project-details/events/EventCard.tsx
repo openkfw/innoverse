@@ -11,7 +11,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import ItemEmojiReactionCard from '@/components/collaboration/emojiReactions/cards/EventEmojiReactionCard';
+import ItemEmojiReactionCard from '@/components/collaboration/emojiReactions/ItemEmojiReactionCard';
 import EventCardHeader from '@/components/landing/eventsSection/EventCardHeader';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';

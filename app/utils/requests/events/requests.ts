@@ -124,9 +124,11 @@ export async function getEventsWithAdditionalData(events: Event[]) {
   return eventsWithAdditionalData;
 }
 
-export async function getEventWithAdditionalData(event: Event): Promise<EventWithAdditionalData> {
-  const { data: reactionForUser } = await findReactionByUser({ objectType: ObjectType.EVENT, objectId: event.id });
-  const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.EVENT, event.id);
+export async function getEventWithAdditionalData(
+  item: Event | EventWithAdditionalData,
+): Promise<EventWithAdditionalData> {
+  const { data: reactionForUser } = await findReactionByUser({ objectType: ObjectType.EVENT, objectId: item.id });
+  const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.EVENT, item.id);
 
   const reactionCount = reactionCountResult.map((r) => ({
     count: r._count.shortCode,
@@ -137,7 +139,7 @@ export async function getEventWithAdditionalData(event: Event): Promise<EventWit
   }));
 
   return {
-    ...event,
+    ...item,
     reactionForUser: reactionForUser
       ? { ...reactionForUser, objectType: reactionForUser.objectType as ObjectType }
       : null,
