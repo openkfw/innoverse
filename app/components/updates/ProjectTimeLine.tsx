@@ -4,11 +4,11 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 
-import { ObjectType, ProjectUpdateWithAdditionalData } from '@/common/types';
+import { ProjectUpdateWithAdditionalData } from '@/common/types';
+import { UpdateEmojiReactionCard } from '@/components/collaboration/emojiReactions/cards/UpdateEmojiReactionCard';
 import { CommentCardHeaderSecondary } from '@/components/common/CommentCardHeaderSecondary';
 import theme from '@/styles/theme';
 
-import ItemEmojiReactionCard from '../collaboration/emojiReactions/ItemEmojiReactionCard';
 import { TextCard } from '../common/TextCard';
 
 import { ProjectTimeLineDate } from './ProjectTimeLineDate';
@@ -105,7 +105,7 @@ const ProjectYearTimeline = ({ year, projectUpdates, isLastYear, widthOfDateColu
             sx={updateCommentCardStyles}
             header={<CommentCardHeaderSecondary author={update.author} sx={updateCommentCardHeaderStyles} />}
             text={update.comment}
-            footer={<ItemEmojiReactionCard item={update} type={ObjectType.UPDATE} />}
+            footer={<UpdateEmojiReactionCard update={update} />}
           />
         </Stack>
       ))}

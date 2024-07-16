@@ -24,17 +24,15 @@ interface EmojiReactionCardProps {
   sx?: SxProps;
 }
 
+const MAX_EMOJIS_SHOWN = 11;
+
 export function EmojiReactionCard(props: EmojiReactionCardProps) {
   const { userReaction, countOfReactions, handleReaction, sx } = props;
   const [isEmojiPickerClicked, setIsEmojiPickerClicked] = useState(false);
   const appInsights = useAppInsightsContext();
   const ref = useRef<HTMLDivElement>(null);
 
-  // Amount of emojis that still look good on the card
-  const MAX_EMOJIS_SHOWN = 11;
-
   const topReactions = useMemo(() => {
-    // If User reaction: move the reaction to the first position
     if (userReaction) {
       const reactionNativeSymbol = userReaction.nativeSymbol;
       countOfReactions.sort((a, b) =>
@@ -46,9 +44,6 @@ export function EmojiReactionCard(props: EmojiReactionCardProps) {
 
   const handleEmojiReaction = (emoji: Emoji) => {
     try {
-      // No Reaction before: Upsert
-      // Reaction with different emoji: Upsert
-      // Removal of emoji reaction: Delete
       const operation = !userReaction || userReaction.shortCode !== emoji.shortCode ? 'upsert' : 'delete';
       handleReaction(emoji, operation);
     } catch (error) {
@@ -58,6 +53,8 @@ export function EmojiReactionCard(props: EmojiReactionCardProps) {
         exception: new Error('Updating reactions failed.', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
+    } finally {
+      setIsEmojiPickerClicked(false);
     }
   };
 

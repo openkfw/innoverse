@@ -10,10 +10,9 @@ import { handleFollow, handleRemoveFollower } from '@/components/project-details
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
+import { NewsFeedReactionCard } from '../../../collaboration/emojiReactions/cards/NewsFeedReactionCard';
 import { errorMessage } from '../../../common/CustomToast';
 import FollowButtonWithLink from '../../../common/FollowButtonWithLink';
-
-import { NewsCardReactions } from './NewsCardReactions';
 
 interface NewsCardActionsProps {
   entry: NewsFeedEntry;
@@ -47,7 +46,7 @@ export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
     <CardActions sx={cardActionsStyles}>
       <Grid container direction="row" justifyContent="space-between" alignItems="center">
         <Grid item xs={12} sx={footerStyles}>
-          <NewsCardReactions entry={entry} />
+          <NewsFeedReactionCard entry={entry} />
           <FollowButtonWithLink isSelected={isFollowed} entry={entry} onIconClick={toggleFollow} />
         </Grid>
       </Grid>

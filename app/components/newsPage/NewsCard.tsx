@@ -10,6 +10,7 @@ import Grid from '@mui/material/Grid';
 import { SxProps, Theme } from '@mui/material/styles';
 
 import { ObjectType, ProjectUpdateWithAdditionalData } from '@/common/types';
+import { UpdateEmojiReactionCard } from '@/components/collaboration/emojiReactions/cards/UpdateEmojiReactionCard';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import { LinkWithArrowLeft } from '@/components/common/LinkWithArrowLeft';
@@ -18,7 +19,6 @@ import { handleFollow, handleRemoveFollower } from '@/components/project-details
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
-import ItemEmojiReactionCard from '../collaboration/emojiReactions/ItemEmojiReactionCard';
 import { errorMessage } from '../common/CustomToast';
 
 interface NewsCardProps {
@@ -85,7 +85,7 @@ const UpdateCardActions = (props: UpdateCardActionsProps) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <ItemEmojiReactionCard item={update} type={ObjectType.UPDATE} />
+          <UpdateEmojiReactionCard update={update} />
         </Grid>
       </Grid>
     </CardActions>
