@@ -54,6 +54,7 @@ export default function NewsFeedTypeFilter(props: NewsFeedTypeFilterProps) {
 
   return (
     <FilterSelect
+      data-testid="news-type-filter"
       title="Art"
       isLoading={isLoading}
       options={options}

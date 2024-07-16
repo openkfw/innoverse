@@ -11,6 +11,7 @@ import { errorMessage } from '@/components/common/CustomToast';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
 import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
 import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
+import { parseStringForLinks } from '@/components/common/LinkString';
 import { NewsCardControls } from '@/components/newsPage/cards/common/NewsCardControls';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
 import { deletePost, updatePost } from '@/services/postService';
@@ -72,8 +73,8 @@ function NewsPostCard(props: NewsPostCardProps) {
     <>
       <CommentCardHeader content={post} avatar={{ size: 32 }} />
       <CardContentWrapper>
-        <Typography color="text.primary" variant="body1">
-          {post.content}
+        <Typography color="text.primary" variant="body1" data-testid="text">
+          {parseStringForLinks(post.content)}
         </Typography>
       </CardContentWrapper>
       <NewsCardControls>

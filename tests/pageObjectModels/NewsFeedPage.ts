@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page, test } from "@playwright/test";
 import { PageLayout } from "./components/PageLayout";
 import { AddUpdateDialog } from "./components/AddUpdateDialog";
 
@@ -8,7 +8,7 @@ type NewsFilter = {
   count: number;
 };
 
-export class NewsPage extends PageLayout {
+export class NewsFeedPage extends PageLayout {
   constructor(readonly page: Page) {
     super(page);
   }
@@ -17,12 +17,28 @@ export class NewsPage extends PageLayout {
     return await this.newsCards.count();
   }
 
-  async getNthNewsCard(index: number) {
+  async getNthNews(index: number) {
     const newsCard = this.newsCards.nth(index);
-    return await this.mapToNews(newsCard);
+    return await this.mapToNewsItemWithProject(newsCard);
   }
 
-  async getNthNewsCardWith(
+  async getNthNewsWith(
+    index: number,
+    filters: {
+      text?: string;
+    }
+  ) {
+    let newsCards = this.newsCards.nth(index);
+
+    if (filters.text !== undefined) {
+      newsCards = newsCards.filter({
+        has: this.page.getByTestId("text").getByText(filters.text),
+      });
+    }
+    return this.mapToNewsItem(newsCards);
+  }
+
+  async getNthNewsWithProject(
     index: number,
     filters: {
       text?: string;
@@ -45,24 +61,32 @@ export class NewsPage extends PageLayout {
       });
     }
 
-    return this.mapToNews(newsCards);
+    return this.mapToNewsItemWithProject(newsCards);
   }
 
-  async addNews(content: string) {
+  async addUpdate(content: string) {
     await this.addNewsButton.click();
 
     const dialog = new AddUpdateDialog(this.page);
     await dialog.fillComment(content);
-    await dialog.selectNthProject(0);
+    await dialog.selectNthProject(1);
+    await dialog.submit();
+  }
+
+  async addPost(content: string) {
+    await this.addNewsButton.click();
+
+    const dialog = new AddUpdateDialog(this.page);
+    await dialog.fillComment(content);
     await dialog.submit();
   }
 
   async getFilters() {
     const projectFilters = await this.parseFilters(this.projectFilters);
-    const topicFilters = await this.parseFilters(this.topicFilters);
+    const typeFilters = await this.parseFilters(this.typeFilters);
     return {
       projectFilters,
-      topicFilters,
+      typeFilters,
     };
   }
 
@@ -70,17 +94,22 @@ export class NewsPage extends PageLayout {
     await filter.checkbox.click();
   }
 
-  private async mapToNews(newsCard: Locator) {
-    const author = await newsCard.getByTestId("author").textContent();
-    const date = await newsCard.getByTestId("date").textContent();
+  private async mapToNewsItemWithProject(newsCard: Locator) {
     const text = await newsCard.getByTestId("text").textContent();
     const projectLink = newsCard.getByTestId("project-link");
     const projectTitle = await projectLink.textContent();
-    return { author, date, text, projectTitle, projectLink };
+    return { text, projectTitle, projectLink };
+  }
+
+  private async mapToNewsItem(newsCard: Locator) {
+    const text = await newsCard.getByTestId("text").textContent();
+    return { text };
   }
 
   private async parseFilters(labelsSelector: Locator): Promise<NewsFilter[]> {
     // locator.all() does not wait for elements, that is why we wait for the first filter
+
+    await this.typeFilters.first().waitFor();
     await this.projectFilters.first().waitFor();
     const labels = await labelsSelector.all();
 
@@ -98,8 +127,8 @@ export class NewsPage extends PageLayout {
     return this.newsFilterContainer.getByTestId("news-project-filter");
   }
 
-  private get topicFilters() {
-    return this.newsFilterContainer.getByTestId("news-topic-filter");
+  private get typeFilters() {
+    return this.newsFilterContainer.getByTestId("news-type-filter");
   }
 
   private get newsCards() {

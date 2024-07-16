@@ -47,7 +47,7 @@ export const SurveyCard = (props: SurveyCardProps) => {
     <Grid container item sx={sx}>
       <Grid container item xs={12} md={fill ? 12 : 6} direction="column" sx={leftGridStyles}>
         <Grid item>
-          <Typography variant="h5" color="secondary.contrastText" style={{ fontSize: 20 }}>
+          <Typography variant="h5" color="secondary.contrastText" style={{ fontSize: 20 }} data-testid="text">
             {surveyQuestion.question}
           </Typography>
         </Grid>

@@ -444,3 +444,8 @@ export type StartPagination = {
   page: number;
   pageSize: number;
 };
+
+// TODO: move/do the data-testid differently
+export type ChildTestProps = {
+  'data-testid'?: string;
+};

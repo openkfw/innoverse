@@ -10,19 +10,22 @@ import FormLabel from '@mui/material/FormLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { ChildTestProps } from '@/common/types';
 import useHydration from '@/components/common/Hydration';
 import { FiltersSkeleton } from '@/components/skeletons/FiltersSkeleton';
 import * as m from '@/src/paraglide/messages.js';
 
 export type FilterOption = { name: string; label: string; count: number };
 
-export default function FilterSelect(props: {
-  title: string;
-  isLoading?: boolean;
-  options: FilterOption[] | undefined;
-  maxOptionsToDisplayCollapsed?: number;
-  onSelect: (selectedFilters: string[]) => void;
-}) {
+export default function FilterSelect(
+  props: {
+    title: string;
+    isLoading?: boolean;
+    options: FilterOption[] | undefined;
+    maxOptionsToDisplayCollapsed?: number;
+    onSelect: (selectedFilters: string[]) => void;
+  } & ChildTestProps,
+) {
   const { title, options, maxOptionsToDisplayCollapsed = 5, isLoading = false, onSelect } = props;
 
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -53,7 +56,7 @@ export default function FilterSelect(props: {
 
   const toggleExpand = () => setExpanded((expanded) => !expanded);
 
-  if (isLoading) return <FiltersSkeleton count={4} sx={{ mt: 2, mb: 3 }} />;
+  if (isLoading) return <FiltersSkeleton count={4} sx={{ mt: 2, mb: 3 }} data-testid="filter-loading" />;
   if (!options?.length) return <></>;
 
   return (
@@ -68,7 +71,7 @@ export default function FilterSelect(props: {
                 control={<Checkbox name={option.name} checked={filterIsChecked(option)} onChange={selectFilter} />}
                 label={getFilterLabel(option)}
                 disabled={!hydrated}
-                data-testid="news-project-filter"
+                data-testid={props['data-testid']}
                 data-testdata-count={option.count}
                 data-testdata-label={option.label}
               />

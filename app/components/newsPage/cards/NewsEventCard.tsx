@@ -46,7 +46,7 @@ function NewsEventCard(props: NewsSurveyCardProps) {
           <Typography variant="h6" sx={titleStyles}>
             {event.title}
           </Typography>
-          <Typography variant="body1" sx={descriptionStyles}>
+          <Typography variant="body1" sx={descriptionStyles} data-testid="text">
             {event.description}
           </Typography>
         </CardContent>
