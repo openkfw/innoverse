@@ -18,7 +18,7 @@ import { handleFollow, handleRemoveFollower } from '@/components/project-details
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
-import { UpdateEmojiReactionCard } from '../collaboration/emojiReactions/cards/UpdateEmojiReactionCard';
+import ItemEmojiReactionCard from '../collaboration/emojiReactions/ItemEmojiReactionCard';
 import { errorMessage } from '../common/CustomToast';
 
 interface NewsCardProps {
@@ -85,7 +85,7 @@ const UpdateCardActions = (props: UpdateCardActionsProps) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <UpdateEmojiReactionCard update={update} />
+          <ItemEmojiReactionCard item={update} type={ObjectType.UPDATE} />
         </Grid>
       </Grid>
     </CardActions>

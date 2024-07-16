@@ -228,7 +228,9 @@ export const getUpdateWithReactions = withAuth(async (user: UserSession, body: {
   };
 });
 
-export async function getUpdateWithAdditionalData(update: ProjectUpdate): Promise<ProjectUpdateWithAdditionalData> {
+export async function getUpdateWithAdditionalData(
+  update: ProjectUpdate | ProjectUpdateWithAdditionalData,
+): Promise<ProjectUpdateWithAdditionalData> {
   const { data: reactionForUser } = await findReactionByUser({ objectType: ObjectType.UPDATE, objectId: update.id });
   const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.UPDATE, update.id);
   const { data: followedByUser } = await isProjectFollowedByUser({ projectId: update.projectId });

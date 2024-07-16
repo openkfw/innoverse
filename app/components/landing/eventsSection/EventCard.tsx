@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { EventWithAdditionalData, ObjectType } from '@/common/types';
-import EventEmojiReactionCard from '@/components/collaboration/emojiReactions/cards/EventEmojiReactionCard';
+import ItemEmojiReactionCard from '@/components/collaboration/emojiReactions/ItemEmojiReactionCard';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
@@ -52,7 +52,7 @@ export const EventCard = ({ event }: EventCardProps) => {
             title={m.components_landing_eventsSection_eventCard_moreDetails()}
             href={`/projects/${encodeURIComponent(event.projectId)}?tab=3`}
           />
-          <EventEmojiReactionCard item={event} type={ObjectType.EVENT} />
+          <ItemEmojiReactionCard item={event} type={ObjectType.EVENT} />
         </Stack>
       </CardActions>
     </Card>
