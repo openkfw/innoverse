@@ -8,6 +8,7 @@ import {
   User,
 } from '@/common/types';
 import { getPromiseResults, getUnixTimestamp } from '@/utils/helpers';
+import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
   NewsType,
   RedisCollaborationComment as RedisCollaborationComment,
@@ -47,6 +48,7 @@ export const mapPostToRedisNewsFeedEntry = (
     updatedAt: item.updatedAt,
     item,
     type: NewsType.POST,
+    search: escapeRedisTextSeparators(item.content || ''),
   };
 };
 
@@ -60,6 +62,7 @@ export const mapSurveyQuestionToRedisNewsFeedEntry = (
     updatedAt: getUnixTimestamp(new Date(surveyQuestion.updatedAt)),
     item: item,
     type: NewsType.SURVEY_QUESTION,
+    search: escapeRedisTextSeparators(item.question || ''),
   };
 };
 
@@ -73,6 +76,15 @@ export const mapProjectToRedisNewsFeedEntry = (
     updatedAt: getUnixTimestamp(new Date(project.updatedAt)),
     item: item,
     type: NewsType.PROJECT,
+    search: escapeRedisTextSeparators(
+      (item.summary || '') +
+        ' ' +
+        (item.title || '') +
+        ' ' +
+        item.description.tags.map((tag) => tag.tag || '').join(' ') +
+        ' ' +
+        (item.description.text || ''),
+    ),
   };
 };
 
@@ -87,6 +99,7 @@ export const mapUpdateToRedisNewsFeedEntry = (
     updatedAt: getUnixTimestamp(new Date(update.updatedAt)),
     item: item,
     type: NewsType.UPDATE,
+    search: escapeRedisTextSeparators((item.comment || '') + ' ' + (item.title || '')),
   };
 };
 
@@ -100,6 +113,15 @@ export const mapEventToRedisNewsFeedEntry = async (
     updatedAt: getUnixTimestamp(event.updatedAt),
     item: item,
     type: NewsType.EVENT,
+    search: escapeRedisTextSeparators(
+      (item.title || '') +
+        ' ' +
+        (item.description || '') +
+        ' ' +
+        (item.type || '') +
+        ' ' +
+        (item.themes ? item.themes.map((theme) => theme || '').join(' ') : ''),
+    ),
   };
 };
 
@@ -113,6 +135,7 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
     updatedAt: getUnixTimestamp(question.updatedAt),
     item: item,
     type: NewsType.COLLABORATION_QUESTION,
+    search: escapeRedisTextSeparators((item.title || '') + ' ' + (item.description || '')),
   };
 };
 
@@ -127,6 +150,7 @@ export const mapCollaborationCommentToRedisNewsFeedEntry = (
     updatedAt: getUnixTimestamp(comment.createdAt),
     item: item,
     type: NewsType.COLLABORATION_COMMENT,
+    search: escapeRedisTextSeparators((item.question || '') + ' ' + (item.comment || '')),
   };
 };
 

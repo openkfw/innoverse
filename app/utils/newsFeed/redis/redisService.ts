@@ -4,6 +4,7 @@ import { AggregateGroupByReducers, AggregateSteps, SearchOptions } from 'redis';
 
 import { redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
+import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import { NewsType, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
 
@@ -24,6 +25,7 @@ type GetItemsOptions = {
     };
     projectIds?: string[];
     types?: RedisNewsFeedEntry['type'][];
+    searchString?: string;
   };
   pagination?: {
     page: number;
@@ -49,37 +51,62 @@ export const getNewsFeedEntryByKey = async (client: RedisClient, key: string) =>
 };
 
 export const getNewsFeedEntries = async (client: RedisClient, options?: GetItemsOptions) => {
-  const escapeString = (str: string) => str.replace('-', '\\-');
   const getFiltersAndIndex = () => {
     const filters: string[] = [];
+    const parameters: SearchOptions['PARAMS'] = {};
     const filterBy = options?.filterBy;
-
     let index: RedisIndex = RedisIndex.UPDATED_AT;
+
+    const parameterizeAndAddArray = (values: string[], parameterPrefix: string) => {
+      values.forEach((value, idx) => {
+        const parameterId = parameterPrefix + idx;
+        parameters[parameterId] = value;
+      });
+
+      const unionSelector = Object.keys(parameters)
+        .map((parameterId) => '$' + parameterId)
+        .join('|');
+
+      return { unionSelector };
+    };
 
     // Get news feeds entries by updatedAt in date range
     if (filterBy?.updatedAt) {
       const from = getUnixTimestamp(filterBy.updatedAt.from);
       const to = getUnixTimestamp(filterBy.updatedAt.to);
-      filters.push(`@updatedAt:[${from}, ${to}]`);
+      parameters['from'] = from;
+      parameters['to'] = to;
+      filters.push('@updatedAt:[$from, $to]');
       index = RedisIndex.UPDATED_AT;
     }
+
     // Get news feed entries by projectIds array
     if (filterBy?.projectIds?.length) {
-      const projectIds = filterBy.projectIds.join('|');
-      filters.push(`@projectId:{${projectIds}}`);
-      index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID;
+      const { unionSelector: projectIdSelector } = parameterizeAndAddArray(filterBy.projectIds, 'projectId');
+      filters.push(`@projectId:{${projectIdSelector}}`);
+      index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_SEARCH;
     }
+
     // Get news feed entries by type (Update/Event/...)
     if (filterBy?.types?.length) {
-      const types = filterBy.types.map(escapeString).join('|');
-      filters.push(`@type:{${types}}`);
-      index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID;
+      const types: string[] = filterBy.types.map((x) => x as string);
+      const { unionSelector: typeSelector } = parameterizeAndAddArray(types, 'type');
+      filters.push(`@type:{${typeSelector}}`);
+      index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_SEARCH;
     }
+
+    if (filterBy?.searchString?.length) {
+      const queryParameter = 'query';
+      filters.push(`@search:*$${queryParameter}*`);
+      parameters[queryParameter] = escapeRedisTextSeparators(filterBy.searchString);
+      index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_SEARCH;
+    }
+
+    // Get all news feed entries
     if (!filters.length) {
-      // Get all news feed entries
       return { filters: ['@updatedAt:[0, +inf]'], index: RedisIndex.UPDATED_AT };
     }
-    return { filters, index };
+    return { filters, index, parameters };
   };
 
   const getSortingOption = (): SearchOptions['SORTBY'] => {
@@ -97,7 +124,7 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     };
   };
 
-  const { filters, index } = getFiltersAndIndex();
+  const { filters, parameters, index } = getFiltersAndIndex();
   const sortOption = getSortingOption();
   const paginationOptions = getPaginationOptions();
   const query = filters.join(' ');
@@ -106,6 +133,8 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     const result = await client.ft.search(index, query, {
       SORTBY: sortOption,
       LIMIT: paginationOptions,
+      PARAMS: parameters,
+      DIALECT: 2,
     });
     return result;
   } catch (err) {
@@ -119,7 +148,7 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
 export const countNewsFeedEntriesByType = async () => {
   try {
     const client = await getRedisClient();
-    const { results } = await client.ft.AGGREGATE(RedisIndex.UPDATED_AT_TYPE_PROJECT_ID, '*', {
+    const { results } = await client.ft.AGGREGATE(RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_SEARCH, '*', {
       STEPS: [
         {
           type: AggregateSteps.GROUPBY,
@@ -155,7 +184,7 @@ export const countNewsFeedEntriesByType = async () => {
 export const countNewsFeedEntriesByProjectIds = async () => {
   try {
     const client = await getRedisClient();
-    const { results } = await client.ft.AGGREGATE(RedisIndex.UPDATED_AT_TYPE_PROJECT_ID, '*', {
+    const { results } = await client.ft.AGGREGATE(RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_SEARCH, '*', {
       STEPS: [
         {
           type: AggregateSteps.GROUPBY,

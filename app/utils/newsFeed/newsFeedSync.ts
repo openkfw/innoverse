@@ -14,8 +14,8 @@ import { createNewsFeedEntryForProjectUpdate } from '@/services/updateService';
 import { redisError } from '@/utils/errors';
 import { fetchPages, getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import * as mappings from '@/utils/newsFeed/redis/mappings';
-import { NewsType, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
+import { mapCollaborationQuestionToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
+import { RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { getBasicCollaborationQuestionStartingFromWithAdditionalData } from '@/utils/requests/collaborationQuestions/requests';
 import { getProjectsStartingFrom } from '@/utils/requests/project/requests';
@@ -222,17 +222,12 @@ const aggregateCollaborationQuestions = async ({ from }: { from: Date }): Promis
     },
   });
 
-  const mapToRedisQuestions = questions.map(async (question) => {
+  const mapToRedisNewsFeedEntries = questions.map(async (question) => {
     const followerIds = await getFollowedByForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, question.id);
-    const followers = await mappings.mapToRedisUsers(followerIds);
-    return mappings.mapToRedisCollaborationQuestion(question, question.reactions, followers);
+    const followers = await mapToRedisUsers(followerIds);
+    return mapCollaborationQuestionToRedisNewsFeedEntry(question, question.reactions, followers);
   });
 
-  const redisQuestions = await getPromiseResults(mapToRedisQuestions);
-
-  return redisQuestions.map((question) => ({
-    type: NewsType.COLLABORATION_QUESTION,
-    updatedAt: question.updatedAt,
-    item: question,
-  }));
+  const newsFeedEntries = await getPromiseResults(mapToRedisNewsFeedEntries);
+  return newsFeedEntries;
 };
