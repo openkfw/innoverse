@@ -246,7 +246,7 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
             <ActiveStepLabel label={label} />
             <Box sx={{ width: `6+${labelSize}+14` }}>
               <svg
-                shape-rendering="crispEdges"
+                shapeRendering={'crispEdges'}
                 style={{ padding: 0, marginRight: 0 }}
                 width="6"
                 height="28"
@@ -267,7 +267,7 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
 
               <svg
                 style={{ marginRight: -1, marginLeft: -1.2, padding: 0 }}
-                shape-rendering="crispEdges"
+                shapeRendering={'crispEdges'}
                 width={labelSize}
                 height="28"
                 viewBox={`0 0 ${labelSize} 28`}
@@ -289,7 +289,7 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
 
               <svg
                 style={{ marginRight: 0, marginLeft: 0, padding: 0 }}
-                shape-rendering="crispEdges"
+                shapeRendering={'crispEdges'}
                 width="14"
                 height="28"
                 viewBox="0 0 14 28"
