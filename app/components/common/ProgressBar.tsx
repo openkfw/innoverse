@@ -160,7 +160,7 @@ function FirstStep({ idx, step, activeStep }: ProgressStepProps) {
   const stepIsDone = isStepDone(idx, activeStep);
   const statusLabel = getStepStatusLabel(stepIsDone, active);
 
-  const labelSize = 0.6 * 14 * label.length + (idx + 1) * 10;
+  const labelSize = 0.6 * 14 * label.length + 20;
 
   return (
     <CustomTooltip tooltip={`${label}: ${statusLabel}`}>
@@ -184,10 +184,10 @@ function FirstStep({ idx, step, activeStep }: ProgressStepProps) {
               </svg>
 
               <svg
-                style={{ marginRight: -1, marginLeft: -1.2 }}
+                style={{ marginRight: -1, marginLeft: -1.2, padding: 0 }}
                 width={labelSize}
                 height="28"
-                viewBox="0 0 {labelSize} 28"
+                viewBox={`0 0 ${labelSize} 28`}
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
@@ -199,7 +199,14 @@ function FirstStep({ idx, step, activeStep }: ProgressStepProps) {
                 />
               </svg>
 
-              <svg width="14" height="28" viewBox="0 0 14 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                style={{ padding: 0 }}
+                width="14"
+                height="28"
+                viewBox="0 0 14 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M0.777344 28H0.887817C2.05237 28 3.15906 27.4926 3.91895 26.6101L12.53 16.6101C13.8219 15.1099 13.8219 12.8901 12.53 11.3899L3.91895 1.38989C3.15906 0.507446 2.05237 0 0.887817 0H0.777344V28Z"
                   fill={isLive(step) ? theme.palette.secondary.main : '#6D767D'}
@@ -233,19 +240,25 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
 
   return (
     <CustomTooltip tooltip={`${label}: ${statusLabel}`}>
-      <Box sx={stepStyles}>
+      <Box sx={{ ...stepStyles }}>
         {active ? (
           <>
             <ActiveStepLabel label={label} />
-            <Box>
+            <Box sx={{ width: `6+${labelSize}+14` }}>
               <svg
-                style={{ padding: 0 }}
+                shape-rendering="crispEdges"
+                style={{ padding: 0, marginRight: 0 }}
                 width="6"
                 height="28"
                 viewBox="0 0 6 28"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
+                <defs>
+                  <filter id="blur">
+                    <feGaussianBlur stdDeviation="0.5" />
+                  </filter>
+                </defs>
                 <path
                   d="M5.77735 0H4.00745C0.669682 0 -1.19995 3.8468 0.862187 6.47131L4.83582 11.5287C5.97547 12.9791 5.97547 15.0209 4.83582 16.4713L0.862187 21.5287C-1.19995 24.1532 0.669682 28 4.00745 28H5.77735V0Z"
                   fill={isLive(step) ? theme.palette.secondary.main : '#6D767D'}
@@ -253,22 +266,41 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
               </svg>
 
               <svg
-                style={{ marginRight: -1, marginLeft: -1.2 }}
+                style={{ marginRight: -1, marginLeft: -1.2, padding: 0 }}
+                shape-rendering="crispEdges"
                 width={labelSize}
                 height="28"
-                viewBox="0 0 {labelSize} 28"
+                viewBox={`0 0 ${labelSize} 28`}
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
+                <defs>
+                  <filter id="blur">
+                    <feGaussianBlur stdDeviation="0.5" />
+                  </filter>
+                </defs>
                 <rect
                   x="0.777344"
                   width={labelSize}
                   height="28"
-                  fill={isLive(step) ? theme.palette.secondary.main : '#6D767D'}
+                  fill={isLive(step) ? theme.palette.secondary.main : '#6D7671'}
                 />
               </svg>
 
-              <svg width="14" height="28" viewBox="0 0 14 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                style={{ marginRight: 0, marginLeft: 0, padding: 0 }}
+                shape-rendering="crispEdges"
+                width="14"
+                height="28"
+                viewBox="0 0 14 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <filter id="blur">
+                    <feGaussianBlur stdDeviation="0.5" />
+                  </filter>
+                </defs>
                 <path
                   d="M0.777344 28H0.887817C2.05237 28 3.15906 27.4926 3.91895 26.6101L12.53 16.6101C13.8219 15.1099 13.8219 12.8901 12.53 11.3899L3.91895 1.38989C3.15906 0.507446 2.05237 0 0.887817 0H0.777344V28Z"
                   fill={isLive(step) ? theme.palette.secondary.main : '#6D767D'}
@@ -308,6 +340,7 @@ const wrapperStyles = {
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
   display: 'inline-flex',
+  width: 320,
 };
 
 const stepStyles = {
