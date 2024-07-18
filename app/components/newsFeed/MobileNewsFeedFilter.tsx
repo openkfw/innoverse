@@ -18,6 +18,7 @@ import theme from '@/styles/theme';
 import ApplyFilterButton, { APPLY_BUTTON } from '../newsPage/newsFilter/ApplyFilterButton';
 
 import NewsFeedProjectsFilter from './NewsFeedProjectsFilter';
+import NewsFeedSearchFilter from './NewsFeedSearchFilter';
 import NewsFeedTypeFilter from './NewsFeedTypeFilter';
 
 interface MobileNewsFeedFilterProps {
@@ -80,6 +81,7 @@ export default function MobileNewsFeedFilter(props: MobileNewsFeedFilterProps) {
         <Box sx={drawerBoxStyle}>
           <Typography variant="overline">Filtern</Typography>
           <Card sx={cardStyles}>
+            <NewsFeedSearchFilter isLoading={!projectOptions} filters={filters} setFilters={setFilters} />
             <NewsFeedProjectsFilter isLoading={!projectOptions} onSelect={updateFilters} options={projectOptions} />
             <NewsFeedTypeFilter isLoading={!projectOptions} filters={filters} setFilters={setNewFilters} />
           </Card>

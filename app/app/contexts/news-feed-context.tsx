@@ -18,6 +18,7 @@ export enum SortValues {
 export type NewsFeedFilters = {
   projectIds: string[];
   types: string[];
+  searchString: string;
 };
 
 type ProjectWithTitle = {
@@ -80,7 +81,7 @@ interface NewsFeedContextInterface {
 const defaultState: NewsFeedContextInterface = {
   feed: [],
   sort: SortValues.DESC,
-  filters: { projectIds: [], types: [] },
+  filters: { projectIds: [], types: [], searchString: '' },
   types: [],
   amountOfEntriesByProjectTitle: {},
   amountOfEntriesByType: {},
@@ -133,7 +134,8 @@ export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextP
     const entryIsVisible =
       !filtersAreSet ||
       filters.projectIds.some((id) => id === projectId) ||
-      filters.types.some((type) => type === entry.type);
+      filters.types.some((type) => type === entry.type) ||
+      (filters.searchString && entry.item.projectName?.toLowerCase().includes(filters.searchString.toLowerCase()));
 
     if (entryIsVisible) {
       setNewsFeedEntries((prev) => [entry, ...prev]);
@@ -205,6 +207,7 @@ export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextP
           filterBy: {
             projectIds: filters.projectIds.length ? filters.projectIds : undefined,
             types: filters.types.length ? filters.types.map(getNewsTypeByString) : undefined,
+            searchString: filters.searchString.length ? filters.searchString : undefined,
           },
           sortBy: { updatedAt: 'DESC' },
         });

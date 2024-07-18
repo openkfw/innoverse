@@ -12,7 +12,7 @@ export enum NewsType {
   PROJECT = 'project',
 }
 
-export type RedisNewsFeedEntry = { updatedAt: number } & RedisNewsFeedTypeEntry;
+export type RedisNewsFeedEntry = { updatedAt: number; search: string } & RedisNewsFeedTypeEntry;
 
 type RedisNewsFeedTypeEntry =
   | {

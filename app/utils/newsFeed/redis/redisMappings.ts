@@ -22,7 +22,7 @@ import {
   isFollowedByUser,
 } from '@/utils/requests/requests';
 
-import { NewsType, RedisNewsFeedEntry, RedisReaction } from './models';
+import { NewsType, RedisNewsFeedEntry, RedisReaction, RedisSurveyQuestion } from './models';
 
 export const MappedRedisType: Record<NewsType, ObjectType> = {
   [NewsType.UPDATE]: ObjectType.UPDATE,
@@ -71,6 +71,15 @@ export const mapRedisNewsFeedEntry = async (redisFeedEntry: RedisNewsFeedEntry) 
 
   const mappedItem = await mapRedisItem(objectWithAdditionalData);
   return mappedItem as NewsFeedEntry;
+};
+
+export const mapRedisSurveyQuestionToRedisNewsFeedEntry = (surveyQuestion: RedisSurveyQuestion): RedisNewsFeedEntry => {
+  return {
+    updatedAt: surveyQuestion.updatedAt,
+    item: surveyQuestion,
+    type: NewsType.SURVEY_QUESTION,
+    search: surveyQuestion.question,
+  };
 };
 
 export const mapReaction = (reaction: PrismaReaction): Reaction => {

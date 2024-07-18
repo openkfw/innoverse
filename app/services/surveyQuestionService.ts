@@ -9,6 +9,7 @@ import getLogger from '@/utils/logger';
 import { mapSurveyQuestionToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
 import { NewsType, RedisSurveyQuestion, RedisSurveyVote } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
+import { mapRedisSurveyQuestionToRedisNewsFeedEntry } from '@/utils/newsFeed/redis/redisMappings';
 import {
   getNewsFeedEntryByKey,
   performRedisTransaction,
@@ -72,11 +73,8 @@ const addVoteToCache = async (
   vote: RedisSurveyVote,
 ) => {
   survey.votes.push(vote);
-  await transactionalSaveNewsFeedEntry(transactionClient, {
-    type: NewsType.SURVEY_QUESTION,
-    updatedAt: survey.updatedAt,
-    item: survey,
-  });
+  const newsFeedEntry = mapRedisSurveyQuestionToRedisNewsFeedEntry(survey);
+  await transactionalSaveNewsFeedEntry(transactionClient, newsFeedEntry);
 };
 
 const removeVoteFromCache = async (
@@ -86,11 +84,8 @@ const removeVoteFromCache = async (
 ) => {
   const updatedVotes = survey.votes.filter((surveyVote) => surveyVote.id !== vote.id);
   survey.votes = updatedVotes;
-  await transactionalSaveNewsFeedEntry(transactionClient, {
-    type: NewsType.SURVEY_QUESTION,
-    updatedAt: survey.updatedAt,
-    item: survey,
-  });
+  const newsFeedEntry = mapRedisSurveyQuestionToRedisNewsFeedEntry(survey);
+  await transactionalSaveNewsFeedEntry(transactionClient, newsFeedEntry);
 };
 
 export const getNewsFeedEntryForSurveyQuestion = async (

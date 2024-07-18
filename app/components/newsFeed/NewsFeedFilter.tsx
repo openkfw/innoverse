@@ -8,6 +8,7 @@ import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { FilterOption } from '@/components/common/FilterSelect';
 
 import NewsFeedProjectsFilter from './NewsFeedProjectsFilter';
+import NewsFeedSearchFilter from './NewsFeedSearchFilter';
 import NewsFeedTypeFilter from './NewsFeedTypeFilter';
 
 export default function NewsFeedFilter() {
@@ -26,6 +27,7 @@ export default function NewsFeedFilter() {
 
   return (
     <Card sx={cardStyles} data-testid="news-filter">
+      <NewsFeedSearchFilter isLoading={!projectOptions} filters={filters} setFilters={setFilters} />
       <NewsFeedProjectsFilter isLoading={!projectOptions} onSelect={updateFilters} options={projectOptions} />
       <NewsFeedTypeFilter isLoading={!projectOptions} filters={filters} setFilters={setFilters} />
     </Card>

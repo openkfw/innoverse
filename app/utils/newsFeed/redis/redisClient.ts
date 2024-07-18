@@ -11,7 +11,7 @@ let client: RedisClient | undefined = undefined;
 const logger = getLogger();
 
 export enum RedisIndex {
-  UPDATED_AT_TYPE_PROJECT_ID = 'idx:updatedAt:type:projectId',
+  UPDATED_AT_TYPE_PROJECT_ID_SEARCH = 'idx:updatedAt:type:projectId:search',
   UPDATED_AT = 'idx:updatedAt',
   SYNCED_AT = 'idx:syncedAt:status',
 }
@@ -78,7 +78,7 @@ const createIndices = async (client: RedisClient) => {
 
   await createIndexOrCatch({
     client,
-    index: RedisIndex.UPDATED_AT_TYPE_PROJECT_ID,
+    index: RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_SEARCH,
     schema: {
       '$.updatedAt': {
         type: SchemaFieldTypes.NUMERIC,
@@ -92,6 +92,10 @@ const createIndices = async (client: RedisClient) => {
       '$.item.projectId': {
         type: SchemaFieldTypes.TAG,
         AS: 'projectId',
+      },
+      '$.search': {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'search',
       },
     },
   });
