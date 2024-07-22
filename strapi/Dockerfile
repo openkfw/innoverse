@@ -19,3 +19,5 @@ USER node
 RUN ["npm", "run", "build"]
 EXPOSE 1337
 CMD ["npm", "run", "develop"]
+
+# TODO: run strapi import to import the demo data

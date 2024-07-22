@@ -10,7 +10,7 @@ For starting the platform, you need to start at least the Strapi CMS, the Databa
 ## InnoVerse App locally, strapi in Docker
 
 The most common way to start up the platform is by starting all components with docker, except for the InnoVerse Next.js App.
-For this you can use the `docker-compose.yaml` for strapi & DB.
+For this you can use the `docker-compose.yaml`.
 
 First, set up the correct env vars:
 
@@ -34,7 +34,7 @@ Make sure you have three (3) .env files in total. One (1) in project root, one (
 Then start the components:
 
 ```bash
-docker-compose -f docker-compose.yaml up # for starting the project with strapi
+docker-compose -f docker-compose.yaml up
 ```
 
 > **IMPORTANT:**
@@ -47,25 +47,25 @@ Next, after login, go to the [API Tokens settings Page](http://localhost:1337/ad
 new API Token (Token duration - Unlimited, Token type - Full Access) - then copy and save the token, and paste the token
 in the `./app/.env` file under STRAPI_TOKEN.
 
+Now you need to migrate the database to prisma by running: `npm run prisma migrate dev`.
+
 Next, you can start the InnoVerse app itself by running the following:
 
 ```bash
 cd app
-npm install # if starting for the first time
+npm install # if starting the app for the first time
 npm run dev
 ```
 
 now your app should be visible under [http://localhost:3000](http://localhost:3000)
 
+#### Database: Accessing/Viewing the DB (Prisma Studio)
+
+- Run `npm run prisma studio` to run the database browser and check the database.
+
 > **Important:**
 > The CMS is not filled with data by default. You can create your own data or opt for importing data from an existing
 > strapi instance - check the docs in [./strapi/README.md](./strapi/README.md##Export&Import)
-
-#### Database: Accessing/Viewing the DB (Prisma Studio)
-
-- First, migrate the database to prisma by running: `npm run prisma migrate dev`.
-
-- Run `npm run prisma studio` to run the database browser and check the database.
 
 ### Push Notifications
 
@@ -78,7 +78,7 @@ now your app should be visible under [http://localhost:3000](http://localhost:30
 
 #### CMS Setup
 
-- Go to the CMS > Settings > Webhooks > Create a new Webhook
+- Go to the Strapi CMS > Settings > Webhooks > Create a new Webhook
 - Add a meaningful name
 - Add the URL of the push notifications
   - For local development: `http://host.docker.internal:3000/api/hooks/push`

@@ -1,0 +1,80 @@
+version: "3.5"
+
+services:
+  database:
+    image: postgres:13
+    volumes:
+      - ../pg-init-scripts:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=innohub,strapi
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: on-failure
+    networks:
+      - backend
+
+  strapi:
+    build:
+      context: ../strapi
+    restart: unless-stopped
+    env_file: ./../strapi/.env
+    environment:
+      DATABASE_HOST: database
+      NODE_ENV: production
+    volumes:
+      - ../strapi/config:/opt/app/config
+      - ../strapi/src:/opt/app/src
+      - ../strapi/package.json:/opt/package.json
+      - ../strapi/yarn.lock:/opt/yarn.lock
+      - ../strapi/.env:/opt/app/.env
+      - ../strapi/public/uploads:/opt/app/public/uploads
+      - ../strapi/types:/opt/app/types
+    ports:
+      - "1337:1337"
+    depends_on:
+      - database
+      - cache
+    networks:
+      - backend
+      - frontend
+
+  # TODO: cache is not connected, change the REDIS_URL variable
+  cache:
+    image: redis/redis-stack:6.2.6-v15
+    environment:
+      - REDIS_ARGS=--appendonly yes --appendfsync everysec
+    restart: always
+    ports:
+      - 8001:8001
+      - 6379:6379
+    volumes:
+      - ../cache:/data
+    networks:
+      - backend
+
+  # TODO: check how to replace build args with regular runtime args
+  innoverse:
+    build:
+      context: ../app
+      dockerfile: ../app/Dockerfile
+      args:
+        - NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT=${NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT}
+        - NEXT_PUBLIC_STRAPI_ENDPOINT=${NEXT_PUBLIC_STRAPI_ENDPOINT}
+        - NEXT_PUBLIC_VAPID_PUBLIC_KEY=${NEXT_PUBLIC_VAPID_PUBLIC_KEY}
+        - NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING=${NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING}
+        - NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY=${NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY}
+    env_file:
+      - ../app/.env
+    ports:
+      - 3000:3000
+    depends_on:
+      - strapi
+      - database
+      - cache
+    restart: on-failure
+    networks:
+      - frontend
+
+networks:
+  backend:
+  frontend:
