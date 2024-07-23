@@ -93,7 +93,11 @@ export function formatDate(dateString: string | Date, locale = 'de-DE') {
   const day = date.toLocaleString(locale, { day: 'numeric' });
   const month = date.toLocaleString(locale, { month: 'long' });
   const year = date.toLocaleString(locale, { year: 'numeric' });
-  return `${day}. ${month} ${year}`;
+
+  const hour = date.getHours().toString().padStart(2, '0');
+  const minute = date.getMinutes().toString().padStart(2, '0');
+
+  return `${day}. ${month} ${year} · ${hour}:${minute}`;
 }
 
 export function formatTimestamp(timestamp: number, locale = 'de-DE'): string | null {
