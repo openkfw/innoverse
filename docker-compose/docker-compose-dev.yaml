@@ -8,14 +8,31 @@ services:
       - ../postgres/pg-init-scripts:/docker-entrypoint-initdb.d
     env_file: ./../postgres/.env
     restart: on-failure
-    networks:
-      - backend
+    network_mode: host
+
+  innoverse:
+      build:
+        context: ./app
+        target: dev
+      restart: always
+      command: npm run dev
+      environment:
+        - NODE_ENV=development
+        #if you’re using Windows, you may need to uncomment the next line
+        #- WATCHPACK_POLLING=true
+      volumes:
+        - ../app:/app
+        - ../app/node_modules:/app/node_modules
+        - ../app/.next:/app/.next
+      ports:
+        - 3000:3000
+      network_mode: host
 
   strapi:
-    build:
-      context: ../strapi
+    container_name: strapi
+    build: ../strapi
     restart: unless-stopped
-    env_file: ./../strapi/.env
+    env_file: ../strapi/.env
     volumes:
       - ../strapi/config:/opt/app/config
       - ../strapi/src:/opt/app/src
@@ -24,13 +41,10 @@ services:
       - ../strapi/.env:/opt/app/.env
       - ../strapi/public/uploads:/opt/app/public/uploads
       - ../strapi/types:/opt/app/types
-    ports:
-      - "1337:1337"
     depends_on:
       - database
       - cache
-    networks:
-      - backend
+    network_mode: host
 
   cache:
     image: redis/redis-stack:6.2.6-v15
@@ -41,25 +55,4 @@ services:
       - 8001:8001
       - 6379:6379
     volumes:
-      - ../cache:/data
-    networks:
-      - backend
-
-  innoverse:
-    build:
-      context: ../app
-      dockerfile: ../app/Dockerfile
-    env_file:
-      - ../app/.env
-    ports:
-      - 3000:3000
-    depends_on:
-      - strapi
-      - database
-      - cache
-    restart: on-failure
-    networks:
-      - backend
-
-networks:
-  backend:
+      - ./cache:/data

@@ -7,10 +7,10 @@ As a short introduction, the main components of the InnoVerse Platform are shown
 
 For starting the platform, you need to start at least the Strapi CMS, the Database and the InnoVerse app.
 
-## InnoVerse App locally, strapi in Docker
+## InnoVerse App locally
 
-The most common way to start up the platform is by starting all components with docker, except for the InnoVerse Next.js App.
-For this you can use the `docker-compose.yaml`.
+The most common way to start up the platform is by starting all components with Docker.
+For this you can use the `docker-compose-local.yaml` located in `/docker-compose`.
 
 First, set up the correct env vars:
 
@@ -23,18 +23,19 @@ You can find a full list of the environment variables in the section 'Environmen
 
 ```bash
 # from project root
-cp .env.example .env
+cp ./postgres.env.example ./postgres/.env 
 cp ./app/.env.example ./app/.env # and then fill the missing env vars in /app
 cp ./strapi/.env.example ./strapi/.env # and then fill the missing env vars in /strapi
 ```
 
-Make sure you have three (3) .env files in total. One (1) in project root, one (1) in the /app folder and one (1) in the
+Make sure you have three (3) .env files in total. One (1) in /postgres folder, one (1) in the /app folder and one (1) in the
 /strapi folder.
 
 Then start the components:
 
 ```bash
-docker-compose -f docker-compose.yaml up
+cd ./docker-compose
+docker-compose -f docker-compose-local.yaml up
 ```
 
 > **IMPORTANT:**
@@ -49,15 +50,21 @@ in the `./app/.env` file under STRAPI_TOKEN.
 
 Now you need to migrate the database to prisma by running: `npm run prisma migrate dev`.
 
-Next, you can start the InnoVerse app itself by running the following:
+Next, you can re-start the InnoVerse app by running the following:
 
 ```bash
-cd app
-npm install # if starting the app for the first time
-npm run dev
+docker compose restart innoverse
 ```
 
 now your app should be visible under [http://localhost:3000](http://localhost:3000)
+
+## Running InnoVerse in for production
+Most likely you will run the app in a Kubernetes set-up for this, you will find Helm-Charts in `/helm`.
+In case you'd like to run a productive environment in via docker-compose, you can find the production ready docker-compose `docker-compose-prod.yaml` in `./docker-compose`.
+Make sure to make all steps described in the section 'Running InnoVerse locally'
+
+## Developing InnoVerse
+To run InnoVerse with hot-reloading make sure to make all steps described in the section 'Running InnoVerse locally' and then run `docker-compose-dev.yaml` in `./docker-compose`.
 
 #### Database: Accessing/Viewing the DB (Prisma Studio)
 

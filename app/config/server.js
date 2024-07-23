@@ -23,27 +23,8 @@ const RequiredEnv = z
     REDIS_URL: z.string({ errorMap: () => ({ message: 'REDIS_URL must be set!' }) }).default(''),
   })
   .superRefine((values, ctx) => {
-    const {
-      DATABASE_URL,
-      // POSTGRES_USER,
-      // POSTGRES_PASSWORD,
-      NEXTAUTH_URL,
-      NEXTAUTH_SECRET,
-      STRAPI_TOKEN,
-      HTTP_BASIC_AUTH,
-      STAGE,
-      REDIS_URL,
-    } = values;
-    const required = [
-      DATABASE_URL,
-      // POSTGRES_USER, TODO: Check if we need this at all
-      // POSTGRES_PASSWORD, TODO: Check if we need this at all
-      NEXTAUTH_URL,
-      NEXTAUTH_SECRET,
-      STRAPI_TOKEN,
-      HTTP_BASIC_AUTH,
-      REDIS_URL,
-    ];
+    const { DATABASE_URL, NEXTAUTH_URL, NEXTAUTH_SECRET, STRAPI_TOKEN, HTTP_BASIC_AUTH, STAGE, REDIS_URL } = values;
+    const required = [DATABASE_URL, NEXTAUTH_URL, NEXTAUTH_SECRET, STRAPI_TOKEN, HTTP_BASIC_AUTH, REDIS_URL];
     if (required.some((el) => el === '') && STAGE !== 'build') {
       ctx.addIssue({
         message: 'Not all required env variables are set!',
@@ -86,6 +67,7 @@ const OptionalEnv = z
     VAPID_ADMIN_EMAIL: z.string().default(''),
     STRAPI_PUSH_NOTIFICATION_SECRET: z.string().default(''),
     APP_INSIGHTS_SERVICE_NAME: z.string().default(''),
+    ANALYZE: z.boolean().default(false),
   })
   .superRefine((values, ctx) => {
     //Ignore the validation at build stage
@@ -181,7 +163,7 @@ const OptionalEnv = z
   });
 
 // If we run 'next build' the required runtime env variables can be empty, at run-time checks will be applied...
-// NEXT_PUBLIC_* are checked in client.js at build. They can not be changed at runtime
+// NEXT_PUBLIC_* are checked in client.js
 const optionalEnv = OptionalEnv.parse(process.env);
 const requiredEnv = RequiredEnv.parse(process.env);
 
