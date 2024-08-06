@@ -4,15 +4,13 @@
 }
 
 .slider-image {
-  align-self: flex-end;
   width: 100%;
   height: auto;
+  background: rgb(255, 255, 255);
   max-width: 806px;
   aspect-ratio: 806/477;
   position: relative;
 }
-
-
 
 .slick-dots.slick-thumb {
   position: absolute !important;
@@ -23,7 +21,7 @@
   justify-items: center;
   align-items: center;
   gap: 25px;
-  top: calc(100% + 100px);
+  top: calc(100% + 50px);
   transition-timing-function: ease-in-out !important;
   transition: all 750ms !important;
   opacity: 0;
@@ -64,7 +62,7 @@
   .slider-image {
     width: 100%;
     height: auto;
-  }  
+  }
 }
 
 .slick-list {

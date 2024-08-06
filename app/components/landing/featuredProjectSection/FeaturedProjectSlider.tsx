@@ -57,7 +57,6 @@ const Slide = ({ content, index, setSelected }: SlideProps) => {
     }
     return <></>;
   };
-  if (!content) return <></>;
 
   const PrevArrow = () => {
     if (isHovered || !isWideScreen) {
@@ -73,6 +72,8 @@ const Slide = ({ content, index, setSelected }: SlideProps) => {
     }
     return <></>;
   };
+
+  if (!content) return <></>;
 
   return (
     <Grid container key={content?.id} sx={wrapperStyles} data-testid="featured-project">
@@ -91,9 +92,10 @@ const Slide = ({ content, index, setSelected }: SlideProps) => {
           alt={m.components_landing_featuredProjectSection_featuredProjectSldier_imageAlt()}
           sizes="50vw"
           className="slider-image"
-          style={{ objectFit: 'contain', objectPosition: 'center' }}
+          style={{ objectFit: 'cover', objectPosition: 'center' }}
           priority
         />
+
         <PrevArrow />
         <NextArrow />
       </Grid>
@@ -321,9 +323,9 @@ const imageContainerStyles = {
   alignItems: 'center',
   overflow: 'hidden',
   height: '509px',
+  position: 'relative',
   flexGrow: { xs: 0, sm: 7 },
   maxWidth: { xs: 'none', sm: `${(7 / 12) * 100}%` },
-  position: 'relative',
 
   [theme.breakpoints.up('xl')]: {
     display: 'flex',
