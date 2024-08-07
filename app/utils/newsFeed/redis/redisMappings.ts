@@ -1,4 +1,5 @@
 import { Follow as PrismaFollow, Reaction as PrismaReaction } from '@prisma/client';
+import { StatusCodes } from 'http-status-codes';
 
 import {
   CollaborationComment,
@@ -12,15 +13,10 @@ import {
   ProjectUpdate,
   Reaction,
   SurveyQuestion,
+  UserSession,
 } from '@/common/types';
-import { getPromiseResults, unixTimestampToDate } from '@/utils/helpers';
-import {
-  findReactedByUser,
-  findSurveyUserVote,
-  getFollowedByForObjects as getFollowedObjectIds,
-  getUserReactionsForObjects,
-  isFollowedByUser,
-} from '@/utils/requests/requests';
+import { withAuth } from '@/utils/auth';
+import { unixTimestampToDate } from '@/utils/helpers';
 
 import { NewsType, RedisNewsFeedEntry, RedisReaction, RedisSurveyQuestion } from './models';
 
@@ -40,38 +36,19 @@ type RedisNewsFeedEntryWithAdditionalData = RedisNewsFeedEntry & {
   followedByUser: boolean;
 };
 
-export const mapRedisNewsFeedEntries = async (redisFeedEntries: RedisNewsFeedEntry[]) => {
-  const objects = redisFeedEntries.map((entry) => ({
-    objectType: MappedRedisType[entry.type],
-    objectId: entry.item.id,
-  }));
-
-  const { data: followedObjectIds } = await getFollowedObjectIds({ objects });
-  const { data: reactions } = await getUserReactionsForObjects({ objects });
-
-  const objectsWithAdditionalData = redisFeedEntries.map((entry) => ({
+export const mapRedisNewsFeedEntries = withAuth(async (user: UserSession, redisFeedEntries: RedisNewsFeedEntry[]) => {
+  const entriesWithUserData = redisFeedEntries.map((entry) => ({
     ...entry,
-    followedByUser: followedObjectIds?.some((id) => id === entry.item.id) ?? false,
-    reaction: reactions?.find((reaction) => reaction.objectId === entry.item.id),
+    followedByUser: entry.item.followedBy.some((follow) => follow.providerId === user.providerId),
+    reaction: entry.item.reactions.find((reaction) => reaction.reactedBy === user.providerId),
   }));
 
-  const mapObjects = objectsWithAdditionalData.map(mapRedisItem);
-  return await getPromiseResults(mapObjects);
-};
-
-export const mapRedisNewsFeedEntry = async (redisFeedEntry: RedisNewsFeedEntry) => {
-  const object = { objectId: redisFeedEntry.item.id, objectType: MappedRedisType[redisFeedEntry.type] };
-  const { data: isFollowedBy } = await isFollowedByUser(object);
-  const { data: reactionForUser } = await findReactedByUser(object);
-  const objectWithAdditionalData = {
-    ...redisFeedEntry,
-    followedByUser: isFollowedBy ?? false,
-    reaction: reactionForUser ?? undefined,
+  const entries = entriesWithUserData.map((entry) => mapRedisItem(entry, user));
+  return {
+    status: StatusCodes.OK,
+    data: entries,
   };
-
-  const mappedItem = await mapRedisItem(objectWithAdditionalData);
-  return mappedItem as NewsFeedEntry;
-};
+});
 
 export const mapRedisSurveyQuestionToRedisNewsFeedEntry = (surveyQuestion: RedisSurveyQuestion): RedisNewsFeedEntry => {
   return {
@@ -113,8 +90,8 @@ export const mapFollow = (reaction: PrismaFollow): Follow => {
   } as Follow;
 };
 
-export const mapRedisItem = async (entry: RedisNewsFeedEntryWithAdditionalData): Promise<NewsFeedEntry> => {
-  const mappedItem = await mapItem(entry);
+const mapRedisItem = (entry: RedisNewsFeedEntryWithAdditionalData, user: UserSession): NewsFeedEntry => {
+  const mappedItem = mapItem(entry, user);
   switch (entry.type) {
     case NewsType.UPDATE:
       return { type: ObjectType.UPDATE, item: mappedItem as ProjectUpdate };
@@ -135,15 +112,15 @@ export const mapRedisItem = async (entry: RedisNewsFeedEntryWithAdditionalData):
   }
 };
 
-const mapItem = async (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData) => {
+const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: UserSession) => {
   const { type, item } = redisFeedEntry;
   const projectId = type === NewsType.PROJECT ? item.id : item.projectId;
 
   if (type === NewsType.SURVEY_QUESTION) {
-    const { data: userVote } = await findSurveyUserVote({ objectId: item.id });
+    const userVote = item.votes.find((vote) => vote.votedBy === user.providerId);
     return mapObjectWithReactions({
       ...item,
-      userVote: userVote?.vote ?? undefined,
+      userVote: userVote?.vote,
       followedByUser: redisFeedEntry.followedByUser,
       reactionForUser: redisFeedEntry.reaction ?? null,
       createdAt: unixTimestampToDate(item.createdAt),

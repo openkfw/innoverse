@@ -1,11 +1,11 @@
-import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import CardActions from '@mui/material/CardActions';
 import Grid from '@mui/material/Grid';
 
-import { NewsFeedEntry } from '@/common/types';
+import { useNewsFeed } from '@/app/contexts/news-feed-context';
+import { NewsFeedEntry, ObjectType } from '@/common/types';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
@@ -19,18 +19,24 @@ interface NewsCardActionsProps {
 }
 
 export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
-  const { id, followedByUser } = entry.item;
+  const { id, followedByUser, projectId = '' } = entry.item;
+
+  const newsFeed = useNewsFeed();
   const appInsights = useAppInsightsContext();
-  const [isFollowed, setIsFollowed] = useState<boolean>(followedByUser ?? false);
+
+  const getItemToFollow = () => ({
+    objectId: entry.type === ObjectType.POST ? id : projectId,
+    objectType: entry.type === ObjectType.POST ? ObjectType.POST : ObjectType.PROJECT,
+  });
 
   async function toggleFollow() {
     try {
-      if (isFollowed) {
-        setIsFollowed(false);
-        await handleRemoveFollower({ objectId: id, objectType: entry.type });
+      newsFeed.toggleFollow(entry);
+      const itemToFollow = getItemToFollow();
+      if (followedByUser) {
+        await handleRemoveFollower(itemToFollow);
       } else {
-        setIsFollowed(true);
-        await handleFollow({ objectId: id, objectType: entry.type });
+        await handleFollow(itemToFollow);
       }
     } catch (error) {
       console.error('Error toggling follow status:', error);
@@ -47,7 +53,7 @@ export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
       <Grid container direction="row" justifyContent="space-between" alignItems="center">
         <Grid item xs={12} sx={footerStyles}>
           <NewsFeedReactionCard entry={entry} />
-          <FollowButtonWithLink isSelected={isFollowed} entry={entry} onIconClick={toggleFollow} />
+          <FollowButtonWithLink isSelected={followedByUser ?? false} entry={entry} onIconClick={toggleFollow} />
         </Grid>
       </Grid>
     </CardActions>

@@ -76,6 +76,7 @@ interface NewsFeedContextInterface {
   toggleSort: () => void;
   setFilters: (filters: NewsFeedFilters) => void;
   loadNextPage: () => Promise<void>;
+  toggleFollow: (entry: NewsFeedEntry) => void;
 }
 
 const defaultState: NewsFeedContextInterface = {
@@ -93,6 +94,7 @@ const defaultState: NewsFeedContextInterface = {
   toggleSort: () => {},
   setFilters: () => {},
   loadNextPage: () => Promise.resolve(),
+  toggleFollow: (_: NewsFeedEntry) => {},
 };
 
 interface NewsFeedContextProviderProps {
@@ -237,6 +239,26 @@ export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextP
     }
   };
 
+  const toggleFollow = (entry: NewsFeedEntry) => {
+    const isFollowedByUser = !(entry.item.followedByUser ?? false);
+    const projectId = entry.item.projectId;
+
+    const getUpdatedEntry = (other: NewsFeedEntry) => {
+      return {
+        ...other,
+        item: { ...other.item, followedByUser: getFollowedByUser(other) },
+      } as NewsFeedEntry;
+    };
+
+    const getFollowedByUser = (other: NewsFeedEntry) => {
+      if (other === entry) return isFollowedByUser;
+      if (projectId && other.item.projectId === projectId) return isFollowedByUser;
+      return other.item.followedByUser;
+    };
+
+    setNewsFeedEntries((entries) => entries.map(getUpdatedEntry));
+  };
+
   const toggleSort = () => {
     setSort((previous) => (previous === SortValues.ASC ? SortValues.DESC : SortValues.ASC));
     const reversed = newsFeedEntries.reverse();
@@ -263,6 +285,7 @@ export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextP
     refetchFeed: () => refetchFeed({ filters, page: pageNumber }),
     addEntry,
     removeEntry,
+    toggleFollow,
     toggleSort,
     setFilters: updateFilters,
     loadNextPage,

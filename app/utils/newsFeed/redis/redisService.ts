@@ -224,6 +224,7 @@ export const saveNewsFeedEntry = async (client: RedisClient, entry: RedisNewsFee
   if (result !== 'OK') {
     throw redisError(`Failed to set RedisNewsFeedEntry of type '${entry.type}' with id '${entry.item.id}'`);
   }
+  return entry;
 };
 
 export const saveNewsFeedSync = async (client: RedisClient, sync: RedisSync) => {
@@ -266,13 +267,19 @@ export const performRedisTransaction = async (
   return results;
 };
 
-export const getNewsFeed = async (options?: GetItemsOptions) => {
+export const getRedisNewsFeed = async (options?: GetItemsOptions) => {
   const client = await getRedisClient();
   const entries = await getNewsFeedEntries(client, options);
   const newsFeedEntries = entries.documents.map((x) => x.value);
   // TODO: temporary solution to get rid of [Object: null prototype]
   const data = JSON.parse(JSON.stringify(newsFeedEntries, null, 2)) as RedisNewsFeedEntry[];
-  return await mapRedisNewsFeedEntries(data);
+  return data;
+};
+
+export const getNewsFeed = async (options?: GetItemsOptions) => {
+  const data = await getRedisNewsFeed(options);
+  const { data: feed } = await mapRedisNewsFeedEntries(data);
+  return feed ?? [];
 };
 
 const getKeyForNewsFeedEntry = (entry: RedisNewsFeedEntry) => `${entry.type}:${entry.item.id}`;

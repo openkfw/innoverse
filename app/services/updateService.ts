@@ -7,7 +7,11 @@ import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { mapToRedisUsers, mapUpdateToRedisNewsFeedEntry } from '@/utils/newsFeed/redis/mappings';
+import {
+  mapRedisNewsFeedEntryToProjectUpdate,
+  mapToRedisUsers,
+  mapUpdateToRedisNewsFeedEntry,
+} from '@/utils/newsFeed/redis/mappings';
 import { NewsType, RedisProjectUpdate } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
@@ -28,7 +32,7 @@ type UpdateUpdateInCache = { update: { id: string; comment?: string; responseCou
 export const createProjectUpdate = async (update: CreateProjectUpdate) => {
   const createdUpdate = await createProjectUpdateInStrapi(update);
   if (createdUpdate) {
-    await createProjectUpdateInCache(createdUpdate);
+    return await createProjectUpdateInCache(createdUpdate);
   }
   return createdUpdate;
 };
@@ -50,7 +54,8 @@ export const deleteProjectUpdate = async (updateId: string) => {
 export const createProjectUpdateInCache = async (update: ProjectUpdate) => {
   const redisClient = await getRedisClient();
   const newsFeedEntry = await createNewsFeedEntryForProjectUpdate(update);
-  await saveNewsFeedEntry(redisClient, newsFeedEntry);
+  const redisNewsFeedEntry = await saveNewsFeedEntry(redisClient, newsFeedEntry);
+  return mapRedisNewsFeedEntryToProjectUpdate(redisNewsFeedEntry.item as RedisProjectUpdate);
 };
 
 export const deleteProjectUpdateInCache = async (updateId: string) => {
@@ -92,8 +97,8 @@ const createNewsFeedEntryForProjectUpdateById = async (updateId: string) => {
 
 export const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate) => {
   const updateReactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
-  const updateFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.UPDATE, update.id);
-  const mappedUpdateFollowedBy = await mapToRedisUsers(updateFollowedBy);
+  const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, update.projectId);
+  const mappedUpdateFollowedBy = await mapToRedisUsers(projectFollowedBy);
   const responseCount = await countNewsResponses(dbClient, update.id);
   return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, responseCount);
 };
