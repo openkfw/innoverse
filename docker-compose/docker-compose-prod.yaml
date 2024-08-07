@@ -1,7 +1,6 @@
-version: "3.5"
-
 services:
   database:
+    container_name: innoverse-database
     build:
       context: ../postgres
     volumes:
@@ -12,10 +11,11 @@ services:
       - backend
 
   strapi:
+    container_name: innoverse-strapi
     build:
       context: ../strapi
     restart: unless-stopped
-    env_file: ./../strapi/.env
+    env_file: ./../strapi/.env.production
     volumes:
       - ../strapi/config:/opt/app/config
       - ../strapi/src:/opt/app/src
@@ -33,6 +33,7 @@ services:
       - backend
 
   cache:
+    container_name: innoverse-cache
     build:
       context: ../redis
     environment:
@@ -46,11 +47,12 @@ services:
       - backend
 
   innoverse:
+    container_name: innoverse
     build:
       context: ../app
       dockerfile: ../app/Dockerfile
     env_file:
-      - ../app/.env
+      - ../app/.env.production
     ports:
       - 3000:3000
     depends_on:
