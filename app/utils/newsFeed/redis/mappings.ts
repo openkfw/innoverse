@@ -2,12 +2,13 @@ import {
   BasicCollaborationQuestion,
   BasicProject,
   Event,
+  ObjectType,
   Post,
   ProjectUpdate,
   SurveyQuestion,
   User,
 } from '@/common/types';
-import { getPromiseResults, getUnixTimestamp } from '@/utils/helpers';
+import { getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
   NewsType,
@@ -151,6 +152,18 @@ export const mapCollaborationCommentToRedisNewsFeedEntry = (
     item: item,
     type: NewsType.COLLABORATION_COMMENT,
     search: escapeRedisTextSeparators((item.question || '') + ' ' + (item.comment || '')),
+  };
+};
+
+export const mapRedisNewsFeedEntryToProjectUpdate = (item: RedisProjectUpdate): ProjectUpdate => {
+  return {
+    ...item,
+    projectName: item.projectName,
+    updatedAt: unixTimestampToDate(item.updatedAt),
+    createdAt: unixTimestampToDate(item.createdAt),
+    reactions: item.reactions.map((r) => {
+      return { ...r, objectId: item.id, objectType: ObjectType.UPDATE };
+    }),
   };
 };
 

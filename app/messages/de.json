@@ -273,11 +273,11 @@
 
   "components_newsPage_cards_projectCard_imageAlt": "projekt",
 
-  "components_newsPage_cards_common_newsCardAction_error": "Folge Status könnte nicht geändert werden. Bitte versuche es noch einmal.",
+  "components_newsPage_cards_common_newsCardAction_error": "Beitrag konnte nicht gefolgt/entfolgt werden. Bitte versuche es noch einmal.",
 
   "components_newsPage_cards_common_newsCardReaction_error": "Deine Reaktion konnte nicht aktualisiert werden. Bitte versuche es noch einmal",
 
-  "components_newsPage_cards_common_newsFeedItemFollowControl_error": "Folge Status konnte nicht geändert werden. Bitte versuche es noch einmal.",
+  "components_newsPage_cards_common_newsFeedItemFollowControl_error": "Beitrag konnte nicht gefolgt/entfolgt werden. Bitte versuche es noch einmal.",
 
   "components_newsPage_cards_common_newsFeedItemReactionControl_error": "Deine Reaktion konnte nicht aktualisiert werden. Bitte versuche es noch einmal.",
 

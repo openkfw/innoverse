@@ -110,9 +110,9 @@ export const createNewsFeedEntryForSurveyQuestionById = async (objectId: string)
 
 export const createNewsFeedEntryForSurveyQuestion = async (survey: SurveyQuestion) => {
   const surveyReactions = await getReactionsForEntity(dbClient, ObjectType.SURVEY_QUESTION, survey.id);
-  const surveyFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.SURVEY_QUESTION, survey.id);
-  const mappedSurveyFollowedBy = await mapToRedisUsers(surveyFollowedBy);
-  return mapSurveyQuestionToRedisNewsFeedEntry(survey, surveyReactions, mappedSurveyFollowedBy);
+  const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, survey.projectId);
+  const mappedSProjectFollowedBy = await mapToRedisUsers(projectFollowedBy);
+  return mapSurveyQuestionToRedisNewsFeedEntry(survey, surveyReactions, mappedSProjectFollowedBy);
 };
 
 const notifySurveyFollowers = async (surveyQuestionId: string) => {

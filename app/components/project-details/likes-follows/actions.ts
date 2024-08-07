@@ -73,11 +73,11 @@ export const handleRemoveFollower = withAuth(
     try {
       const validatedParams = validateParams(followSchema, body);
       if (validatedParams.status === StatusCodes.OK) {
-        await removeFollow({
+        const follow = await removeFollow({
           user,
           object: { objectId: body.objectId, objectType: body.objectType, followedBy: user.providerId },
         });
-        return { status: StatusCodes.OK };
+        return { status: StatusCodes.OK, data: follow };
       }
       return {
         status: validatedParams.status,
@@ -103,11 +103,11 @@ export const handleFollow = withAuth(async (user: UserSession, body: { objectId:
   try {
     const validatedParams = validateParams(followSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      await addFollow({
+      const follow = await addFollow({
         user,
         object: { objectId: body.objectId, objectType: body.objectType, followedBy: user.providerId },
       });
-      return { status: StatusCodes.OK };
+      return { status: StatusCodes.OK, data: follow };
     }
     return {
       status: validatedParams.status,

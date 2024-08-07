@@ -64,6 +64,7 @@ export const handleProjectUpdate = withAuth(
       data: {
         ...newUpdate,
         author: author,
+        followedByUser: newUpdate.followedBy?.some((update) => update.providerId === user.providerId),
       },
     };
   },

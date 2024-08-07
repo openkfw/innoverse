@@ -4,12 +4,12 @@ import { BasicProject, ObjectType } from '@/common/types';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
+import { fetchPages } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-
 import { mapProjectToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
 import { NewsType } from '@/utils/newsFeed/redis/models';
 import { RedisClient } from '@/utils/newsFeed/redis/redisClient';
-import { getNewsFeedEntryByKey } from '@/utils/newsFeed/redis/redisService';
+import { getNewsFeedEntryByKey, getRedisNewsFeed as getNewsFeedEntries } from '@/utils/newsFeed/redis/redisService';
 import { getProjectById } from '@/utils/requests/project/requests';
 
 const logger = getLogger();
@@ -18,6 +18,24 @@ export const getNewsFeedEntryForProject = async (redisClient: RedisClient, { pro
   const redisKey = getRedisKey(projectId);
   const cacheEntry = await getNewsFeedEntryByKey(redisClient, redisKey);
   return cacheEntry ?? (await createNewsFeedEntryForProjectById(projectId));
+};
+
+export const getNewsFeedEntriesForProject = async (redisClient: RedisClient, { projectId }: { projectId: string }) => {
+  const cacheEntries = await fetchPages({
+    fetcher: async (page, pageSize) => {
+      logger.info(`Fetching page ${page} of news feed entries for project ${projectId} ...`);
+      const entries = await getNewsFeedEntries({
+        filterBy: { projectIds: [projectId] },
+        pagination: { page, pageSize },
+        sortBy: {
+          updatedAt: 'DESC',
+        },
+      });
+
+      return entries;
+    },
+  });
+  return cacheEntries;
 };
 
 export const createNewsFeedEntryForProjectById = async (objectId: string) => {

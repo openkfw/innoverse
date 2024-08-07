@@ -158,7 +158,7 @@ export const createNewsFeedEntryForComment = async (comment: PrismaCollaboration
   const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
   const upvotedBy = (await getCollaborationCommentUpvotedBy(dbClient, comment.id)) ?? [];
   const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_COMMENT, comment.id);
-  const followerIds = await getFollowedByForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, question.id);
+  const followerIds = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, question.projectId);
   const followers = await mapToRedisUsers(followerIds);
   const projectName = await getProjectTitleById(comment.projectId);
 

@@ -87,6 +87,7 @@ export type RedisProjectUpdate = RedisItem & {
   comment: string;
   topic: string;
   projectId: string;
+  projectName: string;
   projectStart?: string;
   linkToCollaborationTab: boolean;
   responseCount: number;

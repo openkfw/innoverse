@@ -30,8 +30,10 @@ const createNewsFeedEntryForEventById = async (eventId: string) => {
 
 export const createNewsFeedEntryForEvent = async (event: Event) => {
   const eventReactions = await getReactionsForEntity(dbClient, ObjectType.EVENT, event.id);
-  const eventFollowedBy = await mapToRedisUsers(await getFollowedByForEntity(dbClient, ObjectType.EVENT, event.id));
-  return mapEventToRedisNewsFeedEntry(event, eventReactions, eventFollowedBy);
+  const projectFollowedBy = await mapToRedisUsers(
+    await getFollowedByForEntity(dbClient, ObjectType.PROJECT, event.projectId),
+  );
+  return mapEventToRedisNewsFeedEntry(event, eventReactions, projectFollowedBy);
 };
 
 const getRedisKey = (eventId: string) => `${NewsType.EVENT}:${eventId}`;

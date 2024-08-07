@@ -37,7 +37,7 @@ interface NewsProps {
 
 export const NewsFeed = (props: NewsProps) => {
   const { sx } = props;
-  const { loadNextPage, hasMore, isLoading, feed, removeEntry } = useNewsFeed();
+  const { loadNextPage, hasMore, isLoading, feed } = useNewsFeed();
 
   return (
     <Box sx={{ width: '100%', ...sx }} data-testid="news-container">
@@ -61,50 +61,49 @@ export const NewsFeed = (props: NewsProps) => {
             </Typography>
           }
         >
-          <Stack spacing={2} direction="column">
-            {feed.map((entry, key) => (
-              <NewsCardWrapper key={key} entry={entry}>
-                {(() => {
-                  switch (entry.type) {
-                    case ObjectType.UPDATE:
-                      const update = entry.item as ProjectUpdate;
-                      return (
-                        <NewsUpdateThread
-                          key={`${key}-${update.id}`}
-                          update={update}
-                          onDelete={() => removeEntry(entry)}
-                        />
-                      );
-                    case ObjectType.PROJECT:
-                      return <NewsProjectCard project={entry.item as Project} />;
-                    case ObjectType.EVENT:
-                      return <NewsEventCard event={entry.item as Event} />;
-                    case ObjectType.COLLABORATION_QUESTION:
-                      return <NewsCollabQuestionCard question={entry.item as CollaborationQuestion} />;
-                    case ObjectType.COLLABORATION_COMMENT:
-                      const collaborationComment = entry.item as CollaborationComment;
-                      return (
-                        <NewsCollaborationCommentThread
-                          comment={collaborationComment}
-                          onDelete={() => removeEntry(entry)}
-                        />
-                      );
-                    case ObjectType.SURVEY_QUESTION:
-                      return <NewsSurveyCard surveyQuestion={entry.item as SurveyQuestion} />;
-                    case ObjectType.POST:
-                      const post = entry.item as Post;
-                      return (
-                        <NewsPostThread key={`${key}-${post.id}`} post={post} onDelete={() => removeEntry(entry)} />
-                      );
-                    default:
-                      return null;
-                  }
-                })()}
-              </NewsCardWrapper>
-            ))}
-          </Stack>
+          <NewsFeedContent />
         </InfiniteScroll>
       )}
     </Box>
+  );
+};
+
+const NewsFeedContent = () => {
+  const { feed, removeEntry } = useNewsFeed();
+
+  return (
+    <Stack spacing={2} direction="column">
+      {feed.map((entry, key) => (
+        <NewsCardWrapper key={key} entry={entry}>
+          {(() => {
+            switch (entry.type) {
+              case ObjectType.UPDATE:
+                const update = entry.item as ProjectUpdate;
+                return (
+                  <NewsUpdateThread key={`${key}-${update.id}`} update={update} onDelete={() => removeEntry(entry)} />
+                );
+              case ObjectType.PROJECT:
+                return <NewsProjectCard project={entry.item as Project} />;
+              case ObjectType.EVENT:
+                return <NewsEventCard event={entry.item as Event} />;
+              case ObjectType.COLLABORATION_QUESTION:
+                return <NewsCollabQuestionCard question={entry.item as CollaborationQuestion} />;
+              case ObjectType.COLLABORATION_COMMENT:
+                const collaborationComment = entry.item as CollaborationComment;
+                return (
+                  <NewsCollaborationCommentThread comment={collaborationComment} onDelete={() => removeEntry(entry)} />
+                );
+              case ObjectType.SURVEY_QUESTION:
+                return <NewsSurveyCard surveyQuestion={entry.item as SurveyQuestion} />;
+              case ObjectType.POST:
+                const post = entry.item as Post;
+                return <NewsPostThread key={`${key}-${post.id}`} post={post} onDelete={() => removeEntry(entry)} />;
+              default:
+                return null;
+            }
+          })()}
+        </NewsCardWrapper>
+      ))}
+    </Stack>
   );
 };
