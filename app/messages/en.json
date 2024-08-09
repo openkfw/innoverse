@@ -228,6 +228,8 @@
   "components_newsFeed_newsFeedContainer_allNewsText": "Overview of all news: current news, new projects, and all events.",
   "components_newsFeed_newsFeedContainer_filter": "Filter",
 
+  "components_newsFeed_newsFeedSearchFilter_search" : "Search",
+
   "components_newsFeed_newsFeedTypeFilter_comments": "Comments",
   "components_newsFeed_newsFeedTypeFilter_events": "Events",
   "components_newsFeed_newsFeedTypeFilter_questions": "Questions",

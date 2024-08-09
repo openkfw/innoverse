@@ -52,6 +52,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
                   interactionType={InteractionType.COMMENT}
                   tooltip={m.components_projectdetails_teamMembersColumn_chatWebex()}
                   onClick={() => openWebex(teamMember.email)}
+                  ariaLabel="Chat via Webex"
                 />
               </Box>
             </Box>
@@ -93,6 +94,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
                   interactionType={InteractionType.COMMENT}
                   tooltip={m.components_projectdetails_teamMembersColumn_chatWebex()}
                   onClick={() => openWebex(teamMember.email)}
+                  ariaLabel="Chat via Webex"
                 />
               </Box>
             </Stack>

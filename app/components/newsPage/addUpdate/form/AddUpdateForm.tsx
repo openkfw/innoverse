@@ -105,7 +105,7 @@ export default function AddUpdateForm({
             startAdornment={
               !projectOptions && (
                 <Box sx={{ pt: 1 }}>
-                  <CircularProgress size={20} />
+                  <CircularProgress size={20} aria-label="loading" />
                 </Box>
               )
             }

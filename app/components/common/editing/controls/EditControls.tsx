@@ -48,7 +48,12 @@ export const EditControls = (props: EditControlsProps) => {
     <Stack direction={'row'}>
       {useMobileMenu && (
         <>
-          <CustomIconButton onClick={toggleEditMoreDialog} startIcon={<MoreVertIcon sx={{ ml: 1 }} />} sx={{ p: 0 }} />
+          <CustomIconButton
+            onClick={toggleEditMoreDialog}
+            startIcon={<MoreVertIcon sx={{ ml: 1 }} />}
+            sx={{ p: 0 }}
+            aria-label="edit More"
+          />
         </>
       )}
       {!useMobileMenu && (

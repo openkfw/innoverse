@@ -43,6 +43,7 @@ export const UserInformation = (props: UserInformationProps) => {
           tooltip={m.components_projectdetails_authorinformation_chatWebex()}
           onClick={() => openWebex(user.email)}
           sx={{ mb: 1, mr: 1 }}
+          ariaLabel="Chat via Webex"
         />
       </Stack>
     </Stack>

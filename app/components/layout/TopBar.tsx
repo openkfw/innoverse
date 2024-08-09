@@ -4,7 +4,6 @@ import Link from 'next/link';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -25,9 +24,12 @@ interface TopBarProps {
 export default function TopBar({ pages }: TopBarProps) {
   const { user, isLoading } = useUser();
 
-  const menuItemStyle = {
+  const boxItemStyle = {
     borderRadius: '8px',
     minHeight: '100% !important',
+    backgroundColor: 'inherit',
+    display: 'flex',
+    alignItems: 'center',
     ':hover': {
       backgroundColor: 'rgba(255, 255, 255, 0.08)',
     },
@@ -74,26 +76,30 @@ export default function TopBar({ pages }: TopBarProps) {
             </Box>
 
             <nav>
-              <Stack direction="row" spacing={3}>
+              <Stack direction="row" spacing={5}>
                 {pages.map((page) =>
                   page.link ? (
                     <Link key={page.text} style={{ textDecoration: 'none', color: 'white' }} href={page.link}>
-                      <MenuItem sx={menuItemStyle}>
+                      <Box p={1} sx={boxItemStyle}>
                         <Typography variant="body2">{page.text}</Typography>
-                      </MenuItem>
+                      </Box>
                     </Link>
                   ) : (
-                    <MenuItem
+                    <Box
                       key={page.text}
-                      sx={{ borderRadius: '8px', '&:hover': { backgroundColor: 'inherit' }, pointerEvents: 'none' }}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        pointerEvents: 'none',
+                        backgroundColor: 'inherit',
+                      }}
                     >
                       <Typography variant="body2" color="rgba(155,155,155,1)">
                         {page.text}
                       </Typography>
-                    </MenuItem>
+                    </Box>
                   ),
                 )}
-
                 {(user || isLoading) && <LoggedInMenu user={user} isUserLoading={isLoading} />}
               </Stack>
             </nav>

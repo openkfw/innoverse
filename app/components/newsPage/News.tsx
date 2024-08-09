@@ -75,7 +75,7 @@ export const CustomInfiniteScroll = (props: CustomInfiniteScrollProps) => {
           style={{ overflow: 'unset' }}
           loader={
             <Stack key={0} sx={{ mt: 2 }} alignItems="center">
-              <CircularProgress />
+              <CircularProgress aria-label="loading" />
             </Stack>
           }
           endMessage={

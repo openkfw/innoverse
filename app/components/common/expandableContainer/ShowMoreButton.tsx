@@ -22,6 +22,7 @@ export const ShowMoreButton = ({ isVisible, top, backgroundColor, onClick }: Sho
         sx={{ color: 'rgba(0, 0, 0, 1)' }}
         onClick={onClick}
         data-user-interaction-id={`expand-content-button`}
+        aria-label="Expand content"
       >
         <ArrowDownwardIcon />
       </IconButton>
