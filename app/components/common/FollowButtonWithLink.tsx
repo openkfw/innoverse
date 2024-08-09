@@ -38,7 +38,11 @@ function FollowButtonWithLink(props: FollowButtonWithLinkProps) {
         </Link>
       )}
 
-      <Button onClick={onIconClick} sx={{ ...buttonStyles, backgroundColor: isSelected ? '#D4FCCA' : 'white' }}>
+      <Button
+        onClick={onIconClick}
+        sx={{ ...buttonStyles, backgroundColor: isSelected ? '#D4FCCA' : 'white' }}
+        aria-label={isSelected ? 'Unfollow' : 'Follow'}
+      >
         {isSelected ? (
           <BookmarkAddedOutlinedIcon fontSize="small" style={{ color: '#266446' }} />
         ) : (

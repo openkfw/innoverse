@@ -211,9 +211,9 @@ const ProjectTextAnchorMenu = ({ headings, setHeadingActive }: ProjectTextAnchor
           if (heading.depth > 1) {
             return (
               <Collapse in timeout="auto" unmountOnExit key={heading.id}>
-                <List disablePadding>
+                <Box>
                   <ProjectHeading heading={heading} setHeadingActive={setHeadingActive} />
-                </List>
+                </Box>
               </Collapse>
             );
           }
@@ -262,7 +262,7 @@ const listItemStyle = {
 
 const linkStyle = {
   color: '#99A815',
-  lineHeight: '140%',
+  lineHeight: '175%',
   textDecoration: 'none',
   '&:hover': { color: '#99A815' },
 };

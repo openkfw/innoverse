@@ -36,6 +36,7 @@ export interface InteractionButtonProps extends ButtonProps {
   isSelected?: boolean;
   disabled?: boolean;
   tooltip?: string;
+  ariaLabel?: string;
 }
 
 export enum InteractionType {
@@ -58,7 +59,17 @@ export enum InteractionType {
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
-  const { interactionType, label, onClick, onIconClick, sx, isSelected = false, disabled = false, tooltip } = props;
+  const {
+    interactionType,
+    label,
+    onClick,
+    onIconClick,
+    sx,
+    isSelected = false,
+    disabled = false,
+    tooltip,
+    ariaLabel,
+  } = props;
   const [isHovered, setIsHovered] = useState(false);
   const [clicked, setClicked] = useState(isSelected);
   const { hydrated } = useHydration();
@@ -174,6 +185,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
       disabled={!hydrated || disabled}
       data-user-interaction-id={`${interactionType}-button`}
       data-teststate-active={clicked}
+      aria-label={ariaLabel}
       sx={{
         px: getText() === undefined ? 1 : 2,
         py: 1,

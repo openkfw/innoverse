@@ -48,7 +48,7 @@ export default function LoggedInMenu({ user, isUserLoading }: LoggedInMenuProps)
   if (isUserLoading) {
     return (
       <IconButton>
-        <CircularProgress size={32} color="secondary" />
+        <CircularProgress size={32} color="secondary" aria-label="loading" />
       </IconButton>
     );
   }

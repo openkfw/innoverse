@@ -10,6 +10,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { NewsFeedFilters } from '@/app/contexts/news-feed-context';
+import * as m from '@/src/paraglide/messages.js';
 
 type NewsFeedSearchFilterProps = {
   isLoading: boolean;
@@ -47,7 +48,7 @@ export default function NewsFeedSearchFilter(props: NewsFeedSearchFilterProps) {
     <Box sx={{ margin: 3 }}>
       <FormControl variant="standard" sx={{ width: '100%' }}>
         <Typography mb={1} color="white" variant="button">
-          Search
+          {m.components_newsFeed_newsFeedSearchFilter_search()}
         </Typography>
         <TextField
           onChange={handleInputChange}
@@ -75,6 +76,9 @@ export default function NewsFeedSearchFilter(props: NewsFeedSearchFilterProps) {
                 <Search sx={{ color: 'white' }} />
               </InputAdornment>
             ),
+          }}
+          inputProps={{
+            'aria-label': 'Search field',
           }}
         />
       </FormControl>

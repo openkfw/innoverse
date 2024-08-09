@@ -26,6 +26,7 @@ const AvatarInitialsIcon = (props: AvatarInitialsIcon) => {
     p: 0.6,
     fontSize: `${size * 0.025}rem`,
     ...sx,
+    color: '#00446E',
   };
 
   return (

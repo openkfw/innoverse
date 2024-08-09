@@ -123,7 +123,7 @@ export const FilteringPanel = (props: FilteringPanelProps) => {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon sx={{ color: 'black' }} />
+                <SearchIcon sx={{ color: 'blue' }} />
               </InputAdornment>
             ),
           }}

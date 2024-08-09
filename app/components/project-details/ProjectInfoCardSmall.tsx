@@ -44,7 +44,7 @@ const SliderNavigation = (props: SliderNavigationProps) => {
 
   return (
     <Box sx={navigationWrapperStyles}>
-      <IconButton onClick={() => scroll('left')} sx={{ marginLeft: '-25px' }}>
+      <IconButton onClick={() => scroll('left')} sx={{ marginLeft: '-25px' }} aria-label="arrow back button">
         <ArrowBackOutlinedIcon />
       </IconButton>
 
@@ -66,7 +66,7 @@ const SliderNavigation = (props: SliderNavigationProps) => {
         ))}
       </Box>
 
-      <IconButton onClick={() => scroll('right')} sx={{ marginRight: '-25px' }}>
+      <IconButton onClick={() => scroll('right')} sx={{ marginRight: '-25px' }} aria-label="arrow forward button">
         <ArrowForwardOutlinedIcon />
       </IconButton>
     </Box>
