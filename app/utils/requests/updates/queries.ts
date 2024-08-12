@@ -68,6 +68,19 @@ export const GetUpdatesByProjectIdQuery = graphql(
   [ProjectUpdateFragment],
 );
 
+export const GetUpdatesByIdsQuery = graphql(
+  `
+    query GetUpdates($ids: [ID], $sort: String! = "updatedAt:desc") {
+      updates(sort: [$sort], filters: { id: { in: $ids } }) {
+        data {
+          ...ProjectUpdate
+        }
+      }
+    }
+  `,
+  [ProjectUpdateFragment],
+);
+
 export const GetUpdatesPageByProjectsTitlesAndTopicsQuery = graphql(
   `
     query GetUpdatesByProjectTitleAndTopics(

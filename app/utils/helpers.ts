@@ -168,3 +168,7 @@ export const getUnixTimestamp = (date: Date | undefined) =>
 export const unixTimestampToDate = (unixTimestamp: number | undefined) =>
   unixTimestamp ? new Date(unixTimestamp * 1000) : new Date();
 export const toDate = (date: string | Date | null) => (date ? new Date(date) : new Date());
+
+export function getUniqueValues<T>(arr: T[]) {
+  return Array.from(new Set(arr));
+}

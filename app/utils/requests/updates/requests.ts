@@ -19,7 +19,7 @@ import dbClient from '@/repository/db/prisma/prisma';
 import { countNumberOfReactions, findReaction, getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
-import { getPromiseResults, getUnixTimestamp } from '@/utils/helpers';
+import { getPromiseResults, getUniqueValues, getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapReaction } from '@/utils/newsFeed/redis/redisMappings';
 import { isProjectFollowedByUser } from '@/utils/requests/project/requests';
@@ -33,6 +33,7 @@ import {
 import {
   GetUpdateByIdQuery,
   GetUpdateCountQuery,
+  GetUpdatesByIdsQuery,
   GetUpdatesByProjectIdQuery,
   GetUpdatesPageByProjectsTitlesAndTopicsQuery,
   GetUpdatesPageByProjectTitlesQuery,
@@ -42,6 +43,7 @@ import {
   GetUpdatesStartingFromQuery,
 } from '@/utils/requests/updates/queries';
 import { validateParams } from '@/utils/validationHelper';
+import { getNewsCommentsStartingFrom } from '@/repository/db/news_comment';
 
 const logger = getLogger();
 
@@ -321,6 +323,35 @@ export const countUpdatesForProject = withAuth(async (user: UserSession, body: {
 });
 
 export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: StartPagination) {
+  try {
+    const response = await strapiGraphQLFetcher(GetUpdatesStartingFromQuery, { from, page, pageSize });
+    const updates = await mapToProjectUpdates(response.updates?.data);
+
+    const newsComments = await getNewsCommentsStartingFrom(dbClient, from);
+    // Get unique ids of updates
+    const updatesIds = getUniqueValues(
+      newsComments.map((comment) => comment.newsComment?.newsId).filter((id): id is string => id !== undefined),
+    );
+
+    if (updatesIds.length > 0) {
+      const res = await strapiGraphQLFetcher(GetUpdatesByIdsQuery, { ids: updatesIds });
+      const updatesWithComments = await mapToProjectUpdates(res.updates?.data);
+
+      const combinedUpdates = [...updates, ...updatesWithComments];
+      const uniqueUpdates = combinedUpdates.filter(
+        (update, index, self) => index === self.findIndex((t) => t.id === update.id),
+      );
+      return uniqueUpdates;
+    }
+
+    return updates;
+  } catch (err) {
+    const error = strapiError(`Getting updates starting from ${from}`, err as RequestError);
+    logger.error(error);
+  }
+}
+
+export async function getCommentsForProjectUpdateStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesStartingFromQuery, { from, page, pageSize });
     const updates = mapToProjectUpdates(response.updates?.data);

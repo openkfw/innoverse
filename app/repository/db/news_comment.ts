@@ -125,3 +125,12 @@ export async function handleNewsCommentUpvotedByInDb(client: PrismaClient, comme
     }
   });
 }
+
+export async function getNewsCommentsStartingFrom(client: PrismaClient, from: Date) {
+  return await client.comment.findMany({
+    where: { objectType: 'NEWS_COMMENT', updatedAt: { gte: from } },
+    include: {
+      newsComment: true,
+    },
+  });
+}
