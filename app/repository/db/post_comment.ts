@@ -135,3 +135,12 @@ export async function handlePostCommentUpvotedByInDb(client: PrismaClient, comme
     }
   });
 }
+
+export async function getPostCommentsStartingFrom(client: PrismaClient, from: Date) {
+  return await client.comment.findMany({
+    where: { objectType: 'POST_COMMENT', updatedAt: { gte: from } },
+    include: {
+      postComment: true,
+    },
+  });
+}
