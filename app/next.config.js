@@ -27,6 +27,7 @@ const nextConfig = {
         port: '',
       },
       { hostname: '127.0.0.1', pathname: '/uploads/**', port: '1337' },
+      { hostname: 'strapi', pathname: '/uploads/**', port: '1337' },
     ],
   },
   async rewrites() {

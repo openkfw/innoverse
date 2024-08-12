@@ -13,7 +13,6 @@ services:
     container_name: innoverse
     build:
       context: ../app
-      # target: dev
     restart: always
     command: npm run dev
     environment:

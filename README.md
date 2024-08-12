@@ -60,9 +60,16 @@ now your app should be visible under [http://localhost:3000](http://localhost:30
 
 ## Running InnoVerse in for production
 
+First, configure the env vars in .env.production file.
+
 Most likely you will run the app in a Kubernetes set-up for this, you will find Helm-Charts in `/helm`.
 In case you'd like to run a productive environment in via docker-compose, you can find the production ready docker-compose `docker-compose-prod.yaml` in `./docker-compose`.
+
 Make sure to make all steps described in the section 'Running InnoVerse locally'
+
+You need to migrate the database to prisma by manually executing `npm run prisma migrate dev` in 'innoverse' container.
+
+Now, make sure that to rebuild the containers.
 
 ## Developing InnoVerse
 
