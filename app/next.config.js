@@ -1,4 +1,6 @@
 const { clientConfig } = require('./config/client');
+const { serverConfig } = require('./config/server');
+
 const withFonts = require('next-fonts');
 const withBundleAnalyzer = require('@next/bundle-analyzer')();
 const { paraglide } = require('@inlang/paraglide-next/plugin');
@@ -25,9 +27,11 @@ const nextConfig = {
         port: '',
       },
       { hostname: '127.0.0.1', pathname: '/uploads/**', port: '1337' },
+      { hostname: 'strapi', pathname: '/uploads/**', port: '1337' },
     ],
   },
   async rewrites() {
+    if (serverConfig.STAGE === 'build') return [];
     return [
       {
         source: '/api/strapi',
@@ -74,7 +78,11 @@ const nextConfig = {
     },
     instrumentationHook: true,
     serverActions: {
-      allowedOrigins: ['***URL_REMOVED***', '***URL_REMOVED***', '***URL_REMOVED***'],
+      allowedOrigins: [
+        '***URL_REMOVED***',
+        '***URL_REMOVED***',
+        '***URL_REMOVED***',
+      ],
     },
   },
   i18n: {
@@ -83,16 +91,23 @@ const nextConfig = {
   },
 };
 
-module.exports = process.env.ANALYZE === 'true' ? withBundleAnalyzer(paraglide({
-  paraglide: {
-    project: './project.inlang',
-    outdir: './src/paraglide'
-  },
-  ...nextConfig
-})) : withFonts(paraglide({
-  paraglide: {
-    project: './project.inlang',
-    outdir: './src/paraglide'
-  },
-  ...nextConfig
-}));
+module.exports =
+  serverConfig.ANALYZE === true
+    ? withBundleAnalyzer(
+        paraglide({
+          paraglide: {
+            project: './project.inlang',
+            outdir: './src/paraglide',
+          },
+          ...nextConfig,
+        }),
+      )
+    : withFonts(
+        paraglide({
+          paraglide: {
+            project: './project.inlang',
+            outdir: './src/paraglide',
+          },
+          ...nextConfig,
+        }),
+      );

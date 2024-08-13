@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import { PublicEnvScript } from 'next-runtime-env';
 import { LanguageProvider } from '@inlang/paraglide-next';
 
 import Layout from '@/components/layout/Layout';
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <link rel="manifest" href="/manifest.json" />
           <title>{m.app_layout_title()}</title>
           <meta name="description" content={m.app_layout_content()} />
+          <PublicEnvScript />
         </head>
         <body style={{ background: 'linear-gradient(90deg, rgb(0, 66, 103) 0%, rgb(0, 90, 140) 100%)' }}>
           <Layout>{children}</Layout>

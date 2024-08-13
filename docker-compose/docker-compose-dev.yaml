@@ -1,0 +1,58 @@
+services:
+  database:
+    container_name: innoverse-database
+    build:
+      context: ../postgres
+    volumes:
+      - ../postgres/pg-init-scripts:/docker-entrypoint-initdb.d
+    env_file: ./../postgres/.env
+    restart: on-failure
+    network_mode: host
+
+  innoverse:
+    container_name: innoverse
+    build:
+      context: ../app
+    restart: always
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+      #if you’re using Windows, you may need to uncomment the next line
+      #- WATCHPACK_POLLING=true
+    volumes:
+      - ../app:/app
+      - ../app/node_modules:/app/node_modules
+      - ../app/.next:/app/.next
+    ports:
+      - 3000:3000
+    network_mode: host
+
+  strapi:
+    container_name: innoverse-strapi
+    build: ../strapi
+    restart: unless-stopped
+    env_file: ../strapi/.env
+    volumes:
+      - ../strapi/config:/opt/app/config
+      - ../strapi/src:/opt/app/src
+      - ../strapi/package.json:/opt/package.json
+      - ../strapi/yarn.lock:/opt/yarn.lock
+      - ../strapi/.env:/opt/app/.env
+      - ../strapi/public/uploads:/opt/app/public/uploads
+      - ../strapi/types:/opt/app/types
+    depends_on:
+      - database
+      - cache
+    network_mode: host
+
+  cache:
+    container_name: innoverse-cache
+    image: redis/redis-stack:6.2.6-v15
+    environment:
+      - REDIS_ARGS=--appendonly yes --appendfsync everysec
+    restart: always
+    ports:
+      - 8001:8001
+      - 6379:6379
+    volumes:
+      - ./cache:/data

@@ -7,7 +7,7 @@ COPY package.json package-lock.json* ./
 RUN npm ci
 
 # If using npm with a `package-lock.json` comment out above and use below instead
-# COPY package.json package-lock.json ./ 
+# COPY package.json package-lock.json ./
 # RUN npm ci
 
 # Rebuild the source code only when needed
@@ -16,14 +16,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 
 COPY . .
-
-ARG NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT
-ARG NEXT_PUBLIC_STRAPI_ENDPOINT
-ARG STRAPI_TOKEN
-ARG NEXT_PUBLIC_VAPID_PUBLIC_KEY
-ARG NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING
-ARG NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY
-
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -34,14 +26,6 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run prisma generate --schema ./repository/db/prisma/schema.prisma
 # RUN yarn run prisma db push
 # RUN yarn run prisma migrate dev --name init
-
-ENV NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT ${NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT}
-ENV NEXT_PUBLIC_STRAPI_ENDPOINT ${NEXT_PUBLIC_STRAPI_ENDPOINT}
-ENV STRAPI_TOKEN ${STRAPI_TOKEN}
-ENV NEXT_PUBLIC_VAPID_PUBLIC_KEY ${NEXT_PUBLIC_VAPID_PUBLIC_KEY}
-ENV NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING ${NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING}
-ENV NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY ${NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY}
-
 
 RUN npm run build
 
@@ -66,7 +50,7 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/repository/db/prisma ./repository/db/prisma
 
-# Automatically leverage output traces to reduce image size 
+# Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
@@ -79,3 +63,4 @@ EXPOSE 3000
 ENV PORT 3000
 
 CMD [  "npm", "run", "start:prod" ]
+
