@@ -43,10 +43,10 @@ export default function TopBar({ pages }: TopBarProps) {
       position="sticky"
       elevation={0}
       sx={{
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        backgroundColor: 'rgba(0, 0, 0, 0.15)',
         backdropFilter: `blur(20px)`,
         ':hover': {
-          backgroundColor: 'rgba(0,0,0,0.2)',
+          backgroundColor: 'rgba(0, 0, 0, 0.2)',
           backdropFilter: `blur(20px)`,
         },
       }}

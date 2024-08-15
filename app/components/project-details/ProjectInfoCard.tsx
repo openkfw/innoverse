@@ -138,7 +138,7 @@ const wrapperStyles = {
   flexDirection: 'column',
   alignItems: 'center',
   width: '85%',
-  maxWidth: '1600px',
+  maxWidth: '1280px',
   [theme.breakpoints.down('md')]: {
     width: '90%',
   },

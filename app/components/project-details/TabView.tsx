@@ -147,7 +147,7 @@ export default function TabView(props: BasicTabsProps) {
 
   const containerStyles: SxProps = {
     width: '85%',
-    maxWidth: '1200px',
+    maxWidth: '1280px',
     padding: 0,
     [theme.breakpoints.down('md')]: {
       width: '90%',
