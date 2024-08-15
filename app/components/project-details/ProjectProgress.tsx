@@ -127,7 +127,9 @@ const ProjectDescription = ({ project }: { project: Project }) => {
     <Grid container direction="row" spacing={1}>
       {headings.length > 0 && (
         <Grid item md={4} lg={3}>
-          <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
+          <Box sx={anchorMenuContainerStyle}>
+            <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
+          </Box>
         </Grid>
       )}
       <Grid item sm={12} md={headings.length > 0 ? 8 : 12} lg={headings.length > 0 ? 6 : 9}>
@@ -279,6 +281,12 @@ const contentStyle = {
   margin: '88px 64px',
   [theme.breakpoints.down('md')]: {
     margin: '48px 24px',
+  },
+};
+
+const anchorMenuContainerStyle = {
+  [theme.breakpoints.down('md')]: {
+    display: 'none',
   },
 };
 
