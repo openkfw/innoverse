@@ -20,7 +20,6 @@ import { Project } from '@/common/types';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
-import { useExpandableContainer } from '../common/expandableContainer/ExpandableContainer';
 import { parseStringForLinks } from '../common/LinkString';
 import MuiMarkdownSection from '../common/MuiMarkdownSection';
 
@@ -82,17 +81,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
 const ProjectDescription = ({ project }: { project: Project }) => {
   const [headings, setHeadings] = useState<MarkdownHeading[]>([]);
 
-  const container = useExpandableContainer({
-    collapsedHeight: 600,
-    maxExpandedHeight: 800,
-    content: <ProjectText text={project.description.text} sx={{ pr: 2 }} />,
-  });
-
   const setHeadingActive = (id: string) => {
-    if (container.isOverflowing) {
-      container.expand();
-    }
-
     setHeadings((prev) =>
       prev?.reduce((pV, cV) => {
         if (cV.id === id) cV.active = true;
@@ -133,7 +122,7 @@ const ProjectDescription = ({ project }: { project: Project }) => {
         </Grid>
       )}
       <Grid item sm={12} md={headings.length > 0 ? 8 : 12} lg={headings.length > 0 ? 6 : 9}>
-        {container.element}
+        <ProjectText text={project.description.text} sx={{ pr: 2 }} />
       </Grid>
       <Grid item md={0} lg={3}>
         <Box sx={containerStyle}>
