@@ -4,7 +4,7 @@ export default withAuth({
   callbacks: {
     authorized: ({ req, token }) =>
       req.nextUrl.pathname === '/gitlab' ||
-      req.nextUrl.pathname === '/api/readiness' ||
+      req.nextUrl.pathname === '/api/health' ||
       req.nextUrl.pathname === '/api/hooks/push' ||
       req.nextUrl.pathname === '/api/notification/update-subscription' ||
       req.nextUrl.pathname === '/api/redis/save' ||
