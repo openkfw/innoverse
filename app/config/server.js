@@ -21,10 +21,30 @@ const RequiredEnv = z
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     STAGE: z.enum(['development', 'test', 'build', 'production']).default('development'),
     REDIS_URL: z.string({ errorMap: () => ({ message: 'REDIS_URL must be set!' }) }).default(''),
+    NEWS_FEED_SYNC_SECRET: z
+      .string({ errorMap: () => ({ message: 'NEWS_FEED_SYNC_SECRET must be set!' }) })
+      .default(''),
   })
   .superRefine((values, ctx) => {
-    const { DATABASE_URL, NEXTAUTH_URL, NEXTAUTH_SECRET, STRAPI_TOKEN, HTTP_BASIC_AUTH, STAGE, REDIS_URL } = values;
-    const required = [DATABASE_URL, NEXTAUTH_URL, NEXTAUTH_SECRET, STRAPI_TOKEN, HTTP_BASIC_AUTH, REDIS_URL];
+    const {
+      DATABASE_URL,
+      NEXTAUTH_URL,
+      NEXTAUTH_SECRET,
+      STRAPI_TOKEN,
+      HTTP_BASIC_AUTH,
+      STAGE,
+      REDIS_URL,
+      NEWS_FEED_SYNC_SECRET,
+    } = values;
+    const required = [
+      DATABASE_URL,
+      NEXTAUTH_URL,
+      NEXTAUTH_SECRET,
+      STRAPI_TOKEN,
+      HTTP_BASIC_AUTH,
+      REDIS_URL,
+      NEWS_FEED_SYNC_SECRET,
+    ];
     if (required.some((el) => el === '') && STAGE !== 'build') {
       ctx.addIssue({
         message: 'Not all required env variables are set!',
