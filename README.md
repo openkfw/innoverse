@@ -16,6 +16,7 @@ If you want to take part and contribute to our project, you can read our [Contri
 ## Frequently Asked Questions
 If you have any questions refer to the [Frequently Asked Questions (FAQ)](#frequently-asked-questions) section below or [start a new discussion](https://github.com/open***STRING_REMOVED*** /innoverse/discussions/new)
 
+You need to migrate the database to prisma by manually executing `npm run prisma migrate dev` in 'innoverse' container.
 
 ## License
 
