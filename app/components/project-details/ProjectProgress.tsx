@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 import Box from '@mui/material/Box';
@@ -9,7 +9,6 @@ import CardMedia from '@mui/material/CardMedia';
 import Collapse from '@mui/material/Collapse';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import Stack from '@mui/material/Stack';
@@ -80,6 +79,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
 
 const ProjectDescription = ({ project }: { project: Project }) => {
   const [headings, setHeadings] = useState<MarkdownHeading[]>([]);
+  const headingsRef = useRef<HTMLElement[]>([]);
 
   const setHeadingActive = (id: string) => {
     setHeadings((prev) =>
@@ -95,6 +95,9 @@ const ProjectDescription = ({ project }: { project: Project }) => {
   const generateLinkMarkup = (contentElement: Element | null): MarkdownHeading[] => {
     if (!contentElement) return [] as MarkdownHeading[];
     const headings = [...contentElement.querySelectorAll<HTMLElement>('h1, h2')];
+
+    headingsRef.current = headings;
+
     return headings.map((heading, key) => ({
       title: heading.innerText,
       depth: parseInt(heading.nodeName.replace(/\D/g, '')) || 0,
@@ -112,10 +115,37 @@ const ProjectDescription = ({ project }: { project: Project }) => {
     [project],
   );
 
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -70% 0px',
+      threshold: 0,
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          if (id) {
+            setHeadingActive(id);
+          }
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    headingsRef.current.forEach((heading) => observer.observe(heading));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [headings]);
+
   return (
     <Grid container direction="row" spacing={1}>
       {headings.length > 0 && (
-        <Grid item md={4} lg={3}>
+        <Grid item md={4} lg={3} position="relative">
           <Box sx={anchorMenuContainerStyle}>
             <ProjectTextAnchorMenu headings={headings} setHeadingActive={setHeadingActive} />
           </Box>
@@ -185,10 +215,15 @@ const ProjectHeading = ({ heading, setHeadingActive }: ProjectHeadingProps) => {
   return (
     <Stack direction="row">
       <Divider orientation="vertical" variant="middle" flexItem sx={dividerStyle} />
-      <ListItemButton sx={listItemStyle} key={heading.id} onClick={() => setHeadingActive(heading.id)}>
-        <Link sx={{ ...linkStyle, ...textOverflowStyle }} href={`#${heading.id}`} variant="subtitle1">
+      <ListItemButton
+        sx={listItemStyle}
+        key={heading.id}
+        href={`#${heading.id}`}
+        onClick={() => setHeadingActive(heading.id)}
+      >
+        <Typography sx={{ ...linkStyle, ...textOverflowStyle }} variant="subtitle1">
           {heading.title}
-        </Link>
+        </Typography>
       </ListItemButton>
     </Stack>
   );
@@ -277,9 +312,14 @@ const anchorMenuContainerStyle = {
   [theme.breakpoints.down('md')]: {
     display: 'none',
   },
+  position: 'sticky',
+  top: '100px',
+  mb: '40px',
 };
 
 const wrapperStyle = {
+  p: 1,
+  overflow: 'visible',
   borderRadius: '24px',
   background: '#FFF',
   position: 'relative',
