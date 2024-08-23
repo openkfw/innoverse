@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { StatusCodes } from 'http-status-codes';
+import { ReasonPhrases,StatusCodes } from 'http-status-codes';
 import { literal, number, object, string, z } from 'zod';
 
 import { serverConfig } from '@/config/server';
@@ -26,9 +26,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { authorization } = headerSchema.parse(headers);
   const { event, model, entry } = bodySchema.parse(body);
 
-  if (method !== 'POST') return res.status(StatusCodes.METHOD_NOT_ALLOWED);
-  if (authorization !== serverConfig.STRAPI_PUSH_NOTIFICATION_SECRET) return res.status(StatusCodes.UNAUTHORIZED);
+  if (method !== 'POST') res.status(StatusCodes.METHOD_NOT_ALLOWED).send(ReasonPhrases.METHOD_NOT_ALLOWED);
+  if (authorization !== serverConfig.STRAPI_PUSH_NOTIFICATION_SECRET)
+    res.status(StatusCodes.UNAUTHORIZED).send(ReasonPhrases.UNAUTHORIZED);
 
   await onStrapiEvent(event, model, entry);
-  return res.status(StatusCodes.OK);
+  res.status(StatusCodes.OK).send(ReasonPhrases.OK);
 }
