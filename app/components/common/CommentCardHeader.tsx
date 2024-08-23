@@ -22,7 +22,7 @@ export const CommentCardHeader = ({ content, avatar }: CommentCardHeaderProps) =
           <Typography variant="subtitle2" color="primary.dark" sx={{ fontSize: '14px' }} data-testid="author">
             {author.name}
           </Typography>
-          <Typography variant="caption" color="secondary.contrastText" data-testid="date">
+          <Typography variant="caption" color="secondary.contrastText" data-testid="date" suppressHydrationWarning>
             {formatDate(updatedAt)}
           </Typography>
         </Stack>
