@@ -12,6 +12,7 @@ import { Option } from '@/common/formTypes';
 import { Post, ProjectUpdate } from '@/common/types';
 import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { AutocompleteDropdownField } from '@/components/common/form/AutocompleteDropdownField';
+import { CheckboxInputField } from '@/components/common/form/CheckboxInputField';
 import { inputStyle } from '@/components/common/form/formStyle';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import * as m from '@/src/paraglide/messages.js';
@@ -26,18 +27,21 @@ import { handleUpdateSchema, UpdateFormValidationSchema } from './validationSche
 export interface FormData {
   content: string;
   project: { id?: string; label?: string } | null;
+  anonymous: boolean;
 }
 
 export interface PostFormData {
   content: string;
+  anonymous?: boolean;
 }
 
 const defaultValues = {
   content: '',
   project: { id: '', label: m.components_newsPage_addPost_form_addPostForm_label() },
+  anonymous: false,
 };
 
-const { PROJECT, CONTENT } = formFieldNames;
+const { PROJECT, CONTENT, ANONYMOUS } = formFieldNames;
 
 interface AddUpdateFormProps {
   onAddPost: (post: Post) => void;
@@ -57,10 +61,10 @@ export default function AddPostForm(props: AddUpdateFormProps) {
   });
 
   const onSubmit: SubmitHandler<UpdateFormValidationSchema> = async (data) => {
-    const { content, project } = data;
+    const { content, project, anonymous } = data;
 
     if (project && project.id) {
-      const response = await handleProjectUpdate({ comment: content, projectId: project.id });
+      const response = await handleProjectUpdate({ comment: content, projectId: project.id, anonymous });
       if (response.status === StatusCodes.OK && response.data) {
         successMessage({ message: 'Neuigkeit wurde erstellt' });
         onAddUpdate(response.data);
@@ -71,7 +75,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
         });
       }
     } else {
-      const response = await handlePost({ content });
+      const response = await handlePost({ content, anonymous });
       if (response.status === StatusCodes.OK && response.data) {
         const post: Post = { ...response.data, responseCount: 0 };
         successMessage({ message: 'Post wurde erstellt' });
@@ -122,6 +126,12 @@ export default function AddPostForm(props: AddUpdateFormProps) {
           onClick={handleSubmit(onSubmit)}
         />
       </Stack>
+      <CheckboxInputField
+        name={ANONYMOUS}
+        control={control}
+        label={m.components_newsPage_addPost_form_addPostForm_anonymousPost()}
+        sx={{ width: '25%' }}
+      />
     </Stack>
   );
 }

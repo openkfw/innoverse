@@ -228,7 +228,7 @@
   "components_newsFeed_newsFeedContainer_allNewsText": "Overview of all news: current news, new projects, and all events.",
   "components_newsFeed_newsFeedContainer_filter": "Filter",
 
-  "components_newsFeed_newsFeedSearchFilter_search" : "Search",
+  "components_newsFeed_newsFeedSearchFilter_search": "Search",
 
   "components_newsFeed_newsFeedTypeFilter_comments": "Comments",
   "components_newsFeed_newsFeedTypeFilter_events": "Events",
@@ -253,6 +253,7 @@
   "components_newsPage_addPost_form_addPostForm_createError": "An error occurred while creating the news. Please try again",
   "components_newsPage_addPost_form_addPostForm_addPost": "You can add your post here …",
   "components_newsPage_addPost_form_addPostForm_projectLabel": "Project",
+  "components_newsPage_addPost_form_addPostForm_anonymousPost": "Post anonymously",
 
   "components_newsPage_addPost_form_addUpdateForm_success": "News has been created",
   "components_newsPage_addPost_form_addUpdateForm_error": "An error occurred while creating the news. Please try again.",
@@ -290,6 +291,8 @@
   "components_newsPage_cards_newsCard_error_update": "Failed to update news. Please try again.",
 
   "components_newsPage_cards_newsCard_error_delete": "Failed to delete news. Please try again.",
+
+  "components_newsPage_cards_newsCard_anonymous": "Anonymous",
 
   "components_newsPage_cards_commentCard_error_update": "Failed to update comment. Please try again.",
 

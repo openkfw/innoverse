@@ -21,7 +21,7 @@ export const handlePost = withAuth(async (user: UserSession, body: Omit<PostForm
   if (validatedParams.status === StatusCodes.OK) {
     const author = (await getInnoUserByProviderId(user.providerId)) as User;
     if (author) {
-      const newPost = await addPost({ content: body.content, user });
+      const newPost = await addPost({ content: body.content, user, anonymous: body.anonymous });
       return {
         status: StatusCodes.OK,
         data: {

@@ -25,6 +25,7 @@ export interface AddUpdateData {
   comment: string;
   projectId: string;
   authorId?: string;
+  anonymous?: boolean;
 }
 export interface UpdateFormData {
   comment: string;

@@ -41,8 +41,8 @@ export async function getPostsFromDbStartingFrom(client: PrismaClient, from: Dat
   });
 }
 
-export async function addPostToDb(client: PrismaClient, content: string, author: string) {
-  return await client.post.create({ data: { author, content } });
+export async function addPostToDb(client: PrismaClient, content: string, author: string, anonymous: boolean) {
+  return await client.post.create({ data: { author, content, anonymous } });
 }
 
 export async function deletePostFromDb(client: PrismaClient, postId: string) {

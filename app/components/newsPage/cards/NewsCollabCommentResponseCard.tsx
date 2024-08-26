@@ -27,7 +27,11 @@ export const NewsCollabCommentResponseCard = (props: NewsCollabCommentResponseCa
 
   return state.isEditing(props.response) ? (
     <WriteCommentCard
-      content={{ author: response.author, comment: response.response, updatedAt: response.createdAt }}
+      content={{
+        author: response.author,
+        comment: response.response,
+        updatedAt: response.createdAt,
+      }}
       onSubmit={updateResponse}
       onDiscard={interactions.onCancelEdit}
     />

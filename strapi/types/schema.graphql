@@ -1029,6 +1029,7 @@ input TimeFilterInput {
 }
 
 type Update {
+  anonymous: Boolean
   author: InnoUserEntityResponse
   comment: String!
   createdAt: DateTime
@@ -1054,6 +1055,7 @@ type UpdateEntityResponseCollection {
 
 input UpdateFiltersInput {
   and: [UpdateFiltersInput]
+  anonymous: BooleanFilterInput
   author: InnoUserFiltersInput
   comment: StringFilterInput
   createdAt: DateTimeFilterInput
@@ -1067,6 +1069,7 @@ input UpdateFiltersInput {
 }
 
 input UpdateInput {
+  anonymous: Boolean
   author: ID
   comment: String
   linkToCollaborationTab: Boolean

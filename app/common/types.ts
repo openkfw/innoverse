@@ -45,6 +45,7 @@ export type CollaborationComment = CommonNewsFeedProps & {
   projectName: string;
   question: CollaborationQuestion;
   isUpvotedByUser?: boolean;
+  anonymous: boolean;
 };
 
 export type User = {
@@ -190,6 +191,7 @@ export type ProjectUpdate = CommonNewsFeedProps & {
   projectStart?: string;
   linkToCollaborationTab: boolean;
   responseCount?: number;
+  anonymous: boolean;
 };
 
 export type ProjectUpdateWithAdditionalData = ProjectUpdate & ReactionOnObject;
@@ -386,6 +388,7 @@ export type Post = CommonNewsFeedProps & {
   content: string;
   upvotedBy: string[];
   responseCount: number;
+  anonymous: boolean;
 };
 
 export type ImageFormat = {

@@ -30,7 +30,7 @@ function NewsPostCard(props: NewsPostCardProps) {
   const state = useEditingState();
   const interactions = useEditingInteractions();
   const { user } = useUser();
-  const userIsAuthor = user?.providerId === post.author.providerId;
+  const userIsAuthor = user?.providerId === post.author?.providerId;
 
   const handleUpdate = async (updatedText: string, user?: UserSession) => {
     try {
@@ -65,7 +65,10 @@ function NewsPostCard(props: NewsPostCardProps) {
 
   return state.isEditing(post) ? (
     <WriteCommentCard
-      content={{ author: post.author, comment: post.content, updatedAt: post.updatedAt }}
+      content={{
+        ...post,
+        comment: post.content,
+      }}
       onSubmit={(updatedText) => handleUpdate(updatedText, user)}
       onDiscard={interactions.onCancelEdit}
     />

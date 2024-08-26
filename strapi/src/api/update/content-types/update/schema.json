@@ -32,6 +32,10 @@
     "linkToCollaborationTab": {
       "type": "boolean",
       "default": false
+    },
+    "anonymous": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

@@ -863,7 +863,7 @@ export interface ApiEventEvent extends Schema.CollectionType {
     updatedAt: Attribute.DateTime;
     location: Attribute.String;
     title: Attribute.String & Attribute.Required;
-    image: Attribute.Media;
+    image: Attribute.Media<'images' | 'videos' | 'audios' | 'files'>;
     startTime: Attribute.DateTime & Attribute.Required;
     endTime: Attribute.DateTime;
     author: Attribute.Relation<
@@ -898,7 +898,7 @@ export interface ApiInnoUserInnoUser extends Schema.CollectionType {
   attributes: {
     name: Attribute.String & Attribute.Required;
     role: Attribute.String;
-    avatar: Attribute.Media;
+    avatar: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     department: Attribute.String;
     email: Attribute.Email;
     providerId: Attribute.UID;
@@ -1013,7 +1013,7 @@ export interface ApiProjectProject extends Schema.CollectionType {
     featured: Attribute.Boolean &
       Attribute.Required &
       Attribute.DefaultTo<false>;
-    image: Attribute.Media;
+    image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     status: Attribute.Enumeration<
       ['Exploration', 'Konzeption', 'Proof of Concept', 'Live']
     > &
@@ -1167,6 +1167,7 @@ export interface ApiUpdateUpdate extends Schema.CollectionType {
       'api::project.project'
     >;
     linkToCollaborationTab: Attribute.Boolean & Attribute.DefaultTo<false>;
+    anonymous: Attribute.Boolean & Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

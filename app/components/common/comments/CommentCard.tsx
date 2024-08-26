@@ -1,5 +1,4 @@
 'use client';
-
 import CheckIcon from '@mui/icons-material/Check';
 
 import { User } from '@/common/types';

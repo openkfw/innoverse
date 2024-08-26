@@ -19,4 +19,8 @@ export const inputStyle = {
       color: 'primary.main',
     },
   },
+  '& + .MuiTypography-root': {
+    color: 'text.primary',
+    fontFamily: '***FONT_REMOVED***',
+  },
 };

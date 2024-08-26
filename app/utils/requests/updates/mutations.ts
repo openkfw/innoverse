@@ -16,13 +16,20 @@ export const DeleteProjectUpdateMutation = graphql(
 
 export const CreateProjectUpdateMutation = graphql(
   `
-    mutation PostProjectUpdate($projectId: ID!, $comment: String, $authorId: ID!, $linkToCollaborationTab: Boolean) {
+    mutation PostProjectUpdate(
+      $projectId: ID!
+      $comment: String
+      $authorId: ID!
+      $linkToCollaborationTab: Boolean
+      $anonymous: Boolean!
+    ) {
       createUpdate(
         data: {
           project: $projectId
           comment: $comment
           author: $authorId
           linkToCollaborationTab: $linkToCollaborationTab
+          anonymous: $anonymous
         }
       ) {
         data {

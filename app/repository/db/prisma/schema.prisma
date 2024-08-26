@@ -159,6 +159,7 @@ model Post {
   upvotedBy   String[] // ids of users
   author      String // id of author
   content     String
+  anonymous Boolean @default(false)
 }
 
 enum ObjectType {

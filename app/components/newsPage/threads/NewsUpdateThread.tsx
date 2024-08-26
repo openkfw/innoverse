@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import Box from '@mui/material/Box';
+
 import { ProjectUpdate } from '@/common/types';
 import { NewsUpdateCard } from '@/components/newsPage/cards/NewsUpdateCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
@@ -30,6 +32,7 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
       objectId: update.id,
     });
     const data = response.data ? { ...response.data, responseCount: 0, responses: [] } : undefined;
+
     return { ...response, data: data };
   };
 
@@ -40,15 +43,19 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
       fetchResponses={fetchResponses}
       addResponse={addResponse}
       renderResponse={(response, idx, deleteResponse, updateResponse) => (
-        <NewsCommentThread
-          key={`${idx}-${response.id}`}
-          item={update}
-          comment={response}
-          commentType="NEWS_COMMENT"
-          level={1}
-          onDelete={deleteResponse}
-          onUpdate={updateResponse}
-        />
+        <Box width="98%" display="block " alignSelf="end">
+          <Box>
+            <NewsCommentThread
+              key={`${idx}-${response.id}`}
+              item={update}
+              comment={response}
+              commentType="NEWS_COMMENT"
+              level={1}
+              onDelete={deleteResponse}
+              onUpdate={updateResponse}
+            />
+          </Box>
+        </Box>
       )}
     />
   );

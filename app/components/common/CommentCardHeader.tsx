@@ -4,15 +4,43 @@ import Typography from '@mui/material/Typography';
 
 import { User } from '@/common/types';
 import { UserAvatar, UserAvatarProps } from '@/components/common/UserAvatar';
+import * as m from '@/src/paraglide/messages.js';
 import { formatDate } from '@/utils/helpers';
 
+import AvatarInitialsIcon from './AvatarInitialsIcon';
+
 interface CommentCardHeaderProps {
-  content: { author: User; updatedAt: Date };
+  content: { author: User; updatedAt: Date; anonymous?: boolean };
   avatar?: UserAvatarProps;
 }
 
 export const CommentCardHeader = ({ content, avatar }: CommentCardHeaderProps) => {
-  const { author, updatedAt } = content;
+  const { author, updatedAt, anonymous } = content;
+
+  if (!author || anonymous) {
+    return (
+      <CardHeader
+        sx={cardHeaderStyles}
+        avatar={
+          <AvatarInitialsIcon
+            name={m.components_newsPage_cards_newsCard_anonymous()}
+            size={32}
+            sx={{ border: '2px solid white' }}
+          />
+        }
+        title={
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="subtitle2" color="primary.dark" sx={{ fontSize: '14px' }} data-testid="author">
+              {m.components_newsPage_cards_newsCard_anonymous()}
+            </Typography>
+            <Typography variant="caption" color="secondary.contrastText" data-testid="date" suppressHydrationWarning>
+              {formatDate(updatedAt)}
+            </Typography>
+          </Stack>
+        }
+      />
+    );
+  }
   return (
     <CardHeader
       sx={cardHeaderStyles}

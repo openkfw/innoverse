@@ -178,6 +178,7 @@ export const mapToRedisPost = (post: Post, reactions: RedisReaction[], followedB
     createdAt: getUnixTimestamp(post.createdAt),
     followedBy,
     responseCount: post.responseCount,
+    anonymous: post.anonymous,
   };
 };
 

@@ -66,6 +66,7 @@ export type RedisPost = RedisItem & {
   content: string;
   upvotedBy: string[];
   responseCount: number;
+  anonymous: boolean;
 };
 
 export type RedisProjectEvent = RedisItem & {
@@ -91,6 +92,7 @@ export type RedisProjectUpdate = RedisItem & {
   projectStart?: string;
   linkToCollaborationTab: boolean;
   responseCount: number;
+  anonymous: boolean;
 };
 
 export type RedisProject = RedisItem & {

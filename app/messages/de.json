@@ -228,7 +228,7 @@
   "components_newsFeed_newsFeedContainer_allNewsText": "Alle Neuigkeiten im Überblick: Aktuelle Nachrichten, neue Projekte und alle Ereignisse.",
   "components_newsFeed_newsFeedContainer_filter": "Filter",
 
-  "components_newsFeed_newsFeedSearchFilter_search" : "Suche",
+  "components_newsFeed_newsFeedSearchFilter_search": "Suche",
 
   "components_newsFeed_newsFeedTypeFilter_comments": "Kommentare",
   "components_newsFeed_newsFeedTypeFilter_events": "Events",
@@ -253,6 +253,7 @@
   "components_newsPage_addPost_form_addPostForm_createError": "Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuchen sie es erneut",
   "components_newsPage_addPost_form_addPostForm_addPost": "Hier kannst du deinen Beitrag hinzufügen …",
   "components_newsPage_addPost_form_addPostForm_projectLabel": "Projekt",
+  "components_newsPage_addPost_form_addPostForm_anonymousPost": "Anonym posten",
 
   "components_newsPage_addPost_form_addUpdateForm_success": "Neuigkeit wurde erstellt",
   "components_newsPage_addPost_form_addUpdateForm_error": "Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuche es erneut.",
@@ -290,6 +291,8 @@
   "components_newsPage_cards_newsCard_error_update": "Der Beitrag konnte nicht aktualisiert werden. Bitte versuche es noch einmal",
 
   "components_newsPage_cards_newsCard_error_delete": "Der Beitrag konnte nicht gelöscht werden. Bitte versuche es noch einmal",
+
+  "components_newsPage_cards_newsCard_anonymous": "Anonym",
 
   "components_newsPage_cards_commentCard_error_update": "Der Kommentar konnte nicht aktualisiert werden. Bitte versuche es noch einmal",
 
