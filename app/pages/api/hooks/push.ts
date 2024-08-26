@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { ReasonPhrases,StatusCodes } from 'http-status-codes';
+import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import { literal, number, object, string, z } from 'zod';
 
 import { serverConfig } from '@/config/server';

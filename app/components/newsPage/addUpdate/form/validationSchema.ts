@@ -14,6 +14,7 @@ export const handleProjectUpdateSchema = z
   .object({
     comment: z.string(),
     projectId: z.string(),
+    anonymous: z.boolean().optional(),
   })
   .required();
 

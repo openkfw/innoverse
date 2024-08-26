@@ -37,7 +37,7 @@ export const EditMoreDialog = ({ open, anchorEl, onClickAway, onEdit, onDelete }
             startIcon={<DeleteFilledIcon />}
             sx={{ p: 2, width: '140px', maxWidth: '100%' }}
           >
-            l{m.components_common_editing_controls_editMoreDialog_delete()}
+            {m.components_common_editing_controls_editMoreDialog_delete()}
           </CustomIconButton>
         </Stack>
       </ClickAwayListener>

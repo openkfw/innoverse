@@ -107,6 +107,7 @@ export async function createProjectUpdateInStrapi(body: {
   projectId: string;
   authorId?: string;
   linkToCollaborationTab?: boolean;
+  anonymous?: boolean;
 }) {
   try {
     const response = await strapiGraphQLFetcher(CreateProjectUpdateMutation, {
@@ -114,6 +115,7 @@ export async function createProjectUpdateInStrapi(body: {
       projectId: body.projectId,
       comment: body.comment,
       linkToCollaborationTab: body.linkToCollaborationTab ?? false,
+      anonymous: body.anonymous ?? false,
     });
 
     const updateData = response.createUpdate?.data;

@@ -10,6 +10,7 @@ export const ProjectUpdateFragment = graphql(
         topic
         updatedAt
         linkToCollaborationTab
+        anonymous
         author {
           data {
             ...InnoUser

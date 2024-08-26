@@ -15,7 +15,7 @@ export const UpdateCardActions = (props: UpdateCardActionsProps) => {
   const { update, onDelete, onEdit, onResponse } = props;
   const { user } = useUser();
 
-  const userIsAuthor = user?.providerId === update.author.providerId;
+  const userIsAuthor = user?.providerId === update.author?.providerId;
 
   return (
     <NewsCardControls>

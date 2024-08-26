@@ -24,10 +24,16 @@ import {
 
 const logger = getLogger();
 
-type CreateProjectUpdate = { comment: string; projectId: string; authorId?: string; linkToCollaborationTab?: boolean };
-type UpdateProjectUpdate = { updateId: string; comment: string };
+type CreateProjectUpdate = {
+  comment: string;
+  projectId: string;
+  authorId?: string;
+  linkToCollaborationTab?: boolean;
+  anonymous?: boolean;
+};
+type UpdateProjectUpdate = { updateId: string; comment: string; anonymous?: boolean };
 
-type UpdateUpdateInCache = { update: { id: string; comment?: string; responseCount?: number } };
+type UpdateUpdateInCache = { update: { id: string; comment?: string; responseCount?: number; anonymous?: boolean } };
 
 export const createProjectUpdate = async (update: CreateProjectUpdate) => {
   const createdUpdate = await createProjectUpdateInStrapi(update);
