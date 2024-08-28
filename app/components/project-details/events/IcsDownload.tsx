@@ -10,7 +10,7 @@ import palette from '@/styles/palette';
 
 import { Event } from '../../../common/types';
 
-export const defaultImageForEvents = '/images/event_image.jpg';
+export const defaultImageForEvents = '/public/images/event_image.jpg';
 
 interface IcsDownloadProps {
   event: Event;

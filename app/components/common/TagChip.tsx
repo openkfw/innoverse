@@ -18,7 +18,7 @@ export default function TagChip({ label, sx }: CustomChipProps) {
       variant="filled"
       sx={{
         fontSize: 13,
-        fontFamily: '***FONT_REMOVED***',
+        fontFamily: 'SansDefaultReg',
         ...sx,
       }}
     />

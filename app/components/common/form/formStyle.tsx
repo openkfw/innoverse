@@ -1,6 +1,6 @@
 export const formLabelStyle = {
   color: 'primary.main',
-  fontFamily: '***FONT_REMOVED***',
+  fontFamily: 'SansDefaultMed',
   fontSize: '14px',
   '&.Mui-focused': {
     color: 'primary.main',
@@ -13,7 +13,7 @@ export const inputStyle = {
   },
   '& + .MuiAutocomplete-popper .MuiAutocomplete-option': {
     color: 'primary.main',
-    fontFamily: '***FONT_REMOVED***',
+    fontFamily: 'SansDefaultMed',
     fontSize: '14px',
     '&.Mui-focused': {
       color: 'primary.main',

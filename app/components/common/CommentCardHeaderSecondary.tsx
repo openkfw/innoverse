@@ -7,9 +7,8 @@ import Typography from '@mui/material/Typography';
 
 import { User } from '@/common/types';
 import { UserAvatar, UserAvatarProps } from '@/components/common/UserAvatar';
+import badgeIcon from '@/components/icons/Badge.svg';
 import * as m from '@/src/paraglide/messages.js';
-
-import badgeIcon from '/public/images/icons/badge.svg';
 
 interface CommentCardHeaderSecondaryProps {
   author: User;

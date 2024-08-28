@@ -20,7 +20,7 @@ import { EventWithAdditionalData, ObjectType } from '../../../common/types';
 
 import EventContent from './EventContent';
 
-export const defaultImageForEvents = '/images/event_image.jpg';
+export const defaultImageForEvents = '/public/images/event_image.jpg';
 
 interface EventCardProps {
   event: EventWithAdditionalData;

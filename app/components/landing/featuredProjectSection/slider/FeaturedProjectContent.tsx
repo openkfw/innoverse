@@ -60,7 +60,7 @@ const featuredTypographyStyles = {
   display: 'block',
   marginLeft: 6 / 8,
   fontSize: 12,
-  fontFamily: '***FONT_REMOVED***',
+  fontFamily: 'SansDefaultReg',
 };
 
 const titleStyles = {

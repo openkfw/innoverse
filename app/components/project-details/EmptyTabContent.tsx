@@ -110,7 +110,7 @@ const wrapperStyles = {
 
 const textStyles = {
   color: 'text.primary',
-  fontFamily: '***FONT_REMOVED***',
+  fontFamily: 'SansDefaultReg',
 };
 
 const followButtonStyles = {

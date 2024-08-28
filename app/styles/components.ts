@@ -13,66 +13,67 @@ const components: Components<Omit<Theme, 'components'>> = {
         -moz-osx-font-smoothing: grayscale;
       }
 
+
       @font-face {
-        font-family: '***FONT_REMOVED***';
+        font-family: 'SansDefaultReg';
         font-display: optional;
-        src: local('***FONT_REMOVED***) format('woff2');
+        src: local('SansDefaultReg'), url(/fonts/Sans-Default-Reg.woff2) format('woff2');
         unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
       }
 
       @font-face {
-        font-family: '***FONT_REMOVED***';
+        font-family: 'SansDefaultMed';
         font-display: optional;
-        src: local('***FONT_REMOVED***) format('woff2');
+        src: local('SansDefaultMed'), url(/fonts/Sans-Default-Med.woff2) format('woff2');
         unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
       }
 
       @font-face {
-        font-family: '***FONT_REMOVED***';
+        font-family: 'SansDefaultBold';
         font-display: optional;
-        src: local('***FONT_REMOVED***) format('woff2');
+        src: local('SansDefaultBold'), url(/fonts/Sans-Default-Bold.woff2) format('woff2');
         unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
       }
 
       @font-face {
-        font-family: '***FONT_REMOVED***';
+        font-family: 'SlabReg';
         font-display: optional;
-        src: local('***FONT_REMOVED***) format('woff2');
+        src: local('SlabReg'), url(/fonts/Slab-Reg.woff2) format('woff2');
         unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
       }
 
       @font-face {
-        font-family: '***FONT_REMOVED***';
+        font-family: 'SlabMed';
         font-display: optional;
-        src: local('***FONT_REMOVED***) format('woff2');
+        src: local('SlabMed'), url(/fonts/Slab-Med.woff2) format('woff2');
         unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
       }
 
       @font-face {
-        font-family: '***FONT_REMOVED***';
+        font-family: 'SlabBold';
         font-display: optional;
-        src: local('***FONT_REMOVED***) format('woff2');
+        src: local('SlabBold'), url(/fonts/Slab-Bold.woff2) format('woff2');
         unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
       }
 
       @font-face {
-        font-family: 'PFCentroSansProReg';
+        font-family: 'SansHeadingsReg';
         font-display: optional;
-        src: local('PFCentroSansProReg'), url(/fonts/PFCentroSansPro-Reg.woff2) format('woff2');
+        src: local('Sans-Headings-Reg'), url(/fonts/Sans-Headings-Reg.woff2) format('woff2');
         unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
       }
 
       @font-face {
-        font-family: 'PFCentroSansProMed';
+        font-family: 'SansHeadingsMed';
         font-display: optional;
-        src: local('PFCentroSansProMed'), url(/fonts/PFCentroSansPro-Med.woff2) format('woff2');
+        src: local('Sans-Headings-Med'), url(/fonts/Sans-Headings-Med.woff2) format('woff2');
         unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
       }
 
       @font-face {
-        font-family: 'PFCentroSansProBold';
+        font-family: 'SansHeadingsBold';
         font-display: optional;
-        src: local('PFCentroSansProBold'), url(/fonts/PFCentroSansPro-Bold.woff2) format('woff2');
+        src: local('Sans-Headings-Bold'), url(/fonts/Sans-Headings-Bold.woff2) format('woff2');
         unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
       }
     `,
@@ -137,7 +138,7 @@ const components: Components<Omit<Theme, 'components'>> = {
     styleOverrides: {
       root: {
         color: palette.common?.white,
-        fontFamily: '***FONT_REMOVED***',
+        fontFamily: 'SansDefaultMed',
         fontSize: '14px',
         '&.Mui-focused': {
           color: palette.common?.white,

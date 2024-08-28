@@ -116,7 +116,7 @@ function ActiveStepLabel({ label, sx }: ProgressStepLabelProps) {
             variant="body1"
             sx={{
               fontSize: 14,
-              fontFamily: 'PFCentroSansProMed',
+              fontFamily: 'SansHeadingsMed',
               color: isLive(label) ? 'text.primary' : 'common.white',
             }}
           >

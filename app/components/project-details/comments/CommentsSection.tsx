@@ -91,7 +91,7 @@ const listStyle = {
   pl: 2,
   '& .MuiListItem-root': {
     display: 'list-item',
-    fontFamily: '***FONT_REMOVED***',
+    fontFamily: 'SlabReg',
     fontWeight: 700,
     pl: 0,
   },

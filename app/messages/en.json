@@ -11,10 +11,12 @@
   "app_projects_page_projectsNotFoundError": "Project could not be retrieved. Please try again later.",
 
   "app_layout_title": "InnoVerse",
-  "app_layout_content": "***STRING_REMOVED***  Innovation Platform",
+  "app_layout_content": "Innovation Platform",
 
   "app_notFound_errorMessage": "Page not found",
   "app_notFound_homepageLink": "To the homepage",
+
+  "app_login_option": "Login using {provider}",
 
   "components_collaboration_collaborationQuestionCard_postError": "Comment could not be posted. Please try again.",
   "components_collaboration_collaborationQuestionCard_submitError": "Comment could not be sent. Please try again.",
@@ -154,12 +156,12 @@
   "components_landing_feedbackSection_feedbackSection_discussion": "for discussion.",
 
   "components_landing_mappingProjectsSection_mappingProjectsCard_exploration": "Exploration",
-  "components_landing_mappingProjectsSection_mappingProjectsCard_explorationDesc": "Based on ***STRING_REMOVED*** 's strategic goal system, we explore potential areas of action for ***STRING_REMOVED*** , taking into account external developments and internal guidelines.",
+  "components_landing_mappingProjectsSection_mappingProjectsCard_explorationDesc": "Based on strategic goals, we explore potential areas of action, taking into account external developments and internal guidelines.",
   "components_landing_mappingProjectsSection_mappingProjectsCard_conception": "Conception",
   "components_landing_mappingProjectsSection_mappingProjectsCard_conceptionDesc": "In the conception phase, we are in close contact with the target group: we first understand the problems firsthand to develop solution concepts based on them and validate them with the target group.",
   "components_landing_mappingProjectsSection_mappingProjectsCard_poc": "Proof of Concept",
   "components_landing_mappingProjectsSection_mappingProjectsCard_pocDesc": "In the PoC, we test the attractiveness, feasibility, and profitability of the solution concepts through lean experiments - again, directly with the target group.",
-  "components_landing_mappingProjectsSection_mappingProjectsCard_stratInno": "Strategic Innovation @ ***STRING_REMOVED*** ",
+  "components_landing_mappingProjectsSection_mappingProjectsCard_stratInno": "Strategic Innovation",
   "components_landing_mappingProjectsSection_mappingProjectsCard_imageAlt": "Background Bubble",
 
   "components_landing_mappingProjectsSection_projectLinks_initiatives": "Initiatives",
@@ -181,7 +183,7 @@
   "components_landing_projectSection_projectSection_subtitle": "Current Pipeline",
   "components_landing_projectSection_projectSection_imageAlt": "Background Bubble",
 
-  "components_layout_footer_***STRING_REMOVED*** ": "© ***STRING_REMOVED*** ",
+  "components_layout_footer_innoVerse": "© InnoVerse Team",
 
   "components_layout_layout_initiatives": "Initiatives",
   "components_layout_layout_news": "News",
@@ -189,12 +191,12 @@
 
   "components_layout_loggedInMenu_imageAlt": "avatar",
 
-  "components_layout_topBar_imageAlt": "***STRING_REMOVED***  Logo",
+  "components_layout_topBar_imageAlt": "Logo",
 
   "components_layout_topBarMobile_signOut": "Sign out",
   "components_layout_topBarMobile_closeMenu": "Close menu",
   "components_layout_topBarMobile_openMenu": "Open menu",
-  "components_layout_topBarMobile_imageAlt": "***STRING_REMOVED***  Logo",
+  "components_layout_topBarMobile_imageAlt": "Logo",
 
   "components_layout_userMenu_contentEditor": "Content Editor",
   "components_layout_userMenu_profile": "Profile",

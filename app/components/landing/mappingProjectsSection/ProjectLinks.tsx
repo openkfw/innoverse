@@ -27,7 +27,7 @@ export const ProjectLinks = ({ projects }: { projects: BasicProject[] }) => {
               key={project.title}
               sx={{
                 cursor: 'pointer',
-                fontFamily: '***FONT_REMOVED***',
+                fontFamily: 'SansDefaultMed',
                 fontWeight: 700,
                 lineHeight: '175%',
                 color: 'primary.contrastText',

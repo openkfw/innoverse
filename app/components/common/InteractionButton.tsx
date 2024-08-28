@@ -238,6 +238,6 @@ export const interactionButtonStyles = {
     border: '2px solid rgba(255, 255, 255, 0.40)',
   },
   fontSize: '20px',
-  fontFamily: '***FONT_REMOVED***',
+  fontFamily: 'SansDefaultReg',
   fontWeight: 700,
 };

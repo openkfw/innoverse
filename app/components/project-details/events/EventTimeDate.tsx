@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 
 import { Event } from '../../../common/types';
 
-export const defaultImageForEvents = '/images/event_image.jpg';
+export const defaultImageForEvents = '/public/images/event_image.jpg';
 
 interface EventTimeDateProps {
   event: Event;

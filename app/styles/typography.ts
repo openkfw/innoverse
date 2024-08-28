@@ -6,7 +6,7 @@ const baseStyles = {
   },
   header: {
     h1: {
-      fontFamily: 'PFCentroSansProBold',
+      fontFamily: 'SansHeadingsBold',
       fontSize: '60px',
       fontStyle: 'normal',
       fontWeight: '1000',
@@ -14,7 +14,7 @@ const baseStyles = {
       letterSpacing: '-0.5px',
     },
     h2: {
-      fontFamily: 'PFCentroSansProBold',
+      fontFamily: 'SansHeadingsBold',
       fontSize: '55px',
       fontStyle: 'normal',
       fontWeight: '1000',
@@ -22,7 +22,7 @@ const baseStyles = {
       letterSpacing: '-0.5px',
     },
     h3: {
-      fontFamily: '***FONT_REMOVED***',
+      fontFamily: 'SlabMed',
       fontSize: '60px',
       fontStyle: 'normal',
       fontWeight: '1000',
@@ -32,7 +32,7 @@ const baseStyles = {
   },
   body: {
     body1: {
-      fontFamily: '***FONT_REMOVED***',
+      fontFamily: 'SlabReg',
       fontSize: '16px',
       fontStyle: 'normal',
       fontWeight: '400',
@@ -40,7 +40,7 @@ const baseStyles = {
       letterSpacing: '0.15px',
     },
     body2: {
-      fontFamily: '***FONT_REMOVED***',
+      fontFamily: 'SansDefaultMed',
       fontSize: '16px',
       fontStyle: 'normal',
       fontWeight: '400',
@@ -65,7 +65,7 @@ const header = {
   },
   h4: {
     color: palette.common?.white,
-    fontFamily: 'PFCentroSansProBold',
+    fontFamily: 'SansHeadingsBold',
     fontSize: '34px',
     fontStyle: 'normal',
     fontWeight: 1000,
@@ -74,14 +74,14 @@ const header = {
   },
   h5: {
     color: palette.secondary?.main,
-    fontFamily: 'PFCentroSansProBold',
+    fontFamily: 'SansHeadingsBold',
     fontSize: '24px',
     fontWeight: 1000,
     lineHeight: '133.4%',
   },
   h6: {
     color: palette.common?.white,
-    fontFamily: 'PFCentroSansProBold',
+    fontFamily: 'SansHeadingsBold',
     fontSize: '20px',
     fontStyle: 'normal',
     fontWeight: '1000',
@@ -101,7 +101,7 @@ const body = {
   },
   link: {
     color: palette.common?.white,
-    fontFamily: '***FONT_REMOVED***',
+    fontFamily: 'SansDefaultMed',
     fontSize: '16px',
     fontStyle: 'normal',
     fontWeight: '400',
@@ -110,7 +110,7 @@ const body = {
   },
   caption: {
     color: palette.text?.primary,
-    fontFamily: '***FONT_REMOVED***',
+    fontFamily: 'SansDefaultMed',
     fontSize: '12px',
     fontStyle: 'normal',
     fontWeight: '400',
@@ -119,7 +119,7 @@ const body = {
   },
   overline: {
     color: palette.common?.white,
-    fontFamily: '***FONT_REMOVED***',
+    fontFamily: 'SansDefaultMed',
     fontSize: '12px',
     fontStyle: 'normal',
     fontWeight: '400',
@@ -129,7 +129,7 @@ const body = {
   },
   subtitle1: {
     color: palette.common?.white,
-    fontFamily: '***FONT_REMOVED***',
+    fontFamily: 'SansDefaultMed',
     fontSize: '16px',
     fontStyle: 'normal',
     fontWeight: '400',
@@ -138,7 +138,7 @@ const body = {
   },
   subtitle2: {
     color: palette.secondary?.main,
-    fontFamily: '***FONT_REMOVED***',
+    fontFamily: 'SansDefaultMed',
     fontSize: '16px',
     fontStyle: 'normal',
     fontWeight: '500',
@@ -146,7 +146,7 @@ const body = {
     letterSpacing: '0.15px',
   },
   button: {
-    fontFamily: '***FONT_REMOVED***',
+    fontFamily: 'SansDefaultMed',
     fontSize: '14px',
     fontStyle: 'normal',
     fontWeight: '500',
@@ -158,7 +158,7 @@ const typography = {
   fontSize: 16,
   htmlFontSize: 16,
   color: palette.text?.primary,
-  fontFamily: ['***FONT_REMOVED***', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
+  fontFamily: ['SansDefaultMed', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
   ...header,
   ...body,
 };
