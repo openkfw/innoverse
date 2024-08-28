@@ -4,3 +4,5 @@ helm/**/charts
 .env
 
 redis/data
+
+.DS_STORE
