@@ -49,7 +49,7 @@ const dialogStyles = {
 const dialogTitleStyles = {
   color: 'primary.light',
   fontSize: '12px',
-  fontFamily: '***FONT_REMOVED***',
+  fontFamily: 'SansDefaultReg',
   textTransform: 'uppercase',
   fontStyle: 'normal',
   fontWeight: 400,

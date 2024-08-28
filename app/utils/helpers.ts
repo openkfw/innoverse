@@ -3,6 +3,7 @@ import { Reaction as PrismaReaction } from '@prisma/client';
 import { SxProps } from '@mui/material/styles';
 
 import { ImageFormats, NewsFeedEntry, ObjectType, Reaction } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 
 export const sortDateByCreatedAtAsc = <T extends { createdAt: Date }>(array: T[]): T[] => {
   return array.sort((d1: T, d2: T) => d1.createdAt.getTime() - d2.createdAt.getTime());
@@ -113,7 +114,9 @@ export function formatTimestamp(timestamp: number, locale = 'de-DE'): string | n
 }
 
 export function getProviderLabel(provider: { name: string; id: string }) {
-  return provider.id === 'azure-ad' ? `Mit ***STRING_REMOVED***  Account einloggen` : `Mit ${provider.name.split(' ')[0]} einloggen`;
+  const providerName = provider.name.split(' ')[0];
+  const label = m.app_login_option({ provider: providerName });
+  return label;
 }
 
 export function getImageByBreakpoint(isSmallScreen: boolean, image?: ImageFormats) {

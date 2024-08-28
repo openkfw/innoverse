@@ -11,10 +11,12 @@
   "app_projects_page_projectsNotFoundError": "Projekt konnte nicht abgerufen werden. Bitte versuche es später noch einmal.",
 
   "app_layout_title": "InnoVerse",
-  "app_layout_content": "***STRING_REMOVED***  Innovations Plattform",
+  "app_layout_content": "Innovations Plattform",
 
   "app_notFound_errorMessage": "Die Seite wurde nicht gefunden",
   "app_notFound_homepageLink": "Zur Startseite",
+
+  "app_login_option": "Mit {provider} einloggen",
 
   "components_collaboration_collaborationQuestionCard_postError": "Kommentar konnte nicht gepostet werden. Bitte versuche es noch einmal.",
   "components_collaboration_collaborationQuestionCard_submitError": "Kommentar konnte nicht gesendet werden. Bitte versuche es noch einmal.",
@@ -154,12 +156,12 @@
   "components_landing_feedbackSection_feedbackSection_discussion": "zur Diskussion gepostet werden.",
 
   "components_landing_mappingProjectsSection_mappingProjectsCard_exploration": "Exploration",
-  "components_landing_mappingProjectsSection_mappingProjectsCard_explorationDesc": "Basierend auf dem strategischen Zielsystem ***STRING_REMOVED***  untersuchen wir mögliche Handlungsfelder für ***STRING_REMOVED***  und berücksichtigen dabei externe Entwicklungen und interne Leitplanken.",
+  "components_landing_mappingProjectsSection_mappingProjectsCard_explorationDesc": "Basierend auf dem strategischen Zielsystem untersuchen wir mögliche Handlungsfelder und berücksichtigen dabei externe Entwicklungen und interne Leitplanken.",
   "components_landing_mappingProjectsSection_mappingProjectsCard_conception": "Konzeption",
   "components_landing_mappingProjectsSection_mappingProjectsCard_conceptionDesc": "In der Konzeptionsphase sind wir im engen Austausch mit der Zielgruppe: Aus erster Hand verstehen wir zunächst die Probleme, um basierend darauf Lösungskonzepte zu erarbeiten und mit der Zielgruppe zu validieren.",
   "components_landing_mappingProjectsSection_mappingProjectsCard_poc": "Proof of Concept",
   "components_landing_mappingProjectsSection_mappingProjectsCard_pocDesc": "Im PoC testen wir mittels Lean Experiments die Attraktivität, Machbarkeit und Rentabilität der Lösungskonzepte - auch hier direkt mit der Zielgruppe.",
-  "components_landing_mappingProjectsSection_mappingProjectsCard_stratInno": "Strategische Innovation @ ***STRING_REMOVED*** ",
+  "components_landing_mappingProjectsSection_mappingProjectsCard_stratInno": "Strategische Innovation",
   "components_landing_mappingProjectsSection_mappingProjectsCard_imageAlt": "Hintergrund Bubble",
 
   "components_landing_mappingProjectsSection_projectLinks_initiatives": "Initiativen",
@@ -181,7 +183,7 @@
   "components_landing_projectSection_projectSection_subtitle": "Aktuelle Pipeline",
   "components_landing_projectSection_projectSection_imageAlt": "Hintergrund Bubble",
 
-  "components_layout_footer_***STRING_REMOVED*** ": "© ***STRING_REMOVED*** ",
+  "components_layout_footer_innoVerse": "© InnoVerse Team",
 
   "components_layout_layout_initiatives": "Initiativen",
   "components_layout_layout_news": "News",
@@ -189,12 +191,12 @@
 
   "components_layout_loggedInMenu_imageAlt": "avatar",
 
-  "components_layout_topBar_imageAlt": "***STRING_REMOVED***  Logo",
+  "components_layout_topBar_imageAlt": "Logo",
 
   "components_layout_topBarMobile_signOut": "Ausloggen",
   "components_layout_topBarMobile_closeMenu": "Menü schließen",
   "components_layout_topBarMobile_openMenu": "Menü öffnen",
-  "components_layout_topBarMobile_imageAlt": "***STRING_REMOVED***  Logo",
+  "components_layout_topBarMobile_imageAlt": "Logo",
 
   "components_layout_userMenu_contentEditor": "Content Editor",
   "components_layout_userMenu_profile": "Profil",

@@ -57,10 +57,20 @@ const nextConfig = {
     ];
   },
   webpack: function (config, { isServer }) {
-    config.module.rules.push({
-      test: /\.md$/,
-      use: 'raw-loader',
-    });
+    config.module.rules.push(
+      {
+        test: /\.md$/,
+        use: 'raw-loader',
+      },
+      {
+        // Supports only images which are not optimized by next
+        test: /^.*\.svg$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'static/chunks/images/[name][ext]',
+        },
+      },
+    );
     if (isServer) {
       // required for @azure/monitor-opentelemetry-exporter to work
       config.resolve.fallback ??= {};

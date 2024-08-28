@@ -75,7 +75,7 @@ const containerStyles = {
 
 const labelStyles = {
   fontSize: '13px',
-  fontFamily: '***FONT_REMOVED***',
+  fontFamily: 'SansDefaultReg',
 };
 
 const countStyles = {
@@ -92,5 +92,5 @@ const countStyles = {
   fontSize: '12px',
   lineHeight: '16px',
   letterSpacing: '0.4px',
-  fontFamily: '***FONT_REMOVED***',
+  fontFamily: 'SansDefaultMed',
 };

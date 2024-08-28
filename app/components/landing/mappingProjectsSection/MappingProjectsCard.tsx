@@ -84,10 +84,10 @@ const BubbleImage = () => (
     src={bgBubble}
     alt={m.components_landing_mappingProjectsSection_mappingProjectsCard_imageAlt()}
     sizes="33vw"
+    width={570}
+    height={460}
     style={{
       position: 'absolute',
-      width: 570,
-      height: 460,
       zIndex: 0,
       opacity: 0.9,
       left: 0,

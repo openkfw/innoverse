@@ -29,7 +29,7 @@ const muiMarkdownOverrides = {
         scrollMargin: '5em',
         color: 'text.primary',
         lineHeight: '30px',
-        fontFamily: 'PFCentroSansProMed',
+        fontFamily: 'SansHeadingsMed',
         fontWeight: 400,
         fontSize: '36px',
       },

@@ -95,7 +95,7 @@ const cardActionsStyles = {
 const titleStyles = {
   minHeight: '75px',
   color: 'text.primary',
-  fontFamily: 'PFCentroSansProMed',
+  fontFamily: 'SansHeadingsMed',
   fontSize: '17px',
   fontWeight: 900,
   lineHeight: '140%',

@@ -61,11 +61,7 @@ const BuildNotificationBanner = (props: BuildNotificationBannerProps) => {
       <Stack direction="row" alignItems={'start'} gap={1} style={{ borderRadius: '12px' }}>
         <Box marginLeft={'20px'}>{icon}</Box>
         <Box>
-          <Typography
-            variant={'body1'}
-            color={'text.primary'}
-            sx={{ fontSize: '16px', fontFamily: '***FONT_REMOVED***' }}
-          >
+          <Typography variant={'body1'} color={'text.primary'} sx={{ fontSize: '16px', fontFamily: 'SansDefaultMed' }}>
             {text}
           </Typography>
         </Box>
@@ -98,7 +94,7 @@ export const NotificationBanner = (props: NotificationBannerProps) => {
         icon: <SettingsIcon />,
         image: () => (
           <Image
-            src={'/images/manually_enable_notifications.png'}
+            src={'/public/images/manually_enable_notifications.png'}
             width={550}
             height={80}
             alt={m.components_notifications_notificationBanner_imageAlt()}

@@ -99,6 +99,8 @@ export default function TopBarMobile({ pages }: TopBarProps) {
               src={logo}
               alt={m.components_layout_topBarMobile_imageAlt()}
               sizes="100vw"
+              width={245}
+              height={26}
               style={{
                 width: '70%',
                 height: '70%',

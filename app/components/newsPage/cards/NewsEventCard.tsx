@@ -20,7 +20,7 @@ interface NewsSurveyCardProps {
 function NewsEventCard(props: NewsSurveyCardProps) {
   const { event } = props;
 
-  const defaultImage = '/images/energy_01.png';
+  const defaultImage = '/public/images/energy_01.png';
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
   const image = getImageByBreakpoint(isSmallScreen, event?.image) || defaultImage;

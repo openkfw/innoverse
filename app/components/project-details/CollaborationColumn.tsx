@@ -128,7 +128,7 @@ const sectionTitleStyles = {
   WebkitBoxOrient: 'vertical',
   textOverflow: 'ellipsis',
   overflow: 'hidden',
-  fontFamily: 'PFCentroSansProReg',
+  fontFamily: 'SansHeadingsReg',
   color: 'text.primary',
 };
 

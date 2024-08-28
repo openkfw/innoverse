@@ -6,17 +6,14 @@ import Typography from '@mui/material/Typography';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
-const footerNav = [
-  { label: 'Impressum', link: '***URL_REMOVED***' },
-  { label: 'DSGVO', link: '***URL_REMOVED***' },
-];
+const footerNav: { label: string; link: string }[] = [];
 
 function Footer() {
   return (
     <Grid container spacing={3} sx={footerStyle}>
       <Grid item>
         <Typography sx={typographyStyle}>
-          {m.components_layout_footer_***STRING_REMOVED*** ()} {new Date().getFullYear()}{' '}
+          {m.components_layout_footer_innoVerse()} {new Date().getFullYear()}{' '}
         </Typography>
       </Grid>
       {footerNav.map((item, key) => (
@@ -45,7 +42,7 @@ const footerStyle = {
 
 const typographyStyle = {
   fontWeight: 700,
-  fontFamily: '***FONT_REMOVED***',
+  fontFamily: 'SansDefaultMed',
   fontSize: '14px',
 };
 

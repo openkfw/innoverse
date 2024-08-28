@@ -27,7 +27,8 @@ async function NewsFeedPage() {
       <Image
         src={backgroundImage}
         alt={m.app_news_page_imageAlt()}
-        sizes="33vw"
+        width={1792}
+        height={1024}
         style={{
           position: 'fixed',
           width: '100%',

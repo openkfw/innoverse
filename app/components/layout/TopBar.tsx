@@ -67,9 +67,11 @@ export default function TopBar({ pages }: TopBarProps) {
                   src={logo}
                   alt={m.components_layout_topBar_imageAlt()}
                   sizes="100vw"
+                  width={245}
+                  height={26}
                   style={{
-                    width: '70%',
-                    height: '70%',
+                    width: '60%',
+                    height: '60%',
                   }}
                 />
               </Link>
