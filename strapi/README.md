@@ -2,21 +2,21 @@
 
 Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
 
-## setup
+## Setup
 
-based on the[ setup guide](https://docs.strapi.io/dev-docs/quick-start) here but without the `--quickstart`` flag
+Based on the [official strapi setup guide](https://docs.strapi.io/dev-docs/quick-start) here but without the `--quickstart`` flag
 
 - set the correct env vars in the .env file
 - then run `npm run build` and `npm start` (for production) or `npm run dev` for development
 - then you can open the strapi UI on http://localhost:1337/ and start creating collection types and entries
 
-## setup with docker
+## Setup with docker
 
-Run the `docker-compose.yml` file in this folder, this builds a new strapi API container along with the postgres container
+Run the `docker-compose.yml` in the root folder to start strapi and optionally other services
 
 ## Add Collection Types
 
-add a new folder in the `./src/api` folder (similar to e.g. `/test`), with the following files: a schema.json file, a controller, a route and a service. Then you need to run `npm run strapi ts:generate-types` to generate the necessary types.
+Add a new folder in the `./src/api` folder (similar to e.g. `/test`), with the following files: a schema.json file, a controller, a route and a service. Then you need to run `npm run strapi ts:generate-types` to generate the necessary types.
 
 ## Export & Import
 
