@@ -1,0 +1,68 @@
+services:
+  database:
+    container_name: innoverse-database
+    build:
+      context: ./postgres
+    volumes:
+      - ./postgres/pg-init-scripts:/docker-entrypoint-initdb.d
+    env_file: ./postgres/.env
+    ports:
+      - 5432:5432
+    restart: on-failure
+
+  strapi:
+    container_name: innoverse-strapi
+    build:
+      context: ./strapi
+    restart: unless-stopped
+    env_file: ./strapi/.env
+    volumes:
+      - ./strapi/config:/opt/app/config
+      - ./strapi/src:/opt/app/src
+      - ./strapi/package.json:/opt/package.json
+      - ./strapi/yarn.lock:/opt/yarn.lock
+      - ./strapi/.env:/opt/app/.env
+      - ./strapi/public/uploads:/opt/app/public/uploads
+      - ./strapi/types:/opt/app/types
+    environment:
+      DATABASE_HOST: database
+      DATABASE_PORT: 5432
+    ports:
+      - 1337:1337
+    depends_on:
+      - database
+      - cache
+
+  cache:
+    container_name: innoverse-cache
+    build:
+      context: ./redis
+    environment:
+      - REDIS_ARGS=--appendonly yes --appendfsync everysec
+    restart: always
+    ports:
+      - 6379:6379
+      - 8001:8001
+    volumes:
+      - ./redis/data:/data
+
+  innoverse:
+    container_name: innoverse
+    build:
+      context: ./app
+    env_file:
+      - ./app/.env
+    environment:
+      NEXTAUTH_URL: http://localhost:3001
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/app?schema=public
+      NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT: http://strapi:1337/graphql
+      NEXT_PUBLIC_STRAPI_ENDPOINT: http://strapi:1337
+      REDIS_URL: redis://cache:6379
+    ports:
+      # Not binding to port 3000 to allow running local innoverse in parallel
+      - 3001:3000
+    depends_on:
+      - strapi
+      - database
+      - cache
+    restart: on-failure
