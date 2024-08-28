@@ -3,4 +3,4 @@ helm/**/charts
 .idea/
 .env
 
-/cache
+redis/data
