@@ -42,7 +42,7 @@
     "better-npm-audit": "^3.8.3",
     "dayjs": "^1.11.10",
     "emoji-mart": "^5.5.2",
-    "gql.tada": "^1.5.2",
+    "gql.tada": "^1.8.6",
     "graphql-scalars": "^1.23.0",
     "http-status-codes": "^2.3.0",
     "json-2-csv": "^5.4.0",
