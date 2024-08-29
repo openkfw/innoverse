@@ -15,7 +15,8 @@
     "format": "prettier --write \"**/*.+(ts|tsx|yaml)\"",
     "format:check": "prettier --check \"**/*.+(ts|tsx)\"",
     "format:fix": "prettier -w --check \"**/*.+(ts|tsx)\"",
-    "prisma": "prisma"
+    "prisma": "prisma",
+    "audit": "better-npm-audit audit"
   },
   "dependencies": {
     "@azure/monitor-opentelemetry-exporter": "1.0.0-beta.21",
@@ -38,6 +39,7 @@
     "@rajesh896/broprint.js": "^2.1.1",
     "@redis/json": "^1.0.6",
     "@vercel/otel": "1.8.0",
+    "better-npm-audit": "^3.8.3",
     "dayjs": "^1.11.10",
     "emoji-mart": "^5.5.2",
     "gql.tada": "^1.5.2",
@@ -70,7 +72,7 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.10.1",
-    "@inlang/paraglide-js": "1.9.1",
+    "@inlang/paraglide-js": "1.11.2",
     "@types/emoji-mart": "^3.0.14",
     "@types/lodash": "^4.14.202",
     "@types/next": "^9.0.0",

@@ -1,0 +1,7 @@
+{
+  "1098583": {
+    "active": true,
+    "notes": "Ignored since @inlang/paraglide-js did not update to the newest posthog-node",
+    "expiry": "2024-10-31"
+  }
+}
