@@ -45,8 +45,8 @@ while [ "$1" != "" ]; do
 done
 
 # Check if required variables are set
-if [ -z "$IMAGE_NAME" ] || [ -z "$PRIVATE_REGISTRY_URL" ] || [ -z "$PRIVATE_REGISTRY_PASSWORD" ] || [ -z "$PRIVATE_REGISTRY_USERNAME" ] 
-|| [ -z "$PRIVATE_PROD_REGISTRY_URL" ] || [ -z "$PRIVATE_PROD_REGISTRY_PASSWORD" ] || [ -z "$PRIVATE_PROD_REGISTRY_USERNAME" ]
+if [ -z "$IMAGE_NAME" ] || [ -z "$PRIVATE_REGISTRY_URL" ] || [ -z "$PRIVATE_REGISTRY_PASSWORD" ] || [ -z "$PRIVATE_REGISTRY_USERNAME" ] \
+|| [ -z "$PRIVATE_PROD_REGISTRY_URL" ] || [ -z "$PRIVATE_PROD_REGISTRY_PASSWORD" ] || [ -z "$PRIVATE_PROD_REGISTRY_USERNAME" ]  \
 || [ -z "$PUBLIC_REGISTRY_URL" ] || [ -z "$PUBLIC_REGISTRY_PASSWORD" ] || [ -z "$PUBLIC_REGISTRY_USERNAME" ]; then
     echo "Error: Missing required parameters."
     Help
