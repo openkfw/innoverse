@@ -16,7 +16,7 @@ Help()
     echo
 }
 
-docker_login_and_push() {
+docker_login() {
     local USERNAME="$1"
     local PASSWORD="$2"
     local REGISTRY_URL="$3"
