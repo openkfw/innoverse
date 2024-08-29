@@ -11,7 +11,7 @@ runs:
         PROJECT_NAME: ${{ matrix.project }}
 
     - name: Set rights
-      run: chmod +x "${GITHUB_WORKSPACE}/scripts/pipeline/publish-docker-images.sh"
+      run: chmod +x "${GITHUB_WORKSPACE}/.github/workflows/publish-images.sh"
       shell: bash
       env:
         PROJECT_NAME: ${{ matrix.project }}
@@ -25,7 +25,7 @@ runs:
     - name: Run build & push
       run: |
         cd ${{ matrix.project }} &&
-        command="${GITHUB_WORKSPACE}/scripts/pipeline/publish-docker-images.sh" &&
+        command="${GITHUB_WORKSPACE}/.github/workflows/publish-images.sh" &&
         eval $command
       shell: bash
       env:
