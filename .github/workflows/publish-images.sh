@@ -24,8 +24,9 @@ docker_login() {
 }
 
 docker_tag_and_push() {
-    local TAG="$1"
-    docker tag "$TAG"
+    local TEMP_TAG="$1"
+    local TAG="$2"
+    docker tag "$TEMP_TAG" "$TAG"
     docker push "$TAG"
 }
 
@@ -68,7 +69,14 @@ else
     export GITHUB_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 fi
 
-docker build -f Dockerfile .
+# set placeholder tag 
+export TEMP_TAG="$IMAGE_NAME:$GITHUB_BRANCH"
+if [[ "$GITHUB_EVENT_NAME" = "release" ]];
+then
+    # placeholder so docker build is working correctly
+    TEMP_TAG="release"
+fi
+docker build --tag "$TEMP_TAG" -f Dockerfile .
 
 # if a pull request is updated
 if [[ "$GITHUB_EVENT_NAME" = "pull_request" ]];
@@ -83,10 +91,10 @@ if [[ "$GITHUB_BRANCH" = "main" ]] && [[ "$GITHUB_EVENT_NAME" = "push" ]];
 then
     export TAG="main"
     docker_login "$PRIVATE_REGISTRY_USERNAME" "$PRIVATE_REGISTRY_PASSWORD" "$PRIVATE_REGISTRY_URL"
-    docker_tag_and_push "$TAG"
+    docker_tag_and_push "$TEMP_TAG" "$TAG"
 
     docker_login "$PUBLIC_REGISTRY_USERNAME" "$PUBLIC_REGISTRY_PASSWORD" "$PUBLIC_REGISTRY_URL"
-    docker_tag_and_push "$TAG"
+    docker_tag_and_push "$TEMP_TAG" "$TAG"
 
 fi
  
@@ -98,14 +106,14 @@ then
     export TAG_RELEASE_PRIVATE="$PRIVATE_PROD_REGISTRY_URL/$IMAGE_NAME:$RELEASE_VERSION"
     export TAG_LATEST_PRIVATE="$PRIVATE_PROD_REGISTRY_URL/$IMAGE_NAME:latest"
     docker_login "$PRIVATE_PROD_REGISTRY_USERNAME" "$PRIVATE_PROD_REGISTRY_PASSWORD" "$PRIVATE_PROD_REGISTRY_URL"
-    docker_tag_and_push "$TAG_LATEST_PRIVATE"
-    docker_tag_and_push "$TAG_RELEASE_PRIVATE"
+    docker_tag_and_push "$TEMP_TAG" "$TAG_LATEST_PRIVATE"
+    docker_tag_and_push "$TEMP_TAG" "$TAG_RELEASE_PRIVATE"
 
     # Push to the public registry
     export TAG_RELEASE_PUBLIC="$PUBLIC_REGISTRY_URL/$IMAGE_NAME:$RELEASE_VERSION"
     export TAG_LATEST_PUBLIC="$PUBLIC_REGISTRY_URL/$IMAGE_NAME:latest"
     docker_login "$PUBLIC_REGISTRY_USERNAME" "$PUBLIC_REGISTRY_PASSWORD" "$PUBLIC_REGISTRY_URL"
-    docker_tag_and_push "$TAG_RELEASE_PUBLIC"
-    docker_tag_and_push "$TAG_LATEST_PUBLIC"
+    docker_tag_and_push "$TEMP_TAG" "$TAG_RELEASE_PUBLIC"
+    docker_tag_and_push "$TEMP_TAG" "$TAG_LATEST_PUBLIC"
 
 fi
