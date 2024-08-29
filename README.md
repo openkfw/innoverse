@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Welcome to InnoVerse - a platform to explore and stay informed about exciting projects, browse the latest news and upcoming events, interact with team members, and share new updates in a collaborative and innovative environment.
+Welcome to InnoVerse - the innovation platform to explore and stay informed about exciting projects & initiatives in your organisation, browse the latest news and upcoming events, interact with team members, and share new updates in a collaborative and modern environment.
 
 ## Installation
 
