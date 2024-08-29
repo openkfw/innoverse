@@ -1,0 +1,33 @@
+name: "Docker Build"
+description: "Builds docker images for the innoverse components"
+runs:
+  using: "composite"
+
+  steps:
+    - name: Extract GITHUB_BRANCH
+      run: echo "GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+      shell: bash
+      env:
+        PROJECT_NAME: ${{ matrix.project }}
+
+    - name: Set rights
+      run: chmod +x "${GITHUB_WORKSPACE}/scripts/pipeline/publish-docker-images.sh"
+      shell: bash
+      env:
+        PROJECT_NAME: ${{ matrix.project }}
+
+    - name: Tag name
+      id: tag_name
+      run: |
+        echo "SOURCE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Run build & push
+      run: |
+        cd ${{ matrix.project }} &&
+        command="${GITHUB_WORKSPACE}/scripts/pipeline/publish-docker-images.sh" &&
+        eval $command
+      shell: bash
+      env:
+        IMAGE_NAME: ${{ matrix.image_name }}
+        RELEASE_VERSION: ${{ steps.tag_name.outputs.SOURCE_TAG }}
