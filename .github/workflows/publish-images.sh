@@ -83,7 +83,7 @@ if [[ "$GITHUB_EVENT_NAME" = "pull_request" ]];
 then
     docker_login "$PRIVATE_REGISTRY_USERNAME" "$PRIVATE_REGISTRY_PASSWORD" "$PRIVATE_REGISTRY_URL"
     export TAG_BUILD_PRIVATE="$PRIVATE_REGISTRY_URL/$IMAGE_NAME:$GITHUB_BRANCH"
-    docker_tag_and_push "$TAG_BUILD_PRIVATE"
+    docker_tag_and_push "$TEMP_TAG" "$TAG_BUILD_PRIVATE"
 fi
 
 # if main branch is updated
