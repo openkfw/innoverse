@@ -13,6 +13,7 @@ import { Option } from '@/common/formTypes';
 import { Filters } from '@/common/types';
 import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { AutocompleteDropdownField } from '@/components/common/form/AutocompleteDropdownField';
+import { CheckboxInputField } from '@/components/common/form/CheckboxInputField';
 import * as m from '@/src/paraglide/messages.js';
 
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
@@ -31,14 +32,16 @@ export interface UpdateFormData {
   comment: string;
   project: { id: string; label: string } | null;
   authorId?: string;
+  anonymous?: boolean;
 }
 
 const defaultValues = {
   comment: '',
   project: null,
+  anonymous: false,
 };
 
-const { PROJECT, COMMENT } = formFieldNames;
+const { PROJECT, COMMENT, ANONYMOUS } = formFieldNames;
 
 interface AddUpdateFormProps {
   refetchUpdates: (options?: { filters?: Filters; fullRefetch?: boolean }) => void;
@@ -64,10 +67,11 @@ export default function AddUpdateForm({
   });
 
   const onSubmit: SubmitHandler<UpdateFormValidationSchema> = async (data) => {
-    const { comment, project } = data;
+    const { comment, project, anonymous } = data;
     if (project) {
       const formData = {
         comment,
+        anonymous,
         projectId: project?.id,
       };
 
@@ -114,6 +118,12 @@ export default function AddUpdateForm({
           />
         )}
       </Stack>
+      <CheckboxInputField
+        name={ANONYMOUS}
+        control={control}
+        label={m.components_newsPage_addUpdate_form_addUpdateForm_anonymousPost()}
+        sx={{ width: '35%' }}
+      />
 
       <DialogSaveButton onSave={handleSubmit(onSubmit)} disabled={!isDirty || !isValid} />
     </Stack>

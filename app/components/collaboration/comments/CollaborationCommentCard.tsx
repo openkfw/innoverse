@@ -27,17 +27,15 @@ export const CollaborationCommentCard = (props: CollaborationCommentCardProps) =
     useCollaborationCommentCardProps(props);
 
   return (
-    <>
-      <CommentCard
-        comment={comment}
-        projectName={projectName}
-        isUpvoted={isUpvoted ?? false}
-        enableResponses={true}
-        onUpvoteToggle={toggleCommentUpvote}
-        onEdit={updateComment}
-        onDelete={deleteComment}
-      />
-    </>
+    <CommentCard
+      comment={comment}
+      projectName={projectName}
+      isUpvoted={isUpvoted ?? false}
+      enableResponses={true}
+      onUpvoteToggle={toggleCommentUpvote}
+      onEdit={updateComment}
+      onDelete={deleteComment}
+    />
   );
 };
 

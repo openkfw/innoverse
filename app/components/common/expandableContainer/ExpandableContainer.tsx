@@ -91,7 +91,7 @@ export function useExpandableContainer({
       <Box
         ref={containerRef}
         sx={{
-          maxHeight: isExpanded ? maxExpandedHeight ?? 'auto' : collapsedHeight,
+          maxHeight: isExpanded ? (maxExpandedHeight ?? 'auto') : collapsedHeight,
           overflowY: isExpanded ? (scrollWhenExpanded ? 'scroll' : 'visible') : 'hidden',
           scrollBehavior: 'smooth',
           position: 'relative',
