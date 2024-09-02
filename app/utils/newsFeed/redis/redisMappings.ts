@@ -15,6 +15,7 @@ import {
   SurveyQuestion,
   UserSession,
 } from '@/common/types';
+import { clientConfig } from '@/config/client';
 import { withAuth } from '@/utils/auth';
 import { unixTimestampToDate } from '@/utils/helpers';
 
@@ -116,6 +117,8 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
   const { type, item } = redisFeedEntry;
   const projectId = type === NewsType.PROJECT ? item.id : item.projectId;
 
+  updateImageUrls(item);
+
   if (type === NewsType.SURVEY_QUESTION) {
     const userVote = item.votes.find((vote) => vote.votedBy === user.providerId);
     return mapObjectWithReactions({
@@ -129,6 +132,20 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
     });
   }
 
+  updateImageUrls(item);
+
+  const sizes = ['xxlarge', 'xlarge', 'large', 'medium', 'small', 'xsmall', 'thumbnail'] as const;
+
+  for (const size of sizes) {
+    if ((type === NewsType.EVENT || type === NewsType.PROJECT) && item.image) {
+      const newImageUrl = `${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}${item.image?.[size]?.url}`;
+
+      if (item.image[size]) {
+        item.image[size]!.url = newImageUrl;
+      }
+    }
+  }
+
   return mapObjectWithReactions({
     ...item,
     followedByUser: redisFeedEntry.followedByUser,
@@ -136,4 +153,18 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
     updatedAt: unixTimestampToDate(item.updatedAt),
     projectId: projectId,
   }) as NewsFeedEntry['item'];
+};
+
+const updateImageUrl = (imageUrl: string | undefined): string | undefined => {
+  if (imageUrl && imageUrl.startsWith(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}`)) {
+    return imageUrl.replace(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}`, '');
+  }
+  return imageUrl;
+};
+
+const updateImageUrls = (item: any) => {
+  if (item.author?.image) {
+    const newImageUrl = `${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}${updateImageUrl(item.author.image)}`;
+    item.author.image = newImageUrl;
+  }
 };

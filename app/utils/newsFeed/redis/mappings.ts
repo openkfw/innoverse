@@ -45,6 +45,7 @@ export const mapPostToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisPost(post, reactions, followedBy);
+  updateImageUrls(item);
   return {
     updatedAt: item.updatedAt,
     item,
@@ -59,6 +60,7 @@ export const mapSurveyQuestionToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisSurveyQuestion(surveyQuestion, reactions, followedBy);
+  updateImageUrls(item);
   return {
     updatedAt: getUnixTimestamp(new Date(surveyQuestion.updatedAt)),
     item: item,
@@ -73,6 +75,7 @@ export const mapProjectToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisProject(project, reactions, followedBy);
+  updateImageUrls(item);
   return {
     updatedAt: getUnixTimestamp(new Date(project.updatedAt)),
     item: item,
@@ -96,6 +99,7 @@ export const mapUpdateToRedisNewsFeedEntry = (
   responseCount: number,
 ): RedisNewsFeedEntry => {
   const item = mapToRedisProjectUpdate(update, reactions, followedBy, responseCount);
+  updateImageUrls(item);
   return {
     updatedAt: getUnixTimestamp(new Date(update.updatedAt)),
     item: item,
@@ -110,6 +114,7 @@ export const mapEventToRedisNewsFeedEntry = async (
   followedBy: RedisUser[],
 ): Promise<RedisNewsFeedEntry> => {
   const item = mapToRedisProjectEvent(event, reactions, followedBy);
+  updateImageUrls(item);
   return {
     updatedAt: getUnixTimestamp(event.updatedAt),
     item: item,
@@ -132,6 +137,7 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisCollaborationQuestion(question, reactions, followedBy);
+  updateImageUrls(item);
   return {
     updatedAt: getUnixTimestamp(question.updatedAt),
     item: item,
@@ -147,6 +153,7 @@ export const mapCollaborationCommentToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisCollaborationComment(comment, question, reactions, followedBy);
+  updateImageUrls(item);
   return {
     updatedAt: getUnixTimestamp(comment.createdAt),
     item: item,
@@ -297,4 +304,25 @@ export const mapToRedisUser = async (userId: string): Promise<RedisUser> => {
   // TODO: Run this against Redis.
   const user = await getInnoUserByProviderId(userId);
   return user;
+};
+
+const updateImageUrl = (imageUrl: string | undefined): string | undefined => {
+  if (imageUrl && imageUrl.startsWith('http://127.0.0.1:1337/')) {
+    return imageUrl.replace('http://127.0.0.1:1337', '');
+  }
+  return imageUrl;
+};
+
+const updateImageUrls = (item: any) => {
+  if (item.author?.image) {
+    item.author.image = updateImageUrl(item.author.image);
+  }
+
+  const sizes = ['xxlarge', 'xlarge', 'large', 'medium', 'small', 'xsmall', 'thumbnail'] as const;
+  for (const size of sizes) {
+    const imageSize = item.image?.[size];
+    if (imageSize?.url) {
+      imageSize.url = updateImageUrl(imageSize.url) as string;
+    }
+  }
 };
