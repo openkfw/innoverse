@@ -5,9 +5,9 @@
 const Configuration = {
   extends: ["@commitlint/config-conventional"],
   rules: {
-    // Type muse be lowercase
+    // Type must be lowercase
     "type-case": [2, "always", ["lower-case"]],
-    // Scope muse be lowercase
+    // Scope must be lowercase
     "scope-case": [2, "always", ["lower-case"]],
     // Subject may have any case
     "subject-case": [0],
