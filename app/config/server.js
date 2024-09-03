@@ -91,7 +91,7 @@ const OptionalEnv = z
   })
   .superRefine((values, ctx) => {
     //Ignore the validation at build stage
-    if (process.env.STAGE === 'build') return true;
+    if (process.env.STAGE === 'build' || process.env.STAGE === 'lint') return true;
     //For each auth option we check if eiter all required fields or set or none (= method disabled)
     const {
       NEXTAUTH_AZURE_CLIENT_ID,
