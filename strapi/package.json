@@ -14,10 +14,10 @@
     "strapi": "strapi"
   },
   "dependencies": {
-    "@strapi/plugin-graphql": "4.25.8",
-    "@strapi/plugin-i18n": "4.25.8",
-    "@strapi/plugin-users-permissions": "4.25.8",
-    "@strapi/strapi": "4.25.8",
+    "@strapi/plugin-graphql": "4.25.9",
+    "@strapi/plugin-i18n": "4.25.9",
+    "@strapi/plugin-users-permissions": "4.25.9",
+    "@strapi/strapi": "4.25.9",
     "@strapi/utils": "4.25.8",
     "pg": "8.8.0",
     "react": "^18.3.1",
