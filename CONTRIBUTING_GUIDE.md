@@ -79,6 +79,7 @@ When writing commits you should consider the following guidelines:
 
 - Write commit messages according to the [conventional commit specification](https://www.conventionalcommits.org/).
 - Follow these [git commit guidelines]
+  - Add the appropriate prefix for the commit. Optionally add a scope. Allowed prefixes can be found in the [commit lint config](./commitlint.config.ts)
 - When you're only changing the documentation you can include `[ci skip]` in the commit title
 
 ### Git Branches
