@@ -1,0 +1,32 @@
+{
+  "1095223": {
+    "active": true,
+    "notes": "Ignored since @strapi/plugin-graphql did not update to the newest apollo-server-koa",
+    "expiry": "2024-10-31"
+  },
+  "1098094": {
+    "active": true,
+    "notes": "Ignored since @strapi/generators did not update to the newest plop, and a subdependency uses the vulnerable version of the braces tool",
+    "expiry": "2024-10-31"
+  },
+  "1093150": {
+    "active": true,
+    "notes": "Ignored since @strapi/plugin-graphql uses graphql-upload, which contains a subdependency that uses dicer, which did not publish a vulnerability fix yet",
+    "expiry": "2024-10-31"
+  },
+  "1098681": {
+    "active": true,
+    "notes": "Ignored since @strapi/generators did not update to the newest plop, and a subdependency uses the vulnerable version of the micromatch tool",
+    "expiry": "2024-10-31"
+  },
+  "1097493": {
+    "active": true,
+    "notes": "Ignored since multiple @strapi plugins use an older version of tar",
+    "expiry": "2024-10-31"
+  },
+  "1098392": {
+    "active": true,
+    "notes": "Ignored since the @strapi/admin plugin uses a version of the webpack-bundle-analyzer that uses the vulnerable version of ws",
+    "expiry": "2024-10-31"
+  }
+}
