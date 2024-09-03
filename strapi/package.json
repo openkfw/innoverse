@@ -29,6 +29,18 @@
     "node": ">=16.0.0 <=20.x.x",
     "npm": ">=6.0.0"
   },
+  "overrides": {
+    "@koa/cors": "^5.0.0",
+    "elliptic": "^6.5.7",
+    "ws": "^8.17.1",
+    "braces": "^3.0.3",
+    "axios": "^1.6.0",
+    "tar": "^6.2.1",
+    "micromatch": "^4.0.8",
+    "@strapi/plugin-graphql": {
+      "busboy": "1.0.0"
+    }
+  },
   "strapi": {
     "uuid": "59cfa33d-463b-4911-8898-498e793d3789"
   }
