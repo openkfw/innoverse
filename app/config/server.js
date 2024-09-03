@@ -45,31 +45,43 @@ const RequiredEnv = z
       REDIS_URL,
       NEWS_FEED_SYNC_SECRET,
     ];
-    if (required.some((el) => el === '') && STAGE !== 'build') {
-      ctx.addIssue({
-        message: 'Not all required env variables are set!',
-        code: z.ZodIssueCode.custom,
-      });
-    }
-    if (!/^(postgres|postgresql):\/\//.test(DATABASE_URL) && STAGE !== 'build') {
-      ctx.addIssue({
-        message: 'DB_URL is not a valid postgres connection string',
-        code: z.ZodIssueCode.custom,
-      });
-    }
-    if (!/^(redis):\/\//.test(REDIS_URL) && STAGE !== 'build') {
-      ctx.addIssue({
-        message: 'REDIS_URL is not a valid postgres connection string',
-        code: z.ZodIssueCode.custom,
-      });
+
+    const checkAndAddIssue = (condition, message, ctx) => {
+      if (condition && STAGE !== 'build' && STAGE !== 'lint') {
+        ctx.addIssue({
+          message: message,
+          code: z.ZodIssueCode.custom,
+        });
+      }
     }
 
-    if (!/(.+?):(.+?)$/.test(HTTP_BASIC_AUTH) && STAGE !== 'build') {
-      ctx.addIssue({
-        message: 'HTTP_BASIC_AUTH must be of the format username:password',
-        code: z.ZodIssueCode.custom,
-      });
-    }
+    const validateEnvVariables = (required, DATABASE_URL, REDIS_URL, HTTP_BASIC_AUTH, ctx) => {
+      checkAndAddIssue(
+        required.some((el) => el === ''),
+        'Not all required env variables are set!',
+        ctx
+      );
+
+      checkAndAddIssue(
+        !/^(postgres|postgresql):\/\//.test(DATABASE_URL),
+        'DB_URL is not a valid postgres connection string',
+        ctx
+      );
+
+      checkAndAddIssue(
+        !/^(redis):\/\//.test(REDIS_URL),
+        'REDIS_URL is not a valid postgres connection string',
+        ctx
+      );
+
+      checkAndAddIssue(
+        !/(.+?):(.+?)$/.test(HTTP_BASIC_AUTH),
+        'HTTP_BASIC_AUTH must be of the format username:password',
+        ctx
+      );
+    };
+
+    validateEnvVariables(required, DATABASE_URL, REDIS_URL, HTTP_BASIC_AUTH, ctx);
   });
 
 // Optional at run-time
