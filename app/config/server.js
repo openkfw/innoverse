@@ -19,7 +19,7 @@ const RequiredEnv = z
     STRAPI_TOKEN: z.string({ errorMap: () => ({ message: 'STRAPI_TOKEN must be set!' }) }).default(''),
     HTTP_BASIC_AUTH: z.string().default(''),
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    STAGE: z.enum(['development', 'test', 'build', 'production']).default('development'),
+    STAGE: z.enum(['development', 'test', 'build', 'production', 'lint']).default('development'),
     REDIS_URL: z.string({ errorMap: () => ({ message: 'REDIS_URL must be set!' }) }).default(''),
     NEWS_FEED_SYNC_SECRET: z
       .string({ errorMap: () => ({ message: 'NEWS_FEED_SYNC_SECRET must be set!' }) })
