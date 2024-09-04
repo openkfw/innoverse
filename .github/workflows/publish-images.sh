@@ -89,13 +89,14 @@ fi
 # if main branch is updated
 if [[ "$GITHUB_BRANCH" = "main" ]] && [[ "$GITHUB_EVENT_NAME" = "push" ]];
 then
-    export TAG="main"
+    export TAG_BUILD_PRIVATE="$PRIVATE_REGISTRY_URL/$IMAGE_NAME:main"
     docker_login "$PRIVATE_REGISTRY_USERNAME" "$PRIVATE_REGISTRY_PASSWORD" "$PRIVATE_REGISTRY_URL"
-    docker_tag_and_push "$TEMP_TAG" "$TAG"
+    docker_tag_and_push "$TEMP_TAG" "$TAG_BUILD_PRIVATE"
 
-    # todo uncomment when open-sourcing  
+    # todo uncomment when open-sourcing
+    # export TAG_BUILD_PUBLIC="$PUBLIC_REGISTRY_URL/$IMAGE_NAME:main"  
     # docker_login "$PUBLIC_REGISTRY_USERNAME" "$PUBLIC_REGISTRY_PASSWORD" "$PUBLIC_REGISTRY_URL" 
-    # docker_tag_and_push "$TEMP_TAG" "$TAG"
+    # docker_tag_and_push "$TEMP_TAG" "$TAG_BUILD_PUBLIC"
 
 fi
  
