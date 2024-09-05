@@ -13,10 +13,11 @@ to this document in a pull request.
   - [Code of Conduct](#code-of-conduct)
   - [How to get started with InnoVerse](#how-to-get-started-with-innoverse)
   - [How to contribute](#how-to-contribute)
+    - [Set up git hooks](#set-up-git-hooks)
     - [Start working on open issues](#start-working-on-open-issues)
     - [Create an issue or suggest a new feature](#create-an-issue-or-suggest-a-new-feature)
     - [Open a Pull Request](#open-a-pull-request)
-    - [Don't forget to update the changelog!](#dont-forget-to-update-the-changelog)
+    - [Creating a release](#creating-a-release)
   - [How to ask for support](#how-to-ask-for-support)
   - [Styleguides](#styleguides)
     - [Git Commits](#git-commits)
@@ -33,6 +34,14 @@ This project and everyone participating in it is governed by our [Code of Conduc
 If this is your first time starting InnoVerse, you should follow the [StartUp Guide] for setting up the project.
 
 ## How to contribute
+
+### Set up git hooks
+
+At first, please run
+
+`npm run prepare`
+
+in the repository's root folder to set up our git hooks, which we use to enforce the [conventional commit message format](https://www.conventionalcommits.org/).
 
 ### Start working on open issues
 
@@ -54,9 +63,9 @@ When working on a feature, you can open a PR in as soon as you push the first ch
 - Describe how you are planning on implementing the soultion, maybe by creating a TODO list
 - The PR should be in draft mode if you're still making some changes. If it is ready to be reviewed then mark it as "Ready for review"
 
-### Don't forget to update the changelog!
+### Creating a release
 
-If you make changes that are relevant to the end user you should add an entry in the [CHANGELOG.md] file, which can be found in the root folder of the project. Before adding to the changelog, you should read these [guidelines]
+In order to create a release, follow the [release guide]
 
 ## How to ask for support
 
@@ -68,7 +77,9 @@ If you need to ask for support feel free to reach out to us on our [QA-Channel].
 
 When writing commits you should consider the following guidelines:
 
+- Write commit messages according to the [conventional commit specification](https://www.conventionalcommits.org/).
 - Follow these [git commit guidelines]
+  - Add the appropriate prefix for the commit. Optionally add a scope. Allowed prefixes can be found in the [commit lint config](./commitlint.config.ts)
 - When you're only changing the documentation you can include `[ci skip]` in the commit title
 
 ### Git Branches
@@ -119,10 +130,10 @@ $ git push origin
 
 Thank you for your contributions and dedication to improving our project. Your efforts make a meaningful impact, and we look forward to collaborating with you!
 
-[code of conduct]: ../../CODE_OF_CONDUCT.md
-[StartUp Guide]: ../../docs/developer/StartUpGuide.md
+[code of conduct]: ./CODE_OF_CONDUCT.md
+[StartUp Guide]: ./docs/developer/START_UP_GUIDE.md
+[release guide]: ./docs/developer/RELEASE_GUIDE.md
 [guidelines]: https://keepachangelog.com/en/1.0.0/
-[CHANGELOG.md]: ../../CHANGELOG.md
 [git commit guidelines]: https://cbea.ms/git-commit/
 [github issue]: https://github.com/openkfw/innoverse/issues
 [discussions]: https://github.com/openkfw/innoverse/discussions
