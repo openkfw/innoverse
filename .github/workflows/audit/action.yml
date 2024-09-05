@@ -1,0 +1,8 @@
+name: "Audit"
+description: "Audit information"
+runs:
+  using: "composite"
+  steps:
+    - name: Audit project cd ${{ matrix.project }}
+      run: cd ${{ matrix.project }} && npm ci --no-audit && npm run audit -- --production
+      shell: bash
