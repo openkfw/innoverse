@@ -19,7 +19,6 @@ interface AvatarIconProps {
 const hoverStyle: CSSProperties = {
   cursor: 'pointer',
   transition: 'transform 0.3s ease-in-out',
-  marginRight: '-16px',
 };
 
 const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, ref: LegacyRef<HTMLDivElement>) {

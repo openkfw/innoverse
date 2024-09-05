@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
@@ -7,28 +5,55 @@ import Typography from '@mui/material/Typography';
 
 import { User } from '@/common/types';
 import { UserAvatar, UserAvatarProps } from '@/components/common/UserAvatar';
-import badgeIcon from '@/components/icons/Badge.svg';
 import * as m from '@/src/paraglide/messages.js';
+import { formatDate } from '@/utils/helpers';
+
+import AvatarInitialsIcon from './AvatarInitialsIcon';
 
 interface CommentCardHeaderSecondaryProps {
-  author: User;
-  avatar?: UserAvatarProps;
+  content: {
+    author: User;
+    avatar?: UserAvatarProps;
+    anonymous?: boolean;
+    updatedAt: Date;
+  };
   sx?: SxProps;
 }
 
-export const CommentCardHeaderSecondary = ({ author, avatar, sx }: CommentCardHeaderSecondaryProps) => {
+export const CommentCardHeaderSecondary = ({ content, sx }: CommentCardHeaderSecondaryProps) => {
+  const { author, avatar, anonymous, updatedAt } = content;
+  if (!author || anonymous) {
+    return (
+      <CardHeader
+        sx={{ ...cardHeaderStyles, ...sx }}
+        avatar={<AvatarInitialsIcon name={m.components_newsPage_cards_newsCard_anonymous()} size={32} />}
+        title={
+          <Stack direction="row" spacing={1} justifyContent="space-between" sx={cardHeaderTitleStyles}>
+            <Typography variant="subtitle2" color="primary.dark">
+              {m.components_newsPage_cards_newsCard_anonymous()}
+            </Typography>
+            <Typography variant="caption" color="secondary.contrastText" data-testid="date" suppressHydrationWarning>
+              {formatDate(updatedAt)}
+            </Typography>
+          </Stack>
+        }
+      />
+    );
+  }
   return (
     <CardHeader
       sx={{ ...cardHeaderStyles, ...sx }}
       avatar={<UserAvatar user={author} size={32} allowAnimation disableTransition {...avatar} />}
       title={
-        <Stack direction="row" spacing={1} sx={cardHeaderTitleStyles}>
+        <Stack direction="row" spacing={1} justifyContent="space-between" sx={cardHeaderTitleStyles}>
           <Typography variant="subtitle2" color="primary.dark">
             {author.name}
           </Typography>
-          {author.badge && <Image src={badgeIcon} alt={m.components_common_commentCardHeaderSecondary_imageAlt()} />}
           <Typography variant="subtitle2" color="text.secondary">
             {author.role}
+          </Typography>
+          <Typography variant="caption" color="secondary.contrastText" data-testid="date" suppressHydrationWarning>
+            {formatDate(updatedAt)}
           </Typography>
         </Stack>
       }
@@ -50,5 +75,4 @@ const cardHeaderTitleStyles = {
   fontWeight: '500',
   alignItems: 'center',
   justifyItems: 'center',
-  marginLeft: '16px',
 };

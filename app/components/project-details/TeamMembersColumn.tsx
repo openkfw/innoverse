@@ -39,7 +39,7 @@ const TeamMembersColumn = (props: TeamMembersProps) => {
             <Box key={index} sx={rowStyles}>
               <Stack sx={boxStyles} direction="row" spacing={1}>
                 <UserAvatar size={24} user={teamMember} allowAnimation />
-                <Box sx={{ paddingLeft: '16px', ml: '8px' }}>
+                <Box sx={{ ml: '8px' }}>
                   <Typography variant="subtitle2" sx={teamMemberNameStyles}>
                     {teamMember.name}
                   </Typography>

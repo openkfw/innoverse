@@ -38,6 +38,7 @@ export const AddUpdateCard = (props: AddUpdateCardProps) => {
     comment: '',
     author: '',
     project: { id: project.id, label: project.title },
+    anonymous: false,
   };
 
   return (
