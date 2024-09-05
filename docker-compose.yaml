@@ -45,23 +45,23 @@ services:
     volumes:
       - ./redis/data:/data
 
-  # innoverse:
-  #   container_name: innoverse
-  #   build:
-  #     context: ./app
-  #   env_file:
-  #     - ./app/.env
-  #   environment:
-  #     NEXTAUTH_URL: http://localhost:3001
-  #     DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/app?schema=public
-  #     NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT: http://strapi:1337/graphql
-  #     NEXT_PUBLIC_STRAPI_ENDPOINT: http://strapi:1337
-  #     REDIS_URL: redis://cache:6379
-  #   ports:
-  #     # Not binding to port 3000 to allow running local innoverse in parallel
-  #     - 3001:3000
-  #   depends_on:
-  #     - strapi
-  #     - database
-  #     - cache
-  #   restart: on-failure
+  innoverse:
+    container_name: innoverse
+    build:
+      context: ./app
+    env_file:
+      - ./app/.env
+    environment:
+      NEXTAUTH_URL: http://localhost:3001
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/app?schema=public
+      NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT: http://strapi:1337/graphql
+      NEXT_PUBLIC_STRAPI_ENDPOINT: http://strapi:1337
+      REDIS_URL: redis://cache:6379
+    ports:
+      # Not binding to port 3000 to allow running local innoverse in parallel
+      - 3001:3000
+    depends_on:
+      - strapi
+      - database
+      - cache
+    restart: on-failure
