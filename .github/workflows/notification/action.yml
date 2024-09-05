@@ -1,0 +1,34 @@
+name: "notification"
+description: "Runs a notification action to trigger private pipeline"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Extract GITHUB_BRANCH
+      run: |
+        echo "GITHUB_BASE_BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Set branch env vars
+      run: |
+        if [ "$GITHUB_PR_NUMBER" != "" ]; then
+          echo "GITHUB_BASE_BRANCH=$GITHUB_BASE_REF" >> $GITHUB_ENV
+          echo "GITHUB_HEAD_BRANCH=$GITHUB_HEAD_REF" >> $GITHUB_ENV
+        fi
+      shell: bash
+
+    - name: Trigger notification hook
+      run: |
+        RELEASE_TAG=$(git tag --points-at $GITHUB_SHA)
+        curl -sX POST -F token=$WEBHOOK_TOKEN \
+          -F ref=$WEBHOOK_REF \
+          -F "variables[GITHUB_HEAD_BRANCH]=$GITHUB_HEAD_BRANCH" \
+          -F "variables[GITHUB_BASE_BRANCH]=$GITHUB_BASE_BRANCH" \
+          -F "variables[GITHUB_RUN_ID]=$GITHUB_RUN_ID" \
+          -F "variables[GITHUB_EVENT_NAME]=$GITHUB_EVENT_NAME-$GITHUB_BASE_BRANCH" \
+          -F "variables[GITHUB_PULL_REQUEST]=$GITHUB_PR_NUMBER" \
+          -F "variables[GITHUB_REPOSITORY]=$GITHUB_REPOSITORY" \
+          -F "variables[CI_COMMIT_SHA]=$CI_COMMIT_SHA" \
+          ${RELEASE_TAG:+-F "variables[RELEASE_TAG]=$RELEASE_TAG"} \
+          $WEBHOOK_URL > /dev/null
+      shell: bash
