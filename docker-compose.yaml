@@ -50,6 +50,7 @@ services:
     build:
       context: ./app
       args:
+        # used for display an innoverse version
         CI_COMMIT_SHA: "LOCAL"
         BUILDTIMESTAMP: 0
     env_file:
