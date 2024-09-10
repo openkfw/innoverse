@@ -24,6 +24,7 @@ const Configuration = {
         "perf", // A code change that improves performance
         "pipeline", // Changes to the pipeline or any CI/CD related change
         "refactor", // A code change that neither fixes a bug nor adds a feature
+        "security", // A new feature
         "style", // Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
         "test", // Adding missing tests or correcting existing tests
       ],
