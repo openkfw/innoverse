@@ -32,6 +32,16 @@ const Config = z
         errorMap: () => ({ message: 'NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY must be set!' }),
       })
       .default(''),
+    NEXT_PUBLIC_BUILDTIMESTAMP: z
+      .string({
+        errorMap: () => ({ message: 'NEXT_PUBLIC_BUILDTIMESTAMP must be set!' }),
+      })
+      .default(''),
+    NEXT_PUBLIC_CI_COMMIT_SHA: z
+      .string({
+        errorMap: () => ({ message: 'NEXT_PUBLIC_CI_COMMIT_SHA must be set!' }),
+      })
+      .default(''),
   })
   .superRefine((values, ctx) => {
     const { NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING, NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY, STAGE } = values;
@@ -55,6 +65,8 @@ const clientConfig = Config.safeParse({
   NEXT_PUBLIC_VAPID_PUBLIC_KEY: env('NEXT_PUBLIC_VAPID_PUBLIC_KEY'),
   NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT: env('NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT'),
   NEXT_PUBLIC_STRAPI_ENDPOINT: env('NEXT_PUBLIC_STRAPI_ENDPOINT'),
+  NEXT_PUBLIC_BUILDTIMESTAMP: env('NEXT_PUBLIC_BUILDTIMESTAMP'),
+  NEXT_PUBLIC_CI_COMMIT_SHA: env('NEXT_PUBLIC_CI_COMMIT_SHA'),
 });
 
 if (!clientConfig.success) {
