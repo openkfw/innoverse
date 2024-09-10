@@ -28,5 +28,10 @@
     "active": true,
     "notes": "Ignored since the @strapi/admin plugin uses a version of the webpack-bundle-analyzer that uses the vulnerable version of ws",
     "expiry": "2024-10-31"
+  },
+  "1099499": {
+    "active": true,
+    "notes": "Ignored since @strapi only support react-router-dom ^5.2.0",
+    "expiry": "2024-10-31"
   }
 }
