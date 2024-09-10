@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Welcome to InnoVerse - the innovation platform to explore and stay informed about exciting projects & initiatives in your organisation, browse the latest news and upcoming events, interact with team members, and share new updates in a collaborative and modern environment.
+Welcome to InnoVerse - the corporate innovation platform to explore and stay informed and discuss about exciting projects & initiatives in your organisation, browse the latest news and upcoming events, interact with team members, and share new updates in a collaborative and modern environment.
 
 ## Installation
 
@@ -20,7 +20,7 @@ If you have any questions refer to the [Q&A section of our discussions forum]
 
 Innoverse is [GNU GENERAL PUBLIC] licensed.
 
-Innoverse is a workflow engine therefore does not contain any relevant data to GDPR. If relevant data is collected, the organizations using the software have to ensure that the data is appropriately encoded or stored.
+Innoverse is a web application and therefore does not contain any relevant data to GDPR. If relevant data is collected, the organization using the software has to ensure that the data is appropriately encoded or stored.
 
 [StartUp Guide]: ./docs/developer/START_UP_GUIDE.md
 [Contributing Guide]: ./CONTRIBUTING_GUIDE.md

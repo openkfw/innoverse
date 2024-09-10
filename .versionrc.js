@@ -21,6 +21,7 @@ module.exports = {
     { type: "perf", section: "Performance Improvements" },
     { type: "refactor", hidden: true },
     { type: "style", hidden: true },
+    { type: "security", section: "Security" },
     { type: "test", hidden: true },
     { type: "breaking", section: "Breaking Changes" },
   ],
