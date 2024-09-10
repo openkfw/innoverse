@@ -93,10 +93,9 @@ then
     docker_login "$PRIVATE_REGISTRY_USERNAME" "$PRIVATE_REGISTRY_PASSWORD" "$PRIVATE_REGISTRY_URL"
     docker_tag_and_push "$TEMP_TAG" "$TAG_BUILD_PRIVATE"
 
-    # todo uncomment when open-sourcing
-    # export TAG_BUILD_PUBLIC="$PUBLIC_REGISTRY_URL/$IMAGE_NAME:main"  
-    # docker_login "$PUBLIC_REGISTRY_USERNAME" "$PUBLIC_REGISTRY_PASSWORD" "$PUBLIC_REGISTRY_URL" 
-    # docker_tag_and_push "$TEMP_TAG" "$TAG_BUILD_PUBLIC"
+    export TAG_BUILD_PUBLIC="$PUBLIC_REGISTRY_URL/$IMAGE_NAME:main"  
+    docker_login "$PUBLIC_REGISTRY_USERNAME" "$PUBLIC_REGISTRY_PASSWORD" "$PUBLIC_REGISTRY_URL" 
+    docker_tag_and_push "$TEMP_TAG" "$TAG_BUILD_PUBLIC"
 
 fi
  
@@ -112,11 +111,10 @@ then
     docker_tag_and_push "$TEMP_TAG" "$TAG_RELEASE_PRIVATE"
 
     # Push to the public registry
-    # todo uncomment when open-sourcing
-    # export TAG_RELEASE_PUBLIC="$PUBLIC_REGISTRY_URL/$IMAGE_NAME:$RELEASE_VERSION"
-    # export TAG_LATEST_PUBLIC="$PUBLIC_REGISTRY_URL/$IMAGE_NAME:latest"
-    # docker_login "$PUBLIC_REGISTRY_USERNAME" "$PUBLIC_REGISTRY_PASSWORD" "$PUBLIC_REGISTRY_URL"
-    # docker_tag_and_push "$TEMP_TAG" "$TAG_RELEASE_PUBLIC"
-    # docker_tag_and_push "$TEMP_TAG" "$TAG_LATEST_PUBLIC"
+    export TAG_RELEASE_PUBLIC="$PUBLIC_REGISTRY_URL/$IMAGE_NAME:$RELEASE_VERSION"
+    export TAG_LATEST_PUBLIC="$PUBLIC_REGISTRY_URL/$IMAGE_NAME:latest"
+    docker_login "$PUBLIC_REGISTRY_USERNAME" "$PUBLIC_REGISTRY_PASSWORD" "$PUBLIC_REGISTRY_URL"
+    docker_tag_and_push "$TEMP_TAG" "$TAG_RELEASE_PUBLIC"
+    docker_tag_and_push "$TEMP_TAG" "$TAG_LATEST_PUBLIC"
 
 fi
