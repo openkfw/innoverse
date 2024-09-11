@@ -33,5 +33,10 @@
     "active": true,
     "notes": "Ignored since @strapi only support react-router-dom ^5.2.0",
     "expiry": "2024-10-31"
+  },
+  "1099518": {
+    "active": true,
+    "notes": "Ignored since @strapi uses an old version of path-to-regexp",
+    "expiry": "2024-10-31"
   }
 }
