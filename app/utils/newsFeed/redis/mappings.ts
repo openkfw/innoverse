@@ -2,12 +2,14 @@ import {
   BasicCollaborationQuestion,
   BasicProject,
   Event,
+  ImageFormats,
   ObjectType,
   Post,
   ProjectUpdate,
   SurveyQuestion,
   User,
 } from '@/common/types';
+import { clientConfig } from '@/config/client';
 import { getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
@@ -45,7 +47,13 @@ export const mapPostToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisPost(post, reactions, followedBy);
-  updateImageUrls(item);
+
+  if (post.author && post.author.image) {
+    mapUserImageToRelativeUrl(post.author);
+  }
+
+  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
     updatedAt: item.updatedAt,
     item,
@@ -60,7 +68,9 @@ export const mapSurveyQuestionToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisSurveyQuestion(surveyQuestion, reactions, followedBy);
-  updateImageUrls(item);
+
+  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
     updatedAt: getUnixTimestamp(new Date(surveyQuestion.updatedAt)),
     item: item,
@@ -75,7 +85,18 @@ export const mapProjectToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisProject(project, reactions, followedBy);
-  updateImageUrls(item);
+
+  if (project.image) {
+    mapAllImageSizesToRelativeUrl(project.image);
+  }
+
+  if (project.author && project.author.image) {
+    mapUserImageToRelativeUrl(project.author);
+  }
+
+  mapUserArrayImagesToRelativeUrls(project.team);
+  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
     updatedAt: getUnixTimestamp(new Date(project.updatedAt)),
     item: item,
@@ -99,7 +120,13 @@ export const mapUpdateToRedisNewsFeedEntry = (
   responseCount: number,
 ): RedisNewsFeedEntry => {
   const item = mapToRedisProjectUpdate(update, reactions, followedBy, responseCount);
-  updateImageUrls(item);
+
+  if (update.author && update.author.image) {
+    mapUserImageToRelativeUrl(update.author);
+  }
+
+  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
     updatedAt: getUnixTimestamp(new Date(update.updatedAt)),
     item: item,
@@ -114,7 +141,21 @@ export const mapEventToRedisNewsFeedEntry = async (
   followedBy: RedisUser[],
 ): Promise<RedisNewsFeedEntry> => {
   const item = mapToRedisProjectEvent(event, reactions, followedBy);
-  updateImageUrls(item);
+
+  if (event.id == '1') {
+    console.log('followedBy', followedBy);
+  }
+
+  if (event.image) {
+    mapAllImageSizesToRelativeUrl(event.image);
+  }
+
+  if (event.author && event.author.image) {
+    mapUserImageToRelativeUrl(event.author);
+  }
+
+  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
     updatedAt: getUnixTimestamp(event.updatedAt),
     item: item,
@@ -137,7 +178,10 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisCollaborationQuestion(question, reactions, followedBy);
-  updateImageUrls(item);
+
+  mapUserArrayImagesToRelativeUrls(question.authors);
+  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
     updatedAt: getUnixTimestamp(question.updatedAt),
     item: item,
@@ -153,7 +197,14 @@ export const mapCollaborationCommentToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisCollaborationComment(comment, question, reactions, followedBy);
-  updateImageUrls(item);
+
+  if (comment.author && comment.author.image) {
+    mapUserImageToRelativeUrl(comment.author);
+  }
+
+  mapUserArrayImagesToRelativeUrls(question.authors);
+  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
     updatedAt: getUnixTimestamp(comment.createdAt),
     item: item,
@@ -306,23 +357,38 @@ export const mapToRedisUser = async (userId: string): Promise<RedisUser> => {
   return user;
 };
 
-const updateImageUrl = (imageUrl: string | undefined): string | undefined => {
-  if (imageUrl && imageUrl.startsWith('http://127.0.0.1:1337/')) {
-    return imageUrl.replace('http://127.0.0.1:1337', '');
+const mapImageToRelativeUrl = (imageUrl: string): string | undefined => {
+  if (URL.canParse(imageUrl, clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT)) {
+    const url = new URL(imageUrl);
+    const path = url.pathname;
+    return path;
   }
   return imageUrl;
 };
 
-const updateImageUrls = (item: any) => {
-  if (item.author?.image) {
-    item.author.image = updateImageUrl(item.author.image);
-  }
-
+const mapAllImageSizesToRelativeUrl = (imageFormats: ImageFormats) => {
   const sizes = ['xxlarge', 'xlarge', 'large', 'medium', 'small', 'xsmall', 'thumbnail'] as const;
   for (const size of sizes) {
-    const imageSize = item.image?.[size];
+    const imageSize = imageFormats[size];
     if (imageSize?.url) {
-      imageSize.url = updateImageUrl(imageSize.url) as string;
+      imageSize.url = mapImageToRelativeUrl(imageSize.url) as string;
     }
   }
+  return imageFormats;
+};
+
+const mapUserImageToRelativeUrl = (user: User | RedisUser) => {
+  if (user.image) {
+    user.image = mapImageToRelativeUrl(user.image) as string;
+  }
+  return user;
+};
+
+const mapUserArrayImagesToRelativeUrls = (users: (User | RedisUser)[]) => {
+  users.forEach((user) => {
+    if (user.image) {
+      user.image = mapImageToRelativeUrl(user.image) as string;
+    }
+  });
+  return users;
 };

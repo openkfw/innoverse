@@ -117,8 +117,6 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
   const { type, item } = redisFeedEntry;
   const projectId = type === NewsType.PROJECT ? item.id : item.projectId;
 
-  updateImageUrls(item);
-
   if (type === NewsType.SURVEY_QUESTION) {
     const userVote = item.votes.find((vote) => vote.votedBy === user.providerId);
     return mapObjectWithReactions({
@@ -132,7 +130,7 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
     });
   }
 
-  updateImageUrls(item);
+  mapAuthorRelativeToAbsoluteImageUrls(item);
 
   const sizes = ['xxlarge', 'xlarge', 'large', 'medium', 'small', 'xsmall', 'thumbnail'] as const;
 
@@ -155,16 +153,16 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
   }) as NewsFeedEntry['item'];
 };
 
-const updateImageUrl = (imageUrl: string | undefined): string | undefined => {
-  if (imageUrl && imageUrl.startsWith(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}`)) {
+const mapRelativeToAbsoluteImageUrl = (imageUrl: string | undefined): string | undefined => {
+  if (imageUrl) {
     return imageUrl.replace(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}`, '');
   }
-  return imageUrl;
 };
 
-const updateImageUrls = (item: any) => {
+const mapAuthorRelativeToAbsoluteImageUrls = (item: any) => {
   if (item.author?.image) {
-    const newImageUrl = `${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}${updateImageUrl(item.author.image)}`;
+    const newImageUrl = `${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}${mapRelativeToAbsoluteImageUrl(item.author.image)}`;
     item.author.image = newImageUrl;
+    console.log(item.author.image);
   }
 };
