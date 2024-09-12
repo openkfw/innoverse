@@ -27,10 +27,12 @@ Make sure you have three (3) .env files in total. One (1) in /postgres folder, o
 First start the components:
 
 ```bash
-docker compose up
+sh startDev.sh
 ```
 
-then start the InnoVerse app locally
+This script starts the InnoVerse app, strapi, redis and the database in docker.
+
+For easier local development we suggest starting the InnoVerse app locally:
 
 ```bash
 cd ./app
