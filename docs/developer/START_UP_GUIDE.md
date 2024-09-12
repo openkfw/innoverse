@@ -16,7 +16,7 @@ You can find a full list of the environment variables in the [Environment variab
 
 ```bash
 # from project root
-cp ./postgres.env.example ./postgres/.env
+cp ./postgres/.env.example ./postgres/.env
 cp ./app/.env.example ./app/.env # and then fill the missing env vars in /app
 cp ./strapi/.env.example ./strapi/.env # and then fill the missing env vars in /strapi
 ```
@@ -27,7 +27,7 @@ Make sure you have three (3) .env files in total. One (1) in /postgres folder, o
 First start the components:
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 then start the InnoVerse app locally
