@@ -59,8 +59,6 @@ if [ "$GITHUB_EVENT_NAME" == "release" ] & [ -z "$RELEASE_VERSION" ]; then
   exit 1
 fi
 
-export BUILDTIMESTAMP=$(date -Iseconds)
-
 # Get github branch value
 # Value is found on different locations depending on the github event
 if [ -n "$GITHUB_HEAD_REF" ]; then
@@ -76,7 +74,15 @@ then
     # placeholder so docker build is working correctly
     TEMP_TAG="release"
 fi
-docker build --tag "$TEMP_TAG" -f Dockerfile .
+
+export BUILDTIMESTAMP=$(date -Iseconds)
+export CI_COMMIT_SHA=$(git rev-parse HEAD)
+
+docker build \
+    --tag "$TEMP_TAG" \
+    --build-arg BUILDTIMESTAMP=$BUILDTIMESTAMP \
+    --build-arg CI_COMMIT_SHA=$CI_COMMIT_SHA \
+    -f Dockerfile .
 
 # if a pull request is updated
 if [[ "$GITHUB_EVENT_NAME" = "pull_request" ]];

@@ -114,10 +114,12 @@ The main focus should here be the `client` report, as we do not use any edge fun
 | REDIS_URL                                    | Y        | -       | Runtime   | Innoverse |
 | NEXTAUTH_URL                                 | Y        | -       | Runtime   | Innoverse |
 | NEWS_FEED_SYNC_SECRET                        | Y        | -       | Runtime   | Innoverse |
-| NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT          | Y        | -       | Buildtime | Innoverse |
-| NEXT_PUBLIC_STRAPI_ENDPOINT                  | Y        | -       | Buildtime | Innoverse |
 | STRAPI_TOKEN                                 | Y        | -       | Runtime   | Innoverse |
 | HTTP_BASIC_AUTH                              | Y        | -       | Runtime   | Innoverse |
+| NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT          | Y        | -       | Buildtime | Innoverse |
+| NEXT_PUBLIC_STRAPI_ENDPOINT                  | Y        | -       | Buildtime | Innoverse |
+| NEXT_PUBLIC_BUILDTIMESTAMP                   | Y        | -       | Buildtime | Innoverse |
+| NEXT_PUBLIC_CI_COMMIT_HASH                   | Y        | -       | Buildtime | Innoverse |
 | POSTGRES_USER                                | N        | -       | Runtime   | Innoverse |
 | POSTGRES_PASSWORD                            | N        | -       | Runtime   | Innoverse |
 | NEXTAUTH_AZURE_CLIENT_ID                     | N(\*)    | -       | Runtime   | Innoverse |

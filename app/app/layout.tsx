@@ -4,6 +4,7 @@ import { PublicEnvScript } from 'next-runtime-env';
 import { LanguageProvider } from '@inlang/paraglide-next';
 
 import Layout from '@/components/layout/Layout';
+import { clientConfig } from '@/config/client';
 import * as m from '@/src/paraglide/messages.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -15,7 +16,11 @@ const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <LanguageProvider>
-      <html lang="de">
+      <html
+        lang="de"
+        data-buildtimestamp={clientConfig.NEXT_PUBLIC_BUILDTIMESTAMP}
+        data-ci-commit-hash={clientConfig.NEXT_PUBLIC_CI_COMMIT_SHA}
+      >
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="theme-color" content="#0067A0" />
