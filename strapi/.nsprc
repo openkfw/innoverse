@@ -38,5 +38,15 @@
     "active": true,
     "notes": "Ignored since @strapi uses an old version of path-to-regexp",
     "expiry": "2024-10-31"
+  },
+  "1099558": {
+    "active": true,
+    "notes": "Ignored since react-router uses an old version of path-to-regexp",
+    "expiry": "2024-10-31"
+  },
+  "1099561": {
+    "active": true,
+    "notes": "Ignored since react-router uses an old version of path-to-regexp",
+    "expiry": "2024-10-31"
   }
 }
