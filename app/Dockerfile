@@ -59,6 +59,10 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/config ./config
 COPY --from=builder /app/public/fonts ./public/fonts
+COPY --from=builder /app/public/manifest.json ./public/manifest.json
+COPY --from=builder /app/public/robots.txt ./public/robots.txt
+COPY --from=builder /app/public/sw.js ./public/sw.js
+
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/repository/db/prisma ./repository/db/prisma
