@@ -2,6 +2,7 @@ import { ObjectType } from '@/common/types';
 import { getFollowedByForEntity, getProjectFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getPushSubscriptionsForUser } from '@/repository/db/push_subscriptions';
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import { mapObjectWithReactions } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapProjectToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
@@ -41,22 +42,32 @@ export class ProjectLifecycle extends StrapiEntityLifecycle {
   };
 
   private buildNotifications = async (projectId: string): Promise<NotificationRequest[]> => {
-    const followers = await getProjectFollowers(dbClient, projectId);
+    try {
+      const followers = await getProjectFollowers(dbClient, projectId);
 
-    // Ignore possible erros...
-    return await Promise.all(
-      followers.map(async ({ followedBy }) => {
-        return {
-          subscriptions: await getPushSubscriptionsForUser(dbClient, followedBy),
-          userId: followedBy,
-          notification: {
-            topic: 'project',
-            body: 'Ein Projekt, dem du folgst, wurde kürzlich aktualisiert.',
-            url: `/projects/${projectId}`,
-          },
-        };
-      }),
-    );
+      // Ignore possible erros...
+      return await Promise.all(
+        followers.map(async ({ followedBy }) => {
+          return {
+            subscriptions: await getPushSubscriptionsForUser(dbClient, followedBy),
+            userId: followedBy,
+            notification: {
+              topic: 'project',
+              body: 'Ein Projekt, dem du folgst, wurde kürzlich aktualisiert.',
+              url: `/projects/${projectId}`,
+            },
+          };
+        }),
+      );
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Build notifications for followers of project with id: ${projectId}`,
+        err as Error,
+        projectId,
+      );
+      logger.error(error);
+      throw err;
+    }
   };
 
   private saveProjectToCache = async (projectId: string, options: { createIfNew: boolean } = { createIfNew: true }) => {

@@ -14,6 +14,7 @@ import {
 } from '@/repository/db/posts';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapPostToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
@@ -38,29 +39,53 @@ type UpvotePost = { postId: string; user: UserSession };
 type DeletePost = { postId: string };
 
 export const addPost = async ({ content, user, anonymous }: AddPost) => {
-  const createdPost = await addPostToDb(dbClient, content, user.providerId, anonymous ?? false);
-  await addPostToCache({ ...createdPost, author: user, responseCount: 0 });
-  return createdPost;
+  try {
+    const createdPost = await addPostToDb(dbClient, content, user.providerId, anonymous ?? false);
+    await addPostToCache({ ...createdPost, author: user, responseCount: 0 });
+    return createdPost;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Add post by user ${user.providerId}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const updatePost = async ({ postId, content, user }: UpdatePost) => {
-  const updatedPost = await updatePostInDb(dbClient, postId, content);
-  await updatePostInCache({ post: updatedPost, user });
-  return updatedPost;
+  try {
+    const updatedPost = await updatePostInDb(dbClient, postId, content);
+    await updatePostInCache({ post: updatedPost, user });
+    return updatedPost;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Update post with id: ${postId} by user ${user.providerId}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const deletePost = async ({ postId }: DeletePost) => {
-  const deletedPost = await deletePostFromDb(dbClient, postId);
-  await deletePostFromCache(postId);
-  return deletedPost;
+  try {
+    const deletedPost = await deletePostFromDb(dbClient, postId);
+    await deletePostFromCache(postId);
+    return deletedPost;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Delete post with id: ${postId}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const handleUpvotePost = async ({ postId, user }: UpvotePost) => {
-  const updatedPost = await handlePostUpvoteInDb(dbClient, postId, user.providerId);
-  if (updatedPost) {
-    await updatePostInCache({ post: updatedPost, user });
+  try {
+    const updatedPost = await handlePostUpvoteInDb(dbClient, postId, user.providerId);
+    if (updatedPost) {
+      await updatePostInCache({ post: updatedPost, user });
+    }
+    return updatedPost;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Upvote post with id: ${postId} by user ${user.providerId}`, err as Error);
+    logger.error(error);
+    throw err;
   }
-  return updatedPost;
 };
 
 export const addPostToCache = async (post: Post) => {

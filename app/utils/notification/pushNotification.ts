@@ -9,6 +9,7 @@ import { serverConfig } from '@/config/server';
 import { createPushSubscriptionForUser, removePushSubscriptionForUser } from '@/repository/db/push_subscriptions';
 import { PushNotification } from '@/types/notification';
 import { withAuth } from '@/utils/auth';
+import { dbError, InnoPlatformError } from '@/utils/errors';
 
 import dbClient from '../../repository/db/prisma/prisma';
 import getLogger from '../logger';
@@ -50,19 +51,51 @@ export const sendPushNotification = async (subscription: WebPushSubscription, pu
     }
   }
 };
-const removeExpiredPushSubscriptions = async (userId: string, subscription: webpush.PushSubscription) =>
-  await removePushSubscriptionForUser(dbClient, userId, subscription);
+
+const removeExpiredPushSubscriptions = async (userId: string, subscription: webpush.PushSubscription) => {
+  try {
+    await removePushSubscriptionForUser(dbClient, userId, subscription);
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Remove expired push subscription for user ${userId}`,
+      err as Error,
+      userId,
+    );
+    logger.error(error);
+    throw err;
+  }
+};
 
 export const subscribeToWebPush = withAuth(
   async (user: UserSession, body: { subscription: string; browserFingerprint: string }) => {
-    const subscription = JSON.parse(body.subscription);
-    await createPushSubscriptionForUser(dbClient, user.providerId, body.browserFingerprint, subscription);
-    return { status: 200 };
+    try {
+      const subscription = JSON.parse(body.subscription);
+      await createPushSubscriptionForUser(dbClient, user.providerId, body.browserFingerprint, subscription);
+      return { status: 200 };
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Create push subscription for user ${user.providerId}`,
+        err as Error,
+        user.providerId,
+      );
+      logger.error(error);
+      throw err;
+    }
   },
 );
 
 export const unsubscribeFromWebPush = withAuth(async (user: UserSession, body: string) => {
-  const subscription: webpush.PushSubscription = JSON.parse(body);
-  await removePushSubscriptionForUser(dbClient, user.providerId, subscription);
-  return { status: 200 };
+  try {
+    const subscription: webpush.PushSubscription = JSON.parse(body);
+    await removePushSubscriptionForUser(dbClient, user.providerId, subscription);
+    return { status: 200 };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Remove push subscription for user ${user.providerId}`,
+      err as Error,
+      user.providerId,
+    );
+    logger.error(error);
+    throw err;
+  }
 });

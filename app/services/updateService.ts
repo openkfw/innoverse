@@ -5,6 +5,7 @@ import { getFollowedByForEntity } from '@/repository/db/follow';
 import { countNewsResponses } from '@/repository/db/news_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import {
@@ -102,11 +103,21 @@ const createNewsFeedEntryForProjectUpdateById = async (updateId: string) => {
 };
 
 export const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate) => {
-  const updateReactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
-  const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, update.projectId);
-  const mappedUpdateFollowedBy = await mapToRedisUsers(projectFollowedBy);
-  const responseCount = await countNewsResponses(dbClient, update.id);
-  return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, responseCount);
+  try {
+    const updateReactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
+    const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, update.projectId);
+    const mappedUpdateFollowedBy = await mapToRedisUsers(projectFollowedBy);
+    const responseCount = await countNewsResponses(dbClient, update.id);
+    return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, responseCount);
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Creating news feed entry for project update with id: ${update.projectId}`,
+      err as Error,
+      update.projectId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 const getRedisKey = (updateId: string) => `${NewsType.UPDATE}:${updateId}`;

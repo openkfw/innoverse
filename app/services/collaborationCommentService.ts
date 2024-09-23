@@ -15,6 +15,7 @@ import { getCollaborationCommentResponseCount } from '@/repository/db/collaborat
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import {
   mapCollaborationCommentToRedisNewsFeedEntry,
@@ -63,35 +64,75 @@ type UpvoteCollaborationComment = {
 };
 
 export const addCollaborationComment = async ({ user, comment }: AddCollaborationComment) => {
-  const createdComment = await addCollaborationCommentToDb(
-    dbClient,
-    comment.projectId,
-    comment.questionId,
-    user.providerId,
-    comment.comment,
-    comment.visible,
-  );
+  try {
+    const createdComment = await addCollaborationCommentToDb(
+      dbClient,
+      comment.projectId,
+      comment.questionId,
+      user.providerId,
+      comment.comment,
+      comment.visible,
+    );
 
-  await addCollaborationCommentToCache(user, createdComment);
-  return createdComment;
+    await addCollaborationCommentToCache(user, createdComment);
+    return createdComment;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Add collaboration comment to project with id: ${comment.projectId} and question with id: ${comment.questionId} by user ${user.providerId}`,
+      err as Error,
+      comment.projectId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const deleteCollaborationComment = async (commentId: string) => {
-  await deleteCollaborationCommentInDb(dbClient, commentId);
-  await deleteCollaborationCommentInCache(commentId);
+  try {
+    await deleteCollaborationCommentInDb(dbClient, commentId);
+    await deleteCollaborationCommentInCache(commentId);
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Delete collaboration comment with id: ${commentId}`,
+      err as Error,
+      commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const updateCollaborationComment = async ({ user, comment }: UpdateCollaborationComment) => {
-  const updatedComment = await updateCollaborationCommentInDb(dbClient, comment.id, comment.comment);
-  await updateCollaborationCommentInCache({ user, comment });
-  return updatedComment;
+  try {
+    const updatedComment = await updateCollaborationCommentInDb(dbClient, comment.id, comment.comment);
+    await updateCollaborationCommentInCache({ user, comment });
+    return updatedComment;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Update collaboration comment with id: ${comment.id}`,
+      err as Error,
+      comment.id,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const handleCollaborationCommentUpvote = async ({ user, commentId }: UpvoteCollaborationComment) => {
-  const updatedComment = await handleCollaborationCommentUpvoteInDb(dbClient, commentId, user.providerId);
+  try {
+    const updatedComment = await handleCollaborationCommentUpvoteInDb(dbClient, commentId, user.providerId);
 
-  if (updatedComment) {
-    await updateCollaborationCommentInCache({ user, comment: updatedComment });
+    if (updatedComment) {
+      await updateCollaborationCommentInCache({ user, comment: updatedComment });
+    }
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Handle upvote for collaboration comment with id: ${commentId} by user ${user.providerId}`,
+      err as Error,
+      commentId,
+    );
+    logger.error(error);
+    throw err;
   }
 };
 

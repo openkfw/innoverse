@@ -1,6 +1,7 @@
 import { Follow, ObjectType, User } from '@/common/types';
 import { addFollowToDb, removeFollowFromDb } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { RedisNewsFeedEntry } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
@@ -34,15 +35,35 @@ type RemoveFollow = {
 };
 
 export const addFollow = async ({ user, object }: AddFollow) => {
-  const createdObject = await addFollowToDb(dbClient, object.followedBy, object.objectType, object.objectId);
-  await addFollowToCache({ ...createdObject, objectType: createdObject.objectType as ObjectType }, user);
-  return object;
+  try {
+    const createdObject = await addFollowToDb(dbClient, object.followedBy, object.objectType, object.objectId);
+    await addFollowToCache({ ...createdObject, objectType: createdObject.objectType as ObjectType }, user);
+    return object;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Add follow for user ${user.providerId} on ${object.objectType} object with id: ${object.objectId}`,
+      err as Error,
+      object.objectId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const removeFollow = async ({ user, object }: RemoveFollow) => {
-  const removedObject = await removeFollowFromDb(dbClient, object.followedBy, object.objectType, object.objectId);
-  await removeFollowFromCache({ ...removedObject, objectType: removedObject.objectType as ObjectType }, user);
-  return object;
+  try {
+    const removedObject = await removeFollowFromDb(dbClient, object.followedBy, object.objectType, object.objectId);
+    await removeFollowFromCache({ ...removedObject, objectType: removedObject.objectType as ObjectType }, user);
+    return object;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Remove follow for user ${user.providerId} on ${object.objectType} object with id: ${object.objectId}`,
+      err as Error,
+      object.objectId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const addFollowToCache = async (follow: Follow, user: User) => {

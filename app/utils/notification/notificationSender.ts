@@ -8,6 +8,8 @@ import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { sendPushNotification } from '@/utils/notification/pushNotification';
 
+import { dbError, InnoPlatformError } from '../errors';
+
 const logger = getLogger();
 
 export type NotificationTopic =
@@ -71,15 +73,24 @@ const createNotificationForFollow = async (
   text: string,
   url: string,
 ): Promise<NotificationRequest> => {
-  const subscriptions = await getPushSubscriptionsForUser(dbClient, follow.followedBy);
+  try {
+    const subscriptions = await getPushSubscriptionsForUser(dbClient, follow.followedBy);
 
-  return {
-    subscriptions: subscriptions,
-    userId: follow.followedBy,
-    notification: {
-      topic,
-      body: text,
-      url,
-    },
-  };
+    return {
+      subscriptions: subscriptions,
+      userId: follow.followedBy,
+      notification: {
+        topic,
+        body: text,
+        url,
+      },
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Create notification for follow by user ${follow.followedBy}`,
+      err as Error,
+    );
+    logger.error(error);
+    throw err;
+  }
 };

@@ -19,8 +19,12 @@ import {
 import dbClient from '@/repository/db/prisma/prisma';
 import { updatePostInCache } from '@/services/postService';
 import { updateProjectUpdateInCache } from '@/services/updateService';
+import { dbError, InnoPlatformError } from '@/utils/errors';
+import getLogger from '@/utils/logger';
 import { notifyFollowers } from '@/utils/notification/notificationSender';
 import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
+
+const logger = getLogger();
 
 interface AddComment {
   author: UserSession;
@@ -101,35 +105,90 @@ export const removeComment = async ({ user, commentId, commentType }: RemoveComm
 };
 
 const updatePostCommentInCache = async (postComment: { postId: string }, author: UserSession) => {
-  const postResponseCount = await countPostResponses(dbClient, postComment.postId);
-  return await updatePostInCache({ post: { id: postComment.postId, responseCount: postResponseCount }, user: author });
+  try {
+    const postResponseCount = await countPostResponses(dbClient, postComment.postId);
+    return await updatePostInCache({
+      post: { id: postComment.postId, responseCount: postResponseCount },
+      user: author,
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Update post comment in cache with id: ${postComment.postId}`,
+      err as Error,
+      postComment.postId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 const updateNewsCommentInCache = async (newsComment: { newsId: string }) => {
-  const newsResponseCount = await countNewsResponses(dbClient, newsComment.newsId);
-  await updateProjectUpdateInCache({ update: { id: newsComment.newsId, responseCount: newsResponseCount } });
+  try {
+    const newsResponseCount = await countNewsResponses(dbClient, newsComment.newsId);
+    await updateProjectUpdateInCache({ update: { id: newsComment.newsId, responseCount: newsResponseCount } });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Update news comment in cache with id: ${newsComment.newsId}`,
+      err as Error,
+      newsComment.newsId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 const removePostCommentInCache = async (postId: string, user: UserSession) => {
-  if (postId) {
-    const responseCount = await countPostResponses(dbClient, postId);
-    await updatePostInCache({ post: { id: postId, responseCount }, user });
+  try {
+    if (postId) {
+      const responseCount = await countPostResponses(dbClient, postId);
+      await updatePostInCache({ post: { id: postId, responseCount }, user });
+    }
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Remove post comment in cache with id: ${postId}`, err as Error, postId);
+    logger.error(error);
+    throw err;
   }
 };
 
 const removeNewsCommenInCache = async (newsId: string) => {
-  if (newsId) {
-    const responseCount = await countNewsResponses(dbClient, newsId);
-    await updateProjectUpdateInCache({ update: { id: newsId, responseCount } });
+  try {
+    if (newsId) {
+      const responseCount = await countNewsResponses(dbClient, newsId);
+      await updateProjectUpdateInCache({ update: { id: newsId, responseCount } });
+    }
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Remove news comment in cache with id: ${newsId}`, err as Error, newsId);
+    logger.error(error);
+    throw err;
   }
 };
 
 const notifyUpdateFollowers = async (updateId: string) => {
-  const follows = await getFollowers(dbClient, ObjectType.UPDATE, updateId);
-  await notifyFollowers(follows, 'update', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
+  try {
+    const follows = await getFollowers(dbClient, ObjectType.UPDATE, updateId);
+    await notifyFollowers(follows, 'update', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Notify followers about updated update with id: ${updateId}`,
+      err as Error,
+      updateId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 const notifyPostFollowers = async (postId: string) => {
-  const follows = await getFollowers(dbClient, ObjectType.POST, postId);
-  await notifyFollowers(follows, 'post', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
+  try {
+    const follows = await getFollowers(dbClient, ObjectType.POST, postId);
+    await notifyFollowers(follows, 'post', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Notify followers about updated post with id: ${postId}`,
+      err as Error,
+      postId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };

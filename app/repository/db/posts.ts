@@ -1,25 +1,37 @@
 import { PrismaClient } from '@prisma/client';
-import { getPostCommentsStartingFrom } from './post_comment';
+
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getUniqueValues } from '@/utils/helpers';
+import getLogger from '@/utils/logger';
+
+import { getPostCommentsStartingFrom } from './post_comment';
+
+const logger = getLogger();
 
 export async function getPostById(client: PrismaClient, id: string) {
   return await client.post.findFirst({ where: { id: id } });
 }
 
 export async function getPostsStartingFrom(client: PrismaClient, from: Date) {
-  const [posts, postsComments] = await Promise.all([
-    getPostsFromDbStartingFrom(client, from),
-    getPostCommentsStartingFrom(client, from),
-  ]);
+  try {
+    const [posts, postsComments] = await Promise.all([
+      getPostsFromDbStartingFrom(client, from),
+      getPostCommentsStartingFrom(client, from),
+    ]);
 
-  // Get unique ids of posts
-  const postIds = getUniqueValues(
-    postsComments.map((comment) => comment.postComment?.postId).filter((id): id is string => id !== undefined),
-  );
-  const postsWithComments = await getPostsByIds(client, postIds);
-  const allPosts = [...posts, ...postsWithComments];
-  const uniquePosts = allPosts.filter((post, index, self) => index === self.findIndex((t) => t.id === post.id));
-  return uniquePosts;
+    // Get unique ids of posts
+    const postIds = getUniqueValues(
+      postsComments.map((comment) => comment.postComment?.postId).filter((id): id is string => id !== undefined),
+    );
+    const postsWithComments = await getPostsByIds(client, postIds);
+    const allPosts = [...posts, ...postsWithComments];
+    const uniquePosts = allPosts.filter((post, index, self) => index === self.findIndex((t) => t.id === post.id));
+    return uniquePosts;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Getting post comments starting from ${Date}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function getPostsByIds(client: PrismaClient, ids: string[]) {
