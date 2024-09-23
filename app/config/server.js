@@ -211,7 +211,7 @@ const OptionalRunTimeEnv = z
         message:
           'Looks like the required environment variables for push-notifications are not set in the UI but in the server (or vice versa)',
         code: z.ZodIssueCode.custom,
-        path: ['VAPID_PRIVATE_KEY', 'VAPID_ADMIN_EMAIL', 'NEXT_PUBLIC_VAPID_PUBLIC_KEY'],
+        path: ['VAPID_PRIVATE_KEY', 'VAPID_ADMIN_EMAIL', 'NEXT_PUBLIC_VAPID_PUBLIC_KEY', 'STRAPI_PUSH_NOTIFICATION_SECRET'],
       });
     }
 
