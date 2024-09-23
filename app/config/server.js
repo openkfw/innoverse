@@ -3,13 +3,51 @@
 const { z } = require('zod');
 const { clientConfig } = require('./client');
 const { someOrAllNotSet } = require('./helper');
+const { cond } = require('lodash');
+const { env } = require('next-runtime-env');
 
 if (typeof window !== 'undefined') {
   throw new Error('The server config should not be imported on the frontend!');
 }
 
+const RequiredBuildTimeEnv = z
+  .object({
+    STAGE: z.enum(['development', 'test', 'build', 'production', 'lint']).default('development'),
+    NEXT_PUBLIC_BUILDTIMESTAMP: z
+      .string({ errorMap: () => ({ message: 'NEXT_PUBLIC_BUILDTIMESTAMP is not' }) })
+      .default(''),
+    NEXT_PUBLIC_CI_COMMIT_SHA: z
+      .string({ errorMap: () => ({ message: 'NEXT_PUBLIC_CI_COMMIT_SHA is not' }) })
+      .default(''),
+  })
+  .superRefine((values, ctx) => {
+    const { STAGE } = values;
+    const requiredKeys = ['NEXT_PUBLIC_BUILDTIMESTAMP', 'NEXT_PUBLIC_CI_COMMIT_SHA'];
+
+    const checkAndAddIssue = (condition, message, ctx) => {
+      if (condition && STAGE === 'build') {
+        ctx.addIssue({
+          message: message,
+          code: z.ZodIssueCode.custom,
+        });
+      }
+    };
+
+    const validateEnvVariables = (ctx) => {
+      requiredKeys.forEach((env) =>
+        checkAndAddIssue(
+          values[env].trim().length === 0,
+          `Required build time environment variable ${env} is not set`,
+          ctx,
+        ),
+      );
+    };
+
+    validateEnvVariables(ctx);
+  });
+
 // Required at run-time
-const RequiredEnv = z
+const RequiredRunTimeEnv = z
   .object({
     DATABASE_URL: z.string().default(''),
     POSTGRES_USER: z.string({ errorMap: () => ({ message: 'POSTGRES_USER must be set!' }) }).default(''),
@@ -19,7 +57,7 @@ const RequiredEnv = z
     STRAPI_TOKEN: z.string({ errorMap: () => ({ message: 'STRAPI_TOKEN must be set!' }) }).default(''),
     HTTP_BASIC_AUTH: z.string().default(''),
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    STAGE: z.enum(['development', 'test', 'build', 'production']).default('development'),
+    STAGE: z.enum(['development', 'test', 'build', 'production', 'lint']).default('development'),
     REDIS_URL: z.string({ errorMap: () => ({ message: 'REDIS_URL must be set!' }) }).default(''),
     NEWS_FEED_SYNC_SECRET: z
       .string({ errorMap: () => ({ message: 'NEWS_FEED_SYNC_SECRET must be set!' }) })
@@ -45,35 +83,43 @@ const RequiredEnv = z
       REDIS_URL,
       NEWS_FEED_SYNC_SECRET,
     ];
-    if (required.some((el) => el === '') && STAGE !== 'build') {
-      ctx.addIssue({
-        message: 'Not all required env variables are set!',
-        code: z.ZodIssueCode.custom,
-      });
-    }
-    if (!/^(postgres|postgresql):\/\//.test(DATABASE_URL) && STAGE !== 'build') {
-      ctx.addIssue({
-        message: 'DB_URL is not a valid postgres connection string',
-        code: z.ZodIssueCode.custom,
-      });
-    }
-    if (!/^(redis):\/\//.test(REDIS_URL) && STAGE !== 'build') {
-      ctx.addIssue({
-        message: 'REDIS_URL is not a valid postgres connection string',
-        code: z.ZodIssueCode.custom,
-      });
-    }
 
-    if (!/(.+?):(.+?)$/.test(HTTP_BASIC_AUTH) && STAGE !== 'build') {
-      ctx.addIssue({
-        message: 'HTTP_BASIC_AUTH must be of the format username:password',
-        code: z.ZodIssueCode.custom,
-      });
-    }
+    const checkAndAddIssue = (condition, message, ctx) => {
+      if (condition && STAGE !== 'build' && STAGE !== 'lint') {
+        ctx.addIssue({
+          message: message,
+          code: z.ZodIssueCode.custom,
+        });
+      }
+    };
+
+    const validateEnvVariables = (required, DATABASE_URL, REDIS_URL, HTTP_BASIC_AUTH, ctx) => {
+      checkAndAddIssue(
+        required.some((el) => el === ''),
+        'Not all required env variables are set!',
+        ctx,
+      );
+
+      checkAndAddIssue(
+        !/^(postgres|postgresql):\/\//.test(DATABASE_URL),
+        'DB_URL is not a valid postgres connection string',
+        ctx,
+      );
+
+      checkAndAddIssue(!/^(redis):\/\//.test(REDIS_URL), 'REDIS_URL is not a valid postgres connection string', ctx);
+
+      checkAndAddIssue(
+        !/(.+?):(.+?)$/.test(HTTP_BASIC_AUTH),
+        'HTTP_BASIC_AUTH must be of the format username:password',
+        ctx,
+      );
+    };
+
+    validateEnvVariables(required, DATABASE_URL, REDIS_URL, HTTP_BASIC_AUTH, ctx);
   });
 
 // Optional at run-time
-const OptionalEnv = z
+const OptionalRunTimeEnv = z
   .object({
     NEXTAUTH_AZURE_CLIENT_ID: z.string().default(''),
     NEXTAUTH_AZURE_CLIENT_SECRET: z.string().default(''),
@@ -91,7 +137,7 @@ const OptionalEnv = z
   })
   .superRefine((values, ctx) => {
     //Ignore the validation at build stage
-    if (process.env.STAGE === 'build') return true;
+    if (process.env.STAGE === 'build' || process.env.STAGE === 'lint') return true;
     //For each auth option we check if eiter all required fields or set or none (= method disabled)
     const {
       NEXTAUTH_AZURE_CLIENT_ID,
@@ -184,10 +230,12 @@ const OptionalEnv = z
 
 // If we run 'next build' the required runtime env variables can be empty, at run-time checks will be applied...
 // NEXT_PUBLIC_* are checked in client.js
-const optionalEnv = OptionalEnv.parse(process.env);
-const requiredEnv = RequiredEnv.parse(process.env);
+const requiredBuildEnv = RequiredBuildTimeEnv.parse(process.env);
+const optionalRunTimeEnv = OptionalRunTimeEnv.parse(process.env);
+const requiredRunTimeEnv = RequiredRunTimeEnv.parse(process.env);
 
 module.exports.serverConfig = {
-  ...requiredEnv,
-  ...optionalEnv,
+  ...requiredBuildEnv,
+  ...requiredRunTimeEnv,
+  ...optionalRunTimeEnv,
 };

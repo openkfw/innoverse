@@ -20,7 +20,6 @@ services:
       - ./strapi/config:/opt/app/config
       - ./strapi/src:/opt/app/src
       - ./strapi/package.json:/opt/package.json
-      - ./strapi/yarn.lock:/opt/yarn.lock
       - ./strapi/.env:/opt/app/.env
       - ./strapi/public/uploads:/opt/app/public/uploads
       - ./strapi/types:/opt/app/types
@@ -50,6 +49,10 @@ services:
     container_name: innoverse
     build:
       context: ./app
+      args:
+        # used for display an innoverse version
+        CI_COMMIT_SHA: "LOCAL"
+        BUILDTIMESTAMP: 0
     env_file:
       - ./app/.env
     environment:

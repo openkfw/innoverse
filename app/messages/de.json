@@ -268,6 +268,7 @@
   "components_newsPage_addUpdate_form_addUpdateForm_error": "Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuche es erneut.",
   "components_newsPage_addUpdate_form_addUpdateForm_updateLabel": "Update",
   "components_newsPage_addUpdate_form_addUpdateForm_placeholder": "Gib hier das Update ein...",
+  "components_newsPage_addUpdate_form_addUpdateForm_anonymousPost": "Anonym posten",
 
   "components_newsPage_cards_collabCommentCard_postError": "Der Kommentar konnte nicht gepostet werden. Bitte versuche es noch einmal.",
   "components_newsPage_cards_collabCommentCard_submitError": "Der Kommentar konnte nicht erstellt werden. Bitte versuche es noch einmal.",

@@ -57,7 +57,7 @@ export const sendPushNotifications = (notifications: NotificationRequest[]) => {
         icon: '/favicon.ico',
         ttl: 60,
         type: 'push',
-        title: 'Innohub',
+        title: 'Innoverse',
         userId: request.userId,
         ...request.notification,
       };

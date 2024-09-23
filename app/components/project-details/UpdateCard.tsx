@@ -104,7 +104,7 @@ const UpdateCard = (props: UpdateCardProps) => {
           <Grid container alignItems="center">
             <UserAvatar size={24} user={update.author} allowAnimation />
 
-            <Box sx={{ paddingLeft: '16px', ml: '8px' }}>
+            <Box sx={{ ml: '8px' }}>
               <Typography variant="subtitle2" sx={authorNameStyles}>
                 {update?.author?.name}
               </Typography>
