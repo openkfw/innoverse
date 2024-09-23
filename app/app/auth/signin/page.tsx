@@ -7,7 +7,7 @@ export default function SignIn() {
   return (
     <>
       <SkeletonIndexPage />
-      <LoginDialog providers={process.env.NODE_ENV === 'production' ? ['azure-ad'] : ['azure-ad', 'gitlab']} />
+      <LoginDialog providers={process.env.NODE_ENV === 'production' ? ['azure-ad'] : ['azure-ad', 'gitlab', 'credentials']} />
     </>
   );
 }
