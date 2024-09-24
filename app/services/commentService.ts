@@ -105,61 +105,29 @@ export const removeComment = async ({ user, commentId, commentType }: RemoveComm
 };
 
 const updatePostCommentInCache = async (postComment: { postId: string }, author: UserSession) => {
-  try {
-    const postResponseCount = await countPostResponses(dbClient, postComment.postId);
-    return await updatePostInCache({
-      post: { id: postComment.postId, responseCount: postResponseCount },
-      user: author,
-    });
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Update post comment in cache with id: ${postComment.postId}`,
-      err as Error,
-      postComment.postId,
-    );
-    logger.error(error);
-    throw err;
-  }
+  const postResponseCount = await countPostResponses(dbClient, postComment.postId);
+  return await updatePostInCache({
+    post: { id: postComment.postId, responseCount: postResponseCount },
+    user: author,
+  });
 };
 
 const updateNewsCommentInCache = async (newsComment: { newsId: string }) => {
-  try {
-    const newsResponseCount = await countNewsResponses(dbClient, newsComment.newsId);
-    await updateProjectUpdateInCache({ update: { id: newsComment.newsId, responseCount: newsResponseCount } });
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Update news comment in cache with id: ${newsComment.newsId}`,
-      err as Error,
-      newsComment.newsId,
-    );
-    logger.error(error);
-    throw err;
-  }
+  const newsResponseCount = await countNewsResponses(dbClient, newsComment.newsId);
+  await updateProjectUpdateInCache({ update: { id: newsComment.newsId, responseCount: newsResponseCount } });
 };
 
 const removePostCommentInCache = async (postId: string, user: UserSession) => {
-  try {
-    if (postId) {
-      const responseCount = await countPostResponses(dbClient, postId);
-      await updatePostInCache({ post: { id: postId, responseCount }, user });
-    }
-  } catch (err) {
-    const error: InnoPlatformError = dbError(`Remove post comment in cache with id: ${postId}`, err as Error, postId);
-    logger.error(error);
-    throw err;
+  if (postId) {
+    const responseCount = await countPostResponses(dbClient, postId);
+    await updatePostInCache({ post: { id: postId, responseCount }, user });
   }
 };
 
 const removeNewsCommenInCache = async (newsId: string) => {
-  try {
-    if (newsId) {
-      const responseCount = await countNewsResponses(dbClient, newsId);
-      await updateProjectUpdateInCache({ update: { id: newsId, responseCount } });
-    }
-  } catch (err) {
-    const error: InnoPlatformError = dbError(`Remove news comment in cache with id: ${newsId}`, err as Error, newsId);
-    logger.error(error);
-    throw err;
+  if (newsId) {
+    const responseCount = await countNewsResponses(dbClient, newsId);
+    await updateProjectUpdateInCache({ update: { id: newsId, responseCount } });
   }
 };
 

@@ -1,7 +1,7 @@
 import { Follow, ObjectType, User } from '@/common/types';
 import { addFollowToDb, removeFollowFromDb } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
-import { dbError, InnoPlatformError } from '@/utils/errors';
+import { InnoPlatformError, redisError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { RedisNewsFeedEntry } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
@@ -35,64 +35,62 @@ type RemoveFollow = {
 };
 
 export const addFollow = async ({ user, object }: AddFollow) => {
-  try {
-    const createdObject = await addFollowToDb(dbClient, object.followedBy, object.objectType, object.objectId);
-    await addFollowToCache({ ...createdObject, objectType: createdObject.objectType as ObjectType }, user);
-    return object;
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Add follow for user ${user.providerId} on ${object.objectType} object with id: ${object.objectId}`,
-      err as Error,
-      object.objectId,
-    );
-    logger.error(error);
-    throw err;
-  }
+  const createdObject = await addFollowToDb(dbClient, object.followedBy, object.objectType, object.objectId);
+  await addFollowToCache({ ...createdObject, objectType: createdObject.objectType as ObjectType }, user);
+  return object;
 };
 
 export const removeFollow = async ({ user, object }: RemoveFollow) => {
-  try {
-    const removedObject = await removeFollowFromDb(dbClient, object.followedBy, object.objectType, object.objectId);
-    await removeFollowFromCache({ ...removedObject, objectType: removedObject.objectType as ObjectType }, user);
-    return object;
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Remove follow for user ${user.providerId} on ${object.objectType} object with id: ${object.objectId}`,
-      err as Error,
-      object.objectId,
-    );
-    logger.error(error);
-    throw err;
-  }
+  const removedObject = await removeFollowFromDb(dbClient, object.followedBy, object.objectType, object.objectId);
+  await removeFollowFromCache({ ...removedObject, objectType: removedObject.objectType as ObjectType }, user);
+  return object;
 };
 
 export const addFollowToCache = async (follow: Follow, user: User) => {
-  if (follow.objectType === ObjectType.PROJECT) {
-    const projectId = follow.objectId;
-    await followNewsFeedEntriesWithProject({ projectId, user });
-    return;
-  }
+  try {
+    if (follow.objectType === ObjectType.PROJECT) {
+      const projectId = follow.objectId;
+      await followNewsFeedEntriesWithProject({ projectId, user });
+      return;
+    }
 
-  const newsFeedEntry = await getNewsFeedEntry(follow, user);
+    const newsFeedEntry = await getNewsFeedEntry(follow, user);
 
-  if (newsFeedEntry) {
-    const redisClient = await getRedisClient();
-    return await addFollowToCacheForNewsFeedEntry(redisClient, newsFeedEntry, user);
+    if (newsFeedEntry) {
+      const redisClient = await getRedisClient();
+      return await addFollowToCacheForNewsFeedEntry(redisClient, newsFeedEntry, user);
+    }
+  } catch (err) {
+    const error: InnoPlatformError = redisError(
+      `Add follow to cache for object with id: ${follow.objectId} by user ${user}`,
+      err as Error,
+    );
+    logger.error(error);
+    throw err;
   }
 };
 
 export const removeFollowFromCache = async (follow: Follow, user: User) => {
-  if (follow.objectType === ObjectType.PROJECT) {
-    const projectId = follow.objectId;
-    await unfollowNewsFeedEntriesWithProject({ projectId, user });
-    return;
-  }
+  try {
+    if (follow.objectType === ObjectType.PROJECT) {
+      const projectId = follow.objectId;
+      await unfollowNewsFeedEntriesWithProject({ projectId, user });
+      return;
+    }
 
-  const newsFeedEntry = await getNewsFeedEntry(follow, user);
+    const newsFeedEntry = await getNewsFeedEntry(follow, user);
 
-  if (newsFeedEntry) {
-    const redisClient = await getRedisClient();
-    await removeFollowFromCacheForNewsFeedEntry(redisClient, newsFeedEntry, user);
+    if (newsFeedEntry) {
+      const redisClient = await getRedisClient();
+      await removeFollowFromCacheForNewsFeedEntry(redisClient, newsFeedEntry, user);
+    }
+  } catch (err) {
+    const error: InnoPlatformError = redisError(
+      `Remove follow from cache for object with id: ${follow.objectId} by user ${user}`,
+      err as Error,
+    );
+    logger.error(error);
+    throw err;
   }
 };
 
@@ -118,17 +116,35 @@ export const getNewsFeedEntry = async (object: { objectId: string; objectType: O
 };
 
 const followNewsFeedEntriesWithProject = async ({ projectId, user }: { projectId: string; user: User }) => {
-  const redisClient = await getRedisClient();
-  const newsFeedEntries = await getNewsFeedEntriesForProject(redisClient, { projectId });
-  newsFeedEntries?.forEach(async (entry) => await addFollowToCacheForNewsFeedEntry(redisClient, entry, user));
+  try {
+    const redisClient = await getRedisClient();
+    const newsFeedEntries = await getNewsFeedEntriesForProject(redisClient, { projectId });
+    newsFeedEntries?.forEach(async (entry) => await addFollowToCacheForNewsFeedEntry(redisClient, entry, user));
+  } catch (err) {
+    const error: InnoPlatformError = redisError(
+      `Add follow to project with id: ${projectId} by user ${user}`,
+      err as Error,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 const unfollowNewsFeedEntriesWithProject = async ({ projectId, user }: { projectId: string; user: User }) => {
-  const redisClient = await getRedisClient();
-  const projectNewsFeedEntries = await getNewsFeedEntriesForProject(redisClient, { projectId });
-  projectNewsFeedEntries.forEach(
-    async (entry) => await removeFollowFromCacheForNewsFeedEntry(redisClient, entry, user),
-  );
+  try {
+    const redisClient = await getRedisClient();
+    const projectNewsFeedEntries = await getNewsFeedEntriesForProject(redisClient, { projectId });
+    projectNewsFeedEntries.forEach(
+      async (entry) => await removeFollowFromCacheForNewsFeedEntry(redisClient, entry, user),
+    );
+  } catch (err) {
+    const error: InnoPlatformError = redisError(
+      `Remove follow to project with id: ${projectId} by user ${user}`,
+      err as Error,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 const addFollowToCacheForNewsFeedEntry = async (
@@ -136,12 +152,21 @@ const addFollowToCacheForNewsFeedEntry = async (
   newsFeedEntry: RedisNewsFeedEntry,
   user: User,
 ) => {
-  const updatedFollows =
-    newsFeedEntry.item.followedBy?.filter((follower) => follower.providerId !== user.providerId) ?? [];
+  try {
+    const updatedFollows =
+      newsFeedEntry.item.followedBy?.filter((follower) => follower.providerId !== user.providerId) ?? [];
 
-  updatedFollows.push(user);
-  newsFeedEntry.item.followedBy = updatedFollows;
-  await saveNewsFeedEntry(redisClient, newsFeedEntry);
+    updatedFollows.push(user);
+    newsFeedEntry.item.followedBy = updatedFollows;
+    await saveNewsFeedEntry(redisClient, newsFeedEntry);
+  } catch (err) {
+    const error: InnoPlatformError = redisError(
+      `Add follow to news feed entry with id: ${newsFeedEntry.item.id} by user ${user}`,
+      err as Error,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 const removeFollowFromCacheForNewsFeedEntry = async (
@@ -149,6 +174,15 @@ const removeFollowFromCacheForNewsFeedEntry = async (
   entry: RedisNewsFeedEntry,
   user: User,
 ) => {
-  entry.item.followedBy = entry.item.followedBy.filter((follower) => follower.providerId !== user.providerId);
-  await saveNewsFeedEntry(redisClient, entry);
+  try {
+    entry.item.followedBy = entry.item.followedBy.filter((follower) => follower.providerId !== user.providerId);
+    await saveNewsFeedEntry(redisClient, entry);
+  } catch (err) {
+    const error: InnoPlatformError = redisError(
+      `Remove follow from news feed entry with id: ${entry.item.id} by user ${user}`,
+      err as Error,
+    );
+    logger.error(error);
+    throw err;
+  }
 };

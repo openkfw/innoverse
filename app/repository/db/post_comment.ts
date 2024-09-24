@@ -1,13 +1,23 @@
 import { PrismaClient } from '@prisma/client';
 
 import { defaultParamsComment as defaultParams } from '@/repository/db/utils/types';
+import { dbError, InnoPlatformError } from '@/utils/errors';
+import getLogger from '@/utils/logger';
+
+const logger = getLogger();
 
 export async function countPostResponses(client: PrismaClient, postId: string) {
-  return await client.postComment.count({
-    where: {
-      postId,
-    },
-  });
+  try {
+    return await client.postComment.count({
+      where: {
+        postId,
+      },
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Counting reponses for post with id: ${postId}`, err as Error, postId);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function getNewsCommentsByPostId(client: PrismaClient, postId: string) {

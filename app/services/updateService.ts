@@ -5,7 +5,7 @@ import { getFollowedByForEntity } from '@/repository/db/follow';
 import { countNewsResponses } from '@/repository/db/news_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
-import { dbError, InnoPlatformError } from '@/utils/errors';
+import { dbError, InnoPlatformError, redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import {
@@ -72,17 +72,23 @@ export const deleteProjectUpdateInCache = async (updateId: string) => {
 };
 
 export const updateProjectUpdateInCache = async ({ update }: UpdateUpdateInCache) => {
-  const redisClient = await getRedisClient();
-  const newsFeedEntry = await getNewsFeedEntryForProjectUpdate(redisClient, update.id);
+  try {
+    const redisClient = await getRedisClient();
+    const newsFeedEntry = await getNewsFeedEntryForProjectUpdate(redisClient, update.id);
 
-  if (!newsFeedEntry) return;
-  const cachedItem = newsFeedEntry.item as RedisProjectUpdate;
-  cachedItem.responseCount = update.responseCount ?? cachedItem.responseCount;
-  cachedItem.comment = update.comment ?? cachedItem.comment;
-  newsFeedEntry.item = cachedItem;
-  newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
+    if (!newsFeedEntry) return;
+    const cachedItem = newsFeedEntry.item as RedisProjectUpdate;
+    cachedItem.responseCount = update.responseCount ?? cachedItem.responseCount;
+    cachedItem.comment = update.comment ?? cachedItem.comment;
+    newsFeedEntry.item = cachedItem;
+    newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
 
-  await saveNewsFeedEntry(redisClient, newsFeedEntry);
+    await saveNewsFeedEntry(redisClient, newsFeedEntry);
+  } catch (err) {
+    const error: InnoPlatformError = redisError(`Update project update with id: ${update.id}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const getNewsFeedEntryForProjectUpdate = async (redisClient: RedisClient, updateId: string) => {

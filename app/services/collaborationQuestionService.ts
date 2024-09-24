@@ -3,6 +3,7 @@
 import { ObjectType } from '@/common/types';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
+import { InnoPlatformError, redisError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapCollaborationQuestionToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
 import { NewsType } from '@/utils/newsFeed/redis/models';
@@ -13,9 +14,18 @@ import { getBasicCollaborationQuestionByIdWithAdditionalData } from '@/utils/req
 const logger = getLogger();
 
 export const getNewsFeedEntryForCollaborationQuestion = async (redisClient: RedisClient, questionId: string) => {
-  const redisKey = getRedisKey(questionId);
-  const cacheEntry = await getNewsFeedEntryByKey(redisClient, redisKey);
-  return cacheEntry ?? (await createNewsFeedEntryForCollaborationQuestion(questionId));
+  try {
+    const redisKey = getRedisKey(questionId);
+    const cacheEntry = await getNewsFeedEntryByKey(redisClient, redisKey);
+    return cacheEntry ?? (await createNewsFeedEntryForCollaborationQuestion(questionId));
+  } catch (err) {
+    const error: InnoPlatformError = redisError(
+      `Get news feed entry for collaboration question with id: ${questionId}`,
+      err as Error,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 const createNewsFeedEntryForCollaborationQuestion = async (questionId: string) => {

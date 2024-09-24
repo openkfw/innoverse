@@ -8,10 +8,6 @@ import {
 } from '@/repository/db/collaboration_comment_response';
 import dbClient from '@/repository/db/prisma/prisma';
 import { updateCollaborationCommentInCache } from '@/services/collaborationCommentService';
-import { dbError, InnoPlatformError } from '@/utils/errors';
-import getLogger from '@/utils/logger';
-
-const logger = getLogger();
 
 type AddResponse = {
   user: UserSession;
@@ -29,34 +25,14 @@ type DeleteResponse = {
 };
 
 export const addCollaborationCommentResponse = async ({ user, response, comment }: AddResponse) => {
-  try {
-    const createdResponse = await addCollaborationCommentResponseToDb(dbClient, user.providerId, response, comment.id);
-    const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
-    await updateCollaborationCommentInCache({ user, comment: { id: comment.id, responseCount } });
-    return createdResponse;
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Add collaboration comment response for comment with id: ${comment.id} by user ${user.providerId}`,
-      err as Error,
-      comment.id,
-    );
-    logger.error(error);
-    throw err;
-  }
+  const createdResponse = await addCollaborationCommentResponseToDb(dbClient, user.providerId, response, comment.id);
+  const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
+  await updateCollaborationCommentInCache({ user, comment: { id: comment.id, responseCount } });
+  return createdResponse;
 };
 
 export const deleteCollaborationCommentResponse = async ({ user, response }: DeleteResponse) => {
-  try {
-    const deletedResponse = await deleteCollaborationCommentResponseInDb(dbClient, response.id);
-    const responseCount = await getCollaborationCommentResponseCount(dbClient, deletedResponse.commentId);
-    await updateCollaborationCommentInCache({ user, comment: { id: deletedResponse.commentId, responseCount } });
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Delete collaboration comment response with id: ${response.id} by user ${user.providerId}`,
-      err as Error,
-      response.id,
-    );
-    logger.error(error);
-    throw err;
-  }
+  const deletedResponse = await deleteCollaborationCommentResponseInDb(dbClient, response.id);
+  const responseCount = await getCollaborationCommentResponseCount(dbClient, deletedResponse.commentId);
+  await updateCollaborationCommentInCache({ user, comment: { id: deletedResponse.commentId, responseCount } });
 };
