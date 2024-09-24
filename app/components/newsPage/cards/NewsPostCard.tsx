@@ -10,7 +10,11 @@ import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { errorMessage } from '@/components/common/CustomToast';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
 import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
-import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
+import {
+  useEditingInteractions,
+  useEditingState,
+  useRespondingInteractions,
+} from '@/components/common/editing/editing-context';
 import { parseStringForLinks } from '@/components/common/LinkString';
 import { NewsCardControls } from '@/components/newsPage/cards/common/NewsCardControls';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
@@ -28,7 +32,8 @@ function NewsPostCard(props: NewsPostCardProps) {
   const [post, setPost] = useState(props.post);
 
   const state = useEditingState();
-  const interactions = useEditingInteractions();
+  const editingInteractions = useEditingInteractions();
+  const respondingInteractions = useRespondingInteractions();
   const { user } = useUser();
   const userIsAuthor = user?.providerId === post.author?.providerId;
 
@@ -37,7 +42,7 @@ function NewsPostCard(props: NewsPostCardProps) {
       if (user) {
         updatePost({ postId: post.id, content: updatedText, user });
         setPost({ ...post, content: updatedText });
-        interactions.onSubmitEdit();
+        editingInteractions.onSubmit();
       }
     } catch (error) {
       console.error('Error updating post:', error);
@@ -70,7 +75,7 @@ function NewsPostCard(props: NewsPostCardProps) {
         comment: post.content,
       }}
       onSubmit={(updatedText) => handleUpdate(updatedText, user)}
-      onDiscard={interactions.onCancelEdit}
+      onDiscard={editingInteractions.onCancel}
     />
   ) : (
     <>
@@ -81,8 +86,8 @@ function NewsPostCard(props: NewsPostCardProps) {
         </Typography>
       </CardContentWrapper>
       <NewsCardControls>
-        {userIsAuthor && <EditControls onEdit={() => interactions.onStartEdit(post)} onDelete={handleDelete} />}
-        <ResponseControls onResponse={() => interactions.onStartResponse(post)} />
+        {userIsAuthor && <EditControls onEdit={() => editingInteractions.onStart(post)} onDelete={handleDelete} />}
+        <ResponseControls onResponse={() => respondingInteractions.onStart(post)} />
       </NewsCardControls>
     </>
   );

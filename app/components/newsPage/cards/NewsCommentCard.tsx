@@ -8,7 +8,11 @@ import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { errorMessage } from '@/components/common/CustomToast';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
 import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
-import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
+import {
+  useEditingInteractions,
+  useEditingState,
+  useRespondingInteractions,
+} from '@/components/common/editing/editing-context';
 import { TextCard } from '@/components/common/TextCard';
 import { removeUserComment, updateUserComment } from '@/components/newsPage/cards/actions';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
@@ -57,7 +61,8 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
   const { comment, commentType, displayResponseControls, onDelete, onUpdate } = props;
 
   const state = useEditingState();
-  const interactions = useEditingInteractions();
+  const editingInteractions = useEditingInteractions();
+  const respondingInteractions = useRespondingInteractions();
   const { user } = useUser();
 
   const userIsAuthor = user?.providerId === comment.author.providerId;
@@ -80,7 +85,7 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
     try {
       await updateUserComment({ commentId: comment.commentId, content: updatedText, commentType });
       onUpdate(updatedText);
-      interactions.onSubmitEdit();
+      editingInteractions.onSubmit();
     } catch (error) {
       console.error('Error updating comment:', error);
       errorMessage({ message: m.components_newsPage_cards_commentCard_error_update() });
@@ -96,9 +101,9 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
     displayEditingControls: userIsAuthor,
     displayResponseControls,
     isEditing: state.isEditing(comment),
-    startEdit: () => interactions.onStartEdit(comment),
-    startResponse: () => interactions.onStartResponse(comment),
-    cancelEdit: (params: { isDirty: boolean }) => interactions.onCancelEdit(params),
+    startEdit: () => editingInteractions.onStart(comment),
+    startResponse: () => respondingInteractions.onStart(comment),
+    cancelEdit: editingInteractions.onCancel,
     updateComment: handleUpdate,
     deleteComment: handleDelete,
   };

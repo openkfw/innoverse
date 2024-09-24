@@ -15,7 +15,7 @@ import theme from '@/styles/theme';
 import { AuthResponse } from '@/utils/auth';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
 
-import { useEditingState } from '../../common/editing/editing-context';
+import { useRespondingState } from '../../common/editing/editing-context';
 
 interface CommentThreadProps<TComment> {
   comment: { id: string; responseCount: number };
@@ -92,7 +92,7 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
 const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadProps<TComment>) => {
   const { comment, card, disableDivider, indentResponses, fetchResponses, renderResponse, addResponse } = props;
   const [responses, setResponses] = useState<ResponseState<TComment>>({ isVisible: false, isLoading: false });
-  const state = useEditingState();
+  const state = useRespondingState();
 
   const responsesExist = comment.responseCount > 0 || (responses.data?.length ?? 0) > 0;
 
@@ -167,7 +167,7 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     responses,
     indentResponses,
     showLoadResponsesButton: !responses.isVisible && !responses.isLoading && comment.responseCount > 0,
-    showDivider: !disableDivider && (responsesExist || state.isResponding(comment)),
+    showDivider: !disableDivider && (responsesExist || state.isEditing(comment)),
     handleResponse,
     deleteResponse,
     updateResponse,
