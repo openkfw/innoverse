@@ -2,12 +2,14 @@ import {
   BasicCollaborationQuestion,
   BasicProject,
   Event,
+  ImageFormats,
   ObjectType,
   Post,
   ProjectUpdate,
   SurveyQuestion,
   User,
 } from '@/common/types';
+import { clientConfig } from '@/config/client';
 import { getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
@@ -45,6 +47,10 @@ export const mapPostToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisPost(post, reactions, followedBy);
+
+  post.author.image = mapImageUrlToRelativeUrl(post.author.image);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
     updatedAt: item.updatedAt,
     item,
@@ -59,6 +65,9 @@ export const mapSurveyQuestionToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisSurveyQuestion(surveyQuestion, reactions, followedBy);
+
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
     updatedAt: getUnixTimestamp(new Date(surveyQuestion.updatedAt)),
     item: item,
@@ -73,8 +82,20 @@ export const mapProjectToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisProject(project, reactions, followedBy);
+
+  if (item.image) {
+    project.image = mapImageFormatsToRelativeUrls(item.image);
+  }
+
+  if (item.author) {
+    item.author.image = mapImageUrlToRelativeUrl(item.author.image);
+  }
+
+  item.team = mapUserImagesToRelativeUrls(item.team);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
-    updatedAt: getUnixTimestamp(new Date(project.updatedAt)),
+    updatedAt: getUnixTimestamp(new Date(item.updatedAt)),
     item: item,
     type: NewsType.PROJECT,
     search: escapeRedisTextSeparators(
@@ -96,6 +117,9 @@ export const mapUpdateToRedisNewsFeedEntry = (
   responseCount: number,
 ): RedisNewsFeedEntry => {
   const item = mapToRedisProjectUpdate(update, reactions, followedBy, responseCount);
+  item.author.image = mapImageUrlToRelativeUrl(item.author.image);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
     updatedAt: getUnixTimestamp(new Date(update.updatedAt)),
     item: item,
@@ -110,8 +134,19 @@ export const mapEventToRedisNewsFeedEntry = async (
   followedBy: RedisUser[],
 ): Promise<RedisNewsFeedEntry> => {
   const item = mapToRedisProjectEvent(event, reactions, followedBy);
+
+  if (item.image) {
+    item.image = mapImageFormatsToRelativeUrls(item.image);
+  }
+
+  if (item.author) {
+    item.author.image = mapImageUrlToRelativeUrl(item.author.image);
+  }
+
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
-    updatedAt: getUnixTimestamp(event.updatedAt),
+    updatedAt: getUnixTimestamp(new Date(item.updatedAt)),
     item: item,
     type: NewsType.EVENT,
     search: escapeRedisTextSeparators(
@@ -132,8 +167,12 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisCollaborationQuestion(question, reactions, followedBy);
+
+  item.authors = mapUserImagesToRelativeUrls(question.authors);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
-    updatedAt: getUnixTimestamp(question.updatedAt),
+    updatedAt: getUnixTimestamp(new Date(item.updatedAt)),
     item: item,
     type: NewsType.COLLABORATION_QUESTION,
     search: escapeRedisTextSeparators((item.title || '') + ' ' + (item.description || '')),
@@ -147,6 +186,10 @@ export const mapCollaborationCommentToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisCollaborationComment(comment, question, reactions, followedBy);
+  item.author.image = mapImageUrlToRelativeUrl(item.author.image);
+  item.question.authors = mapUserImagesToRelativeUrls(item.question.authors);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
+
   return {
     updatedAt: getUnixTimestamp(comment.createdAt),
     item: item,
@@ -294,7 +337,41 @@ export const mapToRedisUsers = async (userIds: string[]) => {
 };
 
 export const mapToRedisUser = async (userId: string): Promise<RedisUser> => {
-  // TODO: Run this against Redis.
   const user = await getInnoUserByProviderId(userId);
   return user;
+};
+
+const mapImageFormatsToRelativeUrls = (imageFormats: ImageFormats) => {
+  const sizes = ['xxlarge', 'xlarge', 'large', 'medium', 'small', 'xsmall', 'thumbnail'] as const;
+  for (const size of sizes) {
+    if (imageFormats[size]) {
+      imageFormats[size].url = mapImageUrlToRelativeUrl(imageFormats[size].url) as string;
+    }
+  }
+  return imageFormats;
+};
+
+const mapUserImagesToRelativeUrls = (users: (User | RedisUser)[]) => {
+  users.forEach((user) => {
+    user.image = mapImageUrlToRelativeUrl(user.image);
+  });
+  return users;
+};
+
+const mapImageUrlToRelativeUrl = (imageUrl: string | undefined): string | undefined => {
+  if (!imageUrl) return undefined;
+
+  if (!URL.canParse(imageUrl, clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT)) {
+    return undefined;
+  }
+
+  const url = new URL(imageUrl);
+  const externalImageHost = 'secure.gravatar.com';
+
+  if (url.host.toLowerCase() === externalImageHost.toLowerCase()) {
+    return imageUrl;
+  }
+
+  const path = url.pathname;
+  return `{strapi_host}${path}`;
 };
