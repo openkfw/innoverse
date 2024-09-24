@@ -48,11 +48,8 @@ export const mapPostToRedisNewsFeedEntry = (
 ): RedisNewsFeedEntry => {
   const item = mapToRedisPost(post, reactions, followedBy);
 
-  if (post.author && post.author.image) {
-    mapUserImageToRelativeUrl(post.author);
-  }
-
-  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+  post.author.image = mapImageUrlToRelativeUrl(post.author.image);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
     updatedAt: item.updatedAt,
@@ -69,7 +66,7 @@ export const mapSurveyQuestionToRedisNewsFeedEntry = (
 ): RedisNewsFeedEntry => {
   const item = mapToRedisSurveyQuestion(surveyQuestion, reactions, followedBy);
 
-  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
     updatedAt: getUnixTimestamp(new Date(surveyQuestion.updatedAt)),
@@ -86,19 +83,19 @@ export const mapProjectToRedisNewsFeedEntry = (
 ): RedisNewsFeedEntry => {
   const item = mapToRedisProject(project, reactions, followedBy);
 
-  if (project.image) {
-    mapAllImageSizesToRelativeUrl(project.image);
+  if (item.image) {
+    project.image = mapImageFormatsToRelativeUrls(item.image);
   }
 
-  if (project.author && project.author.image) {
-    mapUserImageToRelativeUrl(project.author);
+  if (item.author) {
+    item.author.image = mapImageUrlToRelativeUrl(item.author.image);
   }
 
-  mapUserArrayImagesToRelativeUrls(project.team);
-  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+  item.team = mapUserImagesToRelativeUrls(item.team);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
-    updatedAt: getUnixTimestamp(new Date(project.updatedAt)),
+    updatedAt: getUnixTimestamp(new Date(item.updatedAt)),
     item: item,
     type: NewsType.PROJECT,
     search: escapeRedisTextSeparators(
@@ -120,12 +117,8 @@ export const mapUpdateToRedisNewsFeedEntry = (
   responseCount: number,
 ): RedisNewsFeedEntry => {
   const item = mapToRedisProjectUpdate(update, reactions, followedBy, responseCount);
-
-  if (update.author && update.author.image) {
-    mapUserImageToRelativeUrl(update.author);
-  }
-
-  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+  item.author.image = mapImageUrlToRelativeUrl(item.author.image);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
     updatedAt: getUnixTimestamp(new Date(update.updatedAt)),
@@ -142,22 +135,18 @@ export const mapEventToRedisNewsFeedEntry = async (
 ): Promise<RedisNewsFeedEntry> => {
   const item = mapToRedisProjectEvent(event, reactions, followedBy);
 
-  if (event.id == '1') {
-    console.log('followedBy', followedBy);
+  if (item.image) {
+    item.image = mapImageFormatsToRelativeUrls(item.image);
   }
 
-  if (event.image) {
-    mapAllImageSizesToRelativeUrl(event.image);
+  if (item.author) {
+    item.author.image = mapImageUrlToRelativeUrl(item.author.image);
   }
 
-  if (event.author && event.author.image) {
-    mapUserImageToRelativeUrl(event.author);
-  }
-
-  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
-    updatedAt: getUnixTimestamp(event.updatedAt),
+    updatedAt: getUnixTimestamp(new Date(item.updatedAt)),
     item: item,
     type: NewsType.EVENT,
     search: escapeRedisTextSeparators(
@@ -179,11 +168,11 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
 ): RedisNewsFeedEntry => {
   const item = mapToRedisCollaborationQuestion(question, reactions, followedBy);
 
-  mapUserArrayImagesToRelativeUrls(question.authors);
-  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+  item.authors = mapUserImagesToRelativeUrls(question.authors);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
-    updatedAt: getUnixTimestamp(question.updatedAt),
+    updatedAt: getUnixTimestamp(new Date(item.updatedAt)),
     item: item,
     type: NewsType.COLLABORATION_QUESTION,
     search: escapeRedisTextSeparators((item.title || '') + ' ' + (item.description || '')),
@@ -197,13 +186,9 @@ export const mapCollaborationCommentToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisCollaborationComment(comment, question, reactions, followedBy);
-
-  if (comment.author && comment.author.image) {
-    mapUserImageToRelativeUrl(comment.author);
-  }
-
-  mapUserArrayImagesToRelativeUrls(question.authors);
-  item.followedBy = mapUserArrayImagesToRelativeUrls(item.followedBy ?? []);
+  item.author.image = mapImageUrlToRelativeUrl(item.author.image);
+  item.question.authors = mapUserImagesToRelativeUrls(item.question.authors);
+  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
     updatedAt: getUnixTimestamp(comment.createdAt),
@@ -352,43 +337,41 @@ export const mapToRedisUsers = async (userIds: string[]) => {
 };
 
 export const mapToRedisUser = async (userId: string): Promise<RedisUser> => {
-  // TODO: Run this against Redis.
   const user = await getInnoUserByProviderId(userId);
   return user;
 };
 
-const mapImageToRelativeUrl = (imageUrl: string): string | undefined => {
-  if (URL.canParse(imageUrl, clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT)) {
-    const url = new URL(imageUrl);
-    const path = url.pathname;
-    return path;
-  }
-  return imageUrl;
-};
-
-const mapAllImageSizesToRelativeUrl = (imageFormats: ImageFormats) => {
+const mapImageFormatsToRelativeUrls = (imageFormats: ImageFormats) => {
   const sizes = ['xxlarge', 'xlarge', 'large', 'medium', 'small', 'xsmall', 'thumbnail'] as const;
   for (const size of sizes) {
-    const imageSize = imageFormats[size];
-    if (imageSize?.url) {
-      imageSize.url = mapImageToRelativeUrl(imageSize.url) as string;
+    if (imageFormats[size]) {
+      imageFormats[size].url = mapImageUrlToRelativeUrl(imageFormats[size].url) as string;
     }
   }
   return imageFormats;
 };
 
-const mapUserImageToRelativeUrl = (user: User | RedisUser) => {
-  if (user.image) {
-    user.image = mapImageToRelativeUrl(user.image) as string;
-  }
-  return user;
-};
-
-const mapUserArrayImagesToRelativeUrls = (users: (User | RedisUser)[]) => {
+const mapUserImagesToRelativeUrls = (users: (User | RedisUser)[]) => {
   users.forEach((user) => {
-    if (user.image) {
-      user.image = mapImageToRelativeUrl(user.image) as string;
-    }
+    user.image = mapImageUrlToRelativeUrl(user.image);
   });
   return users;
+};
+
+const mapImageUrlToRelativeUrl = (imageUrl: string | undefined): string | undefined => {
+  if (!imageUrl) return undefined;
+
+  if (!URL.canParse(imageUrl, clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT)) {
+    return undefined;
+  }
+
+  const url = new URL(imageUrl);
+  const externalImageHost = 'secure.gravatar.com';
+
+  if (url.host.toLowerCase() === externalImageHost.toLowerCase()) {
+    return imageUrl;
+  }
+
+  const path = url.pathname;
+  return `{strapi_host}${path}`;
 };

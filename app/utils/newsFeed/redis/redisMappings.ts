@@ -6,6 +6,7 @@ import {
   CollaborationQuestion,
   Event,
   Follow,
+  ImageFormats,
   NewsFeedEntry,
   ObjectType,
   Post,
@@ -19,7 +20,7 @@ import { clientConfig } from '@/config/client';
 import { withAuth } from '@/utils/auth';
 import { unixTimestampToDate } from '@/utils/helpers';
 
-import { NewsType, RedisNewsFeedEntry, RedisReaction, RedisSurveyQuestion } from './models';
+import { NewsType, RedisNewsFeedEntry, RedisReaction, RedisSurveyQuestion, RedisUser } from './models';
 
 export const MappedRedisType: Record<NewsType, ObjectType> = {
   [NewsType.UPDATE]: ObjectType.UPDATE,
@@ -117,31 +118,48 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
   const { type, item } = redisFeedEntry;
   const projectId = type === NewsType.PROJECT ? item.id : item.projectId;
 
-  if (type === NewsType.SURVEY_QUESTION) {
-    const userVote = item.votes.find((vote) => vote.votedBy === user.providerId);
-    return mapObjectWithReactions({
-      ...item,
-      userVote: userVote?.vote,
-      followedByUser: redisFeedEntry.followedByUser,
-      reactionForUser: redisFeedEntry.reaction ?? null,
-      createdAt: unixTimestampToDate(item.createdAt),
-      updatedAt: unixTimestampToDate(item.updatedAt),
-      projectId: item.projectId,
-    });
-  }
-
-  mapAuthorRelativeToAbsoluteImageUrls(item);
-
-  const sizes = ['xxlarge', 'xlarge', 'large', 'medium', 'small', 'xsmall', 'thumbnail'] as const;
-
-  for (const size of sizes) {
-    if ((type === NewsType.EVENT || type === NewsType.PROJECT) && item.image) {
-      const newImageUrl = `${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}${item.image?.[size]?.url}`;
-
-      if (item.image[size]) {
-        item.image[size]!.url = newImageUrl;
+  switch (type) {
+    case NewsType.SURVEY_QUESTION:
+      const userVote = item.votes.find((vote) => vote.votedBy === user.providerId);
+      return mapObjectWithReactions({
+        ...item,
+        userVote: userVote?.vote,
+        followedByUser: redisFeedEntry.followedByUser,
+        reactionForUser: redisFeedEntry.reaction ?? null,
+        createdAt: unixTimestampToDate(item.createdAt),
+        updatedAt: unixTimestampToDate(item.updatedAt),
+        projectId: item.projectId,
+      });
+    case NewsType.POST:
+      item.author.image = mapUrlToStrapiUrl(item.author.image);
+      break;
+    case NewsType.COLLABORATION_COMMENT:
+      item.author.image = mapUrlToStrapiUrl(item.author.image);
+      break;
+    case NewsType.COLLABORATION_QUESTION:
+      item.authors = mapUserImagesToStrapiUrls(item.authors);
+      break;
+    case NewsType.OPPORTUNITY:
+      if (item.contactPerson) {
+        item.contactPerson.image = mapUrlToStrapiUrl(item.contactPerson.image);
       }
-    }
+      break;
+    case NewsType.UPDATE:
+      item.author.image = mapUrlToStrapiUrl(item.author.image);
+      break;
+    case NewsType.PROJECT:
+      item.team = mapUserImagesToStrapiUrls(item.team);
+      item.image = mapImageFormatsToStrapiUrls(item.image);
+      if (item.author) {
+        item.author.image = mapUrlToStrapiUrl(item.author.image);
+      }
+      break;
+    case NewsType.EVENT:
+      item.image = mapImageFormatsToStrapiUrls(item.image);
+      if (item.author) {
+        item.author.image = mapUrlToStrapiUrl(item.author.image);
+      }
+      break;
   }
 
   return mapObjectWithReactions({
@@ -153,16 +171,28 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
   }) as NewsFeedEntry['item'];
 };
 
-const mapRelativeToAbsoluteImageUrl = (imageUrl: string | undefined): string | undefined => {
-  if (imageUrl) {
-    return imageUrl.replace(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}`, '');
-  }
+const mapUserImagesToStrapiUrls = (users: RedisUser[]) => {
+  users.forEach((user) => {
+    user.image = mapUrlToStrapiUrl(user.image);
+  });
+  return users;
 };
 
-const mapAuthorRelativeToAbsoluteImageUrls = (item: any) => {
-  if (item.author?.image) {
-    const newImageUrl = `${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}${mapRelativeToAbsoluteImageUrl(item.author.image)}`;
-    item.author.image = newImageUrl;
-    console.log(item.author.image);
+const mapImageFormatsToStrapiUrls = (image: ImageFormats | undefined) => {
+  const sizes = ['xxlarge', 'xlarge', 'large', 'medium', 'small', 'xsmall', 'thumbnail'] as const;
+  if (!image) return undefined;
+
+  for (const size of sizes) {
+    const imageSizeUrl = image[size]?.url;
+    const newImageSizeUrl = mapUrlToStrapiUrl(imageSizeUrl);
+    if (!image[size] || !newImageSizeUrl) continue;
+    image[size].url = newImageSizeUrl;
   }
+
+  return image;
+};
+
+const mapUrlToStrapiUrl = (imageUrl: string | undefined) => {
+  if (!imageUrl) return undefined;
+  return imageUrl.replaceAll('{strapi_host}', clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT);
 };
