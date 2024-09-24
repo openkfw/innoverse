@@ -26,6 +26,7 @@ interface BasicComment {
   author: User;
   comment: string;
   upvotedBy: User[];
+  updatedAt: Date;
 }
 
 export const CommentCard = (props: CommentCardProps) => {
@@ -62,7 +63,7 @@ export const CommentCard = (props: CommentCardProps) => {
   ) : (
     <TextCard
       text={comment.comment}
-      header={<CommentCardHeaderSecondary author={comment.author} />}
+      header={<CommentCardHeaderSecondary content={comment} />}
       footer={
         <CommentFooter
           author={comment.author}

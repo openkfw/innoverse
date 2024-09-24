@@ -70,6 +70,7 @@ export type Comment = {
   questionId?: string;
   createdAt: Date;
   isUpvotedByUser?: boolean;
+  updatedAt: Date;
 };
 
 export type CommentResponse = {
@@ -79,6 +80,7 @@ export type CommentResponse = {
   createdAt: Date;
   upvotedBy: User[];
   comment: Comment | CollaborationComment;
+  updatedAt: Date;
 };
 
 export type ResponseOption = {

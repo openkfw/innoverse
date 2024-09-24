@@ -16,7 +16,7 @@ You can find a full list of the environment variables in the [Environment variab
 
 ```bash
 # from project root
-cp ./postgres.env.example ./postgres/.env
+cp ./postgres/.env.example ./postgres/.env
 cp ./app/.env.example ./app/.env # and then fill the missing env vars in /app
 cp ./strapi/.env.example ./strapi/.env # and then fill the missing env vars in /strapi
 ```
@@ -27,10 +27,12 @@ Make sure you have three (3) .env files in total. One (1) in /postgres folder, o
 First start the components:
 
 ```bash
-docker-compose up
+sh startDev.sh
 ```
 
-then start the InnoVerse app locally
+This script starts the InnoVerse app, strapi, redis and the database in docker.
+
+For easier local development we suggest starting the InnoVerse app locally:
 
 ```bash
 cd ./app
@@ -114,10 +116,12 @@ The main focus should here be the `client` report, as we do not use any edge fun
 | REDIS_URL                                    | Y        | -       | Runtime   | Innoverse |
 | NEXTAUTH_URL                                 | Y        | -       | Runtime   | Innoverse |
 | NEWS_FEED_SYNC_SECRET                        | Y        | -       | Runtime   | Innoverse |
-| NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT          | Y        | -       | Buildtime | Innoverse |
-| NEXT_PUBLIC_STRAPI_ENDPOINT                  | Y        | -       | Buildtime | Innoverse |
 | STRAPI_TOKEN                                 | Y        | -       | Runtime   | Innoverse |
 | HTTP_BASIC_AUTH                              | Y        | -       | Runtime   | Innoverse |
+| NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT          | Y        | -       | Buildtime | Innoverse |
+| NEXT_PUBLIC_STRAPI_ENDPOINT                  | Y        | -       | Buildtime | Innoverse |
+| NEXT_PUBLIC_BUILDTIMESTAMP                   | Y        | -       | Buildtime | Innoverse |
+| NEXT_PUBLIC_CI_COMMIT_HASH                   | Y        | -       | Buildtime | Innoverse |
 | POSTGRES_USER                                | N        | -       | Runtime   | Innoverse |
 | POSTGRES_PASSWORD                            | N        | -       | Runtime   | Innoverse |
 | NEXTAUTH_AZURE_CLIENT_ID                     | N(\*)    | -       | Runtime   | Innoverse |
