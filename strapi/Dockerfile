@@ -12,7 +12,10 @@ ENV PATH /opt/node_modules/.bin:$PATH
 WORKDIR /opt/app
 COPY package.json package-lock.json ./
 RUN npm ci
-COPY . .
+COPY config/ ./config/
+COPY plugins/ ./plugins/
+COPY public/ ./public/
+COPY src/ ./src/
 
 RUN chown -R node:node /opt/app
 USER node
