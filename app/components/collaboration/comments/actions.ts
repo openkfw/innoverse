@@ -1,7 +1,7 @@
 'use server';
 import { StatusCodes } from 'http-status-codes';
 
-import { CollaborationComment, Comment, User, UserSession } from '@/common/types';
+import { CollaborationComment, Comment, Mention, User, UserSession } from '@/common/types';
 import { getCollaborationCommentById } from '@/repository/db/collaboration_comment';
 import {
   getCollaborationCommentResponseById,
@@ -22,7 +22,7 @@ import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import { getAllInnoUsersWithEmail, getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
@@ -305,3 +305,19 @@ export const handleProjectCollaborationCommentResponseUpvotedBy = withAuth(
     };
   },
 );
+
+export async function fetchMentionData(search: string): Promise<Mention[]> {
+  try {
+    const data = await getAllInnoUsersWithEmail();
+
+    const formattedData = data.map((user) => ({
+      id: `${user.id}|${user.email}`,
+      display: user.display,
+    }));
+
+    return formattedData.filter((user) => user.display.toLowerCase().includes(search.toLowerCase()));
+  } catch (error) {
+    console.error('Failed to load users:', error);
+    return [];
+  }
+}

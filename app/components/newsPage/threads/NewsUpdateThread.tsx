@@ -38,23 +38,20 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
 
   return (
     <CommentThread
-      comment={{ id: update.id, responseCount: update.responseCount ?? 0 }}
+      comment={{ id: update.id, responseCount: update.responseCount ?? 0, author: update.author }}
       card={<NewsUpdateCard update={update} onDelete={props.onDelete} onUpdate={handleUpdate} />}
       fetchResponses={fetchResponses}
       addResponse={addResponse}
       renderResponse={(response, idx, deleteResponse, updateResponse) => (
-        <Box width="98%" display="block " alignSelf="end">
-          <Box>
-            <NewsCommentThread
-              key={`${idx}-${response.id}`}
-              item={update}
-              comment={response}
-              commentType="NEWS_COMMENT"
-              level={1}
-              onDelete={deleteResponse}
-              onUpdate={updateResponse}
-            />
-          </Box>
+        <Box key={`${idx}-${response.id}`}>
+          <NewsCommentThread
+            item={update}
+            comment={response}
+            commentType="NEWS_COMMENT"
+            level={1}
+            onDelete={deleteResponse}
+            onUpdate={updateResponse}
+          />
         </Box>
       )}
     />

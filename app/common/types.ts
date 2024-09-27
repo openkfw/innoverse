@@ -454,3 +454,8 @@ export type StartPagination = {
 export type ChildTestProps = {
   'data-testid'?: string;
 };
+
+export interface Mention {
+  id: string;
+  display: string;
+}

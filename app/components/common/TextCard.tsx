@@ -28,12 +28,44 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const getText = () => {
-    const slicedText = isCollapsed ? text : text.slice(0, MAX_TEXT_LENGTH);
-    return parseStringForLinks(slicedText);
+    return isCollapsed ? text : text.slice(0, MAX_TEXT_LENGTH);
   };
 
   const handleToggle = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const processTextWithHighlighting = (text: string): React.ReactNode => {
+    const mentionRegex = /@\[(.*?)\]\((\d+)\|(.+?)\)/g;
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = mentionRegex.exec(text)) !== null) {
+      const [_fullMatch, name, id, _other] = match;
+      const matchStart = match.index;
+      const matchEnd = mentionRegex.lastIndex;
+
+      if (matchStart > lastIndex) {
+        const nonMentionText = text.substring(lastIndex, matchStart);
+        parts.push(parseStringForLinks(nonMentionText));
+      }
+
+      parts.push(
+        <Typography key={`mention-${id}-${matchStart}`} variant="body1" component="span" style={mentionStyle}>
+          {name}
+        </Typography>,
+      );
+
+      lastIndex = matchEnd;
+    }
+
+    if (lastIndex < text.length) {
+      const remainingText = text.substring(lastIndex);
+      parts.push(parseStringForLinks(remainingText));
+    }
+
+    return parts;
   };
 
   useEffect(() => {
@@ -49,7 +81,7 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
         <Stack direction="column" spacing={2}>
           <Box sx={{ ...textContainerStyle, overflowWrap: isCollapsed ? 'break-word' : 'unset' }}>
             <Typography variant="body1" sx={textStyle}>
-              {getText()}
+              {processTextWithHighlighting(getText())}
             </Typography>
             {!isCollapsed && (
               <Typography variant="subtitle2" onClick={handleToggle} sx={buttonOverlayStyle}>
@@ -65,7 +97,6 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
 };
 
 // Text Card Styles
-
 const cardStyle = {
   background: 'transparent',
   border: 'none',
@@ -111,4 +142,14 @@ const buttonOverlayStyle = {
   paddingLeft: '4px',
   cursor: 'pointer',
   boxShadow: '-10px 0 10px white',
+};
+
+const mentionStyle = {
+  fontFamily: 'KfW Centro Slab',
+  fontWeight: 700,
+  fontSize: '16px',
+  lineHeight: '24px',
+  letterSpacing: '0.15px',
+  display: 'inline',
+  color: '#398357',
 };

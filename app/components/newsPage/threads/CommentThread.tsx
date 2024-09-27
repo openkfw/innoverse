@@ -7,6 +7,7 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 
+import { User } from '@/common/types';
 import WriteCommentResponseCard from '@/components/common/comments/WriteCommentResponseCard';
 import { errorMessage } from '@/components/common/CustomToast';
 import { CommentThreadSkeleton } from '@/components/newsPage/cards/skeletons/CommentThreadSkeleton';
@@ -18,7 +19,7 @@ import { appInsights } from '@/utils/instrumentation/AppInsights';
 import { useEditingState } from '../../common/editing/editing-context';
 
 interface CommentThreadProps<TComment> {
-  comment: { id: string; responseCount: number };
+  comment: { id: string; responseCount: number; author?: User; anonymous?: boolean };
   card: React.ReactNode;
   disableDivider?: boolean;
   indentResponses?: React.CSSProperties['paddingLeft'];
@@ -36,6 +37,8 @@ interface ThreadComment {
   id: string;
   createdAt: Date;
   responseCount: number;
+  author?: User;
+  anonymous?: boolean;
 }
 
 type ResponseState<TComment> =
