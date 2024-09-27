@@ -145,7 +145,7 @@ const buttonOverlayStyle = {
 };
 
 const mentionStyle = {
-  fontFamily: 'KfW Centro Slab',
+  fontFamily: 'SlabMed',
   fontWeight: 700,
   fontSize: '16px',
   lineHeight: '24px',
