@@ -63,9 +63,8 @@ export const EditingContextProvider = ({ children }: PropsWithChildren) => {
 
   const initiateInteraction = useCallback(
     (item: ItemWithId, interactionType: 'edit' | 'respond') => {
-      // The same interaction is already in progress
-      // (e.g. 'respond' was clicked again on the same comment)
       if (interaction?.type === interactionType && interaction.itemId === item.id) {
+        setInteraction(undefined);
         return;
       }
       if (interaction) {
