@@ -2,19 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
-## [1.0.2](https://github.com/openkfw/innoverse/compare/v1.0.1...v1.0.2) (2024-09-27)
-
-
-### Documentation
-
-* describe release process in more detail ([b3f7746](https://github.com/openkfw/innoverse/commit/b3f7746cfa8d472d0981d9b3fce8f231879f5b45))
-* describe release process in more detail ([aaa75c3](https://github.com/openkfw/innoverse/commit/aaa75c35263e4bc67247e8f888e6caf38146f0df))
-
-
-### Bug Fixes
-
-* relative strapi urls for redis cache ([#25](https://github.com/openkfw/innoverse/issues/25)) ([8e20bcf](https://github.com/openkfw/innoverse/commit/8e20bcf70a77b7049300f5fac15481727a238108))
-
 ## [1.0.1](https://github.com/openkfw/innoverse/compare/v1.0.0...v1.0.1) (2024-09-24)
 
 ### Pipelines
