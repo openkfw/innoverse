@@ -14,7 +14,7 @@ module.exports = {
   types: [
     { type: "build", hidden: true },
     { type: "chore", hidden: true },
-    { type: "pipeline", hidden: true },
+    { type: "pipeline", section: "Pipeline" },
     { type: "docs", section: "Documentation" },
     { type: "feat", section: "Features" },
     { type: "fix", section: "Bug Fixes" },
