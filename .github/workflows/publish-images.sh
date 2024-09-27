@@ -47,7 +47,6 @@ done
 
 # Check if required variables are set
 if [ -z "$IMAGE_NAME" ] || [ -z "$PRIVATE_REGISTRY_URL" ] || [ -z "$PRIVATE_REGISTRY_PASSWORD" ] || [ -z "$PRIVATE_REGISTRY_USERNAME" ] \
-|| [ -z "$PRIVATE_PROD_REGISTRY_URL" ] || [ -z "$PRIVATE_PROD_REGISTRY_PASSWORD" ] || [ -z "$PRIVATE_PROD_REGISTRY_USERNAME" ]  \
 || [ -z "$PUBLIC_REGISTRY_URL" ] || [ -z "$PUBLIC_REGISTRY_PASSWORD" ] || [ -z "$PUBLIC_REGISTRY_USERNAME" ]; then
     echo "Error: Missing required parameters."
     Help
@@ -110,9 +109,9 @@ fi
 if [[ "$GITHUB_EVENT_NAME" = "release" ]];
 then
     # Push to the private prod registry
-    export TAG_RELEASE_PRIVATE="$PRIVATE_PROD_REGISTRY_URL/$IMAGE_NAME:$RELEASE_VERSION"
-    export TAG_LATEST_PRIVATE="$PRIVATE_PROD_REGISTRY_URL/$IMAGE_NAME:latest"
-    docker_login "$PRIVATE_PROD_REGISTRY_USERNAME" "$PRIVATE_PROD_REGISTRY_PASSWORD" "$PRIVATE_PROD_REGISTRY_URL"
+    export TAG_RELEASE_PRIVATE="$PRIVATE_REGISTRY_URL/$IMAGE_NAME:$RELEASE_VERSION"
+    export TAG_LATEST_PRIVATE="$PRIVATE_REGISTRY_URL/$IMAGE_NAME:latest"
+    docker_login "$PRIVATE_REGISTRY_USERNAME" "$PRIVATE_REGISTRY_PASSWORD" "$PRIVATE_REGISTRY_URL"
     docker_tag_and_push "$TEMP_TAG" "$TAG_LATEST_PRIVATE"
     docker_tag_and_push "$TEMP_TAG" "$TAG_RELEASE_PRIVATE"
 
