@@ -18,18 +18,19 @@ To create a release
 
    For more options, see the [commit and tag version github page](https://github.com/absolute-version/commit-and-tag-version/tree/master?tab=readme-ov-file#cli-usage)
 
-3. Review the changelog and edit it if needed
-4. Push changes and the newly created git tag:
+3. Review the changelog, edit it and commit if needed
+4. Push changes **without** the newly created tag (we create the tag on GitHub later)
 
-   `git push --follow-tags origin <branch>`
+   `git push`
 
 5. Create a pull request
 6. Wait for approval
 7. Set the branch merge strategy to squash and merge (squashed commit message: `chore(release): <release_version>`)
 8. Visit this [repository's release page](https://github.com/openkfw/innoverse/releases)
-9. Create a new release based on the new git tag.
+9. Create a new release
 
-- Make sure to check the option "Create a discussion for this release" and select the category "Announcements"
+- Create a new git tag pointing to correct commit on the main branch:
+- Check the option "Create a discussion for this release" and select the category "Announcements"
 
 ## Configuration
 
