@@ -21,7 +21,7 @@ To create a release
 3. Review the changelog, edit it and commit if needed
 4. Push changes **without** the newly created tag (we create the tag on GitHub later)
 
-   `git push`
+   `git push -u origin <branch_name>`
 
 5. Create a pull request
 6. Wait for approval
