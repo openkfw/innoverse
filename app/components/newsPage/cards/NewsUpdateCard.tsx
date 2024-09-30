@@ -5,7 +5,11 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import { ProjectUpdate } from '@/common/types';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { errorMessage } from '@/components/common/CustomToast';
-import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
+import {
+  useEditingInteractions,
+  useEditingState,
+  useRespondingInteractions,
+} from '@/components/common/editing/editing-context';
 import { UpdateCardContent } from '@/components/common/UpdateCardContent';
 import { UpdateCardActions } from '@/components/newsPage/cards/common/NewsUpdateCardActions';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
@@ -23,13 +27,14 @@ interface UpdateCardProps {
 export const NewsUpdateCard = (props: UpdateCardProps) => {
   const { update, onUpdate, onDelete, noClamp = false } = props;
   const state = useEditingState();
-  const interactions = useEditingInteractions();
+  const editingInteractions = useEditingInteractions();
+  const respondingInteractions = useRespondingInteractions();
 
   const handleUpdate = async (updatedText: string) => {
     try {
       await updateProjectUpdate({ updateId: update.id, comment: updatedText });
       onUpdate(updatedText);
-      interactions.onSubmitEdit();
+      editingInteractions.onSubmit();
     } catch (error) {
       console.error('Error updating project update:', error);
       errorMessage({ message: m.components_newsPage_cards_newsCard_error_update() });
@@ -55,7 +60,7 @@ export const NewsUpdateCard = (props: UpdateCardProps) => {
   };
 
   return state.isEditing(update) ? (
-    <WriteCommentCard content={update} onSubmit={handleUpdate} onDiscard={interactions.onCancelEdit} />
+    <WriteCommentCard content={update} onSubmit={handleUpdate} onDiscard={editingInteractions.onCancel} />
   ) : (
     <>
       <CommentCardHeader content={update} avatar={{ size: 32 }} />
@@ -63,8 +68,8 @@ export const NewsUpdateCard = (props: UpdateCardProps) => {
       <UpdateCardActions
         update={update}
         onDelete={handleDelete}
-        onEdit={() => interactions.onStartEdit(update)}
-        onResponse={() => interactions.onStartResponse(update)}
+        onEdit={() => editingInteractions.onStart(update)}
+        onResponse={() => respondingInteractions.onStart(update)}
       />
     </>
   );

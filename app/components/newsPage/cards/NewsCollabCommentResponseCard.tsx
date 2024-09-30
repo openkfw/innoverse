@@ -33,7 +33,7 @@ export const NewsCollabCommentResponseCard = (props: NewsCollabCommentResponseCa
         updatedAt: response.createdAt,
       }}
       onSubmit={updateResponse}
-      onDiscard={interactions.onCancelEdit}
+      onDiscard={interactions.onCancel}
     />
   ) : (
     <TextCard
@@ -43,7 +43,7 @@ export const NewsCollabCommentResponseCard = (props: NewsCollabCommentResponseCa
       }
       footer={
         <Stack direction={'row'} sx={{ mt: 0 }} style={{ marginTop: '8px', marginLeft: '-8px' }}>
-          {userIsAuthor && <EditControls onEdit={() => interactions.onStartEdit(response)} onDelete={deleteResponse} />}{' '}
+          {userIsAuthor && <EditControls onEdit={() => interactions.onStart(response)} onDelete={deleteResponse} />}{' '}
         </Stack>
       }
       contentSx={{ marginLeft: 4 }}

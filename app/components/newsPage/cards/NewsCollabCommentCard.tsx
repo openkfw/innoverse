@@ -14,7 +14,11 @@ import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { errorMessage } from '@/components/common/CustomToast';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
 import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
-import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
+import {
+  useEditingInteractions,
+  useEditingState,
+  useRespondingInteractions,
+} from '@/components/common/editing/editing-context';
 import { NewsCardControls } from '@/components/newsPage/cards/common/NewsCardControls';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
 import * as m from '@/src/paraglide/messages.js';
@@ -70,7 +74,8 @@ function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   const [comment, setComment] = useState(item);
 
   const state = useEditingState();
-  const interactions = useEditingInteractions();
+  const editingInteractions = useEditingInteractions();
+  const respondingInteractions = useRespondingInteractions();
   const { user } = useUser();
   const userIsAuthor = comment.author.providerId === user?.providerId;
 
@@ -78,7 +83,7 @@ function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
     try {
       await updateProjectCollaborationComment({ commentId: comment.id, updatedText });
       setComment({ ...comment, comment: updatedText });
-      interactions.onSubmitEdit();
+      editingInteractions.onSubmit();
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
       errorMessage({ message: m.components_collaboration_comments_collaborationCommentCard_updateError() });
@@ -108,9 +113,9 @@ function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
     question,
     displayEditingControls: userIsAuthor,
     isEditing: state.isEditing(comment),
-    startEditing: () => interactions.onStartEdit(comment),
-    startResponse: () => interactions.onStartResponse(comment),
-    cancelEditing: (params: { isDirty: boolean }) => interactions.onCancelEdit(params),
+    startEditing: () => editingInteractions.onStart(comment),
+    startResponse: () => respondingInteractions.onStart(comment),
+    cancelEditing: editingInteractions.onCancel,
     handleUpdate,
     handleDelete,
   };
