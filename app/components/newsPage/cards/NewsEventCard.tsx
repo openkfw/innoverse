@@ -7,11 +7,13 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { Event } from '@/common/types';
 import EventCardHeader from '@/components/landing/eventsSection/EventCardHeader';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
+import { highlightText } from '@/utils/highlightText';
 
 interface NewsSurveyCardProps {
   event: Event;
@@ -24,6 +26,9 @@ function NewsEventCard(props: NewsSurveyCardProps) {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
   const image = getImageByBreakpoint(isSmallScreen, event?.image) || defaultImage;
+
+  const { filters } = useNewsFeed();
+  const { searchString } = filters;
 
   return (
     <>
@@ -44,10 +49,10 @@ function NewsEventCard(props: NewsSurveyCardProps) {
         </CardMedia>
         <CardContent sx={cardContentStyles}>
           <Typography variant="h6" sx={titleStyles}>
-            {event.title}
+            {highlightText(event.title, searchString)}
           </Typography>
           <Typography variant="body1" sx={descriptionStyles} data-testid="text">
-            {event.description}
+            {highlightText(event.description, searchString)}
           </Typography>
         </CardContent>
       </Box>

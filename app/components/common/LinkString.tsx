@@ -1,6 +1,10 @@
+import React from 'react';
+
 import Link from '@mui/material/Link';
 
-export const parseStringForLinks = (text: string): React.ReactNode | string => {
+import { highlightText } from '@/utils/highlightText';
+
+export const parseStringForLinks = (text: string, searchString?: string): React.ReactNode => {
   const urlRegex = /((?:https?:\/\/)?(?:www\.|localhost:\d{1,5})?[^\s]+\.[^\s]+|https?:\/\/localhost:\d{1,5}[^\s]*)/g;
   const parts = text.split(urlRegex);
 
@@ -12,7 +16,7 @@ export const parseStringForLinks = (text: string): React.ReactNode | string => {
         </Link>
       );
     } else {
-      return part;
+      return highlightText(part, searchString);
     }
   });
 };

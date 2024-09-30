@@ -3,6 +3,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import Typography from '@mui/material/Typography';
 
+import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { useUser } from '@/app/contexts/user-context';
 import { Post, UserSession } from '@/common/types';
 import CardContentWrapper from '@/components/common/CardContentWrapper';
@@ -24,6 +25,8 @@ interface NewsPostCardProps {
 }
 function NewsPostCard(props: NewsPostCardProps) {
   const { onDelete } = props;
+  const { filters } = useNewsFeed();
+  const { searchString } = filters;
 
   const [post, setPost] = useState(props.post);
 
@@ -77,7 +80,7 @@ function NewsPostCard(props: NewsPostCardProps) {
       <CommentCardHeader content={post} avatar={{ size: 32 }} />
       <CardContentWrapper>
         <Typography color="text.primary" variant="body1" data-testid="text">
-          {parseStringForLinks(post.content)}
+          {parseStringForLinks(post.content, searchString)}
         </Typography>
       </CardContentWrapper>
       <NewsCardControls>

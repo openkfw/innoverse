@@ -7,6 +7,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { Project } from '@/common/types';
 import ProgressBar from '@/components/common/ProgressBar';
 import { defaultImage } from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
@@ -14,6 +15,7 @@ import VisibleContributors from '@/components/project-details/VisibleContributor
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
+import { highlightText } from '@/utils/highlightText';
 
 import CommentOverview from './common/CommentOverview';
 
@@ -26,6 +28,9 @@ function NewsProjectCard(props: NewsProjectCardProps) {
 
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
   const image = getImageByBreakpoint(!isWideScreen, project.image) || defaultImage;
+
+  const { filters } = useNewsFeed();
+  const { searchString } = filters;
 
   if (project?.comments?.length > 0) {
     return (
@@ -59,7 +64,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
           <VisibleContributors contributors={project.team} />
           <Typography variant="h5" sx={titleStyles}>
             <Link href={`/projects/${encodeURIComponent(project.id)}`} style={linkStyles}>
-              {project.title}
+              {highlightText(project.title, searchString)}
             </Link>
           </Typography>
           <Typography
@@ -67,7 +72,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
             sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? 4 : 6 }}
             data-testid="text"
           >
-            {project.summary}
+            {highlightText(project.summary, searchString)}
           </Typography>
         </CardContent>
       </Box>
