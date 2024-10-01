@@ -8,12 +8,11 @@ import Grid from '@mui/material/Grid';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { SurveyQuestion } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
-import { highlightText } from '@/utils/highlightText';
+import { HighlightText } from '@/utils/highlightText';
 
 import { handleSurveyVote } from './actions';
 import { SurveyResponsePicker } from './SurveyResponsePicker';
@@ -44,15 +43,13 @@ type SurveyVoteResponses = {
 export const SurveyCard = (props: SurveyCardProps) => {
   const { selectedOption, handleVote, votesPerOption } = useSurveyCard(props);
   const { surveyQuestion, sx, fill = false } = props;
-  const { filters } = useNewsFeed();
-  const { searchString } = filters;
 
   return (
     <Grid container item sx={sx}>
       <Grid container item xs={12} md={fill ? 12 : 6} direction="column" sx={leftGridStyles}>
         <Grid item>
           <Typography variant="h5" color="secondary.contrastText" style={{ fontSize: 20 }} data-testid="text">
-            {highlightText(surveyQuestion.question, searchString)}
+            <HighlightText text={surveyQuestion.question} />
           </Typography>
         </Grid>
       </Grid>

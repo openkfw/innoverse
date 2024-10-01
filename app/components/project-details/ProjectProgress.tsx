@@ -15,7 +15,6 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { Project } from '@/common/types';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
@@ -165,9 +164,6 @@ const ProjectDescription = ({ project }: { project: Project }) => {
 };
 
 const InfoItemRight = ({ title, summary }: InfoItemProps) => {
-  const { filters } = useNewsFeed();
-  const { searchString } = filters;
-
   return (
     <Card sx={infoItemRightStyle} elevation={0}>
       <CardContent sx={{ p: '18px', pb: 1 }}>
@@ -195,7 +191,7 @@ const InfoItemRight = ({ title, summary }: InfoItemProps) => {
             ...subtitleStyle,
           }}
         >
-          {parseStringForLinks(summary, searchString)}
+          {parseStringForLinks(summary)}
         </Typography>
       </CardContent>
     </Card>

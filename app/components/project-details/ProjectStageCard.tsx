@@ -6,7 +6,6 @@ import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { Project } from '@/common/types';
 import ContinueIcon from '@/components/icons/ContinueIcon';
 import * as m from '@/src/paraglide/messages.js';
@@ -21,8 +20,6 @@ interface TimingDataProps {
 
 const ProjectStageCard = (props: TimingDataProps) => {
   const { project } = props;
-  const { filters } = useNewsFeed();
-  const { searchString } = filters;
 
   function readMore() {
     const newUrl = `${window.location.pathname}?tab=0`;
@@ -53,7 +50,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
           <ProgressBar active={project.status} />
           <Stack sx={descriptionWrapperStyles}>
             <Typography variant="body1" sx={descriptionStyles}>
-              {parseStringForLinks(project.summary, searchString)}
+              {parseStringForLinks(project.summary)}
             </Typography>
             <Button onClick={readMore} sx={buttonStyles} startIcon={<ContinueIcon />}>
               <Typography variant="button" sx={buttonTextStyles}>

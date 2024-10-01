@@ -3,7 +3,6 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import Typography from '@mui/material/Typography';
 
-import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { useUser } from '@/app/contexts/user-context';
 import { CollaborationComment } from '@/common/types';
 import {
@@ -19,7 +18,7 @@ import { useEditingInteractions, useEditingState } from '@/components/common/edi
 import { NewsCardControls } from '@/components/newsPage/cards/common/NewsCardControls';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
 import * as m from '@/src/paraglide/messages.js';
-import { highlightText } from '@/utils/highlightText';
+import { HighlightText } from '@/utils/highlightText';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
 
 import CommentOverview from './common/CommentOverview';
@@ -42,9 +41,6 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
     handleDelete,
   } = useNewsCollabCommentCard(props);
 
-  const { filters } = useNewsFeed();
-  const { searchString } = filters;
-
   return isEditing ? (
     <WriteCommentCard
       content={{ author: comment.author, comment: comment.comment, updatedAt: comment.updatedAt }}
@@ -57,7 +53,7 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
       <CommentCardHeader content={comment} avatar={{ size: 32 }} />
       <CardContentWrapper>
         <Typography color="text.primary" variant="body1">
-          {highlightText(comment.comment, searchString)}
+          <HighlightText text={comment.comment} />
         </Typography>
       </CardContentWrapper>
       <NewsCardControls>

@@ -3,9 +3,8 @@ import Image from 'next/image';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { parseStringForLinks } from '@/components/common/LinkString';
-import { highlightText } from '@/utils/highlightText';
+import { HighlightText } from '@/utils/highlightText';
 
 interface CommentOverviewProps {
   title: string;
@@ -20,8 +19,6 @@ function CommentOverview(props: CommentOverviewProps) {
 
 const CommentOverviewContent = (props: CommentOverviewProps) => {
   const { title, description, image } = props;
-  const { filters } = useNewsFeed();
-  const { searchString } = filters;
 
   return (
     <Box sx={wrapperStyles}>
@@ -29,11 +26,11 @@ const CommentOverviewContent = (props: CommentOverviewProps) => {
 
       <Box sx={textWrapperStyles}>
         <Typography variant="h5" sx={titleStyles}>
-          {highlightText(title, searchString)}
+          <HighlightText text={title} />
         </Typography>
 
         <Typography variant="body1" sx={descriptionStyles}>
-          {parseStringForLinks(description, searchString)}
+          {parseStringForLinks(description)}
         </Typography>
       </Box>
     </Box>

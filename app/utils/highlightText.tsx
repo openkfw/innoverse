@@ -1,18 +1,24 @@
-import React from 'react';
+import { useHighlightContext } from '@/app/contexts/highlight-context';
+import React, { useMemo } from 'react';
 
-export const highlightText = (text: string | undefined, searchString?: string): React.ReactNode => {
-  if (!text) return;
-  if (!searchString) return text;
 
-  const parts = text.split(new RegExp(`(${searchString})`, 'gi'));
+export function HighlightText({ text }: { text: string | undefined }) {
+  const { highlightString } = useHighlightContext();
+  const regex = useMemo(() => new RegExp(`(${highlightString})`, 'gi'), [highlightString]);
 
-  return parts.map((part, index) =>
-    part.toLowerCase() === searchString.toLowerCase() ? (
-      <span key={index} style={{ backgroundColor: '#FFE95E' }}>
-        {part}
-      </span>
-    ) : (
-      part
-    ),
-  );
-};
+  const renderText = (text: string | undefined) => {
+    if (!text) return;
+    const parts = text.split(regex);
+    return parts.map((part, index) =>
+      part.toLowerCase() === highlightString?.toLowerCase() ? (
+        <span key={index} style={{ backgroundColor: '#FFE95E' }}>
+          {part}
+        </span>
+      ) : (
+        part
+      ),
+    );
+  };
+
+  return <>{renderText(text)}</>;
+}
