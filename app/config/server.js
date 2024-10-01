@@ -14,11 +14,11 @@ const RequiredBuildTimeEnv = z
   .object({
     STAGE: z.enum(['development', 'test', 'build', 'production', 'lint']).default('development'),
     NEXT_PUBLIC_BUILDTIMESTAMP: z
-      .string({ errorMap: () => ({ message: 'NEXT_PUBLIC_BUILDTIMESTAMP is not' }) })
+      .string({ errorMap: () => ({ message: 'NEXT_PUBLIC_BUILDTIMESTAMP is not set' }) })
       .default(''),
     NEXT_PUBLIC_CI_COMMIT_SHA: z
-      .string({ errorMap: () => ({ message: 'NEXT_PUBLIC_CI_COMMIT_SHA is not' }) })
-      .default(''),
+      .string({ errorMap: () => ({ message: 'NEXT_PUBLIC_CI_COMMIT_SHA is not set' }) })
+      .default('')
   })
   .superRefine((values, ctx) => {
     const { STAGE } = values;
@@ -118,6 +118,15 @@ const RequiredRunTimeEnv = z
     validateEnvVariables(required, DATABASE_URL, REDIS_URL, HTTP_BASIC_AUTH, ctx);
   });
 
+// Optional at build-time
+const OptionalBuildTimeEnv = z
+  .object({
+    ALLOWED_ORIGINS: z
+      .string()
+      .transform((origins) => origins.split(','))
+      .optional()
+  })
+
 // Optional at run-time
 const OptionalRunTimeEnv = z
   .object({
@@ -211,7 +220,12 @@ const OptionalRunTimeEnv = z
         message:
           'Looks like the required environment variables for push-notifications are not set in the UI but in the server (or vice versa)',
         code: z.ZodIssueCode.custom,
-        path: ['VAPID_PRIVATE_KEY', 'VAPID_ADMIN_EMAIL', 'NEXT_PUBLIC_VAPID_PUBLIC_KEY', 'STRAPI_PUSH_NOTIFICATION_SECRET'],
+        path: [
+          'VAPID_PRIVATE_KEY',
+          'VAPID_ADMIN_EMAIL',
+          'NEXT_PUBLIC_VAPID_PUBLIC_KEY',
+          'STRAPI_PUSH_NOTIFICATION_SECRET',
+        ],
       });
     }
 
@@ -231,11 +245,13 @@ const OptionalRunTimeEnv = z
 // If we run 'next build' the required runtime env variables can be empty, at run-time checks will be applied...
 // NEXT_PUBLIC_* are checked in client.js
 const requiredBuildEnv = RequiredBuildTimeEnv.parse(process.env);
+const optionalBuildTimeEnv = OptionalBuildTimeEnv.parse(process.env);
 const optionalRunTimeEnv = OptionalRunTimeEnv.parse(process.env);
 const requiredRunTimeEnv = RequiredRunTimeEnv.parse(process.env);
 
 module.exports.serverConfig = {
   ...requiredBuildEnv,
+  ...optionalBuildTimeEnv,
   ...requiredRunTimeEnv,
   ...optionalRunTimeEnv,
 };
