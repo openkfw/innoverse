@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import getLogger from '@/utils/logger';
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { StatusCodes } from 'http-status-codes';
-import { serverConfig } from '@/config/server';
 import { clientConfig } from '@/config/client';
 
 const logger = getLogger();
