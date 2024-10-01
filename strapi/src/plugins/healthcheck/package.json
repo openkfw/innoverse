@@ -1,0 +1,27 @@
+{
+  "name": "healthcheck",
+  "version": "1.0.0",
+  "description": "Provides a /health healthcheck for providing strapi readiness",
+  "license": "MIT",
+  "author": {
+    "name": "Innoverse development team"
+  },
+  "maintainers": [
+    {
+      "name": "Innoverse development team"
+    }
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.server.json",
+    "develop": "tsc -p tsconfig.server.json -w"
+  },
+  "engines": {
+    "node": ">=18.0.0 <=20.x.x",
+    "npm": ">=6.0.0"
+  },
+  "strapi": {
+    "name": "healthcheck",
+    "description": "Provides a /health healthcheck for providing strapi readiness",
+    "kind": "plugin"
+  }
+}
