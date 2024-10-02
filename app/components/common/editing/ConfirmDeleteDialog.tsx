@@ -1,4 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import Box from '@mui/material/Box';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Dialog from '@mui/material/Dialog';
@@ -6,29 +7,17 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import CustomButton from '../CustomButton';
 
-import { useUnsavedEditingChangesDialog } from './editing-context';
-
-interface UnsavedChangesDialogProps {
+interface ConfirmDeleteDialogProps {
   open: boolean;
-  onProceed: () => void;
-  onDismiss: () => void;
+  onConfirm: () => void;
   onCancel: () => void;
 }
 
-export const UnsavedEditingChangesDialog = () => {
-  // The 'useUnsavedEditingChangesDialog' hook causes this component to rerender
-  // whenever a user initiates/discards an edit or response. Isolating this into
-  // a separate components can help reduce rerendering overhead.
-  const dialog = useUnsavedEditingChangesDialog();
-  return dialog;
-};
-
-export const UnsavedChangesDialog = ({ open, onProceed, onDismiss }: UnsavedChangesDialogProps) => {
+export const ConfirmDeleteDialog = ({ open, onConfirm, onCancel }: ConfirmDeleteDialogProps) => {
   return (
     <Dialog
       open={open}
@@ -51,33 +40,27 @@ export const UnsavedChangesDialog = ({ open, onProceed, onDismiss }: UnsavedChan
         },
       }}
     >
-      <ClickAwayListener onClickAway={onDismiss}>
+      <ClickAwayListener onClickAway={onCancel}>
         <Box sx={containerStyle}>
-          <CloseIcon onClick={onDismiss} sx={closeIconStyle} />
+          <CloseIcon onClick={onCancel} sx={closeIconStyle} />
           <Typography variant="body2" color="text.primary" sx={textStyle}>
-            {m.components_common_editing_unsavedChangesDialog_throw()}
+            Möchtest du diesen Beitrag löschen?
           </Typography>
           <Stack direction={'row'} alignItems={'flex-start'} gap={'8px'} flexWrap={'wrap'}>
-            <CustomButton
-              themeVariant="secondary"
-              startIcon={<></>}
-              endIcon={<></>}
-              onClick={onDismiss}
-              sx={buttonStyle}
-            >
-              {m.components_common_editing_unsavedChangesDialog_cancel()}
+            <CustomButton themeVariant="secondary" endIcon={null} onClick={onCancel} sx={buttonStyle}>
+              Abbrechen
             </CustomButton>
             <CustomButton
               themeVariant="secondary"
-              startIcon={<></>}
-              endIcon={<></>}
-              onClick={onProceed}
+              startIcon={<DeleteOutlinedIcon />}
+              endIcon={null}
+              onClick={onConfirm}
               sx={{
                 ...buttonStyle,
                 backgroundColor: '#B7F9AA',
               }}
             >
-              {m.components_common_editing_unsavedChangesDialog_confirmThrow()}
+              Löschen
             </CustomButton>
           </Stack>
         </Box>
