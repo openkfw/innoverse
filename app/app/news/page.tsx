@@ -14,6 +14,7 @@ import { NewsFeed } from '../../components/newsPage/NewsFeed';
 import { NewsFeedContextProvider } from '../contexts/news-feed-context';
 
 import backgroundImage from '/public/images/news-background.png';
+import { NewsFeedHighlightContextProvider } from '@/app/contexts/highlight-context';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,9 +51,11 @@ async function NewsFeedPage() {
           projects={props.projects}
           types={props.types}
         >
-          <NewsFeedContainer>
-            <NewsFeed />
-          </NewsFeedContainer>
+          <NewsFeedHighlightContextProvider>
+            <NewsFeedContainer>
+              <NewsFeed />
+            </NewsFeedContainer>
+          </NewsFeedHighlightContextProvider>
         </NewsFeedContextProvider>
       </Container>
     </Stack>

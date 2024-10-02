@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 import { useNewsFeed } from './news-feed-context';
@@ -8,7 +10,7 @@ interface HighlightContext {
 
 const HighlightContext = createContext<HighlightContext>({});
 
-export function HighlightContextProvider(props: PropsWithChildren) {
+export function NewsFeedHighlightContextProvider(props: PropsWithChildren) {
   const [highlightString, setHighlightString] = useState<string>();
   const { filters } = useNewsFeed();
 
