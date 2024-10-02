@@ -1,5 +1,5 @@
 import * as React from 'react';
-import data from '@emoji-mart/data';
+import data from '@emoji-mart/data/sets/15/apple.json';
 import Picker from '@emoji-mart/react';
 
 import Popper from '@mui/material/Popper';
@@ -23,6 +23,12 @@ export default function EmojiPickerCard(props: EmojiPickerCardProps) {
       <Picker
         saveFeedback
         data={data}
+        set="apple"
+        theme="light"
+        locale="de"
+        icons="auto"
+        autoFocus={false}
+        searchPosition="sticky"
         previewPosition={isSmallScreen ? 'none' : 'bottom'}
         maxFrequentRows={isSmallScreen ? 1 : 4}
         skinTonePosition={isSmallScreen ? 'none' : 'preview'}

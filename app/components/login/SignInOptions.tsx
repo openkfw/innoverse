@@ -45,7 +45,7 @@ export default function SignInOptions({ providers: providersForPage }: SignInOpt
           handleNoProvider();
         } else {
           const filteredProviders = filterProviders(providers);
-          !filteredProviders ? handleNoProvider() : setSignInProviders(filteredProviders);
+          !filteredProviders.length ? handleNoProvider() : setSignInProviders(filteredProviders);
         }
       } catch (error) {
         console.error('Failed to fetch sign-in providers:', error);

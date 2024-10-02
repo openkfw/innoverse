@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { SxProps } from '@mui/material/styles';
 
 import { User } from '@/common/types';
-import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
+import { useRespondingInteractions, useRespondingState } from '@/components/common/editing/editing-context';
 
 import WriteTextCard from '../editing/writeText/WriteTextCard';
 
@@ -17,29 +17,30 @@ interface WriteCommentResponseCardProps {
 
 const WriteCommentResponseCard = ({ comment, projectName, onRespond, sx }: WriteCommentResponseCardProps) => {
   const [disabled, setDisabled] = useState(false);
-  const editingState = useEditingState();
-  const editingInteractions = useEditingInteractions();
+  const respondingState = useRespondingState();
+  const respondingInteractions = useRespondingInteractions();
 
   const handleResponse = async (comment: string) => {
     setDisabled(true);
     await onRespond(comment);
-    editingInteractions.onSubmitResponse();
+    respondingInteractions.onSubmit();
     setDisabled(false);
   };
 
   return (
-    editingState.isResponding(comment) && (
+    respondingState.isEditing(comment) && (
       <WriteTextCard
         sx={sx}
         metadata={{ projectName }}
+        onSubmit={handleResponse}
+        onDiscard={respondingInteractions.onCancel}
+        disabled={disabled}
         defaultValues={{
           text:
             !comment.anonymous && comment.author
               ? `@[${comment.author.name}](${comment.author.id}|${comment.author.email})`
               : '',
         }}
-        onSubmit={handleResponse}
-        disabled={disabled}
       />
     )
   );
