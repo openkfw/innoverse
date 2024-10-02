@@ -49,6 +49,7 @@ const clientEnvConfig = createEnvConfig({
     {
       variables: ['NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING', 'NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY'],
       mode: 'none_or_all',
+      stages: ['development', 'test', 'production'],
       errorMessage: 'All Application Insights variables are required to enable Azure Application Insights',
     },
   ],

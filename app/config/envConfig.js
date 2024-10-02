@@ -32,10 +32,10 @@ const addVariableValidation = (schema, envConfig) => {
     configKeys.forEach((configKey) => {
       const variableConfig = envConfig.variables[configKey];
 
-      // Check if env variable should be checked for this stage
-      const noStageApplies = variableConfig.stages?.every((stage) => stage !== currentStage) ?? false;
+      // Check if env variable should be checked at this stage
+      const stagesApplies = variableConfig.stages?.some((stage) => stage === currentStage) ?? true;
 
-      if (noStageApplies) {
+      if (!stagesApplies) {
         return;
       }
 
@@ -73,6 +73,13 @@ const addVariableValidation = (schema, envConfig) => {
 
     // Validate env variable groups
     envConfig.groups.forEach((group) => {
+      // Check if env variable group should be checked at this stage
+      const stageApplies = group.stages?.some((stage) => stage === currentStage) ?? true;
+
+      if (!stageApplies) {
+        return;
+      }
+
       const groupValues = group.variables.map((variable) => values[variable]);
       const noneAreSet = groupValues.every((value) => !valueExists(value));
 

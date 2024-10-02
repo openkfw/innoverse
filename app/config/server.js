@@ -157,16 +157,19 @@ const serverEnvConfig = createEnvConfig({
     {
       variables: ['NEXTAUTH_AZURE_CLIENT_ID', 'NEXTAUTH_AZURE_CLIENT_SECRET', 'NEXTAUTH_AZURE_CLIENT_SECRET'],
       mode: 'none_or_all',
+      stages: runtimeStages,
       errorMessage: 'Azure auth env variables not all defined',
     },
     {
       variables: ['NEXTAUTH_GITLAB_URL', 'NEXTAUTH_GITLAB_ID', 'NEXTAUTH_GITLAB_SECRET'],
       mode: 'none_or_all',
+      stages: runtimeStages,
       errorMessage: 'Gitlab auth env variables not all defined',
     },
     {
       variables: ['NEXTAUTH_CREDENTIALS_USERNAME', 'NEXTAUTH_CREDENTIALS_PASSWORD'],
       mode: 'none_or_all',
+      stages: runtimeStages,
       errorMessage: 'Credential auth env variables not all defined',
     },
     {
@@ -181,6 +184,7 @@ const serverEnvConfig = createEnvConfig({
         'NEXTAUTH_CREDENTIALS_PASSWORD',
       ],
       mode: 'at_least_one',
+      stages: runtimeStages,
       errorMessage: 'At least one type of authentication has to be set',
     },
   ],
