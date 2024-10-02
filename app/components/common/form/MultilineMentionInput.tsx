@@ -88,7 +88,7 @@ const mentionInputStyle = {
   },
   mentionsInput: {
     control: {
-      backgroundColor: 'white',
+      backgroundColor: '#FFFFFF',
       fontSize: 14,
       fontFamily: 'SansDefaultMed',
       minHeight: 200,
@@ -106,17 +106,22 @@ const mentionInputStyle = {
     },
     suggestions: {
       list: {
-        backgroundColor: 'white',
-        border: '1px solid rgba(0,0,0,0.15)',
+        border: '1px solid #000000',
+        borderRadius: '5px',
+        backgroundColor: '#FFFFFF',
         overflow: 'auto',
-        maxHeight: 280,
+        padding: 0,
+        maxHeight: 275,
+        margin: '-2px',
       },
       item: {
         padding: '5px 15px',
         borderBottom: '1px solid rgba(0,0,0,0.15)',
+        backgroundColor: '#FFFFFF',
+        transition: 'background-color 0.2s ease-in-out',
         '&focused': {
-          backgroundColor: '#2677f0',
-          color: 'white',
+          backgroundColor: '#004267',
+          color: '#FFFFFF',
         },
       },
     },
