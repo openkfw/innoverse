@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 const { z } = require('zod');
-const { someOrAllNotSet } = require('./helper');
+const { someOrAllNotSet, formatErrors } = require('./helper');
 const { env } = require('next-runtime-env');
 
 const Config = z
@@ -70,7 +70,7 @@ const clientConfig = Config.safeParse({
 });
 
 if (!clientConfig.success) {
-  console.error(clientConfig.error.issues);
+  console.error(formatErrors(clientConfig.error));
   throw new Error('There is an error with the client environment variables');
 }
 
