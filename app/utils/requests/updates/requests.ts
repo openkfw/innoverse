@@ -15,10 +15,11 @@ import {
 import { handleProjectUpdatesSchema } from '@/components/updates/validationSchema';
 import { RequestError } from '@/entities/error';
 import { getFollowedByForEntity } from '@/repository/db/follow';
+import { getNewsCommentsStartingFrom } from '@/repository/db/news_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { countNumberOfReactions, findReaction, getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
-import { InnoPlatformError, strapiError } from '@/utils/errors';
+import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
 import { getPromiseResults, getUniqueValues, getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapReaction } from '@/utils/newsFeed/redis/redisMappings';
@@ -43,7 +44,6 @@ import {
   GetUpdatesStartingFromQuery,
 } from '@/utils/requests/updates/queries';
 import { validateParams } from '@/utils/validationHelper';
-import { getNewsCommentsStartingFrom } from '@/repository/db/news_comment';
 
 const logger = getLogger();
 
@@ -235,51 +235,71 @@ export const getUpdateWithReactions = withAuth(async (user: UserSession, body: {
 export async function getUpdateWithAdditionalData(
   update: ProjectUpdate | ProjectUpdateWithAdditionalData,
 ): Promise<ProjectUpdateWithAdditionalData> {
-  const { data: reactionForUser } = await findReactionByUser({ objectType: ObjectType.UPDATE, objectId: update.id });
-  const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.UPDATE, update.id);
-  const { data: followedByUser } = await isProjectFollowedByUser({ projectId: update.projectId });
+  try {
+    const { data: reactionForUser } = await findReactionByUser({ objectType: ObjectType.UPDATE, objectId: update.id });
+    const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.UPDATE, update.id);
+    const { data: followedByUser } = await isProjectFollowedByUser({ projectId: update.projectId });
 
-  const reactionCount = reactionCountResult.map((r) => ({
-    count: r._count.shortCode,
-    emoji: {
-      shortCode: r.shortCode,
-      nativeSymbol: r.nativeSymbol,
-    },
-  }));
+    const reactionCount = reactionCountResult.map((r) => ({
+      count: r._count.shortCode,
+      emoji: {
+        shortCode: r.shortCode,
+        nativeSymbol: r.nativeSymbol,
+      },
+    }));
 
-  return {
-    ...update,
-    reactionForUser: reactionForUser ? mapReaction(reactionForUser) : undefined,
-    followedByUser,
-    reactionCount,
-  };
-}
-
-export async function getNewsFeedEntry(entry: any): Promise<NewsFeedEntry> {
-  const { data: reactionForUser } = await findReactionByUser({
-    objectType: ObjectType.UPDATE,
-    objectId: entry.item.id,
-  });
-  const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.UPDATE, entry.item.id);
-  const { data: followedByUser } = await isProjectFollowedByUser({ projectId: entry.item.projectId });
-
-  const reactionCount = reactionCountResult.map((r) => ({
-    count: r._count.shortCode,
-    emoji: {
-      shortCode: r.shortCode,
-      nativeSymbol: r.nativeSymbol,
-    },
-  }));
-
-  return {
-    ...entry,
-    item: {
-      ...entry.item,
+    return {
+      ...update,
       reactionForUser: reactionForUser ? mapReaction(reactionForUser) : undefined,
       followedByUser,
       reactionCount,
-    },
-  };
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Getting additional data for update with id: ${update.id}`,
+      err as Error,
+      update.id,
+    );
+    logger.error(error);
+    throw err;
+  }
+}
+
+export async function getNewsFeedEntry(entry: any): Promise<NewsFeedEntry> {
+  try {
+    const { data: reactionForUser } = await findReactionByUser({
+      objectType: ObjectType.UPDATE,
+      objectId: entry.item.id,
+    });
+    const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.UPDATE, entry.item.id);
+    const { data: followedByUser } = await isProjectFollowedByUser({ projectId: entry.item.projectId });
+
+    const reactionCount = reactionCountResult.map((r) => ({
+      count: r._count.shortCode,
+      emoji: {
+        shortCode: r.shortCode,
+        nativeSymbol: r.nativeSymbol,
+      },
+    }));
+
+    return {
+      ...entry,
+      item: {
+        ...entry.item,
+        reactionForUser: reactionForUser ? mapReaction(reactionForUser) : undefined,
+        followedByUser,
+        reactionCount,
+      },
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Getting news feed entry for update with id: ${entry.item.id}`,
+      err as Error,
+      entry.item.id,
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export const findReactionByUser = withAuth(
@@ -348,7 +368,7 @@ export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: St
 
     return updates;
   } catch (err) {
-    const error = strapiError(`Getting updates starting from ${from}`, err as RequestError);
+    const error = strapiError(`Getting updates on news comments starting from ${from}`, err as RequestError);
     logger.error(error);
   }
 }

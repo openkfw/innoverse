@@ -2,6 +2,7 @@ import { ObjectType } from '@/common/types';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getAllPushSubscriptions } from '@/repository/db/push_subscriptions';
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import { mapObjectWithReactions } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapEventToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
@@ -42,18 +43,24 @@ export class EventLifecycle extends StrapiEntityLifecycle {
   };
 
   private buildNotifications = async (): Promise<NotificationRequest[]> => {
-    const allSubscriptions = await getAllPushSubscriptions(dbClient);
-    return allSubscriptions.map((subscription) => {
-      return {
-        subscriptions: subscription.subscriptions,
-        userId: subscription.userId,
-        notification: {
-          topic: 'event',
-          body: `Ein neues Event wurde kürzlich hinzugefügt.`,
-          url: '/',
-        },
-      };
-    });
+    try {
+      const allSubscriptions = await getAllPushSubscriptions(dbClient);
+      return allSubscriptions.map((subscription) => {
+        return {
+          subscriptions: subscription.subscriptions,
+          userId: subscription.userId,
+          notification: {
+            topic: 'event',
+            body: `Ein neues Event wurde kürzlich hinzugefügt.`,
+            url: '/',
+          },
+        };
+      });
+    } catch (err) {
+      const error: InnoPlatformError = dbError(`Build notifications`, err as Error);
+      logger.error(error);
+      throw err;
+    }
   };
 
   private saveEventToCache = async (eventId: string, options: { createIfNew: boolean } = { createIfNew: true }) => {

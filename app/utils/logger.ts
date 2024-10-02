@@ -29,7 +29,7 @@ const getErrorLog = (info: winston.Logform.TransformableInfo) => {
 };
 
 const createdLogger = winston.createLogger({
-  level: 'info',
+  level: `${process.env.LOG_LEVEL}`,
   format: combine(
     colorize(),
     timestamp({

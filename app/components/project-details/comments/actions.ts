@@ -51,7 +51,7 @@ export const addProjectComment = withAuth(async (user: UserSession, body: { proj
     };
   } catch (err) {
     const error: InnoPlatformError = dbError(
-      `Adding a Comment to a Project ${body.projectId} from user ${user.providerId}`,
+      `Adding a Comment to a Project ${body.projectId} by user ${user.providerId}`,
       err as Error,
       body.projectId,
     );
@@ -93,42 +93,8 @@ export const handleProjectCommentUpvoteBy = withAuth(async (user: UserSession, b
 });
 
 export const deleteProjectComment = withAuth(async (user: UserSession, body: { commentId: string }) => {
-  const validatedParams = validateParams(deleteCommentSchema, body);
-
-  if (validatedParams.status !== StatusCodes.OK) {
-    return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
-      message: validatedParams.message,
-    };
-  }
-
-  const comment = await getCommentbyId(dbClient, body.commentId);
-
-  if (comment === null) {
-    return {
-      status: StatusCodes.BAD_REQUEST,
-      message: 'No comment with the specified ID exists',
-    };
-  }
-
-  if (comment.author !== user.providerId) {
-    return {
-      status: StatusCodes.BAD_REQUEST,
-      message: 'A comment can only be deleted by its author',
-    };
-  }
-
-  await deleteComment(dbClient, body.commentId);
-
-  return {
-    status: StatusCodes.OK,
-  };
-});
-
-export const updateProjectComment = withAuth(
-  async (user: UserSession, body: { commentId: string; updatedText: string }) => {
-    const validatedParams = validateParams(updateCommentSchema, body);
+  try {
+    const validatedParams = validateParams(deleteCommentSchema, body);
 
     if (validatedParams.status !== StatusCodes.OK) {
       return {
@@ -150,15 +116,69 @@ export const updateProjectComment = withAuth(
     if (comment.author !== user.providerId) {
       return {
         status: StatusCodes.BAD_REQUEST,
-        message: 'A comment can only be edited by its author',
+        message: 'A comment can only be deleted by its author',
       };
     }
 
-    const updatedComment = await updateComment(dbClient, body.commentId, body.updatedText);
+    await deleteComment(dbClient, body.commentId);
 
     return {
       status: StatusCodes.OK,
-      comment: updatedComment,
     };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Deleting a Comment ${body.commentId} from user ${user.providerId}`,
+      err as Error,
+      body.commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
+});
+
+export const updateProjectComment = withAuth(
+  async (user: UserSession, body: { commentId: string; updatedText: string }) => {
+    try {
+      const validatedParams = validateParams(updateCommentSchema, body);
+
+      if (validatedParams.status !== StatusCodes.OK) {
+        return {
+          status: validatedParams.status,
+          errors: validatedParams.errors,
+          message: validatedParams.message,
+        };
+      }
+
+      const comment = await getCommentbyId(dbClient, body.commentId);
+
+      if (comment === null) {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          message: 'No comment with the specified ID exists',
+        };
+      }
+
+      if (comment.author !== user.providerId) {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          message: 'A comment can only be edited by its author',
+        };
+      }
+
+      const updatedComment = await updateComment(dbClient, body.commentId, body.updatedText);
+
+      return {
+        status: StatusCodes.OK,
+        comment: updatedComment,
+      };
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Updating a Comment ${body.commentId} by user ${user.providerId}`,
+        err as Error,
+        body.commentId,
+      );
+      logger.error(error);
+      throw err;
+    }
   },
 );

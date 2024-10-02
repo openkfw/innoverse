@@ -1,6 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { getPostCommentsStartingFrom } from './post_comment';
+
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getUniqueValues } from '@/utils/helpers';
+import getLogger from '@/utils/logger';
+
+import { getPostCommentsStartingFrom } from './post_comment';
+
+const logger = getLogger();
 
 export async function getPostById(client: PrismaClient, id: string) {
   return await client.post.findFirst({ where: { id: id } });
@@ -27,62 +33,92 @@ export async function getPostsByIds(client: PrismaClient, ids: string[]) {
 }
 
 export async function getPostsFromDbStartingFrom(client: PrismaClient, from: Date) {
-  return await client.post.findMany({
-    where: {
-      OR: [
-        {
-          createdAt: {
-            gte: from,
+  try {
+    return await client.post.findMany({
+      where: {
+        OR: [
+          {
+            createdAt: {
+              gte: from,
+            },
           },
-        },
-        { updatedAt: { gte: from } },
-      ],
-    },
-  });
+          { updatedAt: { gte: from } },
+        ],
+      },
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Getting posts starting from ${from}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function addPostToDb(client: PrismaClient, content: string, author: string, anonymous: boolean) {
-  return await client.post.create({ data: { author, content, anonymous } });
+  try {
+    return await client.post.create({ data: { author, content, anonymous } });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Add post with by author: ${author}`, err as Error);
+    logger.error(error);
+    throw error;
+  }
 }
 
 export async function deletePostFromDb(client: PrismaClient, postId: string) {
-  return await client.post.delete({ where: { id: postId } });
+  try {
+    return await client.post.delete({ where: { id: postId } });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Delete post with id: ${postId}`, err as Error);
+    logger.error(error);
+    throw error;
+  }
 }
 
 export async function updatePostInDb(client: PrismaClient, postId: string, content: string) {
-  return await client.post.update({ data: { content }, where: { id: postId } });
+  try {
+    return await client.post.update({ data: { content }, where: { id: postId } });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Update post with id: ${postId}`, err as Error);
+    logger.error(error);
+    throw error;
+  }
 }
 
 export async function handlePostUpvoteInDb(client: PrismaClient, postId: string, upvotedBy: string) {
-  return client.$transaction(async (tx) => {
-    const result = await tx.post.findFirst({
-      where: { id: postId },
-      select: {
-        upvotedBy: true,
-      },
+  try {
+    return client.$transaction(async (tx) => {
+      const result = await tx.post.findFirst({
+        where: { id: postId },
+        select: {
+          upvotedBy: true,
+        },
+      });
+      const upvotes = result?.upvotedBy.filter((upvote) => upvote !== upvotedBy);
+
+      if (result?.upvotedBy.includes(upvotedBy)) {
+        return tx.post.update({
+          where: {
+            id: postId,
+          },
+          data: {
+            upvotedBy: upvotes,
+          },
+        });
+      }
+
+      if (result) {
+        return tx.post.update({
+          where: {
+            id: postId,
+          },
+          data: {
+            upvotedBy: { push: upvotedBy },
+          },
+        });
+      }
     });
-    const upvotes = result?.upvotedBy.filter((upvote) => upvote !== upvotedBy);
-
-    if (result?.upvotedBy.includes(upvotedBy)) {
-      return tx.post.update({
-        where: {
-          id: postId,
-        },
-        data: {
-          upvotedBy: upvotes,
-        },
-      });
-    }
-
-    if (result) {
-      return tx.post.update({
-        where: {
-          id: postId,
-        },
-        data: {
-          upvotedBy: { push: upvotedBy },
-        },
-      });
-    }
-  });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Upvote post with id: ${postId} by user ${upvotedBy}`, err as Error);
+    logger.error(error);
+    throw error;
+  }
 }

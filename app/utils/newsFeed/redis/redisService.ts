@@ -47,7 +47,14 @@ export const getLatestSuccessfulNewsFeedSync = async (client: RedisClient) => {
 };
 
 export const getNewsFeedEntryByKey = async (client: RedisClient, key: string) => {
-  return (await client.json.get(key)) as RedisNewsFeedEntry | null;
+  try {
+    return (await client.json.get(key)) as RedisNewsFeedEntry | null;
+  } catch (err) {
+    const error = err as Error;
+    error.cause = error.message;
+    const extendedError = redisError(`Failed to get RedisNewsFeedEntry with key '${key}'`, err as Error);
+    throw extendedError;
+  }
 };
 
 export const getNewsFeedEntries = async (client: RedisClient, options?: GetItemsOptions) => {
