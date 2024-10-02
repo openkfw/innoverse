@@ -14,7 +14,7 @@ import { NewsFeed } from '../../components/newsPage/NewsFeed';
 import { NewsFeedContextProvider } from '../contexts/news-feed-context';
 
 import backgroundImage from '/public/images/news-background.png';
-import { NewsFeedHighlightContextProvider } from '@/app/contexts/highlight-context';
+import { NewsFeedHighlightContextProvider } from '@/app/contexts/news-feed-highlight-context';
 
 export const dynamic = 'force-dynamic';
 

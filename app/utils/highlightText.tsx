@@ -1,6 +1,5 @@
-import { useHighlightContext } from '@/app/contexts/highlight-context';
+import { useHighlightContext } from '@/app/contexts/news-feed-highlight-context';
 import React, { useMemo } from 'react';
-
 
 export function HighlightText({ text }: { text: string | undefined }) {
   const { highlightString } = useHighlightContext();
