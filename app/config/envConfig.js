@@ -1,4 +1,5 @@
-const { config } = require('process');
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 const { z } = require('zod');
 
 // Returns an environment config
@@ -22,7 +23,7 @@ const createZodSchemaFromEnvConfig = (config) => {
 
 // Adds stage (build/lint/...) specific environment variable validation to a zod schema
 const addVariableValidation = (schema, envConfig) => {
-  const valueExists = (value) => value?.toString().trim().length > 0;
+  const valueExists = (value) => (value?.toString().trim().length ?? 0) > 0;
 
   return schema.superRefine((values, ctx) => {
     const configKeys = Object.keys(envConfig.variables);

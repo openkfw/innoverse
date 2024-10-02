@@ -29,11 +29,19 @@ type ZodSchemaType<TVariables extends EnvVariablesConfiguration> = z.ZodObject<{
 }>;
 
 // Returns an environment config
-const createEnvConfig = <T extends EnvVariablesConfiguration>(props: {
+export const createEnvConfig = <T extends EnvVariablesConfiguration>(props: {
   variables: T;
   groups: EnvConfig<T>['groups'];
 }) => {
   return { groups: props.groups, variables: props.variables };
+};
+
+export const createValidatingZodSchemaFromEnvConfig = <TVariables extends EnvVariablesConfiguration>(
+  envConfig: EnvConfig<TVariables>,
+): ReturnType<ZodSchemaType<TVariables>['superRefine']> => {
+  const zodSchema = createZodSchemaFromEnvConfig(envConfig);
+  const validatingZodSchema = addVariableValidation(zodSchema, envConfig);
+  return validatingZodSchema;
 };
 
 // Creates a zod schema (z.Object({...})) based on an environment configuration
@@ -55,7 +63,7 @@ const addVariableValidation = <TVariables extends EnvVariablesConfiguration>(
   schema: ZodSchemaType<TVariables>,
   envConfig: EnvConfig<TVariables>,
 ) => {
-  const valueExists = (value: any | undefined) => value?.toString().trim().length > 0;
+  const valueExists = (value: string | undefined) => (value?.toString().trim().length ?? 0) > 0;
 
   return schema.superRefine((values, ctx) => {
     const configKeys = Object.keys(envConfig.variables);
@@ -130,17 +138,4 @@ const addVariableValidation = <TVariables extends EnvVariablesConfiguration>(
       }
     });
   });
-};
-
-const createValidatingZodSchemaFromEnvConfig = <TVariables extends EnvVariablesConfiguration>(
-  envConfig: EnvConfig<TVariables>,
-) => {
-  const zodSchema = createZodSchemaFromEnvConfig(envConfig);
-  const validatingZodSchema = addVariableValidation(zodSchema, envConfig);
-  return validatingZodSchema;
-};
-
-module.exports = {
-  createEnvConfig,
-  createZodSchemaFromEnvConfig: createValidatingZodSchemaFromEnvConfig,
 };

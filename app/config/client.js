@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 const { z } = require('zod');
 const { env } = require('next-runtime-env');
 const { createEnvConfig, createZodSchemaFromEnvConfig } = require('./envConfig');

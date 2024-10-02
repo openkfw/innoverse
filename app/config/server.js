@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 const { z } = require('zod');
 const { createEnvConfig, createZodSchemaFromEnvConfig } = require('./envConfig');
 
@@ -75,6 +77,15 @@ const serverEnvConfig = createEnvConfig({
       defaultRule: z.string().default(''),
       regex: /(.+?):(.+?)$/,
       required: true,
+    },
+
+    // Next
+    ALLOWED_ORIGINS: {
+      stages: runtimeStages,
+      defaultRule: z
+        .string()
+        .transform((origins) => origins.split(','))
+        .optional(),
     },
 
     // Redis
