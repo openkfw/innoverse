@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 
+import { NewsFeedHighlightContextProvider } from '@/app/contexts/news-feed-highlight-context';
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';
 import NewsFeedContainer from '@/components/newsFeed/NewsFeedContainer';
@@ -50,9 +51,11 @@ async function NewsFeedPage() {
           projects={props.projects}
           types={props.types}
         >
-          <NewsFeedContainer>
-            <NewsFeed />
-          </NewsFeedContainer>
+          <NewsFeedHighlightContextProvider>
+            <NewsFeedContainer>
+              <NewsFeed />
+            </NewsFeedContainer>
+          </NewsFeedHighlightContextProvider>
         </NewsFeedContextProvider>
       </Container>
     </Stack>

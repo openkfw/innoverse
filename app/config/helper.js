@@ -5,4 +5,9 @@ const someOrAllNotSet = (arr) => {
   return someUndefined && !allDefined && !allUndefined;
 };
 
+const formatErrors = (error) => {
+  return JSON.stringify(error.issues);
+};
+
 module.exports.someOrAllNotSet = someOrAllNotSet;
+module.exports.formatErrors = formatErrors;

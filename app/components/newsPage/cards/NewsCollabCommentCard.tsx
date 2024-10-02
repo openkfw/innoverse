@@ -22,6 +22,7 @@ import {
 import { NewsCardControls } from '@/components/newsPage/cards/common/NewsCardControls';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
 import * as m from '@/src/paraglide/messages.js';
+import { HighlightText } from '@/utils/highlightText';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
 import { formatMentionToText } from '@/utils/mentions/formatMentionToText';
 
@@ -57,7 +58,7 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
       <CommentCardHeader content={comment} avatar={{ size: 32 }} />
       <CardContentWrapper>
         <Typography color="text.primary" variant="body1">
-          {formatMentionToText(comment.comment)}
+          <HighlightText text={formatMentionToText(comment.comment)} />
         </Typography>
       </CardContentWrapper>
       <NewsCardControls>

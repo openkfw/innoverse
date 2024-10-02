@@ -4,19 +4,33 @@ This guide descibribes how to create a new release of the InnoVerse platform.
 
 To create a release
 
-1. Creata a branch for this release
-2. Bump the version, generate the release changelog and create a git tag:
+1. Create a branch for this release:
+
+   `git checkout -b <branch_name>`
+
+2. Bump the version, generate the release changelog and create a git tag with the following command:
 
    `npm run release`
 
-3. Push changes and the newly created git tag:
+   This bumps the version according to semver. Alternatively a specific version can be set using:
 
-   `git push --follow-tags origin <branch>`
+   `npm run release --release-as <release_version>`
 
-4. Create a pull request
-5. Wait for approval and then merge the the pull request
-6. Visit this [repository's release page](https://github.com/openkfw/innoverse/releases)
-7. Create a new release based on the new git tag
+   For more options, see the [commit and tag version github page](https://github.com/absolute-version/commit-and-tag-version/tree/master?tab=readme-ov-file#cli-usage)
+
+3. Review the changelog, edit it and commit if needed
+4. Push changes **without** the newly created tag (we create the tag on GitHub later)
+
+   `git push -u origin <branch_name>`
+
+5. Create a pull request
+6. Wait for approval
+7. Set the branch merge strategy to squash and merge (squashed commit message: `chore(release): <release_version>`)
+8. Visit this [repository's release page](https://github.com/openkfw/innoverse/releases)
+9. Create a new release
+
+- Create a new git tag pointing to correct commit on the main branch:
+- Check the option "Create a discussion for this release" and select the category "Announcements"
 
 ## Configuration
 
