@@ -14,16 +14,19 @@ const clientEnvConfig = createEnvConfig({
     NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT: {
       defaultRule: z.string().default(''),
       required: true,
+      stages: ['development', 'test', 'production'],
     },
     NEXT_PUBLIC_STRAPI_ENDPOINT: {
       defaultRule: z.string().default(''),
       required: true,
+      stages: ['development', 'test', 'production'],
     },
 
     // Push notifications
     NEXT_PUBLIC_VAPID_PUBLIC_KEY: {
       defaultRule: z.string().default(''),
       required: true,
+      stages: ['development', 'test', 'production'],
     },
 
     // Application insights
