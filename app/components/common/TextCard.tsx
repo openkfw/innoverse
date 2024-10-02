@@ -136,7 +136,7 @@ const buttonOverlayStyle = {
     background: '#ffffff',
     color: theme.palette.primary.main,
   },
-  fontSize: '14px',
+  fontSize: 14,
   fontWeight: '500',
   marginBottom: '-1px',
   paddingLeft: '4px',
@@ -145,9 +145,9 @@ const buttonOverlayStyle = {
 };
 
 const mentionStyle = {
-  fontFamily: 'SlabMed',
-  fontWeight: 700,
-  fontSize: '16px',
+  fontFamily: 'SansDefaultMed',
+  fontWeight: 500,
+  fontSize: 14,
   lineHeight: '24px',
   letterSpacing: '0.15px',
   display: 'inline',

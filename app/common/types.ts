@@ -450,7 +450,6 @@ export type StartPagination = {
   pageSize: number;
 };
 
-// TODO: move/do the data-testid differently
 export type ChildTestProps = {
   'data-testid'?: string;
 };

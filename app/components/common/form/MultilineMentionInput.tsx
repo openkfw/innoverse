@@ -5,7 +5,7 @@ import { Mention, MentionsInput, SuggestionDataItem } from 'react-mentions';
 import Box from '@mui/material/Box';
 
 import { useMentions } from '@/app/contexts/mentions-context';
-import { MultilineMentionInputProps } from '@/common/formTypes';
+import { MultilineFormInputProps } from '@/common/formTypes';
 import { fetchMentionData } from '@/components/collaboration/comments/actions';
 import * as m from '@/src/paraglide/messages.js';
 
@@ -18,7 +18,7 @@ function MultilineMentionInput({
   readOnly = false,
   endAdornment,
   rows = 4,
-}: MultilineMentionInputProps) {
+}: MultilineFormInputProps) {
   const { mentions, setMentions } = useMentions();
   const loading = m.components_common_form_MultilineMentionInput_loading();
 
@@ -50,6 +50,7 @@ function MultilineMentionInput({
               rows={rows}
             >
               <Mention
+                style={mentionInputStyle.highlightedInput}
                 trigger="@"
                 displayTransform={(_id: string, display: string) => `@${display}`}
                 appendSpaceOnAdd={true}
@@ -64,7 +65,6 @@ function MultilineMentionInput({
                   if (suggestion.id === 'loading') {
                     return <div>{loading}</div>;
                   }
-
                   return <div className={`${focused ? 'focused' : ''}`}>{suggestion.display}</div>;
                 }}
               />
@@ -86,9 +86,13 @@ const mentionInputStyle = {
   wrapperStyles: {
     position: 'relative',
   },
+  highlightedInput: {
+    backgroundColor: '#398357',
+    opacity: 0.5,
+  },
   mentionsInput: {
+    padding: '16px 24px 36px 24px',
     control: {
-      backgroundColor: '#FFFFFF',
       fontSize: 14,
       fontFamily: 'SansDefaultMed',
       minHeight: 200,
@@ -96,6 +100,7 @@ const mentionInputStyle = {
     highlighter: {
       overflow: 'hidden',
       whiteSpace: 'pre-wrap',
+      border: 0,
     },
     input: {
       borderWidth: 1,
@@ -106,13 +111,11 @@ const mentionInputStyle = {
     },
     suggestions: {
       list: {
-        border: '1px solid #000000',
+        border: '1px solid rgba(0,0,0,0.15)',
         borderRadius: '5px',
         backgroundColor: '#FFFFFF',
         overflow: 'auto',
-        padding: 0,
         maxHeight: 275,
-        margin: '-2px',
       },
       item: {
         padding: '5px 15px',
