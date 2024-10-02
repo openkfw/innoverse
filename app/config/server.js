@@ -2,7 +2,7 @@
 
 const { z } = require('zod');
 const { clientConfig } = require('./client');
-const { someOrAllNotSet } = require('./helper');
+const { someOrAllNotSet, formatErrors } = require('./helper');
 const { cond } = require('lodash');
 const { env } = require('next-runtime-env');
 
@@ -14,10 +14,10 @@ const RequiredBuildTimeEnv = z
   .object({
     STAGE: z.enum(['development', 'test', 'build', 'production', 'lint']).default('development'),
     NEXT_PUBLIC_BUILDTIMESTAMP: z
-      .string({ errorMap: () => ({ message: 'NEXT_PUBLIC_BUILDTIMESTAMP is not' }) })
+      .string({ errorMap: () => ({ message: 'NEXT_PUBLIC_BUILDTIMESTAMP is not set' }) })
       .default(''),
     NEXT_PUBLIC_CI_COMMIT_SHA: z
-      .string({ errorMap: () => ({ message: 'NEXT_PUBLIC_CI_COMMIT_SHA is not' }) })
+      .string({ errorMap: () => ({ message: 'NEXT_PUBLIC_CI_COMMIT_SHA is not set' }) })
       .default(''),
   })
   .superRefine((values, ctx) => {
@@ -73,15 +73,19 @@ const RequiredRunTimeEnv = z
       STAGE,
       REDIS_URL,
       NEWS_FEED_SYNC_SECRET,
+      POSTGRES_USER,
+      POSTGRES_PASSWORD,
     } = values;
-    const required = [
-      DATABASE_URL,
-      NEXTAUTH_URL,
-      NEXTAUTH_SECRET,
-      STRAPI_TOKEN,
-      HTTP_BASIC_AUTH,
-      REDIS_URL,
-      NEWS_FEED_SYNC_SECRET,
+    const requiredKeys = [
+      'DATABASE_URL',
+      'NEXTAUTH_URL',
+      'NEXTAUTH_SECRET',
+      'STRAPI_TOKEN',
+      'HTTP_BASIC_AUTH',
+      'REDIS_URL',
+      'NEWS_FEED_SYNC_SECRET',
+      'POSTGRES_USER',
+      'POSTGRES_PASSWORD',
     ];
 
     const checkAndAddIssue = (condition, message, ctx) => {
@@ -93,9 +97,11 @@ const RequiredRunTimeEnv = z
       }
     };
 
-    const validateEnvVariables = (required, DATABASE_URL, REDIS_URL, HTTP_BASIC_AUTH, ctx) => {
+    const validateEnvVariables = (ctx) => {
+      requiredKeys.forEach((env) => checkAndAddIssue(values[env].trim().length === 0, `${env} is not set`, ctx));
+
       checkAndAddIssue(
-        required.some((el) => el === ''),
+        requiredKeys.some((el) => el === ''),
         'Not all required env variables are set!',
         ctx,
       );
@@ -115,7 +121,7 @@ const RequiredRunTimeEnv = z
       );
     };
 
-    validateEnvVariables(required, DATABASE_URL, REDIS_URL, HTTP_BASIC_AUTH, ctx);
+    validateEnvVariables(ctx);
   });
 
 // Optional at run-time
@@ -134,6 +140,10 @@ const OptionalRunTimeEnv = z
     STRAPI_PUSH_NOTIFICATION_SECRET: z.string().default(''),
     APP_INSIGHTS_SERVICE_NAME: z.string().default(''),
     ANALYZE: z.boolean().default(false),
+    ALLOWED_ORIGINS: z
+      .string()
+      .transform((origins) => origins.split(','))
+      .optional(),
   })
   .superRefine((values, ctx) => {
     //Ignore the validation at build stage
@@ -211,7 +221,12 @@ const OptionalRunTimeEnv = z
         message:
           'Looks like the required environment variables for push-notifications are not set in the UI but in the server (or vice versa)',
         code: z.ZodIssueCode.custom,
-        path: ['VAPID_PRIVATE_KEY', 'VAPID_ADMIN_EMAIL', 'NEXT_PUBLIC_VAPID_PUBLIC_KEY', 'STRAPI_PUSH_NOTIFICATION_SECRET'],
+        path: [
+          'VAPID_PRIVATE_KEY',
+          'VAPID_ADMIN_EMAIL',
+          'NEXT_PUBLIC_VAPID_PUBLIC_KEY',
+          'STRAPI_PUSH_NOTIFICATION_SECRET',
+        ],
       });
     }
 
@@ -230,12 +245,28 @@ const OptionalRunTimeEnv = z
 
 // If we run 'next build' the required runtime env variables can be empty, at run-time checks will be applied...
 // NEXT_PUBLIC_* are checked in client.js
-const requiredBuildEnv = RequiredBuildTimeEnv.parse(process.env);
-const optionalRunTimeEnv = OptionalRunTimeEnv.parse(process.env);
-const requiredRunTimeEnv = RequiredRunTimeEnv.parse(process.env);
+const requiredBuildTimeEnv = RequiredBuildTimeEnv.safeParse(process.env);
+const requiredRunTimeEnv = RequiredRunTimeEnv.safeParse(process.env);
+const optionalRunTimeEnv = OptionalRunTimeEnv.safeParse(process.env);
+
+if (!requiredRunTimeEnv.success) {
+  console.error(`Required runtime variables are not set correctly: ${formatErrors(requiredRunTimeEnv.error)}`);
+}
+
+if (!requiredBuildTimeEnv.success) {
+  console.error(`Required build variables are not set correctly: ${formatErrors(requiredBuildTimeEnv.error)}`);
+}
+
+if (!optionalRunTimeEnv.success) {
+  console.warn(`Optional runtime variables are not set correctly: ${formatErrors(optionalRunTimeEnv.error)}`);
+  throw new Error('There is an error with the optional runtime environment variables');
+}
+if (!requiredRunTimeEnv.success || !requiredBuildTimeEnv.success) {
+  process.exit(1);
+}
 
 module.exports.serverConfig = {
-  ...requiredBuildEnv,
-  ...requiredRunTimeEnv,
-  ...optionalRunTimeEnv,
+  ...requiredBuildTimeEnv.data,
+  ...requiredRunTimeEnv.data,
+  ...optionalRunTimeEnv.data,
 };

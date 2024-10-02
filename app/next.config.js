@@ -88,11 +88,7 @@ const nextConfig = {
     },
     instrumentationHook: true,
     serverActions: {
-      allowedOrigins: [
-        '***URL_REMOVED***',
-        '***URL_REMOVED***',
-        '***URL_REMOVED***',
-      ],
+      allowedOrigins: serverConfig.NEXT_PUBLIC_ALLOWED_ORIGINS
     },
   },
   i18n: {
