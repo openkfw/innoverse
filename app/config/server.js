@@ -2,6 +2,7 @@
 
 const { z } = require('zod');
 const { createEnvConfig, createZodSchemaFromEnvConfig } = require('./envConfig');
+const { clientConfig } = require('./client');
 
 if (typeof window !== 'undefined') {
   throw new Error('The server config should not be imported on the frontend!');
@@ -151,9 +152,21 @@ const serverEnvConfig = createEnvConfig({
       stages: runtimeStages,
       defaultRule: z.string().optional(),
     },
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: {
+      stage: runtimeStages,
+      defaultRule: z.string().optional(),
+    },
 
     // Application Insights
     APP_INSIGHTS_SERVICE_NAME: {
+      stages: runtimeStages,
+      defaultRule: z.string().optional(),
+    },
+    NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING: {
+      stages: runtimeStages,
+      defaultRule: z.string().optional(),
+    },
+    NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY: {
       stages: runtimeStages,
       defaultRule: z.string().optional(),
     },
@@ -198,11 +211,39 @@ const serverEnvConfig = createEnvConfig({
       stages: runtimeStages,
       errorMessage: 'At least one type of authentication has to be set',
     },
+    {
+      variables: [
+        'VAPID_PRIVATE_KEY',
+        'VAPID_ADMIN_EMAIL',
+        'STRAPI_PUSH_NOTIFICATION_SECRET',
+        'NEXT_PUBLIC_VAPID_PUBLIC_KEY',
+      ],
+      mode: 'none_or_all',
+      stages: runtimeStages,
+      errorMessage:
+        'Looks like the required environment variables for push-notifications are not set in the UI but in the server (or vice versa)',
+    },
+    {
+      variables: [
+        'APP_INSIGHTS_SERVICE_NAME',
+        'NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING',
+        'NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY',
+      ],
+      mode: 'none_or_all',
+      stages: runtimeStages,
+      errorMessage:
+        'Looks like the required environment variables for ApplicationInsights are not set in the UI but in the server (or vice versa)',
+    },
   ],
 });
 
 const schema = createZodSchemaFromEnvConfig(serverEnvConfig);
-const serverConfig = schema.safeParse(process.env);
+const serverConfig = schema.safeParse({
+  ...process.env,
+  NEXT_PUBLIC_VAPID_PUBLIC_KEY: clientConfig.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING: clientConfig.NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING,
+  NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY: clientConfig.NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY,
+});
 
 if (!serverConfig.success) {
   console.error(serverConfig.error.issues);
