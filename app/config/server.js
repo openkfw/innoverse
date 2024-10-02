@@ -124,14 +124,6 @@ const RequiredRunTimeEnv = z
     validateEnvVariables(ctx);
   });
 
-// Optional at build-time
-const OptionalBuildTimeEnv = z.object({
-  ALLOWED_ORIGINS: z
-    .string()
-    .transform((origins) => origins.split(','))
-    .optional(),
-});
-
 // Optional at run-time
 const OptionalRunTimeEnv = z
   .object({
@@ -148,6 +140,10 @@ const OptionalRunTimeEnv = z
     STRAPI_PUSH_NOTIFICATION_SECRET: z.string().default(''),
     APP_INSIGHTS_SERVICE_NAME: z.string().default(''),
     ANALYZE: z.boolean().default(false),
+    ALLOWED_ORIGINS: z
+      .string()
+      .transform((origins) => origins.split(','))
+      .optional(),
   })
   .superRefine((values, ctx) => {
     //Ignore the validation at build stage
@@ -251,7 +247,6 @@ const OptionalRunTimeEnv = z
 // NEXT_PUBLIC_* are checked in client.js
 const requiredBuildTimeEnv = RequiredBuildTimeEnv.safeParse(process.env);
 const requiredRunTimeEnv = RequiredRunTimeEnv.safeParse(process.env);
-const optionalBuildTimeEnv = OptionalBuildTimeEnv.safeParse(process.env);
 const optionalRunTimeEnv = OptionalRunTimeEnv.safeParse(process.env);
 
 if (!requiredRunTimeEnv.success) {
@@ -266,12 +261,6 @@ if (!optionalRunTimeEnv.success) {
   console.warn(`Optional runtime variables are not set correctly: ${formatErrors(optionalRunTimeEnv.error)}`);
   throw new Error('There is an error with the optional runtime environment variables');
 }
-
-if (!optionalBuildTimeEnv.success) {
-  console.warn(`Optional build variables are not set correctly: ${formatErrors(optionalBuildTimeEnv.error)}`);
-  throw new Error('There is an error with the optional build environment variables');
-}
-
 if (!requiredRunTimeEnv.success || !requiredBuildTimeEnv.success) {
   process.exit(1);
 }
@@ -279,6 +268,5 @@ if (!requiredRunTimeEnv.success || !requiredBuildTimeEnv.success) {
 module.exports.serverConfig = {
   ...requiredBuildTimeEnv.data,
   ...requiredRunTimeEnv.data,
-  ...optionalBuildTimeEnv.data,
   ...optionalRunTimeEnv.data,
 };
