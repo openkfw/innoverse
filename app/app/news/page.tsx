@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 
+import { NewsFeedHighlightContextProvider } from '@/app/contexts/news-feed-highlight-context';
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';
 import NewsFeedContainer from '@/components/newsFeed/NewsFeedContainer';
@@ -14,7 +15,6 @@ import { NewsFeed } from '../../components/newsPage/NewsFeed';
 import { NewsFeedContextProvider } from '../contexts/news-feed-context';
 
 import backgroundImage from '/public/images/news-background.png';
-import { NewsFeedHighlightContextProvider } from '@/app/contexts/news-feed-highlight-context';
 
 export const dynamic = 'force-dynamic';
 
