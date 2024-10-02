@@ -32,17 +32,9 @@ export type NotificationRequest = {
 };
 
 export const notifyFollowers = async (follows: PrismaFollow[], topic: NotificationTopic, text: string, url: string) => {
-  try {
-    const buildNotifications = follows.map((follow) => createNotificationForFollow(follow, topic, text, url));
-    const notifications = await getPromiseResults(buildNotifications);
-    sendPushNotifications(notifications);
-  } catch (err) {
-    logger.error(
-      `Failed to notify followers with ids (Topic: '${topic}', text: '${text}', url: '${url}'): ${follows.map((follow) => follow.followedBy)}`,
-      follows,
-      err,
-    );
-  }
+  const buildNotifications = follows.map((follow) => createNotificationForFollow(follow, topic, text, url));
+  const notifications = await getPromiseResults(buildNotifications);
+  sendPushNotifications(notifications);
 };
 
 export const sendPushNotifications = (notifications: NotificationRequest[]) => {

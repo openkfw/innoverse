@@ -21,32 +21,54 @@ export async function countPostResponses(client: PrismaClient, postId: string) {
 }
 
 export async function getNewsCommentsByPostId(client: PrismaClient, postId: string) {
-  return await client.postComment.findMany({
-    where: {
-      postId,
-    },
-    ...defaultParams,
-  });
+  try {
+    return await client.postComment.findMany({
+      where: {
+        postId,
+      },
+      ...defaultParams,
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Get news comments by post with id: ${postId}`, err as Error, postId);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function getPostComments(client: PrismaClient, commentId: string) {
-  return await client.postComment.findMany({
-    where: {
-      comment: {
-        parentId: commentId,
+  try {
+    return await client.postComment.findMany({
+      where: {
+        comment: {
+          parentId: commentId,
+        },
       },
-    },
-    ...defaultParams,
-  });
+      ...defaultParams,
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Get post for comment with id: ${commentId}`, err as Error, commentId);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function getPostCommentById(client: PrismaClient, commentId: string) {
-  return await client.postComment.findUnique({
-    where: {
-      id: commentId,
-    },
-    ...defaultParams,
-  });
+  try {
+    return await client.postComment.findUnique({
+      where: {
+        id: commentId,
+      },
+      ...defaultParams,
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Get post by id for comment with id: ${commentId}`,
+      err as Error,
+      commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function addPostCommentToDb(
@@ -56,47 +78,69 @@ export async function addPostCommentToDb(
   comment: string,
   parentCommentId?: string,
 ) {
-  return await client.postComment.create({
-    data: {
-      postId,
-      comment: {
-        create: {
-          author,
-          objectType: 'POST_COMMENT',
-          text: comment,
-          parentId: parentCommentId,
+  try {
+    return await client.postComment.create({
+      data: {
+        postId,
+        comment: {
+          create: {
+            author,
+            objectType: 'POST_COMMENT',
+            text: comment,
+            parentId: parentCommentId,
+          },
         },
       },
-    },
-    ...defaultParams,
-  });
+      ...defaultParams,
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Add comment to post with id: ${postId} by user ${author}`,
+      err as Error,
+      postId,
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function updatePostCommentInDb(client: PrismaClient, commentId: string, updatedText: string) {
-  return await client.postComment.update({
-    where: {
-      commentId,
-    },
-    data: {
-      comment: {
-        update: {
-          text: updatedText,
+  try {
+    return await client.postComment.update({
+      where: {
+        commentId,
+      },
+      data: {
+        comment: {
+          update: {
+            text: updatedText,
+          },
         },
       },
-    },
-    ...defaultParams,
-  });
+      ...defaultParams,
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Update post comment with id: ${commentId}`, err as Error, commentId);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function deletePostCommentInDb(client: PrismaClient, commentId: string) {
-  return client.comment.delete({
-    where: {
-      id: commentId,
-    },
-    include: {
-      postComment: true,
-    },
-  });
+  try {
+    return client.comment.delete({
+      where: {
+        id: commentId,
+      },
+      include: {
+        postComment: true,
+      },
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Delete post for comment with id: ${commentId}`, err as Error, commentId);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function isPostCommentUpvotedBy(client: PrismaClient, commentId: string, upvotedBy: string) {
@@ -107,50 +151,76 @@ export async function isPostCommentUpvotedBy(client: PrismaClient, commentId: st
       upvotedBy: { has: upvotedBy },
     },
   });
-  return likedCommentsCount > 0;
+  try {
+    return likedCommentsCount > 0;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Get upvote by user for comment with id: ${commentId}`,
+      err as Error,
+      commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function handlePostCommentUpvotedByInDb(client: PrismaClient, commentId: string, upvotedBy: string) {
-  return client.$transaction(async (tx) => {
-    const result = await tx.comment.findFirst({
-      where: { id: commentId, objectType: 'POST_COMMENT' },
-      select: {
-        upvotedBy: true,
-      },
+  try {
+    return client.$transaction(async (tx) => {
+      const result = await tx.comment.findFirst({
+        where: { id: commentId, objectType: 'POST_COMMENT' },
+        select: {
+          upvotedBy: true,
+        },
+      });
+
+      const upvotes = result?.upvotedBy.filter((upvote) => upvote !== upvotedBy);
+      if (result?.upvotedBy.includes(upvotedBy)) {
+        return tx.comment.update({
+          where: {
+            id: commentId,
+            objectType: 'POST_COMMENT',
+          },
+          data: {
+            upvotedBy: upvotes,
+          },
+        });
+      }
+
+      if (result) {
+        return tx.comment.update({
+          where: {
+            id: commentId,
+            objectType: 'POST_COMMENT',
+          },
+          data: {
+            upvotedBy: { push: upvotedBy },
+          },
+        });
+      }
     });
-
-    const upvotes = result?.upvotedBy.filter((upvote) => upvote !== upvotedBy);
-    if (result?.upvotedBy.includes(upvotedBy)) {
-      return tx.comment.update({
-        where: {
-          id: commentId,
-          objectType: 'POST_COMMENT',
-        },
-        data: {
-          upvotedBy: upvotes,
-        },
-      });
-    }
-
-    if (result) {
-      return tx.comment.update({
-        where: {
-          id: commentId,
-          objectType: 'POST_COMMENT',
-        },
-        data: {
-          upvotedBy: { push: upvotedBy },
-        },
-      });
-    }
-  });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Handle post comment upvote for comment with id: ${commentId}`,
+      err as Error,
+      commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function getPostCommentsStartingFrom(client: PrismaClient, from: Date) {
-  return await client.comment.findMany({
-    where: { objectType: 'POST_COMMENT', updatedAt: { gte: from } },
-    include: {
-      postComment: true,
-    },
-  });
+  try {
+    return await client.comment.findMany({
+      where: { objectType: 'POST_COMMENT', updatedAt: { gte: from } },
+      include: {
+        postComment: true,
+      },
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Get post comments starting from ${from}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 }

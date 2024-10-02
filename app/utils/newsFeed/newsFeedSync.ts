@@ -153,8 +153,8 @@ const removeKeysAndSaveNewEntriesAsTransaction = async (
 const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
   // posts fetched from prisma, hence no pagination required
   const posts = await getPostsStartingFrom(dbClient, from);
-  if (!posts || posts.length === 0) {
-    logger.warn('No posts found to sync');
+  if (posts.length === 0) {
+    logger.info('No posts found to sync');
   }
   const mapEntries = posts.map(async (post) => createNewsFeedEntryForPost(post));
   const newsFeedEntries = await getPromiseResults(mapEntries);
