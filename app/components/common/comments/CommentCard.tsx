@@ -5,7 +5,11 @@ import { User } from '@/common/types';
 import { CommentCardHeaderSecondary } from '@/components/common/CommentCardHeaderSecondary';
 import { CommentFooter } from '@/components/common/comments/CommentFooter';
 import CustomButton from '@/components/common/CustomButton';
-import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
+import {
+  useEditingInteractions,
+  useEditingState,
+  useRespondingInteractions,
+} from '@/components/common/editing/editing-context';
 import WriteTextCard from '@/components/common/editing/writeText/WriteTextCard';
 import * as m from '@/src/paraglide/messages.js';
 
@@ -33,19 +37,20 @@ export const CommentCard = (props: CommentCardProps) => {
   const { comment, isUpvoted, projectName, enableResponses = false, onUpvoteToggle, onEdit, onDelete } = props;
 
   const state = useEditingState();
-  const interactions = useEditingInteractions();
+  const editingInteractions = useEditingInteractions();
+  const respondingInteractions = useRespondingInteractions();
 
   const updateComment = async (updatedText: string) => {
     if (onEdit) {
       await onEdit(updatedText);
     }
-    interactions.onSubmitEdit();
+    editingInteractions.onSubmit();
   };
 
   return state.isEditing(comment) ? (
     <WriteTextCard
       onSubmit={updateComment}
-      onDiscard={interactions.onCancelEdit}
+      onDiscard={editingInteractions.onCancel}
       defaultValues={{ text: comment.comment }}
       metadata={{ projectName }}
       submitButton={
@@ -70,9 +75,9 @@ export const CommentCard = (props: CommentCardProps) => {
           upvoteCount={comment.upvotedBy.length}
           isUpvoted={isUpvoted}
           onUpvote={onUpvoteToggle}
-          onEdit={() => interactions.onStartEdit(comment)}
+          onEdit={() => editingInteractions.onStart(comment)}
           onDelete={onDelete}
-          onResponse={enableResponses ? () => interactions.onStartResponse(comment) : undefined}
+          onResponse={enableResponses ? () => respondingInteractions.onStart(comment) : undefined}
         />
       }
     />

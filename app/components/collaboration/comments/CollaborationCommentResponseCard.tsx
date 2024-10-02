@@ -85,7 +85,7 @@ export function useCollaborationCommentResponseCard(props: CollaborationCommentR
     try {
       await updateProjectCollaborationCommentResponse({ responseId: response.id, updatedText });
       setResponse({ ...response, response: updatedText });
-      interactions.onSubmitEdit();
+      interactions.onSubmit();
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
       errorMessage({ message: m.components_collaboration_comments_collaborationCommentResponseCard_updateError() });

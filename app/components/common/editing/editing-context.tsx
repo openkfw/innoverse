@@ -8,14 +8,11 @@ interface EditingState {
   unsavedChangesDialog: JSX.Element;
   state: {
     isEditing: (item: ItemWithId) => boolean;
-    isResponding: (item: ItemWithId) => boolean;
   };
   interactions: {
-    onStartEdit: (item: ItemWithId) => void;
-    onCancelEdit: ({ isDirty }: { isDirty: boolean }) => void;
-    onSubmitEdit: () => void;
-    onStartResponse: (item: ItemWithId) => void;
-    onSubmitResponse: () => void;
+    onStart: (item: ItemWithId) => void;
+    onCancel: ({ isDirty }: { isDirty: boolean }) => void;
+    onSubmit: () => void;
   };
 }
 
@@ -24,7 +21,6 @@ interface ItemWithId {
 }
 
 interface Interaction {
-  type: 'edit' | 'respond';
   itemId: string;
 }
 
@@ -32,20 +28,24 @@ const defaultState: EditingState = {
   unsavedChangesDialog: <></>,
   state: {
     isEditing: () => false,
-    isResponding: () => false,
   },
   interactions: {
-    onStartEdit: () => {},
-    onCancelEdit: () => {},
-    onSubmitEdit: () => {},
-    onStartResponse: () => {},
-    onSubmitResponse: () => {},
+    onStart: () => {},
+    onCancel: () => {},
+    onSubmit: () => {},
   },
 };
 
 const EditingContext = createContext(defaultState);
+const RespondingContext = createContext(defaultState);
 
-export const EditingContextProvider = ({ children }: PropsWithChildren) => {
+export const EditingContextProvider = ({ children }: PropsWithChildren) => (
+  <EditingContext.Provider value={useEditingContext()}>
+    <RespondingContext.Provider value={useEditingContext()}>{children}</RespondingContext.Provider>
+  </EditingContext.Provider>
+);
+
+function useEditingContext() {
   const [interaction, setInteraction] = useState<Interaction>();
   const [pendingInteraction, setPendingInteraction] = useState<Interaction>();
   const [openUnsavedChangesDialog, setOpenUnsavedChangesDialog] = useState(false);
@@ -62,17 +62,16 @@ export const EditingContextProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   const initiateInteraction = useCallback(
-    (item: ItemWithId, interactionType: 'edit' | 'respond') => {
-      // The same interaction is already in progress
-      // (e.g. 'respond' was clicked again on the same comment)
-      if (interaction?.type === interactionType && interaction.itemId === item.id) {
+    (item: ItemWithId) => {
+      if (interaction?.itemId === item.id) {
+        setInteraction(undefined);
         return;
       }
       if (interaction) {
-        setPendingInteraction({ itemId: item.id, type: interactionType });
+        setPendingInteraction({ itemId: item.id });
         setOpenUnsavedChangesDialog(true);
       } else {
-        setInteraction({ itemId: item.id, type: interactionType });
+        setInteraction({ itemId: item.id });
         dismissDialog();
       }
     },
@@ -112,23 +111,21 @@ export const EditingContextProvider = ({ children }: PropsWithChildren) => {
 
   const contextObject: EditingState = {
     state: {
-      isEditing: (item: ItemWithId) => interaction?.type === 'edit' && interaction.itemId === item.id,
-      isResponding: (item: ItemWithId) => interaction?.type === 'respond' && interaction.itemId === item.id,
+      isEditing: (item: ItemWithId) => interaction?.itemId === item.id,
     },
     interactions: {
-      onStartEdit: (item: ItemWithId) => initiateInteraction(item, 'edit'),
-      onCancelEdit: ({ isDirty }) => tryDiscardOrPrompt({ showPrompt: isDirty ?? true }),
-      onSubmitEdit: finalizeInteraction,
-      onStartResponse: (item: ItemWithId) => initiateInteraction(item, 'respond'),
-      onSubmitResponse: finalizeInteraction,
+      onStart: (item: ItemWithId) => initiateInteraction(item),
+      onCancel: ({ isDirty }) => tryDiscardOrPrompt({ showPrompt: isDirty ?? true }),
+      onSubmit: finalizeInteraction,
     },
     unsavedChangesDialog: dialog,
   };
 
-  return <EditingContext.Provider value={contextObject}>{children}</EditingContext.Provider>;
-};
+  return contextObject;
+}
 
 const useEditing = () => useContext(EditingContext);
+const useResponding = () => useContext(RespondingContext);
 
 export const useEditingState = () => {
   const editing = useEditing();
@@ -143,4 +140,19 @@ export const useEditingInteractions = () => {
 export const useUnsavedEditingChangesDialog = () => {
   const editing = useEditing();
   return editing.unsavedChangesDialog;
+};
+
+export const useRespondingState = () => {
+  const responding = useResponding();
+  return responding.state;
+};
+
+export const useRespondingInteractions = () => {
+  const responding = useResponding();
+  return responding.interactions;
+};
+
+export const useUnsavedRespondingChangesDialog = () => {
+  const responding = useResponding();
+  return responding.unsavedChangesDialog;
 };
