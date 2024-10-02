@@ -35,11 +35,11 @@ export default function NewsFeedSearchFilter(props: NewsFeedSearchFilterProps) {
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      updateFilters(inputValue); // Update filters with input value
+      updateFilters(inputValue);
     }, 300);
 
     return () => {
-      clearTimeout(timeoutId); // Clear the timeout if inputValue changes or component unmounts
+      clearTimeout(timeoutId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue]);
