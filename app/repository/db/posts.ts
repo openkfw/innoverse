@@ -13,25 +13,19 @@ export async function getPostById(client: PrismaClient, id: string) {
 }
 
 export async function getPostsStartingFrom(client: PrismaClient, from: Date) {
-  try {
-    const [posts, postsComments] = await Promise.all([
-      getPostsFromDbStartingFrom(client, from),
-      getPostCommentsStartingFrom(client, from),
-    ]);
+  const [posts, postsComments] = await Promise.all([
+    getPostsFromDbStartingFrom(client, from),
+    getPostCommentsStartingFrom(client, from),
+  ]);
 
-    // Get unique ids of posts
-    const postIds = getUniqueValues(
-      postsComments.map((comment) => comment.postComment?.postId).filter((id): id is string => id !== undefined),
-    );
-    const postsWithComments = await getPostsByIds(client, postIds);
-    const allPosts = [...posts, ...postsWithComments];
-    const uniquePosts = allPosts.filter((post, index, self) => index === self.findIndex((t) => t.id === post.id));
-    return uniquePosts;
-  } catch (err) {
-    const error: InnoPlatformError = dbError(`Getting post comments starting from ${Date}`, err as Error);
-    logger.error(error);
-    throw err;
-  }
+  // Get unique ids of posts
+  const postIds = getUniqueValues(
+    postsComments.map((comment) => comment.postComment?.postId).filter((id): id is string => id !== undefined),
+  );
+  const postsWithComments = await getPostsByIds(client, postIds);
+  const allPosts = [...posts, ...postsWithComments];
+  const uniquePosts = allPosts.filter((post, index, self) => index === self.findIndex((t) => t.id === post.id));
+  return uniquePosts;
 }
 
 export async function getPostsByIds(client: PrismaClient, ids: string[]) {
@@ -39,18 +33,24 @@ export async function getPostsByIds(client: PrismaClient, ids: string[]) {
 }
 
 export async function getPostsFromDbStartingFrom(client: PrismaClient, from: Date) {
-  return await client.post.findMany({
-    where: {
-      OR: [
-        {
-          createdAt: {
-            gte: from,
+  try {
+    return await client.post.findMany({
+      where: {
+        OR: [
+          {
+            createdAt: {
+              gte: from,
+            },
           },
-        },
-        { updatedAt: { gte: from } },
-      ],
-    },
-  });
+          { updatedAt: { gte: from } },
+        ],
+      },
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Getting posts starting from ${from}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function addPostToDb(client: PrismaClient, content: string, author: string, anonymous: boolean) {

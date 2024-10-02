@@ -47,7 +47,13 @@ export async function getCollaborationCommentUpvotedBy(client: PrismaClient, com
 }
 
 export async function getCollaborationCommentStartingFrom(client: PrismaClient, from: Date) {
-  return await client.collaborationComment.findMany({ where: { createdAt: { gte: from } } });
+  try {
+    return await client.collaborationComment.findMany({ where: { createdAt: { gte: from } } });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Getting collaboration comment starting from ${from}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function addCollaborationCommentToDb(
