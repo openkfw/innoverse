@@ -6,10 +6,13 @@ import { getNewsFeedEntryForCollaborationQuestion } from '@/services/collaborati
 import { getNewsFeedEntryForProjectEvent } from '@/services/eventService';
 import { getNewsFeedEntryForPost } from '@/services/postService';
 import { getNewsFeedEntryForProjectUpdate } from '@/services/updateService';
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { RedisReaction } from '@/utils/newsFeed/redis/models';
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
+
+import { redisError } from '../utils/errors';
 
 import { getNewsFeedEntryForProject } from './projectService';
 import { getNewsFeedEntryForSurveyQuestion } from './surveyQuestionService';
@@ -37,57 +40,89 @@ type RemoveReaction = {
 };
 
 export const addReaction = async ({ user, reaction }: AddReaction) => {
-  const createdReaction = await addReactionToDb(
-    dbClient,
-    reaction.reactedBy,
-    reaction.objectType,
-    reaction.objectId,
-    reaction.shortCode,
-    reaction.nativeSymbol,
-  );
-  addReactionToCache({ ...createdReaction, objectType: createdReaction.objectType as ObjectType }, user);
-  return createdReaction;
+  try {
+    const createdReaction = await addReactionToDb(
+      dbClient,
+      reaction.reactedBy,
+      reaction.objectType,
+      reaction.objectId,
+      reaction.shortCode,
+      reaction.nativeSymbol,
+    );
+    addReactionToCache({ ...createdReaction, objectType: createdReaction.objectType as ObjectType }, user);
+    return createdReaction;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Adding Reaction by user ${reaction.reactedBy} on type ${reaction.objectType} with id: ${reaction.objectId}`,
+      err as Error,
+      reaction.objectId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const removeReaction = async ({ user, reaction }: RemoveReaction) => {
-  const removedReaction = await removeReactionFromDb(
-    dbClient,
-    reaction.reactedBy,
-    reaction.objectType,
-    reaction.objectId,
-  );
-  removeReactionFromCache({
-    reaction: { ...removedReaction, objectType: removedReaction.objectType as ObjectType },
-    user,
-  });
-  return removedReaction;
+  try {
+    const removedReaction = await removeReactionFromDb(
+      dbClient,
+      reaction.reactedBy,
+      reaction.objectType,
+      reaction.objectId,
+    );
+    removeReactionFromCache({
+      reaction: { ...removedReaction, objectType: removedReaction.objectType as ObjectType },
+      user,
+    });
+    return removedReaction;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Remove Reaction by user ${reaction.reactedBy} on type ${reaction.objectType} with id: ${reaction.objectId}`,
+      err as Error,
+      reaction.objectId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const addReactionToCache = async (reaction: Reaction, user: User) => {
-  const redisClient = await getRedisClient();
-  const newsFeedEntry = await getItemForEntityWithReactions(reaction, user);
+  try {
+    const redisClient = await getRedisClient();
+    const newsFeedEntry = await getItemForEntityWithReactions(reaction, user);
 
-  if (!newsFeedEntry) {
-    return;
+    if (!newsFeedEntry) {
+      return;
+    }
+
+    const updatedReactions = newsFeedEntry.item.reactions.filter((r: RedisReaction) => r.reactedBy !== user.providerId);
+    updatedReactions.push(reaction);
+    newsFeedEntry.item.reactions = updatedReactions;
+    await saveNewsFeedEntry(redisClient, newsFeedEntry);
+  } catch (err) {
+    const error: InnoPlatformError = redisError(`Adding reaction to cache by user ${user.providerId}`, err as Error);
+    logger.error(error);
+    throw err;
   }
-
-  const updatedReactions = newsFeedEntry.item.reactions.filter((r: RedisReaction) => r.reactedBy !== user.providerId);
-  updatedReactions.push(reaction);
-  newsFeedEntry.item.reactions = updatedReactions;
-  await saveNewsFeedEntry(redisClient, newsFeedEntry);
 };
 
 export const removeReactionFromCache = async ({ reaction, user }: RemoveReaction) => {
-  const redisClient = await getRedisClient();
-  const newsFeedEntry = await getItemForEntityWithReactions(reaction, user);
+  try {
+    const redisClient = await getRedisClient();
+    const newsFeedEntry = await getItemForEntityWithReactions(reaction, user);
 
-  if (!newsFeedEntry) {
-    return;
+    if (!newsFeedEntry) {
+      return;
+    }
+
+    const updatedReactions = newsFeedEntry.item.reactions.filter((r: RedisReaction) => r.reactedBy !== user.providerId);
+    newsFeedEntry.item.reactions = updatedReactions;
+    await saveNewsFeedEntry(redisClient, newsFeedEntry);
+  } catch (err) {
+    const error: InnoPlatformError = redisError(`Removing reaction to cache by user ${user.providerId}`, err as Error);
+    logger.error(error);
+    throw err;
   }
-
-  const updatedReactions = newsFeedEntry.item.reactions.filter((r: RedisReaction) => r.reactedBy !== user.providerId);
-  newsFeedEntry.item.reactions = updatedReactions;
-  await saveNewsFeedEntry(redisClient, newsFeedEntry);
 };
 
 export const getItemForEntityWithReactions = async (

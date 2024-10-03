@@ -93,6 +93,8 @@ const addVariableValidation = <TVariables extends EnvVariablesConfiguration>(
         ctx.addIssue({
           message: `Environment variable '${String(configKey)}' is required, but not set`,
           code: z.ZodIssueCode.custom,
+          path: [configKey],
+          fatal: variableConfig.required,
         });
         return;
       }
@@ -108,6 +110,7 @@ const addVariableValidation = <TVariables extends EnvVariablesConfiguration>(
         ctx.addIssue({
           message: `Environment variable '${String(configKey)}' has an invalid format`,
           code: z.ZodIssueCode.custom,
+          path: [configKey],
         });
       }
     });
@@ -123,9 +126,10 @@ const addVariableValidation = <TVariables extends EnvVariablesConfiguration>(
 
       const groupValues = group.variables.map((variable) => values[variable]);
       const noneAreSet = groupValues.every((value) => !valueExists(value));
+      const variableNames = group.variables.map((envVariable) => envVariable) as string[];
 
       if (group.mode === 'at_least_one' && noneAreSet) {
-        ctx.addIssue({ message: group.errorMessage, code: z.ZodIssueCode.custom });
+        ctx.addIssue({ message: group.errorMessage, code: z.ZodIssueCode.custom, path: variableNames });
         return;
       }
 
@@ -133,7 +137,7 @@ const addVariableValidation = <TVariables extends EnvVariablesConfiguration>(
       const someAreNotSet = groupValues.some((value) => !valueExists(value));
 
       if (group.mode === 'none_or_all' && someAreSet && someAreNotSet) {
-        ctx.addIssue({ message: group.errorMessage, code: z.ZodIssueCode.custom });
+        ctx.addIssue({ message: group.errorMessage, code: z.ZodIssueCode.custom, path: variableNames });
         return;
       }
     });

@@ -106,17 +106,27 @@ export const getProjectCollaborationCommentResponses = withAuth(
 
 export const isProjectCollaborationCommentResponseUpvotedBy = withAuth(
   async (user: UserSession, body: { responseId: string }) => {
-    const validatedParams = validateParams(collaborationCommentResponseUpvotedBySchema, body);
-    if (validatedParams.status === StatusCodes.OK) {
-      const result = await getCollaborationCommentResponseUpvotedBy(dbClient, body.responseId, user.providerId);
+    try {
+      const validatedParams = validateParams(collaborationCommentResponseUpvotedBySchema, body);
+      if (validatedParams.status === StatusCodes.OK) {
+        const result = await getCollaborationCommentResponseUpvotedBy(dbClient, body.responseId, user.providerId);
+        return {
+          status: StatusCodes.OK,
+          data: result.length > 0,
+        };
+      }
       return {
-        status: StatusCodes.OK,
-        data: result.length > 0,
+        status: validatedParams.status,
+        errors: validatedParams.errors,
       };
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Checking if user ${user.providerId} has upvoted response ${body.responseId}`,
+        err as Error,
+        user.providerId,
+      );
+      logger.error(error);
+      throw err;
     }
-    return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
-    };
   },
 );

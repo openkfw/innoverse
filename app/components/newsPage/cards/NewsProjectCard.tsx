@@ -14,6 +14,7 @@ import VisibleContributors from '@/components/project-details/VisibleContributor
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
+import { HighlightText } from '@/utils/highlightText';
 
 import CommentOverview from './common/CommentOverview';
 
@@ -59,7 +60,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
           <VisibleContributors contributors={project.team} />
           <Typography variant="h5" sx={titleStyles}>
             <Link href={`/projects/${encodeURIComponent(project.id)}`} style={linkStyles}>
-              {project.title}
+              <HighlightText text={project.title} />
             </Link>
           </Typography>
           <Typography
@@ -67,7 +68,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
             sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? 4 : 6 }}
             data-testid="text"
           >
-            {project.summary}
+            <HighlightText text={project.summary} />
           </Typography>
         </CardContent>
       </Box>

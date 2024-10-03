@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 import { parseStringForLinks } from '@/components/common/LinkString';
+import { HighlightText } from '@/utils/highlightText';
 
 interface CommentOverviewProps {
   title: string;
@@ -25,7 +26,7 @@ const CommentOverviewContent = (props: CommentOverviewProps) => {
 
       <Box sx={textWrapperStyles}>
         <Typography variant="h5" sx={titleStyles}>
-          {title}
+          <HighlightText text={title} />
         </Typography>
 
         <Typography variant="body1" sx={descriptionStyles}>

@@ -3,6 +3,7 @@ import { getFollowedByForEntity, getProjectFollowers } from '@/repository/db/fol
 import dbClient from '@/repository/db/prisma/prisma';
 import { getPushSubscriptionsForUser } from '@/repository/db/push_subscriptions';
 import { createProjectUpdate } from '@/services/updateService';
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import { mapObjectWithReactions } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapSurveyQuestionToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
@@ -47,21 +48,31 @@ export class SurveyQuestionLifecycle extends StrapiEntityLifecycle {
   };
 
   private buildNotifications = async (surveyId: string): Promise<NotificationRequest[]> => {
-    const followers = await getProjectFollowers(dbClient, surveyId);
-    // Ignore possible erros...
-    return await Promise.all(
-      followers.map(async ({ followedBy }) => {
-        return {
-          subscriptions: await getPushSubscriptionsForUser(dbClient, followedBy),
-          userId: followedBy,
-          notification: {
-            topic: 'survey-question',
-            body: 'Eine neue Umfrage wurde kürzlich zu einem Projekt, dem du folgst, hinzugefügt.',
-            url: '/',
-          },
-        };
-      }),
-    );
+    try {
+      const followers = await getProjectFollowers(dbClient, surveyId);
+      // Ignore possible erros...
+      return await Promise.all(
+        followers.map(async ({ followedBy }) => {
+          return {
+            subscriptions: await getPushSubscriptionsForUser(dbClient, followedBy),
+            userId: followedBy,
+            notification: {
+              topic: 'survey-question',
+              body: 'Eine neue Umfrage wurde kürzlich zu einem Projekt, dem du folgst, hinzugefügt.',
+              url: '/',
+            },
+          };
+        }),
+      );
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Build notifications for followers of survey question with id: ${surveyId}`,
+        err as Error,
+        surveyId,
+      );
+      logger.error(error);
+      throw err;
+    }
   };
 
   private createUpdateForNewSurvey = async (surveyId: string) => {

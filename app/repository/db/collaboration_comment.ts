@@ -1,5 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 
+import { dbError, InnoPlatformError } from '@/utils/errors';
+import getLogger from '@/utils/logger';
+
+const logger = getLogger();
+
 export async function getCollaborationCommentById(client: PrismaClient, commentId: string) {
   return client.collaborationComment.findFirst({
     where: {
@@ -42,7 +47,13 @@ export async function getCollaborationCommentUpvotedBy(client: PrismaClient, com
 }
 
 export async function getCollaborationCommentStartingFrom(client: PrismaClient, from: Date) {
-  return await client.collaborationComment.findMany({ where: { createdAt: { gte: from } } });
+  try {
+    return await client.collaborationComment.findMany({ where: { createdAt: { gte: from } } });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Getting collaboration comment starting from ${from}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function addCollaborationCommentToDb(
@@ -53,66 +64,106 @@ export async function addCollaborationCommentToDb(
   comment: string,
   visible: boolean = true,
 ) {
-  return client.collaborationComment.create({
-    data: {
+  try {
+    return client.collaborationComment.create({
+      data: {
+        projectId,
+        questionId,
+        author,
+        comment,
+        visible,
+      },
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Add collaboration comment to project with id: ${projectId} and question with id: ${questionId} by user: ${author}`,
+      err as Error,
       projectId,
-      questionId,
-      author,
-      comment,
-      visible,
-    },
-  });
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function updateCollaborationCommentInDb(client: PrismaClient, commentId: string, updatedText: string) {
-  return client.collaborationComment.update({
-    where: {
-      id: commentId,
-    },
-    data: {
-      comment: updatedText,
-    },
-  });
+  try {
+    return client.collaborationComment.update({
+      where: {
+        id: commentId,
+      },
+      data: {
+        comment: updatedText,
+      },
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Update collaboration comment with id: ${commentId}`,
+      err as Error,
+      commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function deleteCollaborationCommentInDb(client: PrismaClient, commentId: string) {
-  return client.collaborationComment.delete({
-    where: {
-      id: commentId,
-    },
-  });
+  try {
+    return client.collaborationComment.delete({
+      where: {
+        id: commentId,
+      },
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Delete collaboration comment with id: ${commentId}`,
+      err as Error,
+      commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function handleCollaborationCommentUpvoteInDb(client: PrismaClient, commentId: string, upvotedBy: string) {
-  return client.$transaction(async (tx) => {
-    const result = await tx.collaborationComment.findFirst({
-      where: { id: commentId },
-      select: {
-        upvotedBy: true,
-      },
+  try {
+    return client.$transaction(async (tx) => {
+      const result = await tx.collaborationComment.findFirst({
+        where: { id: commentId },
+        select: {
+          upvotedBy: true,
+        },
+      });
+      const upvotes = result?.upvotedBy.filter((upvote) => upvote !== upvotedBy);
+
+      if (result?.upvotedBy.includes(upvotedBy)) {
+        return tx.collaborationComment.update({
+          where: {
+            id: commentId,
+          },
+          data: {
+            upvotedBy: upvotes,
+          },
+        });
+      }
+
+      if (result) {
+        return tx.collaborationComment.update({
+          where: {
+            id: commentId,
+          },
+          data: {
+            upvotedBy: { push: upvotedBy },
+          },
+        });
+      }
     });
-    const upvotes = result?.upvotedBy.filter((upvote) => upvote !== upvotedBy);
-
-    if (result?.upvotedBy.includes(upvotedBy)) {
-      return tx.collaborationComment.update({
-        where: {
-          id: commentId,
-        },
-        data: {
-          upvotedBy: upvotes,
-        },
-      });
-    }
-
-    if (result) {
-      return tx.collaborationComment.update({
-        where: {
-          id: commentId,
-        },
-        data: {
-          upvotedBy: { push: upvotedBy },
-        },
-      });
-    }
-  });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Handle upvote on collaboration comment with id: ${commentId} by user: ${upvotedBy}`,
+      err as Error,
+      commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
 }

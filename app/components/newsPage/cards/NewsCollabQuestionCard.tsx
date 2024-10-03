@@ -2,6 +2,7 @@ import Typography from '@mui/material/Typography';
 
 import { CollaborationQuestion } from '@/common/types';
 import { parseStringForLinks } from '@/components/common/LinkString';
+import { HighlightText } from '@/utils/highlightText';
 interface NewsCollabQuestionCardProps {
   question: CollaborationQuestion;
 }
@@ -13,7 +14,7 @@ function NewsCollabQuestionCard(props: NewsCollabQuestionCardProps) {
   return (
     <>
       <Typography variant="h5" color="secondary.contrastText" sx={titleStyles}>
-        {title}
+        <HighlightText text={title} />
       </Typography>
 
       <Typography variant="body1" color="secondary.contrastText" sx={descriptionStyles} data-testid="text">

@@ -1,20 +1,7 @@
 /* eslint-disable */
 /* prettier-ignore */
 
-/** An IntrospectionQuery representation of your schema.
- *
- * @remarks
- * This is an introspection of your schema saved as a file by GraphQLSP.
- * It will automatically be used by `gql.tada` to infer the types of your GraphQL documents.
- * If you need to reuse this data or update your `scalars`, update `tadaOutputLocation` to
- * instead save to a .ts instead of a .d.ts file.
- */
-export type introspection = {
-  name: never;
-  query: 'Query';
-  mutation: 'Mutation';
-  subscription: never;
-  types: {
+export type introspection_types = {
     'Boolean': unknown;
     'BooleanFilterInput': { kind: 'INPUT_OBJECT'; name: 'BooleanFilterInput'; isOneOf: false; inputFields: [{ name: 'and'; type: { kind: 'LIST'; name: never; ofType: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; }; defaultValue: null }, { name: 'between'; type: { kind: 'LIST'; name: never; ofType: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; }; defaultValue: null }, { name: 'contains'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'containsi'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'endsWith'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'eq'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'eqi'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'gt'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'gte'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'in'; type: { kind: 'LIST'; name: never; ofType: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; }; defaultValue: null }, { name: 'lt'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'lte'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'ne'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'nei'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'not'; type: { kind: 'INPUT_OBJECT'; name: 'BooleanFilterInput'; ofType: null; }; defaultValue: null }, { name: 'notContains'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'notContainsi'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'notIn'; type: { kind: 'LIST'; name: never; ofType: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; }; defaultValue: null }, { name: 'notNull'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'null'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'or'; type: { kind: 'LIST'; name: never; ofType: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; }; defaultValue: null }, { name: 'startsWith'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }]; };
     'CollaborationQuestion': { kind: 'OBJECT'; name: 'CollaborationQuestion'; fields: { 'authors': { name: 'authors'; type: { kind: 'OBJECT'; name: 'InnoUserRelationResponseCollection'; ofType: null; } }; 'createdAt': { name: 'createdAt'; type: { kind: 'SCALAR'; name: 'DateTime'; ofType: null; } }; 'description': { name: 'description'; type: { kind: 'NON_NULL'; name: never; ofType: { kind: 'SCALAR'; name: 'String'; ofType: null; }; } }; 'isPlatformFeedback': { name: 'isPlatformFeedback'; type: { kind: 'NON_NULL'; name: never; ofType: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; } }; 'project': { name: 'project'; type: { kind: 'OBJECT'; name: 'ProjectEntityResponse'; ofType: null; } }; 'publishedAt': { name: 'publishedAt'; type: { kind: 'SCALAR'; name: 'DateTime'; ofType: null; } }; 'title': { name: 'title'; type: { kind: 'NON_NULL'; name: never; ofType: { kind: 'SCALAR'; name: 'String'; ofType: null; }; } }; 'updatedAt': { name: 'updatedAt'; type: { kind: 'SCALAR'; name: 'DateTime'; ofType: null; } }; }; };
@@ -176,7 +163,22 @@ export type introspection = {
     'UsersPermissionsUserFiltersInput': { kind: 'INPUT_OBJECT'; name: 'UsersPermissionsUserFiltersInput'; isOneOf: false; inputFields: [{ name: 'and'; type: { kind: 'LIST'; name: never; ofType: { kind: 'INPUT_OBJECT'; name: 'UsersPermissionsUserFiltersInput'; ofType: null; }; }; defaultValue: null }, { name: 'blocked'; type: { kind: 'INPUT_OBJECT'; name: 'BooleanFilterInput'; ofType: null; }; defaultValue: null }, { name: 'confirmationToken'; type: { kind: 'INPUT_OBJECT'; name: 'StringFilterInput'; ofType: null; }; defaultValue: null }, { name: 'confirmed'; type: { kind: 'INPUT_OBJECT'; name: 'BooleanFilterInput'; ofType: null; }; defaultValue: null }, { name: 'createdAt'; type: { kind: 'INPUT_OBJECT'; name: 'DateTimeFilterInput'; ofType: null; }; defaultValue: null }, { name: 'email'; type: { kind: 'INPUT_OBJECT'; name: 'StringFilterInput'; ofType: null; }; defaultValue: null }, { name: 'id'; type: { kind: 'INPUT_OBJECT'; name: 'IDFilterInput'; ofType: null; }; defaultValue: null }, { name: 'not'; type: { kind: 'INPUT_OBJECT'; name: 'UsersPermissionsUserFiltersInput'; ofType: null; }; defaultValue: null }, { name: 'or'; type: { kind: 'LIST'; name: never; ofType: { kind: 'INPUT_OBJECT'; name: 'UsersPermissionsUserFiltersInput'; ofType: null; }; }; defaultValue: null }, { name: 'password'; type: { kind: 'INPUT_OBJECT'; name: 'StringFilterInput'; ofType: null; }; defaultValue: null }, { name: 'provider'; type: { kind: 'INPUT_OBJECT'; name: 'StringFilterInput'; ofType: null; }; defaultValue: null }, { name: 'resetPasswordToken'; type: { kind: 'INPUT_OBJECT'; name: 'StringFilterInput'; ofType: null; }; defaultValue: null }, { name: 'role'; type: { kind: 'INPUT_OBJECT'; name: 'UsersPermissionsRoleFiltersInput'; ofType: null; }; defaultValue: null }, { name: 'updatedAt'; type: { kind: 'INPUT_OBJECT'; name: 'DateTimeFilterInput'; ofType: null; }; defaultValue: null }, { name: 'username'; type: { kind: 'INPUT_OBJECT'; name: 'StringFilterInput'; ofType: null; }; defaultValue: null }]; };
     'UsersPermissionsUserInput': { kind: 'INPUT_OBJECT'; name: 'UsersPermissionsUserInput'; isOneOf: false; inputFields: [{ name: 'blocked'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'confirmationToken'; type: { kind: 'SCALAR'; name: 'String'; ofType: null; }; defaultValue: null }, { name: 'confirmed'; type: { kind: 'SCALAR'; name: 'Boolean'; ofType: null; }; defaultValue: null }, { name: 'email'; type: { kind: 'SCALAR'; name: 'String'; ofType: null; }; defaultValue: null }, { name: 'password'; type: { kind: 'SCALAR'; name: 'String'; ofType: null; }; defaultValue: null }, { name: 'provider'; type: { kind: 'SCALAR'; name: 'String'; ofType: null; }; defaultValue: null }, { name: 'resetPasswordToken'; type: { kind: 'SCALAR'; name: 'String'; ofType: null; }; defaultValue: null }, { name: 'role'; type: { kind: 'SCALAR'; name: 'ID'; ofType: null; }; defaultValue: null }, { name: 'username'; type: { kind: 'SCALAR'; name: 'String'; ofType: null; }; defaultValue: null }]; };
     'UsersPermissionsUserRelationResponseCollection': { kind: 'OBJECT'; name: 'UsersPermissionsUserRelationResponseCollection'; fields: { 'data': { name: 'data'; type: { kind: 'NON_NULL'; name: never; ofType: { kind: 'LIST'; name: never; ofType: { kind: 'NON_NULL'; name: never; ofType: { kind: 'OBJECT'; name: 'UsersPermissionsUserEntity'; ofType: null; }; }; }; } }; }; };
-  };
+};
+
+/** An IntrospectionQuery representation of your schema.
+ *
+ * @remarks
+ * This is an introspection of your schema saved as a file by GraphQLSP.
+ * It will automatically be used by `gql.tada` to infer the types of your GraphQL documents.
+ * If you need to reuse this data or update your `scalars`, update `tadaOutputLocation` to
+ * instead save to a .ts instead of a .d.ts file.
+ */
+export type introspection = {
+  name: never;
+  query: 'Query';
+  mutation: 'Mutation';
+  subscription: never;
+  types: introspection_types;
 };
 
 import * as gqlTada from 'gql.tada';

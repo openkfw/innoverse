@@ -5,6 +5,7 @@ import { getFollowedByForEntity, getFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { handleSurveyQuestionVoteInDb } from '@/repository/db/survey_votes';
+import { dbError, InnoPlatformError, redisError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapSurveyQuestionToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
 import { NewsType, RedisSurveyQuestion, RedisSurveyVote } from '@/utils/newsFeed/redis/models';
@@ -27,44 +28,60 @@ export const handleSurveyQuestionVote = async (surveyQuestion: {
   providerId: string;
   vote: string;
 }) => {
-  const { operation, vote: surveyVote } = await handleSurveyQuestionVoteInDb(
-    dbClient,
-    surveyQuestion.projectId,
-    surveyQuestion.surveyQuestionId,
-    surveyQuestion.providerId,
-    surveyQuestion.vote,
-  );
+  try {
+    const { operation, vote: surveyVote } = await handleSurveyQuestionVoteInDb(
+      dbClient,
+      surveyQuestion.projectId,
+      surveyQuestion.surveyQuestionId,
+      surveyQuestion.providerId,
+      surveyQuestion.vote,
+    );
 
-  handleSurveyVoteInCache(surveyVote);
+    handleSurveyVoteInCache(surveyVote);
 
-  if (operation !== 'deleted') {
-    notifySurveyFollowers(surveyQuestion.surveyQuestionId);
+    if (operation !== 'deleted') {
+      notifySurveyFollowers(surveyQuestion.surveyQuestionId);
+    }
+
+    return surveyVote;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Handle vote for survey question with id: ${surveyQuestion.surveyQuestionId} by user ${surveyQuestion.providerId}`,
+      err as Error,
+      surveyQuestion.surveyQuestionId,
+    );
+    logger.error(error);
+    throw error;
   }
-
-  return surveyVote;
 };
 
 const handleSurveyVoteInCache = async (surveyQuestion: PrismaSurveyVote) => {
-  const { surveyQuestionId, votedBy, vote, id } = surveyQuestion;
-  const redisClient = await getRedisClient();
-  const newsFeedEntry = await getNewsFeedEntryForSurveyQuestion(redisClient, {
-    surveyId: surveyQuestionId,
-  });
+  try {
+    const { surveyQuestionId, votedBy, vote, id } = surveyQuestion;
+    const redisClient = await getRedisClient();
+    const newsFeedEntry = await getNewsFeedEntryForSurveyQuestion(redisClient, {
+      surveyId: surveyQuestionId,
+    });
 
-  if (!newsFeedEntry) {
-    return;
+    if (!newsFeedEntry) {
+      return;
+    }
+    const survey = newsFeedEntry.item as RedisSurveyQuestion;
+    await performRedisTransaction(redisClient, async (transactionClient) => {
+      const redisVote = survey.votes.find((vote) => vote.votedBy === votedBy);
+      if (redisVote) {
+        await removeVoteFromCache(transactionClient, survey, redisVote);
+      }
+      if (redisVote?.vote !== vote) {
+        const newVote = { id, votedBy, vote };
+        await addVoteToCache(transactionClient, survey, newVote);
+      }
+    });
+  } catch (err) {
+    const error: InnoPlatformError = redisError(`Handle survey vote in cache`, err as Error);
+    logger.error(error);
+    throw error;
   }
-  const survey = newsFeedEntry.item as RedisSurveyQuestion;
-  await performRedisTransaction(redisClient, async (transactionClient) => {
-    const redisVote = survey.votes.find((vote) => vote.votedBy === votedBy);
-    if (redisVote) {
-      await removeVoteFromCache(transactionClient, survey, redisVote);
-    }
-    if (redisVote?.vote !== vote) {
-      const newVote = { id, votedBy, vote };
-      await addVoteToCache(transactionClient, survey, newVote);
-    }
-  });
 };
 
 const addVoteToCache = async (
@@ -116,13 +133,23 @@ export const createNewsFeedEntryForSurveyQuestion = async (survey: SurveyQuestio
 };
 
 const notifySurveyFollowers = async (surveyQuestionId: string) => {
-  const followers = await getFollowers(dbClient, ObjectType.SURVEY_QUESTION, surveyQuestionId);
-  await notifyFollowers(
-    followers,
-    'survey-question',
-    'Auf eine Umfrage, der du folgst, wurde eine neue Stimme abgegeben.',
-    '/news',
-  );
+  try {
+    const followers = await getFollowers(dbClient, ObjectType.SURVEY_QUESTION, surveyQuestionId);
+    await notifyFollowers(
+      followers,
+      'survey-question',
+      'Auf eine Umfrage, der du folgst, wurde eine neue Stimme abgegeben.',
+      '/news',
+    );
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Failed to notify followers about updated survey question with id: ${surveyQuestionId}`,
+      err as Error,
+      surveyQuestionId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 const getRedisKey = (id: string) => `${NewsType.SURVEY_QUESTION}:${id}`;

@@ -3,6 +3,7 @@
 const { z } = require('zod');
 const { createEnvConfig, createZodSchemaFromEnvConfig } = require('./envConfig');
 const { clientConfig } = require('./client');
+const { formatErrors } = require('./helper');
 
 if (typeof window !== 'undefined') {
   throw new Error('The server config should not be imported on the frontend!');
@@ -98,7 +99,8 @@ const serverEnvConfig = createEnvConfig({
     },
     NEWS_FEED_SYNC_SECRET: {
       stages: runtimeStages,
-      defaultRule: z.string().optional(),
+      defaultRule: z.string().default(''),
+      required: true,
     },
 
     // Azure auth
@@ -246,7 +248,14 @@ const serverConfig = schema.safeParse({
 });
 
 if (!serverConfig.success) {
-  console.error(serverConfig.error.issues);
+  const fatalErrorExists = serverConfig.error.issues.some((issue) => issue.fatal);
+  const formatedErrors = formatErrors(serverConfig.error);
+  if (fatalErrorExists) {
+    console.error(formatedErrors);
+    process.exit(1);
+  } else {
+    console.warn(formatedErrors);
+  }
   throw new Error('There is an error with the server environment variables');
 }
 

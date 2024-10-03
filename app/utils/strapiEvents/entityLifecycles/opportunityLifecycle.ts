@@ -2,6 +2,7 @@ import { getProjectFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getPushSubscriptionsForUser } from '@/repository/db/push_subscriptions';
 import { createProjectUpdate } from '@/services/updateService';
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { NotificationRequest, sendPushNotifications } from '@/utils/notification/notificationSender';
 import { getBasicOpportunityById } from '@/utils/requests/opportunities/requests';
@@ -22,21 +23,31 @@ export class OpportunityLifecycle extends StrapiEntityLifecycle {
   };
 
   private buildNotifications = async (opportunityId: string): Promise<NotificationRequest[]> => {
-    const followers = await getProjectFollowers(dbClient, opportunityId);
-    // Ignore possible erros...
-    return await Promise.all(
-      followers.map(async ({ followedBy }) => {
-        return {
-          subscriptions: await getPushSubscriptionsForUser(dbClient, followedBy),
-          userId: followedBy,
-          notification: {
-            topic: 'opportunity',
-            body: 'Eine neue Opportunity wurde kürzlich zu einem Projekt, dem du folgst, hinzugefügt.',
-            url: '/',
-          },
-        };
-      }),
-    );
+    try {
+      const followers = await getProjectFollowers(dbClient, opportunityId);
+      // Ignore possible erros...
+      return await Promise.all(
+        followers.map(async ({ followedBy }) => {
+          return {
+            subscriptions: await getPushSubscriptionsForUser(dbClient, followedBy),
+            userId: followedBy,
+            notification: {
+              topic: 'opportunity',
+              body: 'Eine neue Opportunity wurde kürzlich zu einem Projekt, dem du folgst, hinzugefügt.',
+              url: '/',
+            },
+          };
+        }),
+      );
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Build notifications for followers of opportunity with id: ${opportunityId}`,
+        err as Error,
+        opportunityId,
+      );
+      logger.error(error);
+      throw err;
+    }
   };
 
   private createUpdateForNewOpportunity = async (opportunityId: string) => {
