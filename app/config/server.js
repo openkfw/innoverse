@@ -39,16 +39,6 @@ const serverEnvConfig = createEnvConfig({
     },
 
     // Database
-    POSTGRES_USER: {
-      stages: runtimeStages,
-      defaultRule: z.string().default(''),
-      required: true,
-    },
-    POSTGRES_PASSWORD: {
-      stages: runtimeStages,
-      defaultRule: z.string().default(''),
-      required: true,
-    },
     DATABASE_URL: {
       stages: runtimeStages,
       defaultRule: z.string().default(''),
