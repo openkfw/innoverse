@@ -1,65 +1,66 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 const { z } = require('zod');
-const { someOrAllNotSet, formatErrors } = require('./helper');
+const { formatErrors } = require('./helper');
 const { env } = require('next-runtime-env');
+const { createEnvConfig, createZodSchemaFromEnvConfig } = require('./envConfig');
 
-const Config = z
-  .object({
-    STAGE: z.enum(['development', 'test', 'build', 'production']).default('development'),
-    NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT: z
-      .string({
-        errorMap: () => ({ message: 'NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT must be set!' }),
-      })
-      .default(''),
-    NEXT_PUBLIC_STRAPI_ENDPOINT: z
-      .string({
-        errorMap: () => ({ message: 'NEXT_PUBLIC_STRAPI_ENDPOINT must be set!' }),
-      })
-      .default(''),
-    NEXT_PUBLIC_VAPID_PUBLIC_KEY: z
-      .string({
-        errorMap: () => ({ message: 'NEXT_PUBLIC_VAPID_PUBLIC_KEY must be set!' }),
-      })
-      .default(''),
-    NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING: z
-      .string({
-        errorMap: () => ({ message: 'NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING must be set!' }),
-      })
-      .default(''),
-    NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY: z
-      .string({
-        errorMap: () => ({ message: 'NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY must be set!' }),
-      })
-      .default(''),
-    NEXT_PUBLIC_BUILDTIMESTAMP: z
-      .string({
-        errorMap: () => ({ message: 'NEXT_PUBLIC_BUILDTIMESTAMP must be set!' }),
-      })
-      .default(''),
-    NEXT_PUBLIC_CI_COMMIT_SHA: z
-      .string({
-        errorMap: () => ({ message: 'NEXT_PUBLIC_CI_COMMIT_SHA must be set!' }),
-      })
-      .default(''),
-  })
-  .superRefine((values, ctx) => {
-    const { NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING, NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY, STAGE } = values;
-    if (STAGE !== 'build') {
-      // The checking of the counterparts is done in the server config to limit the possibility of cross-imports.
-      // Assignment to default as
-      const appInsights = [NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING, NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY];
-      if (someOrAllNotSet(appInsights)) {
-        ctx.addIssue({
-          message: 'All Application Insights variables are required to enable Azure Application Insights.',
-          code: z.ZodIssueCode.custom,
-          path: ['NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING', 'NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY'],
-        });
-      }
-    }
-  });
+const clientEnvConfig = createEnvConfig({
+  variables: {
+    // DO NOT remove the stage environment variable from this config
+    STAGE: {
+      defaultRule: z.enum(['development', 'test', 'build', 'production', 'lint']).default('development'),
+      required: true,
+    },
 
-const clientConfig = Config.safeParse({
+    // Strapi
+    NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT: {
+      defaultRule: z.string().default(''),
+      required: true,
+      stages: [],
+    },
+    NEXT_PUBLIC_STRAPI_ENDPOINT: {
+      defaultRule: z.string().default(''),
+      required: true,
+      stages: [],
+    },
+
+    // Push notifications
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: {
+      defaultRule: z.string().default(''),
+      required: true,
+      stages: [],
+    },
+
+    // Application insights
+    NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING: {
+      defaultRule: z.string().optional(),
+    },
+    NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY: {
+      defaultRule: z.string().optional(),
+    },
+
+    // Version info
+    NEXT_PUBLIC_BUILDTIMESTAMP: {
+      defaultRule: z.string().optional(),
+    },
+    NEXT_PUBLIC_CI_COMMIT_SHA: {
+      defaultRule: z.string().optional(),
+    },
+  },
+  groups: [
+    {
+      variables: ['NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING', 'NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY'],
+      mode: 'none_or_all',
+      stages: ['development', 'test', 'production'],
+      errorMessage: 'All Application Insights variables are required to enable Azure Application Insights',
+    },
+  ],
+});
+
+const schema = createZodSchemaFromEnvConfig(clientEnvConfig);
+
+const clientConfig = schema.safeParse({
   NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING: env('NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING'),
   NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY: env('NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY'),
   NEXT_PUBLIC_VAPID_PUBLIC_KEY: env('NEXT_PUBLIC_VAPID_PUBLIC_KEY'),
