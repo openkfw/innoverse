@@ -7,6 +7,10 @@ export default {
       },
     },
   },
+  healthcheck: {
+    enabled: true,
+    resolve: "./src/plugins/healthcheck",
+  },
   upload: {
     config: {
       breakpoints: {
