@@ -7,6 +7,7 @@ import { StatusCodes } from 'http-status-codes';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 import { Option } from '@/common/formTypes';
 import { Post, ProjectUpdate } from '@/common/types';
@@ -90,7 +91,9 @@ export default function AddPostForm(props: AddUpdateFormProps) {
   };
 
   return (
-    <Stack spacing={2} sx={formStyles} direction="column" data-testid="add-update-form">
+    <Stack spacing={2} direction="column" data-testid="add-update-form">
+      <Typography sx={titleStyles}>{m.components_newsPage_addPost_addPostDialog_addPost()}</Typography>
+
       <form>
         <MultilineTextInputField
           name={CONTENT}
@@ -109,6 +112,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
             label={m.components_newsPage_addPost_form_addPostForm_projectLabel()}
             options={[{ label: '-optional-', id: '' }, ...projectOptions]}
             readOnly={!projectOptions}
+            sx={inputStyle}
             startAdornment={
               !projectOptions && (
                 <Box sx={{ pt: 1 }}>
@@ -116,30 +120,33 @@ export default function AddPostForm(props: AddUpdateFormProps) {
                 </Box>
               )
             }
-            sx={inputStyle}
           />
         )}
 
-        <InteractionButton
-          interactionType={InteractionType.COMMENT_SEND}
-          disabled={!formState.isValid}
-          onClick={handleSubmit(onSubmit)}
-        />
+        <Box
+          sx={{
+            display: { xs: 'flex', md: 'flex' },
+            gap: { xs: 0, md: '24px' },
+            justifyContent: { xs: 'space-between', md: 'flex-start' },
+            alignItems: 'center',
+            height: '60px',
+          }}
+        >
+          <CheckboxInputField
+            name={ANONYMOUS}
+            control={control}
+            label={m.components_newsPage_addPost_form_addPostForm_anonymousPost()}
+          />
+          <InteractionButton
+            interactionType={InteractionType.COMMENT_SEND}
+            disabled={!formState.isValid}
+            onClick={handleSubmit(onSubmit)}
+          />
+        </Box>
       </Stack>
-      <CheckboxInputField
-        name={ANONYMOUS}
-        control={control}
-        label={m.components_newsPage_addPost_form_addPostForm_anonymousPost()}
-        sx={{ width: '25%' }}
-      />
     </Stack>
   );
 }
-
-const formStyles = {
-  borderTop: '1px solid rgba(0, 90, 140, 0.10)',
-  paddingTop: 3,
-};
 
 const multilineTextStyles = {
   width: '100%',
@@ -149,4 +156,16 @@ const multilineTextStyles = {
 const inputPropsStyles = {
   height: '100%',
   alignItems: 'baseline',
+  borderRadius: 8,
+};
+
+const titleStyles = {
+  color: 'primary.light',
+  fontSize: '12px',
+  fontFamily: 'SansDefaultReg',
+  textTransform: 'uppercase',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  lineHeight: '169%',
+  letterSpacing: '1px',
 };
