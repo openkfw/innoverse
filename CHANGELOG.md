@@ -20,7 +20,8 @@ All notable changes to this project will be documented in this file. See [commit
 - add allowed origin and format env variable errors [#73](https://github.com/openkfw/innoverse/pull/73) PR[#76](https://github.com/openkfw/innoverse/pull/76)
 - close input field when clicking on 'antworten' again [#45](https://github.com/openkfw/innoverse/pull/45) PR[#68](https://github.com/openkfw/innoverse/pull/68)
 - use relative strapi urls in the redis cache [#14](https://github.com/openkfw/innoverse/issues/14) PR[#25](https://github.com/openkfw/innoverse/issues/25)
-- remove unused database env vars PR[#82](https://github.com/openkfw/innoverse/issues/82)
+- remove unused database env vars [#81](https://github.com/openkfw/innoverse/issues/81) PR[#82](https://github.com/openkfw/innoverse/issues/82)
+- display unsaved changes dialog when responding [#83](https://github.com/openkfw/innoverse/issues/83) PR[#85](https://github.com/openkfw/innoverse/pull/85)
 
 ## [1.0.1](https://github.com/openkfw/innoverse/compare/v1.0.0...v1.0.1) (2024-09-24)
 
