@@ -124,6 +124,7 @@ const textContainerStyle = {
 
 const textStyle = {
   color: 'secondary.contrastText',
+  lineHeight: 1.5,
 };
 
 const buttonOverlayStyle = {
@@ -148,7 +149,7 @@ const mentionStyle = {
   fontFamily: 'SansDefaultMed',
   fontWeight: 500,
   fontSize: 14,
-  lineHeight: '24px',
+  lineHeight: 1.5,
   letterSpacing: '0.15px',
   display: 'inline',
   color: '#398357',

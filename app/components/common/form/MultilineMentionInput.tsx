@@ -8,6 +8,7 @@ import { useMentions } from '@/app/contexts/mentions-context';
 import { MultilineFormInputProps } from '@/common/formTypes';
 import { fetchMentionData } from '@/components/collaboration/comments/actions';
 import * as m from '@/src/paraglide/messages.js';
+import theme from '@/styles/theme';
 
 type MentionCallbackType = (data: SuggestionDataItem[]) => void;
 
@@ -87,8 +88,10 @@ const mentionInputStyle = {
     position: 'relative',
   },
   highlightedInput: {
-    backgroundColor: '#398357',
-    opacity: 0.5,
+    backgroundColor: 'rgba(250,249,246,255)',
+    color: '#398357',
+    zIndex: 1,
+    position: 'relative',
   },
   mentionsInput: {
     padding: '16px 24px 36px 24px',
@@ -101,6 +104,7 @@ const mentionInputStyle = {
       overflow: 'hidden',
       whiteSpace: 'pre-wrap',
       border: 0,
+      lineHeight: 1.5,
     },
     input: {
       borderWidth: 1,
@@ -108,23 +112,24 @@ const mentionInputStyle = {
       outline: 'none',
       fontFamily: 'SansDefaultMed',
       padding: '16px 24px 36px 24px',
+      lineHeight: 1.5,
     },
     suggestions: {
       list: {
         border: '1px solid rgba(0,0,0,0.15)',
         borderRadius: '5px',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.palette.common.white,
         overflow: 'auto',
         maxHeight: 275,
       },
       item: {
         padding: '5px 15px',
         borderBottom: '1px solid rgba(0,0,0,0.15)',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.palette.common.white,
         transition: 'background-color 0.2s ease-in-out',
         '&focused': {
-          backgroundColor: '#004267',
-          color: '#FFFFFF',
+          backgroundColor: theme.palette.primary.dark,
+          color: theme.palette.common.white,
         },
       },
     },
