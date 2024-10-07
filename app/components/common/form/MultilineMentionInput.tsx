@@ -44,11 +44,14 @@ function MultilineMentionInput({
           <Box sx={mentionInputStyle.wrapperStyles}>
             <MentionsInput
               {...field}
-              style={mentionInputStyle.mentionsInput}
               placeholder={placeholder}
               spellCheck="false"
               readOnly={readOnly}
               rows={rows}
+              style={{
+                ...mentionInputStyle.mentionsInput,
+                paddingBottom: endAdornment ? '56px' : '16px',
+              }}
             >
               <Mention
                 style={mentionInputStyle.highlightedInput}
@@ -92,6 +95,8 @@ const mentionInputStyle = {
     color: '#398357',
     zIndex: 1,
     position: 'relative',
+    top: 1,
+    left: 1,
   },
   mentionsInput: {
     padding: '16px 24px 36px 24px',

@@ -14,6 +14,9 @@ import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { mergeStyles } from '@/utils/helpers';
 
+import { StyledTooltip } from './StyledTooltip';
+import { UserTooltip } from './UserTooltip';
+
 interface TextCardProps {
   text: string;
   header?: React.ReactNode;
@@ -42,7 +45,7 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
     let match;
 
     while ((match = mentionRegex.exec(text)) !== null) {
-      const [_fullMatch, name, id, _other] = match;
+      const [_fullMatch, name, id, email] = match;
       const matchStart = match.index;
       const matchEnd = mentionRegex.lastIndex;
 
@@ -52,9 +55,16 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
       }
 
       parts.push(
-        <Typography key={`mention-${id}-${matchStart}`} variant="body1" component="span" style={mentionStyle}>
-          {name}
-        </Typography>,
+        <StyledTooltip
+          arrow
+          key={`mention-${id}-${matchStart}`}
+          title={<UserTooltip user={{ id, name, email }} />}
+          placement="top"
+        >
+          <Typography variant="body1" component="span" style={mentionStyle}>
+            {name}
+          </Typography>
+        </StyledTooltip>,
       );
 
       lastIndex = matchEnd;
