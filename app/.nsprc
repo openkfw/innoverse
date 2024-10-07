@@ -8,5 +8,10 @@
     "active": true,
     "notes": "Ignored since multiple libraries use an old version of webpack",
     "expiry": "2024-10-31"
+  },
+  "1099846": {
+    "active": true,
+    "notes": "Ignored since nextauth use an old version of cookie",
+    "expiry": "2024-10-31"
   }
 }
