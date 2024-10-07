@@ -2,6 +2,10 @@ import type { Follow, ObjectType as PrismaObjectType } from '@prisma/client';
 import { PrismaClient } from '@prisma/client';
 
 import { ObjectType } from '@/common/types';
+import { dbError, InnoPlatformError } from '@/utils/errors';
+import getLogger from '@/utils/logger';
+
+const logger = getLogger();
 
 export async function getFollowers(client: PrismaClient, objectType: ObjectType, objectId: string, limit?: number) {
   const query: any = {
@@ -21,16 +25,26 @@ export async function getFollowedByForEntity(
   objectType: ObjectType,
   objectId: string,
 ): Promise<string[]> {
-  const followedBy = await client.follow.findMany({
-    where: {
+  try {
+    const followedBy = await client.follow.findMany({
+      where: {
+        objectId,
+        objectType: objectType as PrismaObjectType,
+      },
+      select: {
+        followedBy: true,
+      },
+    });
+    return followedBy.map((follow) => follow.followedBy);
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Get follower for ${objectType} object with id: ${objectId}`,
+      err as Error,
       objectId,
-      objectType: objectType as PrismaObjectType,
-    },
-    select: {
-      followedBy: true,
-    },
-  });
-  return followedBy.map((follow) => follow.followedBy);
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function getProjectFollowers(client: PrismaClient, objectId: string, limit?: number) {
@@ -106,15 +120,25 @@ export async function removeFollowFromDb(
   objectType: ObjectType,
   objectId: string,
 ): Promise<Follow> {
-  return await client.follow.delete({
-    where: {
-      objectId_objectType_followedBy: {
-        followedBy,
-        objectId,
-        objectType: objectType as PrismaObjectType,
+  try {
+    return await client.follow.delete({
+      where: {
+        objectId_objectType_followedBy: {
+          followedBy,
+          objectId,
+          objectType: objectType as PrismaObjectType,
+        },
       },
-    },
-  });
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Remove follow to ${objectType} object with id: ${objectId}`,
+      err as Error,
+      objectId,
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function addFollowToDb(
@@ -123,23 +147,33 @@ export async function addFollowToDb(
   objectType: ObjectType,
   objectId: string,
 ) {
-  return client.follow.upsert({
-    where: {
-      objectId_objectType_followedBy: {
+  try {
+    return client.follow.upsert({
+      where: {
+        objectId_objectType_followedBy: {
+          objectId,
+          objectType: objectType as PrismaObjectType,
+          followedBy,
+        },
+      },
+      update: {
         objectId,
         objectType: objectType as PrismaObjectType,
         followedBy,
       },
-    },
-    update: {
+      create: {
+        objectId,
+        objectType: objectType as PrismaObjectType,
+        followedBy,
+      },
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Add follow to ${objectType} object with id: ${objectId}`,
+      err as Error,
       objectId,
-      objectType: objectType as PrismaObjectType,
-      followedBy,
-    },
-    create: {
-      objectId,
-      objectType: objectType as PrismaObjectType,
-      followedBy,
-    },
-  });
+    );
+    logger.error(error);
+    throw err;
+  }
 }

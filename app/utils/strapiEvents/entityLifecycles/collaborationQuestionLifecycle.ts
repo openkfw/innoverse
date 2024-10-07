@@ -2,6 +2,7 @@ import { ObjectType } from '@/common/types';
 import { getFollowedByForEntity, getProjectFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getPushSubscriptionsForUser } from '@/repository/db/push_subscriptions';
+import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapCollaborationQuestionToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
@@ -40,21 +41,31 @@ export class CollaborationQuestionLifecycle extends StrapiEntityLifecycle {
   };
 
   private buildNotifications = async (questionId: string): Promise<NotificationRequest[]> => {
-    const followers = await getProjectFollowers(dbClient, questionId);
-    // Ignore possible erros...
-    return await Promise.all(
-      followers.map(async ({ followedBy }) => {
-        return {
-          subscriptions: await getPushSubscriptionsForUser(dbClient, followedBy),
-          userId: followedBy,
-          notification: {
-            topic: 'collaboration-question',
-            body: 'Eine neue Frage wurde kürzlich zu einem Projekt, dem du folgst, hinzugefügt.',
-            url: '/',
-          },
-        };
-      }),
-    );
+    try {
+      const followers = await getProjectFollowers(dbClient, questionId);
+      // Ignore possible erros...
+      return await Promise.all(
+        followers.map(async ({ followedBy }) => {
+          return {
+            subscriptions: await getPushSubscriptionsForUser(dbClient, followedBy),
+            userId: followedBy,
+            notification: {
+              topic: 'collaboration-question',
+              body: 'Eine neue Frage wurde kürzlich zu einem Projekt, dem du folgst, hinzugefügt.',
+              url: '/',
+            },
+          };
+        }),
+      );
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Build notifications for collaboration question with id: ${questionId}`,
+        err as Error,
+        questionId,
+      );
+      logger.error(error);
+      throw err;
+    }
   };
 
   private saveQuestionToCache = async (

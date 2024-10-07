@@ -137,7 +137,7 @@ export const isCollaborationCommentUpvotedByUser = withAuth(async (user: UserSes
     return { status: StatusCodes.OK, data: isUpvotedBy };
   } catch (err) {
     const error: InnoPlatformError = strapiError(
-      `Find upvote for comment${body.commentId} by user ${user.providerId}`,
+      `Find upvote for comment with id: ${body.commentId} by user ${user.providerId}`,
       err as RequestError,
       body.commentId,
     );

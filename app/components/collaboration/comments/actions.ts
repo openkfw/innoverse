@@ -85,42 +85,8 @@ export const addProjectCollaborationComment = withAuth(
 );
 
 export const deleteProjectCollaborationComment = withAuth(async (user: UserSession, body: { commentId: string }) => {
-  const validatedParams = validateParams(deleteCollaborationCommentSchema, body);
-
-  if (validatedParams.status !== StatusCodes.OK) {
-    return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
-      message: validatedParams.message,
-    };
-  }
-
-  const comment = await getCollaborationCommentById(dbClient, body.commentId);
-
-  if (comment === null) {
-    return {
-      status: StatusCodes.BAD_REQUEST,
-      message: 'No collaboration comment with the specified ID exists',
-    };
-  }
-
-  if (comment.author !== user.providerId) {
-    return {
-      status: StatusCodes.BAD_REQUEST,
-      message: 'A collaboration comment can only be deleted by its author',
-    };
-  }
-
-  await deleteCollaborationComment(body.commentId);
-
-  return {
-    status: StatusCodes.OK,
-  };
-});
-
-export const updateProjectCollaborationComment = withAuth(
-  async (user: UserSession, body: { commentId: string; updatedText: string }) => {
-    const validatedParams = validateParams(updateCollaborationCommentSchema, body);
+  try {
+    const validatedParams = validateParams(deleteCollaborationCommentSchema, body);
 
     if (validatedParams.status !== StatusCodes.OK) {
       return {
@@ -142,22 +108,76 @@ export const updateProjectCollaborationComment = withAuth(
     if (comment.author !== user.providerId) {
       return {
         status: StatusCodes.BAD_REQUEST,
-        message: 'A collaboration comment can only be edited by its author',
+        message: 'A collaboration comment can only be deleted by its author',
       };
     }
 
-    const updatedComment = await updateCollaborationComment({
-      user,
-      comment: {
-        id: body.commentId,
-        comment: body.updatedText,
-      },
-    });
+    await deleteCollaborationComment(body.commentId);
 
     return {
       status: StatusCodes.OK,
-      comment: updatedComment,
     };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Deleting Collaboration Comment with id: ${body.commentId} by user ${user.providerId}`,
+      err as Error,
+      body.commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
+});
+
+export const updateProjectCollaborationComment = withAuth(
+  async (user: UserSession, body: { commentId: string; updatedText: string }) => {
+    try {
+      const validatedParams = validateParams(updateCollaborationCommentSchema, body);
+
+      if (validatedParams.status !== StatusCodes.OK) {
+        return {
+          status: validatedParams.status,
+          errors: validatedParams.errors,
+          message: validatedParams.message,
+        };
+      }
+
+      const comment = await getCollaborationCommentById(dbClient, body.commentId);
+
+      if (comment === null) {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          message: 'No collaboration comment with the specified ID exists',
+        };
+      }
+
+      if (comment.author !== user.providerId) {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          message: 'A collaboration comment can only be edited by its author',
+        };
+      }
+
+      const updatedComment = await updateCollaborationComment({
+        user,
+        comment: {
+          id: body.commentId,
+          comment: body.updatedText,
+        },
+      });
+
+      return {
+        status: StatusCodes.OK,
+        comment: updatedComment,
+      };
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Updating Collaboration Comment with id: ${body.commentId} by user ${user.providerId}`,
+        err as Error,
+        body.commentId,
+      );
+      logger.error(error);
+      throw err;
+    }
   },
 );
 
@@ -221,88 +241,118 @@ export const addProjectCollaborationCommentResponse = withAuth(
 
 export const deleteProjectCollaborationCommentResponse = withAuth(
   async (user: UserSession, body: { responseId: string }) => {
-    const validatedParams = validateParams(deleteCollaborationCommentResponseSchema, body);
+    try {
+      const validatedParams = validateParams(deleteCollaborationCommentResponseSchema, body);
 
-    if (validatedParams.status !== StatusCodes.OK) {
+      if (validatedParams.status !== StatusCodes.OK) {
+        return {
+          status: validatedParams.status,
+          errors: validatedParams.errors,
+          message: validatedParams.message,
+        };
+      }
+
+      const response = await getCollaborationCommentResponseById(dbClient, body.responseId);
+
+      if (response === null) {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          message: 'No collaboration comment response with the specified ID exists',
+        };
+      }
+
+      if (response.author !== user.providerId) {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          message: 'A collaboration comment response can only be deleted by its author',
+        };
+      }
+
+      await deleteCollaborationCommentResponse({ user, response: { id: body.responseId } });
+
       return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-        message: validatedParams.message,
+        status: StatusCodes.OK,
       };
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Deleting a Collaboration Comment Response with id: ${body.responseId} by user ${user.providerId}`,
+        err as Error,
+        body.responseId,
+      );
+      logger.error(error);
+      throw err;
     }
-
-    const response = await getCollaborationCommentResponseById(dbClient, body.responseId);
-
-    if (response === null) {
-      return {
-        status: StatusCodes.BAD_REQUEST,
-        message: 'No collaboration comment response with the specified ID exists',
-      };
-    }
-
-    if (response.author !== user.providerId) {
-      return {
-        status: StatusCodes.BAD_REQUEST,
-        message: 'A collaboration comment response can only be deleted by its author',
-      };
-    }
-
-    await deleteCollaborationCommentResponse({ user, response: { id: body.responseId } });
-
-    return {
-      status: StatusCodes.OK,
-    };
   },
 );
 
 export const updateProjectCollaborationCommentResponse = withAuth(
   async (user: UserSession, body: { responseId: string; updatedText: string }) => {
-    const validatedParams = validateParams(updateCollaborationCommentResponseSchema, body);
+    try {
+      const validatedParams = validateParams(updateCollaborationCommentResponseSchema, body);
 
-    if (validatedParams.status !== StatusCodes.OK) {
+      if (validatedParams.status !== StatusCodes.OK) {
+        return {
+          status: validatedParams.status,
+          errors: validatedParams.errors,
+          message: validatedParams.message,
+        };
+      }
+
+      const response = await getCollaborationCommentResponseById(dbClient, body.responseId);
+
+      if (response === null) {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          message: 'No collaboration comment response with the specified ID exists',
+        };
+      }
+
+      if (response.author !== user.providerId) {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          message: 'A collaboration comment response can only be edited by its author',
+        };
+      }
+
+      const updatedResponse = await updateCollaborationCommentResponseInDb(dbClient, body.responseId, body.updatedText);
+
       return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-        message: validatedParams.message,
+        status: StatusCodes.OK,
+        comment: updatedResponse,
       };
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Updating a Collaboration Comment Response with id: ${body.responseId} by user ${user.providerId}`,
+        err as Error,
+        body.responseId,
+      );
+      logger.error(error);
+      throw err;
     }
-
-    const response = await getCollaborationCommentResponseById(dbClient, body.responseId);
-
-    if (response === null) {
-      return {
-        status: StatusCodes.BAD_REQUEST,
-        message: 'No collaboration comment response with the specified ID exists',
-      };
-    }
-
-    if (response.author !== user.providerId) {
-      return {
-        status: StatusCodes.BAD_REQUEST,
-        message: 'A collaboration comment response can only be edited by its author',
-      };
-    }
-
-    const updatedResponse = await updateCollaborationCommentResponseInDb(dbClient, body.responseId, body.updatedText);
-
-    return {
-      status: StatusCodes.OK,
-      comment: updatedResponse,
-    };
   },
 );
 
 export const handleProjectCollaborationCommentResponseUpvotedBy = withAuth(
   async (user: UserSession, body: { responseId: string }) => {
-    const validatedParams = validateParams(collaborationCommentResponseUpvotedBySchema, body);
-    if (validatedParams.status === StatusCodes.OK) {
-      await handleCollaborationCommentResponseUpvotedByInDb(dbClient, body.responseId, user.providerId);
-      return { status: StatusCodes.OK };
+    try {
+      const validatedParams = validateParams(collaborationCommentResponseUpvotedBySchema, body);
+      if (validatedParams.status === StatusCodes.OK) {
+        await handleCollaborationCommentResponseUpvotedByInDb(dbClient, body.responseId, user.providerId);
+        return { status: StatusCodes.OK };
+      }
+      return {
+        status: validatedParams.status,
+        errors: validatedParams.errors,
+      };
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Adding an upvote to a Collaboration Comment Response with id: ${body.responseId} by user ${user.providerId}`,
+        err as Error,
+        body.responseId,
+      );
+      logger.error(error);
+      throw err;
     }
-    return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
-    };
   },
 );
 
