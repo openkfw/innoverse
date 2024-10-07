@@ -1,6 +1,7 @@
-import { ObjectType } from '@/common/types';
-import { PrismaClient } from '@prisma/client';
 import type { ObjectType as PrismaObjectType } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+
+import { ObjectType } from '@/common/types';
 
 export async function getTotalReactions(client: PrismaClient, type: ObjectType) {
   return client.reaction.groupBy({

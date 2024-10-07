@@ -19,8 +19,12 @@ import {
 import dbClient from '@/repository/db/prisma/prisma';
 import { updatePostInCache } from '@/services/postService';
 import { updateProjectUpdateInCache } from '@/services/updateService';
+import { dbError, InnoPlatformError } from '@/utils/errors';
+import getLogger from '@/utils/logger';
 import { notifyFollowers } from '@/utils/notification/notificationSender';
 import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
+
+const logger = getLogger();
 
 interface AddComment {
   author: UserSession;
@@ -102,7 +106,10 @@ export const removeComment = async ({ user, commentId, commentType }: RemoveComm
 
 const updatePostCommentInCache = async (postComment: { postId: string }, author: UserSession) => {
   const postResponseCount = await countPostResponses(dbClient, postComment.postId);
-  return await updatePostInCache({ post: { id: postComment.postId, responseCount: postResponseCount }, user: author });
+  return await updatePostInCache({
+    post: { id: postComment.postId, responseCount: postResponseCount },
+    user: author,
+  });
 };
 
 const updateNewsCommentInCache = async (newsComment: { newsId: string }) => {
@@ -125,11 +132,31 @@ const removeNewsCommenInCache = async (newsId: string) => {
 };
 
 const notifyUpdateFollowers = async (updateId: string) => {
-  const follows = await getFollowers(dbClient, ObjectType.UPDATE, updateId);
-  await notifyFollowers(follows, 'update', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
+  try {
+    const follows = await getFollowers(dbClient, ObjectType.UPDATE, updateId);
+    await notifyFollowers(follows, 'update', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Notify followers about updated update with id: ${updateId}`,
+      err as Error,
+      updateId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 const notifyPostFollowers = async (postId: string) => {
-  const follows = await getFollowers(dbClient, ObjectType.POST, postId);
-  await notifyFollowers(follows, 'post', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
+  try {
+    const follows = await getFollowers(dbClient, ObjectType.POST, postId);
+    await notifyFollowers(follows, 'post', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Notify followers about updated post with id: ${postId}`,
+      err as Error,
+      postId,
+    );
+    logger.error(error);
+    throw err;
+  }
 };

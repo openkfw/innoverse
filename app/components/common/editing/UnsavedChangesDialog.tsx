@@ -11,7 +11,7 @@ import theme from '@/styles/theme';
 
 import CustomButton from '../CustomButton';
 
-import { useUnsavedEditingChangesDialog } from './editing-context';
+import { useUnsavedChangesDialog } from './editing-context';
 
 interface UnsavedChangesDialogProps {
   open: boolean;
@@ -23,7 +23,7 @@ export const UnsavedEditingChangesDialog = () => {
   // The 'useUnsavedEditingChangesDialog' hook causes this component to rerender
   // whenever a user initiates/discards an edit or response. Isolating this into
   // a separate components can help reduce rerendering overhead.
-  const dialog = useUnsavedEditingChangesDialog();
+  const dialog = useUnsavedChangesDialog();
   return dialog;
 };
 

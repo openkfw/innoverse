@@ -12,6 +12,7 @@ import { SurveyQuestion } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
+import { HighlightText } from '@/utils/highlightText';
 
 import { handleSurveyVote } from './actions';
 import { SurveyResponsePicker } from './SurveyResponsePicker';
@@ -48,7 +49,7 @@ export const SurveyCard = (props: SurveyCardProps) => {
       <Grid container item xs={12} md={fill ? 12 : 6} direction="column" sx={leftGridStyles}>
         <Grid item>
           <Typography variant="h5" color="secondary.contrastText" style={{ fontSize: 20 }} data-testid="text">
-            {surveyQuestion.question}
+            <HighlightText text={surveyQuestion.question} />
           </Typography>
         </Grid>
       </Grid>

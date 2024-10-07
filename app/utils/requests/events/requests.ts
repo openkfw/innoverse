@@ -8,7 +8,7 @@ import { RequestError } from '@/entities/error';
 import dbClient from '@/repository/db/prisma/prisma';
 import { countNumberOfReactions, getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
-import { strapiError } from '@/utils/errors';
+import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapToEvent, mapToEvents } from '@/utils/requests/events/mappings';
@@ -127,24 +127,34 @@ export async function getEventsWithAdditionalData(events: Event[]) {
 export async function getEventWithAdditionalData(
   item: Event | EventWithAdditionalData,
 ): Promise<EventWithAdditionalData> {
-  const { data: reactionForUser } = await findReactionByUser({ objectType: ObjectType.EVENT, objectId: item.id });
-  const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.EVENT, item.id);
+  try {
+    const { data: reactionForUser } = await findReactionByUser({ objectType: ObjectType.EVENT, objectId: item.id });
+    const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.EVENT, item.id);
 
-  const reactionCount = reactionCountResult.map((r) => ({
-    count: r._count.shortCode,
-    emoji: {
-      shortCode: r.shortCode,
-      nativeSymbol: r.nativeSymbol,
-    },
-  }));
+    const reactionCount = reactionCountResult.map((r) => ({
+      count: r._count.shortCode,
+      emoji: {
+        shortCode: r.shortCode,
+        nativeSymbol: r.nativeSymbol,
+      },
+    }));
 
-  return {
-    ...item,
-    reactionForUser: reactionForUser
-      ? { ...reactionForUser, objectType: reactionForUser.objectType as ObjectType }
-      : null,
-    reactionCount,
-  };
+    return {
+      ...item,
+      reactionForUser: reactionForUser
+        ? { ...reactionForUser, objectType: reactionForUser.objectType as ObjectType }
+        : null,
+      reactionCount,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Getting additional data for event with id: ${item.id}`,
+      err as Error,
+      item.id,
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export const countFutureEventsForProject = withAuth(async (user: UserSession, body: { projectId: string }) => {

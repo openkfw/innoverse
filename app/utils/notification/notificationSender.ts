@@ -8,6 +8,8 @@ import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { sendPushNotification } from '@/utils/notification/pushNotification';
 
+import { dbError, InnoPlatformError } from '../errors';
+
 const logger = getLogger();
 
 export type NotificationTopic =
@@ -30,17 +32,9 @@ export type NotificationRequest = {
 };
 
 export const notifyFollowers = async (follows: PrismaFollow[], topic: NotificationTopic, text: string, url: string) => {
-  try {
-    const buildNotifications = follows.map((follow) => createNotificationForFollow(follow, topic, text, url));
-    const notifications = await getPromiseResults(buildNotifications);
-    sendPushNotifications(notifications);
-  } catch (err) {
-    logger.error(
-      `Failed to notify followers with ids (Topic: '${topic}', text: '${text}', url: '${url}'): ${follows.map((follow) => follow.followedBy)}`,
-      follows,
-      err,
-    );
-  }
+  const buildNotifications = follows.map((follow) => createNotificationForFollow(follow, topic, text, url));
+  const notifications = await getPromiseResults(buildNotifications);
+  sendPushNotifications(notifications);
 };
 
 export const sendPushNotifications = (notifications: NotificationRequest[]) => {
@@ -71,15 +65,24 @@ const createNotificationForFollow = async (
   text: string,
   url: string,
 ): Promise<NotificationRequest> => {
-  const subscriptions = await getPushSubscriptionsForUser(dbClient, follow.followedBy);
+  try {
+    const subscriptions = await getPushSubscriptionsForUser(dbClient, follow.followedBy);
 
-  return {
-    subscriptions: subscriptions,
-    userId: follow.followedBy,
-    notification: {
-      topic,
-      body: text,
-      url,
-    },
-  };
+    return {
+      subscriptions: subscriptions,
+      userId: follow.followedBy,
+      notification: {
+        topic,
+        body: text,
+        url,
+      },
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Create notification for follow by user ${follow.followedBy}`,
+      err as Error,
+    );
+    logger.error(error);
+    throw err;
+  }
 };

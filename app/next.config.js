@@ -88,11 +88,7 @@ const nextConfig = {
     },
     instrumentationHook: true,
     serverActions: {
-      allowedOrigins: [
-        '***URL_REMOVED***',
-        '***URL_REMOVED***',
-        '***URL_REMOVED***',
-      ],
+      allowedOrigins: serverConfig.ALLOWED_ORIGINS
     },
   },
   i18n: {
@@ -104,20 +100,20 @@ const nextConfig = {
 module.exports =
   serverConfig.ANALYZE === true
     ? withBundleAnalyzer(
-        paraglide({
-          paraglide: {
-            project: './project.inlang',
-            outdir: './src/paraglide',
-          },
-          ...nextConfig,
-        }),
-      )
+      paraglide({
+        paraglide: {
+          project: './project.inlang',
+          outdir: './src/paraglide',
+        },
+        ...nextConfig,
+      }),
+    )
     : withFonts(
-        paraglide({
-          paraglide: {
-            project: './project.inlang',
-            outdir: './src/paraglide',
-          },
-          ...nextConfig,
-        }),
-      );
+      paraglide({
+        paraglide: {
+          project: './project.inlang',
+          outdir: './src/paraglide',
+        },
+        ...nextConfig,
+      }),
+    );

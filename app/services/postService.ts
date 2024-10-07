@@ -14,6 +14,7 @@ import {
 } from '@/repository/db/posts';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
+import { InnoPlatformError, redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapPostToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
@@ -64,30 +65,51 @@ export const handleUpvotePost = async ({ postId, user }: UpvotePost) => {
 };
 
 export const addPostToCache = async (post: Post) => {
-  const redisClient = await getRedisClient();
-  const newsFeedEntry = mapPostToRedisNewsFeedEntry(post, [], []);
-  await saveNewsFeedEntry(redisClient, newsFeedEntry);
+  try {
+    const redisClient = await getRedisClient();
+    const newsFeedEntry = mapPostToRedisNewsFeedEntry(post, [], []);
+    await saveNewsFeedEntry(redisClient, newsFeedEntry);
+  } catch (err) {
+    const error: InnoPlatformError = redisError(`Add post with id: ${post.id} to cache`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const updatePostInCache = async ({ post, user }: UpdatePostInCache) => {
-  const redisClient = await getRedisClient();
-  const newsFeedEntry = await getNewsFeedEntryForPost(redisClient, { user, postId: post.id });
+  try {
+    const redisClient = await getRedisClient();
+    const newsFeedEntry = await getNewsFeedEntryForPost(redisClient, { user, postId: post.id });
 
-  if (!newsFeedEntry) return;
-  const cachedItem = newsFeedEntry.item as RedisPost;
-  cachedItem.content = post.content ?? cachedItem.content;
-  cachedItem.upvotedBy = post.upvotedBy ?? cachedItem.upvotedBy;
-  cachedItem.responseCount = post.responseCount ?? cachedItem.responseCount;
-  newsFeedEntry.item = cachedItem;
-  newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
+    if (!newsFeedEntry) return;
+    const cachedItem = newsFeedEntry.item as RedisPost;
+    cachedItem.content = post.content ?? cachedItem.content;
+    cachedItem.upvotedBy = post.upvotedBy ?? cachedItem.upvotedBy;
+    cachedItem.responseCount = post.responseCount ?? cachedItem.responseCount;
+    newsFeedEntry.item = cachedItem;
+    newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
 
-  await saveNewsFeedEntry(redisClient, newsFeedEntry);
+    await saveNewsFeedEntry(redisClient, newsFeedEntry);
+  } catch (err) {
+    const error: InnoPlatformError = redisError(
+      `Update post with id: ${post.id} by user ${user.providerId} could not be saved in the cache`,
+      err as Error,
+    );
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const deletePostFromCache = async (postId: string) => {
-  const redisClient = await getRedisClient();
-  const redisKey = getRedisKey(postId);
-  await deleteItemFromRedis(redisClient, redisKey);
+  try {
+    const redisClient = await getRedisClient();
+    const redisKey = getRedisKey(postId);
+    await deleteItemFromRedis(redisClient, redisKey);
+  } catch (err) {
+    const error: InnoPlatformError = redisError(`Delete post with id: ${postId} from cache`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 };
 
 export const getNewsFeedEntryForPost = async (
@@ -100,14 +122,20 @@ export const getNewsFeedEntryForPost = async (
 };
 
 export const createNewsFeedEntryForPostById = async (postId: string, author?: User) => {
-  const post = await getPostById(dbClient, postId);
+  try {
+    const post = await getPostById(dbClient, postId);
 
-  if (!post) {
-    logger.warn(`Failed to create news feed cache entry for post with id ${postId}: Post not found`);
-    return null;
+    if (!post) {
+      logger.warn(`Failed to create news feed cache entry for post with id ${postId}: Post not found`);
+      return null;
+    }
+
+    return await createNewsFeedEntryForPost(post, author);
+  } catch (err) {
+    const error: InnoPlatformError = redisError(`Create news feed entry for post with id: ${postId}`, err as Error);
+    logger.error(error);
+    throw err;
   }
-
-  return await createNewsFeedEntryForPost(post, author);
 };
 
 export const createNewsFeedEntryForPost = async (post: PrismaPost, author?: User) => {

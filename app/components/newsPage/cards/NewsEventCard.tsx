@@ -12,6 +12,7 @@ import EventCardHeader from '@/components/landing/eventsSection/EventCardHeader'
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
+import { HighlightText } from '@/utils/highlightText';
 
 interface NewsSurveyCardProps {
   event: Event;
@@ -44,10 +45,10 @@ function NewsEventCard(props: NewsSurveyCardProps) {
         </CardMedia>
         <CardContent sx={cardContentStyles}>
           <Typography variant="h6" sx={titleStyles}>
-            {event.title}
+            <HighlightText text={event.title} />
           </Typography>
           <Typography variant="body1" sx={descriptionStyles} data-testid="text">
-            {event.description}
+            <HighlightText text={event.description} />
           </Typography>
         </CardContent>
       </Box>
