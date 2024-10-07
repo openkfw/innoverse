@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.1](https://github.com/openkfw/innoverse/compare/v1.1.0...v1.1.1) (2024-10-07)
+
+### Bug Fixes
+
+- rename allowed_origins in next.config.js [#87](https://github.com/openkfw/innoverse/issues/87) PR[#88](https://github.com/openkfw/innoverse/issues/88)
+
 ## [1.1.0](https://github.com/openkfw/innoverse/compare/v1.0.1...v1.1.0) (2024-10-03)
 
 ### Documentation
