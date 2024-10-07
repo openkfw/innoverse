@@ -17,7 +17,6 @@ interface UnsavedChangesDialogProps {
   open: boolean;
   onProceed: () => void;
   onDismiss: () => void;
-  onCancel: () => void;
 }
 
 export const UnsavedEditingChangesDialog = () => {
