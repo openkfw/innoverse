@@ -1,5 +1,6 @@
 ARG BUILDTIMESTAMP
 ARG CI_COMMIT_SHA
+ARG ALLOWED_ORIGINS
 
 # Install dependencies only when needed
 FROM node:18-alpine AS deps
@@ -17,6 +18,7 @@ RUN npm ci
 FROM node:18-alpine AS builder
 ARG BUILDTIMESTAMP
 ARG CI_COMMIT_SHA
+ARG ALLOWED_ORIGINS
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -25,6 +27,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 ENV NEXT_PUBLIC_BUILDTIMESTAMP ${BUILDTIMESTAMP}
 ENV NEXT_PUBLIC_CI_COMMIT_SHA ${CI_COMMIT_SHA}
+ENV ALLOWED_ORIGINS ${ALLOWED_ORIGINS}
 
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -42,9 +45,11 @@ RUN npm run build
 FROM node:18-alpine AS runner
 ARG BUILDTIMESTAMP
 ARG CI_COMMIT_SHA
+ARG ALLOWED_ORIGINS
 
 ENV NEXT_PUBLIC_BUILDTIMESTAMP ${BUILDTIMESTAMP}
 ENV NEXT_PUBLIC_CI_COMMIT_SHA ${CI_COMMIT_SHA}
+ENV ALLOWED_ORIGINS ${ALLOWED_ORIGINS}
 
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.

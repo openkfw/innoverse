@@ -46,7 +46,7 @@ while [ "$1" != "" ]; do
 done
 
 # Check if required variables are set
-if [ -z "$IMAGE_NAME" ] || [ -z "$PRIVATE_REGISTRY_URL" ] || [ -z "$PRIVATE_REGISTRY_PASSWORD" ] || [ -z "$PRIVATE_REGISTRY_USERNAME" ] \
+if [ -z "$IMAGE_NAME" ] || [ -z "$PROJECT_NAME" ] || [ -z "$PRIVATE_REGISTRY_URL" ] || [ -z "$PRIVATE_REGISTRY_PASSWORD" ] || [ -z "$PRIVATE_REGISTRY_USERNAME" ] \
 || [ -z "$PUBLIC_REGISTRY_URL" ] || [ -z "$PUBLIC_REGISTRY_PASSWORD" ] || [ -z "$PUBLIC_REGISTRY_USERNAME" ]; then
     echo "Error: Missing required parameters."
     Help
@@ -77,11 +77,21 @@ fi
 export BUILDTIMESTAMP=$(date -Iseconds)
 export CI_COMMIT_SHA=$(git rev-parse HEAD)
 
-docker build \
-    --tag "$TEMP_TAG" \
-    --build-arg BUILDTIMESTAMP=$BUILDTIMESTAMP \
-    --build-arg CI_COMMIT_SHA=$CI_COMMIT_SHA \
-    -f Dockerfile .
+if [ "$PROJECT_NAME" = "app" ]; then
+    export ALLOWED_ORIGINS
+    docker build \
+        --tag "$TEMP_TAG" \
+        --build-arg BUILDTIMESTAMP="$BUILDTIMESTAMP" \
+        --build-arg CI_COMMIT_SHA="$CI_COMMIT_SHA" \
+        --build-arg ALLOWED_ORIGINS="$ALLOWED_ORIGINS" \
+        -f Dockerfile .
+else
+    docker build \
+        --tag "$TEMP_TAG" \
+        --build-arg BUILDTIMESTAMP="$BUILDTIMESTAMP" \
+        --build-arg CI_COMMIT_SHA="$CI_COMMIT_SHA" \
+        -f Dockerfile .
+fi
 
 # if a pull request is updated
 if [[ "$GITHUB_EVENT_NAME" = "pull_request" ]];

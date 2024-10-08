@@ -31,3 +31,4 @@ runs:
       env:
         IMAGE_NAME: ${{ matrix.image_name }}
         RELEASE_VERSION: ${{ steps.tag_name.outputs.SOURCE_TAG }}
+        PROJECT_NAME: ${{ matrix.project }}
