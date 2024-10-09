@@ -53,5 +53,10 @@
     "active": true,
     "notes": "Ignored since the strapi admin panel uses an old version of vite which requires this rollup version",
     "expiry": "2024-10-31"
+  },
+  "1099846": {
+    "active": true,
+    "notes": "Ignored since strapi uses an old version of cookie",
+    "expiry": "2024-10-31"
   }
 }

@@ -5,7 +5,10 @@ import { createContext, PropsWithChildren, useCallback, useContext, useMemo, use
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 
 interface EditingState {
-  unsavedChangesDialog: JSX.Element;
+  unsavedChangesDialog: {
+    element: JSX.Element;
+    isOpen: boolean;
+  };
   state: {
     isEditing: (item: ItemWithId) => boolean;
   };
@@ -25,7 +28,10 @@ interface Interaction {
 }
 
 const defaultState: EditingState = {
-  unsavedChangesDialog: <></>,
+  unsavedChangesDialog: {
+    element: <></>,
+    isOpen: false,
+  },
   state: {
     isEditing: () => false,
   },
@@ -118,7 +124,10 @@ function useEditingContext() {
       onCancel: ({ isDirty }) => tryDiscardOrPrompt({ showPrompt: isDirty ?? true }),
       onSubmit: finalizeInteraction,
     },
-    unsavedChangesDialog: dialog,
+    unsavedChangesDialog: {
+      element: dialog,
+      isOpen: openUnsavedChangesDialog,
+    },
   };
 
   return contextObject;
@@ -137,11 +146,6 @@ export const useEditingInteractions = () => {
   return editing.interactions;
 };
 
-export const useUnsavedEditingChangesDialog = () => {
-  const editing = useEditing();
-  return editing.unsavedChangesDialog;
-};
-
 export const useRespondingState = () => {
   const responding = useResponding();
   return responding.state;
@@ -152,7 +156,10 @@ export const useRespondingInteractions = () => {
   return responding.interactions;
 };
 
-export const useUnsavedRespondingChangesDialog = () => {
+export const useUnsavedChangesDialog = () => {
+  const editing = useEditing();
   const responding = useResponding();
-  return responding.unsavedChangesDialog;
+  const editingDialog = editing.unsavedChangesDialog;
+  const respondingDialog = responding.unsavedChangesDialog;
+  return editingDialog.isOpen ? editingDialog.element : respondingDialog.element;
 };

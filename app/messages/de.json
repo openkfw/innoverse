@@ -96,6 +96,14 @@
 
   "components_common_comments_commentCard_done": "Fertig",
 
+  "components_common_editing_discardAddPostDialog_discardAddPost": "Post verwerfen oder fortsetzen?",
+  "components_common_editing_discardAddPostDialog_discard": "Verwerfen",
+  "components_common_editing_discardAddPostDialog_continue": "Fortsetzen",
+
+  "components_common_editing_confirmDeleteDialog_deletePost": "Möchtest du diesen Beitrag löschen?",
+  "components_common_editing_confirmDeleteDialog_cancel": "Abbrechen",
+  "components_common_editing_confirmDeleteDialog_delete": "Löschen",
+  
   "components_common_editing_unsavedChangesDialog_edit": "Bearbeitung",
   "components_common_editing_unsavedChangesDialog_throw": "Möchtest du diese Bearbeitung verwerfen?",
   "components_common_editing_unsavedChangesDialog_cancel": "Abbrechen",
