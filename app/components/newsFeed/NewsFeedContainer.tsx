@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { Option } from '@/common/formTypes';
 import { NewsFeedEntry, ObjectType, Post, ProjectUpdate } from '@/common/types';
+import { DiscardAddPostDialog } from '@/components/common/editing/DiscardAddPostDialog'; // Import the discard dialog
 import { UnsavedEditingChangesDialog } from '@/components/common/editing/UnsavedChangesDialog';
 import InteractionButton, { interactionButtonStyles, InteractionType } from '@/components/common/InteractionButton';
 import SecondaryIconButton from '@/components/common/SecondaryIconButton';
@@ -19,11 +20,11 @@ import NewsFeedFilter from '@/components/newsFeed/NewsFeedFilter';
 import * as m from '@/src/paraglide/messages.js';
 import { getProjectsOptions } from '@/utils/requests/project/requests';
 
-import { EditingContextProvider } from '../common/editing/editing-context';
 import AddPostForm from '../newsPage/addPost/form/AddPostForm';
 
 export default function NewsFeedContainer({ children }: PropsWithChildren) {
   const [showPostForm, setShowPostForm] = useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false); // State for discard dialog
   const [projectOptions, setProjectOptions] = useState<Option[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { addEntry } = useNewsFeed();
@@ -36,8 +37,10 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
     if (!showPostForm) {
       const projectOptions = await getProjectsOptions();
       setProjectOptions(projectOptions);
+      setShowPostForm(true);
+    } else {
+      setCancelDialogOpen(true); // Open discard dialog if form is open
     }
-    setShowPostForm((prev) => !prev);
   }
 
   function handleAddPost(post: Post) {
@@ -55,6 +58,15 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
       item: update,
     };
     addEntry(entry);
+    setShowPostForm(false);
+  }
+
+  function handleDiscardDialogConfirm() {
+    setCancelDialogOpen(false);
+  }
+
+  function handleDiscardDialogClose() {
+    setCancelDialogOpen(false);
     setShowPostForm(false);
   }
 
@@ -86,7 +98,7 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
   }, [showPostForm]);
 
   return (
-    <EditingContextProvider>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12} md={4} lg={3}>
           <Card sx={cardStyles}>
@@ -143,7 +155,7 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
                   onAddPost={handleAddPost}
                   onAddUpdate={handleAddUpdate}
                   projectOptions={projectOptions}
-                  handleClose={() => setShowPostForm(false)}
+                  handleClose={() => setCancelDialogOpen(true)}
                 />
               </Box>
             )}
@@ -151,11 +163,19 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
           {children}
         </Grid>
       </Grid>
+
+      <DiscardAddPostDialog
+        open={cancelDialogOpen}
+        onConfirm={handleDiscardDialogConfirm}
+        onCancel={handleDiscardDialogClose}
+      />
+
       <UnsavedEditingChangesDialog />
-    </EditingContextProvider>
+    </>
   );
 }
 
+// Styles for the component
 const cardStyles = {
   px: 3,
   py: 4,
