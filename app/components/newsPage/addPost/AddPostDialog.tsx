@@ -32,7 +32,7 @@ export default function AddPostDialog(props: AddPostDialogProps) {
     setOpen(false);
   }
 
-  function handleContinue() {
+  function handleConfirmDialogClose() {
     setCancelDialogOpen(false);
   }
 
@@ -46,14 +46,19 @@ export default function AddPostDialog(props: AddPostDialogProps) {
         titleSx={dialogTitleStyles}
       >
         <AddPostForm
-          handleClose={handleClose}
+          handleClose={handleCancelDialogClose}
           defaultFormValues={defaultFormValues}
           projectOptions={projectOptions}
           onAddPost={onAddPost}
           onAddUpdate={onAddUpdate}
         />
       </CustomDialog>
-      <DiscardAddPostDialog open={cancelDialogOpen} onConfirm={handleContinue} onCancel={handleCancelDialogClose} />
+
+      <DiscardAddPostDialog
+        open={cancelDialogOpen}
+        onConfirm={handleConfirmDialogClose}
+        onCancel={handleCancelDialogClose}
+      />
     </>
   );
 }
