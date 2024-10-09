@@ -12,6 +12,7 @@ import theme from '@/styles/theme';
 import DeleteFilledIcon from '../../../icons/DeleteFilled';
 import EditFilledIcon from '../../../icons/EditFilled';
 import { CustomIconButton } from '../../CustomIconButton';
+import { ConfirmDeleteDialog } from '../ConfirmDeleteDialog';
 
 import { EditMoreDialog } from './EditMoreDialog';
 
@@ -23,6 +24,7 @@ interface EditControlsProps {
 export const EditControls = (props: EditControlsProps) => {
   const [openEditMoreDialog, setOpenEditMoreDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const useMobileMenu = useMediaQuery(theme.breakpoints.down(1025));
 
   const { onEdit, onDelete } = props;
@@ -40,8 +42,16 @@ export const EditControls = (props: EditControlsProps) => {
   };
 
   const handleDelete = () => {
-    setOpenEditMoreDialog(false);
+    setOpenDeleteDialog(true);
+  };
+
+  const confirmDelete = () => {
+    setOpenDeleteDialog(false);
     onDelete();
+  };
+
+  const cancelDelete = () => {
+    setOpenDeleteDialog(false);
   };
 
   return (
@@ -61,7 +71,7 @@ export const EditControls = (props: EditControlsProps) => {
           <CustomIconButton onClick={onEdit} startIcon={<EditFilledIcon />}>
             {m.components_common_editing_controls_editControls_edit()}
           </CustomIconButton>
-          <CustomIconButton onClick={onDelete} startIcon={<DeleteFilledIcon />}>
+          <CustomIconButton onClick={handleDelete} startIcon={<DeleteFilledIcon />}>
             {m.components_common_editing_controls_editControls_delete()}
           </CustomIconButton>
         </>
@@ -73,6 +83,7 @@ export const EditControls = (props: EditControlsProps) => {
         onDelete={handleDelete}
         onEdit={handleEdit}
       />
+      <ConfirmDeleteDialog open={openDeleteDialog} onConfirm={confirmDelete} onCancel={cancelDelete} />
     </Stack>
   );
 };
