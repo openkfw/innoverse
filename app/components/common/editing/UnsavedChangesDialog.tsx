@@ -104,6 +104,7 @@ const buttonStyle: SxProps = {
   fontSize: '20px',
   border: '2px solid #ECFDED',
   color: '#41484C',
+  '&:hover': { border: '2px solid rgba(255, 255, 255, 0.40)' },
 };
 
 const closeIconStyle: SxProps = {
