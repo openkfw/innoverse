@@ -8,7 +8,11 @@ import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { CreateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
-import { GetInnoUserByEmailQuery, GetInnoUserByProviderIdQuery } from '@/utils/requests/innoUsers/queries';
+import {
+  GetAllInnoUsers,
+  GetInnoUserByEmailQuery,
+  GetInnoUserByProviderIdQuery,
+} from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 const logger = getLogger();
@@ -52,6 +56,26 @@ export async function getInnoUserByProviderId(providerId: string) {
     return user;
   } catch (err) {
     const error = strapiError('Getting Inno user by providerId', err as RequestError, providerId);
+    logger.error(error);
+    throw err;
+  }
+}
+
+export async function getAllInnoUsersWithEmail() {
+  try {
+    const response = await strapiGraphQLFetcher(GetAllInnoUsers, { limit: 1000 });
+    if (!response.innoUsers?.data) {
+      throw new Error('No users data available');
+    }
+
+    const users = response.innoUsers?.data.map((user) => ({
+      id: user.id,
+      display: user.attributes.name,
+      email: user.attributes.email,
+    }));
+    return users;
+  } catch (err) {
+    const error = strapiError('Getting All Inno users', err as RequestError);
     logger.error(error);
     throw err;
   }
