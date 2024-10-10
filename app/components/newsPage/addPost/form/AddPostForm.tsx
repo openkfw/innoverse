@@ -4,9 +4,12 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StatusCodes } from 'http-status-codes';
 
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 import { Option } from '@/common/formTypes';
 import { Post, ProjectUpdate } from '@/common/types';
@@ -90,7 +93,15 @@ export default function AddPostForm(props: AddUpdateFormProps) {
   };
 
   return (
-    <Stack spacing={2} sx={formStyles} direction="column" data-testid="add-update-form">
+    <Stack spacing={2} direction="column" data-testid="add-update-form">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography sx={titleStyles}>{m.components_newsPage_addPost_addPostDialog_addPost()}</Typography>
+
+        <Button onClick={handleClose} sx={closeButtonStyles}>
+          <CloseOutlinedIcon sx={closeIconStyles} aria-label="close dialog" />
+        </Button>
+      </Box>
+
       <form>
         <MultilineTextInputField
           name={CONTENT}
@@ -109,6 +120,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
             label={m.components_newsPage_addPost_form_addPostForm_projectLabel()}
             options={[{ label: '-optional-', id: '' }, ...projectOptions]}
             readOnly={!projectOptions}
+            sx={inputStyle}
             startAdornment={
               !projectOptions && (
                 <Box sx={{ pt: 1 }}>
@@ -116,30 +128,25 @@ export default function AddPostForm(props: AddUpdateFormProps) {
                 </Box>
               )
             }
-            sx={inputStyle}
           />
         )}
 
-        <InteractionButton
-          interactionType={InteractionType.COMMENT_SEND}
-          disabled={!formState.isValid}
-          onClick={handleSubmit(onSubmit)}
-        />
+        <Box sx={actionConainerStyles}>
+          <CheckboxInputField
+            name={ANONYMOUS}
+            control={control}
+            label={m.components_newsPage_addPost_form_addPostForm_anonymousPost()}
+          />
+          <InteractionButton
+            interactionType={InteractionType.COMMENT_SEND}
+            disabled={!formState.isValid}
+            onClick={handleSubmit(onSubmit)}
+          />
+        </Box>
       </Stack>
-      <CheckboxInputField
-        name={ANONYMOUS}
-        control={control}
-        label={m.components_newsPage_addPost_form_addPostForm_anonymousPost()}
-        sx={{ width: '25%' }}
-      />
     </Stack>
   );
 }
-
-const formStyles = {
-  borderTop: '1px solid rgba(0, 90, 140, 0.10)',
-  paddingTop: 3,
-};
 
 const multilineTextStyles = {
   width: '100%',
@@ -149,4 +156,47 @@ const multilineTextStyles = {
 const inputPropsStyles = {
   height: '100%',
   alignItems: 'baseline',
+  borderRadius: 8,
+};
+
+const titleStyles = {
+  color: 'primary.light',
+  fontSize: '12px',
+  fontFamily: 'SansDefaultReg',
+  textTransform: 'uppercase',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  lineHeight: '169%',
+  letterSpacing: '1px',
+};
+
+const closeButtonStyles = {
+  width: '32px',
+  height: '32px',
+  minWidth: 'auto',
+  maxWidth: '32px',
+  maxHeight: '32px',
+  border: '1px solid #D8DFE3',
+  borderRadius: '48px',
+  padding: 0,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: '4px',
+  cursor: 'pointer',
+  background: 'none',
+  borderColor: '#D8DFE3',
+};
+
+const closeIconStyles = {
+  color: '#41484C',
+  fontSize: '18px',
+};
+
+const actionConainerStyles = {
+  display: { xs: 'flex', md: 'flex' },
+  gap: { xs: 0, md: '24px' },
+  justifyContent: { xs: 'space-between', md: 'flex-start' },
+  alignItems: 'center',
+  height: '60px',
 };

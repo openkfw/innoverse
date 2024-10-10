@@ -68,7 +68,19 @@ export default function FilterSelect(
             {options.slice(0, maxOptionsToDisplayCollapsed).map((option, key) => (
               <FormControlLabel
                 key={key}
-                control={<Checkbox name={option.name} checked={filterIsChecked(option)} onChange={selectFilter} />}
+                control={
+                  <Checkbox
+                    name={option.name}
+                    checked={filterIsChecked(option)}
+                    onChange={selectFilter}
+                    sx={{
+                      color: 'common.white',
+                      '&.Mui-checked': {
+                        color: 'action.hover',
+                      },
+                    }}
+                  />
+                }
                 label={getFilterLabel(option)}
                 disabled={!hydrated}
                 data-testid={props['data-testid']}
@@ -90,7 +102,19 @@ export default function FilterSelect(
                 {options.slice(maxOptionsToDisplayCollapsed).map((option, key) => (
                   <FormControlLabel
                     key={key}
-                    control={<Checkbox name={option.name} checked={filterIsChecked(option)} onChange={selectFilter} />}
+                    control={
+                      <Checkbox
+                        name={option.name}
+                        checked={filterIsChecked(option)}
+                        onChange={selectFilter}
+                        sx={{
+                          color: 'common.white',
+                          '&.Mui-checked': {
+                            color: 'action.hover',
+                          },
+                        }}
+                      />
+                    }
                     label={getFilterLabel(option)}
                     disabled={!hydrated}
                   />
@@ -99,7 +123,7 @@ export default function FilterSelect(
               {options.length > maxOptionsToDisplayCollapsed && expanded && (
                 <Typography
                   onClick={toggleExpand}
-                  color="secondary"
+                  color="action.hover"
                   sx={{ textDecoration: 'underline', cursor: 'pointer' }}
                 >
                   {m.components_common_filterSelect_showLess()}
