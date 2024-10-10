@@ -38,7 +38,6 @@ export default function NewsCard(props: NewsCardProps) {
     <Card sx={{ ...cardStyles, ...sx } as SxProps<Theme>}>
       <CommentCardHeader content={update} />
       <UpdateCardContent update={update} noClamp={noClamp} />
-      <UpdateCardActions update={update} />
     </Card>
   );
 }

@@ -7,7 +7,6 @@ import { getPostCommentByPostId } from '@/utils/requests/comments/requests';
 
 interface NewsPostThreadProps {
   post: Post;
-  onDelete: () => void;
 }
 
 export const NewsPostThread = (props: NewsPostThreadProps) => {
@@ -30,7 +29,7 @@ export const NewsPostThread = (props: NewsPostThreadProps) => {
   return (
     <CommentThread
       comment={post}
-      card={<NewsPostCard post={post} onDelete={props.onDelete} />}
+      card={<NewsPostCard post={post} />}
       fetchResponses={fetchResponses}
       addResponse={addResponse}
       renderResponse={(response, idx, deleteResponse, updateResponse) => (

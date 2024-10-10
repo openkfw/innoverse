@@ -20,6 +20,7 @@ import NewsFeedFilter from '@/components/newsFeed/NewsFeedFilter';
 import * as m from '@/src/paraglide/messages.js';
 import { getProjectsOptions } from '@/utils/requests/project/requests';
 
+import { EditingContextProvider } from '../common/editing/editing-context';
 import AddPostForm from '../newsPage/addPost/form/AddPostForm';
 
 export default function NewsFeedContainer({ children }: PropsWithChildren) {
@@ -98,7 +99,7 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
   }, [showPostForm]);
 
   return (
-    <>
+    <EditingContextProvider>
       <Grid container spacing={2}>
         <Grid item xs={12} md={4} lg={3}>
           <Card sx={cardStyles}>
@@ -171,7 +172,7 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
       />
 
       <UnsavedEditingChangesDialog />
-    </>
+    </EditingContextProvider>
   );
 }
 
