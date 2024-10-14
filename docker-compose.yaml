@@ -57,7 +57,7 @@ services:
       - ./app/.env
     environment:
       NEXTAUTH_URL: http://localhost:3001
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/app?schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER:-inno}:${POSTGRES_PASSWORD:-hub}@database:5432/innoverse?schema=public
       NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT: http://strapi:1337/graphql
       NEXT_PUBLIC_STRAPI_ENDPOINT: http://strapi:1337
       REDIS_URL: redis://cache:6379

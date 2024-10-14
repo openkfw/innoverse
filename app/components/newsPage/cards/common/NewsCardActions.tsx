@@ -1,12 +1,18 @@
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
+import Box from '@mui/material/Box';
 import CardActions from '@mui/material/CardActions';
 import Grid from '@mui/material/Grid';
 
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
+import { useUser } from '@/app/contexts/user-context';
 import { NewsFeedEntry, ObjectType } from '@/common/types';
+import { EditControls } from '@/components/common/editing/controls/EditControls';
+import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
+import { useEditingInteractions, useRespondingInteractions } from '@/components/common/editing/editing-context';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
+import { deletePost } from '@/services/postService';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
@@ -20,7 +26,12 @@ interface NewsCardActionsProps {
 
 export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
   const { id, followedByUser, projectId = '' } = entry.item;
+  const { user } = useUser();
+  const userIsAuthor =
+    'author' in entry.item && !Array.isArray(entry.item.author) && user?.providerId === entry.item.author?.providerId;
 
+  const editingInteractions = useEditingInteractions();
+  const respondingInteractions = useRespondingInteractions();
   const newsFeed = useNewsFeed();
   const appInsights = useAppInsightsContext();
 
@@ -48,12 +59,33 @@ export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
     }
   }
 
+  const handleDelete = async () => {
+    try {
+      await deletePost({ postId: entry.item.id });
+      newsFeed.removeEntry(entry);
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      errorMessage({ message: m.components_newsPage_cards_newsCard_error_delete() });
+      appInsights.trackException({
+        exception: new Error('Failed to delete post', { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
+    }
+  };
+
   return (
     <CardActions sx={cardActionsStyles}>
       <Grid container direction="row" justifyContent="space-between" alignItems="center">
         <Grid item xs={12} sx={footerStyles}>
           <NewsFeedReactionCard entry={entry} />
-          <FollowButtonWithLink isSelected={followedByUser ?? false} entry={entry} onIconClick={toggleFollow} />
+          <Box sx={actionStyles}>
+            <ResponseControls onResponse={() => respondingInteractions.onStart(entry.item)} />
+            {userIsAuthor && (
+              <EditControls onEdit={() => editingInteractions.onStart(entry.item)} onDelete={handleDelete} />
+            )}
+
+            <FollowButtonWithLink isSelected={followedByUser ?? false} entry={entry} onIconClick={toggleFollow} />
+          </Box>
         </Grid>
       </Grid>
     </CardActions>
@@ -77,4 +109,11 @@ const footerStyles = {
     marginTop: 3,
     gap: 1,
   },
+};
+
+const actionStyles = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: 2,
 };

@@ -57,23 +57,23 @@ export default function NewsFeedSearchFilter(props: NewsFeedSearchFilterProps) {
           sx={{
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                borderColor: 'white',
+                borderColor: 'common.white',
               },
               '&:hover fieldset': {
-                borderColor: 'white',
+                borderColor: 'common.white',
               },
               '&.Mui-focused fieldset': {
-                borderColor: 'white',
+                borderColor: 'action.hover',
               },
               '& input': {
-                color: 'white',
+                color: 'common.white',
               },
             },
           }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Search sx={{ color: 'white' }} />
+                <Search sx={{ color: 'common.white' }} />
               </InputAdornment>
             ),
           }}
