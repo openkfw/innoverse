@@ -7,6 +7,7 @@ export type RedisClient = ReturnType<typeof createClient>;
 export type RedisTransactionClient = ReturnType<RedisClient['multi']>;
 
 let client: RedisClient | undefined = undefined;
+const searchClient = createClient(client);
 
 const logger = getLogger();
 
@@ -14,6 +15,7 @@ export enum RedisIndex {
   UPDATED_AT_TYPE_PROJECT_ID_SEARCH = 'idx:updatedAt:type:projectId:search',
   UPDATED_AT = 'idx:updatedAt',
   SYNCED_AT = 'idx:syncedAt:status',
+  COMMENTS = 'idx:comments',
 }
 
 export const getRedisClient = async () => {
@@ -22,6 +24,7 @@ export const getRedisClient = async () => {
     await createIndices(client);
     return client;
   }
+  await createIndices(client);
 
   if (!client.isOpen || !client.isReady) {
     client = await client.connect();
@@ -111,20 +114,42 @@ const createIndices = async (client: RedisClient) => {
       },
     },
   });
+
+  await createIndexOrCatch({
+    client,
+    index: RedisIndex.COMMENTS,
+    schema: {
+      comment: {
+        type: SchemaFieldTypes.TEXT,
+        AS: 'comment',
+      },
+      updatedAt: {
+        type: SchemaFieldTypes.NUMERIC,
+        AS: 'updatedAt',
+        SORTABLE: true,
+      },
+    },
+    on: {
+      ON: 'HASH',
+      PREFIX: 'comment:',
+    },
+  });
 };
 
 const createIndexOrCatch = async ({
   client,
   index,
   schema,
+  on = { ON: 'JSON' },
 }: {
   client: RedisClient;
   index: string;
   schema: RediSearchSchema;
+  on?: { ON: 'JSON' | 'HASH'; PREFIX?: string };
 }) => {
   try {
     logger.debug(`Trying to create redis index '${index}' ...`);
-    await client.ft.create(index, schema, { ON: 'JSON' });
+    await client.ft.create(index, schema, on);
     logger.info(`Created redis index '${index}'`);
   } catch (e: unknown) {
     const error = e as Error;

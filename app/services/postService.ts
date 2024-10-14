@@ -17,11 +17,13 @@ import { getReactionsForEntity } from '@/repository/db/reaction';
 import { InnoPlatformError, redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { mapPostToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
-import { NewsType, RedisPost } from '@/utils/newsFeed/redis/models';
+import { mapPostToRedisNewsFeedEntry, mapToRedisNewsComments, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
+import { NewsType, RedisNewsComment, RedisPost } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import { getPostCommentByPostId } from '@/utils/requests/comments/requests';
+import { saveHashedComments } from '@/utils/newsFeed/redis/services/commentsService';
 
 const logger = getLogger();
 
@@ -30,7 +32,7 @@ type AddPost = { content: string; user: UserSession; anonymous?: boolean };
 type UpdatePost = { postId: string; content: string; user: UserSession };
 
 type UpdatePostInCache = {
-  post: { id: string; content?: string; upvotedBy?: string[]; responseCount?: number };
+  post: { id: string; content?: string; upvotedBy?: string[]; responseCount?: number; comments?: RedisNewsComment[] };
   user: UserSession;
 };
 
@@ -67,7 +69,7 @@ export const handleUpvotePost = async ({ postId, user }: UpvotePost) => {
 export const addPostToCache = async (post: Post) => {
   try {
     const redisClient = await getRedisClient();
-    const newsFeedEntry = mapPostToRedisNewsFeedEntry(post, [], []);
+    const newsFeedEntry = mapPostToRedisNewsFeedEntry(post, [], [], []);
     await saveNewsFeedEntry(redisClient, newsFeedEntry);
   } catch (err) {
     const error: InnoPlatformError = redisError(`Add post with id: ${post.id} to cache`, err as Error);
@@ -90,6 +92,9 @@ export const updatePostInCache = async ({ post, user }: UpdatePostInCache) => {
     newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
 
     await saveNewsFeedEntry(redisClient, newsFeedEntry);
+    if (post.comments) {
+      await saveHashedComments(redisClient, newsFeedEntry, post.comments);
+    }
   } catch (err) {
     const error: InnoPlatformError = redisError(
       `Update post with id: ${post.id} by user ${user.providerId} could not be saved in the cache`,
@@ -139,14 +144,16 @@ export const createNewsFeedEntryForPostById = async (postId: string, author?: Us
 };
 
 export const createNewsFeedEntryForPost = async (post: PrismaPost, author?: User) => {
+  const comments = await getPostCommentByPostId(post.id);
   const reactions = await getReactionsForEntity(dbClient, ObjectType.POST, post.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
   const followers = await mapToRedisUsers(followerIds);
+  const redisComments = await mapToRedisNewsComments(comments);
   const responseCount = await countPostResponses(dbClient, post.id);
 
   const postAuthor = author ?? (await getInnoUserByProviderId(post.author));
   const postWithAuthor = { ...post, author: postAuthor, responseCount };
-  return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers);
+  return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers, redisComments);
 };
 
 const getRedisKey = (postId: string) => `${NewsType.POST}:${postId}`;

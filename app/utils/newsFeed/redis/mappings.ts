@@ -1,6 +1,7 @@
 import {
   BasicCollaborationQuestion,
   BasicProject,
+  CommentWithResponses,
   Event,
   ImageFormats,
   ObjectType,
@@ -16,6 +17,7 @@ import {
   NewsType,
   RedisCollaborationComment as RedisCollaborationComment,
   RedisCollaborationQuestion,
+  RedisNewsComment,
   RedisNewsFeedEntry,
   RedisPost,
   RedisProject,
@@ -45,6 +47,7 @@ export const mapPostToRedisNewsFeedEntry = (
   post: Post,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: RedisNewsComment[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisPost(post, reactions, followedBy);
 
@@ -55,6 +58,7 @@ export const mapPostToRedisNewsFeedEntry = (
     updatedAt: item.updatedAt,
     item,
     type: NewsType.POST,
+    comments,
     search: escapeRedisTextSeparators(item.content || ''),
   };
 };
@@ -115,8 +119,9 @@ export const mapUpdateToRedisNewsFeedEntry = (
   reactions: RedisReaction[],
   followedBy: RedisUser[],
   responseCount: number,
+  comments: RedisNewsComment[],
 ): RedisNewsFeedEntry => {
-  const item = mapToRedisProjectUpdate(update, reactions, followedBy, responseCount);
+  const item = mapToRedisProjectUpdate(update, reactions, followedBy, responseCount, comments);
   item.author.image = mapImageUrlToRelativeUrl(item.author.image);
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
@@ -306,6 +311,7 @@ export const mapToRedisProjectUpdate = (
   reactions: RedisReaction[],
   followedBy: RedisUser[],
   responseCount: number,
+  comments: RedisNewsComment[],
 ): RedisProjectUpdate => {
   return {
     ...update,
@@ -314,6 +320,7 @@ export const mapToRedisProjectUpdate = (
     reactions,
     followedBy,
     responseCount,
+    comments,
   };
 };
 
@@ -329,6 +336,23 @@ const mapToRedisProjectEvent = (
     projectId: event.projectId,
     reactions,
     followedBy,
+  };
+};
+
+export const mapToRedisNewsComments = async (comments: CommentWithResponses[]) => {
+  return await getPromiseResults(comments.map(mapToRedisNewsComment));
+};
+
+const mapToRedisNewsComment = async (comment: CommentWithResponses): Promise<RedisNewsComment> => {
+  return {
+    id: comment.id,
+    commentId: comment.commentId,
+    comment: comment.comment,
+    upvotedBy: comment.upvotedBy,
+    responseCount: comment.responseCount,
+    author: comment.author,
+    updatedAt: getUnixTimestamp(comment.updatedAt),
+    createdAt: getUnixTimestamp(comment.createdAt),
   };
 };
 

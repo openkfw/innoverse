@@ -114,7 +114,8 @@ export const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate)
     const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, update.projectId);
     const mappedUpdateFollowedBy = await mapToRedisUsers(projectFollowedBy);
     const responseCount = await countNewsResponses(dbClient, update.id);
-    return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, responseCount);
+    //TODO: map update comments
+    return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, responseCount, []);
   } catch (err) {
     const error: InnoPlatformError = dbError(
       `Creating news feed entry for project update with id: ${update.projectId}`,
