@@ -9,20 +9,21 @@ import Typography from '@mui/material/Typography';
 
 import * as m from '@/src/paraglide/messages.js';
 
-const PillBox = ({ children, sx }: { children: ReactNode; sx?: SxProps }) => {
+const PillBox = ({ children, sx, active }: { children: ReactNode; sx?: SxProps; active?: boolean }) => {
   const style = {
     border: '0.50px white solid',
     px: '10px',
     py: '1px',
     display: 'flex',
     alignItems: 'center',
+    minHeight: active ? '65px' : '48px',
     ...sx,
   };
   return <Box sx={style}>{children}</Box>;
 };
 
-const ActiveSliderPill = (props: { itemNumber: string; title: string; projectStart: string }) => {
-  const { itemNumber, title, projectStart } = props;
+const ActiveSliderPill = (props: { itemNumber: string; title: string }) => {
+  const { itemNumber, title } = props;
   const styles = {
     activeContainer: {
       position: 'relative',
@@ -48,17 +49,14 @@ const ActiveSliderPill = (props: { itemNumber: string; title: string; projectSta
       <Box sx={styles.vr} />
       <Stack direction="row">
         <Stack>
-          <PillBox sx={{ pl: '13px', pr: '24px' }}>
+          <PillBox sx={{ pl: '13px', pr: '24px' }} active>
             <Typography variant="overline">
               {m.components_landing_featuredProjectSection_slider_sliderPill_projectNum()}
               {itemNumber}
             </Typography>
           </PillBox>
-          <PillBox sx={{ pl: '13px', pr: '24px', borderTop: 0 }}>
-            <Typography variant="overline">{projectStart}</Typography>
-          </PillBox>
         </Stack>
-        <PillBox sx={{ px: '32px', borderLeft: 0 }}>
+        <PillBox sx={{ px: '32px', borderLeft: 0 }} active>
           <Typography variant="h4" sx={{ wordWrap: 'break-word' }}>
             {title}
           </Typography>
@@ -68,7 +66,7 @@ const ActiveSliderPill = (props: { itemNumber: string; title: string; projectSta
   );
 };
 
-const NonActiveSliderPill = (props: { itemNumber: string; title: string; projectStart: string }) => {
+const NonActiveSliderPill = (props: { itemNumber: string; title: string }) => {
   const { itemNumber, title } = props;
   const [hover, setHover] = useState<boolean>(false);
 
@@ -80,6 +78,7 @@ const NonActiveSliderPill = (props: { itemNumber: string; title: string; project
         color: 'action.hover',
       },
     }),
+    minHeight: '48px',
   };
 
   return (
@@ -105,7 +104,7 @@ const NonActiveSliderPill = (props: { itemNumber: string; title: string; project
   );
 };
 
-const SliderPill = (props: { active: boolean; itemNumber: string; title: string; projectStart: string }) => {
+const SliderPill = (props: { active: boolean; itemNumber: string; title: string }) => {
   const { active } = props;
   return <>{active ? <ActiveSliderPill {...props} /> : <NonActiveSliderPill {...props} />}</>;
 };
