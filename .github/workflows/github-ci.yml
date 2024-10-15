@@ -12,7 +12,7 @@ env:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     continue-on-error: true
     strategy:
       matrix:
@@ -26,7 +26,7 @@ jobs:
       - uses: ./.github/workflows/lint
 
   audit:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [lint]
     strategy:
       matrix:
@@ -44,7 +44,7 @@ jobs:
       - uses: ./.github/workflows/audit
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [lint, audit]
     strategy:
       matrix:
@@ -80,7 +80,7 @@ jobs:
       - uses: ./.github/workflows/build
 
   notification:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [lint, audit, build]
     env:
       GITHUB_BASE_REF: ${{ github.base_ref}}
