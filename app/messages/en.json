@@ -83,7 +83,7 @@
   "components_common_interactionButton_feedback": "Feedback",
   "components_common_interactionButton_logIn": "Log in",
   "components_common_interactionButton_clear": "Remove",
-  "components_common_interactionButton_addUpdate": "Add post",
+  "components_common_interactionButton_addUpdate": "Add news",
   "components_common_interactionButton_liked": "Liked",
   "components_common_interactionButton_unfollow": "Unfollow",
   "components_common_interactionButton_applied": "Applied",
@@ -247,7 +247,7 @@
   "components_newsFeed_newsFeedTypeFilter_posts": "Posts",
   "components_newsFeed_newsFeedTypeFilter_projects": "Projects",
   "components_newsFeed_newsFeedTypeFilter_surveys": "Surveys",
-  "components_newsFeed_newsFeedTypeFilter_updates": "Updates",
+  "components_newsFeed_newsFeedTypeFilter_updates": "News",
   "components_newsFeed_newsFeedTypeFilter_others": "Others",
 
   "components_newsPage_news_dataReceived": "All data has been loaded",
@@ -256,26 +256,26 @@
 
   "components_newsPage_newsFeed_dataReceived": "All data has been loaded",
 
-  "components_newsPage_addPost_addPostDialog_addPost": "Add post",
+  "components_newsPage_addPost_addPostDialog_addPost": "Add news",
 
   "components_newsPage_addPost_form_addPostForm_label": "-optional-",
   "components_newsPage_addPost_form_addPostForm_postCreated": "News has been created",
   "components_newsPage_addPost_form_addPostForm_createError": "An error occurred while creating the news. Please try again",
-  "components_newsPage_addPost_form_addPostForm_addPost": "You can add your post here …",
+  "components_newsPage_addPost_form_addPostForm_addPost": "You can enter the news here …",
   "components_newsPage_addPost_form_addPostForm_projectLabel": "Project",
   "components_newsPage_addPost_form_addPostForm_anonymousPost": "Post anonymously",
 
   "components_newsPage_addPost_form_addUpdateForm_success": "News has been created",
   "components_newsPage_addPost_form_addUpdateForm_error": "An error occurred while creating the news. Please try again.",
-  "components_newsPage_addPost_form_addUpdateForm_updateLabel": "Update",
-  "components_newsPage_addPost_form_addUpdateForm_placeholder": "Enter the update here...",
+  "components_newsPage_addPost_form_addUpdateForm_updateLabel": "News",
+  "components_newsPage_addPost_form_addUpdateForm_placeholder": "You can enter the news here …",
 
-  "components_newsPage_addUpdate_addUpdateDialog_addUpdate": "Add post",
+  "components_newsPage_addUpdate_addUpdateDialog_addUpdate": "Add news",
 
   "components_newsPage_addUpdate_form_addUpdateForm_postCreated": "News has been created",
   "components_newsPage_addUpdate_form_addUpdateForm_error": "An error occurred while creating the news. Please try again.",
-  "components_newsPage_addUpdate_form_addUpdateForm_updateLabel": "Update",
-  "components_newsPage_addUpdate_form_addUpdateForm_placeholder": "Enter the update here...",
+  "components_newsPage_addUpdate_form_addUpdateForm_updateLabel": "News",
+  "components_newsPage_addUpdate_form_addUpdateForm_placeholder": "You can enter the news here …",
   "components_newsPage_addUpdate_form_addUpdateForm_anonymousPost": "Post anonymously",
 
   "components_newsPage_cards_collabCommentCard_postError": "Failed to post the comment. Please try again.",
@@ -363,10 +363,10 @@
   "components_projectdetails_teamMembersColumn_allMembers": "All team members",
   "components_projectdetails_teamMembersColumn_chatWebex": "Chat via Webex",
 
-  "components_projectdetails_updateCard_newUpdates": "Latest updates",
+  "components_projectdetails_updateCard_newUpdates": "Latest news",
   "components_projectdetails_updateCard_showMore": "Learn more",
   "components_projectdetails_updateCard_showAll": "... show all",
-  "components_projectdetails_updateCard_allUpdates": "All updates",
+  "components_projectdetails_updateCard_allUpdates": "All news",
 
   "components_projectdetails_comments_commentsSection_opinion": "Your opinion is needed",
   "components_projectdetails_comments_commentsSection_comments": "Comments",
@@ -397,7 +397,7 @@
 
   "components_updates_projectTimeLineDate_kickoff": "Project Kickoff",
 
-  "components_updates_updatesTab_refetchError": "Failed to refetch project updates. Please try again later.",
+  "components_updates_updatesTab_refetchError": "Failed to refetch project news. Please try again later.",
   "components_updates_updatesTab_noNews": "There is no news for this project yet. Click here to add one.",
   "components_updates_updatesTab_addNewNews": "Keep your audience informed! Click here to add news."
 }
