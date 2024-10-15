@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -13,6 +14,7 @@ import ProgressBar from '@/components/common/ProgressBar';
 import VisibleContributors from '@/components/project-details/VisibleContributors';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
+import { mergeStyles } from '@/utils/helpers';
 
 interface ProjectCardProps {
   id: string;
@@ -21,10 +23,11 @@ interface ProjectCardProps {
   title: string;
   summary: string;
   status: string;
+  progressBarContainersx?: SxProps;
 }
 
 export default function ProjectCard(props: ProjectCardProps) {
-  const { id, img, contributors, title, summary, status } = props;
+  const { id, img, contributors, title, summary, status, progressBarContainersx } = props;
 
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
@@ -71,7 +74,7 @@ export default function ProjectCard(props: ProjectCardProps) {
               </Typography>
             )}
 
-            <Box sx={progressBarContainerStyles}>
+            <Box sx={mergeStyles(progressBarContainerStyles, progressBarContainersx)}>
               <ProgressBar active={status} />
             </Box>
           </Box>

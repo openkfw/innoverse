@@ -6,6 +6,7 @@
   "app_export_page_export": "Export",
 
   "app_news_page_news": "News",
+  "app_project_page_projects": "Initiativen",
   "app_news_page_imageAlt": "News Background",
 
   "app_projects_page_projectsNotFoundError": "Project could not be retrieved. Please try again later.",
@@ -188,6 +189,7 @@
   "components_landing_projectSection_projectSection_title": "Innovation Initiatives",
   "components_landing_projectSection_projectSection_subtitle": "Current Pipeline",
   "components_landing_projectSection_projectSection_imageAlt": "Background Bubble",
+  "components_landing_projectSection_projectSection_moreInitiatives": "More Initiatives",
 
   "components_layout_footer_innoVerse": "© InnoVerse Team",
 
@@ -317,6 +319,9 @@
   "components_newsPage_newsFilter_mobileNewsFilter_filter": "Filter",
 
   "components_newsPage_newsFilter_newsTopicFilter_topics": "Topics",
+
+  "components_projectpage_projectPageContainer_projects": "Initiatives",
+  "components_projectpage_projectPageContainer_projectText": "An overview of all Initiatives.",
 
   "components_notifications_notificationBanner_notificationError": "Your browser is preventing notifications from being enabled. Please go to settings to enable notifications: Settings → Cookies and site permissions → Notifications",
   "components_notifications_notificationBanner_dismiss": "Remind me later",
