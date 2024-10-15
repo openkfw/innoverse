@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { NewsComment, PrismaClient } from '@prisma/client';
 
 import { defaultParamsComment as defaultParams } from '@/repository/db/utils/types';
 import { dbError, InnoPlatformError } from '@/utils/errors';

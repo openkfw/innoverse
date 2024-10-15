@@ -1,14 +1,14 @@
 'use server';
-
 import { AggregateGroupByReducers, AggregateSteps, SearchOptions } from 'redis';
 
 import { redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
-import { NewsType, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
+import { NewsType, RedisNewsComment, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
 
 import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
+import { searchNewsComments } from './services/commentsService';
 
 interface RedisJson {
   [key: string]: any;
@@ -106,6 +106,7 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
       const queryParameter = 'query';
       filters.push(`@search:*$${queryParameter}*`);
       parameters[queryParameter] = escapeRedisTextSeparators(filterBy.searchString);
+
       index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_SEARCH;
     }
 
@@ -135,14 +136,21 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
   const sortOption = getSortingOption();
   const paginationOptions = getPaginationOptions();
   const query = filters.join(' ');
+  const searchOptions: SearchOptions = {
+    SORTBY: sortOption,
+    LIMIT: paginationOptions,
+    PARAMS: parameters,
+    DIALECT: 2,
+  };
 
   try {
-    const result = await client.ft.search(index, query, {
-      SORTBY: sortOption,
-      LIMIT: paginationOptions,
-      PARAMS: parameters,
-      DIALECT: 2,
-    });
+    let result = await client.ft.search(index, query, searchOptions);
+    if (options?.filterBy?.searchString) {
+      const resultComments = await searchNewsComments(client, options?.filterBy?.searchString, searchOptions);
+      //TODO: create type for result
+      result = { ...result, ...(resultComments as any) };
+    }
+
     return result;
   } catch (err) {
     const error = err as Error;

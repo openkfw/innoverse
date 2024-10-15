@@ -10,9 +10,14 @@ export enum NewsType {
   SURVEY_QUESTION = 'survey-question',
   OPPORTUNITY = 'opportunity',
   PROJECT = 'project',
+  NEWS_COMMENT = 'news-comment',
 }
 
-export type RedisNewsFeedEntry = { updatedAt: number; search: string } & RedisNewsFeedTypeEntry;
+export type RedisNewsFeedEntry = {
+  updatedAt: number;
+  search: string;
+  comments?: RedisNewsComment[];
+} & RedisNewsFeedTypeEntry;
 
 type RedisNewsFeedTypeEntry =
   | {
@@ -58,6 +63,7 @@ export type RedisItem = {
   reactions: RedisReaction[];
   followedBy: RedisUser[];
   projectId?: string;
+  comments?: RedisNewsComment[];
 };
 
 export type RedisPost = RedisItem & {
@@ -108,6 +114,18 @@ export type RedisProject = RedisItem & {
   description: ProjectDescription;
   projectId: string;
   author?: RedisUser;
+};
+
+export type RedisNewsComment = {
+  id: string;
+  commentId: string;
+  comment: string;
+  author?: RedisUser;
+  upvotedBy: string[];
+  responseCount: number;
+  responses?: RedisNewsComment[];
+  updatedAt: number;
+  createdAt?: number;
 };
 
 export type RedisCollaborationQuestion = RedisItem & {
