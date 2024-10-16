@@ -23,6 +23,9 @@ const PillBox = ({ children, sx }: { children: ReactNode; sx?: SxProps }) => {
 
 const ActiveSliderPill = (props: { itemNumber: string; title: string; projectStart: string }) => {
   const { itemNumber, title, projectStart } = props;
+
+  const projectStartDate = projectStart.split('·')[0].trim();
+
   const styles = {
     activeContainer: {
       position: 'relative',
@@ -55,7 +58,7 @@ const ActiveSliderPill = (props: { itemNumber: string; title: string; projectSta
             </Typography>
           </PillBox>
           <PillBox sx={{ pl: '13px', pr: '24px', borderTop: 0 }}>
-            <Typography variant="overline">{projectStart}</Typography>
+            <Typography variant="overline">{projectStartDate}</Typography>
           </PillBox>
         </Stack>
         <PillBox sx={{ px: '32px', borderLeft: 0 }}>
@@ -80,6 +83,7 @@ const NonActiveSliderPill = (props: { itemNumber: string; title: string; project
         color: 'action.hover',
       },
     }),
+    minHeight: '48px',
   };
 
   return (
