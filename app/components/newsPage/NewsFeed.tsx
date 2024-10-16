@@ -97,7 +97,7 @@ const NewsFeedContent = () => {
                 return <NewsSurveyCard surveyQuestion={entry.item as SurveyQuestion} />;
               case ObjectType.POST:
                 const post = entry.item as Post;
-                return <NewsPostThread key={`${key}-${post.id}`} post={post} onDelete={() => removeEntry(entry)} />;
+                return <NewsPostThread key={`${key}-${post.id}`} post={post} />;
               default:
                 return null;
             }
