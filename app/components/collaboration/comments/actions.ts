@@ -361,7 +361,7 @@ export async function fetchMentionData(search: string): Promise<Mention[]> {
     const data = await getAllInnoUsersWithEmail();
 
     const formattedData = data.map((user) => ({
-      id: `${user.id}|${user.email}`,
+      id: `${user.email}`,
       display: user.display,
     }));
 

@@ -15,6 +15,7 @@ import CustomButton from '@/components/common/CustomButton';
 import { errorMessage } from '@/components/common/CustomToast';
 import { UserAvatarProps } from '@/components/common/UserAvatar';
 import * as m from '@/src/paraglide/messages.js';
+import { mentionRegex } from '@/utils/mentions/formatMentionToText';
 
 import AvatarIcon from '../../AvatarIcon';
 import MultilineMentionInput from '../../form/MultilineMentionInput';
@@ -72,12 +73,11 @@ const WriteTextCard = ({
     try {
       if (disabled) return;
 
-      const mentionRegex = /@\[(.*?)\]\((\d+)\|(.+?)\)/g;
       let match;
       const mentionedEmails = new Set();
 
       while ((match = mentionRegex.exec(data.text)) !== null) {
-        const email = match[3];
+        const email = match[2];
         if (email) {
           mentionedEmails.add(email);
         }

@@ -13,6 +13,7 @@ import { parseStringForLinks } from '@/components/common/LinkString';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { mergeStyles } from '@/utils/helpers';
+import { mentionRegex } from '@/utils/mentions/formatMentionToText';
 
 import { StyledTooltip } from './StyledTooltip';
 import { UserTooltip } from './UserTooltip';
@@ -39,13 +40,12 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
   };
 
   const processTextWithHighlighting = (text: string): React.ReactNode => {
-    const mentionRegex = /@\[(.*?)\]\((\d+)\|(.+?)\)/g;
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
     let match;
 
     while ((match = mentionRegex.exec(text)) !== null) {
-      const [_fullMatch, name, id, email] = match;
+      const [_fullMatch, name, email] = match;
       const matchStart = match.index;
       const matchEnd = mentionRegex.lastIndex;
 
@@ -57,8 +57,8 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
       parts.push(
         <StyledTooltip
           arrow
-          key={`mention-${id}-${matchStart}`}
-          title={<UserTooltip user={{ id, name, email }} />}
+          key={`mention-${email}-${matchStart}`}
+          title={<UserTooltip user={{ name, email }} />}
           placement="top"
         >
           <Typography variant="body1" component="span" style={mentionStyle}>

@@ -36,10 +36,7 @@ const WriteCommentResponseCard = ({ comment, projectName, onRespond, sx }: Write
         onDiscard={respondingInteractions.onCancel}
         disabled={disabled}
         defaultValues={{
-          text:
-            !comment.anonymous && comment.author
-              ? `@[${comment.author.name}](${comment.author.id}|${comment.author.email})`
-              : '',
+          text: !comment.anonymous && comment.author ? `@[${comment.author.name}](${comment.author.email})` : '',
         }}
       />
     )

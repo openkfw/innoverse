@@ -16,6 +16,7 @@ import {
 } from '@/components/common/editing/editing-context';
 import WriteTextCard from '@/components/common/editing/writeText/WriteTextCard';
 import * as m from '@/src/paraglide/messages.js';
+import { mentionRegex } from '@/utils/mentions/formatMentionToText';
 
 import { TextCard } from '../TextCard';
 
@@ -52,7 +53,6 @@ export const CommentCard = (props: CommentCardProps) => {
   };
 
   const mentionedUsers = useMemo(() => {
-    const mentionRegex = /@\[(.*?)\]\((\d+)\|(.+?)\)/g;
     const mentionedUsers = new Set<string>();
     let match;
 
