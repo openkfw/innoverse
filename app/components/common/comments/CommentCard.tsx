@@ -1,5 +1,9 @@
 'use client';
+import { useMemo } from 'react';
+
 import CheckIcon from '@mui/icons-material/Check';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import { User } from '@/common/types';
 import { CommentCardHeaderSecondary } from '@/components/common/CommentCardHeaderSecondary';
@@ -12,6 +16,7 @@ import {
 } from '@/components/common/editing/editing-context';
 import WriteTextCard from '@/components/common/editing/writeText/WriteTextCard';
 import * as m from '@/src/paraglide/messages.js';
+import { mentionRegex } from '@/utils/mentions/formatMentionToText';
 
 import { TextCard } from '../TextCard';
 
@@ -47,6 +52,38 @@ export const CommentCard = (props: CommentCardProps) => {
     editingInteractions.onSubmit();
   };
 
+  const mentionedUsers = useMemo(() => {
+    const mentionedUsers = new Set<string>();
+    let match;
+
+    while ((match = mentionRegex.exec(comment.comment)) !== null) {
+      const username = match[1];
+      if (username) {
+        mentionedUsers.add(username);
+      }
+    }
+
+    const uniqueUsernames = Array.from(mentionedUsers);
+
+    if (uniqueUsernames.length > 0) {
+      return uniqueUsernames.map((user) => (
+        <Typography variant="subtitle2" key={user} sx={styles.mentionedItem}>
+          @{user}
+        </Typography>
+      ));
+    } else {
+      return null;
+    }
+  }, [comment.comment]);
+
+  const renderHeader = (comment: BasicComment, mentionedUsers: JSX.Element[] | null) => (
+    <Box sx={styles.headerWrapper}>
+      <CommentCardHeaderSecondary content={comment} />
+      <Box sx={styles.bull}>•</Box>
+      {mentionedUsers}
+    </Box>
+  );
+
   return state.isEditing(comment) ? (
     <WriteTextCard
       onSubmit={updateComment}
@@ -68,7 +105,7 @@ export const CommentCard = (props: CommentCardProps) => {
   ) : (
     <TextCard
       text={comment.comment}
-      header={<CommentCardHeaderSecondary content={comment} />}
+      header={renderHeader(comment, mentionedUsers)}
       footer={
         <CommentFooter
           author={comment.author}
@@ -82,4 +119,30 @@ export const CommentCard = (props: CommentCardProps) => {
       }
     />
   );
+};
+
+// Comment Card Styles
+const styles = {
+  headerWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  mentionedItem: {
+    margin: 0,
+    padding: 0,
+    alignSelf: 'center',
+    marginBottom: '-7px',
+    marginRight: '10px',
+    color: 'primary.main',
+    fontSize: 14,
+  },
+  bull: {
+    margin: 0,
+    padding: 0,
+    alignSelf: 'center',
+    marginBottom: '-7px',
+    marginX: '10px',
+    color: 'primary.main',
+  },
 };

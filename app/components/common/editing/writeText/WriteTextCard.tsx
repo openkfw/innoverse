@@ -17,7 +17,7 @@ import { UserAvatarProps } from '@/components/common/UserAvatar';
 import * as m from '@/src/paraglide/messages.js';
 
 import AvatarIcon from '../../AvatarIcon';
-import { MultilineTextInputField } from '../../form/MultilineTextInputField';
+import MultilineMentionInput from '../../form/MultilineMentionInput';
 import InteractionButton, { InteractionType } from '../../InteractionButton';
 
 import formFieldNames from './formFields';
@@ -56,6 +56,7 @@ const WriteTextCard = ({
   sx,
 }: WriteTextCardProps) => {
   const { user } = useUser();
+
   const appInsights = useAppInsightsContext();
 
   const form = useForm<TextFormData>({
@@ -70,6 +71,9 @@ const WriteTextCard = ({
   const submit: SubmitHandler<TextFormValidationSchema> = async (data) => {
     try {
       if (disabled) return;
+
+      // todo - Send email to all unique users in the comment
+
       await onSubmit(data.text);
       form.reset();
     } catch (error) {
@@ -88,18 +92,18 @@ const WriteTextCard = ({
 
   const placeholder = m.components_common_editing_writetext_writeTextCard_placeholder();
 
+  console.log(form.getValues());
   return (
     <>
       {user && (
         <Stack direction="row" spacing={1} sx={sx}>
           {!disableAvatar && <AvatarIcon user={user} size={32} {...avatar} />}
           <form style={{ width: '100%' }}>
-            <MultilineTextInputField
-              name={formFieldNames.TEXT}
+            <MultilineMentionInput
+              rows={4}
               control={form.control}
               placeholder={placeholder}
-              rows={4}
-              sx={textFieldStyles}
+              name={formFieldNames.TEXT}
               endAdornment={<EndAdornment />}
             />
           </form>
@@ -139,22 +143,6 @@ const WriteTextCard = ({
 };
 
 export default WriteTextCard;
-
-const textFieldStyles = {
-  width: '100%',
-  maxWidth: '450px',
-  '& .MuiInputBase-root': {
-    p: '22px 24px',
-    color: 'text.primary',
-    display: 'block',
-  },
-  '& .MuiOutlinedInput-root': {
-    borderRadius: '8px',
-    '& fieldset': {
-      borderColor: 'text.primary',
-    },
-  },
-};
 
 const buttonWrapperStyles: SxProps = {
   justifyContent: 'end',

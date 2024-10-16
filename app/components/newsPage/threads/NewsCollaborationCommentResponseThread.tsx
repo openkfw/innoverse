@@ -15,7 +15,7 @@ export const NewsCollaborationCommentResponseThread = (props: NewsCollaborationC
 
   return (
     <CommentThread
-      comment={{ id: response.id, responseCount: 0 }}
+      comment={{ id: response.id, responseCount: 0, author: response.author }}
       card={<NewsCollabCommentResponseCard response={response} onDelete={onDelete} />}
       fetchResponses={fetchResponses}
       renderResponse={(_response, _idx, _deleteResponse) => <></>}
