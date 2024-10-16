@@ -22,7 +22,7 @@ import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { getAllInnoUsersWithEmail, getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import { getAllInnoUsers, getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
@@ -358,10 +358,10 @@ export const handleProjectCollaborationCommentResponseUpvotedBy = withAuth(
 
 export async function fetchMentionData(search: string): Promise<Mention[]> {
   try {
-    const data = await getAllInnoUsersWithEmail();
+    const data = await getAllInnoUsers();
 
     const formattedData = data.map((user) => ({
-      id: `${user.email}`,
+      id: `${user.id}`,
       display: user.display,
     }));
 

@@ -61,7 +61,7 @@ export async function getInnoUserByProviderId(providerId: string) {
   }
 }
 
-export async function getAllInnoUsersWithEmail() {
+export async function getAllInnoUsers() {
   try {
     const response = await strapiGraphQLFetcher(GetAllInnoUsers, { limit: 1000 });
     if (!response.innoUsers?.data) {
@@ -71,8 +71,8 @@ export async function getAllInnoUsersWithEmail() {
     const users = response.innoUsers?.data.map((user) => ({
       id: user.id,
       display: user.attributes.name,
-      email: user.attributes.email,
     }));
+
     return users;
   } catch (err) {
     const error = strapiError('Getting All Inno users', err as RequestError);
