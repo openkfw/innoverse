@@ -179,7 +179,7 @@ function FirstStep({ idx, step, activeStep }: ProgressStepProps) {
               >
                 <path
                   d="M5.77735 0H4.00745C0.669682 0 -1.19995 3.8468 0.862187 6.47131L4.83582 11.5287C5.97547 12.9791 5.97547 15.0209 4.83582 16.4713L0.862187 21.5287C-1.19995 24.1532 0.669682 28 4.00745 28H5.77735V0Z"
-                  fill={isLive(step) ? theme.palette.secondary.main : '#57D96D'}
+                  fill={isLive(step) ? theme.palette.secondary.main : '#B7F9AA'}
                 />
               </svg>
 
@@ -195,7 +195,7 @@ function FirstStep({ idx, step, activeStep }: ProgressStepProps) {
                   x="0.777344"
                   width={labelSize}
                   height="28"
-                  fill={isLive(step) ? theme.palette.secondary.main : '#57D96D'}
+                  fill={isLive(step) ? theme.palette.secondary.main : '#B7F9AA'}
                 />
               </svg>
 
@@ -209,7 +209,7 @@ function FirstStep({ idx, step, activeStep }: ProgressStepProps) {
               >
                 <path
                   d="M0.777344 28H0.887817C2.05237 28 3.15906 27.4926 3.91895 26.6101L12.53 16.6101C13.8219 15.1099 13.8219 12.8901 12.53 11.3899L3.91895 1.38989C3.15906 0.507446 2.05237 0 0.887817 0H0.777344V28Z"
-                  fill={isLive(step) ? theme.palette.secondary.main : '#57D96D'}
+                  fill={isLive(step) ? theme.palette.secondary.main : '#B7F9AA'}
                 />
               </svg>
             </Box>
@@ -261,7 +261,7 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
                 </defs>
                 <path
                   d="M5.77735 0H4.00745C0.669682 0 -1.19995 3.8468 0.862187 6.47131L4.83582 11.5287C5.97547 12.9791 5.97547 15.0209 4.83582 16.4713L0.862187 21.5287C-1.19995 24.1532 0.669682 28 4.00745 28H5.77735V0Z"
-                  fill={isLive(step) ? theme.palette.secondary.main : '#57D96D'}
+                  fill={isLive(step) ? theme.palette.secondary.main : '#B7F9AA'}
                 />
               </svg>
 
@@ -283,7 +283,7 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
                   x="0.777344"
                   width={labelSize}
                   height="28"
-                  fill={isLive(step) ? theme.palette.secondary.main : '#57D96D'}
+                  fill={isLive(step) ? theme.palette.secondary.main : '#B7F9AA'}
                 />
               </svg>
 
@@ -303,7 +303,7 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
                 </defs>
                 <path
                   d="M0.777344 28H0.887817C2.05237 28 3.15906 27.4926 3.91895 26.6101L12.53 16.6101C13.8219 15.1099 13.8219 12.8901 12.53 11.3899L3.91895 1.38989C3.15906 0.507446 2.05237 0 0.887817 0H0.777344V28Z"
-                  fill={isLive(step) ? theme.palette.secondary.main : '#57D96D'}
+                  fill={isLive(step) ? theme.palette.secondary.main : '#B7F9AA'}
                 />
               </svg>
             </Box>
