@@ -87,9 +87,6 @@ const nextConfig = {
       static: 180,
     },
     instrumentationHook: true,
-    serverActions: {
-      allowedOrigins: serverConfig.ALLOWED_ORIGINS
-    },
   },
   i18n: {
     locales: ['de'],
