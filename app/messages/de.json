@@ -83,7 +83,7 @@
   "components_common_interactionButton_feedback": "Feedback",
   "components_common_interactionButton_logIn": "Log in",
   "components_common_interactionButton_clear": "Entfernen",
-  "components_common_interactionButton_addUpdate": "News hinzufügen",
+  "components_common_interactionButton_addUpdate": "Beitrag hinzufügen",
   "components_common_interactionButton_liked": "Gefällt mir",
   "components_common_interactionButton_unfollow": "Entfolgen",
   "components_common_interactionButton_applied": "Angewandt",
@@ -256,7 +256,7 @@
 
   "components_newsPage_newsFeed_dataReceived": "Alle Daten wurden geladen",
 
-  "components_newsPage_addPost_addPostDialog_addPost": "News hinzufügen",
+  "components_newsPage_addPost_addPostDialog_addPost": "Beitrag hinzufügen",
 
   "components_newsPage_addPost_form_addPostForm_label": "-optional-",
   "components_newsPage_addPost_form_addPostForm_postCreated": "News wurde erstellt",
