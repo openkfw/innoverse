@@ -95,6 +95,19 @@ export function formatDate(dateString: string | Date, locale = 'de-DE') {
   const month = date.toLocaleString(locale, { month: 'long' });
   const year = date.toLocaleString(locale, { year: 'numeric' });
 
+  return `${day}. ${month} ${year}`;
+}
+
+export function formatDateWithTimestamp(dateString: string | Date, locale = 'de-DE') {
+  if (!dateString || isNaN(new Date(dateString).getTime())) {
+    return null;
+  }
+
+  const date = new Date(dateString);
+  const day = date.toLocaleString(locale, { day: 'numeric' });
+  const month = date.toLocaleString(locale, { month: 'long' });
+  const year = date.toLocaleString(locale, { year: 'numeric' });
+
   const hour = date.getHours().toString().padStart(2, '0');
   const minute = date.getMinutes().toString().padStart(2, '0');
 
