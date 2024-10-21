@@ -268,7 +268,7 @@
   "components_newsPage_addPost_form_addUpdateForm_success": "News has been created",
   "components_newsPage_addPost_form_addUpdateForm_error": "An error occurred while creating the news. Please try again.",
   "components_newsPage_addPost_form_addUpdateForm_updateLabel": "News",
-  "components_newsPage_addPost_form_addUpdateForm_placeholder": "You can enter the news here …",
+  "components_newsPage_addPost_form_addUpdateForm_placeholder": "You can add your news here …",
 
   "components_newsPage_addUpdate_addUpdateDialog_addUpdate": "Add news",
 
