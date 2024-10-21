@@ -92,7 +92,6 @@ const WriteTextCard = ({
 
   const placeholder = m.components_common_editing_writetext_writeTextCard_placeholder();
 
-  console.log(form.getValues());
   return (
     <>
       {user && (

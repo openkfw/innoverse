@@ -48,6 +48,7 @@ export const GetInnoUserByProviderIdQuery = graphql(
   [InnoUserFragment],
 );
 
+// todo: attributes.name->attributes.username
 export const GetAllInnoUsers = graphql(`
   query GetInnoUsers($limit: Int) {
     innoUsers(pagination: { limit: $limit }) {
@@ -55,7 +56,6 @@ export const GetAllInnoUsers = graphql(`
         id
         attributes {
           name
-          email
         }
       }
     }

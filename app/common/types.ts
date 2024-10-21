@@ -455,6 +455,5 @@ export type ChildTestProps = {
 };
 
 export interface Mention {
-  id: string;
-  display: string;
+  username: string;
 }

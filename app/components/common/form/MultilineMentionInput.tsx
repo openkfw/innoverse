@@ -27,11 +27,22 @@ function MultilineMentionInput({
     if (mentions === null) {
       callback([{ id: 'loading', display: loading }]);
       fetchMentionData(search).then((fetchedUsers) => {
+        const suggestionData = fetchedUsers.map((user) => ({
+          id: user.username,
+          display: user.username,
+        }));
         setMentions(fetchedUsers);
-        callback(fetchedUsers);
+        callback(suggestionData);
       });
     } else {
-      callback(mentions.filter((user) => user.display.toLowerCase().includes(search.toLowerCase())));
+      const suggestionData = mentions
+        .filter((user) => user.username.toLowerCase().includes(search.toLowerCase()))
+        .map((user) => ({
+          id: user.username,
+          display: user.username,
+        }));
+
+      callback(suggestionData);
     }
   }
 
@@ -56,8 +67,9 @@ function MultilineMentionInput({
               <Mention
                 style={mentionInputStyle.highlightedInput}
                 trigger="@"
-                displayTransform={(_id: string, display: string) => `@${display}`}
+                displayTransform={(username: string) => `@${username}`}
                 appendSpaceOnAdd={true}
+                markup="@[__display__]"
                 data={fetchAndFilterMentionData}
                 renderSuggestion={(
                   suggestion: SuggestionDataItem,
@@ -126,6 +138,9 @@ const mentionInputStyle = {
         backgroundColor: theme.palette.common.white,
         overflow: 'auto',
         maxHeight: 275,
+        position: 'absolute',
+        minWidth: 300,
+        top: 25,
       },
       item: {
         padding: '5px 15px',

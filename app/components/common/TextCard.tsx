@@ -45,7 +45,7 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
     let match;
 
     while ((match = mentionRegex.exec(text)) !== null) {
-      const [_fullMatch, name, id] = match;
+      const [_fullMatch, username] = match;
       const matchStart = match.index;
       const matchEnd = mentionRegex.lastIndex;
 
@@ -53,16 +53,10 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
         const nonMentionText = text.substring(lastIndex, matchStart);
         parts.push(parseStringForLinks(nonMentionText));
       }
-
       parts.push(
-        <StyledTooltip
-          arrow
-          key={`mention-${id}-${matchStart}`}
-          title={<UserTooltip user={{ name, id }} />}
-          placement="top"
-        >
+        <StyledTooltip key={`mention-${username}-${matchStart}`} title={<UserTooltip user={{ name: username }} />}>
           <Typography variant="body1" component="span" style={mentionStyle}>
-            {name}
+            {username}
           </Typography>
         </StyledTooltip>,
       );

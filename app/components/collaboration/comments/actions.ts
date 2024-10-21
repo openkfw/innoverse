@@ -360,12 +360,9 @@ export async function fetchMentionData(search: string): Promise<Mention[]> {
   try {
     const data = await getAllInnoUsers();
 
-    const formattedData = data.map((user) => ({
-      id: `${user.id}`,
-      display: user.display,
-    }));
+    const formattedData = data.map((user) => ({ username: user.username }));
 
-    return formattedData.filter((user) => user.display.toLowerCase().includes(search.toLowerCase()));
+    return formattedData.filter((user) => user.username.toLowerCase().includes(search.toLowerCase()));
   } catch (error) {
     console.error('Failed to load users:', error);
     return [];

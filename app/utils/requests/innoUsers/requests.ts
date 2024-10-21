@@ -68,10 +68,8 @@ export async function getAllInnoUsers() {
       throw new Error('No users data available');
     }
 
-    const users = response.innoUsers?.data.map((user) => ({
-      id: user.id,
-      display: user.attributes.name,
-    }));
+    // todo: attributes.name->attributes.username
+    const users = response.innoUsers?.data.map((user) => ({ username: user.attributes.name }));
 
     return users;
   } catch (err) {
