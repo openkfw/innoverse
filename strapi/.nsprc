@@ -58,5 +58,10 @@
     "active": true,
     "notes": "Ignored since strapi uses an old version of cookie",
     "expiry": "2024-10-31"
+  },
+  "1100186": {
+    "active": true,
+    "notes": "Ignored since strapi uses an old version of jwk-to-pem which uses old version of elliptic",
+    "expiry": "2024-11-30"
   }
 }
