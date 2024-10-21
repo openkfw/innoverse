@@ -154,7 +154,7 @@
   "components_landing_feedbackSection_feedbackSection_toastError": "Feedback could not be saved! Please try again later.",
   "components_landing_feedbackSection_feedbackSection_giveFeedback": "Give us feedback",
   "components_landing_feedbackSection_feedbackSection_importantFeedbackMessage": "Your feedback is important! Share your experiences with the new innovation platform to improve and optimize it. Any feedback is welcome!",
-  "components_landing_feedbackSection_feedbackSection_placeholderFeedback": "You can enter your feedback here.",
+  "components_landing_feedbackSection_feedbackSection_placeholderFeedback": "You can add your feedback here.",
   "components_landing_feedbackSection_feedbackSection_administratorFeedback": "Your feedback will be sent to the administrators of the",
   "components_landing_feedbackSection_feedbackSection_projectpage": "project page",
   "components_landing_feedbackSection_feedbackSection_innoPlatform": "InnoPlatform",
@@ -261,7 +261,7 @@
   "components_newsPage_addPost_form_addPostForm_label": "-optional-",
   "components_newsPage_addPost_form_addPostForm_postCreated": "News has been created",
   "components_newsPage_addPost_form_addPostForm_createError": "An error occurred while creating the news. Please try again",
-  "components_newsPage_addPost_form_addPostForm_addPost": "You can enter the news here …",
+  "components_newsPage_addPost_form_addPostForm_addPost": "You can add your news here …",
   "components_newsPage_addPost_form_addPostForm_projectLabel": "Project",
   "components_newsPage_addPost_form_addPostForm_anonymousPost": "Post anonymously",
 
@@ -275,7 +275,7 @@
   "components_newsPage_addUpdate_form_addUpdateForm_postCreated": "News has been created",
   "components_newsPage_addUpdate_form_addUpdateForm_error": "An error occurred while creating the news. Please try again.",
   "components_newsPage_addUpdate_form_addUpdateForm_updateLabel": "News",
-  "components_newsPage_addUpdate_form_addUpdateForm_placeholder": "You can enter the news here …",
+  "components_newsPage_addUpdate_form_addUpdateForm_placeholder": "You can add your news here …",
   "components_newsPage_addUpdate_form_addUpdateForm_anonymousPost": "Post anonymously",
 
   "components_newsPage_cards_collabCommentCard_postError": "Failed to post the comment. Please try again.",
