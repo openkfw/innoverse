@@ -259,20 +259,20 @@
   "components_newsPage_addPost_addPostDialog_addPost": "Beitrag hinzufügen",
 
   "components_newsPage_addPost_form_addPostForm_label": "-optional-",
-  "components_newsPage_addPost_form_addPostForm_postCreated": "News wurde erstellt",
+  "components_newsPage_addPost_form_addPostForm_postCreated": "News Beitrag wurde erstellt",
   "components_newsPage_addPost_form_addPostForm_createError": "Es ist ein Fehler beim Erstellen der News aufgetreten. Bitte versuchen sie es erneut",
   "components_newsPage_addPost_form_addPostForm_addPost": "Hier kannst du deine News hinzufügen …",
   "components_newsPage_addPost_form_addPostForm_projectLabel": "Projekt",
   "components_newsPage_addPost_form_addPostForm_anonymousPost": "Anonym posten",
 
-  "components_newsPage_addPost_form_addUpdateForm_success": "News wurde erstellt",
+  "components_newsPage_addPost_form_addUpdateForm_success": "News Beitrag wurde erstellt",
   "components_newsPage_addPost_form_addUpdateForm_error": "Es ist ein Fehler beim Erstellen der News aufgetreten. Bitte versuche es erneut.",
   "components_newsPage_addPost_form_addUpdateForm_updateLabel": "News",
   "components_newsPage_addPost_form_addUpdateForm_placeholder": "Hier kannst du deine News hinzufügen …",
 
   "components_newsPage_addUpdate_addUpdateDialog_addUpdate": "News hinzufügen",
 
-  "components_newsPage_addUpdate_form_addUpdateForm_postCreated": "News wurde erstellt",
+  "components_newsPage_addUpdate_form_addUpdateForm_postCreated": "News Beitrag wurde erstellt",
   "components_newsPage_addUpdate_form_addUpdateForm_error": "Es ist ein Fehler beim Erstellen der News aufgetreten. Bitte versuche es erneut.",
   "components_newsPage_addUpdate_form_addUpdateForm_updateLabel": "News",
   "components_newsPage_addUpdate_form_addUpdateForm_placeholder": "Hier kannst du deine News hinzufügen …",
