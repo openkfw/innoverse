@@ -4,10 +4,8 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 
-import { Project } from '@/common/types';
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
 import ErrorPage from '@/components/error/ErrorPage';
-import NewsProjectCard from '@/components/newsPage/cards/NewsProjectCard';
 import { Projects } from '@/components/projectsPage/Projects';
 import ProjectsPageContainer from '@/components/projectsPage/ProjectsPageContainer';
 import * as m from '@/src/paraglide/messages.js';

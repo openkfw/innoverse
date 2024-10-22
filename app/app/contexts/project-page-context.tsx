@@ -6,11 +6,9 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { BasicProject } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
-import { getProjects } from '@/utils/requests/project/requests';
+import { GetProjectsBySearchString } from '@/utils/requests/project/requests';
 
 export type ProjectFilters = {
-  projectIds: string[];
-  types: string[];
   searchString: string;
 };
 
@@ -36,7 +34,7 @@ const defaultState: ProjectPageContextInterface = {
   isLoading: false,
   hasMore: true,
   sort: SortValues.DESC,
-  filters: { projectIds: [], types: [], searchString: '' },
+  filters: { searchString: '' },
   refetchProjects: () => Promise.resolve(),
   toggleSort: () => {},
   setFilters: () => {},
@@ -76,36 +74,31 @@ export const ProjectPageContextProvider = ({ children, ...props }: ProjectPageCo
 
   const refetchProjects = useCallback(
     async (options: { page: number; filters: ProjectFilters }) => {
-      const filters = options.filters;
+      const searchString = options.filters.searchString;
       const pageSize = 10;
 
       try {
         if (options.page === 1) {
           setIsLoading(true);
         }
-
-        // const result =
-        //   (await getProjects({
-        //     pagination: {
-        //       page: options.page,
-        //       pageSize: pageSize,
-        //     },
-        //     filterBy: {
-        //       projectIds: filters.projectIds.length ? filters.projectIds : undefined,
-        //       searchString: filters.searchString.length ? filters.searchString : undefined,
-        //     },
-        //     sortsorBy: { updatedAt: 'DESC' },
-        //   })) || [];
-        const result = (await getProjects()) || []; //todo apply filters
+        const result =
+          (await GetProjectsBySearchString({
+            pagination: {
+              page: options.page,
+              pageSize: pageSize,
+            },
+            sort: { by: 'title', order: 'desc' },
+            searchString,
+          })) || [];
 
         const entries = options.page > 1 ? [...projects, ...result] : result;
         setProjects(entries);
         setHasMore(result.length >= pageSize);
       } catch (error) {
-        errorMessage({ message: 'Error refetching news feed. Please check your connection and try again.' });
-        console.error('Error refetching news feed:', error);
+        errorMessage({ message: 'Error refetching projects. Please check your connection and try again.' });
+        console.error('Error refetching projects:', error);
         appInsights.trackException({
-          exception: new Error('Error refetching news feed', { cause: error }),
+          exception: new Error('Error refetching projects', { cause: error }),
           severityLevel: SeverityLevel.Error,
         });
       } finally {
@@ -115,6 +108,13 @@ export const ProjectPageContextProvider = ({ children, ...props }: ProjectPageCo
     [appInsights, projects],
   );
 
+  const updateFilters = (filters: ProjectFilters) => {
+    const page = 1;
+    setFilters(filters);
+    setPageNumber(page);
+    refetchProjects({ page, filters });
+  };
+
   const contextObject: ProjectPageContextInterface = {
     projects,
     sort,
@@ -123,7 +123,7 @@ export const ProjectPageContextProvider = ({ children, ...props }: ProjectPageCo
     hasMore,
     refetchProjects: () => refetchProjects({ filters, page: pageNumber }),
     toggleSort,
-    setFilters,
+    setFilters: updateFilters,
     loadNextPage,
   };
 

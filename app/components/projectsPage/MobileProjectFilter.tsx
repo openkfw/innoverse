@@ -4,49 +4,37 @@ import React, { useCallback, useState } from 'react';
 import { isEqual } from 'lodash';
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import Typography from '@mui/material/Typography';
 
-import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import { closeIconButtonStyle } from '@/components/common/CustomDialog';
 import CloseIcon from '@/components/icons/CloseIcon';
-import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
-import ApplyFilterButton, { APPLY_BUTTON } from '../../common/ApplyFilterButton';
-import NewsProjectsFilter from './NewsProjectsFilter';
-import NewsTopicFilter from './NewsTopicFilter';
+import ApplyFilterButton, { APPLY_BUTTON } from '../common/ApplyFilterButton';
+import { Typography, Card } from '@mui/material';
+import ProjectFilter from './ProjectFilter';
 
-interface MobileNewsFilterProps {
+interface MobileProjectFilterProps {
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-export default function MobileNewsFilter(props: MobileNewsFilterProps) {
+//todo combine with MobileNewsFeedFilter.tsx
+
+export default function MobileNewsFeedFilter(props: MobileProjectFilterProps) {
   const { open, setOpen } = props;
-  const { filters, setFilters } = useNewsFilter();
-  const [newFilters, setNewFilters] = useState(filters);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
 
   const applyFilters = () => {
-    setFilters(newFilters);
     setOpen(false);
   };
 
-  const getApplyButtonType = useCallback(() => {
-    if (isEqual(filters, newFilters)) {
-      return APPLY_BUTTON.DISABLED;
-    }
-    return APPLY_BUTTON.ENABLED;
-  }, [newFilters, filters]);
-
   return (
-    <Box mb={0} sx={{ backgroundColor: theme.palette.background.paper }} date-testid="news-filter">
+    <Box mb={0} sx={{ backgroundColor: theme.palette.background.paper }} date-testid="projects-filter">
       <SwipeableDrawer
         sx={{
           '& .MuiPaper-root': {
@@ -66,35 +54,37 @@ export default function MobileNewsFilter(props: MobileNewsFilterProps) {
         </Box>
 
         <Box sx={drawerBoxStyle}>
-          <Typography variant="overline">{m.components_newsPage_newsFilter_mobileNewsFilter_filter()}</Typography>
+          <Typography variant="overline">Filtern</Typography>
           <Card sx={cardStyles}>
-            <NewsProjectsFilter filters={newFilters} setFilters={setNewFilters} />
-            <NewsTopicFilter filters={newFilters} setFilters={setNewFilters} />
+            <ProjectFilter />
           </Card>
         </Box>
-        <ApplyFilterButton onClick={applyFilters} applyButtonType={getApplyButtonType()} />
+
+        <ApplyFilterButton onClick={applyFilters} applyButtonType={APPLY_BUTTON.ENABLED} />
       </SwipeableDrawer>
     </Box>
   );
 }
 
-// News Card Styles
 const cardStyles = {
-  borderRadius: '16px 16px 0 0',
+  minHeight: '300px',
+  borderRadius: '16px',
   border: '1px solid rgba(255, 255, 255, 0.20)',
   background: 'rgba(255, 255, 255, 0.10)',
   boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
   backdropFilter: 'blur(20px)',
-  height: '120% !important',
+  height: 'fit-content !important',
+  marginBottom: 4,
 };
 
 const drawerBoxStyle = {
+  minHeight: '300px',
   overflow: 'scroll',
   p: 3,
   pb: 0,
   m: '15px',
   mb: 0,
-  borderRadius: '16px 16px 0 0',
+  borderRadius: '16px',
   border: '1px solid rgba(0, 90, 140, 0.20)',
   backgroundColor: 'primary.light',
   boxShadow:

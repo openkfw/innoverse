@@ -9,7 +9,7 @@ import { getImageByBreakpoint } from '@/utils/helpers';
 import Carousel from '../Carousel';
 import { defaultImage } from '../featuredProjectSection/FeaturedProjectSlider';
 
-import ProjectCard from './ProjectCard';
+import ProjectCard from '../../common/project/ProjectCard';
 import { ProjectProps } from './ProjectSection';
 
 import 'slick-carousel/slick/slick-theme.css';
