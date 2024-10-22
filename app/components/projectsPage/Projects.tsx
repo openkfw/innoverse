@@ -16,7 +16,8 @@ import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 
 import { defaultImage } from '../landing/featuredProjectSection/FeaturedProjectSlider';
-import ProjectCard from '../landing/projectSection/ProjectCard';
+import ProjectCard from '../common/project/ProjectCard';
+import { CommonSkeleton } from '../common/skeletons/CommonSkeleton';
 
 interface ProjectPageProps {
   sx?: SxProps;
@@ -28,29 +29,29 @@ export const Projects = (props: ProjectPageProps) => {
 
   return (
     <Box sx={{ width: '100%', ...sx }} data-testid="news-container">
-      {/* {isLoading ? (
-        <NewsSkeleton count={5} />
-      ) : ( */}
-      <InfiniteScroll
-        dataLength={projects?.length || 0}
-        next={loadNextPage}
-        hasMore={hasMore}
-        scrollThreshold={0.5}
-        style={{ overflow: 'unset' }}
-        loader={
-          <Stack key={0} sx={{ mt: 2 }} alignItems="center">
-            <CircularProgress aria-label="loading" />
-          </Stack>
-        }
-        endMessage={
-          <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 2 }}>
-            {m.components_newsPage_newsFeed_dataReceived()}
-          </Typography>
-        }
-      >
-        <ProjectPageContent />
-      </InfiniteScroll>
-      {/* )} */}
+      {isLoading ? (
+        <CommonSkeleton count={3} size={cardSize} /> //todo fix skeleton to match ProjectCards
+      ) : (
+        <InfiniteScroll
+          dataLength={projects?.length || 0}
+          next={loadNextPage}
+          hasMore={hasMore}
+          scrollThreshold={0.5}
+          style={{ overflow: 'unset' }}
+          loader={
+            <Stack key={0} sx={{ mt: 2 }} alignItems="center">
+              <CircularProgress aria-label="loading" />
+            </Stack>
+          }
+          endMessage={
+            <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 2 }}>
+              {m.components_newsPage_newsFeed_dataReceived()}
+            </Typography>
+          }
+        >
+          <ProjectPageContent />
+        </InfiniteScroll>
+      )}
     </Box>
   );
 };
@@ -65,7 +66,7 @@ const ProjectPageContent = () => {
         const image = getImageByBreakpoint(isSmallScreen, p.image) || defaultImage;
 
         return (
-          <Grid item key={p.id} xs={12} sm={6} md={6} sx={cardContainerStyles}>
+          <Grid item key={p.id} xs={12} sm={6} md={4} sx={cardContainerStyles}>
             <ProjectCard
               key={key}
               id={p.id}
@@ -75,6 +76,7 @@ const ProjectPageContent = () => {
               summary={p.summary}
               status={p.status}
               progressBarContainersx={{ position: 'sticky' }}
+              cardSize={cardSize}
             />
           </Grid>
         );
@@ -82,6 +84,8 @@ const ProjectPageContent = () => {
     </Grid>
   );
 };
+
+const cardSize = { height: '550px', width: '350px' };
 
 const cardContainerStyles = {
   display: 'flex',

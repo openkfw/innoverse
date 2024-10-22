@@ -24,15 +24,16 @@ interface ProjectCardProps {
   summary: string;
   status: string;
   progressBarContainersx?: SxProps;
+  cardSize?: { height: string; width: string };
 }
 
 export default function ProjectCard(props: ProjectCardProps) {
-  const { id, img, contributors, title, summary, status, progressBarContainersx } = props;
+  const { id, img, contributors, title, summary, status, progressBarContainersx, cardSize } = props;
 
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
-    <Card sx={{ ...cardStyles, height: isWideScreen ? 490 : 440 }}>
+    <Card sx={{ ...cardStyles, height: isWideScreen ? cardSize?.height || 490 : 440, width: cardSize?.width || 466 }}>
       <Box sx={cardWrapperStyles}>
         <CardMedia sx={{ borderRadius: '8px', overflow: 'hidden', padding: '24px' }}>
           <Image
