@@ -31,6 +31,7 @@ export const MappedRedisType: Record<NewsType, ObjectType> = {
   [NewsType.OPPORTUNITY]: ObjectType.OPPORTUNITY,
   [NewsType.PROJECT]: ObjectType.PROJECT,
   [NewsType.COLLABORATION_COMMENT]: ObjectType.COLLABORATION_COMMENT,
+  [NewsType.NEWS_COMMENT]: ObjectType.NEWS_COMMENT,
 };
 
 type RedisNewsFeedEntryWithAdditionalData = RedisNewsFeedEntry & {

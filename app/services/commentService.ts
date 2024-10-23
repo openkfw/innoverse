@@ -23,6 +23,8 @@ import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { notifyFollowers } from '@/utils/notification/notificationSender';
 import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
+import { getPostCommentByPostId } from '@/utils/requests/comments/requests';
+import { mapToRedisNewsComments } from '@/utils/newsFeed/redis/mappings';
 
 const logger = getLogger();
 
@@ -106,8 +108,10 @@ export const removeComment = async ({ user, commentId, commentType }: RemoveComm
 
 const updatePostCommentInCache = async (postComment: { postId: string }, author: UserSession) => {
   const postResponseCount = await countPostResponses(dbClient, postComment.postId);
+  const comments = await getPostCommentByPostId(postComment.postId);
+  const redisComments = await mapToRedisNewsComments(comments);
   return await updatePostInCache({
-    post: { id: postComment.postId, responseCount: postResponseCount },
+    post: { id: postComment.postId, responseCount: postResponseCount, comments: redisComments },
     user: author,
   });
 };
@@ -120,7 +124,9 @@ const updateNewsCommentInCache = async (newsComment: { newsId: string }) => {
 const removePostCommentInCache = async (postId: string, user: UserSession) => {
   if (postId) {
     const responseCount = await countPostResponses(dbClient, postId);
-    await updatePostInCache({ post: { id: postId, responseCount }, user });
+    const comments = await getPostCommentByPostId(postId);
+    const redisComments = await mapToRedisNewsComments(comments);
+    await updatePostInCache({ post: { id: postId, responseCount, comments: redisComments }, user });
   }
 };
 
