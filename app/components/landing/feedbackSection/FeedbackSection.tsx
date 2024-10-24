@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { StatusCodes } from 'http-status-codes';
-import { useSessionStorage } from 'usehooks-ts';
 
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
@@ -44,8 +43,7 @@ const ProjectLink = ({
 function FeedbackSection() {
   const [open, openDialog] = useState(false);
   // The useState and the useSessionStorage both must be used to avoid pre-hydration errors.
-  const [feedbackClosed, setFeedbackClosed] = useSessionStorage('feedbackClosed', false);
-  const [hideButton, setHideButton] = useState(feedbackClosed);
+  const [hideButton, setHideButton] = useState(false);
   const [projectId, setProjectId] = useState<string>();
 
   const [showFeedbackOnProjectPage, setShowFeedbackOnProjectPage] = useState(false);
@@ -69,7 +67,6 @@ function FeedbackSection() {
   }
 
   function hideFeedbackButton() {
-    setFeedbackClosed(true);
     setHideButton(true);
   }
 
@@ -78,7 +75,6 @@ function FeedbackSection() {
     if (result.status === StatusCodes.OK) {
       toast.success(m.components_landing_feedbackSection_feedbackSection_toastSuccess());
       handleClose();
-      hideFeedbackButton();
     } else {
       toast.error(m.components_landing_feedbackSection_feedbackSection_toastError());
     }
