@@ -44,8 +44,7 @@ const ProjectLink = ({
 function FeedbackSection() {
   const [open, openDialog] = useState(false);
   // The useState and the useSessionStorage both must be used to avoid pre-hydration errors.
-  const [feedbackClosed] = useSessionStorage('feedbackClosed', false);
-  const [hideButton] = useState(feedbackClosed);
+  const [hideButton, setHideButton] = useState(false);
   const [projectId, setProjectId] = useState<string>();
 
   const [showFeedbackOnProjectPage, setShowFeedbackOnProjectPage] = useState(false);
@@ -68,6 +67,10 @@ function FeedbackSection() {
     openDialog(false);
   }
 
+  function hideFeedbackButton() {
+    setHideButton(true);
+  }
+
   const submitFeedback = async () => {
     const result = await saveFeedback({ feedback: feedbackText, showOnProjectPage: showFeedbackOnProjectPage });
     if (result.status === StatusCodes.OK) {
@@ -81,7 +84,12 @@ function FeedbackSection() {
   return (
     <Box sx={feedbackSectionStyles}>
       {!hideButton && (
-        <InteractionButton onClick={handleOpen} sx={feedbackButtonStyles} interactionType={InteractionType.FEEDBACK} />
+        <InteractionButton
+          onClick={handleOpen}
+          sx={feedbackButtonStyles}
+          onIconClick={hideFeedbackButton}
+          interactionType={InteractionType.FEEDBACK}
+        />
       )}
       <CustomDialog
         open={open}
