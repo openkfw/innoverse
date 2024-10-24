@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { StatusCodes } from 'http-status-codes';
-import { useSessionStorage } from 'usehooks-ts';
 
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
