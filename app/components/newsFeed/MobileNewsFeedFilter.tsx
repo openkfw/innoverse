@@ -15,7 +15,7 @@ import { FilterOption } from '@/components/common/FilterSelect';
 import CloseIcon from '@/components/icons/CloseIcon';
 import theme from '@/styles/theme';
 
-import ApplyFilterButton, { APPLY_BUTTON } from '../newsPage/newsFilter/ApplyFilterButton';
+import ApplyFilterButton, { APPLY_BUTTON } from '../common/ApplyFilterButton';
 
 import NewsFeedProjectsFilter from './NewsFeedProjectsFilter';
 import NewsFeedSearchFilter from './NewsFeedSearchFilter';
