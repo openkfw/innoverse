@@ -23,6 +23,7 @@ const PillBox = ({ children, sx }: { children: ReactNode; sx?: SxProps }) => {
 
 const ActiveSliderPill = (props: { itemNumber: string; title: string; projectStart: string }) => {
   const { itemNumber, title, projectStart } = props;
+
   const styles = {
     activeContainer: {
       position: 'relative',
@@ -80,6 +81,7 @@ const NonActiveSliderPill = (props: { itemNumber: string; title: string; project
         color: 'action.hover',
       },
     }),
+    minHeight: '48px',
   };
 
   return (
