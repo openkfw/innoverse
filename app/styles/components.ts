@@ -180,6 +180,9 @@ const components: Components<Omit<Theme, 'components'>> = {
     },
   },
   MuiButtonBase: {
+    defaultProps: {
+      disableRipple: true,
+    },
     styleOverrides: {
       root: {
         color: palette.text?.primary,
