@@ -6,7 +6,6 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -14,7 +13,6 @@ import ProgressBar from '@/components/common/ProgressBar';
 import VisibleContributors from '@/components/project-details/VisibleContributors';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
-import { mergeStyles } from '@/utils/helpers';
 
 interface ProjectCardProps {
   id: string;
@@ -23,28 +21,38 @@ interface ProjectCardProps {
   title: string;
   summary: string;
   status: string;
-  progressBarContainersx?: SxProps;
-  cardSize?: { height: string; width: string };
+  cardSize: { height: number; width: number };
 }
 
 export default function ProjectCard(props: ProjectCardProps) {
-  const { id, img, contributors, title, summary, status, progressBarContainersx, cardSize } = props;
+  const { id, img, contributors, title, summary, status, cardSize } = props;
 
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
+  const imgHeight = isWideScreen ? 200 : 150;
+
   return (
-    <Card sx={{ ...cardStyles, height: isWideScreen ? cardSize?.height || 490 : 440, width: cardSize?.width || 466 }}>
+    <Card
+      sx={{
+        ...cardStyles,
+        position: 'relative',
+        height: isWideScreen ? cardSize.height : 440,
+        width: cardSize.width,
+      }}
+    >
       <Box sx={cardWrapperStyles}>
         <CardMedia sx={{ borderRadius: '8px', overflow: 'hidden', padding: '24px' }}>
           <Image
             src={img}
-            width={isWideScreen ? 418 : 500}
-            height={isWideScreen ? 237 : 175}
+            width={cardSize.width}
+            height={0}
             alt={m.components_landing_projectSection_projectCard_imageAlt()}
             style={{
               width: '100%',
               objectFit: 'cover',
               borderRadius: 0,
+              display: 'block',
+              height: imgHeight,
             }}
           />
         </CardMedia>
@@ -62,7 +70,7 @@ export default function ProjectCard(props: ProjectCardProps) {
             {isWideScreen ? (
               <Typography
                 variant="subtitle1"
-                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 50 ? 1 : 2 }}
+                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 100 ? 1 : 3 }}
               >
                 {summary}
               </Typography>
@@ -75,7 +83,7 @@ export default function ProjectCard(props: ProjectCardProps) {
               </Typography>
             )}
 
-            <Box sx={mergeStyles(progressBarContainerStyles, progressBarContainersx)}>
+            <Box sx={progressBarContainerStyles}>
               <ProgressBar active={status} />
             </Box>
           </Box>
@@ -134,6 +142,9 @@ const descriptionStyles = {
 };
 
 const progressBarContainerStyles = {
-  bottom: 24,
   position: 'absolute',
+  bottom: 24, // Stick to the bottom
+  left: '50%', // Move to the horizontal center
+  transform: 'translateX(-50%)', // Center it by shifting 50% of its width
+  width: '80%', // Adjust width as necessary (optional)
 };

@@ -22,6 +22,8 @@ import {
 import { NewsCollaborationCommentThread } from '@/components/newsPage/threads/NewsCollaborationCommentThread';
 import * as m from '@/src/paraglide/messages.js';
 
+import { CommonSkeleton } from '../common/skeletons/CommonSkeleton';
+
 import NewsCardWrapper from './cards/common/NewsCardWrapper';
 import NewsCollabQuestionCard from './cards/NewsCollabQuestionCard';
 import NewsEventCard from './cards/NewsEventCard';
@@ -29,7 +31,6 @@ import NewsProjectCard from './cards/NewsProjectCard';
 import NewsSurveyCard from './cards/NewsSurveyCard';
 import { NewsPostThread } from './threads/NewsPostThread';
 import { NewsUpdateThread } from './threads/NewsUpdateThread';
-import { CommonSkeleton } from '../common/skeletons/CommonSkeleton';
 
 interface NewsProps {
   sx?: SxProps;

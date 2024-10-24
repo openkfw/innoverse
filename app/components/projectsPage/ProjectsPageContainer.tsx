@@ -2,6 +2,7 @@
 
 import { PropsWithChildren, useState } from 'react';
 
+import FilterIcon from '@mui/icons-material/FilterAlt';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
@@ -9,11 +10,11 @@ import Typography from '@mui/material/Typography';
 
 import * as m from '@/src/paraglide/messages.js';
 
-import MobileProjectFilter from './MobileProjectFilter';
-import ProjectFilter from './ProjectFilter';
 import { mergeStyles } from '../../utils/helpers';
 import SecondaryIconButton from '../common/SecondaryIconButton';
-import FilterIcon from '@mui/icons-material/FilterAlt';
+
+import MobileProjectFilter from './MobileProjectFilter';
+import ProjectFilter from './ProjectFilter';
 
 export default function ProjectsPageContainer({ children }: PropsWithChildren) {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -88,4 +89,5 @@ const stickyContainer = {
   overflowY: 'auto',
   maxWidth: 'fit-content',
   px: '10px',
+  height: '100%',
 };

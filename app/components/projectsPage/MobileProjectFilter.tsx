@@ -1,18 +1,19 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
-import { isEqual } from 'lodash';
+import React from 'react';
 
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import Typography from '@mui/material/Typography';
 
 import { closeIconButtonStyle } from '@/components/common/CustomDialog';
 import CloseIcon from '@/components/icons/CloseIcon';
 import theme from '@/styles/theme';
 
 import ApplyFilterButton, { APPLY_BUTTON } from '../common/ApplyFilterButton';
-import { Typography, Card } from '@mui/material';
+
 import ProjectFilter from './ProjectFilter';
 
 interface MobileProjectFilterProps {

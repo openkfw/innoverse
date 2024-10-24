@@ -6,10 +6,10 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 
+import ProjectCard from '../../common/project/ProjectCard';
 import Carousel from '../Carousel';
 import { defaultImage } from '../featuredProjectSection/FeaturedProjectSlider';
 
-import ProjectCard from '../../common/project/ProjectCard';
 import { ProjectProps } from './ProjectSection';
 
 import 'slick-carousel/slick/slick-theme.css';
@@ -36,6 +36,7 @@ export default function ProjectCarousel({ projects }: ProjectProps) {
               title={project.title}
               summary={project.summary}
               status={project.status}
+              cardSize={{ height: 490, width: 466 }}
             />
           </Grid>
         );
