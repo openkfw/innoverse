@@ -15,9 +15,9 @@ import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 
-import { defaultImage } from '../landing/featuredProjectSection/FeaturedProjectSlider';
 import ProjectCard from '../common/project/ProjectCard';
 import { CommonSkeleton } from '../common/skeletons/CommonSkeleton';
+import { defaultImage } from '../landing/featuredProjectSection/FeaturedProjectSlider';
 
 interface ProjectPageProps {
   sx?: SxProps;
@@ -61,7 +61,7 @@ const ProjectPageContent = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <Grid container spacing={2}>
+    <Grid container rowSpacing={5} columnSpacing={1}>
       {projects?.map((p, key) => {
         const image = getImageByBreakpoint(isSmallScreen, p.image) || defaultImage;
 
@@ -75,8 +75,7 @@ const ProjectPageContent = () => {
               title={p.title}
               summary={p.summary}
               status={p.status}
-              progressBarContainersx={{ position: 'sticky' }}
-              cardSize={cardSize}
+              cardSize={{ height: 550, width: 466 }}
             />
           </Grid>
         );
@@ -85,7 +84,7 @@ const ProjectPageContent = () => {
   );
 };
 
-const cardSize = { height: '550px', width: '350px' };
+const cardSize = { height: 490, width: 466 };
 
 const cardContainerStyles = {
   display: 'flex',

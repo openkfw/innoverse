@@ -3,9 +3,14 @@
 import React, { useEffect, useState } from 'react';
 
 import { Search } from '@mui/icons-material';
-import { Box, FormControl, InputAdornment, TextField, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
+import InputAdornment from '@mui/material/InputAdornment';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 import { useProjects } from '@/app/contexts/project-page-context';
+import * as m from '@/src/paraglide/messages.js';
 
 export default function ProjectFilter() {
   const { filters, setFilters } = useProjects();
@@ -22,6 +27,16 @@ export default function ProjectFilter() {
   };
 
   useEffect(() => {
+    // if (inputValue !== filters.searchString) {
+    //   const timeoutId = setTimeout(() => {
+    //     updateFilters(inputValue);
+    //   }, 300);
+    //   return () => {
+    //     clearTimeout(timeoutId);
+    //   };
+    // }
+    //todo to be fixed
+
     const timeoutId = setTimeout(() => {
       updateFilters(inputValue);
     }, 300);
@@ -36,7 +51,7 @@ export default function ProjectFilter() {
     <Box sx={{ margin: 3 }}>
       <FormControl variant="standard" sx={{ width: '100%' }}>
         <Typography mb={1} color="white" variant="button">
-          search
+          {m.components_projectpage_projectPageContainer_search()}
         </Typography>
         <TextField
           onChange={handleInputChange}

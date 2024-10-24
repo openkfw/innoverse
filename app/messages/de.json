@@ -322,6 +322,7 @@
 
   "components_projectpage_projectPageContainer_projects": "Initiativen",
   "components_projectpage_projectPageContainer_projectText": "Alle Initiativen im Überblick.",
+  "components_projectpage_projectPageContainer_search": "suche",
 
   "components_notifications_notificationBanner_notificationError": "Dein Browser verhindert die Aktivierung von Benachrichtigungen. Bitte gehe zu den Einstellungen, um die Aktivierung zu ermöglichen um Benachrichtigungen zu erhalten: Settings → Cookies and site permissions → Notifications",
   "components_notifications_notificationBanner_dismiss": "Später erinnern",
