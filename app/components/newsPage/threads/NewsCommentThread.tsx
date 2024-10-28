@@ -64,17 +64,18 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
       <WriteCommentResponseCard sx={{ mt: 2 }} comment={comment} onRespond={handleResponse} />
 
       <Stack sx={{ ml: 4, mt: 2 }} style={{ marginLeft: '2em' }}>
-        {comment.responses.map((response, idx) => (
-          <NewsCommentThread
-            key={idx}
-            item={props.item}
-            comment={response}
-            commentType={props.commentType}
-            level={level + 1}
-            onDelete={() => handleDeleteResponse(response)}
-            onUpdate={handleUpdateResponse}
-          />
-        ))}
+        {comment.responses &&
+          comment.responses.map((response, idx) => (
+            <NewsCommentThread
+              key={idx}
+              item={props.item}
+              comment={response}
+              commentType={props.commentType}
+              level={level + 1}
+              onDelete={() => handleDeleteResponse(response)}
+              onUpdate={handleUpdateResponse}
+            />
+          ))}
       </Stack>
     </>
   );

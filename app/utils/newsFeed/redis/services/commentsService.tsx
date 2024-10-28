@@ -1,8 +1,10 @@
-import { CommentWithResponses } from '@/common/types';
+import { CommentWithResponses, NewsComment, NewsFeedEntry } from '@/common/types';
 import { NewsType, RedisNewsComment, RedisNewsFeedEntry } from '../models';
 import { getRedisClient, RedisClient, RedisIndex } from '../redisClient';
 import { getNewsFeedEntryByKey } from '../redisService';
 import { SearchOptions } from 'redis';
+import { escapeRedisTextSeparators } from '../helpers';
+import { getUnixTimestamp } from '@/utils/helpers';
 
 export async function addNewsComment(newsFeedEntry: RedisNewsFeedEntry, comment: CommentWithResponses) {
   const redisClient = await getRedisClient();
@@ -17,78 +19,82 @@ export async function addNewsComment(newsFeedEntry: RedisNewsFeedEntry, comment:
     itemType: type,
     itemId: item.id,
     updatedAt: newsFeedEntry.updatedAt,
+    author: JSON.stringify(comment.author),
   });
 }
 
-export async function getNewsComments(newsFeedEntry: RedisNewsFeedEntry) {
+export async function updateNewsCommentInCache(newsType: NewsType, newsId: string, comment: RedisNewsComment) {
   const redisClient = await getRedisClient();
-  const { type, item } = newsFeedEntry;
-  const listKey = `${type}:${item.id}:comments`;
+  const hashKey = `comment:${comment.commentId}`;
 
-  const commentIds = await redisClient.lRange(listKey, 0, -1);
-
-  const comments: RedisNewsComment[] = [];
-  commentIds.map(async (commentId) => {
-    const hashKey = `${type}:${item.id}:comments:${commentId}`;
-    const commentData = await redisClient.hGetAll(hashKey);
-    comments.push({
-      id: commentData.id,
-      commentId: commentData.commentId,
-      comment: commentData.comment,
-      upvotedBy: [],
-      responseCount: 0,
-      updatedAt: item.updatedAt,
-    });
+  await redisClient.hSet(hashKey, {
+    id: comment.id,
+    commentId: comment.commentId,
+    comment: comment.comment,
+    itemType: newsType,
+    itemId: newsId,
+    updatedAt: getUnixTimestamp(new Date()),
+    author: JSON.stringify(comment.author),
   });
+}
 
-  return comments;
+export async function addNewsCommentInCache(newsType: NewsType, newsId: string, comment: RedisNewsComment) {
+  const redisClient = await getRedisClient();
+  await updateNewsCommentInCache(newsType, newsId, comment);
+  await redisClient.json.arrAppend(`${newsType}:${newsId}`, '$.comments', comment.commentId);
+}
+
+export async function removeNewsCommentInCache(newsType: NewsType, newsId: string, commentId: string) {
+  const redisClient = await getRedisClient();
+  const hashKey = `comment:${commentId}`;
+
+  await redisClient.del(hashKey);
+
+  const item = await getNewsFeedEntryByKey(redisClient, `${newsType}:${newsId}`);
+  if (item && item.comments) {
+    const updatedCommentsIds = item?.comments?.filter((commentId) => commentId !== commentId);
+    await redisClient.json.set(`${newsType}:${newsId}`, '$.comments', updatedCommentsIds);
+  }
 }
 
 export async function saveHashedComments(client: RedisClient, entry: RedisNewsFeedEntry, comments: RedisNewsComment[]) {
-  const listKey = `${entry.type}:${entry.item.id}:comments`;
-
   for (const comment of comments) {
-    const hashKey = `comment:${comment.commentId}`;
-    await client.json.arrAppend(`${entry.type}:${entry.item.id}`, '$.comments', comment.commentId);
-
-    await client.hSet(hashKey, {
-      id: comment.id,
-      commentId: comment.commentId,
-      comment: comment.comment,
-      itemType: entry.type,
-      itemId: entry.item.id,
-      updatedAt: entry.updatedAt,
-    });
+    await updateNewsCommentInCache(entry.type, entry.item.id, comment);
 
     if (comment.responses) {
       await saveHashedComments(client, entry, comment.responses);
     }
   }
+}
 
-  for (const comment of comments) {
-    const hashKey = `comment:${comment.commentId}`;
-    await client.json.arrAppend(`${entry.type}:${entry.item.id}`, '$.comments', comment.commentId);
+async function getRedisComment(client: RedisClient, commentId: string) {
+  const hashKey = `comment:${commentId}`;
+  const commentData = await client.hGetAll(hashKey);
+  return {
+    id: commentData.id,
+    commentId: commentData.commentId,
+    comment: commentData.comment,
+    updatedAt: getUnixTimestamp(new Date(commentData.updatedAt)),
+  };
+}
 
-    await client.hSet(hashKey, {
-      id: comment.id,
-      commentId: comment.commentId,
-      comment: comment.comment,
-      itemType: entry.type,
-      itemId: entry.item.id,
-      updatedAt: entry.updatedAt,
-    });
+export async function getNewsFeedEntriesWithComments(client: RedisClient, entryType: NewsType, entryId: string) {
+  const entry = await getNewsFeedEntryByKey(client, `${entryType}:${entryId}`);
+  if (entry) {
+    const commentIds = entry.comments ?? [];
+    const comments = await Promise.all(
+      commentIds.map(async (commentId) => {
+        return await getRedisComment(client, commentId);
+      }),
+    );
+
+    return { ...entry, item: { ...entry.item, comments } } as RedisNewsFeedEntry;
   }
 }
 
-// Retrieve the item and its comments
-export async function getNewsFeedEntriesWithComments(client: RedisClient, entryType: NewsType, entryId: string) {
-  const item = await getNewsFeedEntryByKey(client, `${entryType}:${entryId}`);
-
-  return item;
-}
-
 async function searchComments(client: RedisClient, searchString: string, searchOptions: SearchOptions) {
-  const comments = await client.ft.search(RedisIndex.COMMENTS, `@comment:*${searchString}*`, searchOptions);
+  const query = escapeRedisTextSeparators(searchString);
+  const comments = await client.ft.search(RedisIndex.COMMENTS, `@comment:*${query}*`, searchOptions);
   if (comments) {
     return comments.documents.map((doc) => doc.value.itemId as string);
   }
@@ -96,21 +102,35 @@ async function searchComments(client: RedisClient, searchString: string, searchO
 }
 
 export async function searchNewsComments(client: RedisClient, searchString: string, searchOptions: SearchOptions) {
-  //TODO: refactor
-  const itemTypes = [NewsType.POST];
+  const itemTypes = [NewsType.POST, NewsType.UPDATE];
   const result = await Promise.all(
     itemTypes.map(async (itemType, id) => {
-      const resultComments = await searchComments(client, searchString, searchOptions);
+      const resultItems = await searchComments(client, searchString, searchOptions);
       const result = await Promise.all(
-        resultComments.map(async (searchComment) => {
-          const res = await getNewsFeedEntriesWithComments(client, itemType, searchComment);
+        resultItems.map(async (itemId) => {
+          const res = await getNewsFeedEntriesWithComments(client, itemType, itemId);
           if (res) {
-            return { id, value: res };
+            return { id: `${id}`, value: res };
           }
         }),
       );
+
       return { documents: result.filter((res) => res !== undefined) };
     }),
   );
-  return result[0];
+  return mergeDocumentsArray(result.flat());
+}
+
+interface DocumentsArray {
+  documents: { id: string; value: RedisNewsFeedEntry }[];
+}
+
+function mergeDocumentsArray(arr: DocumentsArray[]): { documents: { id: string; value: RedisNewsFeedEntry }[] } {
+  const mergedDocuments = arr.reduce(
+    (acc, current) => {
+      return acc.concat(current.documents);
+    },
+    [] as { id: string; value: RedisNewsFeedEntry }[],
+  );
+  return { documents: mergedDocuments };
 }

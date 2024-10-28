@@ -11,6 +11,7 @@ import {
   User,
 } from '@/common/types';
 import { clientConfig } from '@/config/client';
+import { NewsCommentDB } from '@/repository/db/utils/types';
 import { getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
@@ -49,7 +50,7 @@ export const mapPostToRedisNewsFeedEntry = (
   followedBy: RedisUser[],
   comments: RedisNewsComment[],
 ): RedisNewsFeedEntry => {
-  const item = mapToRedisPost(post, reactions, followedBy);
+  const item = mapToRedisPost(post, reactions, followedBy, comments);
 
   post.author.image = mapImageUrlToRelativeUrl(post.author.image);
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
@@ -58,7 +59,6 @@ export const mapPostToRedisNewsFeedEntry = (
     updatedAt: item.updatedAt,
     item,
     type: NewsType.POST,
-    comments,
     search: escapeRedisTextSeparators(item.content || ''),
   };
 };
@@ -215,7 +215,12 @@ export const mapRedisNewsFeedEntryToProjectUpdate = (item: RedisProjectUpdate): 
   };
 };
 
-export const mapToRedisPost = (post: Post, reactions: RedisReaction[], followedBy: RedisUser[]): RedisPost => {
+export const mapToRedisPost = (
+  post: Post,
+  reactions: RedisReaction[],
+  followedBy: RedisUser[],
+  comments: RedisNewsComment[],
+): RedisPost => {
   return {
     id: post.id,
     author: post.author,
@@ -227,6 +232,7 @@ export const mapToRedisPost = (post: Post, reactions: RedisReaction[], followedB
     followedBy,
     responseCount: post.responseCount,
     anonymous: post.anonymous,
+    comments,
   };
 };
 
@@ -353,6 +359,22 @@ const mapToRedisNewsComment = async (comment: CommentWithResponses): Promise<Red
     author: comment.author,
     updatedAt: getUnixTimestamp(comment.updatedAt),
     createdAt: getUnixTimestamp(comment.createdAt),
+  };
+};
+
+export const mapToRedisComment = async (newsComment: NewsCommentDB): Promise<RedisNewsComment> => {
+  const comment = newsComment.comment;
+  const author = await getInnoUserByProviderId(comment.author);
+
+  return {
+    id: newsComment.id,
+    commentId: newsComment.commentId,
+    createdAt: getUnixTimestamp(comment.createdAt),
+    updatedAt: getUnixTimestamp(comment.updatedAt),
+    comment: comment.text,
+    author: author,
+    upvotedBy: comment.upvotedBy,
+    responseCount: comment.responses.length,
   };
 };
 

@@ -16,7 +16,7 @@ export enum NewsType {
 export type RedisNewsFeedEntry = {
   updatedAt: number;
   search: string;
-  comments?: RedisNewsComment[];
+  comments?: string[];
 } & RedisNewsFeedTypeEntry;
 
 type RedisNewsFeedTypeEntry =
@@ -121,8 +121,8 @@ export type RedisNewsComment = {
   commentId: string;
   comment: string;
   author?: RedisUser;
-  upvotedBy: string[];
-  responseCount: number;
+  upvotedBy?: string[];
+  responseCount?: number;
   responses?: RedisNewsComment[];
   updatedAt: number;
   createdAt?: number;

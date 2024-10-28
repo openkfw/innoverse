@@ -13,9 +13,10 @@ import {
   mapToRedisUsers,
   mapUpdateToRedisNewsFeedEntry,
 } from '@/utils/newsFeed/redis/mappings';
-import { NewsType, RedisProjectUpdate } from '@/utils/newsFeed/redis/models';
+import { NewsType, RedisNewsComment, RedisProjectUpdate } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
+import { getRedisNewsCommentsById } from '@/utils/requests/comments/requests';
 import {
   createProjectUpdateInStrapi,
   deleteProjectUpdateInStrapi,
@@ -34,7 +35,9 @@ type CreateProjectUpdate = {
 };
 type UpdateProjectUpdate = { updateId: string; comment: string; anonymous?: boolean };
 
-type UpdateUpdateInCache = { update: { id: string; comment?: string; responseCount?: number; anonymous?: boolean } };
+type UpdateUpdateInCache = {
+  update: { id: string; comment?: string; responseCount?: number; anonymous?: boolean; comments?: RedisNewsComment[] };
+};
 
 export const createProjectUpdate = async (update: CreateProjectUpdate) => {
   const createdUpdate = await createProjectUpdateInStrapi(update);
@@ -114,8 +117,9 @@ export const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate)
     const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, update.projectId);
     const mappedUpdateFollowedBy = await mapToRedisUsers(projectFollowedBy);
     const responseCount = await countNewsResponses(dbClient, update.id);
-    //TODO: map update comments
-    return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, responseCount, []);
+    const comments = await getRedisNewsCommentsById(update.id);
+
+    return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, responseCount, comments);
   } catch (err) {
     const error: InnoPlatformError = dbError(
       `Creating news feed entry for project update with id: ${update.projectId}`,

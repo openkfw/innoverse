@@ -65,7 +65,7 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
   const respondingInteractions = useRespondingInteractions();
   const { user } = useUser();
 
-  const userIsAuthor = user?.providerId === comment.author.providerId;
+  const userIsAuthor = user?.providerId === comment.author?.providerId;
 
   const handleDelete = async () => {
     try {

@@ -18,7 +18,7 @@ import { appInsights } from '@/utils/instrumentation/AppInsights';
 import { useRespondingState } from '../../common/editing/editing-context';
 
 interface CommentThreadProps<TComment> {
-  comment: { id: string; responseCount: number };
+  comment: { id: string; responseCount: number; comments?: TComment[] };
   card: React.ReactNode;
   disableDivider?: boolean;
   indentResponses?: React.CSSProperties['paddingLeft'];
@@ -81,6 +81,13 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
       {responses.isVisible && (
         <Stack spacing={2} sx={{ pl: indentResponses }}>
           {responses.data.map((response, idx) =>
+            renderResponse(response, idx, () => deleteResponse(response), updateResponse),
+          )}
+        </Stack>
+      )}
+      {comment && comment.comments && comment.comments.length > 0 && (
+        <Stack spacing={2} sx={{ pl: indentResponses }}>
+          {comment.comments.map((response, idx) =>
             renderResponse(response, idx, () => deleteResponse(response), updateResponse),
           )}
         </Stack>
@@ -166,7 +173,8 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     card,
     responses,
     indentResponses,
-    showLoadResponsesButton: !responses.isVisible && !responses.isLoading && comment.responseCount > 0,
+    showLoadResponsesButton:
+      !comment.comments && !responses.isVisible && !responses.isLoading && comment.responseCount > 0,
     showDivider: !disableDivider && (responsesExist || state.isEditing(comment)),
     handleResponse,
     deleteResponse,

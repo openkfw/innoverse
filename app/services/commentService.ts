@@ -18,13 +18,15 @@ import {
 } from '@/repository/db/post_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { updatePostInCache } from '@/services/postService';
-import { updateProjectUpdateInCache } from '@/services/updateService';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { notifyFollowers } from '@/utils/notification/notificationSender';
 import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
-import { getPostCommentByPostId } from '@/utils/requests/comments/requests';
-import { mapToRedisNewsComments } from '@/utils/newsFeed/redis/mappings';
+import { getRedisPostCommentsByPostId } from '@/utils/requests/comments/requests';
+import { addNewsCommentInCache, removeNewsCommentInCache } from '@/utils/newsFeed/redis/services/commentsService';
+import { NewsType } from '@/utils/newsFeed/redis/models';
+import { updateProjectUpdateInCache } from './updateService';
+import { mapToRedisComment } from '@/utils/newsFeed/redis/mappings';
 
 const logger = getLogger();
 
@@ -55,15 +57,17 @@ export const addComment = async (body: AddComment): Promise<NewsComment | PostCo
   switch (commentType) {
     case 'POST_COMMENT':
       const postCommentDb = await addPostCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
-      updatePostCommentInCache(postCommentDb, author);
+      //TODO: add post comment instead of updating the post
+      await updatePostCommentInCache(postCommentDb, author);
       notifyPostFollowers(objectId);
       const postComment = await mapToPostComment(postCommentDb);
       return postComment;
     case 'NEWS_COMMENT':
       const newsCommentDb = await addNewsCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
-      updateNewsCommentInCache(newsCommentDb);
-      notifyUpdateFollowers(objectId);
+      const redisNewsComment = await mapToRedisComment(newsCommentDb);
       const newsComment = await mapToNewsComment(newsCommentDb);
+      await addNewsCommentInCache(NewsType.NEWS_COMMENT, redisNewsComment.id, redisNewsComment);
+      notifyUpdateFollowers(objectId);
       return newsComment;
     default:
       throw Error(`Failed to add comment: Unknown comment type '${commentType}'`);
@@ -98,7 +102,7 @@ export const removeComment = async ({ user, commentId, commentType }: RemoveComm
       const newsCommentInDb = await deleteNewsCommentInDb(dbClient, commentId);
       const updateId = newsCommentInDb.newsComment?.newsId;
       if (updateId) {
-        await removeNewsCommenInCache(updateId);
+        await removeNewsCommentInCache(NewsType.NEWS_COMMENT, updateId, commentId);
       }
       return;
     default:
@@ -108,10 +112,9 @@ export const removeComment = async ({ user, commentId, commentType }: RemoveComm
 
 const updatePostCommentInCache = async (postComment: { postId: string }, author: UserSession) => {
   const postResponseCount = await countPostResponses(dbClient, postComment.postId);
-  const comments = await getPostCommentByPostId(postComment.postId);
-  const redisComments = await mapToRedisNewsComments(comments);
+  const comments = await getRedisPostCommentsByPostId(postComment.postId);
   return await updatePostInCache({
-    post: { id: postComment.postId, responseCount: postResponseCount, comments: redisComments },
+    post: { id: postComment.postId, responseCount: postResponseCount, comments },
     user: author,
   });
 };
@@ -124,16 +127,8 @@ const updateNewsCommentInCache = async (newsComment: { newsId: string }) => {
 const removePostCommentInCache = async (postId: string, user: UserSession) => {
   if (postId) {
     const responseCount = await countPostResponses(dbClient, postId);
-    const comments = await getPostCommentByPostId(postId);
-    const redisComments = await mapToRedisNewsComments(comments);
-    await updatePostInCache({ post: { id: postId, responseCount, comments: redisComments }, user });
-  }
-};
-
-const removeNewsCommenInCache = async (newsId: string) => {
-  if (newsId) {
-    const responseCount = await countNewsResponses(dbClient, newsId);
-    await updateProjectUpdateInCache({ update: { id: newsId, responseCount } });
+    const comments = await getRedisPostCommentsByPostId(postId);
+    await updatePostInCache({ post: { id: postId, responseCount, comments }, user });
   }
 };
 

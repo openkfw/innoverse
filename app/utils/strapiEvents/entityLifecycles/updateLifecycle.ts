@@ -10,6 +10,7 @@ import { mapToRedisUsers, mapUpdateToRedisNewsFeedEntry } from '@/utils/newsFeed
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { NotificationRequest, sendPushNotifications } from '@/utils/notification/notificationSender';
+import { getRedisNewsCommentsById } from '@/utils/requests/comments/requests';
 import { getProjectUpdateByIdWithReactions } from '@/utils/requests/updates/requests';
 import { StrapiEntityLifecycle, StrapiEntry } from '@/utils/strapiEvents/entityLifecycles/strapiEntityLifecycle';
 
@@ -78,13 +79,13 @@ export class UpdateLifecycle extends StrapiEntityLifecycle {
       const followers = await mapToRedisUsers(followerIds);
       const updateWithReactions = mapObjectWithReactions(update);
       const responseCount = await countNewsResponses(dbClient, update.id);
-      // TODO: save comments
+      const comments = await getRedisNewsCommentsById(update.id);
       const newsFeedEntry = mapUpdateToRedisNewsFeedEntry(
         updateWithReactions,
         update.reactions,
         followers,
         responseCount,
-        [],
+        comments,
       );
       await saveNewsFeedEntry(redisClient, newsFeedEntry);
     } catch (err) {

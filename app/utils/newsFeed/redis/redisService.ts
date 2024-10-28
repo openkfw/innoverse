@@ -147,8 +147,10 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     let result = await client.ft.search(index, query, searchOptions);
     if (options?.filterBy?.searchString) {
       const resultComments = await searchNewsComments(client, options?.filterBy?.searchString, searchOptions);
-      //TODO: create type for result
-      result = { ...result, ...(resultComments as any) };
+      // TODO: fix error with entries.map
+      return {
+        documents: { ...result.documents, ...resultComments.documents },
+      };
     }
 
     return result;
@@ -285,7 +287,7 @@ export const performRedisTransaction = async (
 export const getRedisNewsFeed = async (options?: GetItemsOptions) => {
   const client = await getRedisClient();
   const entries = await getNewsFeedEntries(client, options);
-  const newsFeedEntries = entries.documents.map((x) => x.value);
+  const newsFeedEntries = entries.documents?.map((x) => x.value);
   // TODO: temporary solution to get rid of [Object: null prototype]
   const data = JSON.parse(JSON.stringify(newsFeedEntries, null, 2)) as RedisNewsFeedEntry[];
   return data;
