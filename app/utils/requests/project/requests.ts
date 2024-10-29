@@ -28,6 +28,7 @@ import {
   GetProjectsStartingFromQuery,
   GetProjectTitleByIdQuery,
   GetProjectTitleByIdsQuery,
+  SearchProjectsQuery,
 } from '@/utils/requests/project/queries';
 import { getProjectQuestionsByProjectId } from '@/utils/requests/questions/requests';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
@@ -114,6 +115,32 @@ export async function getProjectById(id: string) {
   } catch (err) {
     const e: InnoPlatformError = strapiError('Getting Project by ID', err as RequestError, id);
     logger.error(e);
+  }
+}
+
+export async function searchProjects(
+  {
+    searchString,
+    pagination,
+  }: {
+    searchString: string;
+    pagination: {
+      page: number;
+      pageSize?: number;
+    };
+  } = { pagination: { pageSize: 80, page: 1 }, searchString: '' },
+) {
+  try {
+    const response = await strapiGraphQLFetcher(SearchProjectsQuery, {
+      page: pagination.page,
+      pageSize: pagination?.pageSize,
+      sort: `updatedAt:asc`,
+      searchString,
+    });
+    const projects = response.projects?.data.map(mapToBasicProject) ?? [];
+    return projects;
+  } catch (err) {
+    console.info(err);
   }
 }
 
