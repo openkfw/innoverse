@@ -16,6 +16,7 @@ import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import ApplyFilterButton, { APPLY_BUTTON } from '../../common/ApplyFilterButton';
+
 import NewsProjectsFilter from './NewsProjectsFilter';
 import NewsTopicFilter from './NewsTopicFilter';
 

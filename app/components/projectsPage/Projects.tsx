@@ -16,7 +16,7 @@ import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 
 import ProjectCard from '../common/project/ProjectCard';
-import { CommonSkeleton } from '../common/skeletons/CommonSkeleton';
+import { CardSkeleton } from '../common/skeletons/CardSkeleton';
 import { defaultImage } from '../landing/featuredProjectSection/FeaturedProjectSlider';
 
 interface ProjectPageProps {
@@ -30,7 +30,13 @@ export const Projects = (props: ProjectPageProps) => {
   return (
     <Box sx={{ width: '100%', ...sx }} data-testid="news-container">
       {isLoading ? (
-        <CommonSkeleton count={3} size={cardSize} /> //todo fix skeleton to match ProjectCards
+        <Grid container rowSpacing={5} columnSpacing={1}>
+          {Array.from({ length: 6 }).map((_, key) => (
+            <Grid item key={key} xs={12} sm={6} md={4} sx={cardContainerStyles}>
+              <CardSkeleton size={cardSize} />
+            </Grid>
+          ))}
+        </Grid>
       ) : (
         <InfiniteScroll
           dataLength={projects?.length || 0}
@@ -75,7 +81,7 @@ const ProjectPageContent = () => {
               title={p.title}
               summary={p.summary}
               status={p.status}
-              cardSize={{ height: 550, width: 466 }}
+              cardSize={cardSize}
             />
           </Grid>
         );
@@ -84,7 +90,7 @@ const ProjectPageContent = () => {
   );
 };
 
-const cardSize = { height: 490, width: 466 };
+const cardSize = { height: 550, width: 466 };
 
 const cardContainerStyles = {
   display: 'flex',

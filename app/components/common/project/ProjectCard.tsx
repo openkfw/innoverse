@@ -70,14 +70,14 @@ export default function ProjectCard(props: ProjectCardProps) {
             {isWideScreen ? (
               <Typography
                 variant="subtitle1"
-                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 100 ? 1 : 3 }}
+                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 100 ? 2 : 5 }}
               >
                 {summary}
               </Typography>
             ) : (
               <Typography
                 variant="subtitle1"
-                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 20 ? 2 : 3 }}
+                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 20 ? 2 : 4 }}
               >
                 {summary}
               </Typography>
