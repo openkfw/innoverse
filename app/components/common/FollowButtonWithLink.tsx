@@ -59,7 +59,7 @@ export default FollowButtonWithLink;
 const containerStyles = {
   display: 'flex',
   flexDirection: 'row',
-  border: '1px solid #266446',
+  border: '1px solid #D8DFE3',
   borderRadius: '2px',
   background: 'rgba(255, 255, 255, 0.10)',
   padding: 0,
@@ -75,7 +75,7 @@ const labelStyles = {
   fontSize: '14px',
   color: 'primary.main',
   padding: '0 16px',
-  borderRight: '1px solid #266446',
+  borderRight: '1px solid #D8DFE3',
 };
 
 const buttonStyles = {

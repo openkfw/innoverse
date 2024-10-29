@@ -73,12 +73,7 @@ export default function FilterSelect(
                     name={option.name}
                     checked={filterIsChecked(option)}
                     onChange={selectFilter}
-                    sx={{
-                      color: 'common.white',
-                      '&.Mui-checked': {
-                        color: 'action.hover',
-                      },
-                    }}
+                    sx={checkboxStyles}
                   />
                 }
                 label={getFilterLabel(option)}
@@ -107,12 +102,7 @@ export default function FilterSelect(
                         name={option.name}
                         checked={filterIsChecked(option)}
                         onChange={selectFilter}
-                        sx={{
-                          color: 'common.white',
-                          '&.Mui-checked': {
-                            color: 'action.hover',
-                          },
-                        }}
+                        sx={checkboxStyles}
                       />
                     }
                     label={getFilterLabel(option)}
@@ -136,3 +126,11 @@ export default function FilterSelect(
     </>
   );
 }
+
+// Filter Select Styles
+const checkboxStyles = {
+  color: 'common.white',
+  '&.Mui-checked': {
+    color: 'action.hover',
+  },
+};
