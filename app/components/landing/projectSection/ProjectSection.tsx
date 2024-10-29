@@ -1,15 +1,18 @@
 'use client';
 
+import { type ChangeEventHandler, useEffect, useState, useTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import { BasicProject } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
 import * as m from '@/src/paraglide/messages.js';
+import { searchProjects } from '@/utils/requests/project/requests';
 
 import { LandingPageSection } from '../LandingPageSection';
 
 import ProjectCarousel from './ProjectCarousel';
+import { ResponsiveSearchInput } from './ResponsiveSearchInput';
 
 import bgBubble from '/public/images/bg-image.png';
 
@@ -20,10 +23,39 @@ export type ProjectProps = {
 };
 
 export const ProjectSection = ({ projects }: ProjectProps) => {
+  const [inputValue, setInputValue] = useState('');
+  const [searchResults, setSearchResults] = useState<BasicProject[]>();
+  const [isLoading, startTransition] = useTransition();
+
+  const handleInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const newValue = event.target.value;
+    setInputValue(newValue);
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!inputValue) {
+        setSearchResults([]);
+        return;
+      }
+      startTransition(async () => {
+        const response = await searchProjects({ searchString: inputValue, pagination: { page: 0, pageSize: 10 } });
+        setSearchResults(response ?? []);
+      });
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [inputValue]);
+
   return (
     <LandingPageSection
       id="initiativen"
-      title={m.components_landing_projectSection_projectSection_title()}
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <span>{m.components_landing_projectSection_projectSection_title()}</span>
+          <ResponsiveSearchInput onChange={handleInputChange} />
+        </div>
+      }
       subtitle={m.components_landing_projectSection_projectSection_subtitle()}
       topRightMenu={
         <Link href="projects">
@@ -54,7 +86,7 @@ export const ProjectSection = ({ projects }: ProjectProps) => {
         </div>
       }
     >
-      <ProjectCarousel projects={projects} />
+      <ProjectCarousel projects={inputValue.length && searchResults ? searchResults : projects} isLoading={isLoading} />
     </LandingPageSection>
   );
 };

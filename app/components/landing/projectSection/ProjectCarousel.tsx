@@ -19,7 +19,11 @@ import { ProjectProps } from './ProjectSection';
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 
-export default function ProjectCarousel({ projects }: ProjectProps) {
+type ProjectCarouselProps = ProjectProps & {
+  isLoading: boolean;
+};
+
+export default function ProjectCarousel({ projects }: ProjectCarouselProps) {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
