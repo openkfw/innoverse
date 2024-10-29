@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StatusCodes } from 'http-status-codes';
@@ -17,6 +18,7 @@ import { inputStyle } from '@/components/common/form/formStyle';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import * as m from '@/src/paraglide/messages.js';
 
+import { DropzoneField } from '../../../common/form/DropzoneField';
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
 import { handleProjectUpdate } from '../../addUpdate/form/actions';
 
@@ -28,20 +30,23 @@ export interface FormData {
   content: string;
   project: { id?: string; label?: string } | null;
   anonymous: boolean;
+  media?: string;
 }
 
 export interface PostFormData {
   content: string;
   anonymous?: boolean;
+  media?: string;
 }
 
 const defaultValues = {
   content: '',
   project: { id: '', label: m.components_newsPage_addPost_form_addPostForm_label() },
   anonymous: false,
+  media: '',
 };
 
-const { PROJECT, CONTENT, ANONYMOUS } = formFieldNames;
+const { PROJECT, CONTENT, ANONYMOUS, MEDIA } = formFieldNames;
 
 interface AddUpdateFormProps {
   onAddPost: (post: Post) => void;
@@ -61,8 +66,20 @@ export default function AddPostForm(props: AddUpdateFormProps) {
   });
 
   const onSubmit: SubmitHandler<UpdateFormValidationSchema> = async (data) => {
-    const { content, project, anonymous } = data;
+    const { content, project, anonymous, media } = data;
 
+    const formData = new FormData();
+    formData.append('content', content);
+    formData.append('anonymous', JSON.stringify(anonymous));
+
+    if (project && project.id) {
+      formData.append('projectId', project.id);
+    }
+    if (media) {
+      formData.append('media', media); 
+    }
+    
+    
     if (project && project.id) {
       const response = await handleProjectUpdate({ comment: content, projectId: project.id, anonymous });
       if (response.status === StatusCodes.OK && response.data) {
@@ -75,7 +92,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
         });
       }
     } else {
-      const response = await handlePost({ content, anonymous });
+      const response = await handlePost({ content, anonymous, media});
       if (response.status === StatusCodes.OK && response.data) {
         const post: Post = { ...response.data, responseCount: 0 };
         successMessage({ message: 'Post wurde erstellt' });
@@ -99,6 +116,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
           sx={multilineTextStyles}
           inputPropsSx={inputPropsStyles}
         />
+        <DropzoneField name={MEDIA} control={control} />
       </form>
 
       <Stack spacing={2} direction={{ sm: 'column', md: 'row' }}>

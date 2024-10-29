@@ -25,7 +25,7 @@ import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 
 const logger = getLogger();
 
-type AddPost = { content: string; user: UserSession; anonymous?: boolean };
+type AddPost = { content: string; user: UserSession; anonymous?: boolean, media?: string };
 
 type UpdatePost = { postId: string; content: string; user: UserSession };
 
@@ -38,8 +38,8 @@ type UpvotePost = { postId: string; user: UserSession };
 
 type DeletePost = { postId: string };
 
-export const addPost = async ({ content, user, anonymous }: AddPost) => {
-  const createdPost = await addPostToDb(dbClient, content, user.providerId, anonymous ?? false);
+export const addPost = async ({ content, user, anonymous, media }: AddPost) => {
+  const createdPost = await addPostToDb(dbClient, content, user.providerId, anonymous ?? false, media);
   await addPostToCache({ ...createdPost, author: user, responseCount: 0 });
   return createdPost;
 };

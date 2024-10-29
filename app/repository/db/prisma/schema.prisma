@@ -160,6 +160,7 @@ model Post {
   author      String // id of author
   content     String
   anonymous Boolean @default(false)
+  media     String
 }
 
 enum ObjectType {

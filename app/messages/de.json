@@ -262,6 +262,8 @@
   "components_newsPage_addPost_form_addPostForm_postCreated": "Neuigkeit wurde erstellt",
   "components_newsPage_addPost_form_addPostForm_createError": "Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuchen sie es erneut",
   "components_newsPage_addPost_form_addPostForm_addPost": "Hier kannst du deinen Beitrag hinzufügen …",
+  "components_newsPage_addPost_form_addPostForm_addMedia": "Fotos oder Videos hochladen",
+  "components_newsPage_addPost_form_addPostForm_preview": "Vorschau:",
   "components_newsPage_addPost_form_addPostForm_projectLabel": "Projekt",
   "components_newsPage_addPost_form_addPostForm_anonymousPost": "Anonym posten",
 

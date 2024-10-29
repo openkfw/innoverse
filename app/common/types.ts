@@ -391,6 +391,7 @@ export type Post = CommonNewsFeedProps & {
   upvotedBy: string[];
   responseCount: number;
   anonymous: boolean;
+  media: string;
 };
 
 export type ImageFormat = {

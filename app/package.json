@@ -55,6 +55,7 @@
     "nookies": "^2.5.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-dropzone": "^14.2.9",
     "react-hook-form": "^7.49.3",
     "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "^6.21.3",

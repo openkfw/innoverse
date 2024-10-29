@@ -53,9 +53,9 @@ export async function getPostsFromDbStartingFrom(client: PrismaClient, from: Dat
   }
 }
 
-export async function addPostToDb(client: PrismaClient, content: string, author: string, anonymous: boolean) {
+export async function addPostToDb(client: PrismaClient, content: string, author: string, anonymous: boolean, media: string,) {
   try {
-    return await client.post.create({ data: { author, content, anonymous } });
+    return await client.post.create({ data: { author, content, anonymous, media } });
   } catch (err) {
     const error: InnoPlatformError = dbError(`Add post with by author: ${author}`, err as Error);
     logger.error(error);

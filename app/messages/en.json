@@ -262,6 +262,8 @@
   "components_newsPage_addPost_form_addPostForm_postCreated": "News has been created",
   "components_newsPage_addPost_form_addPostForm_createError": "An error occurred while creating the news. Please try again",
   "components_newsPage_addPost_form_addPostForm_addPost": "You can add your post here …",
+  "components_newsPage_addPost_form_addPostForm_addMedia": "Upload images or videos",
+  "components_newsPage_addPost_form_addPostForm_preview": "Preview:",
   "components_newsPage_addPost_form_addPostForm_projectLabel": "Project",
   "components_newsPage_addPost_form_addPostForm_anonymousPost": "Post anonymously",
 
