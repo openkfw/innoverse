@@ -50,7 +50,7 @@ export default function ApplyFilterButton(props: ApplyFilterButtonProps) {
 const buttonStyle = {
   position: 'absolute',
   bottom: '5%',
-  left: '25%',
+  alignSelf: 'center',
   px: 3,
   py: 1,
   borderRadius: '50px',
