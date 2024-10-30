@@ -4,7 +4,7 @@ import { AggregateGroupByReducers, AggregateSteps, SearchOptions } from 'redis';
 import { redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
-import { NewsType, RedisNewsComment, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
+import { NewsType, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
 
 import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
@@ -147,12 +147,13 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     let result = await client.ft.search(index, query, searchOptions);
     if (options?.filterBy?.searchString) {
       const resultComments = await searchNewsComments(client, options?.filterBy?.searchString, searchOptions);
-      // TODO: fix error with entries.map
+      const commentsDocuments = resultComments.documents;
+      const resultDocuments = result.documents;
       return {
-        documents: { ...result.documents, ...resultComments.documents },
+        total: commentsDocuments.length + resultDocuments.length,
+        documents: Object.assign(commentsDocuments, resultDocuments),
       };
     }
-
     return result;
   } catch (err) {
     const error = err as Error;

@@ -4,22 +4,22 @@ import { NewsCollabCommentResponseCard } from '@/components/newsPage/cards/NewsC
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
 
 interface NewsCollaborationCommentResponseThreadProps {
-  response: CommentResponse;
+  comment: CommentResponse;
   onDelete: () => void;
 }
 
 // Nested collaboration comment responses are not yet supported
 export const NewsCollaborationCommentResponseThread = (props: NewsCollaborationCommentResponseThreadProps) => {
-  const { response, onDelete } = props;
-  const { fetchResponses, addResponse } = useCollaborationCommentResponseThread();
+  const { comment, onDelete } = props;
+  const { fetchComments, addComment } = useCollaborationCommentResponseThread();
 
   return (
     <CommentThread
-      comment={{ id: response.id, responseCount: 0 }}
-      card={<NewsCollabCommentResponseCard response={response} onDelete={onDelete} />}
-      fetchResponses={fetchResponses}
-      renderResponse={(_response, _idx, _deleteResponse) => <></>}
-      addResponse={addResponse}
+      comment={{ id: comment.id, commentCount: 0 }}
+      card={<NewsCollabCommentResponseCard comment={comment} onDelete={onDelete} />}
+      fetchComments={fetchComments}
+      renderComment={(_comment, _idx, _deleteComment) => <></>}
+      addComment={addComment}
     />
   );
 };

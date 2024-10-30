@@ -32,7 +32,7 @@ type AddPost = { content: string; user: UserSession; anonymous?: boolean };
 type UpdatePost = { postId: string; content: string; user: UserSession };
 
 type UpdatePostInCache = {
-  post: { id: string; content?: string; upvotedBy?: string[]; responseCount?: number; comments?: RedisNewsComment[] };
+  post: { id: string; content?: string; upvotedBy?: string[]; commentCount?: number; comments?: RedisNewsComment[] };
   user: UserSession;
 };
 
@@ -42,7 +42,7 @@ type DeletePost = { postId: string };
 
 export const addPost = async ({ content, user, anonymous }: AddPost) => {
   const createdPost = await addPostToDb(dbClient, content, user.providerId, anonymous ?? false);
-  await addPostToCache({ ...createdPost, author: user, responseCount: 0 });
+  await addPostToCache({ ...createdPost, author: user, commentCount: 0, objectType: ObjectType.POST });
   return createdPost;
 };
 
@@ -87,14 +87,11 @@ export const updatePostInCache = async ({ post, user }: UpdatePostInCache) => {
     const cachedItem = newsFeedEntry.item as RedisPost;
     cachedItem.content = post.content ?? cachedItem.content;
     cachedItem.upvotedBy = post.upvotedBy ?? cachedItem.upvotedBy;
-    cachedItem.responseCount = post.responseCount ?? cachedItem.responseCount;
+    cachedItem.commentCount = post.commentCount ?? cachedItem.commentCount;
     newsFeedEntry.item = cachedItem;
     newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
 
     await saveNewsFeedEntry(redisClient, newsFeedEntry);
-    if (post.comments) {
-      await saveHashedComments(redisClient, newsFeedEntry, post.comments);
-    }
   } catch (err) {
     const error: InnoPlatformError = redisError(
       `Update post with id: ${post.id} by user ${user.providerId} could not be saved in the cache`,
@@ -148,10 +145,10 @@ export const createNewsFeedEntryForPost = async (post: PrismaPost, author?: User
   const reactions = await getReactionsForEntity(dbClient, ObjectType.POST, post.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
   const followers = await mapToRedisUsers(followerIds);
-  const responseCount = await countPostResponses(dbClient, post.id);
+  const commentCount = await countPostResponses(dbClient, post.id);
 
   const postAuthor = author ?? (await getInnoUserByProviderId(post.author));
-  const postWithAuthor = { ...post, author: postAuthor, responseCount };
+  const postWithAuthor = { ...post, author: postAuthor, commentCount, objectType: ObjectType.POST };
   return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers, comments);
 };
 

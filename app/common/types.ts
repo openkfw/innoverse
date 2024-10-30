@@ -41,7 +41,7 @@ export type CollaborationComment = CommonNewsFeedProps & {
   author: User;
   comment: string;
   upvotedBy: string[];
-  responseCount: number;
+  commentCount: number;
   projectId: string;
   projectName: string;
   question: CollaborationQuestion;
@@ -65,7 +65,7 @@ export type Comment = {
   author: User;
   comment: string;
   upvotedBy: User[];
-  responseCount: number;
+  commentCount: number;
   projectId: string;
   projectName?: string | undefined;
   questionId?: string;
@@ -193,8 +193,9 @@ export type ProjectUpdate = CommonNewsFeedProps & {
   projectName: string;
   projectStart?: string;
   linkToCollaborationTab: boolean;
-  responseCount?: number;
+  commentCount: number;
   anonymous: boolean;
+  objectType: ObjectType.UPDATE;
 };
 
 export type ProjectUpdateWithAdditionalData = ProjectUpdate & ReactionOnObject;
@@ -390,9 +391,10 @@ export type Post = CommonNewsFeedProps & {
   author: User;
   content: string;
   upvotedBy: string[];
-  responseCount: number;
+  commentCount: number;
   anonymous: boolean;
   createdAt: Date;
+  objectType: ObjectType;
 };
 
 export type ImageFormat = {
@@ -415,7 +417,7 @@ export type CommonCommentProps = {
   comment: string;
   author: User;
   upvotedBy: string[];
-  responseCount: number;
+  commentCount: number;
   parentId?: string;
 };
 
@@ -428,7 +430,7 @@ export type NewsComment = CommonCommentProps & {
 };
 
 export type CommentWithResponses = CommonCommentProps & {
-  responses: CommentWithResponses[];
+  comments: CommentWithResponses[];
 };
 
 export type ImageFormats = {

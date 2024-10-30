@@ -1,12 +1,15 @@
 'use server';
-import { CommentWithResponses, CommonCommentProps } from '@/common/types';
+import { CommentWithResponses, CommonCommentProps, NewsFeedEntry } from '@/common/types';
 import { getNewsCommentsByUpdateId } from '@/repository/db/news_comment';
 import { getNewsCommentsByPostId, getPostCommentById } from '@/repository/db/post_comment';
-import dbClient from '@/repository/db/prisma/prisma';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapToRedisNewsComments } from '@/utils/newsFeed/redis/mappings';
+import { saveHashedComments } from '@/utils/newsFeed/redis/services/commentsService';
 import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
+import dbClient from '@/repository/db/prisma/prisma';
+import { RedisNewsFeedEntry } from '@/utils/newsFeed/redis/models';
+import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 
 const logger = getLogger();
 
@@ -55,15 +58,15 @@ export const getRedisPostCommentsByPostId = async (postId: string) => {
 const setResponses = (comments: CommonCommentProps[]) => {
   const rootComments: CommentWithResponses[] = comments
     .filter((comment) => !comment.parentId)
-    .map((comment) => ({ ...comment, responses: [] }));
+    .map((comment) => ({ ...comment, comments: [] }));
 
   let queue = rootComments;
 
   while (queue.length) {
     queue.forEach((comment) => {
-      comment.responses = getResponsesForComment(comments, comment);
+      comment.comments = getResponsesForComment(comments, comment);
     });
-    queue = queue.flatMap((comment) => comment.responses);
+    queue = queue.flatMap((comment) => comment.comments);
   }
 
   return rootComments;
@@ -95,5 +98,39 @@ const getResponsesForComment = (
 ): CommentWithResponses[] => {
   return comments
     .filter((comment) => comment.parentId === rootComment.commentId)
-    .map((response) => ({ ...response, responses: [] }));
+    .map((response) => ({ ...response, comments: [] }));
 };
+
+export async function saveEntryNewsComments(entry: RedisNewsFeedEntry) {
+  try {
+    const redisClient = await getRedisClient();
+    const comments = await getRedisNewsCommentsById(entry.item.id);
+    await redisClient.json.set(`${entry.type}:${entry.item.id}`, '$.item.comments', []);
+    await saveHashedComments(redisClient, entry, comments);
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Saving news comments for entry with id: ${entry.item.id}`,
+      err as Error,
+      entry.item.id,
+    );
+    logger.error(error);
+    throw err;
+  }
+}
+
+export async function saveEntryPostComments(entry: RedisNewsFeedEntry) {
+  try {
+    const redisClient = await getRedisClient();
+    const comments = await getRedisPostCommentsByPostId(entry.item.id);
+    await redisClient.json.set(`${entry.type}:${entry.item.id}`, '$.item.comments', []);
+    await saveHashedComments(redisClient, entry, comments);
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Saving post comments for entry with id: ${entry.item.id}`,
+      err as Error,
+      entry.item.id,
+    );
+    logger.error(error);
+    throw err;
+  }
+}

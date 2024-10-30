@@ -60,7 +60,7 @@ export const addProjectCollaborationComment = withAuth(
             ...newComment,
             author,
             upvotedBy: [],
-            responseCount: 0,
+            commentCount: 0,
           },
         };
       }

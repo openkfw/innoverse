@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 
-import { ProjectUpdate } from '@/common/types';
+import { ObjectType, ProjectUpdate } from '@/common/types';
 import { NewsUpdateCard } from '@/components/newsPage/cards/NewsUpdateCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
@@ -21,40 +21,38 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
     setUpdate({ ...update, comment: updatedText });
   };
 
-  const fetchResponses = async () => {
+  const fetchComments = async () => {
     return await getNewsCommentProjectUpdateId(update.id);
   };
 
-  const addResponse = async (text: string) => {
-    const response = await addUserComment({
+  const addComment = async (text: string) => {
+    const comment = await addUserComment({
       comment: text,
       commentType: 'NEWS_COMMENT',
       objectId: update.id,
+      objectType: ObjectType.UPDATE,
     });
-    const data = response.data ? { ...response.data, responseCount: 0, responses: [] } : undefined;
+    const data = comment.data ? { ...comment.data, commentCount: 0, comments: [] } : undefined;
 
-    return { ...response, data: data };
+    return { ...comment, data: data };
   };
 
   return (
     <CommentThread
-      comment={{ id: update.id, responseCount: update.responseCount ?? 0 }}
+      comment={update}
       card={<NewsUpdateCard update={update} onDelete={props.onDelete} onUpdate={handleUpdate} />}
-      fetchResponses={fetchResponses}
-      addResponse={addResponse}
-      renderResponse={(response, idx, deleteResponse, updateResponse) => (
-        <Box width="98%" display="block " alignSelf="end">
-          <Box>
-            <NewsCommentThread
-              key={`${idx}-${response.id}`}
-              item={update}
-              comment={response}
-              commentType="NEWS_COMMENT"
-              level={1}
-              onDelete={deleteResponse}
-              onUpdate={updateResponse}
-            />
-          </Box>
+      fetchComments={fetchComments}
+      addComment={addComment}
+      renderComment={(comment, idx, deleteComment, updateComment) => (
+        <Box width="98%" display="block " alignSelf="end" key={`${idx}-${comment.id}`}>
+          <NewsCommentThread
+            item={update}
+            comment={comment}
+            commentType="NEWS_COMMENT"
+            level={1}
+            onDelete={deleteComment}
+            onUpdate={updateComment}
+          />
         </Box>
       )}
     />

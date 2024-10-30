@@ -78,14 +78,16 @@ export class UpdateLifecycle extends StrapiEntityLifecycle {
       const followerIds = await getFollowedByForEntity(dbClient, ObjectType.UPDATE, updateId);
       const followers = await mapToRedisUsers(followerIds);
       const updateWithReactions = mapObjectWithReactions(update);
-      const responseCount = await countNewsResponses(dbClient, update.id);
+      const commentCount = await countNewsResponses(dbClient, update.id);
       const comments = await getRedisNewsCommentsById(update.id);
+      const commentsIds = comments.map((comment) => comment.commentId);
+
       const newsFeedEntry = mapUpdateToRedisNewsFeedEntry(
         updateWithReactions,
         update.reactions,
         followers,
-        responseCount,
-        comments,
+        commentCount,
+        commentsIds,
       );
       await saveNewsFeedEntry(redisClient, newsFeedEntry);
     } catch (err) {

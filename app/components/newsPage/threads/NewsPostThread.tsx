@@ -1,4 +1,4 @@
-import { Post } from '@/common/types';
+import { ObjectType, Post } from '@/common/types';
 import NewsPostCard from '@/components/newsPage/cards/NewsPostCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
@@ -13,35 +13,36 @@ interface NewsPostThreadProps {
 export const NewsPostThread = (props: NewsPostThreadProps) => {
   const { post } = props;
 
-  const fetchResponses = async () => {
+  const fetchComments = async () => {
     return await getPostCommentsByPostId(post.id);
   };
 
-  const addResponse = async (text: string) => {
-    const response = await addUserComment({
+  const addComment = async (text: string) => {
+    const comment = await addUserComment({
       comment: text,
       commentType: 'POST_COMMENT',
       objectId: post.id,
+      objectType: ObjectType.POST,
     });
-    const data = response.data ? { ...response.data, responseCount: 0, responses: [] } : undefined;
-    return { ...response, data };
+    const data = comment.data ? { ...comment.data, commentCount: 0, comments: [] } : undefined;
+    return { ...comment, data };
   };
 
   return (
     <CommentThread
       comment={post}
       card={<NewsPostCard post={post} onDelete={props.onDelete} />}
-      fetchResponses={fetchResponses}
-      addResponse={addResponse}
-      renderResponse={(response, idx, deleteResponse, updateResponse) => (
+      fetchComments={fetchComments}
+      addComment={addComment}
+      renderComment={(comment, idx, deleteComment, updateComment) => (
         <NewsCommentThread
-          key={`${idx}-${response.id}`}
+          key={`${idx}-${comment.id}`}
           item={post}
-          comment={response}
+          comment={comment}
           commentType="POST_COMMENT"
           level={1}
-          onDelete={deleteResponse}
-          onUpdate={updateResponse}
+          onDelete={deleteComment}
+          onUpdate={updateComment}
         />
       )}
     />

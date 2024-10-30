@@ -36,7 +36,7 @@ type CreateProjectUpdate = {
 type UpdateProjectUpdate = { updateId: string; comment: string; anonymous?: boolean };
 
 type UpdateUpdateInCache = {
-  update: { id: string; comment?: string; responseCount?: number; anonymous?: boolean; comments?: RedisNewsComment[] };
+  update: { id: string; comment?: string; commentCount?: number; anonymous?: boolean; comments?: RedisNewsComment[] };
 };
 
 export const createProjectUpdate = async (update: CreateProjectUpdate) => {
@@ -81,7 +81,7 @@ export const updateProjectUpdateInCache = async ({ update }: UpdateUpdateInCache
 
     if (!newsFeedEntry) return;
     const cachedItem = newsFeedEntry.item as RedisProjectUpdate;
-    cachedItem.responseCount = update.responseCount ?? cachedItem.responseCount;
+    cachedItem.commentCount = update.commentCount ?? cachedItem.commentCount;
     cachedItem.comment = update.comment ?? cachedItem.comment;
     newsFeedEntry.item = cachedItem;
     newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
@@ -116,10 +116,11 @@ export const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate)
     const updateReactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
     const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, update.projectId);
     const mappedUpdateFollowedBy = await mapToRedisUsers(projectFollowedBy);
-    const responseCount = await countNewsResponses(dbClient, update.id);
+    const commentCount = await countNewsResponses(dbClient, update.id);
     const comments = await getRedisNewsCommentsById(update.id);
+    const commentsIds = comments.map((comment) => comment.commentId);
 
-    return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, responseCount, comments);
+    return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, commentCount, commentsIds);
   } catch (err) {
     const error: InnoPlatformError = dbError(
       `Creating news feed entry for project update with id: ${update.projectId}`,

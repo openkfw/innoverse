@@ -18,27 +18,27 @@ import { appInsights } from '@/utils/instrumentation/AppInsights';
 import { useRespondingState } from '../../common/editing/editing-context';
 
 interface CommentThreadProps<TComment> {
-  comment: { id: string; responseCount: number; comments?: TComment[] };
+  comment: { id: string; commentCount: number; comments?: TComment[] };
   card: React.ReactNode;
   disableDivider?: boolean;
-  indentResponses?: React.CSSProperties['paddingLeft'];
-  fetchResponses: () => Promise<TComment[]>;
-  renderResponse: (
+  indentComments?: React.CSSProperties['paddingLeft'];
+  fetchComments: () => Promise<TComment[]>;
+  renderComment: (
     comment: TComment,
     idx: number,
-    deleteResponse: () => void,
-    updateResponse: (response: TComment) => void,
+    deleteComment: () => void,
+    updateComment: (comment: TComment) => void,
   ) => React.ReactNode;
-  addResponse: (text: string) => Promise<AuthResponse<TComment>>;
+  addComment: (text: string) => Promise<AuthResponse<TComment>>;
 }
 
 interface ThreadComment {
   id: string;
   createdAt: Date;
-  responseCount: number;
+  commentCount?: number;
 }
 
-type ResponseState<TComment> =
+type CommentState<TComment> =
   | { isVisible: false; isLoading: false; data?: undefined }
   | { isVisible?: false; isLoading: true; data?: undefined }
   | { isVisible: true; isLoading?: false; data: TComment[] };
@@ -47,15 +47,15 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
   const {
     comment,
     card,
-    responses,
-    indentResponses,
+    comments,
+    indentComments,
     showDivider,
-    showLoadResponsesButton,
-    loadResponses,
-    handleResponse,
-    updateResponse,
-    deleteResponse,
-    renderResponse,
+    showLoadCommentsButton,
+    loadComments,
+    handleComment,
+    updateComment,
+    deleteComment,
+    renderComment,
   } = useCommentThread(props);
 
   return (
@@ -63,32 +63,34 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
       <div>{card}</div>
       {showDivider && <Divider />}
 
-      <WriteCommentResponseCard comment={comment} onRespond={handleResponse} sx={{ mb: 1, pl: indentResponses }} />
+      <WriteCommentResponseCard comment={comment} onRespond={handleComment} sx={{ mb: 1, pl: indentComments }} />
 
-      {showLoadResponsesButton && (
+      {showLoadCommentsButton && (
         <Button
           startIcon={<AddIcon color="primary" fontSize="large" />}
-          sx={{ ...transparentButtonStyles, pl: indentResponses }}
+          sx={{ ...transparentButtonStyles, pl: indentComments }}
           style={{ marginBottom: 2 }}
-          onClick={loadResponses}
+          onClick={loadComments}
         >
-          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} ({comment.responseCount})
+          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} ({comment.commentCount})
         </Button>
       )}
 
-      {responses.isLoading && <CommentThreadSkeleton sx={{ pl: indentResponses, mt: 2 }} />}
+      {comments.isLoading && <CommentThreadSkeleton sx={{ pl: indentComments, mt: 2 }} />}
 
-      {responses.isVisible && (
-        <Stack spacing={2} sx={{ pl: indentResponses }}>
-          {responses.data.map((response, idx) =>
-            renderResponse(response, idx, () => deleteResponse(response), updateResponse),
+      {comments.isVisible && (
+        <Stack spacing={2} sx={{ pl: indentComments }}>
+          {comments.data.map((comment, idx) =>
+            renderComment(comment, idx, () => deleteComment(comment), updateComment),
           )}
         </Stack>
       )}
-      {comment && comment.comments && comment.comments.length > 0 && (
-        <Stack spacing={2} sx={{ pl: indentResponses }}>
-          {comment.comments.map((response, idx) =>
-            renderResponse(response, idx, () => deleteResponse(response), updateResponse),
+      {/* TODO: Temporary solution till the comments are loaded from redis */}
+      {!showLoadCommentsButton && comment && comment.comments && (
+        <Stack spacing={2} sx={{ pl: indentComments }}>
+          {comment.comments.map(
+            (comment, idx) =>
+              typeof comment != 'string' && renderComment(comment, idx, () => deleteComment(comment), updateComment),
           )}
         </Stack>
       )}
@@ -97,90 +99,90 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
 };
 
 const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadProps<TComment>) => {
-  const { comment, card, disableDivider, indentResponses, fetchResponses, renderResponse, addResponse } = props;
-  const [responses, setResponses] = useState<ResponseState<TComment>>({ isVisible: false, isLoading: false });
+  const { comment, card, disableDivider, indentComments, fetchComments, renderComment, addComment } = props;
+  const [comments, setComments] = useState<CommentState<TComment>>({ isVisible: false, isLoading: false });
   const state = useRespondingState();
 
-  const responsesExist = comment.responseCount > 0 || (responses.data?.length ?? 0) > 0;
+  const commentsExist = comment.commentCount > 0 || (comments.data?.length ?? 0) > 0;
 
-  const loadResponses = async () => {
-    setResponses({ isLoading: true });
-    const responses = await fetchSortedResponses();
-    if (responses) {
-      setResponses({ isVisible: true, data: responses });
+  const loadComments = async () => {
+    setComments({ isLoading: true });
+    const comments = await fetchSortedComments();
+    if (comments) {
+      setComments({ isVisible: true, data: comments });
     } else {
-      setResponses({ isVisible: false, isLoading: false });
+      setComments({ isVisible: false, isLoading: false });
     }
   };
 
-  const handleResponse = async (responseText: string) => {
+  const handleComment = async (commentText: string) => {
     try {
-      const currentResponses = responses.data ?? (await fetchSortedResponses());
-      if (!currentResponses) return;
+      const currentComments = comments.data ?? (await fetchSortedComments());
+      if (!currentComments) return;
 
-      const result = await addResponse(responseText);
-      const createdResponse = result?.data;
-      if (!createdResponse) return;
+      const result = await addComment(commentText);
+      const createdComment = result?.data;
+      if (!createdComment) return;
 
-      const newResponses = [createdResponse, ...currentResponses];
-      setResponses({ isVisible: true, data: newResponses });
+      const newComments = [createdComment, ...currentComments];
+      setComments({ isVisible: true, data: newComments });
     } catch (error) {
-      console.error('Error adding response:', error);
-      errorMessage({ message: m.components_newsPage_thread_add_response_error() });
+      console.error('Error adding comment:', error);
+      errorMessage({ message: m.components_newsPage_thread_add_comment_error() });
       appInsights.trackException({
-        exception: new Error('Failed to add response', { cause: error }),
+        exception: new Error('Failed to add comment', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
     }
   };
 
-  const deleteResponse = (response: TComment) => {
-    const filteredResponses = responses.data?.filter((r) => r.id !== response.id) ?? [];
-    setResponses({ isVisible: true, data: filteredResponses });
+  const deleteComment = (comment: TComment) => {
+    const filteredComments = comments.data?.filter((r) => r.id !== comment.id) ?? [];
+    setComments({ isVisible: true, data: filteredComments });
   };
 
-  const updateResponse = (response: TComment) => {
-    if (!responses.data) return;
-    const idx = responses.data.findIndex((r) => r.id === response.id);
+  const updateComment = (comment: TComment) => {
+    if (!comments.data) return;
+    const idx = comments.data.findIndex((r) => r.id === comment.id);
     if (idx < 0) {
       return;
     }
-    const newResponses = responses.data;
-    newResponses[idx] = response;
-    setResponses({ data: newResponses, isVisible: true });
+    const newComments = comments.data;
+    newComments[idx] = comment;
+    setComments({ data: newComments, isVisible: true });
   };
 
-  const fetchSortedResponses = async () => {
+  const fetchSortedComments = async () => {
     try {
-      const responses = await fetchResponses();
-      if (!responses) return;
-      const sortedResponses = sortResponses(responses);
-      return sortedResponses;
+      const comments = await fetchComments();
+      if (!comments) return;
+      const sortedComments = sortComments(comments);
+      return sortedComments;
     } catch (error) {
-      console.error('Error fetching responses:', error);
+      console.error('Error fetching comments:', error);
       errorMessage({ message: m.components_newsPage_thread_fetch_error() });
       appInsights.trackException({
-        exception: new Error('Failed to fetch responses', { cause: error }),
+        exception: new Error('Failed to fetch comments', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
     }
   };
 
-  const sortResponses = (responses: TComment[]) => responses.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+  const sortComments = (comments: TComment[]) => comments.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+  const searchedResult = comment.comments && comment.comments.length > 0 && typeof comment.comments[0] !== 'string';
 
   return {
     comment,
     card,
-    responses,
-    indentResponses,
-    showLoadResponsesButton:
-      !comment.comments && !responses.isVisible && !responses.isLoading && comment.responseCount > 0,
-    showDivider: !disableDivider && (responsesExist || state.isEditing(comment)),
-    handleResponse,
-    deleteResponse,
-    updateResponse,
-    loadResponses,
-    renderResponse,
+    comments,
+    indentComments,
+    showLoadCommentsButton: !searchedResult && !comments.isVisible && !comments.isLoading && comment.commentCount > 0,
+    showDivider: !disableDivider && (commentsExist || state.isEditing(comment)),
+    handleComment,
+    deleteComment,
+    updateComment,
+    loadComments,
+    renderComment,
   };
 };
 

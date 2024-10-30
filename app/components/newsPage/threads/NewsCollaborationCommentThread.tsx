@@ -14,19 +14,19 @@ interface CollaborationCommentThreadProps {
 export const NewsCollaborationCommentThread = (props: CollaborationCommentThreadProps) => {
   const { comment, onDelete } = props;
 
-  const { fetchResponses, addResponse } = useCollaborationCommentThread(props);
+  const { fetchComments, addComment } = useCollaborationCommentThread(props);
 
   return (
     <CommentThread
-      comment={{ id: comment.id, responseCount: comment.responseCount }}
+      comment={{ id: comment.id, commentCount: comment.commentCount }}
       card={<NewsCollabCommentCard item={comment} onDelete={onDelete} />}
-      fetchResponses={fetchResponses}
-      addResponse={addResponse}
-      renderResponse={(response, idx, deleteResponse) => (
+      fetchComments={fetchComments}
+      addComment={addComment}
+      renderComment={(comment, idx, deleteComment) => (
         <NewsCollaborationCommentResponseThread
-          key={`${idx}-${response.id}`}
-          response={response}
-          onDelete={deleteResponse}
+          key={`${idx}-${comment.id}`}
+          comment={comment}
+          onDelete={deleteComment}
         />
       )}
     ></CommentThread>
@@ -36,19 +36,19 @@ export const NewsCollaborationCommentThread = (props: CollaborationCommentThread
 export function useCollaborationCommentThread(props: { comment: Comment | CollaborationComment }) {
   const { comment } = props;
 
-  const fetchResponses = async () => {
-    const responses = await getProjectCollaborationCommentResponses({ comment });
-    return responses.data?.map((response) => ({ ...response, responseCount: 0 })) ?? [];
+  const fetchComments = async () => {
+    const comments = await getProjectCollaborationCommentResponses({ comment });
+    return comments.data?.map((comment) => ({ ...comment, commentCount: 0 })) ?? [];
   };
 
-  const addResponse = async (response: string) => {
+  const addComment = async (response: string) => {
     const result = await addProjectCollaborationCommentResponse({ comment, response });
-    const data = result.data ? { ...result.data, responseCount: 0 } : undefined;
+    const data = result.data ? { ...result.data, commentCount: 0 } : undefined;
     return { ...result, data };
   };
 
   return {
-    fetchResponses,
-    addResponse,
+    fetchComments,
+    addComment,
   };
 }

@@ -63,7 +63,7 @@ export type RedisItem = {
   reactions: RedisReaction[];
   followedBy: RedisUser[];
   projectId?: string;
-  comments?: RedisNewsComment[];
+  comments?: RedisNewsComment[] | string[];
 };
 
 export type RedisPost = RedisItem & {
@@ -71,7 +71,7 @@ export type RedisPost = RedisItem & {
   author: RedisUser;
   content: string;
   upvotedBy: string[];
-  responseCount: number;
+  commentCount: number;
   anonymous: boolean;
 };
 
@@ -97,7 +97,7 @@ export type RedisProjectUpdate = RedisItem & {
   projectName: string;
   projectStart?: string;
   linkToCollaborationTab: boolean;
-  responseCount: number;
+  commentCount: number;
   anonymous: boolean;
 };
 
@@ -122,8 +122,8 @@ export type RedisNewsComment = {
   comment: string;
   author?: RedisUser;
   upvotedBy?: string[];
-  responseCount?: number;
-  responses?: RedisNewsComment[];
+  commentCount?: number;
+  comments?: RedisNewsComment[];
   updatedAt: number;
   createdAt?: number;
 };
@@ -166,7 +166,7 @@ export type RedisCollaborationComment = RedisItem & {
   author: RedisUser;
   comment: string;
   upvotedBy: string[];
-  responseCount: number;
+  commentCount: number;
   projectId: string;
   question: Omit<RedisCollaborationQuestion, 'reactions' | 'followedBy' | 'updatedAt'>;
   createdAt: number;
