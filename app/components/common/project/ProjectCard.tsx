@@ -13,6 +13,7 @@ import ProgressBar from '@/components/common/ProgressBar';
 import VisibleContributors from '@/components/project-details/VisibleContributors';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
+import { mergeStyles } from '@/utils/helpers';
 
 interface ProjectCardProps {
   id: string;
@@ -27,16 +28,15 @@ interface ProjectCardProps {
 export default function ProjectCard(props: ProjectCardProps) {
   const { id, img, contributors, title, summary, status, cardSize } = props;
 
-  const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const imgHeight = isWideScreen ? 200 : 150;
-
+  const transform = isSmallScreen ? { transform: 'translateX(-55%)' } : { transform: 'translateX(-50%)' };
   return (
     <Card
       sx={{
         ...cardStyles,
         position: 'relative',
-        height: isWideScreen ? cardSize.height : 440,
+        height: cardSize.height,
         width: cardSize.width,
       }}
     >
@@ -52,7 +52,7 @@ export default function ProjectCard(props: ProjectCardProps) {
               objectFit: 'cover',
               borderRadius: 0,
               display: 'block',
-              height: imgHeight,
+              height: 200,
             }}
           />
         </CardMedia>
@@ -67,23 +67,23 @@ export default function ProjectCard(props: ProjectCardProps) {
               </Link>
             </Typography>
 
-            {isWideScreen ? (
+            {cardSize.height > 500 ? (
               <Typography
                 variant="subtitle1"
-                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 100 ? 2 : 5 }}
+                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 100 ? 2 : 4 }}
               >
                 {summary}
               </Typography>
             ) : (
               <Typography
                 variant="subtitle1"
-                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 20 ? 2 : 4 }}
+                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 40 ? 2 : 3 }}
               >
                 {summary}
               </Typography>
             )}
 
-            <Box sx={progressBarContainerStyles}>
+            <Box sx={mergeStyles(progressBarContainerStyles, transform)}>
               <ProgressBar active={status} />
             </Box>
           </Box>
@@ -143,8 +143,8 @@ const descriptionStyles = {
 
 const progressBarContainerStyles = {
   position: 'absolute',
-  bottom: 24, // Stick to the bottom
-  left: '50%', // Move to the horizontal center
-  transform: 'translateX(-50%)', // Center it by shifting 50% of its width
-  width: '80%', // Adjust width as necessary (optional)
+  bottom: 24,
+  left: '50%',
+  transform: 'translateX(-50%)',
+  width: '80%',
 };

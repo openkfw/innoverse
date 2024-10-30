@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { Search } from '@mui/icons-material';
 import Box from '@mui/material/Box';
@@ -14,7 +14,6 @@ import * as m from '@/src/paraglide/messages.js';
 
 export default function ProjectFilter() {
   const { filters, setFilters } = useProjects();
-  const [inputValue, setInputValue] = useState('');
 
   const updateFilters = (searchString: string) => {
     const updatedFilters = { ...filters, searchString };
@@ -23,29 +22,8 @@ export default function ProjectFilter() {
 
   const handleInputChange = (event: { target: { value: string } }) => {
     const newValue = event.target.value;
-    setInputValue(newValue);
+    updateFilters(newValue);
   };
-
-  useEffect(() => {
-    // if (inputValue !== filters.searchString) {
-    //   const timeoutId = setTimeout(() => {
-    //     updateFilters(inputValue);
-    //   }, 300);
-    //   return () => {
-    //     clearTimeout(timeoutId);
-    //   };
-    // }
-    //todo to be fixed
-
-    const timeoutId = setTimeout(() => {
-      updateFilters(inputValue);
-    }, 300);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue]);
 
   return (
     <Box sx={{ margin: 3 }}>

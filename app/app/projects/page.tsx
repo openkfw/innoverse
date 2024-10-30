@@ -18,7 +18,7 @@ import backgroundImage from '/public/images/news-background.png';
 export const dynamic = 'force-dynamic';
 
 async function ProjectsPage() {
-  const projects = await getProjects();
+  const projects = await getProjects({ limit: 10, sort: { by: 'updatedAt', order: 'desc' } });
 
   if (!projects) return <ErrorPage />;
 

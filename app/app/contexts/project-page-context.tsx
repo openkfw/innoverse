@@ -87,7 +87,7 @@ export const ProjectPageContextProvider = ({ children, ...props }: ProjectPageCo
               page: options.page,
               pageSize: pageSize,
             },
-            sort: { by: 'title', order: 'desc' },
+            sort: { by: 'updatedAt', order: 'desc' },
             searchString,
           })) || [];
 
