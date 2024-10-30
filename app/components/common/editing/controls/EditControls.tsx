@@ -115,7 +115,7 @@ export const EditControls = (props: EditControlsProps) => {
   );
 };
 
-// Styles for the menu icon button
+// Edit Controls Styles
 const menuIconButtonStyles = {
   width: '32px',
   height: '32px',

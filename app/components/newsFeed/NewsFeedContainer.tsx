@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { Option } from '@/common/formTypes';
 import { NewsFeedEntry, ObjectType, Post, ProjectUpdate } from '@/common/types';
-import { DiscardAddPostDialog } from '@/components/common/editing/DiscardAddPostDialog'; // Import the discard dialog
+import { DiscardAddPostDialog } from '@/components/common/editing/DiscardAddPostDialog';
 import { UnsavedEditingChangesDialog } from '@/components/common/editing/UnsavedChangesDialog';
 import InteractionButton, { interactionButtonStyles, InteractionType } from '@/components/common/InteractionButton';
 import SecondaryIconButton from '@/components/common/SecondaryIconButton';

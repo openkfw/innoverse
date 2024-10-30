@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 
-import ReplyIcon from '@/components/icons/ReplyIcon'; // Your custom ReplyIcon
+import ReplyIcon from '@/components/icons/ReplyIcon';
 
 interface ResponseControlsProps {
   onResponse: () => void;
