@@ -322,7 +322,7 @@
 
   "components_projectpage_projectPageContainer_projects": "Initiatives",
   "components_projectpage_projectPageContainer_projectText": "An overview of all Initiatives.",
-  "components_projectpage_projectPageContainer_search": "search",
+  "components_projectpage_projectPageContainer_search": "Search",
 
   "components_notifications_notificationBanner_notificationError": "Your browser is preventing notifications from being enabled. Please go to settings to enable notifications: Settings → Cookies and site permissions → Notifications",
   "components_notifications_notificationBanner_dismiss": "Remind me later",
