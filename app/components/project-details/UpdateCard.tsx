@@ -18,7 +18,7 @@ import ArrowLeftIcon from '@/components/icons/ArrowLeftIcon';
 import ArrowRightIcon from '@/components/icons/ArrowRightIcon';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
-import { formatDate } from '@/utils/helpers';
+import { formatDateWithTimestamp } from '@/utils/helpers';
 
 import { parseStringForLinks } from '../common/LinkString';
 
@@ -139,7 +139,7 @@ const UpdateCard = (props: UpdateCardProps) => {
             )}
           </Box>
           <Typography variant="caption" color="text.secondary">
-            {formatDate(update?.updatedAt)}
+            {formatDateWithTimestamp(update?.updatedAt)}
           </Typography>
 
           <Box sx={footerStyles}>
