@@ -4,13 +4,14 @@ import React, { useCallback, useState } from 'react';
 import { isEqual } from 'lodash';
 
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
+import { FilterOption } from '@/components/common/FilterSelect';
+
 import { APPLY_BUTTON } from '../common/ApplyFilterButton';
+import MobileFilterDrawer from '../common/MobileFilterDrawer';
 
 import NewsFeedProjectsFilter from './NewsFeedProjectsFilter';
 import NewsFeedSearchFilter from './NewsFeedSearchFilter';
 import NewsFeedTypeFilter from './NewsFeedTypeFilter';
-import { FilterOption } from '@/components/common/FilterSelect';
-import MobileFilterDrawer from '../common/MobileFilterDrawer';
 
 interface MobileNewsFeedFilterProps {
   open: boolean;

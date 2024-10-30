@@ -1,9 +1,11 @@
 'use client';
 
 import React from 'react';
-import ProjectFilter from './ProjectFilter';
+
 import { APPLY_BUTTON } from '../common/ApplyFilterButton';
 import MobileFilterDrawer from '../common/MobileFilterDrawer';
+
+import ProjectFilter from './ProjectFilter';
 
 interface MobileProjectFilterProps {
   open: boolean;

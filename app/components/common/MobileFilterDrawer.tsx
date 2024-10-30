@@ -1,17 +1,19 @@
 'use client';
 
 import React from 'react';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Typography from '@mui/material/Typography';
 
-import CloseIcon from '@/components/icons/CloseIcon';
-import theme from '@/styles/theme';
-import ApplyFilterButton from './ApplyFilterButton';
 import { closeIconButtonStyle } from '@/components/common/CustomDialog';
+import CloseIcon from '@/components/icons/CloseIcon';
 import * as m from '@/src/paraglide/messages.js';
+import theme from '@/styles/theme';
+
+import ApplyFilterButton from './ApplyFilterButton';
 
 interface MobileFilterDrawerProps {
   open: boolean;
