@@ -8,10 +8,13 @@ import Grid from '@mui/material/Grid';
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { useUser } from '@/app/contexts/user-context';
 import { NewsFeedEntry, ObjectType } from '@/common/types';
+import { deleteProjectCollaborationComment } from '@/components/collaboration/comments/actions';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
 import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
 import { useEditingInteractions, useRespondingInteractions } from '@/components/common/editing/editing-context';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
+import { deletePost } from '@/services/postService';
+import { deleteProjectUpdate } from '@/services/updateService';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
@@ -21,9 +24,10 @@ import FollowButtonWithLink from '../../../common/FollowButtonWithLink';
 
 interface NewsCardActionsProps {
   entry: NewsFeedEntry;
+  hideControls?: boolean;
 }
 
-export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
+export const NewsCardActions = ({ entry, hideControls = false }: NewsCardActionsProps) => {
   const { id, followedByUser, projectId = '' } = entry.item;
   const { user } = useUser();
   const userIsAuthor =
@@ -59,18 +63,46 @@ export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
     }
   }
 
+  async function handleDelete() {
+    try {
+      switch (entry.type) {
+        case ObjectType.POST:
+          deletePost({ postId: entry.item.id });
+          break;
+        case ObjectType.COLLABORATION_COMMENT:
+          deleteProjectCollaborationComment({ commentId: entry.item.id });
+          break;
+        case ObjectType.UPDATE:
+          deleteProjectUpdate(entry.item.id);
+          break;
+        default:
+          break;
+      }
+
+      removeEntry(entry);
+    } catch (error) {
+      console.error(`Error deleting entry of type ${entry.type}:`, error);
+      errorMessage({ message: m.components_newsPage_cards_common_newsCardAction_error() });
+      appInsights.trackException({
+        exception: new Error(`Failed to delete entry of type ${entry.type}`, { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
+    }
+  }
+
   return (
     <CardActions sx={cardActionsStyles}>
       <Grid container direction="row" justifyContent="space-between" alignItems="center">
         <Grid item xs={12} sx={footerStyles}>
           <NewsFeedReactionCard entry={entry} />
           <Box sx={actionStyles}>
-            <ResponseControls onResponse={() => respondingInteractions.onStart(entry.item)} />
-            {userIsAuthor && (
-              <EditControls
-                onEdit={() => editingInteractions.onStart(entry.item)}
-                onDelete={() => removeEntry(entry)}
-              />
+            {!hideControls && (
+              <>
+                <ResponseControls onResponse={() => respondingInteractions.onStart(entry.item)} />
+                {userIsAuthor && (
+                  <EditControls onDelete={handleDelete} onEdit={() => editingInteractions.onStart(entry.item)} />
+                )}
+              </>
             )}
             <FollowButtonWithLink isSelected={followedByUser ?? false} entry={entry} onIconClick={handleToggleFollow} />
           </Box>

@@ -13,7 +13,7 @@ function NewsSurveyCard({ entry }: NewsSurveyCardProps) {
   return (
     <>
       <SurveyCard surveyQuestion={surveyQuestion} projectId={surveyQuestion.projectId} sx={surveyStyles} fill />
-      <NewsCardActions entry={entry} />
+      <NewsCardActions entry={entry} hideControls />
     </>
   );
 }

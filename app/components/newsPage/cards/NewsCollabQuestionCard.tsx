@@ -11,7 +11,8 @@ interface NewsCollabQuestionCardProps {
 }
 
 function NewsCollabQuestionCard(props: NewsCollabQuestionCardProps) {
-  const question = props.entry.item as CollaborationQuestion;
+  const { entry } = props;
+  const question = entry.item as CollaborationQuestion;
   const { title, description } = question;
 
   return (
@@ -24,7 +25,7 @@ function NewsCollabQuestionCard(props: NewsCollabQuestionCardProps) {
         {parseStringForLinks(description)}
       </Typography>
 
-      <NewsCardActions entry={props.entry} />
+      <NewsCardActions entry={entry} hideControls />
     </>
   );
 }

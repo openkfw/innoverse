@@ -27,6 +27,7 @@ interface NewsCollabCommentCardProps {
 }
 
 function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
+  const { entry } = props;
   const { comment, question, isEditing, cancelEditing, handleUpdate } = useNewsCollabCommentCard(props);
 
   return isEditing ? (
@@ -44,7 +45,7 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
           <HighlightText text={comment.comment} />
         </Typography>
       </CardContentWrapper>
-      <NewsCardActions entry={props.entry} />
+      <NewsCardActions entry={entry} />
     </>
   );
 }

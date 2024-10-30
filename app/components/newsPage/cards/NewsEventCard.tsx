@@ -55,7 +55,7 @@ function NewsEventCard(props: NewsEventCardProps) {
           </Typography>
         </CardContent>
       </Box>
-      <NewsCardActions entry={entry} />
+      <NewsCardActions entry={entry} hideControls />
     </>
   );
 }

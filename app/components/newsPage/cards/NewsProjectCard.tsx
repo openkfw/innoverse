@@ -34,7 +34,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
     return (
       <>
         <CommentOverview title={project.title} description={project.summary} image={image} />
-        <NewsCardActions entry={entry} />
+        <NewsCardActions entry={entry} hideControls />
       </>
     );
   }
@@ -78,7 +78,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
       <Box sx={progressBarStyles}>
         <ProgressBar active={project.status} />
       </Box>
-      <NewsCardActions entry={entry} />
+      <NewsCardActions entry={entry} hideControls />
     </>
   );
 }
