@@ -12,7 +12,6 @@ import { EditControls } from '@/components/common/editing/controls/EditControls'
 import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
 import { useEditingInteractions, useRespondingInteractions } from '@/components/common/editing/editing-context';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
-import { deletePost } from '@/services/postService';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
@@ -30,19 +29,20 @@ export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
   const userIsAuthor =
     'author' in entry.item && !Array.isArray(entry.item.author) && user?.providerId === entry.item.author?.providerId;
 
+  const { toggleFollow, removeEntry } = useNewsFeed();
+  const appInsights = useAppInsightsContext();
+
   const editingInteractions = useEditingInteractions();
   const respondingInteractions = useRespondingInteractions();
-  const newsFeed = useNewsFeed();
-  const appInsights = useAppInsightsContext();
 
   const getItemToFollow = () => ({
     objectId: entry.type === ObjectType.POST ? id : projectId,
     objectType: entry.type === ObjectType.POST ? ObjectType.POST : ObjectType.PROJECT,
   });
 
-  async function toggleFollow() {
+  async function handleToggleFollow() {
     try {
-      newsFeed.toggleFollow(entry);
+      toggleFollow(entry);
       const itemToFollow = getItemToFollow();
       if (followedByUser) {
         await handleRemoveFollower(itemToFollow);
@@ -59,20 +59,6 @@ export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
     }
   }
 
-  const handleDelete = async () => {
-    try {
-      await deletePost({ postId: entry.item.id });
-      newsFeed.removeEntry(entry);
-    } catch (error) {
-      console.error('Error deleting post:', error);
-      errorMessage({ message: m.components_newsPage_cards_newsCard_error_delete() });
-      appInsights.trackException({
-        exception: new Error('Failed to delete post', { cause: error }),
-        severityLevel: SeverityLevel.Error,
-      });
-    }
-  };
-
   return (
     <CardActions sx={cardActionsStyles}>
       <Grid container direction="row" justifyContent="space-between" alignItems="center">
@@ -81,10 +67,12 @@ export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
           <Box sx={actionStyles}>
             <ResponseControls onResponse={() => respondingInteractions.onStart(entry.item)} />
             {userIsAuthor && (
-              <EditControls onEdit={() => editingInteractions.onStart(entry.item)} onDelete={handleDelete} />
+              <EditControls
+                onEdit={() => editingInteractions.onStart(entry.item)}
+                onDelete={() => removeEntry(entry)}
+              />
             )}
-
-            <FollowButtonWithLink isSelected={followedByUser ?? false} entry={entry} onIconClick={toggleFollow} />
+            <FollowButtonWithLink isSelected={followedByUser ?? false} entry={entry} onIconClick={handleToggleFollow} />
           </Box>
         </Grid>
       </Grid>

@@ -1,4 +1,4 @@
-import { Post } from '@/common/types';
+import { NewsFeedEntry, Post } from '@/common/types';
 import NewsPostCard from '@/components/newsPage/cards/NewsPostCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
@@ -6,15 +6,13 @@ import { NewsCommentThread } from '@/components/newsPage/threads/NewsCommentThre
 import { getPostCommentByPostId } from '@/utils/requests/comments/requests';
 
 interface NewsPostThreadProps {
-  post: Post;
+  entry: NewsFeedEntry;
 }
 
-export const NewsPostThread = (props: NewsPostThreadProps) => {
-  const { post } = props;
+export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
+  const post = entry.item as Post;
 
-  const fetchResponses = async () => {
-    return await getPostCommentByPostId(post.id);
-  };
+  const fetchResponses = async () => await getPostCommentByPostId(post.id);
 
   const addResponse = async (text: string) => {
     const response = await addUserComment({
@@ -29,7 +27,7 @@ export const NewsPostThread = (props: NewsPostThreadProps) => {
   return (
     <CommentThread
       comment={post}
-      card={<NewsPostCard post={post} />}
+      card={<NewsPostCard entry={entry} />}
       fetchResponses={fetchResponses}
       addResponse={addResponse}
       renderResponse={(response, idx, deleteResponse, updateResponse) => (

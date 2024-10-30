@@ -2,7 +2,7 @@
 
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
-import { ProjectUpdate } from '@/common/types';
+import { NewsFeedEntry, ProjectUpdate } from '@/common/types';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { errorMessage } from '@/components/common/CustomToast';
 import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
@@ -12,15 +12,17 @@ import { updateProjectUpdate } from '@/services/updateService';
 import * as m from '@/src/paraglide/messages.js';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
 
+import { NewsCardActions } from './common/NewsCardActions';
+
 interface UpdateCardProps {
-  update: ProjectUpdate;
   onUpdate: (updatedText: string) => void;
-  onDelete: () => void;
   noClamp?: boolean;
+  entry: NewsFeedEntry;
 }
 
 export const NewsUpdateCard = (props: UpdateCardProps) => {
-  const { update, onUpdate, noClamp = false } = props;
+  const { entry, onUpdate, noClamp = false } = props;
+  const update = entry.item as ProjectUpdate;
   const state = useEditingState();
   const editingInteractions = useEditingInteractions();
 
@@ -45,6 +47,7 @@ export const NewsUpdateCard = (props: UpdateCardProps) => {
     <>
       <CommentCardHeader content={update} avatar={{ size: 32 }} />
       <UpdateCardContent update={update} noClamp={noClamp} />
+      <NewsCardActions entry={entry} />
     </>
   );
 };

@@ -4,46 +4,30 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import Typography from '@mui/material/Typography';
 
 import { useUser } from '@/app/contexts/user-context';
-import { CollaborationComment } from '@/common/types';
-import {
-  deleteProjectCollaborationComment,
-  updateProjectCollaborationComment,
-} from '@/components/collaboration/comments/actions';
+import { CollaborationComment, NewsFeedEntry } from '@/common/types';
+import { updateProjectCollaborationComment } from '@/components/collaboration/comments/actions';
 import CardContentWrapper from '@/components/common/CardContentWrapper';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { errorMessage } from '@/components/common/CustomToast';
-import { EditControls } from '@/components/common/editing/controls/EditControls';
-import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
 import {
   useEditingInteractions,
   useEditingState,
   useRespondingInteractions,
 } from '@/components/common/editing/editing-context';
-import { NewsCardControls } from '@/components/newsPage/cards/common/NewsCardControls';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
 import * as m from '@/src/paraglide/messages.js';
 import { HighlightText } from '@/utils/highlightText';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
 
 import CommentOverview from './common/CommentOverview';
+import { NewsCardActions } from './common/NewsCardActions';
 
 interface NewsCollabCommentCardProps {
-  item: CollaborationComment;
-  onDelete: () => void;
+  entry: NewsFeedEntry;
 }
 
 function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
-  const {
-    comment,
-    question,
-    displayEditingControls,
-    isEditing,
-    startEditing,
-    startResponse,
-    cancelEditing,
-    handleUpdate,
-    handleDelete,
-  } = useNewsCollabCommentCard(props);
+  const { comment, question, isEditing, cancelEditing, handleUpdate } = useNewsCollabCommentCard(props);
 
   return isEditing ? (
     <WriteCommentCard
@@ -60,16 +44,14 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
           <HighlightText text={comment.comment} />
         </Typography>
       </CardContentWrapper>
-      <NewsCardControls>
-        {displayEditingControls && <EditControls onEdit={startEditing} onDelete={handleDelete} />}
-        <ResponseControls onResponse={startResponse} />
-      </NewsCardControls>
+      <NewsCardActions entry={props.entry} />
     </>
   );
 }
 
 function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
-  const { item, onDelete } = props;
+  const { entry } = props;
+  const item = entry.item as CollaborationComment;
   const question = item.question;
 
   const [comment, setComment] = useState(item);
@@ -95,20 +77,6 @@ function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
     }
   };
 
-  const handleDelete = () => {
-    try {
-      deleteProjectCollaborationComment({ commentId: comment.id });
-      onDelete();
-    } catch (error) {
-      console.error('Error deleting collaboration comment:', error);
-      errorMessage({ message: m.components_collaboration_comments_collaborationCommentCard_deleteError() });
-      appInsights.trackException({
-        exception: new Error('Failed to delete collaboration comment.', { cause: error }),
-        severityLevel: SeverityLevel.Error,
-      });
-    }
-  };
-
   return {
     comment,
     question,
@@ -118,7 +86,6 @@ function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
     startResponse: () => respondingInteractions.onStart(comment),
     cancelEditing: editingInteractions.onCancel,
     handleUpdate,
-    handleDelete,
   };
 }
 

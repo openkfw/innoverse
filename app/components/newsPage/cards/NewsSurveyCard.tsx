@@ -1,15 +1,21 @@
-import { SurveyQuestion } from '@/common/types';
+import { NewsFeedEntry, SurveyQuestion } from '@/common/types';
 import { SurveyCard } from '@/components/collaboration/survey/SurveyCard';
 
+import { NewsCardActions } from './common/NewsCardActions';
+
 interface NewsSurveyCardProps {
-  projectId?: string;
-  surveyQuestion: SurveyQuestion;
+  entry: NewsFeedEntry;
 }
 
-function NewsSurveyCard(props: NewsSurveyCardProps) {
-  const { surveyQuestion, projectId = '' } = props;
+function NewsSurveyCard({ entry }: NewsSurveyCardProps) {
+  const surveyQuestion = entry.item as SurveyQuestion;
 
-  return <SurveyCard surveyQuestion={surveyQuestion} projectId={projectId} sx={surveyStyles} fill />;
+  return (
+    <>
+      <SurveyCard surveyQuestion={surveyQuestion} projectId={surveyQuestion.projectId} sx={surveyStyles} fill />
+      <NewsCardActions entry={entry} />
+    </>
+  );
 }
 
 export default NewsSurveyCard;
