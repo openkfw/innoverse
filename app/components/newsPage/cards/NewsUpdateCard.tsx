@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { NewsFeedEntry, ProjectUpdate } from '@/common/types';
@@ -22,20 +23,24 @@ interface UpdateCardProps {
 
 export const NewsUpdateCard = (props: UpdateCardProps) => {
   const { entry, onUpdate, noClamp = false } = props;
-  const update = entry.item as ProjectUpdate;
+
+  const initialUpdate = entry.item as ProjectUpdate;
+  const [update, setUpdate] = useState(initialUpdate);
+
   const state = useEditingState();
   const editingInteractions = useEditingInteractions();
 
   const handleUpdate = async (updatedText: string) => {
     try {
       await updateProjectUpdate({ updateId: update.id, comment: updatedText });
+      setUpdate({ ...update, comment: updatedText });
       onUpdate(updatedText);
       editingInteractions.onSubmit();
     } catch (error) {
       console.error('Error updating project update:', error);
       errorMessage({ message: m.components_newsPage_cards_newsCard_error_update() });
       appInsights.trackException({
-        exception: new Error('Failed to delete project update', { cause: error }),
+        exception: new Error('Failed to update project update', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
     }
