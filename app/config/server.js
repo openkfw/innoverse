@@ -71,15 +71,6 @@ const serverEnvConfig = createEnvConfig({
       required: true,
     },
 
-    // Next
-    ALLOWED_ORIGINS: {
-      stages: runtimeStages,
-      defaultRule: z
-        .string()
-        .transform((origins) => origins.split(','))
-        .optional(),
-    },
-
     // Redis
     REDIS_URL: {
       stages: runtimeStages,
