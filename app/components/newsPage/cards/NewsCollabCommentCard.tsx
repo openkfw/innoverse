@@ -50,7 +50,7 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   );
 }
 
-function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
+export function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   const { entry } = props;
   const item = entry.item as CollaborationComment;
   const question = item.question;
@@ -61,7 +61,7 @@ function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   const editingInteractions = useEditingInteractions();
   const respondingInteractions = useRespondingInteractions();
   const { user } = useUser();
-  const userIsAuthor = comment.author.providerId === user?.providerId;
+  const userIsAuthor = comment.author?.providerId === user?.providerId;
 
   const handleUpdate = async (updatedText: string) => {
     try {

@@ -6,7 +6,6 @@ import CardActions from '@mui/material/CardActions';
 import Grid from '@mui/material/Grid';
 
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
-import { useUser } from '@/app/contexts/user-context';
 import { NewsFeedEntry, ObjectType } from '@/common/types';
 import { deleteProjectCollaborationComment } from '@/components/collaboration/comments/actions';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
@@ -21,6 +20,7 @@ import theme from '@/styles/theme';
 import { NewsFeedReactionCard } from '../../../collaboration/emojiReactions/cards/NewsFeedReactionCard';
 import { errorMessage } from '../../../common/CustomToast';
 import FollowButtonWithLink from '../../../common/FollowButtonWithLink';
+import { useNewsCollabCommentCard } from '../NewsCollabCommentCard';
 
 interface NewsCardActionsProps {
   entry: NewsFeedEntry;
@@ -29,9 +29,7 @@ interface NewsCardActionsProps {
 
 export const NewsCardActions = ({ entry, hideControls = false }: NewsCardActionsProps) => {
   const { id, followedByUser, projectId = '' } = entry.item;
-  const { user } = useUser();
-  const userIsAuthor =
-    'author' in entry.item && !Array.isArray(entry.item.author) && user?.providerId === entry.item.author?.providerId;
+  const { displayEditingControls } = useNewsCollabCommentCard({ entry });
 
   const { toggleFollow, removeEntry } = useNewsFeed();
   const appInsights = useAppInsightsContext();
@@ -99,7 +97,7 @@ export const NewsCardActions = ({ entry, hideControls = false }: NewsCardActions
             {!hideControls && (
               <>
                 <ResponseControls onResponse={() => respondingInteractions.onStart(entry.item)} />
-                {userIsAuthor && (
+                {displayEditingControls && (
                   <EditControls onDelete={handleDelete} onEdit={() => editingInteractions.onStart(entry.item)} />
                 )}
               </>

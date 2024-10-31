@@ -74,16 +74,7 @@ export const EditControls = (props: EditControlsProps) => {
             <EditFilledIcon color="#41484C" />
           </ListItemIcon>
           <ListItemText>
-            <Typography
-              sx={{
-                fontSize: '16px',
-                fontWeight: 400,
-                lineHeight: '24px',
-                letterSpacing: '0.15px',
-                textAlign: 'left',
-                color: 'text.primary',
-              }}
-            >
+            <Typography sx={listItemTypographyStyles}>
               {m.components_common_editing_controls_editControls_edit()}
             </Typography>
           </ListItemText>
@@ -94,16 +85,7 @@ export const EditControls = (props: EditControlsProps) => {
             <DeleteFilledIcon color="#41484C" />
           </ListItemIcon>
           <ListItemText>
-            <Typography
-              sx={{
-                fontSize: '16px',
-                fontWeight: 400,
-                lineHeight: '24px',
-                letterSpacing: '0.15px',
-                textAlign: 'left',
-                color: 'text.primary',
-              }}
-            >
+            <Typography sx={listItemTypographyStyles}>
               {m.components_common_editing_controls_editControls_delete()}
             </Typography>
           </ListItemText>
@@ -136,12 +118,6 @@ const menuSlotPropsStyles = {
       overflow: 'visible',
       filter: 'drop-shadow(0px 4px 12px rgba(0,0,0,0.1))',
       mt: 1.5,
-      '& .MuiAvatar-root': {
-        width: 32,
-        height: 32,
-        ml: -0.5,
-        mr: 1,
-      },
       '&:before': {
         content: '""',
         display: 'block',
@@ -156,4 +132,13 @@ const menuSlotPropsStyles = {
       },
     },
   },
+};
+
+const listItemTypographyStyles = {
+  fontSize: '16px',
+  fontWeight: 400,
+  lineHeight: '24px',
+  letterSpacing: '0.15px',
+  textAlign: 'left',
+  color: 'text.primary',
 };

@@ -34,7 +34,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
     return (
       <>
         <CommentOverview title={project.title} description={project.summary} image={image} />
-        <NewsCardActions entry={entry} hideControls />
+        <NewsCardActions entry={entry} />
       </>
     );
   }
