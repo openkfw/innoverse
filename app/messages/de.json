@@ -115,8 +115,6 @@
   "components_common_editing_controls_editMoreDialog_edit": "bearbeiten",
   "components_common_editing_controls_editMoreDialog_delete": "löschen",
 
-  "components_common_editing_controls_responseControl_answer": "antworten",
-
   "components_common_editing_writetext_writeTextCard_failedSubmit": "Dein Beitrag konnte nicht veröffentlicht werden. Bitte versuche es später noch einmal.",
   "components_common_editing_writetext_writeTextCard_placeholder": "Teile deine Ratschläge und Gedanken zu diesem Thema mit, damit deine Kollegen von deiner Expertise profitieren können.",
   "components_common_editing_writetext_writeTextCard_throw": "Verwerfen",

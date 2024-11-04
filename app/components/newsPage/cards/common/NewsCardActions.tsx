@@ -1,37 +1,50 @@
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
+import Box from '@mui/material/Box';
 import CardActions from '@mui/material/CardActions';
 import Grid from '@mui/material/Grid';
 
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { NewsFeedEntry, ObjectType } from '@/common/types';
+import { deleteProjectCollaborationComment } from '@/components/collaboration/comments/actions';
+import { EditControls } from '@/components/common/editing/controls/EditControls';
+import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
+import { useEditingInteractions, useRespondingInteractions } from '@/components/common/editing/editing-context';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
+import { deletePost } from '@/services/postService';
+import { deleteProjectUpdate } from '@/services/updateService';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { NewsFeedReactionCard } from '../../../collaboration/emojiReactions/cards/NewsFeedReactionCard';
 import { errorMessage } from '../../../common/CustomToast';
 import FollowButtonWithLink from '../../../common/FollowButtonWithLink';
+import { useNewsCollabCommentCard } from '../NewsCollabCommentCard';
 
 interface NewsCardActionsProps {
   entry: NewsFeedEntry;
+  hideControls?: boolean;
 }
 
-export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
+export const NewsCardActions = ({ entry, hideControls = false }: NewsCardActionsProps) => {
   const { id, followedByUser, projectId = '' } = entry.item;
+  const { displayEditingControls } = useNewsCollabCommentCard({ entry });
 
-  const newsFeed = useNewsFeed();
+  const { toggleFollow, removeEntry } = useNewsFeed();
   const appInsights = useAppInsightsContext();
+
+  const editingInteractions = useEditingInteractions();
+  const respondingInteractions = useRespondingInteractions();
 
   const getItemToFollow = () => ({
     objectId: entry.type === ObjectType.POST ? id : projectId,
     objectType: entry.type === ObjectType.POST ? ObjectType.POST : ObjectType.PROJECT,
   });
 
-  async function toggleFollow() {
+  async function handleToggleFollow() {
     try {
-      newsFeed.toggleFollow(entry);
+      toggleFollow(entry);
       const itemToFollow = getItemToFollow();
       if (followedByUser) {
         await handleRemoveFollower(itemToFollow);
@@ -48,12 +61,49 @@ export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
     }
   }
 
+  async function handleDelete() {
+    try {
+      switch (entry.type) {
+        case ObjectType.POST:
+          deletePost({ postId: entry.item.id });
+          break;
+        case ObjectType.COLLABORATION_COMMENT:
+          deleteProjectCollaborationComment({ commentId: entry.item.id });
+          break;
+        case ObjectType.UPDATE:
+          deleteProjectUpdate(entry.item.id);
+          break;
+        default:
+          break;
+      }
+
+      removeEntry(entry);
+    } catch (error) {
+      console.error(`Error deleting entry of type ${entry.type}:`, error);
+      errorMessage({ message: m.components_newsPage_cards_common_newsCardAction_error() });
+      appInsights.trackException({
+        exception: new Error(`Failed to delete entry of type ${entry.type}`, { cause: error }),
+        severityLevel: SeverityLevel.Error,
+      });
+    }
+  }
+
   return (
     <CardActions sx={cardActionsStyles}>
       <Grid container direction="row" justifyContent="space-between" alignItems="center">
         <Grid item xs={12} sx={footerStyles}>
           <NewsFeedReactionCard entry={entry} />
-          <FollowButtonWithLink isSelected={followedByUser ?? false} entry={entry} onIconClick={toggleFollow} />
+          <Box sx={actionStyles}>
+            {!hideControls && (
+              <>
+                <ResponseControls onResponse={() => respondingInteractions.onStart(entry.item)} />
+                {displayEditingControls && (
+                  <EditControls onDelete={handleDelete} onEdit={() => editingInteractions.onStart(entry.item)} />
+                )}
+              </>
+            )}
+            <FollowButtonWithLink isSelected={followedByUser ?? false} entry={entry} onIconClick={handleToggleFollow} />
+          </Box>
         </Grid>
       </Grid>
     </CardActions>
@@ -77,4 +127,11 @@ const footerStyles = {
     marginTop: 3,
     gap: 1,
   },
+};
+
+const actionStyles = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: 2,
 };

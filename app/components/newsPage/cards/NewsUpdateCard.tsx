@@ -1,59 +1,46 @@
 'use client';
 
+import { useState } from 'react';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
-import { ProjectUpdate } from '@/common/types';
+import { NewsFeedEntry, ProjectUpdate } from '@/common/types';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { errorMessage } from '@/components/common/CustomToast';
-import {
-  useEditingInteractions,
-  useEditingState,
-  useRespondingInteractions,
-} from '@/components/common/editing/editing-context';
+import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
 import { UpdateCardContent } from '@/components/common/UpdateCardContent';
-import { UpdateCardActions } from '@/components/newsPage/cards/common/NewsUpdateCardActions';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
-import { deleteProjectUpdate, updateProjectUpdate } from '@/services/updateService';
+import { updateProjectUpdate } from '@/services/updateService';
 import * as m from '@/src/paraglide/messages.js';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
 
+import { NewsCardActions } from './common/NewsCardActions';
+
 interface UpdateCardProps {
-  update: ProjectUpdate;
   onUpdate: (updatedText: string) => void;
-  onDelete: () => void;
   noClamp?: boolean;
+  entry: NewsFeedEntry;
 }
 
 export const NewsUpdateCard = (props: UpdateCardProps) => {
-  const { update, onUpdate, onDelete, noClamp = false } = props;
+  const { entry, onUpdate, noClamp = false } = props;
+
+  const initialUpdate = entry.item as ProjectUpdate;
+  const [update, setUpdate] = useState(initialUpdate);
+
   const state = useEditingState();
   const editingInteractions = useEditingInteractions();
-  const respondingInteractions = useRespondingInteractions();
 
   const handleUpdate = async (updatedText: string) => {
     try {
       await updateProjectUpdate({ updateId: update.id, comment: updatedText });
+      setUpdate({ ...update, comment: updatedText });
       onUpdate(updatedText);
       editingInteractions.onSubmit();
     } catch (error) {
       console.error('Error updating project update:', error);
       errorMessage({ message: m.components_newsPage_cards_newsCard_error_update() });
       appInsights.trackException({
-        exception: new Error('Failed to delete project update', { cause: error }),
-        severityLevel: SeverityLevel.Error,
-      });
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      deleteProjectUpdate(update.id);
-      onDelete();
-    } catch (error) {
-      console.error('Error deleting project update:', error);
-      errorMessage({ message: m.components_newsPage_cards_newsCard_error_delete() });
-      appInsights.trackException({
-        exception: new Error('Failed to delete project update', { cause: error }),
+        exception: new Error('Failed to update project update', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
     }
@@ -65,12 +52,7 @@ export const NewsUpdateCard = (props: UpdateCardProps) => {
     <>
       <CommentCardHeader content={update} avatar={{ size: 32 }} />
       <UpdateCardContent update={update} noClamp={noClamp} />
-      <UpdateCardActions
-        update={update}
-        onDelete={handleDelete}
-        onEdit={() => editingInteractions.onStart(update)}
-        onResponse={() => respondingInteractions.onStart(update)}
-      />
+      <NewsCardActions entry={entry} />
     </>
   );
 };
