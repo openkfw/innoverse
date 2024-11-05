@@ -9,16 +9,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
-import {
-  CollaborationComment,
-  CollaborationQuestion,
-  Event,
-  ObjectType,
-  Post,
-  Project,
-  ProjectUpdate,
-  SurveyQuestion,
-} from '@/common/types';
+import { ObjectType } from '@/common/types';
 import { NewsSkeleton } from '@/components/newsPage/skeletons/NewsSkeleton';
 import { NewsCollaborationCommentThread } from '@/components/newsPage/threads/NewsCollaborationCommentThread';
 import * as m from '@/src/paraglide/messages.js';
@@ -69,35 +60,35 @@ export const NewsFeed = (props: NewsProps) => {
 };
 
 const NewsFeedContent = () => {
-  const { feed, removeEntry } = useNewsFeed();
+  const { feed } = useNewsFeed();
 
   return (
     <Stack spacing={2} direction="column">
       {feed.map((entry, key) => (
-        <NewsCardWrapper key={key} entry={entry}>
+        <NewsCardWrapper key={key}>
           {(() => {
             switch (entry.type) {
               case ObjectType.UPDATE:
-                const update = entry.item as ProjectUpdate;
-                return (
-                  <NewsUpdateThread key={`${key}-${update.id}`} update={update} onDelete={() => removeEntry(entry)} />
-                );
+                return <NewsUpdateThread entry={entry} key={`${key}-${entry.item.id}`} />;
+
               case ObjectType.PROJECT:
-                return <NewsProjectCard project={entry.item as Project} />;
+                return <NewsProjectCard entry={entry} />;
+
               case ObjectType.EVENT:
-                return <NewsEventCard event={entry.item as Event} />;
+                return <NewsEventCard entry={entry} />;
+
               case ObjectType.COLLABORATION_QUESTION:
-                return <NewsCollabQuestionCard question={entry.item as CollaborationQuestion} />;
+                return <NewsCollabQuestionCard entry={entry} />;
+
               case ObjectType.COLLABORATION_COMMENT:
-                const collaborationComment = entry.item as CollaborationComment;
-                return (
-                  <NewsCollaborationCommentThread comment={collaborationComment} onDelete={() => removeEntry(entry)} />
-                );
+                return <NewsCollaborationCommentThread entry={entry} />;
+
               case ObjectType.SURVEY_QUESTION:
-                return <NewsSurveyCard surveyQuestion={entry.item as SurveyQuestion} />;
+                return <NewsSurveyCard entry={entry} />;
+
               case ObjectType.POST:
-                const post = entry.item as Post;
-                return <NewsPostThread key={`${key}-${post.id}`} post={post} onDelete={() => removeEntry(entry)} />;
+                return <NewsPostThread entry={entry} key={`${key}-${entry.item.id}`} />;
+
               default:
                 return null;
             }

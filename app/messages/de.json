@@ -115,8 +115,6 @@
   "components_common_editing_controls_editMoreDialog_edit": "bearbeiten",
   "components_common_editing_controls_editMoreDialog_delete": "löschen",
 
-  "components_common_editing_controls_responseControl_answer": "antworten",
-
   "components_common_editing_writetext_writeTextCard_failedSubmit": "Dein Beitrag konnte nicht veröffentlicht werden. Bitte versuche es später noch einmal.",
   "components_common_editing_writetext_writeTextCard_placeholder": "Teile deine Ratschläge und Gedanken zu diesem Thema mit, damit deine Kollegen von deiner Expertise profitieren können.",
   "components_common_editing_writetext_writeTextCard_throw": "Verwerfen",
@@ -235,7 +233,7 @@
   "components_login_userSuggestionRow_confirmationMessage": "Bitte bestätige das Entfernen von dem User",
 
   "components_newsFeed_newsFeedContainer_news": "News",
-  "components_newsFeed_newsFeedContainer_allNewsText": "Alle Neuigkeiten im Überblick: Aktuelle Nachrichten, neue Projekte und alle Ereignisse.",
+  "components_newsFeed_newsFeedContainer_allNewsText": "Alle News im Überblick: Aktuelle Nachrichten, neue Projekte und alle Ereignisse.",
   "components_newsFeed_newsFeedContainer_filter": "Filter",
 
   "components_newsFeed_newsFeedSearchFilter_search": "Suche",
@@ -247,7 +245,7 @@
   "components_newsFeed_newsFeedTypeFilter_posts": "Beiträge",
   "components_newsFeed_newsFeedTypeFilter_projects": "Projekte",
   "components_newsFeed_newsFeedTypeFilter_surveys": "Umfragen",
-  "components_newsFeed_newsFeedTypeFilter_updates": "Updates",
+  "components_newsFeed_newsFeedTypeFilter_updates": "News",
   "components_newsFeed_newsFeedTypeFilter_others": "Andere",
 
   "components_newsPage_news_dataReceived": "Alle Daten wurden geladen",
@@ -259,23 +257,23 @@
   "components_newsPage_addPost_addPostDialog_addPost": "Beitrag hinzufügen",
 
   "components_newsPage_addPost_form_addPostForm_label": "-optional-",
-  "components_newsPage_addPost_form_addPostForm_postCreated": "Neuigkeit wurde erstellt",
-  "components_newsPage_addPost_form_addPostForm_createError": "Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuchen sie es erneut",
-  "components_newsPage_addPost_form_addPostForm_addPost": "Hier kannst du deinen Beitrag hinzufügen …",
+  "components_newsPage_addPost_form_addPostForm_postCreated": "News Beitrag wurde erstellt",
+  "components_newsPage_addPost_form_addPostForm_createError": "Es ist ein Fehler beim Erstellen der News aufgetreten. Bitte versuchen sie es erneut",
+  "components_newsPage_addPost_form_addPostForm_addPost": "Hier kannst du deine News hinzufügen …",
   "components_newsPage_addPost_form_addPostForm_projectLabel": "Projekt",
   "components_newsPage_addPost_form_addPostForm_anonymousPost": "Anonym posten",
 
-  "components_newsPage_addPost_form_addUpdateForm_success": "Neuigkeit wurde erstellt",
-  "components_newsPage_addPost_form_addUpdateForm_error": "Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuche es erneut.",
-  "components_newsPage_addPost_form_addUpdateForm_updateLabel": "Update",
-  "components_newsPage_addPost_form_addUpdateForm_placeholder": "Gib hier das Update ein...",
+  "components_newsPage_addPost_form_addUpdateForm_success": "News Beitrag wurde erstellt",
+  "components_newsPage_addPost_form_addUpdateForm_error": "Es ist ein Fehler beim Erstellen der News aufgetreten. Bitte versuche es erneut.",
+  "components_newsPage_addPost_form_addUpdateForm_updateLabel": "News",
+  "components_newsPage_addPost_form_addUpdateForm_placeholder": "Hier kannst du deine News hinzufügen …",
 
-  "components_newsPage_addUpdate_addUpdateDialog_addUpdate": "Beitrag hinzufügen",
+  "components_newsPage_addUpdate_addUpdateDialog_addUpdate": "News hinzufügen",
 
-  "components_newsPage_addUpdate_form_addUpdateForm_postCreated": "Neuigkeit wurde erstellt",
-  "components_newsPage_addUpdate_form_addUpdateForm_error": "Es ist ein Fehler beim Erstellen der Neuigkeit aufgetreten. Bitte versuche es erneut.",
-  "components_newsPage_addUpdate_form_addUpdateForm_updateLabel": "Update",
-  "components_newsPage_addUpdate_form_addUpdateForm_placeholder": "Gib hier das Update ein...",
+  "components_newsPage_addUpdate_form_addUpdateForm_postCreated": "News Beitrag wurde erstellt",
+  "components_newsPage_addUpdate_form_addUpdateForm_error": "Es ist ein Fehler beim Erstellen der News aufgetreten. Bitte versuche es erneut.",
+  "components_newsPage_addUpdate_form_addUpdateForm_updateLabel": "News",
+  "components_newsPage_addUpdate_form_addUpdateForm_placeholder": "Hier kannst du deine News hinzufügen …",
   "components_newsPage_addUpdate_form_addUpdateForm_anonymousPost": "Anonym posten",
 
   "components_newsPage_cards_collabCommentCard_postError": "Der Kommentar konnte nicht gepostet werden. Bitte versuche es noch einmal.",
@@ -285,7 +283,7 @@
 
   "components_newsPage_cards_eventCard_imageAlt": "Event Bild",
 
-  "components_newsPage_cards_projectCard_imageAlt": "projekt",
+  "components_newsPage_cards_projectCard_imageAlt": "Projekt",
 
   "components_newsPage_cards_common_newsCardAction_error": "Beitrag konnte nicht gefolgt/entfolgt werden. Bitte versuche es noch einmal.",
 
@@ -363,10 +361,10 @@
   "components_projectdetails_teamMembersColumn_allMembers": "Alle Teammitglieder",
   "components_projectdetails_teamMembersColumn_chatWebex": "Chat über Webex",
 
-  "components_projectdetails_updateCard_newUpdates": "Neueste Updates",
+  "components_projectdetails_updateCard_newUpdates": "News",
   "components_projectdetails_updateCard_showMore": "Mehr erfahren",
   "components_projectdetails_updateCard_showAll": "... alles anzeigen",
-  "components_projectdetails_updateCard_allUpdates": "Alle Updates",
+  "components_projectdetails_updateCard_allUpdates": "Alle News",
 
   "components_projectdetails_comments_commentsSection_opinion": "Deine Meinung ist gefragt",
   "components_projectdetails_comments_commentsSection_comments": "Kommentare",

@@ -47,7 +47,7 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
       text={comment.comment}
       header={<CommentCardHeader content={comment} avatar={{ size: 24 }} />}
       footer={
-        <Stack direction={'row'} sx={{ mt: 0 }} style={{ marginTop: '8px', marginLeft: '-8px' }}>
+        <Stack direction={'row'} sx={{ mt: 0 }} style={{ marginTop: '8px', marginLeft: '-8px', gap: 16 }}>
           {displayResponseControls && <ResponseControls onResponse={startResponse} />}
           {displayEditingControls && <EditControls onEdit={startEdit} onDelete={deleteComment} />}
         </Stack>

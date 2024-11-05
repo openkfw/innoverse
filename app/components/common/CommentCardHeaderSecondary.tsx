@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import { User } from '@/common/types';
 import { UserAvatar, UserAvatarProps } from '@/components/common/UserAvatar';
 import * as m from '@/src/paraglide/messages.js';
-import { formatDate } from '@/utils/helpers';
+import { formatDateWithTimestamp } from '@/utils/helpers';
 
 import AvatarInitialsIcon from './AvatarInitialsIcon';
 
@@ -33,7 +33,7 @@ export const CommentCardHeaderSecondary = ({ content, sx }: CommentCardHeaderSec
               {m.components_newsPage_cards_newsCard_anonymous()}
             </Typography>
             <Typography variant="caption" color="secondary.contrastText" data-testid="date" suppressHydrationWarning>
-              {formatDate(updatedAt)}
+              {formatDateWithTimestamp(updatedAt)}
             </Typography>
           </Stack>
         }
@@ -53,7 +53,7 @@ export const CommentCardHeaderSecondary = ({ content, sx }: CommentCardHeaderSec
             {author.role}
           </Typography>
           <Typography variant="caption" color="secondary.contrastText" data-testid="date" suppressHydrationWarning>
-            {formatDate(updatedAt)}
+            {formatDateWithTimestamp(updatedAt)}
           </Typography>
         </Stack>
       }

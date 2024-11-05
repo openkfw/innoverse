@@ -1,17 +1,7 @@
 {
-  "1098583": {
-    "active": true,
-    "notes": "Ignored since @inlang/paraglide-js did not update to the newest posthog-node",
-    "expiry": "2024-10-31"
-  },
-  "1099350": {
-    "active": true,
-    "notes": "Ignored since multiple libraries use an old version of webpack",
-    "expiry": "2024-10-31"
-  },
   "1099846": {
     "active": true,
-    "notes": "Ignored since nextauth use an old version of cookie",
-    "expiry": "2024-10-31"
+    "notes": "Ignored since nookies use an old version of cookie",
+    "expiry": "2025-01-31"
   }
 }

@@ -7,19 +7,22 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { Event } from '@/common/types';
+import { Event, NewsFeedEntry } from '@/common/types';
 import EventCardHeader from '@/components/landing/eventsSection/EventCardHeader';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 import { HighlightText } from '@/utils/highlightText';
 
-interface NewsSurveyCardProps {
-  event: Event;
+import { NewsCardActions } from './common/NewsCardActions';
+
+interface NewsEventCardProps {
+  entry: NewsFeedEntry;
 }
 
-function NewsEventCard(props: NewsSurveyCardProps) {
-  const { event } = props;
+function NewsEventCard(props: NewsEventCardProps) {
+  const { entry } = props;
+  const event = entry.item as Event;
 
   const defaultImage = '/public/images/energy_01.png';
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -52,12 +55,14 @@ function NewsEventCard(props: NewsSurveyCardProps) {
           </Typography>
         </CardContent>
       </Box>
+      <NewsCardActions entry={entry} hideControls />
     </>
   );
 }
 
 export default NewsEventCard;
 
+// News Survey Card Styles
 const cardMediaStyles = {
   [theme.breakpoints.down('sm')]: {
     height: '100%',
@@ -65,7 +70,6 @@ const cardMediaStyles = {
   },
 };
 
-// News Survey Card Styles
 const cardHeaderStyles = {
   textAlign: 'left',
   padding: 0,

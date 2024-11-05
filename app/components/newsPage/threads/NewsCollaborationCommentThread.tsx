@@ -1,4 +1,4 @@
-import { CollaborationComment, Comment } from '@/common/types';
+import { CollaborationComment, Comment, NewsFeedEntry } from '@/common/types';
 import { addProjectCollaborationCommentResponse } from '@/components/collaboration/comments/actions';
 import NewsCollabCommentCard from '@/components/newsPage/cards/NewsCollabCommentCard';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
@@ -6,20 +6,19 @@ import { NewsCollaborationCommentResponseThread } from '@/components/newsPage/th
 import { getProjectCollaborationCommentResponses } from '@/utils/requests/collaborationComments/requests';
 
 interface CollaborationCommentThreadProps {
-  comment: CollaborationComment;
-  projectName?: string;
-  onDelete: () => void;
+  entry: NewsFeedEntry;
 }
 
 export const NewsCollaborationCommentThread = (props: CollaborationCommentThreadProps) => {
-  const { comment, onDelete } = props;
+  const { entry } = props;
+  const comment = entry.item as CollaborationComment;
 
-  const { fetchResponses, addResponse } = useCollaborationCommentThread(props);
+  const { fetchResponses, addResponse } = useCollaborationCommentThread({ comment });
 
   return (
     <CommentThread
       comment={{ id: comment.id, responseCount: comment.responseCount, author: comment.author }}
-      card={<NewsCollabCommentCard item={comment} onDelete={onDelete} />}
+      card={<NewsCollabCommentCard entry={entry} />}
       fetchResponses={fetchResponses}
       addResponse={addResponse}
       renderResponse={(response, idx, deleteResponse) => (

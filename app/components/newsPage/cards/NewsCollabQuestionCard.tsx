@@ -1,14 +1,18 @@
 import Typography from '@mui/material/Typography';
 
-import { CollaborationQuestion } from '@/common/types';
+import { CollaborationQuestion, NewsFeedEntry } from '@/common/types';
 import { parseStringForLinks } from '@/components/common/LinkString';
 import { HighlightText } from '@/utils/highlightText';
+
+import { NewsCardActions } from './common/NewsCardActions';
+
 interface NewsCollabQuestionCardProps {
-  question: CollaborationQuestion;
+  entry: NewsFeedEntry;
 }
 
 function NewsCollabQuestionCard(props: NewsCollabQuestionCardProps) {
-  const { question } = props;
+  const { entry } = props;
+  const question = entry.item as CollaborationQuestion;
   const { title, description } = question;
 
   return (
@@ -20,6 +24,8 @@ function NewsCollabQuestionCard(props: NewsCollabQuestionCardProps) {
       <Typography variant="body1" color="secondary.contrastText" sx={descriptionStyles} data-testid="text">
         {parseStringForLinks(description)}
       </Typography>
+
+      <NewsCardActions entry={entry} hideControls />
     </>
   );
 }
