@@ -22,7 +22,12 @@ import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { getAllInnoUsers, getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import {
+  getAllInnoUsers,
+  getEmailsByUsernames,
+  getInnoUserByProviderId,
+  getInnoUserByUsername,
+} from '@/utils/requests/innoUsers/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
@@ -359,12 +364,32 @@ export const handleProjectCollaborationCommentResponseUpvotedBy = withAuth(
 export async function fetchMentionData(search: string): Promise<Mention[]> {
   try {
     const data = await getAllInnoUsers();
+    console.log(data);
 
-    const formattedData = data.map((user) => ({ username: user.username }));
-
-    return formattedData.filter((user) => user.username.toLowerCase().includes(search.toLowerCase()));
+    const formattedData = data.map((user) => ({ username: user.username as string }));
+    return formattedData.filter((user) => user.username?.toLowerCase().includes(search.toLowerCase()));
   } catch (error) {
     console.error('Failed to load users:', error);
     return [];
+  }
+}
+
+export async function fetchEmailsByUsernames(usernames: string[]): Promise<string[]> {
+  try {
+    const emails = await getEmailsByUsernames(usernames);
+    return emails;
+  } catch (error) {
+    console.error('Failed to fetch emails by usernames:', error);
+    throw error;
+  }
+}
+
+export async function fetchUserByUsername(username: string): Promise<User | null> {
+  try {
+    const userData = await getInnoUserByUsername(username);
+    return userData;
+  } catch (error) {
+    console.error('Failed to fetch user by username:', error);
+    return null;
   }
 }

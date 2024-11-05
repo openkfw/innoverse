@@ -37,6 +37,7 @@
     "@prisma/client": "^5.1.0",
     "@rajesh896/broprint.js": "^2.1.1",
     "@redis/json": "^1.0.6",
+    "@sendgrid/mail": "^8.1.4",
     "@vercel/otel": "1.8.0",
     "better-npm-audit": "^3.8.3",
     "dayjs": "^1.11.10",

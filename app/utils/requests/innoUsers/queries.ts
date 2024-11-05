@@ -7,6 +7,7 @@ export const InnoUserFragment = graphql(`
       providerId
       provider
       name
+      username
       role
       department
       email
@@ -48,16 +49,40 @@ export const GetInnoUserByProviderIdQuery = graphql(
   [InnoUserFragment],
 );
 
-// todo: attributes.name->attributes.username
 export const GetAllInnoUsers = graphql(`
   query GetInnoUsers($limit: Int) {
     innoUsers(pagination: { limit: $limit }) {
       data {
         id
         attributes {
-          name
+          username
         }
       }
     }
   }
 `);
+
+export const GetEmailsByUsernamesQuery = graphql(`
+  query GetEmailsByUsernames($usernames: [String!]) {
+    innoUsers(filters: { username: { in: $usernames } }) {
+      data {
+        attributes {
+          email
+        }
+      }
+    }
+  }
+`);
+
+export const GetInnoUserByUsernameQuery = graphql(
+  `
+    query GetInnoUserByUsername($username: String!) {
+      innoUsers(filters: { username: { eq: $username } }) {
+        data {
+          ...InnoUser
+        }
+      }
+    }
+  `,
+  [InnoUserFragment],
+);

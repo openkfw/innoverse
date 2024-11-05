@@ -73,6 +73,11 @@
       "relation": "manyToMany",
       "target": "api::opportunity.opportunity",
       "mappedBy": "participants"
+    },
+    "username": {
+      "type": "string",
+      "required": false,
+      "unique": true
     }
   }
 }

@@ -18,6 +18,7 @@ import WriteTextCard from '@/components/common/editing/writeText/WriteTextCard';
 import * as m from '@/src/paraglide/messages.js';
 import { mentionRegex } from '@/utils/mentions/formatMentionToText';
 
+import { ClickTooltip } from '../ClickTooltip';
 import { TextCard } from '../TextCard';
 
 interface CommentCardProps {
@@ -67,9 +68,11 @@ export const CommentCard = (props: CommentCardProps) => {
 
     if (uniqueUsernames.length > 0) {
       return uniqueUsernames.map((user) => (
-        <Typography variant="subtitle2" key={user} sx={styles.mentionedItem}>
-          @{user}
-        </Typography>
+        <ClickTooltip key={user} username={user}>
+          <Typography variant="subtitle2" sx={styles.mentionedItem}>
+            @{user}
+          </Typography>
+        </ClickTooltip>
       ));
     } else {
       return null;

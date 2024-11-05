@@ -15,8 +15,7 @@ import theme from '@/styles/theme';
 import { mergeStyles } from '@/utils/helpers';
 import { mentionRegex } from '@/utils/mentions/formatMentionToText';
 
-import { StyledTooltip } from './StyledTooltip';
-import { UserTooltip } from './UserTooltip';
+import { ClickTooltip } from './ClickTooltip';
 
 interface TextCardProps {
   text: string;
@@ -53,12 +52,13 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
         const nonMentionText = text.substring(lastIndex, matchStart);
         parts.push(parseStringForLinks(nonMentionText));
       }
+
       parts.push(
-        <StyledTooltip key={`mention-${username}-${matchStart}`} title={<UserTooltip user={{ name: username }} />}>
+        <ClickTooltip key={`mention-${username}-${matchStart}`} username={username}>
           <Typography variant="body1" component="span" style={mentionStyle}>
             {username}
           </Typography>
-        </StyledTooltip>,
+        </ClickTooltip>,
       );
 
       lastIndex = matchEnd;

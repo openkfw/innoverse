@@ -1,20 +1,25 @@
 'use client';
 
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import CloseIcon from '@mui/icons-material/Close';
+import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 
 import { useUser } from '@/app/contexts/user-context';
+import { fetchEmailsByUsernames } from '@/components/collaboration/comments/actions';
 import CustomButton from '@/components/common/CustomButton';
 import { errorMessage } from '@/components/common/CustomToast';
 import { UserAvatarProps } from '@/components/common/UserAvatar';
 import * as m from '@/src/paraglide/messages.js';
+import { mentionRegex } from '@/utils/mentions/formatMentionToText';
 
 import AvatarIcon from '../../AvatarIcon';
 import MultilineMentionInput from '../../form/MultilineMentionInput';
@@ -56,8 +61,9 @@ const WriteTextCard = ({
   sx,
 }: WriteTextCardProps) => {
   const { user } = useUser();
-
+  const [loading, setLoading] = useState(false);
   const appInsights = useAppInsightsContext();
+  const placeholder = m.components_common_editing_writetext_writeTextCard_placeholder();
 
   const form = useForm<TextFormData>({
     defaultValues: {
@@ -71,8 +77,15 @@ const WriteTextCard = ({
   const submit: SubmitHandler<TextFormValidationSchema> = async (data) => {
     try {
       if (disabled) return;
+      setLoading(true);
 
-      // todo - Send email to all unique users in the comment
+      const emails = await fetchEmailsByUsernames(
+        Array.from(new Set(data?.text.matchAll(mentionRegex)), (match) => match[1]),
+      );
+
+      if (emails.length > 0) {
+        // todo - enable email sending
+      }
 
       await onSubmit(data.text);
       form.reset();
@@ -83,14 +96,14 @@ const WriteTextCard = ({
         exception: new Error('Failed to submit text.', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const discard = () => {
     onDiscard && onDiscard({ isDirty: formState.isDirty });
   };
-
-  const placeholder = m.components_common_editing_writetext_writeTextCard_placeholder();
 
   return (
     <>
@@ -126,15 +139,22 @@ const WriteTextCard = ({
               {m.components_common_editing_writetext_writeTextCard_throw()}
             </CustomButton>
           )}
-          <div onClick={form.handleSubmit(submit)}>
-            {submitButton ?? (
-              <InteractionButton
-                projectName={metadata?.projectName}
-                interactionType={InteractionType.COMMENT_SEND}
-                disabled={!formState.isDirty || !formState.isValid || disabled}
-              />
-            )}
-          </div>
+
+          {loading ? (
+            <IconButton disabled>
+              <CircularProgress size={32} color="primary" aria-label="loading" />
+            </IconButton>
+          ) : (
+            <div onClick={form.handleSubmit(submit)}>
+              {submitButton ?? (
+                <InteractionButton
+                  projectName={metadata?.projectName}
+                  interactionType={InteractionType.COMMENT_SEND}
+                  disabled={!formState.isDirty || !formState.isValid || disabled}
+                />
+              )}
+            </div>
+          )}
         </Stack>
       </>
     );
