@@ -2,23 +2,14 @@ import React from 'react';
 
 import Card from '@mui/material/Card';
 
-import { NewsFeedEntry } from '@/common/types';
 import theme from '@/styles/theme';
 
-import { NewsCardActions } from './NewsCardActions';
-
 interface NewsCardWrapperProps {
-  entry: NewsFeedEntry;
   children?: React.ReactNode;
 }
 
-const NewsCardWrapper: React.FC<NewsCardWrapperProps> = ({ children, entry }) => {
-  return (
-    <Card sx={cardStyles}>
-      {children}
-      <NewsCardActions entry={entry} />
-    </Card>
-  );
+const NewsCardWrapper: React.FC<NewsCardWrapperProps> = ({ children }) => {
+  return <Card sx={cardStyles}>{children}</Card>;
 };
 
 export default NewsCardWrapper;

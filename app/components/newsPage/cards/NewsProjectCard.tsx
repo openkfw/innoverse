@@ -7,7 +7,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { Project } from '@/common/types';
+import { NewsFeedEntry, Project } from '@/common/types';
 import ProgressBar from '@/components/common/ProgressBar';
 import { defaultImage } from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
 import VisibleContributors from '@/components/project-details/VisibleContributors';
@@ -17,13 +17,15 @@ import { getImageByBreakpoint } from '@/utils/helpers';
 import { HighlightText } from '@/utils/highlightText';
 
 import CommentOverview from './common/CommentOverview';
+import { NewsCardActions } from './common/NewsCardActions';
 
 interface NewsProjectCardProps {
-  project: Project;
+  entry: NewsFeedEntry;
 }
 
 function NewsProjectCard(props: NewsProjectCardProps) {
-  const { project } = props;
+  const { entry } = props;
+  const project = entry.item as Project;
 
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
   const image = getImageByBreakpoint(!isWideScreen, project.image) || defaultImage;
@@ -32,6 +34,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
     return (
       <>
         <CommentOverview title={project.title} description={project.summary} image={image} />
+        <NewsCardActions entry={entry} />
       </>
     );
   }
@@ -75,18 +78,12 @@ function NewsProjectCard(props: NewsProjectCardProps) {
       <Box sx={progressBarStyles}>
         <ProgressBar active={project.status} />
       </Box>
+      <NewsCardActions entry={entry} hideControls />
     </>
   );
 }
 
 export default NewsProjectCard;
-
-const cardMediaStyles = {
-  [theme.breakpoints.down('sm')]: {
-    height: '100%',
-    width: '100%',
-  },
-};
 
 // News Project Card Styles
 const bodyStyles = {
@@ -156,5 +153,12 @@ const progressBarMobileStyles = {
   [theme.breakpoints.down('sm')]: {
     visibility: 'hidden',
     marginTop: -5,
+  },
+};
+
+const cardMediaStyles = {
+  [theme.breakpoints.down('sm')]: {
+    height: '100%',
+    width: '100%',
   },
 };

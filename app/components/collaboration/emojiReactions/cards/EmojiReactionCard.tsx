@@ -132,7 +132,7 @@ const activeReactionCardButtonStyles = {
   minWidth: '.1em',
   width: '3rem',
   border: '2px solid',
-  borderColor: 'action.hover',
+  borderColor: '#D8DFE3',
   borderRadius: '2px',
   p: '1em',
   bgcolor: 'rgba(0, 0, 0, 0)',

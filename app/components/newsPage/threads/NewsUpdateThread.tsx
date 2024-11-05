@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 
-import { ObjectType, ProjectUpdate } from '@/common/types';
+import { NewsFeedEntry, ObjectType, ProjectUpdate } from '@/common/types';
 import { NewsUpdateCard } from '@/components/newsPage/cards/NewsUpdateCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
@@ -10,12 +10,13 @@ import { NewsCommentThread } from '@/components/newsPage/threads/NewsCommentThre
 import { getNewsCommentProjectUpdateId } from '@/utils/requests/comments/requests';
 
 interface NewsUpdateThreadProps {
-  update: ProjectUpdate;
-  onDelete: () => void;
+  entry: NewsFeedEntry;
 }
 
 export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
-  const [update, setUpdate] = useState(props.update);
+  const { entry } = props;
+  const currentUpdate = entry.item as ProjectUpdate;
+  const [update, setUpdate] = useState(currentUpdate);
 
   const handleUpdate = (updatedText: string) => {
     setUpdate({ ...update, comment: updatedText });
@@ -33,14 +34,13 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
       objectType: ObjectType.UPDATE,
     });
     const data = comment.data ? { ...comment.data, commentCount: 0, comments: [] } : undefined;
-
-    return { ...comment, data: data };
+    return { ...comment, data };
   };
 
   return (
     <CommentThread
       comment={update}
-      card={<NewsUpdateCard update={update} onDelete={props.onDelete} onUpdate={handleUpdate} />}
+      card={<NewsUpdateCard entry={entry} onUpdate={handleUpdate} />}
       fetchComments={fetchComments}
       addComment={addComment}
       renderComment={(comment, idx, deleteComment, updateComment) => (

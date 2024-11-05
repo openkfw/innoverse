@@ -1,4 +1,4 @@
-import { ObjectType, Post } from '@/common/types';
+import { NewsFeedEntry, ObjectType, Post } from '@/common/types';
 import NewsPostCard from '@/components/newsPage/cards/NewsPostCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
@@ -6,16 +6,13 @@ import { NewsCommentThread } from '@/components/newsPage/threads/NewsCommentThre
 import { getPostCommentsByPostId } from '@/utils/requests/comments/requests';
 
 interface NewsPostThreadProps {
-  post: Post;
-  onDelete: () => void;
+  entry: NewsFeedEntry;
 }
 
-export const NewsPostThread = (props: NewsPostThreadProps) => {
-  const { post } = props;
+export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
+  const post = entry.item as Post;
 
-  const fetchComments = async () => {
-    return await getPostCommentsByPostId(post.id);
-  };
+  const fetchComments = async () => await getPostCommentsByPostId(post.id);
 
   const addComment = async (text: string) => {
     const comment = await addUserComment({
@@ -31,7 +28,7 @@ export const NewsPostThread = (props: NewsPostThreadProps) => {
   return (
     <CommentThread
       comment={post}
-      card={<NewsPostCard post={post} onDelete={props.onDelete} />}
+      card={<NewsPostCard entry={entry} />}
       fetchComments={fetchComments}
       addComment={addComment}
       renderComment={(comment, idx, deleteComment, updateComment) => (

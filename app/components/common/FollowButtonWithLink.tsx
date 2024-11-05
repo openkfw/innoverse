@@ -59,11 +59,12 @@ export default FollowButtonWithLink;
 const containerStyles = {
   display: 'flex',
   flexDirection: 'row',
-  border: '1px solid #266446',
+  border: '1px solid #D8DFE3',
   borderRadius: '2px',
   background: 'rgba(255, 255, 255, 0.10)',
   padding: 0,
   margin: 0,
+  height: '32px',
 };
 
 const linkStyles = {
@@ -75,7 +76,11 @@ const labelStyles = {
   fontSize: '14px',
   color: 'primary.main',
   padding: '0 16px',
-  borderRight: '1px solid #266446',
+  borderRight: '1px solid #D8DFE3',
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 };
 
 const buttonStyles = {
@@ -95,9 +100,9 @@ const buttonStyles = {
 
 const iconStyles = {
   color: '#266446',
-  height: '100%',
   padding: 0,
   margin: 0,
   flex: 1,
   display: 'flex',
+  height: '100%',
 };
