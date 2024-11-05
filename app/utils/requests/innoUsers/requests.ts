@@ -1,6 +1,6 @@
 'use server';
 
-import { UserSession } from '@/common/types';
+import { User, UserSession } from '@/common/types';
 import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { RequestError } from '@/entities/error';
@@ -8,18 +8,27 @@ import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { CreateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
-import { GetInnoUserByEmailQuery, GetInnoUserByProviderIdQuery } from '@/utils/requests/innoUsers/queries';
+import {
+  GetAllInnoUsers,
+  GetEmailsByUsernamesQuery,
+  GetInnoUserByEmailQuery,
+  GetInnoUserByProviderIdQuery,
+  GetInnoUserByUsernameQuery,
+} from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 const logger = getLogger();
 
 export async function createInnoUser(body: UserSession, image?: string | null) {
   try {
+    const username = await generateUniqueUsername(body.email);
+
     const uploadedImages = image ? await uploadImage(image, `avatar-${body.name}`) : null;
     const uploadedImage = uploadedImages ? uploadedImages[0] : null;
 
     const response = await strapiGraphQLFetcher(CreateInnoUserMutation, {
       ...body,
+      username,
       avatarId: uploadedImage ? uploadedImage.id : null,
     });
 
@@ -57,10 +66,54 @@ export async function getInnoUserByProviderId(providerId: string) {
   }
 }
 
+export async function getEmailsByUsernames(usernames: string[]): Promise<string[]> {
+  try {
+    const response = await strapiGraphQLFetcher(GetEmailsByUsernamesQuery, { usernames });
+
+    const emails = response.innoUsers?.data
+      ?.map((user) => user.attributes.email)
+      .filter((email): email is string => email !== null && email !== undefined);
+
+    return emails ?? [];
+  } catch (err) {
+    console.error('Error fetching emails by usernames:', err);
+    throw err;
+  }
+}
+
+export async function getInnoUserByUsername(username: string): Promise<User | null> {
+  try {
+    const response = await strapiGraphQLFetcher(GetInnoUserByUsernameQuery, { username });
+    const user = mapFirstToUser(response?.innoUsers?.data);
+    return user || null;
+  } catch (error) {
+    console.error('Error fetching user by username:', error);
+    throw error;
+  }
+}
+
+export async function getAllInnoUsers() {
+  try {
+    const response = await strapiGraphQLFetcher(GetAllInnoUsers, { limit: 1000 });
+    if (!response.innoUsers?.data) {
+      throw new Error('No users data available');
+    }
+
+    const users = response.innoUsers?.data.map((user) => ({ username: user.attributes.username }));
+
+    return users;
+  } catch (err) {
+    const error = strapiError('Getting All Inno users', err as RequestError);
+    logger.error(error);
+    throw err;
+  }
+}
+
 export async function createInnoUserIfNotExist(body: UserSession, image?: string | null) {
   try {
     if (!body.email) throw new Error('User session does not contain email');
     const user = await getInnoUserByEmail(body.email);
+    console.log('START', user);
     return user ? user : await createInnoUser(body, image);
   } catch (err) {
     const error = strapiError('Trying to create a InnoUser if it does not exist', err as RequestError, body.name);
@@ -89,4 +142,25 @@ async function uploadImage(imageUrl: string, fileName: string) {
           return result;
         });
     });
+}
+
+async function generateUniqueUsername(email: string): Promise<string> {
+  const baseUsername = email.split('@')[0];
+  let username = baseUsername;
+  let count = 1;
+
+  while (true) {
+    try {
+      const response = await strapiGraphQLFetcher(GetInnoUserByUsernameQuery, { username });
+      if (!response?.innoUsers?.data.length) break;
+
+      username = `${baseUsername}${count}`;
+      count++;
+    } catch (error) {
+      logger.error('Error checking username existence:', error);
+      throw error;
+    }
+  }
+
+  return username;
 }

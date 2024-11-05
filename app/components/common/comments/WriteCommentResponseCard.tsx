@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 
 import { SxProps } from '@mui/material/styles';
 
+import { User } from '@/common/types';
 import { useRespondingInteractions, useRespondingState } from '@/components/common/editing/editing-context';
 
 import WriteTextCard from '../editing/writeText/WriteTextCard';
 
 interface WriteCommentResponseCardProps {
-  comment: { id: string };
+  comment: { id: string; author?: User; anonymous?: boolean };
   projectName?: string;
   onRespond: (response: string) => Promise<void>;
   sx?: SxProps;
@@ -34,6 +35,9 @@ const WriteCommentResponseCard = ({ comment, projectName, onRespond, sx }: Write
         onSubmit={handleResponse}
         onDiscard={respondingInteractions.onCancel}
         disabled={disabled}
+        defaultValues={{
+          text: !comment.anonymous && comment.author ? `@[${comment.author.username}]` : '',
+        }}
       />
     )
   );

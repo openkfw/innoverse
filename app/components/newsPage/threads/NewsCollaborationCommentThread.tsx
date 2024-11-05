@@ -16,21 +16,19 @@ export const NewsCollaborationCommentThread = (props: CollaborationCommentThread
   const { fetchResponses, addResponse } = useCollaborationCommentThread({ comment });
 
   return (
-    <>
-      <CommentThread
-        comment={{ id: comment.id, responseCount: comment.responseCount }}
-        card={<NewsCollabCommentCard entry={entry} />}
-        fetchResponses={fetchResponses}
-        addResponse={addResponse}
-        renderResponse={(response, idx, deleteResponse) => (
-          <NewsCollaborationCommentResponseThread
-            key={`${idx}-${response.id}`}
-            response={response}
-            onDelete={deleteResponse}
-          />
-        )}
-      />
-    </>
+    <CommentThread
+      comment={{ id: comment.id, responseCount: comment.responseCount, author: comment.author }}
+      card={<NewsCollabCommentCard entry={entry} />}
+      fetchResponses={fetchResponses}
+      addResponse={addResponse}
+      renderResponse={(response, idx, deleteResponse) => (
+        <NewsCollaborationCommentResponseThread
+          key={`${idx}-${response.id}`}
+          response={response}
+          onDelete={deleteResponse}
+        />
+      )}
+    ></CommentThread>
   );
 };
 
