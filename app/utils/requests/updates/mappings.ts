@@ -30,7 +30,6 @@ export function mapToProjectUpdate(updateData: ResultOf<typeof ProjectUpdateFrag
     author: mapToUser(author),
     linkToCollaborationTab: updateData.attributes.linkToCollaborationTab ?? false,
     anonymous: updateData.attributes.anonymous ?? false,
-    commentCount: 0,
     objectType: ObjectType.UPDATE,
   };
 }

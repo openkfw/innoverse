@@ -193,7 +193,6 @@ export type ProjectUpdate = CommonNewsFeedProps & {
   projectName: string;
   projectStart?: string;
   linkToCollaborationTab: boolean;
-  commentCount: number;
   anonymous: boolean;
   objectType: ObjectType.UPDATE;
 };
@@ -391,7 +390,6 @@ export type Post = CommonNewsFeedProps & {
   author: User;
   content: string;
   upvotedBy: string[];
-  commentCount: number;
   anonymous: boolean;
   createdAt: Date;
   objectType: ObjectType;
@@ -427,6 +425,17 @@ export type PostComment = CommonCommentProps & {
 
 export type NewsComment = CommonCommentProps & {
   newsId: string;
+};
+
+export type HashedNewsComment = {
+  id: string;
+  commentId: string;
+  comment: string;
+  author?: string;
+  updatedAt: Date;
+  createdAt: Date;
+  itemType: ObjectType;
+  itemId: string;
 };
 
 export type CommentWithResponses = CommonCommentProps & {

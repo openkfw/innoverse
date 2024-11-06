@@ -118,10 +118,9 @@ export const mapUpdateToRedisNewsFeedEntry = (
   update: ProjectUpdate,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  commentCount: number,
   comments: string[],
 ): RedisNewsFeedEntry => {
-  const item = mapToRedisProjectUpdate(update, reactions, followedBy, commentCount, comments);
+  const item = mapToRedisProjectUpdate(update, reactions, followedBy, comments);
   item.author.image = mapImageUrlToRelativeUrl(item.author.image);
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
@@ -231,7 +230,6 @@ export const mapToRedisPost = (
     updatedAt: getUnixTimestamp(post.updatedAt),
     createdAt: getUnixTimestamp(post.createdAt),
     followedBy,
-    commentCount: post.commentCount,
     anonymous: post.anonymous,
     comments,
   };
@@ -317,7 +315,6 @@ export const mapToRedisProjectUpdate = (
   update: ProjectUpdate,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  commentCount: number,
   comments: string[],
 ): RedisProjectUpdate => {
   return {
@@ -326,7 +323,6 @@ export const mapToRedisProjectUpdate = (
     createdAt: getUnixTimestamp(update.createdAt),
     reactions,
     followedBy,
-    commentCount,
     comments,
   };
 };

@@ -160,11 +160,10 @@ const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEn
   const mapEntries = posts.map(async (post) => createNewsFeedEntryForPost(post));
   const newsFeedEntries = await getPromiseResults(mapEntries);
 
-  const newsFeedEntriesCommments = newsFeedEntries.map(async (entry) => {
-    await saveEntryPostComments(entry);
+  const mapCommments = newsFeedEntries.map(async (entry) => {
+    saveEntryPostComments(entry);
   });
-  await getPromiseResults(newsFeedEntriesCommments);
-
+  await getPromiseResults(mapCommments);
   return newsFeedEntries.filter((entry): entry is RedisNewsFeedEntry => entry !== null);
 };
 
@@ -189,10 +188,10 @@ const aggregateProjectUpdates = async ({ from }: { from: Date }): Promise<RedisN
   const createdProjectUpdates = projectUpdates.map((update) => createNewsFeedEntryForProjectUpdate(update));
   const newsFeedEntries = await getPromiseResults(createdProjectUpdates);
 
-  const newsFeedEntriesCommments = newsFeedEntries.map(async (entry) => {
-    await saveEntryNewsComments(entry);
+  const mapCommments = newsFeedEntries.map(async (entry) => {
+    saveEntryNewsComments(entry);
   });
-  await getPromiseResults(newsFeedEntriesCommments);
+  await getPromiseResults(mapCommments);
   return newsFeedEntries;
 };
 

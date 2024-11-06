@@ -7,7 +7,7 @@ import { NewsUpdateCard } from '@/components/newsPage/cards/NewsUpdateCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
 import { NewsCommentThread } from '@/components/newsPage/threads/NewsCommentThread';
-import { getNewsCommentProjectUpdateId } from '@/utils/requests/comments/requests';
+import { getNewsCommentsProjectUpdateId } from '@/utils/requests/comments/requests';
 
 interface NewsUpdateThreadProps {
   entry: NewsFeedEntry;
@@ -23,7 +23,7 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
   };
 
   const fetchComments = async () => {
-    return await getNewsCommentProjectUpdateId(update.id);
+    return await getNewsCommentsProjectUpdateId(update.id);
   };
 
   const addComment = async (text: string) => {
@@ -33,7 +33,7 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
       objectId: update.id,
       objectType: ObjectType.UPDATE,
     });
-    const data = comment.data ? { ...comment.data, commentCount: 0, comments: [] } : undefined;
+    const data = comment.data ? { ...comment.data, comments: [] } : undefined;
     return { ...comment, data };
   };
 

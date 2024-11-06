@@ -4,7 +4,6 @@ import type { Post as PrismaPost } from '@prisma/client';
 
 import { ObjectType, Post, User, UserSession } from '@/common/types';
 import { getFollowedByForEntity } from '@/repository/db/follow';
-import { countPostResponses } from '@/repository/db/post_comment';
 import {
   addPostToDb,
   deletePostFromDb,
@@ -22,8 +21,7 @@ import { NewsType, RedisNewsComment, RedisPost } from '@/utils/newsFeed/redis/mo
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
-import { getRedisPostCommentsByPostId } from '@/utils/requests/comments/requests';
-import { saveHashedComments } from '@/utils/newsFeed/redis/services/commentsService';
+import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
 
 const logger = getLogger();
 
@@ -32,7 +30,7 @@ type AddPost = { content: string; user: UserSession; anonymous?: boolean };
 type UpdatePost = { postId: string; content: string; user: UserSession };
 
 type UpdatePostInCache = {
-  post: { id: string; content?: string; upvotedBy?: string[]; commentCount?: number; comments?: RedisNewsComment[] };
+  post: { id: string; content?: string; upvotedBy?: string[]; comments?: RedisNewsComment[] };
   user: UserSession;
 };
 
@@ -42,7 +40,7 @@ type DeletePost = { postId: string };
 
 export const addPost = async ({ content, user, anonymous }: AddPost) => {
   const createdPost = await addPostToDb(dbClient, content, user.providerId, anonymous ?? false);
-  await addPostToCache({ ...createdPost, author: user, commentCount: 0, objectType: ObjectType.POST });
+  await addPostToCache({ ...createdPost, author: user, objectType: ObjectType.POST });
   return createdPost;
 };
 
@@ -87,7 +85,6 @@ export const updatePostInCache = async ({ post, user }: UpdatePostInCache) => {
     const cachedItem = newsFeedEntry.item as RedisPost;
     cachedItem.content = post.content ?? cachedItem.content;
     cachedItem.upvotedBy = post.upvotedBy ?? cachedItem.upvotedBy;
-    cachedItem.commentCount = post.commentCount ?? cachedItem.commentCount;
     newsFeedEntry.item = cachedItem;
     newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
 
@@ -141,14 +138,13 @@ export const createNewsFeedEntryForPostById = async (postId: string, author?: Us
 };
 
 export const createNewsFeedEntryForPost = async (post: PrismaPost, author?: User) => {
-  const comments = await getRedisPostCommentsByPostId(post.id);
+  const comments = await getRedisNewsCommentsWithResponses(post.id, ObjectType.POST);
   const reactions = await getReactionsForEntity(dbClient, ObjectType.POST, post.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
   const followers = await mapToRedisUsers(followerIds);
-  const commentCount = await countPostResponses(dbClient, post.id);
 
   const postAuthor = author ?? (await getInnoUserByProviderId(post.author));
-  const postWithAuthor = { ...post, author: postAuthor, commentCount, objectType: ObjectType.POST };
+  const postWithAuthor = { ...post, author: postAuthor, objectType: ObjectType.POST };
   return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers, comments);
 };
 

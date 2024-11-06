@@ -21,7 +21,7 @@ export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
       objectId: post.id,
       objectType: ObjectType.POST,
     });
-    const data = comment.data ? { ...comment.data, commentCount: 0, comments: [] } : undefined;
+    const data = comment.data ? { ...comment.data, comments: [] } : undefined;
     return { ...comment, data };
   };
 

@@ -46,7 +46,7 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
 
     if (!newResponse) return;
 
-    const threadResponse = { ...newResponse, commentCount: 0, responses: [] };
+    const threadResponse = { ...newResponse, responses: [] };
     const responses = [threadResponse, ...comment.comments];
     const updatedComment = { ...comment, responses };
     props.onUpdate(updatedComment);

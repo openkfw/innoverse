@@ -1,4 +1,4 @@
-import { PROJECT_PROGRESS, ProjectDescription } from '@/common/types';
+import { HashedNewsComment, PROJECT_PROGRESS, ProjectDescription } from '@/common/types';
 import { InnoPlatformError } from '@/utils/errors';
 
 export enum NewsType {
@@ -16,7 +16,8 @@ export enum NewsType {
 export type RedisNewsFeedEntry = {
   updatedAt: number;
   search: string;
-  comments?: string[];
+  // TODO: fix types when the comments will be fetched from cache
+  comments?: any[];
 } & RedisNewsFeedTypeEntry;
 
 type RedisNewsFeedTypeEntry =
@@ -63,7 +64,7 @@ export type RedisItem = {
   reactions: RedisReaction[];
   followedBy: RedisUser[];
   projectId?: string;
-  comments?: RedisNewsComment[] | string[];
+  comments?: any[];
 };
 
 export type RedisPost = RedisItem & {
@@ -71,7 +72,6 @@ export type RedisPost = RedisItem & {
   author: RedisUser;
   content: string;
   upvotedBy: string[];
-  commentCount: number;
   anonymous: boolean;
 };
 
@@ -97,7 +97,6 @@ export type RedisProjectUpdate = RedisItem & {
   projectName: string;
   projectStart?: string;
   linkToCollaborationTab: boolean;
-  commentCount: number;
   anonymous: boolean;
 };
 
@@ -126,6 +125,17 @@ export type RedisNewsComment = {
   comments?: RedisNewsComment[];
   updatedAt: number;
   createdAt?: number;
+};
+
+export type RedisHashedNewsComment = {
+  id: string;
+  commentId: string;
+  comment: string;
+  author?: string;
+  updatedAt: number;
+  createdAt: number;
+  itemType: NewsType;
+  itemId: string;
 };
 
 export type RedisCollaborationQuestion = RedisItem & {

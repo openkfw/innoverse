@@ -79,7 +79,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
     } else {
       const response = await handlePost({ content, anonymous });
       if (response.status === StatusCodes.OK && response.data) {
-        const post: Post = { ...response.data, commentCount: 0, objectType: ObjectType.POST };
+        const post: Post = { ...response.data, objectType: ObjectType.POST };
         successMessage({ message: 'Post wurde erstellt' });
         onAddPost(post);
       } else {

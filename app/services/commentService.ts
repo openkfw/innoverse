@@ -12,7 +12,7 @@ import getLogger from '@/utils/logger';
 import { notifyFollowers } from '@/utils/notification/notificationSender';
 import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
 import {
-  addNewsCommentInCache,
+  addNewsCommentToCache,
   removeNewsCommentInCache,
   updateNewsCommentInCache,
 } from '@/utils/newsFeed/redis/services/commentsService';
@@ -50,14 +50,14 @@ export const addComment = async (body: AddComment): Promise<NewsComment | PostCo
       const postCommentDb = await addPostCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
       const redisPostComment = await mapToRedisComment(postCommentDb);
       const postComment = await mapToPostComment(postCommentDb);
-      await addNewsCommentInCache(getNewsTypeByString(objectType), objectId, redisPostComment);
+      await addNewsCommentToCache(getNewsTypeByString(objectType), objectId, redisPostComment);
       notifyPostFollowers(objectId);
       return postComment;
     case 'NEWS_COMMENT':
       const newsCommentDb = await addNewsCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
       const redisNewsComment = await mapToRedisComment(newsCommentDb);
       const newsComment = await mapToNewsComment(newsCommentDb);
-      await addNewsCommentInCache(getNewsTypeByString(objectType), objectId, redisNewsComment);
+      await addNewsCommentToCache(getNewsTypeByString(objectType), objectId, redisNewsComment);
       notifyUpdateFollowers(objectId);
       return newsComment;
     default:
