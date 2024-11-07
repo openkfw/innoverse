@@ -237,6 +237,7 @@
   "components_newsFeed_newsFeedContainer_filter": "Filter",
 
   "components_newsFeed_newsFeedSearchFilter_search": "Search",
+  "components_newsFeed_newsFeedSearchFilter_searchField_minLength": "Enter at least 2 characters",
 
   "components_newsFeed_newsFeedTypeFilter_comments": "Comments",
   "components_newsFeed_newsFeedTypeFilter_events": "Events",
