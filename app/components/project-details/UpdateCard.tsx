@@ -49,23 +49,19 @@ const UpdateCard = (props: UpdateCardProps) => {
     }
   }
 
-  function handleUpdatesClick(offset: number) {
+  function handleUpdatesClick() {
     const newUrl = `${window.location.pathname}?tab=2`;
     window.history.pushState({ path: newUrl }, '', newUrl);
 
     setTimeout(() => {
-      const section = document.getElementById('updates-tab');
+      const section = document.getElementById('updates-tab') || document.getElementById('moredetails');
       if (section) {
         window.scrollTo({
-          top: section.offsetTop - offset,
+          top: section.offsetTop - 125,
           behavior: 'smooth',
         });
       }
-    }, 0);
-  }
-
-  if (updates.length === 0) {
-    return <></>;
+    }, 100);
   }
 
   function readMore() {
@@ -91,6 +87,10 @@ const UpdateCard = (props: UpdateCardProps) => {
     return update?.comment.length > MAX_LENGTH
       ? parseStringForLinks(update?.comment.slice(0, MAX_LENGTH))
       : parseStringForLinks(update?.comment);
+  }
+
+  if (updates.length === 0) {
+    return <></>;
   }
 
   return (
@@ -143,7 +143,7 @@ const UpdateCard = (props: UpdateCardProps) => {
           </Typography>
 
           <Box sx={footerStyles}>
-            <Button sx={buttonStyles} startIcon={<AllUpdatesIcon />} onClick={() => handleUpdatesClick(125)}>
+            <Button sx={buttonStyles} startIcon={<AllUpdatesIcon />} onClick={handleUpdatesClick}>
               <Typography variant="button" sx={typographyStyles}>
                 {m.components_projectdetails_updateCard_allUpdates()}
               </Typography>
