@@ -39,9 +39,9 @@ export async function getDataWithFeaturedFiltering() {
       featuredProjects.map(async (project) => {
         const eventCount = await countFutureEventsForProject({ projectId: project.id });
         const updateCount = await countUpdatesForProject({ projectId: project.id });
-        const collaborationQuestionCount = await countCollaborationQuestionsForProject({ projectId: project.id });
-        const opportunityCount = await countOpportunitiesForProject({ projectId: project.id });
-        const surveyQuestionCount = await countSurveyQuestionsForProject({ projectId: project.id });
+        const collaborationQuestionCount = await countCollaborationQuestionsForProject(project.id);
+        const opportunityCount = await countOpportunitiesForProject(project.id);
+        const surveyQuestionCount = await countSurveyQuestionsForProject(project.id);
         const collaborationActivities =
           (collaborationQuestionCount?.data ?? 0) + (opportunityCount?.data ?? 0) + (surveyQuestionCount?.data ?? 0);
 
@@ -58,7 +58,6 @@ export async function getDataWithFeaturedFiltering() {
         };
       }),
     );
-
     return {
       sliderContent: sliderContent,
       projects: projects ?? [],
