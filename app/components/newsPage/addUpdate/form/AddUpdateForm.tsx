@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { StatusCodes } from 'http-status-codes';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 
@@ -21,6 +21,7 @@ import { MultilineTextInputField } from '../../../common/form/MultilineTextInput
 import { handleProjectUpdate } from './actions';
 import formFieldNames from './formFields';
 import { formValidationSchema, UpdateFormValidationSchema } from './validationSchema';
+import { FormSaveButton } from '@/components/common/form/SaveButton';
 
 export interface AddUpdateData {
   comment: string;
@@ -125,24 +126,8 @@ export default function AddUpdateForm({
         sx={{ width: '35%' }}
       />
 
-      <DialogSaveButton onSave={handleSubmit(onSubmit)} disabled={!isDirty || !isValid} />
+      <FormSaveButton onSave={handleSubmit(onSubmit)} disabled={!isDirty || !isValid} />
     </Stack>
-  );
-}
-
-export function DialogSaveButton({ onSave, disabled }: { onSave: () => void; disabled: boolean }) {
-  return (
-    <Box display="flex" justifyContent="flex-end">
-      <Button
-        onClick={onSave}
-        variant="contained"
-        size="small"
-        disabled={disabled}
-        sx={{ width: '30%', backgroundColor: 'secondary.main' }}
-      >
-        Speichern
-      </Button>
-    </Box>
   );
 }
 
