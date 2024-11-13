@@ -15,6 +15,7 @@ const logger = getLogger();
 
 export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: string | null) {
   try {
+    logger.debug('Image URL: ' + image);
     const uploadedImages = image ? await uploadImage(image, `avatar-${body.name}`) : null;
     const uploadedImage = uploadedImages ? uploadedImages[0] : null;
     const response = await strapiGraphQLFetcher(CreateInnoUserMutation, {
@@ -69,7 +70,14 @@ export async function createInnoUserIfNotExist(body: Omit<UserSession, 'image'>,
 
 async function uploadImage(imageUrl: string, fileName: string) {
   return fetch(imageUrl)
-    .then((response) => response.blob())
+    .catch((e) => {
+      logger.error('Error while fetching image:', e);
+      throw new Error('Error while fetching image');
+    })
+    .then((response) => {
+      logger.debug(response.status);
+      return response.blob();
+    })
     .then(async function (myBlob) {
       const formData = new FormData();
       formData.append('files', myBlob, fileName);
@@ -83,8 +91,20 @@ async function uploadImage(imageUrl: string, fileName: string) {
         },
         body: formData,
       })
-        .then((response) => response.json())
+        .catch((e) => {
+          logger.error('Error while uploading image:', e);
+          throw new Error('Error while uploading image');
+        })
+        .then((response) => {
+          logger.debug(response.status);
+          const headers = response.headers;
+          headers.forEach((header, key) => logger.debug(`${key}: ${header}`));
+          // logger.debug(response);
+
+          return response.json();
+        })
         .then((result) => {
+          logger.debug('Image uploading result: ' + JSON.stringify(result));
           return result;
         });
     });
