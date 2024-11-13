@@ -13,11 +13,10 @@ import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 const logger = getLogger();
 
-export async function createInnoUser(body: UserSession, image?: string | null) {
+export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: string | null) {
   try {
     const uploadedImages = image ? await uploadImage(image, `avatar-${body.name}`) : null;
     const uploadedImage = uploadedImages ? uploadedImages[0] : null;
-
     const response = await strapiGraphQLFetcher(CreateInnoUserMutation, {
       ...body,
       avatarId: uploadedImage ? uploadedImage.id : null,
@@ -25,12 +24,12 @@ export async function createInnoUser(body: UserSession, image?: string | null) {
 
     const userData = response.createInnoUser?.data;
     if (!userData) throw new Error('Response contained no user data');
-
     const createdUser = mapToUser(userData);
     return createdUser;
   } catch (err) {
     const error = strapiError('Create Inno User', err as RequestError, body.name);
     logger.error(error);
+    throw error;
   }
 }
 
@@ -42,6 +41,7 @@ export async function getInnoUserByEmail(email: string) {
   } catch (err) {
     const error = strapiError('Getting Inno user by email', err as RequestError, email);
     logger.error(error);
+    throw error;
   }
 }
 
@@ -53,18 +53,17 @@ export async function getInnoUserByProviderId(providerId: string) {
   } catch (err) {
     const error = strapiError('Getting Inno user by providerId', err as RequestError, providerId);
     logger.error(error);
-    throw err;
+    throw error;
   }
 }
 
-export async function createInnoUserIfNotExist(body: UserSession, image?: string | null) {
+export async function createInnoUserIfNotExist(body: Omit<UserSession, 'image'>, image?: string | null) {
   try {
     if (!body.email) throw new Error('User session does not contain email');
     const user = await getInnoUserByEmail(body.email);
     return user ? user : await createInnoUser(body, image);
   } catch (err) {
-    const error = strapiError('Trying to create a InnoUser if it does not exist', err as RequestError, body.name);
-    logger.error(error);
+    throw err;
   }
 }
 
