@@ -1,6 +1,6 @@
 'use client';
 
-import { PropsWithChildren, useEffect, useRef, useState } from 'react';
+import { PropsWithChildren, useRef, useState } from 'react';
 
 import FilterIcon from '@mui/icons-material/FilterAlt';
 import Box from '@mui/material/Box';
@@ -30,8 +30,6 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { addEntry } = useNewsFeed();
 
-  const [formHeight, setFormHeight] = useState<number>(0);
-  const [contentOpacity, setContentOpacity] = useState(0);
   const formRef = useRef<HTMLDivElement | null>(null);
 
   async function handleTogglePostForm() {
@@ -70,33 +68,6 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
     setCancelDialogOpen(false);
     setShowPostForm(false);
   }
-
-  function scrollToFormWithOffset(offset: number) {
-    if (formRef.current) {
-      const elementPosition = formRef.current.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-    }
-  }
-
-  useEffect(() => {
-    if (formRef.current) {
-      if (showPostForm) {
-        const targetHeight = formRef.current.scrollHeight;
-        setFormHeight(targetHeight);
-        setTimeout(() => setContentOpacity(1), 100);
-
-        scrollToFormWithOffset(100);
-      } else {
-        setContentOpacity(0);
-        setFormHeight(0);
-      }
-    }
-  }, [showPostForm]);
 
   return (
     <EditingContextProvider>
@@ -137,28 +108,14 @@ export default function NewsFeedContainer({ children }: PropsWithChildren) {
           </Box>
         </Grid>
         <Grid item xs={12} md={8} lg={9}>
-          <Box
-            ref={formRef}
-            sx={{
-              ...addPostFormStyles(showPostForm),
-              height: `${formHeight}px`,
-              transition: 'height 0.3s ease-in-out',
-            }}
-          >
+          <Box ref={formRef} sx={addPostFormStyles(showPostForm)}>
             {showPostForm && (
-              <Box
-                sx={{
-                  opacity: contentOpacity,
-                  transition: 'opacity 0.3s ease-in-out',
-                }}
-              >
-                <AddPostForm
-                  onAddPost={handleAddPost}
-                  onAddUpdate={handleAddUpdate}
-                  projectOptions={projectOptions}
-                  handleClose={() => setCancelDialogOpen(true)}
-                />
-              </Box>
+              <AddPostForm
+                onAddPost={handleAddPost}
+                onAddUpdate={handleAddUpdate}
+                projectOptions={projectOptions}
+                handleClose={() => setCancelDialogOpen(true)}
+              />
             )}
           </Box>
           {children}

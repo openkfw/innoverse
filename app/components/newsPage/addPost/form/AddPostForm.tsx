@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StatusCodes } from 'http-status-codes';
@@ -20,6 +21,7 @@ import { inputStyle } from '@/components/common/form/formStyle';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import * as m from '@/src/paraglide/messages.js';
 
+import { DropzoneField } from '../../../common/form/DropzoneField';
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
 import { handleProjectUpdate } from '../../addUpdate/form/actions';
 
@@ -44,7 +46,7 @@ const defaultValues = {
   anonymous: false,
 };
 
-const { PROJECT, CONTENT, ANONYMOUS } = formFieldNames;
+const { PROJECT, CONTENT, ANONYMOUS, MEDIA } = formFieldNames;
 
 interface AddUpdateFormProps {
   onAddPost: (post: Post) => void;
@@ -56,6 +58,7 @@ interface AddUpdateFormProps {
 
 export default function AddPostForm(props: AddUpdateFormProps) {
   const { onAddPost, onAddUpdate, handleClose, defaultFormValues, projectOptions } = props;
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
 
   const { handleSubmit, control, formState } = useForm<FormData>({
     defaultValues: defaultFormValues || defaultValues,
@@ -65,6 +68,11 @@ export default function AddPostForm(props: AddUpdateFormProps) {
 
   const onSubmit: SubmitHandler<UpdateFormValidationSchema> = async (data) => {
     const { content, project, anonymous } = data;
+
+    const formData = new FormData();
+    if (fileUrl) {
+      formData.append('media', fileUrl);
+    }
 
     if (project && project.id) {
       const response = await handleProjectUpdate({ comment: content, projectId: project.id, anonymous });
@@ -109,6 +117,14 @@ export default function AddPostForm(props: AddUpdateFormProps) {
           inputPropsSx={inputPropsStyles}
         />
       </form>
+
+      <DropzoneField
+        name={MEDIA}
+        control={control}
+        onFileAdded={(fileUrl) => {
+          setFileUrl(fileUrl);
+        }}
+      />
 
       <Stack spacing={2} direction={{ sm: 'column', md: 'row' }}>
         {!defaultFormValues?.project && (
