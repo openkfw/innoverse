@@ -52,11 +52,19 @@ export default function UserMenu(props: UserMenuProps) {
           </Typography>
         </Link>
       </MenuItem>
-      <MenuItem disabled>
+      <Link href="/userProfile" style={{ textDecoration: 'none', color: 'common.white' }}>
+        <MenuItem sx={listItemStyles}>
+          <Typography variant="body2" color="text.primary">
+            {m.components_layout_userMenu_profile()}
+          </Typography>
+        </MenuItem>
+      </Link>
+
+      {/* <MenuItem component={Link} to="/profile">
         <Typography variant="body2" color="text.primary">
           {m.components_layout_userMenu_profile()}
         </Typography>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem disabled>
         <Typography variant="body2" color="text.primary">
           {m.components_layout_userMenu_notification()}
@@ -80,3 +88,13 @@ export default function UserMenu(props: UserMenuProps) {
     </Menu>
   );
 }
+
+const listItemStyles = {
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  gap: 1,
+  padding: '12px 16px',
+  marginBottom: 1,
+  color: 'common.white',
+};
