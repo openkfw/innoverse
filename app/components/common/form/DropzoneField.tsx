@@ -2,8 +2,10 @@ import React, { useCallback, useState } from 'react';
 import Dropzone from 'react-dropzone';
 import { Controller } from 'react-hook-form';
 
+import CancelIcon from '@mui/icons-material/Cancel';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Box from '@mui/material/Box';
+import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { FormInputProps } from '@/common/formTypes';
@@ -14,6 +16,7 @@ interface DropzoneFieldProps extends FormInputProps {
 
 export const DropzoneField = ({ name, control, onFileAdded }: DropzoneFieldProps) => {
   const [previewFile, setPreviewFile] = useState<string | null>(null);
+  const [isVideo, setIsVideo] = useState<boolean>(false);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -21,14 +24,18 @@ export const DropzoneField = ({ name, control, onFileAdded }: DropzoneFieldProps
         const file = acceptedFiles[0];
         const previewUrl = URL.createObjectURL(file);
         setPreviewFile(previewUrl);
+        setIsVideo(file.type.startsWith('video/'));
         onFileAdded(previewUrl);
-        return previewUrl;
       }
       onFileAdded(null);
-      return null;
     },
     [onFileAdded],
   );
+
+  const onCancel = () => {
+    setPreviewFile(null);
+    onFileAdded(null);
+  };
 
   return (
     <>
@@ -53,7 +60,7 @@ export const DropzoneField = ({ name, control, onFileAdded }: DropzoneFieldProps
                 <Box sx={boxStyles}>
                   <CloudUploadIcon />
                   <Typography variant="body1" color="rgba(0, 0, 0, 0.56)">
-                    Fotos oder Videos hochladen
+                    Foto oder Video hochladen
                   </Typography>
                 </Box>
               </Box>
@@ -61,12 +68,11 @@ export const DropzoneField = ({ name, control, onFileAdded }: DropzoneFieldProps
           </Dropzone>
         )}
       />
-
       {previewFile && (
         <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
           <Box sx={previewStyles}>
-            {previewFile.includes('video') ? (
-              <video controls style={{ maxWidth: '100%', maxHeight: '100%' }}>
+            {isVideo ? (
+              <video autoPlay loop style={{ maxWidth: '100%', maxHeight: '100%' }}>
                 <source src={previewFile} type="video/mp4" />
               </video>
             ) : (
@@ -74,6 +80,7 @@ export const DropzoneField = ({ name, control, onFileAdded }: DropzoneFieldProps
               <img src={previewFile} alt="preview" style={{ maxWidth: '100%', maxHeight: '100%' }} />
             )}
           </Box>
+          <CancelIcon sx={closeIconStyle} onClick={onCancel} aria-label="close dialog" />
         </Box>
       )}
     </>
@@ -113,4 +120,12 @@ const previewStyles = {
   justifyContent: 'center',
   overflow: 'hidden',
   backgroundColor: 'rgba(0, 0, 0, 0.1)',
+};
+
+const closeIconStyle: SxProps = {
+  cursor: 'pointer',
+  color: 'rgba(0, 0, 0, 0.56)',
+  marginLeft: '-26.5px',
+  marginTop: '-13.5px',
+  width: '20px',
 };
