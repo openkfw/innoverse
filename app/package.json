@@ -64,6 +64,7 @@
     "sharp": "^0.33.3",
     "slick-carousel": "^1.8.1",
     "swr": "^2.2.4",
+    "undici": "^6.21.0",
     "usehooks-ts": "^3.1.0",
     "web-push": "^3.6.6",
     "winston": "^3.11.0",

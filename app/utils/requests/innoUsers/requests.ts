@@ -10,6 +10,7 @@ import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/reques
 import { CreateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
 import { GetInnoUserByEmailQuery, GetInnoUserByProviderIdQuery } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
+import { request, FormData } from 'undici';
 
 const logger = getLogger();
 
@@ -18,6 +19,8 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
     logger.debug('Image URL: ' + image);
     const uploadedImages = image ? await uploadImage(image, `avatar-${body.name}`) : null;
     const uploadedImage = uploadedImages ? uploadedImages[0] : null;
+    logger.debug('uploadedImage' + JSON.stringify(uploadedImage));
+    logger.debug(' imgs: ' + JSON.stringify(uploadedImages));
     const response = await strapiGraphQLFetcher(CreateInnoUserMutation, {
       ...body,
       avatarId: uploadedImage ? uploadedImage.id : null,
@@ -83,8 +86,7 @@ async function uploadImage(imageUrl: string, fileName: string) {
       formData.append('files', myBlob, fileName);
       formData.append('ref', 'api::event.event');
       formData.append('field', 'image');
-
-      return fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
+      return request(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
@@ -96,16 +98,11 @@ async function uploadImage(imageUrl: string, fileName: string) {
           throw new Error('Error while uploading image');
         })
         .then((response) => {
-          logger.debug(response.status);
-          const headers = response.headers;
-          headers.forEach((header, key) => logger.debug(`${key}: ${header}`));
-          // logger.debug(response);
-
-          return response.json();
+          return response.body.json();
         })
         .then((result) => {
           logger.debug('Image uploading result: ' + JSON.stringify(result));
-          return result;
+          return result as any;
         });
     });
 }
