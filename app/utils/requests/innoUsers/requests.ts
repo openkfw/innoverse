@@ -21,6 +21,7 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
     const uploadedImage = uploadedImages ? uploadedImages[0] : null;
     logger.debug('uploadedImage' + JSON.stringify(uploadedImage));
     logger.debug(' imgs: ' + JSON.stringify(uploadedImages));
+
     const response = await strapiGraphQLFetcher(CreateInnoUserMutation, {
       ...body,
       avatarId: uploadedImage ? uploadedImage.id : null,
