@@ -20,57 +20,13 @@ import { UpdatesTab } from '../updates/UpdatesTab';
 
 import { EventsTab } from './events/EventsTab';
 import { ProjectProgress } from './ProjectProgress';
+
 interface TabPanelProps {
   children?: ReactNode;
   id: string;
   index: number;
   value: number;
 }
-
-function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, id, index, ...other } = props;
-
-  return (
-    <EditingContextProvider>
-      <div role="tabpanel" hidden={value !== index} id={id} aria-labelledby={`tab-${id}`} {...other}>
-        <Box sx={{ paddingTop: 3 }}>{children}</Box>
-      </div>
-    </EditingContextProvider>
-  );
-}
-
-const CustomTabs = styled(Tabs)({
-  borderBottom: '1px solid rgba(232, 232, 232, 0.5)',
-  marginLeft: '64px',
-  marginRight: '20px',
-  '& .MuiTabs-indicator': {
-    backgroundColor: '#FFF',
-  },
-  '& .MuiTabs-scrollButtons': {
-    color: 'white',
-  },
-  [theme.breakpoints.down('md')]: {
-    marginLeft: '20px',
-    marginRight: '20px',
-  },
-});
-
-const CustomTab = styled((props: TabProps) => <Tab disableRipple data-testid="tab" {...props} />)(({ theme }) => ({
-  minWidth: 0,
-  fontWeight: theme.typography.fontWeightRegular,
-  color: 'rgba(242, 242, 242, 0.85)',
-  '&:hover': {
-    color: '#FFF',
-    opacity: 1,
-  },
-  '&.Mui-selected': {
-    color: '#FFF',
-    fontWeight: theme.typography.fontWeightMedium,
-  },
-  '&:not(:last-child)': {
-    marginRight: '46px',
-  },
-}));
 
 interface BasicTabsProps {
   project: Project;
@@ -85,7 +41,7 @@ export default function TabView(props: BasicTabsProps) {
   const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState(0);
-  const [initialRender, setInitialRender] = useState(true);
+  const [shouldScrollOnRender, setShouldScrollOnRender] = useState(true);
   const [project, setProject] = useState(props.project);
 
   const { isFollowed, setFollowed, followersAmount, setFollowersAmount } = props;
@@ -93,25 +49,17 @@ export default function TabView(props: BasicTabsProps) {
 
   const { opportunities, collaborationQuestions, updates, futureEvents, surveyQuestions } = project;
   const collaborationActivities = opportunities.length + surveyQuestions.length + collaborationQuestions.length;
-
-  const setProjectUpdates = (updates: ProjectUpdateWithAdditionalData[]) => {
-    setProject({ ...project, updates });
-  };
-
-  const handleChange = (event: SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
-
-    const params = new URLSearchParams(window.location.search);
-    params.set('tab', newValue.toString());
-    window.history.pushState(null, '', `?${params.toString()}`);
-  };
-
   useEffect(() => {
-    if (initialRender && searchParams?.get('tab')) {
-      setInitialRender(false);
+    const tabQueryParam = searchParams?.get('tab');
+    if (tabQueryParam && activeTab !== Number(tabQueryParam)) {
+      setActiveTab(Number(tabQueryParam));
+    }
+
+    if (shouldScrollOnRender && tabQueryParam) {
+      setShouldScrollOnRender(false);
 
       let sectionId;
-      switch (activeTab) {
+      switch (Number(tabQueryParam)) {
         case 0:
           sectionId = 'project-progress-tab';
           break;
@@ -125,7 +73,7 @@ export default function TabView(props: BasicTabsProps) {
           sectionId = 'events-tab';
           break;
         default:
-          sectionId = 'project-progress-tab';
+          sectionId = 'moredetails';
       }
 
       const section = document.getElementById(sectionId)?.offsetTop;
@@ -136,84 +84,87 @@ export default function TabView(props: BasicTabsProps) {
         });
       }
     }
-  }, [activeTab, initialRender, searchParams]);
+  }, [activeTab, shouldScrollOnRender, searchParams]);
 
-  useEffect(() => {
-    const tabQueryParam = searchParams?.get('tab');
-    if (tabQueryParam && activeTab !== Number(tabQueryParam)) {
-      setActiveTab(Number(tabQueryParam));
-    }
-  }, [searchParams, activeTab]);
+  function setProjectUpdates(updates: ProjectUpdateWithAdditionalData[]) {
+    setProject({ ...project, updates });
+  }
 
-  const containerStyles: SxProps = {
-    width: '85%',
-    maxWidth: '1280px',
-    padding: 0,
-    [theme.breakpoints.down('md')]: {
-      width: '90%',
-    },
-  };
+  function handleTabChange(_: SyntheticEvent, newValue: number) {
+    setActiveTab(newValue);
+    const params = new URLSearchParams(window.location.search);
+    params.set('tab', newValue.toString());
+    window.history.pushState(null, '', `?${params.toString()}`);
+  }
+
+  function handleTabClick() {
+    setShouldScrollOnRender(true);
+  }
 
   return (
     <Box sx={containerStyles} id="moredetails">
       <CustomTabs
         value={activeTab}
-        onChange={handleChange}
+        onChange={handleTabChange}
         aria-label="tab switcher"
         variant="scrollable"
         scrollButtons="auto"
         allowScrollButtonsMobile
       >
         <CustomTab
+          id="tab-project-progress"
+          aria-controls="project-progress-tab"
+          onClick={handleTabClick}
           label={
-            <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
+            <Typography variant="subtitle1" sx={typographyStyles}>
               {m.components_projectdetails_tabView_innoInfos()}
             </Typography>
           }
-          id="tab-project-progress"
-          aria-controls="project-progress-tab"
         />
         <CustomTab
+          id="tab-collaboration"
+          aria-controls="collaboration-tab"
+          onClick={handleTabClick}
           label={
             <Stack direction="row" spacing={1}>
-              <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
+              <Typography variant="subtitle1" color="secondary.main" sx={typographyStyles}>
                 {collaborationActivities}
               </Typography>
-              <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
+              <Typography variant="subtitle1" sx={typographyStyles}>
                 {m.components_projectdetails_tabView_collaboration()}
               </Typography>
             </Stack>
           }
-          id="tab-collaboration"
-          aria-controls="collaboration-tab"
         />
         <CustomTab
+          id="tab-updates"
+          aria-controls="updates-tab"
+          onClick={handleTabClick}
           label={
             <Stack direction="row" spacing={1}>
-              <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
+              <Typography variant="subtitle1" color="secondary.main" sx={typographyStyles}>
                 {updates.length}
               </Typography>
-              <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
+              <Typography variant="subtitle1" sx={typographyStyles}>
                 {m.components_projectdetails_tabView_news()}
               </Typography>
             </Stack>
           }
-          id="tab-updates"
-          aria-controls="updates-tab"
         />
         <CustomTab
+          id="tab-events"
+          aria-controls="events-tab"
+          onClick={handleTabClick}
           label={
             <Stack direction="row" spacing={1}>
-              <Typography variant="subtitle1" color="secondary.main" sx={{ fontSize: '22px' }}>
+              <Typography variant="subtitle1" color="secondary.main" sx={typographyStyles}>
                 {futureEvents?.length}
               </Typography>
-              <Typography variant="subtitle1" sx={{ fontSize: '22px' }}>
+              <Typography variant="subtitle1" sx={typographyStyles}>
                 {m.components_projectdetails_tabView_events()}
               </Typography>
             </Stack>
           }
-          id="tab-events"
-          aria-controls="events-tab"
         />
       </CustomTabs>
       <CustomTabPanel value={activeTab} index={0} id="project-progress-tab">
@@ -229,5 +180,67 @@ export default function TabView(props: BasicTabsProps) {
         <EventsTab project={project} {...otherProps} />
       </CustomTabPanel>
     </Box>
+  );
+}
+
+// Tab View Styles
+const containerStyles: SxProps = {
+  width: '85%',
+  maxWidth: '1280px',
+  padding: 0,
+  [theme.breakpoints.down('md')]: {
+    width: '90%',
+  },
+};
+
+const customTabsStyles = {
+  borderBottom: '1px solid rgba(232, 232, 232, 0.5)',
+  marginLeft: '64px',
+  marginRight: '20px',
+  '& .MuiTabs-indicator': {
+    backgroundColor: '#FFF',
+  },
+  '& .MuiTabs-scrollButtons': {
+    color: 'white',
+  },
+  [theme.breakpoints.down('md')]: {
+    marginLeft: '20px',
+    marginRight: '20px',
+  },
+};
+
+const customTabStyles = {
+  minWidth: 0,
+  fontWeight: theme.typography.fontWeightRegular,
+  color: 'rgba(242, 242, 242, 0.85)',
+  '&:hover': {
+    color: '#FFF',
+    opacity: 1,
+  },
+  '&.Mui-selected': {
+    color: '#FFF',
+    fontWeight: theme.typography.fontWeightMedium,
+  },
+  '&:not(:last-child)': {
+    marginRight: '46px',
+  },
+};
+
+const typographyStyles = {
+  fontSize: '22px',
+};
+
+const CustomTabs = styled(Tabs)(customTabsStyles);
+const CustomTab = styled((props: TabProps) => <Tab disableRipple data-testid="tab" {...props} />)(customTabStyles);
+
+function CustomTabPanel(props: TabPanelProps) {
+  const { children, value, id, index, ...other } = props;
+
+  return (
+    <EditingContextProvider>
+      <div role="tabpanel" hidden={value !== index} id={id} aria-labelledby={`tab-${id}`} {...other}>
+        <Box sx={{ paddingTop: 3 }}>{children}</Box>
+      </div>
+    </EditingContextProvider>
   );
 }
