@@ -52,12 +52,7 @@ export default function ContentCard(props: ContentCardProps) {
         height={0}
         width={props.size?.width}
         alt={m.components_landing_projectSection_projectCard_imageAlt()}
-        style={{
-          height: '100%',
-          width: '100%',
-          objectFit: 'cover',
-          display: 'block',
-        }}
+        style={imageStyles}
       />
     ) : (
       props.image
@@ -110,6 +105,8 @@ const cardStyles = {
   display: 'flex',
   flexDirection: 'column',
   gap: 2,
+  transition: 'all 1.5s cubic-bezier(0.42, 0, 0.58, 1)',
+  transitionDelay: '0.2s',
 };
 
 const cardMediaStyles = {
@@ -119,6 +116,14 @@ const cardMediaStyles = {
   [theme.breakpoints.down('sm')]: {
     height: 175,
   },
+};
+
+const imageStyles: React.CSSProperties = {
+  height: '100%',
+  width: '100%',
+  objectFit: 'cover',
+  display: 'block',
+  transition: 'all 1.5s cubic-bezier(0.42, 0, 0.58, 1)',
 };
 
 const cardContentStyles = {
