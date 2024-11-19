@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -26,22 +27,18 @@ interface ProjectCardProps {
 export default function ProjectCard(props: ProjectCardProps) {
   const { id, img, contributors, title, summary, status } = props;
 
-  const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <Card sx={{ ...cardStyles, height: isWideScreen ? 490 : 440 }}>
+    <Card sx={cardStyles(isSmallScreen)}>
       <Box sx={cardWrapperStyles}>
-        <CardMedia sx={{ borderRadius: '8px', overflow: 'hidden', padding: '24px' }}>
+        <CardMedia sx={cardMediaStyles}>
           <Image
             src={img}
-            width={isWideScreen ? 418 : 500}
-            height={isWideScreen ? 237 : 175}
+            width={isSmallScreen ? 500 : 418}
+            height={isSmallScreen ? 175 : 237}
             alt={m.components_landing_projectSection_projectCard_imageAlt()}
-            style={{
-              width: '100%',
-              objectFit: 'cover',
-              borderRadius: 0,
-            }}
+            style={imageStyles}
           />
         </CardMedia>
 
@@ -55,21 +52,12 @@ export default function ProjectCard(props: ProjectCardProps) {
               </Link>
             </Typography>
 
-            {isWideScreen ? (
-              <Typography
-                variant="subtitle1"
-                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 50 ? 1 : 2 }}
-              >
-                {summary}
-              </Typography>
-            ) : (
-              <Typography
-                variant="subtitle1"
-                sx={{ ...descriptionStyles, WebkitLineClamp: title?.length > 20 ? 2 : 3 }}
-              >
-                {summary}
-              </Typography>
-            )}
+            <Typography
+              variant="subtitle1"
+              sx={descriptionStyles(isSmallScreen ? (title?.length > 20 ? 2 : 3) : title?.length > 50 ? 1 : 2)}
+            >
+              {summary}
+            </Typography>
 
             <Box sx={progressBarContainerStyles}>
               <ProgressBar active={status} />
@@ -82,22 +70,39 @@ export default function ProjectCard(props: ProjectCardProps) {
 }
 
 // Project Card styles
-const cardStyles = {
+const cardStyles = (isSmallScreen: boolean) => ({
   display: 'flex',
+  height: isSmallScreen ? 440 : 490,
   borderRadius: 4,
   marginRight: '24px',
   background: 'linear-gradient(0deg, rgba(240, 238, 225, 0.30) 0%, rgba(240, 238, 225, 0.30) 100%), #FFF',
+  transition: 'all 1.5s cubic-bezier(0.42, 0, 0.58, 1)',
+  transitionDelay: '0.2s',
+
   [theme.breakpoints.up('sm')]: {
     width: 466,
   },
   [theme.breakpoints.down('sm')]: {
     maxWidth: '100%',
   },
+});
+
+const cardMediaStyles = {
+  borderRadius: '8px',
+  overflow: 'hidden',
+  padding: '24px',
 };
 
 const cardWrapperStyles = {
   flex: 1,
   width: '100%',
+};
+
+const imageStyles: CSSProperties = {
+  maxWidth: '100%',
+  objectFit: 'cover',
+  borderRadius: 0,
+  transition: 'all 1.5s cubic-bezier(0.42, 0, 0.58, 1)',
 };
 
 const cardContentStyles = {
@@ -121,13 +126,14 @@ const linkStyles = {
   color: 'inherit',
 };
 
-const descriptionStyles = {
+const descriptionStyles = (lineClamp: number) => ({
   color: 'secondary.contrastText',
   marginBottom: 3,
   display: '-webkit-box',
   overflow: 'hidden',
   WebkitBoxOrient: 'vertical',
-};
+  WebkitLineClamp: lineClamp,
+});
 
 const progressBarContainerStyles = {
   bottom: 24,

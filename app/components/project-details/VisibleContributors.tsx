@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
+import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -17,7 +18,6 @@ interface HiddenContributorsTooltipProps {
 }
 
 const HiddenContributorsTooltip: React.FC<HiddenContributorsTooltipProps> = ({ hiddenContributors }) => {
-  // todo - pending design for this section
   return (
     <Box display="flex" flexDirection="row" flexWrap="wrap">
       {hiddenContributors.map((contributor, index) => (
@@ -32,10 +32,13 @@ const HiddenContributorsTooltip: React.FC<HiddenContributorsTooltipProps> = ({ h
 
 const VisibleContributors: React.FC<VisibleContributorsProps> = ({ contributors }) => {
   const [visibleContributors, setVisibleContributors] = useState<React.ReactNode>('');
+  const [loading, setLoading] = useState(false);
 
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
 
   useEffect(() => {
+    setLoading(true);
+
     const containerWidth = isWideScreen ? 418 : 200;
     let currentWidth = 0;
     let hiddenCount = 0;
@@ -91,7 +94,7 @@ const VisibleContributors: React.FC<VisibleContributorsProps> = ({ contributors 
 
   return (
     <Typography variant="caption" component="div">
-      {visibleContributors}
+      {loading ? visibleContributors : <Skeleton variant="text" width={200} height={20} />}
     </Typography>
   );
 };
