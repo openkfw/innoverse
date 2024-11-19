@@ -1,6 +1,6 @@
 'use server';
 
-import { UserSession } from '@/common/types';
+import { UploadImageResponse, UserSession } from '@/common/types';
 import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { RequestError } from '@/entities/error';
@@ -16,15 +16,12 @@ const logger = getLogger();
 
 export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: string | null) {
   try {
-    logger.debug('Image URL: ' + image);
     const uploadedImages = image ? await uploadImage(image, `avatar-${body.name}`) : null;
     const uploadedImage = uploadedImages ? uploadedImages[0] : null;
-    logger.debug('uploadedImage' + JSON.stringify(uploadedImage));
-    logger.debug(' imgs: ' + JSON.stringify(uploadedImages));
 
     const response = await strapiGraphQLFetcher(CreateInnoUserMutation, {
       ...body,
-      avatarId: uploadedImage ? uploadedImage.id : null,
+      avatarId: uploadedImage ? (uploadedImage.id as unknown as string) : null,
     });
 
     const userData = response.createInnoUser?.data;
@@ -79,7 +76,6 @@ async function uploadImage(imageUrl: string, fileName: string) {
       throw new Error('Error while fetching image');
     })
     .then((response) => {
-      logger.debug(response.status);
       return response.blob();
     })
     .then(async function (myBlob) {
@@ -102,8 +98,7 @@ async function uploadImage(imageUrl: string, fileName: string) {
           return response.body.json();
         })
         .then((result) => {
-          logger.debug('Image uploading result: ' + JSON.stringify(result));
-          return result as any;
+          return result as UploadImageResponse[];
         });
     });
 }
