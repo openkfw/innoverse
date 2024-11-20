@@ -1,23 +1,50 @@
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Skeleton from '@mui/material/Skeleton';
+import Typography from '@mui/material/Typography';
 
-interface SkeletonProps {
+import ContentCard, { ContentCardProps } from '../project/ContentCard';
+
+interface SkeletonProps extends Partial<ContentCardProps> {
   size: {
     width: number;
     height: number;
   };
 }
 
-export const CardSkeleton = ({ size }: SkeletonProps) => (
-  <Card sx={{ width: size.width, height: size.height, borderRadius: 4, padding: '16px' }}>
-    <Skeleton variant="rectangular" width="100%" height={237} sx={{ borderRadius: '8px', marginBottom: 2 }} />
-
-    <CardContent>
-      <Skeleton variant="text" width="80%" height={32} />
-      <Skeleton variant="text" width="90%" height={18} sx={{ marginBottom: 2 }} />
-
-      <Skeleton variant="rectangular" width="100%" height={10} sx={{ borderRadius: 1, marginTop: 'auto' }} />
-    </CardContent>
-  </Card>
-);
+export const CardSkeleton = (props: SkeletonProps) => {
+  return (
+    <ContentCard
+      {...props}
+      image={
+        <Skeleton
+          variant="rectangular"
+          style={{
+            width: '100%',
+            height: 200,
+          }}
+        />
+      }
+      header={
+        <Typography variant="caption" component="div">
+          <Skeleton width="60%" />
+        </Typography>
+      }
+      title={
+        <Typography variant="h4">
+          <Skeleton width="70%" />
+        </Typography>
+      }
+      description={
+        <>
+          <Skeleton width="100%" />
+          <Skeleton width="80%" />
+          {props.size.height > 500 ? <Skeleton width="90%" /> : undefined}
+        </>
+      }
+      status={
+        <Typography sx={{ width: '80%' }} variant="h4">
+          <Skeleton sx={{ bgcolor: 'grey.400' }} />
+        </Typography>
+      }
+    />
+  );
+};
