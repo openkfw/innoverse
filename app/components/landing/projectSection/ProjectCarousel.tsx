@@ -1,6 +1,6 @@
 'use client';
 
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import theme from '@/styles/theme';
@@ -28,7 +28,7 @@ export default function ProjectCarousel({ projects }: ProjectProps) {
       renderItem={(project) => {
         const image = getImageByBreakpoint(isSmallScreen, project.image) || defaultImage;
         return (
-          <Grid item key={project.id} sx={cardContainerStyles}>
+          <Box key={project.id} sx={cardContainerStyles}>
             <ProjectCard
               id={project.id}
               img={image}
@@ -36,24 +36,26 @@ export default function ProjectCarousel({ projects }: ProjectProps) {
               title={project.title}
               summary={project.summary}
               status={project.status}
-              cardSize={{ height: 490, width: 466 }}
+              size={{ height: 490, width: 466 }}
             />
-          </Grid>
+          </Box>
         );
       }}
-      sx={{ zIndex: 1, minHeight: '490px' }}
+      sx={carouselStyles}
     />
   );
 }
 
 const cardContainerStyles = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  margin: 0,
-  padding: 0,
-  zIndex: -1,
+  pr: 3,
+  [theme.breakpoints.down('sm')]: { pr: 2 },
+};
+
+const carouselStyles = {
+  zIndex: 1,
+  minHeight: '490px',
+  ml: -2,
   [theme.breakpoints.down('sm')]: {
-    marginLeft: '3px',
+    ml: -3,
   },
 };
