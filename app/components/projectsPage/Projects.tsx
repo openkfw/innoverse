@@ -29,77 +29,63 @@ export const Projects = (props: ProjectPageProps) => {
 
   return (
     <Box sx={{ width: '100%', ...sx }} data-testid="news-container">
-      {isLoading ? (
-        <Grid container rowSpacing={5} columnSpacing={1}>
-          {Array.from({ length: 6 }).map((_, key) => (
-            <Grid item key={key} xs={12} sm={6} md={4} sx={cardContainerStyles}>
-              <CardSkeleton size={cardSize} />
-            </Grid>
-          ))}
-        </Grid>
-      ) : (
-        <InfiniteScroll
-          dataLength={projects?.length || 0}
-          next={loadNextPage}
-          hasMore={hasMore}
-          scrollThreshold={0.5}
-          style={{ overflow: 'unset' }}
-          loader={
-            <Stack key={0} sx={{ mt: 2 }} alignItems="center">
-              <CircularProgress aria-label="loading" />
-            </Stack>
-          }
-          endMessage={
-            <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 2 }}>
-              {m.components_newsPage_newsFeed_dataReceived()}
-            </Typography>
-          }
-        >
-          <ProjectPageContent />
-        </InfiniteScroll>
-      )}
+      <InfiniteScroll
+        dataLength={projects?.length || 0}
+        next={loadNextPage}
+        hasMore={hasMore}
+        scrollThreshold={0.5}
+        style={{ overflow: 'unset' }}
+        loader={
+          <Stack key={0} sx={{ mt: 2 }} alignItems="center">
+            <CircularProgress aria-label="loading" />
+          </Stack>
+        }
+        endMessage={
+          <Typography color="secondary.main" sx={{ textAlign: 'center', mt: 2 }}>
+            {m.components_newsPage_newsFeed_dataReceived()}
+          </Typography>
+        }
+      >
+        <Box sx={projectsListStyle}>{isLoading ? <SkeletonList /> : <ProjectsList />}</Box>
+      </InfiniteScroll>
     </Box>
   );
 };
 
-const ProjectPageContent = () => {
+const SkeletonList = () => Array.from({ length: 10 }).map((_, key) => <CardSkeleton key={key} size={cardSize} />);
+
+const ProjectsList = () => {
   const { projects } = useProjects();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  return (
-    <Grid container rowSpacing={5} columnSpacing={1}>
-      {projects?.map((p, key) => {
-        const image = getImageByBreakpoint(isSmallScreen, p.image) || defaultImage;
+  return projects?.map((p, key) => {
+    const image = getImageByBreakpoint(isSmallScreen, p.image) || defaultImage;
 
-        return (
-          <Grid item key={p.id} xs={12} sm={6} md={4} sx={cardContainerStyles}>
-            <ProjectCard
-              key={key}
-              id={p.id}
-              img={image}
-              contributors={p.team}
-              title={p.title}
-              summary={p.summary}
-              status={p.status}
-              cardSize={cardSize}
-            />
-          </Grid>
-        );
-      })}
-    </Grid>
-  );
+    return (
+      <ProjectCard
+        key={key}
+        id={p.id}
+        img={image}
+        imageHeight={200}
+        contributors={p.team}
+        title={p.title}
+        summary={p.summary}
+        status={p.status}
+        size={cardSize}
+        sx={{ flexGrow: 1, maxWidth: 466 }}
+      />
+    );
+  });
 };
 
-const cardSize = { height: 550, width: 466 };
+const cardSize = { height: 550, width: 354 };
 
-const cardContainerStyles = {
+const projectsListStyle = {
   display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  margin: 0,
-  padding: 0,
-  zIndex: -1,
-  [theme.breakpoints.down('sm')]: {
-    marginLeft: '3px',
+  gap: 4,
+  [theme.breakpoints.down('md')]: {
+    gap: 2,
   },
+  flexWrap: 'wrap',
+  justifyContent: 'center',
 };
