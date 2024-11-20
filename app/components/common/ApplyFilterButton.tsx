@@ -18,37 +18,33 @@ interface ApplyFilterButtonProps {
 export default function ApplyFilterButton(props: ApplyFilterButtonProps) {
   const { onClick, applyButtonType } = props;
 
-  return (
-    <Box>
-      {applyButtonType == APPLY_BUTTON.DISABLED ? (
-        <Button
-          sx={{
-            ...buttonStyle,
-            ...disabledButtonStyle,
-          }}
-          endIcon={<CheckIcon />}
-          onClick={onClick}
-          disabled
-        >
-          <Typography variant="subtitle1" sx={typographyStyle}>
-            {m.components_newsPage_newsFilter_applyFilterButton_apply()}
-          </Typography>
-        </Button>
-      ) : (
-        <Button
-          sx={{
-            backgroundColor: 'secondary.main',
-            ...buttonStyle,
-          }}
-          endIcon={<CheckIcon sx={{ color: 'text.primary' }} />}
-          onClick={onClick}
-        >
-          <Typography variant="subtitle1" sx={typographyStyle}>
-            {m.components_newsPage_newsFilter_applyFilterButton_apply()}
-          </Typography>
-        </Button>
-      )}
-    </Box>
+  return applyButtonType == APPLY_BUTTON.DISABLED ? (
+    <Button
+      sx={{
+        ...buttonStyle,
+        ...disabledButtonStyle,
+      }}
+      endIcon={<CheckIcon />}
+      onClick={onClick}
+      disabled
+    >
+      <Typography variant="subtitle1" sx={typographyStyle}>
+        {m.components_newsPage_newsFilter_applyFilterButton_apply()}
+      </Typography>
+    </Button>
+  ) : (
+    <Button
+      sx={{
+        backgroundColor: 'secondary.main',
+        ...buttonStyle,
+      }}
+      endIcon={<CheckIcon sx={{ color: 'text.primary' }} />}
+      onClick={onClick}
+    >
+      <Typography variant="subtitle1" sx={typographyStyle}>
+        {m.components_newsPage_newsFilter_applyFilterButton_apply()}
+      </Typography>
+    </Button>
   );
 }
 

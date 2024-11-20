@@ -44,7 +44,7 @@ export default function MobileFilterDrawer(props: MobileFilterDrawerProps) {
         onClose={toggleDrawer(false)}
         onOpen={toggleDrawer(true)}
       >
-        <Box mr="15px" display="flex" justifyContent="flex-end" alignItems="flex-end">
+        <Box mr={2} display="flex" justifyContent="flex-end" alignItems="flex-end">
           <IconButton onClick={toggleDrawer(false)} sx={closeIconButtonStyle}>
             <CloseIcon color={theme.palette.text.primary} />
           </IconButton>

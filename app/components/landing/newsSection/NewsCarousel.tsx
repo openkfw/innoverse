@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { ProjectUpdateWithAdditionalData } from '@/common/types';
@@ -31,27 +31,22 @@ export default function NewsCarousel({ updates }: NewsSliderProps) {
         slidesToScroll: isSmallScreen ? 1 : 3,
       }}
       renderItem={(projectUpdate, idx) => (
-        <Grid item xs={11} key={idx} sx={cardContainerStyles}>
-          <NewsCard update={projectUpdate} noClamp />
-        </Grid>
+        <Box sx={{ pr: 3, [theme.breakpoints.down('sm')]: { pr: 2 } }}>
+          <NewsCard key={idx} update={projectUpdate} noClamp sx={{ height: '17rem' }} />
+        </Box>
       )}
       moreButton={
         <Link href="news">
           <CustomButton>{m.components_landing_newsSection_newsCarousel_moreNews()}</CustomButton>
         </Link>
       }
-      sx={{ zIndex: 3, minHeight: '272px' }}
+      sx={{
+        zIndex: 3,
+        minHeight: '272px',
+        [theme.breakpoints.down('sm')]: {
+          ml: -2,
+        },
+      }}
     />
   );
 }
-
-const cardContainerStyles = {
-  height: '17rem',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  margin: 0,
-  [theme.breakpoints.down('sm')]: {
-    marginLeft: '3px',
-  },
-};

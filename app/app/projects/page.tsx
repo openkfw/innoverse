@@ -27,12 +27,10 @@ async function ProjectsPage() {
       <Image
         src={backgroundImage}
         alt={m.app_news_page_imageAlt()}
-        width={1792}
-        height={1024}
         style={{
           position: 'fixed',
           width: '100%',
-          height: 264,
+          height: '16.5em',
           zIndex: -1,
           background: `lightgray 50% / cover no-repeat`,
           mixBlendMode: 'plus-lighter',
