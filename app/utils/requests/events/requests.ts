@@ -157,7 +157,7 @@ export async function getEventWithAdditionalData(
   }
 }
 
-export const countFutureEventsForProject = withAuth(async (user: UserSession, body: { projectId: string }) => {
+export const countFutureEventsForProject = async (body: { projectId: string }) => {
   try {
     const validatedParams = validateParams(eventSchema, body);
 
@@ -175,7 +175,7 @@ export const countFutureEventsForProject = withAuth(async (user: UserSession, bo
     logger.error(error);
     throw err;
   }
-});
+};
 
 export const getAllEventsForProjectFilter = withAuth(
   async (
