@@ -354,6 +354,7 @@ const mapToRedisNewsComment = (comment: CommentWithResponses): RedisNewsComment 
     upvotedBy: comment.upvotedBy,
     commentCount: comment.commentCount,
     author: comment.author,
+    parentId: comment.parentId,
     comments: comment.comments.map((comment) => mapToRedisNewsComment(comment)),
     updatedAt: getUnixTimestamp(comment.updatedAt),
     createdAt: getUnixTimestamp(comment.createdAt),

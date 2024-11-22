@@ -2,7 +2,7 @@
 
 import { CommentType } from '@prisma/client';
 
-import { NewsComment, ObjectType, PostComment, UserSession } from '@/common/types';
+import { NewsComment, NewsFeedEntry, ObjectType, PostComment, UserSession } from '@/common/types';
 import { getFollowers } from '@/repository/db/follow';
 import { addNewsCommentToDb, deleteNewsCommentInDb, updateNewsCommentInDb } from '@/repository/db/news_comment';
 import { addPostCommentToDb, deletePostCommentInDb, updatePostCommentInDb } from '@/repository/db/post_comment';
@@ -13,7 +13,7 @@ import { notifyFollowers } from '@/utils/notification/notificationSender';
 import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
 import {
   addNewsCommentToCache,
-  removeNewsCommentInCache,
+  deleteNewsCommentInCache,
   updateNewsCommentInCache,
 } from '@/utils/newsFeed/redis/services/commentsService';
 import { NewsType } from '@/utils/newsFeed/redis/models';
@@ -50,14 +50,24 @@ export const addComment = async (body: AddComment): Promise<NewsComment | PostCo
       const postCommentDb = await addPostCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
       const redisPostComment = await mapToRedisComment(postCommentDb);
       const postComment = await mapToPostComment(postCommentDb);
-      await addNewsCommentToCache(getNewsTypeByString(objectType), objectId, redisPostComment);
+      await addNewsCommentToCache({
+        newsType: getNewsTypeByString(objectType),
+        newsId: objectId,
+        comment: redisPostComment,
+        parentId: parentCommentId,
+      });
       notifyPostFollowers(objectId);
       return postComment;
     case 'NEWS_COMMENT':
       const newsCommentDb = await addNewsCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
       const redisNewsComment = await mapToRedisComment(newsCommentDb);
       const newsComment = await mapToNewsComment(newsCommentDb);
-      await addNewsCommentToCache(getNewsTypeByString(objectType), objectId, redisNewsComment);
+      await addNewsCommentToCache({
+        newsType: getNewsTypeByString(objectType),
+        newsId: objectId,
+        comment: redisNewsComment,
+        parentId: parentCommentId,
+      });
       notifyUpdateFollowers(objectId);
       return newsComment;
     default:
@@ -88,14 +98,14 @@ export const removeComment = async ({ commentId, commentType }: RemoveComment) =
       const postCommentInDb = await deletePostCommentInDb(dbClient, commentId);
       const postId = postCommentInDb.postComment?.postId;
       if (postId) {
-        await removeNewsCommentInCache(NewsType.POST, postId, commentId);
+        await deleteNewsCommentInCache(NewsType.POST, postId, commentId);
       }
       return;
     case 'NEWS_COMMENT':
       const newsCommentInDb = await deleteNewsCommentInDb(dbClient, commentId);
       const updateId = newsCommentInDb.newsComment?.newsId;
       if (updateId) {
-        await removeNewsCommentInCache(NewsType.NEWS_COMMENT, updateId, commentId);
+        await deleteNewsCommentInCache(NewsType.UPDATE, updateId, commentId);
       }
       return;
     default:

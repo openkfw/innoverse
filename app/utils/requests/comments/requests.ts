@@ -110,14 +110,7 @@ export async function saveEntryNewsComments(entry: RedisNewsFeedEntry) {
   const redisClient = await getRedisClient();
   const comments = await getRedisNewsCommentsWithResponses(entry.item.id, entry.type);
   if (comments.length > 0) {
-    await saveComments(redisClient, entry, comments);
+    return await saveComments(redisClient, entry, comments);
   }
-}
-
-export async function saveEntryPostComments(entry: RedisNewsFeedEntry) {
-  const redisClient = await getRedisClient();
-  const comments = await getRedisNewsCommentsWithResponses(entry.item.id, entry.type);
-  if (comments.length > 0) {
-    await saveComments(redisClient, entry, comments);
-  }
+  return [];
 }

@@ -22,6 +22,7 @@ import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient'
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
+import { deleteCommentsInCache } from '@/utils/newsFeed/redis/services/commentsService';
 
 const logger = getLogger();
 
@@ -103,7 +104,11 @@ export const deletePostFromCache = async (postId: string) => {
   try {
     const redisClient = await getRedisClient();
     const redisKey = getRedisKey(postId);
-    await deleteItemFromRedis(redisClient, redisKey);
+    const entry = await getNewsFeedEntryByKey(redisClient, redisKey);
+    if (entry) {
+      await deleteCommentsInCache(entry);
+      await deleteItemFromRedis(redisClient, redisKey);
+    }
   } catch (err) {
     const error: InnoPlatformError = redisError(`Delete post with id: ${postId} from cache`, err as Error);
     logger.error(error);

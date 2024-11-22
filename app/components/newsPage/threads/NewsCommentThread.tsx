@@ -23,7 +23,7 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
 
   const handleDeleteResponse = (response: CommentWithResponses) => {
     const responses = comment.comments.filter((r) => r.id !== response.id);
-    const updatedComment = { ...comment, responses };
+    const updatedComment = { ...comment, comments: responses };
     props.onUpdate(updatedComment);
   };
 
@@ -46,9 +46,9 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
 
     if (!newResponse) return;
 
-    const threadResponse = { ...newResponse, responses: [] };
+    const threadResponse = { ...newResponse, comments: [] };
     const responses = [threadResponse, ...comment.comments];
-    const updatedComment = { ...comment, responses };
+    const updatedComment = { ...comment, comments: responses };
     props.onUpdate(updatedComment);
   };
 

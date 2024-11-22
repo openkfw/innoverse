@@ -16,6 +16,7 @@ import {
 import { NewsType, RedisNewsComment, RedisProjectUpdate } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
+import { deleteCommentsInCache } from '@/utils/newsFeed/redis/services/commentsService';
 import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
 import {
   createProjectUpdateInStrapi,
@@ -71,7 +72,11 @@ export const createProjectUpdateInCache = async (update: ProjectUpdate) => {
 export const deleteProjectUpdateInCache = async (updateId: string) => {
   const redisClient = await getRedisClient();
   const redisKey = getRedisKey(updateId);
-  await deleteItemFromRedis(redisClient, redisKey);
+  const entry = await getNewsFeedEntryByKey(redisClient, redisKey);
+  if (entry) {
+    await deleteCommentsInCache(entry);
+    await deleteItemFromRedis(redisClient, redisKey);
+  }
 };
 
 export const updateProjectUpdateInCache = async ({ update }: UpdateUpdateInCache) => {

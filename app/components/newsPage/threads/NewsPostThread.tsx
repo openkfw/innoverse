@@ -34,7 +34,7 @@ export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
       renderComment={(comment, idx, deleteComment, updateComment) => (
         <NewsCommentThread
           key={`${idx}-${comment.id}`}
-          item={post}
+          item={{ ...post, objectType: ObjectType.POST }}
           comment={comment}
           commentType="POST_COMMENT"
           level={1}

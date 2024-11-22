@@ -125,6 +125,7 @@ export type RedisNewsComment = {
   comments?: RedisNewsComment[];
   updatedAt: number;
   createdAt?: number;
+  parentId?: string;
 };
 
 export type RedisHashedNewsComment = {

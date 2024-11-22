@@ -46,7 +46,7 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
       renderComment={(comment, idx, deleteComment, updateComment) => (
         <Box width="98%" display="block " alignSelf="end" key={`${idx}-${comment.id}`}>
           <NewsCommentThread
-            item={update}
+            item={{ ...update, objectType: ObjectType.UPDATE }}
             comment={comment}
             commentType="NEWS_COMMENT"
             level={1}
