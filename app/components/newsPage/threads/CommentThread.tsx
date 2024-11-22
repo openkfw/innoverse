@@ -62,9 +62,7 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
     <Stack spacing={2}>
       <div>{card}</div>
       {showDivider && <Divider />}
-
       <WriteCommentResponseCard comment={comment} onRespond={handleComment} sx={{ mb: 1, pl: indentComments }} />
-
       {showLoadCommentsButton && (
         <Button
           startIcon={<AddIcon color="primary" fontSize="large" />}
@@ -75,9 +73,7 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
           {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} ({comment.comments?.length})
         </Button>
       )}
-
       {comments.isLoading && <CommentThreadSkeleton sx={{ pl: indentComments, mt: 2 }} />}
-
       {comments.isVisible && (
         <Stack spacing={2} sx={{ pl: indentComments }}>
           {comments.data.map((comment, idx) =>

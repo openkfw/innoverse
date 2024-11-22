@@ -144,14 +144,14 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
   };
 
   try {
-    let result = await client.ft.search(index, query, searchOptions);
+    const result = await client.ft.search(index, query, searchOptions);
     if (options?.filterBy?.searchString) {
       const resultComments = await searchNewsComments(client, options?.filterBy?.searchString, searchOptions);
       const commentsDocuments = resultComments.documents;
       const resultDocuments = result.documents;
       return {
         total: commentsDocuments.length + resultDocuments.length,
-        documents: Object.assign(commentsDocuments, resultDocuments),
+        documents: [...commentsDocuments, ...resultDocuments],
       };
     }
     return result;

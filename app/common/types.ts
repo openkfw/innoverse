@@ -194,7 +194,7 @@ export type ProjectUpdate = CommonNewsFeedProps & {
   projectStart?: string;
   linkToCollaborationTab: boolean;
   anonymous: boolean;
-  objectType: ObjectType.UPDATE;
+  objectType: ObjectType;
 };
 
 export type ProjectUpdateWithAdditionalData = ProjectUpdate & ReactionOnObject;
