@@ -62,7 +62,7 @@ const CollaborationColumn = (props: CollaborationProps) => {
     window.history.pushState({ path: newUrl }, '', newUrl);
 
     setTimeout(() => {
-      const section = document.getElementById(sectionId);
+      const section = document.getElementById(sectionId) || document.getElementById('collaboration-tab');
       if (section) {
         window.scrollTo({
           top: section.getBoundingClientRect().top + window.scrollY - 70,

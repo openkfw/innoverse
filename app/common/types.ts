@@ -439,6 +439,25 @@ export type ImageFormats = {
   thumbnail?: ImageFormat;
 };
 
+export type UploadImageResponse = {
+  id: number;
+  name: string;
+  alternativeText: string | null;
+  caption: string | null;
+  width: number;
+  height: number;
+  formats: ImageFormats;
+  hash: string;
+  ext: string;
+  mime: string;
+  size: number;
+  url: string;
+  previewUrl: string | null;
+  provider: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export enum SortValues {
   DESC = 'DESC',
   ASC = 'ASC',

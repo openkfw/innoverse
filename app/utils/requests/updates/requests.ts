@@ -322,7 +322,7 @@ export const findReactionByUser = withAuth(
   },
 );
 
-export const countUpdatesForProject = withAuth(async (user: UserSession, body: { projectId: string }) => {
+export const countUpdatesForProject = async (body: { projectId: string }) => {
   try {
     const validatedParams = validateParams(handleProjectUpdatesSchema, body);
 
@@ -342,7 +342,7 @@ export const countUpdatesForProject = withAuth(async (user: UserSession, body: {
     logger.error(error);
     throw err;
   }
-});
+};
 
 export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: StartPagination) {
   try {

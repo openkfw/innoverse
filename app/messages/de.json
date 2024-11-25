@@ -103,7 +103,7 @@
   "components_common_editing_confirmDeleteDialog_deletePost": "Möchtest du diesen Beitrag löschen?",
   "components_common_editing_confirmDeleteDialog_cancel": "Abbrechen",
   "components_common_editing_confirmDeleteDialog_delete": "Löschen",
-  
+
   "components_common_editing_unsavedChangesDialog_edit": "Bearbeitung",
   "components_common_editing_unsavedChangesDialog_throw": "Möchtest du diese Bearbeitung verwerfen?",
   "components_common_editing_unsavedChangesDialog_cancel": "Abbrechen",
@@ -237,6 +237,7 @@
   "components_newsFeed_newsFeedContainer_filter": "Filter",
 
   "components_newsFeed_newsFeedSearchFilter_search": "Suche",
+  "components_newsFeed_newsFeedSearchFilter_searchField_minLength": "Geben Sie mindestens 2 Zeichen ein",
 
   "components_newsFeed_newsFeedTypeFilter_comments": "Kommentare",
   "components_newsFeed_newsFeedTypeFilter_events": "Events",

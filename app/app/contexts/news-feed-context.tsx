@@ -269,7 +269,9 @@ export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextP
     const page = 1;
     setFilters(filters);
     setPageNumber(page);
-    refetchFeed({ page, filters });
+    if (filters.searchString.length !== 1) {
+      refetchFeed({ page, filters });
+    }
   };
 
   const contextObject: NewsFeedContextInterface = {

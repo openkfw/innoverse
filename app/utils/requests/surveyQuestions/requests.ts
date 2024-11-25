@@ -69,9 +69,9 @@ export const findUserVote = withAuth((user: UserSession, body: { votes: SurveyVo
   });
 });
 
-export const countSurveyQuestionsForProject = withAuth(async (user, body: { projectId: string }) => {
+export const countSurveyQuestionsForProject = async (projectId: string) => {
   try {
-    const response = await strapiGraphQLFetcher(GetSurveyQuestionsCountByProjectIdQuery, { projectId: body.projectId });
+    const response = await strapiGraphQLFetcher(GetSurveyQuestionsCountByProjectIdQuery, { projectId });
     const countResult = response.surveyQuestions?.meta.pagination.total;
 
     return { status: StatusCodes.OK, data: countResult };
@@ -80,7 +80,7 @@ export const countSurveyQuestionsForProject = withAuth(async (user, body: { proj
     logger.error(error);
     throw err;
   }
-});
+};
 
 export async function getSurveyQuestionByIdWithReactions(id: string) {
   try {

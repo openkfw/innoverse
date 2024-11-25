@@ -19,15 +19,24 @@ const logger = getLogger();
 export function withAuth<TArgs, TReturn>(func: (user: UserSession, body: TArgs) => Promise<AuthResponse<TReturn>>) {
   return async function (args: TArgs) {
     const session = await getServerSession(options);
-    if (!session || !session.user) {
+    if (!session) {
       return {
         status: StatusCodes.UNAUTHORIZED,
         errors: 'User is not authenticated',
         message: 'User is not authenticated',
       };
     }
-    const sessionUser = session.user;
-    await createInnoUserIfNotExist(sessionUser, sessionUser.image);
+    const { image, ...sessionUser } = session.user;
+
+    try {
+      await createInnoUserIfNotExist(sessionUser, image);
+    } catch (err) {
+      return {
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: 'User could not be created',
+      };
+    }
+
     try {
       return func(sessionUser, args) as Promise<AuthResponse<TReturn>>;
     } catch (err) {

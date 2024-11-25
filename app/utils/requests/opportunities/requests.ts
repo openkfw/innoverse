@@ -134,9 +134,9 @@ export const userParticipatesInOpportunity = withAuth(async (user: UserSession, 
   }
 });
 
-export const countOpportunitiesForProject = withAuth(async (user: UserSession, body: { projectId: string }) => {
+export const countOpportunitiesForProject = async (projectId: string) => {
   try {
-    const response = await strapiGraphQLFetcher(GetOpportunityCountProjectIdQuery, { projectId: body.projectId });
+    const response = await strapiGraphQLFetcher(GetOpportunityCountProjectIdQuery, { projectId });
     const countResult = response.opportunities?.meta.pagination.total;
 
     return { status: StatusCodes.OK, data: countResult };
@@ -145,4 +145,4 @@ export const countOpportunitiesForProject = withAuth(async (user: UserSession, b
     logger.error(error);
     throw err;
   }
-});
+};

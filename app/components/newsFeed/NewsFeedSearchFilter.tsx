@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Search } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -81,6 +82,11 @@ export default function NewsFeedSearchFilter(props: NewsFeedSearchFilterProps) {
             'aria-label': 'Search field',
           }}
         />
+        {inputValue.length === 1 && (
+          <FormHelperText sx={{ color: 'formText.main' }}>
+            {m.components_newsFeed_newsFeedSearchFilter_searchField_minLength()}
+          </FormHelperText>
+        )}
       </FormControl>
     </Box>
   );

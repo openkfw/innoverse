@@ -6,7 +6,10 @@ import GitLabProvider from 'next-auth/providers/gitlab';
 
 import { UserSession } from '@/common/types';
 import { serverConfig } from '@/config/server';
-import { createInnoUserIfNotExist, getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import getLogger from '@/utils/logger';
+import { createInnoUserIfNotExist, getInnoUserByEmail } from '@/utils/requests/innoUsers/requests';
+
+const logger = getLogger();
 
 const loadProviders = () => {
   // Only checking if one of the required variables is set, the ENV validation does the rest.
@@ -72,7 +75,7 @@ export const options: NextAuthOptions = {
     async jwt({ token, account }) {
       if (account && token.name && token.email) {
         const providerId = token.sub ?? account.providerAccountId;
-        const strapiImage = await getStrapiUserImage(providerId);
+        const strapiImage = await getStrapiUserImage(token.email);
         const userImage = strapiImage ?? token.picture;
 
         token.accessToken = account.access_token;
@@ -84,10 +87,13 @@ export const options: NextAuthOptions = {
           email: token.email,
           providerId: providerId,
           provider: token.provider as string,
-          image: userImage ?? undefined,
         };
 
-        await createInnoUserIfNotExist(user, userImage);
+        try {
+          await createInnoUserIfNotExist(user, userImage);
+        } catch (err) {
+          logger.error('Error while creating Inno User during the authentication');
+        }
       }
       return token;
     },
@@ -117,13 +123,12 @@ export const options: NextAuthOptions = {
   },
 };
 
-const getStrapiUserImage = async (providerId: string) => {
-  try {
-    const strapiUser = await getInnoUserByProviderId(providerId);
+const getStrapiUserImage = async (email: string) => {
+  const strapiUser = await getInnoUserByEmail(email);
+  if (strapiUser) {
     return strapiUser.image;
-  } catch (_: unknown) {
-    return undefined;
   }
+  return undefined;
 };
 
 const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
