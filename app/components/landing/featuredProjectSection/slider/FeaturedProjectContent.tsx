@@ -41,7 +41,7 @@ const FeaturedProjectContent = (props: {
           })}
         </List>
       </Box>
-      <Typography variant="body1" sx={descriptionStyles}>
+      <Typography variant="body1" sx={descriptionStyles(title.length)}>
         {summary}
       </Typography>
     </Box>
@@ -110,14 +110,14 @@ const listItemStyles = {
   width: 'fit-content',
 };
 
-const descriptionStyles = {
+const descriptionStyles = (titleLength: number) => ({
   marginLeft: 6 / 8,
   marginTop: 3,
   display: '-webkit-box',
   overflow: 'hidden',
   WebkitBoxOrient: 'vertical',
-  WebkitLineClamp: 6,
-};
+  WebkitLineClamp: Math.max(4, 10 - (Math.min(10, Math.ceil(titleLength / 10)) - 1)),
+});
 
 const linkStyle = {
   textDecoration: 'none',
