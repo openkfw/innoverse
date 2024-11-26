@@ -62,7 +62,9 @@ const PhaseColumnHeader = ({ title, description, icon, isFirstStep }: MappingDat
         {icon}
         {title}
       </PhaseBanner>
-      <Typography variant="subtitle1">{description}</Typography>
+      <Typography variant="subtitle1" sx={descriptionStyles}>
+        {description}
+      </Typography>
     </>
   );
 };
@@ -71,9 +73,29 @@ const PhaseColumFooter = ({ phaseName, projects }: { projects: BasicProject[]; p
   const getProjectsInPhase = (phase: string) => projects.filter((p) => p.status.replace(/_/g, ' ') === phase);
 
   return (
-    <Box sx={{ marginBottom: { xs: 3, lg: 0 } }}>
-      <Divider sx={{ my: 3, height: '1px', opacity: 0.2, borderColor: 'white' }} />
+    <Box sx={footerWrapperStyles}>
+      <Divider sx={dividerStyles} />
       <ProjectLinks projects={getProjectsInPhase(phaseName)} />
     </Box>
   );
+};
+
+// Phase Columns Styles
+const descriptionStyles = {
+  height: '100%',
+};
+
+const footerWrapperStyles = {
+  marginBottom: {
+    xs: 3,
+    lg: 0,
+  },
+  zIndex: 1,
+};
+
+const dividerStyles = {
+  my: 3,
+  height: '1px',
+  opacity: 0.2,
+  borderColor: 'white',
 };
