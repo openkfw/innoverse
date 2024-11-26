@@ -3,7 +3,7 @@ import { AggregateGroupByReducers, AggregateSteps, SearchOptions } from 'redis';
 
 import { redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
-import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
+import { escapeRedisTextSeparators, filterDuplicateEntries } from '@/utils/newsFeed/redis/helpers';
 import { NewsType, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
 
@@ -147,11 +147,15 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     const result = await client.ft.search(index, query, searchOptions);
     if (options?.filterBy?.searchString) {
       const resultComments = await searchNewsComments(client, options?.filterBy?.searchString, searchOptions);
-      const commentsDocuments = resultComments.documents;
-      const resultDocuments = result.documents;
+      const commentsDocuments = filterDuplicateEntries(resultComments.documents);
+      const resultDocuments = filterDuplicateEntries(
+        result.documents as unknown as { id: string; value: RedisNewsFeedEntry }[],
+      );
+      const documents = filterDuplicateEntries([...commentsDocuments, ...resultDocuments]);
+
       return {
-        total: commentsDocuments.length + resultDocuments.length,
-        documents: [...commentsDocuments, ...resultDocuments],
+        total: documents.length,
+        documents,
       };
     }
     return result;

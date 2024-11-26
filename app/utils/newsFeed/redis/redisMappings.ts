@@ -7,6 +7,7 @@ import {
   Event,
   Follow,
   ImageFormats,
+  NewsComment,
   NewsFeedEntry,
   ObjectType,
   Post,
@@ -22,7 +23,7 @@ import { unixTimestampToDate } from '@/utils/helpers';
 
 import {
   NewsType,
-  RedisNewsComment,
+  RedisHashedNewsComment,
   RedisNewsFeedEntry,
   RedisReaction,
   RedisSurveyQuestion,
@@ -186,13 +187,14 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
   }) as NewsFeedEntry['item'];
 };
 
-const mapComments = (comments: RedisNewsComment[]) => {
-  return comments.map((comment) => {
+const mapComments = (comments: RedisHashedNewsComment[]): NewsComment[] => {
+  return comments.map((comment: RedisHashedNewsComment) => {
     return {
       ...comment,
+      comments: comment.comments ? mapComments(comment.comments) : [],
       updatedAt: unixTimestampToDate(comment.updatedAt),
       createdAt: unixTimestampToDate(comment.createdAt),
-    };
+    } as unknown as NewsComment;
   });
 };
 

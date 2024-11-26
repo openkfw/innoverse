@@ -137,6 +137,7 @@ export type RedisHashedNewsComment = {
   createdAt: number;
   itemType: NewsType;
   itemId: string;
+  comments?: RedisHashedNewsComment[];
 };
 
 export type RedisCollaborationQuestion = RedisItem & {
