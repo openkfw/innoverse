@@ -3,13 +3,8 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { Comment, UserSession } from '@/common/types';
-import {
-  addComment,
-  deleteComment,
-  getCommentbyId,
-  handleCommentUpvotedBy,
-  updateComment,
-} from '@/repository/db/project_comment';
+import { addCommentToDb, deleteCommentInDb, getCommentById, updateCommentInDb } from '@/repository/db/comment';
+import { handleCommentUpvotedBy } from '@/repository/db/project_comment';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
@@ -31,7 +26,7 @@ export const addProjectComment = withAuth(async (user: UserSession, body: { proj
   try {
     const validatedParams = validateParams(handleCommentSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      const newComment = await addComment(dbClient, body.projectId, user.providerId, body.comment);
+      const newComment = await addCommentToDb(dbClient, body.projectId, 'PROJECT', user.providerId, body.comment);
       const author = await getInnoUserByProviderId(user.providerId);
       return {
         status: StatusCodes.OK,
@@ -104,7 +99,7 @@ export const deleteProjectComment = withAuth(async (user: UserSession, body: { c
       };
     }
 
-    const comment = await getCommentbyId(dbClient, body.commentId);
+    const comment = await getCommentById(dbClient, body.commentId);
 
     if (comment === null) {
       return {
@@ -120,7 +115,7 @@ export const deleteProjectComment = withAuth(async (user: UserSession, body: { c
       };
     }
 
-    await deleteComment(dbClient, body.commentId);
+    await deleteCommentInDb(dbClient, body.commentId);
 
     return {
       status: StatusCodes.OK,
@@ -149,7 +144,7 @@ export const updateProjectComment = withAuth(
         };
       }
 
-      const comment = await getCommentbyId(dbClient, body.commentId);
+      const comment = await getCommentById(dbClient, body.commentId);
 
       if (comment === null) {
         return {
@@ -165,7 +160,7 @@ export const updateProjectComment = withAuth(
         };
       }
 
-      const updatedComment = await updateComment(dbClient, body.commentId, body.updatedText);
+      const updatedComment = await updateCommentInDb(dbClient, body.commentId, body.updatedText);
 
       return {
         status: StatusCodes.OK,

@@ -1,8 +1,7 @@
 'use server';
 
 import { CommentWithResponses, CommonCommentProps } from '@/common/types';
-import { getNewsCommentsByUpdateId } from '@/repository/db/news_comment';
-import { getNewsCommentsByPostId } from '@/repository/db/post_comment';
+import { getCommentsByObjectId } from '@/repository/db/comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
@@ -12,7 +11,7 @@ const logger = getLogger();
 
 export const getNewsCommentProjectUpdateId = async (updateId: string) => {
   try {
-    const dbComments = await getNewsCommentsByUpdateId(dbClient, updateId);
+    const dbComments = await getCommentsByObjectId(dbClient, updateId);
     const mapComments = dbComments.map(mapToNewsComment);
     const comments = await Promise.all(mapComments);
     const commensWithResponses = setResponses(comments);
@@ -30,7 +29,7 @@ export const getNewsCommentProjectUpdateId = async (updateId: string) => {
 
 export const getPostCommentByPostId = async (postId: string) => {
   try {
-    const dbComments = await getNewsCommentsByPostId(dbClient, postId);
+    const dbComments = await getCommentsByObjectId(dbClient, postId);
     const mapComments = dbComments.map(mapToPostComment);
     const comments = await Promise.all(mapComments);
     const commensWithResponses = setResponses(comments);

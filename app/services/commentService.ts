@@ -1,21 +1,8 @@
 'use server';
 
-import { CommentType } from '@prisma/client';
-
 import { NewsComment, ObjectType, PostComment, UserSession } from '@/common/types';
+import { addCommentToDb, countComments, deleteCommentInDb, updateCommentInDb } from '@/repository/db/comment';
 import { getFollowers } from '@/repository/db/follow';
-import {
-  addNewsCommentToDb,
-  countNewsResponses,
-  deleteNewsCommentInDb,
-  updateNewsCommentInDb,
-} from '@/repository/db/news_comment';
-import {
-  addPostCommentToDb,
-  countPostResponses,
-  deletePostCommentInDb,
-  updatePostCommentInDb,
-} from '@/repository/db/post_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { updatePostInCache } from '@/services/postService';
 import { updateProjectUpdateInCache } from '@/services/updateService';
@@ -47,18 +34,34 @@ interface UpdateComment {
   content: string;
 }
 
+//todo refactor this
+
 export const addComment = async (body: AddComment): Promise<NewsComment | PostComment> => {
   const { comment, commentType, author, objectId, parentCommentId } = body;
 
   switch (commentType) {
     case 'POST_COMMENT':
-      const postCommentDb = await addPostCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
+      const postCommentDb = await addCommentToDb(
+        dbClient,
+        objectId,
+        'POST',
+        author.providerId,
+        comment,
+        parentCommentId,
+      );
       updatePostCommentInCache(postCommentDb, author);
       notifyPostFollowers(objectId);
       const postComment = await mapToPostComment(postCommentDb);
       return postComment;
     case 'NEWS_COMMENT':
-      const newsCommentDb = await addNewsCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
+      const newsCommentDb = await addCommentToDb(
+        dbClient,
+        objectId,
+        'UPDATE',
+        author.providerId,
+        comment,
+        parentCommentId,
+      );
       updateNewsCommentInCache(newsCommentDb);
       notifyUpdateFollowers(objectId);
       const newsComment = await mapToNewsComment(newsCommentDb);
@@ -71,11 +74,11 @@ export const addComment = async (body: AddComment): Promise<NewsComment | PostCo
 export const updateComment = async ({ author, commentId, content, commentType }: UpdateComment) => {
   switch (commentType) {
     case 'POST_COMMENT':
-      const postCommentDb = await updatePostCommentInDb(dbClient, commentId, content);
+      const postCommentDb = await updateCommentInDb(dbClient, commentId, content);
       await updatePostCommentInCache(postCommentDb, author);
       return await mapToPostComment(postCommentDb);
     case 'NEWS_COMMENT':
-      const newsCommentDb = await updateNewsCommentInDb(dbClient, commentId, content);
+      const newsCommentDb = await updateCommentInDb(dbClient, commentId, content);
       await updateNewsCommentInCache(newsCommentDb);
       return await mapToNewsComment(newsCommentDb);
     default:
@@ -86,14 +89,14 @@ export const updateComment = async ({ author, commentId, content, commentType }:
 export const removeComment = async ({ user, commentId, commentType }: RemoveComment) => {
   switch (commentType) {
     case 'POST_COMMENT':
-      const postCommentInDb = await deletePostCommentInDb(dbClient, commentId);
+      const postCommentInDb = await deleteCommentInDb(dbClient, commentId);
       const postId = postCommentInDb.postComment?.postId;
       if (postId) {
         await removePostCommentInCache(postId, user);
       }
       return;
     case 'NEWS_COMMENT':
-      const newsCommentInDb = await deleteNewsCommentInDb(dbClient, commentId);
+      const newsCommentInDb = await deleteCommentInDb(dbClient, commentId);
       const updateId = newsCommentInDb.newsComment?.newsId;
       if (updateId) {
         await removeNewsCommenInCache(updateId);
@@ -104,8 +107,9 @@ export const removeComment = async ({ user, commentId, commentType }: RemoveComm
   }
 };
 
+//todo refactor to only use one of the updatePostCommentInCache and updateNewsCommentInCache
 const updatePostCommentInCache = async (postComment: { postId: string }, author: UserSession) => {
-  const postResponseCount = await countPostResponses(dbClient, postComment.postId);
+  const postResponseCount = await countComments(dbClient, postComment.postId);
   return await updatePostInCache({
     post: { id: postComment.postId, responseCount: postResponseCount },
     user: author,
@@ -113,20 +117,20 @@ const updatePostCommentInCache = async (postComment: { postId: string }, author:
 };
 
 const updateNewsCommentInCache = async (newsComment: { newsId: string }) => {
-  const newsResponseCount = await countNewsResponses(dbClient, newsComment.newsId);
+  const newsResponseCount = await countComments(dbClient, newsComment.newsId);
   await updateProjectUpdateInCache({ update: { id: newsComment.newsId, responseCount: newsResponseCount } });
 };
 
 const removePostCommentInCache = async (postId: string, user: UserSession) => {
   if (postId) {
-    const responseCount = await countPostResponses(dbClient, postId);
+    const responseCount = await countComments(dbClient, postId);
     await updatePostInCache({ post: { id: postId, responseCount }, user });
   }
 };
 
 const removeNewsCommenInCache = async (newsId: string) => {
   if (newsId) {
-    const responseCount = await countNewsResponses(dbClient, newsId);
+    const responseCount = await countComments(dbClient, newsId);
     await updateProjectUpdateInCache({ update: { id: newsId, responseCount } });
   }
 };
@@ -160,3 +164,15 @@ const notifyPostFollowers = async (postId: string) => {
     throw err;
   }
 };
+
+// export const addLike = async (body: { author: UserSession; commentId: string }): Promise<void> => {
+//   const { author, commentId } = body;
+
+//   await addLikeToDb(dbClient, commentId, author.providerId);
+// };
+
+// export const deleteLike = async (body: { author: UserSession; commentId: string }): Promise<void> => {
+//   const { author, commentId } = body;
+
+//   await deleteLikeFromDb(dbClient, commentId, author.providerId);
+// };

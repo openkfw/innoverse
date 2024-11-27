@@ -2,14 +2,16 @@ import { Prisma } from '@prisma/client';
 
 export const defaultParamsComment = {
   include: {
-    comment: {
-      include: {
-        reactions: true,
-        responses: true,
-        parent: true,
-      },
-    },
+    // comment: {
+    //   include: {
+    reactions: true,
+    responses: true,
+    // parent: true,
+    // parentId,
+    likes: true,
   },
+  //   },
+  // },
 };
 
 const withPostComment = Prisma.validator<Prisma.PostCommentDefaultArgs>()({

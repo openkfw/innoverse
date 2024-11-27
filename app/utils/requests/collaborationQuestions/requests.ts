@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { BasicCollaborationQuestion, ObjectType, StartPagination, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
-import { getCollaborationCommentIsUpvotedBy } from '@/repository/db/collaboration_comment';
+import { isCommentLikedBy } from '@/repository/db/comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
@@ -131,7 +131,7 @@ export async function getPlatformFeedbackCollaborationQuestion() {
 
 export const isCollaborationCommentUpvotedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
-    const isUpvotedBy = await getCollaborationCommentIsUpvotedBy(dbClient, body.commentId, user.providerId);
+    const isUpvotedBy = await isCommentLikedBy(dbClient, body.commentId, user.providerId);
     return { status: StatusCodes.OK, data: isUpvotedBy };
   } catch (err) {
     const error: InnoPlatformError = strapiError(

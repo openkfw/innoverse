@@ -6,6 +6,7 @@ import { Comment, ObjectType, StartPagination, UserSession } from '@/common/type
 import { getCommentsSchema } from '@/components/project-details/comments/validationSchema';
 import { RequestError } from '@/entities/error';
 import { getCollaborationCommentResponseCount } from '@/repository/db/collaboration_comment_response';
+import { getCommentsByObjectId, isCommentLikedBy } from '@/repository/db/comment';
 import { getProjectFollowers, isProjectFollowedBy } from '@/repository/db/follow';
 import { getProjectLikes, isProjectLikedBy } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
@@ -188,7 +189,7 @@ export const isProjectFollowedByUser = withAuth(async (user: UserSession, body: 
 
 export const isProjectCommentUpvotedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
-    const isUpvoted = await isCommentUpvotedBy(dbClient, body.commentId, user.providerId);
+    const isUpvoted = await isCommentLikedBy(dbClient, body.commentId, user.providerId);
     return { status: StatusCodes.OK, data: isUpvoted };
   } catch (err) {
     const error: InnoPlatformError = strapiError(
@@ -215,7 +216,7 @@ export const getProjectComments = async (body: { projectId: string }) => {
   try {
     const validatedParams = validateParams(getCommentsSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      const result = await getComments(dbClient, body.projectId);
+      const result = await getCommentsByObjectId(dbClient, body.projectId);
 
       const comments = await Promise.allSettled(
         sortDateByCreatedAtAsc(result).map(async (comment) => {

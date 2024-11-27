@@ -2,6 +2,7 @@ import { NewsComment, PostComment } from '@/common/types';
 import { NewsCommentDB, PostCommentDB } from '@/repository/db/utils/types';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 
+//todo refactor this
 export const mapToPostComment = async (postComment: PostCommentDB): Promise<PostComment> => {
   const comment = postComment.comment;
   const author = await getInnoUserByProviderId(comment.author);

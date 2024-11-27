@@ -2,12 +2,12 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { CollaborationComment, Comment, User, UserSession } from '@/common/types';
-import { getCollaborationCommentById } from '@/repository/db/collaboration_comment';
 import {
   getCollaborationCommentResponseById,
   handleCollaborationCommentResponseUpvotedByInDb,
   updateCollaborationCommentResponseInDb,
 } from '@/repository/db/collaboration_comment_response';
+import { getCommentsByObjectId } from '@/repository/db/comment';
 import {
   addCollaborationCommentResponse,
   deleteCollaborationCommentResponse,
@@ -96,7 +96,7 @@ export const deleteProjectCollaborationComment = withAuth(async (user: UserSessi
       };
     }
 
-    const comment = await getCollaborationCommentById(dbClient, body.commentId);
+    const comment = await getCommentsByObjectId(dbClient, body.commentId);
 
     if (comment === null) {
       return {
@@ -141,7 +141,7 @@ export const updateProjectCollaborationComment = withAuth(
         };
       }
 
-      const comment = await getCollaborationCommentById(dbClient, body.commentId);
+      const comment = await getCommentsByObjectId(dbClient, body.commentId);
 
       if (comment === null) {
         return {

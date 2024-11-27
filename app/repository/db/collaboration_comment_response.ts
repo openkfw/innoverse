@@ -5,6 +5,7 @@ import getLogger from '@/utils/logger';
 
 const logger = getLogger();
 
+//todo use the comments.ts instead of these queries
 export async function getCollaborationCommentResponseById(client: PrismaClient, responseId: string) {
   try {
     return client.collaborationCommentResponse.findFirst({
