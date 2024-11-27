@@ -4,7 +4,7 @@ import { CommentType } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
-import { addComment } from '@/services/commentService';
+import { addComment, addLike, deleteLike } from '@/services/commentService';
 import { withAuth } from '@/utils/auth';
 
 interface AddUserComment {
@@ -24,4 +24,18 @@ export const addUserComment = withAuth(async (user: UserSession, body: AddUserCo
     status: StatusCodes.OK,
     data: createdComment,
   };
+});
+
+export const addCommentLike = withAuth(async (user: UserSession, commentId: string) => {
+  const author = user;
+
+  await addLike({ author, commentId });
+  return { status: StatusCodes.OK };
+});
+
+export const deleteCommentLike = withAuth(async (user: UserSession, commentId: string) => {
+  const author = user;
+
+  await deleteLike({ author, commentId });
+  return { status: StatusCodes.OK };
 });

@@ -1,17 +1,15 @@
 'use server';
 
-import type { CollaborationComment as PrismaCollaborationComment } from '@prisma/client';
-
 import { ObjectType, User, UserSession } from '@/common/types';
 import {
   addCollaborationCommentToDb,
   deleteCollaborationCommentInDb,
-  getCollaborationCommentById,
   getCollaborationCommentUpvotedBy,
   handleCollaborationCommentUpvoteInDb,
 } from '@/repository/db/collaboration_comment';
 import { updateCollaborationCommentInDb } from '@/repository/db/collaboration_comment';
 import { getCollaborationCommentResponseCount } from '@/repository/db/collaboration_comment_response';
+import { getCommentsByObjectId } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
@@ -161,7 +159,7 @@ export const getNewsFeedEntryForComment = async (
 };
 
 export const createNewsFeedEntryForCommentById = async (commentId: string, user?: User) => {
-  const comment: PrismaCollaborationComment | null = await getCollaborationCommentById(dbClient, commentId);
+  const comment: PrismaCollaborationComment | null = await getCommentsByObjectId(dbClient, commentId);
 
   if (!comment) {
     logger.warn(`Failed to create news feed entry for collaboration comment with id ${commentId}: Comment not found`);

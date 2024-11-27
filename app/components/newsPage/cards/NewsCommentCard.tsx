@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import Stack from '@mui/material/Stack';
@@ -7,6 +8,7 @@ import { CommonCommentProps } from '@/common/types';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { errorMessage } from '@/components/common/CustomToast';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
+import { LikeControl } from '@/components/common/editing/controls/LikeControl';
 import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
 import {
   useEditingInteractions,
@@ -18,6 +20,8 @@ import { removeUserComment, updateUserComment } from '@/components/newsPage/card
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
 import * as m from '@/src/paraglide/messages.js';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
+
+import { addCommentLike, deleteCommentLike } from '../threads/actions';
 
 interface NewsCommentCardProps {
   comment: CommonCommentProps;
@@ -38,8 +42,11 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
     cancelEdit,
     updateComment,
     deleteComment,
+    handleLike,
+    commentLikeCount,
   } = useNewsCommentCard(props);
 
+  //TODO todo addLikeAction
   return isEditing ? (
     <WriteCommentCard content={comment} onSubmit={updateComment} onDiscard={cancelEdit} />
   ) : (
@@ -48,6 +55,7 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
       header={<CommentCardHeader content={comment} avatar={{ size: 24 }} />}
       footer={
         <Stack direction={'row'} sx={{ mt: 0 }} style={{ marginTop: '8px', marginLeft: '-8px', gap: 16 }}>
+          <LikeControl onLike={handleLike} isSelected={false} likeNumber={commentLikeCount} commentId={comment.id} />
           {displayResponseControls && <ResponseControls onResponse={startResponse} />}
           {displayEditingControls && <EditControls onEdit={startEdit} onDelete={deleteComment} />}
         </Stack>
@@ -59,6 +67,8 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
 
 const useNewsCommentCard = (props: NewsCommentCardProps) => {
   const { comment, commentType, displayResponseControls, onDelete, onUpdate } = props;
+  const [isCommentLiked, setIsCommentLiked] = useState<boolean>(false);
+  const [commentLikeCount, setCommentLikeCount] = useState<number>(0);
 
   const state = useEditingState();
   const editingInteractions = useEditingInteractions();
@@ -66,6 +76,18 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
   const { user } = useUser();
 
   const userIsAuthor = user?.providerId === comment.author.providerId;
+
+  const handleLike = async () => {
+    if (isCommentLiked) {
+      setIsCommentLiked(false);
+      deleteCommentLike(comment.id);
+      setCommentLikeCount(commentLikeCount - 1);
+    } else {
+      setIsCommentLiked(true);
+      addCommentLike(comment.id);
+      setCommentLikeCount(commentLikeCount + 1);
+    }
+  };
 
   const handleDelete = async () => {
     try {
@@ -106,5 +128,7 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
     cancelEdit: editingInteractions.onCancel,
     updateComment: handleUpdate,
     deleteComment: handleDelete,
+    handleLike,
+    commentLikeCount,
   };
 };

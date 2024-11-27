@@ -5,13 +5,7 @@ import getLogger from '@/utils/logger';
 
 const logger = getLogger();
 
-export async function getCollaborationCommentById(client: PrismaClient, commentId: string) {
-  return client.collaborationComment.findFirst({
-    where: {
-      id: commentId,
-    },
-  });
-}
+//todo use the comments.ts instead of these queries
 
 export async function getCollaborationQuestionComments(client: PrismaClient, projectId: string, questionId: string) {
   return client.collaborationComment.findMany({
@@ -20,17 +14,6 @@ export async function getCollaborationQuestionComments(client: PrismaClient, pro
       questionId,
     },
   });
-}
-
-export async function getCollaborationCommentIsUpvotedBy(client: PrismaClient, commentId: string, upvotedBy: string) {
-  const upvotedCommentCount = await client.collaborationComment.count({
-    where: {
-      id: commentId,
-      upvotedBy: { has: upvotedBy },
-    },
-  });
-
-  return upvotedCommentCount > 0;
 }
 
 export async function getCollaborationCommentUpvotedBy(client: PrismaClient, commentId: string) {
