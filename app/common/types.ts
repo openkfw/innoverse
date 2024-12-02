@@ -57,6 +57,7 @@ export type User = {
   email?: string;
   badge?: boolean;
   providerId?: string;
+  provider?: string;
 };
 
 export type Comment = {

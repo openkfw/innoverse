@@ -52,7 +52,7 @@ export default function UserMenu(props: UserMenuProps) {
           </Typography>
         </Link>
       </MenuItem>
-      <Link href="/userProfile" style={{ textDecoration: 'none', color: 'common.white' }}>
+      <Link href="/profile" style={{ textDecoration: 'none', color: 'common.white' }}>
         <MenuItem sx={listItemStyles}>
           <Typography variant="body2" color="text.primary">
             {m.components_layout_userMenu_profile()}
@@ -60,11 +60,6 @@ export default function UserMenu(props: UserMenuProps) {
         </MenuItem>
       </Link>
 
-      {/* <MenuItem component={Link} to="/profile">
-        <Typography variant="body2" color="text.primary">
-          {m.components_layout_userMenu_profile()}
-        </Typography>
-      </MenuItem> */}
       <MenuItem disabled>
         <Typography variant="body2" color="text.primary">
           {m.components_layout_userMenu_notification()}
