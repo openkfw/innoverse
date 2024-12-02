@@ -17,7 +17,7 @@ export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
   const addResponse = async (text: string) => {
     const response = await addUserComment({
       comment: text,
-      commentType: 'POST_COMMENT',
+      objectType: 'POST',
       objectId: post.id,
     });
     const data = response.data ? { ...response.data, responseCount: 0, responses: [] } : undefined;

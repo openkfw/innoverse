@@ -2,12 +2,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { CollaborationComment, Comment, User, UserSession } from '@/common/types';
-import {
-  getCollaborationCommentResponseById,
-  handleCollaborationCommentResponseUpvotedByInDb,
-  updateCollaborationCommentResponseInDb,
-} from '@/repository/db/collaboration_comment_response';
-import { getCommentsByObjectId } from '@/repository/db/comment';
+import { getCommentById, getCommentsByObjectId, handleCommentLike, updateCommentInDb } from '@/repository/db/comment';
 import {
   addCollaborationCommentResponse,
   deleteCollaborationCommentResponse,
@@ -252,7 +247,7 @@ export const deleteProjectCollaborationCommentResponse = withAuth(
         };
       }
 
-      const response = await getCollaborationCommentResponseById(dbClient, body.responseId);
+      const response = await getCommentById(dbClient, body.responseId);
 
       if (response === null) {
         return {
@@ -298,7 +293,7 @@ export const updateProjectCollaborationCommentResponse = withAuth(
         };
       }
 
-      const response = await getCollaborationCommentResponseById(dbClient, body.responseId);
+      const response = await getCommentById(dbClient, body.responseId);
 
       if (response === null) {
         return {
@@ -314,7 +309,7 @@ export const updateProjectCollaborationCommentResponse = withAuth(
         };
       }
 
-      const updatedResponse = await updateCollaborationCommentResponseInDb(dbClient, body.responseId, body.updatedText);
+      const updatedResponse = await updateCommentInDb(dbClient, body.responseId, body.updatedText);
 
       return {
         status: StatusCodes.OK,
@@ -337,7 +332,7 @@ export const handleProjectCollaborationCommentResponseUpvotedBy = withAuth(
     try {
       const validatedParams = validateParams(collaborationCommentResponseUpvotedBySchema, body);
       if (validatedParams.status === StatusCodes.OK) {
-        await handleCollaborationCommentResponseUpvotedByInDb(dbClient, body.responseId, user.providerId);
+        await handleCommentLike(dbClient, body.responseId, user.providerId);
         return { status: StatusCodes.OK };
       }
       return {

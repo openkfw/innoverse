@@ -2,14 +2,14 @@
 
 import { ObjectType, User, UserSession } from '@/common/types';
 import {
-  addCollaborationCommentToDb,
-  deleteCollaborationCommentInDb,
-  getCollaborationCommentUpvotedBy,
-  handleCollaborationCommentUpvoteInDb,
-} from '@/repository/db/collaboration_comment';
-import { updateCollaborationCommentInDb } from '@/repository/db/collaboration_comment';
-import { getCollaborationCommentResponseCount } from '@/repository/db/collaboration_comment_response';
-import { getCommentsByObjectId } from '@/repository/db/comment';
+  addCommentToDb,
+  deleteCommentInDb,
+  getCommentLikes,
+  getCommentResponseCount,
+  getCommentsByObjectId,
+  handleCommentLike,
+  updateCommentInDb,
+} from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
@@ -62,31 +62,33 @@ type UpvoteCollaborationComment = {
 };
 
 export const addCollaborationComment = async ({ user, comment }: AddCollaborationComment) => {
-  const createdComment = await addCollaborationCommentToDb(
-    dbClient,
-    comment.projectId,
-    comment.questionId,
-    user.providerId,
-    comment.comment,
-    comment.visible,
-  );
+  const createdComment = await addCommentToDb({
+    client: dbClient,
+    objectId: comment.projectId,
+    objectType: 'PROJECT',
+    additionalObjectId: comment.questionId,
+    additionalObjectType: 'SURVEY_QUESTION',
+    author: user.providerId,
+    text: comment.comment,
+    visible: comment.visible,
+  });
   await addCollaborationCommentToCache(user, createdComment);
   return createdComment;
 };
 
 export const deleteCollaborationComment = async (commentId: string) => {
-  await deleteCollaborationCommentInDb(dbClient, commentId);
+  await deleteCommentInDb(dbClient, commentId);
   await deleteCollaborationCommentInCache(commentId);
 };
 
 export const updateCollaborationComment = async ({ user, comment }: UpdateCollaborationComment) => {
-  const updatedComment = await updateCollaborationCommentInDb(dbClient, comment.id, comment.comment);
+  const updatedComment = await updateCommentInDb(dbClient, comment.id, comment.comment);
   await updateCollaborationCommentInCache({ user, comment });
   return updatedComment;
 };
 
 export const handleCollaborationCommentUpvote = async ({ user, commentId }: UpvoteCollaborationComment) => {
-  const updatedComment = await handleCollaborationCommentUpvoteInDb(dbClient, commentId, user.providerId);
+  const updatedComment = await handleCommentLike(dbClient, commentId, user.providerId);
 
   if (updatedComment) {
     await updateCollaborationCommentInCache({ user, comment: updatedComment });
@@ -159,6 +161,7 @@ export const getNewsFeedEntryForComment = async (
 };
 
 export const createNewsFeedEntryForCommentById = async (commentId: string, user?: User) => {
+  //todo update type
   const comment: PrismaCollaborationComment | null = await getCommentsByObjectId(dbClient, commentId);
 
   if (!comment) {
@@ -180,15 +183,16 @@ export const createNewsFeedEntryForComment = async (comment: PrismaCollaboration
   }
 
   const author = user ?? (await mapToRedisUser(comment.author));
-  const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
-  const upvotedBy = (await getCollaborationCommentUpvotedBy(dbClient, comment.id)) ?? [];
+  const responseCount = await getCommentResponseCount(dbClient, comment.id);
+  //todo replace upvotedBy with likedBy
+  const likedBy = (await getCommentLikes(dbClient, comment.id)) ?? [];
   const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_COMMENT, comment.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, question.projectId);
   const followers = await mapToRedisUsers(followerIds);
   const projectName = await getProjectTitleById(comment.projectId);
 
   return mapCollaborationCommentToRedisNewsFeedEntry(
-    { ...comment, projectName: projectName ?? '', upvotedBy, author, responseCount },
+    { ...comment, projectName: projectName ?? '', upvotedBy: likedBy, author, responseCount },
     question,
     reactions,
     followers,

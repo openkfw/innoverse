@@ -32,7 +32,7 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
 
   return isEditing ? (
     <WriteCommentCard
-      content={{ author: comment.author, comment: comment.comment, updatedAt: comment.updatedAt }}
+      content={{ author: comment.author, text: comment.comment, updatedAt: comment.updatedAt }}
       onSubmit={handleUpdate}
       onDiscard={cancelEditing}
     />

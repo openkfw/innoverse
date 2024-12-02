@@ -407,23 +407,23 @@ export type ImageFormat = {
 
 export type CommonCommentProps = {
   id: string;
-  commentId: string;
+  objectId: string;
   createdAt: Date;
   updatedAt: Date;
-  comment: string;
+  text: string;
   author: User;
-  upvotedBy: string[];
+  likes: Like[];
   responseCount: number;
   parentId?: string;
 };
 
-export type PostComment = CommonCommentProps & {
-  postId: string;
-};
+// export type PostComment = CommonCommentProps & {
+//   postId: string;
+// };
 
-export type NewsComment = CommonCommentProps & {
-  newsId: string;
-};
+// export type NewsComment = CommonCommentProps & {
+//   newsId: string;
+// };
 
 export type CommentWithResponses = CommonCommentProps & {
   responses: CommentWithResponses[];

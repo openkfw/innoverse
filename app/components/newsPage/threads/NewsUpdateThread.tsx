@@ -29,7 +29,7 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
   const addResponse = async (text: string) => {
     const response = await addUserComment({
       comment: text,
-      commentType: 'NEWS_COMMENT',
+      objectType: 'UPDATE',
       objectId: update.id,
     });
     const data = response.data ? { ...response.data, responseCount: 0, responses: [] } : undefined;

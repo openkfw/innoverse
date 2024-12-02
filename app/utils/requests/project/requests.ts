@@ -5,12 +5,10 @@ import { StatusCodes } from 'http-status-codes';
 import { Comment, ObjectType, StartPagination, UserSession } from '@/common/types';
 import { getCommentsSchema } from '@/components/project-details/comments/validationSchema';
 import { RequestError } from '@/entities/error';
-import { getCollaborationCommentResponseCount } from '@/repository/db/collaboration_comment_response';
 import { getCommentsByObjectId, isCommentLikedBy } from '@/repository/db/comment';
 import { getProjectFollowers, isProjectFollowedBy } from '@/repository/db/follow';
-import { getProjectLikes, isProjectLikedBy } from '@/repository/db/like';
+import { getProjectLikes, isObjectLikedBy } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
-import { getComments, isCommentUpvotedBy } from '@/repository/db/project_comment';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
@@ -152,7 +150,7 @@ export async function getProjectAuthorIdByProjectId(projectId: string) {
 
 export const isProjectLikedByUser = withAuth(async (user: UserSession, body: { projectId: string }) => {
   try {
-    const isLiked = await isProjectLikedBy(dbClient, body.projectId, user.providerId);
+    const isLiked = await isObjectLikedBy(dbClient, body.projectId, user.providerId);
     return {
       status: StatusCodes.OK,
       data: isLiked,
@@ -218,13 +216,14 @@ export const getProjectComments = async (body: { projectId: string }) => {
     if (validatedParams.status === StatusCodes.OK) {
       const result = await getCommentsByObjectId(dbClient, body.projectId);
 
+      //todo refactor upvotedBy to likedBy
       const comments = await Promise.allSettled(
         sortDateByCreatedAtAsc(result).map(async (comment) => {
           const author = await getInnoUserByProviderId(comment.author);
           const upvotes = await Promise.allSettled(
             comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote)),
           ).then((results) => getFulfilledResults(results));
-          const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
+          const responseCount = await getCommentResponseCount(dbClient, comment.id);
           const projectTitle = await getProjectTitleById(comment.projectId);
 
           return {

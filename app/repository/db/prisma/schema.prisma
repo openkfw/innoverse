@@ -16,14 +16,14 @@ model Comment {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   objectType  ObjectType
-  objectId      String?      // ID of the object (if it's a post, news, project, etc)
+  objectId    String       // ID of the object (if it's a post, news, project, etc)
 
   text        String       // Text of the comment
   author      String       // ID of the author
   reactions   Reaction[]   // Associated reactions
 
   additionalObjectType ObjectType?
-  addiitionalObjectId String?
+  additionalObjectId String?
   visible Boolean? // not visible in case the Feedback is set to not visible
 
 

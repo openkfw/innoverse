@@ -25,7 +25,7 @@ import { addCommentLike, deleteCommentLike } from '../threads/actions';
 
 interface NewsCommentCardProps {
   comment: CommonCommentProps;
-  commentType: 'NEWS_COMMENT' | 'POST_COMMENT';
+  objectType: 'UPDATE' | 'POST';
   displayResponseControls: boolean;
   onDelete: () => void;
   onUpdate: (text: string) => void;
@@ -51,7 +51,7 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
     <WriteCommentCard content={comment} onSubmit={updateComment} onDiscard={cancelEdit} />
   ) : (
     <TextCard
-      text={comment.comment}
+      text={comment.text}
       header={<CommentCardHeader content={comment} avatar={{ size: 24 }} />}
       footer={
         <Stack direction={'row'} sx={{ mt: 0 }} style={{ marginTop: '8px', marginLeft: '-8px', gap: 16 }}>
@@ -66,7 +66,7 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
 };
 
 const useNewsCommentCard = (props: NewsCommentCardProps) => {
-  const { comment, commentType, displayResponseControls, onDelete, onUpdate } = props;
+  const { comment, objectType, displayResponseControls, onDelete, onUpdate } = props;
   const [isCommentLiked, setIsCommentLiked] = useState<boolean>(false);
   const [commentLikeCount, setCommentLikeCount] = useState<number>(0);
 
@@ -91,7 +91,7 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
 
   const handleDelete = async () => {
     try {
-      await removeUserComment({ commentId: comment.commentId, commentType });
+      await removeUserComment({ commentId: comment.id, objectType });
       onDelete();
     } catch (error) {
       console.error('Error deleting comment:', error);
@@ -105,7 +105,7 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
 
   const handleUpdate = async (updatedText: string) => {
     try {
-      await updateUserComment({ commentId: comment.commentId, content: updatedText, commentType });
+      await updateUserComment({ commentId: comment.id, content: updatedText, objectType });
       onUpdate(updatedText);
       editingInteractions.onSubmit();
     } catch (error) {

@@ -48,7 +48,7 @@ function NewsPostCard({ entry }: NewsPostCardProps) {
 
   return state.isEditing(post) ? (
     <WriteCommentCard
-      content={{ ...post, comment: post.content }}
+      content={{ ...post, text: post.content }}
       onSubmit={(updatedText) => handleUpdate(updatedText, user)}
       onDiscard={editingInteractions.onCancel}
     />

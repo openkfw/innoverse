@@ -29,7 +29,7 @@ export const NewsCollabCommentResponseCard = (props: NewsCollabCommentResponseCa
     <WriteCommentCard
       content={{
         author: response.author,
-        comment: response.response,
+        text: response.response,
         updatedAt: response.createdAt,
       }}
       onSubmit={updateResponse}

@@ -52,7 +52,7 @@ export async function getCommentById(client: PrismaClient, commentId: string) {
   }
 }
 
-export async function addCommentToDb(
+export async function addCommentToDb2(
   client: PrismaClient,
   objectId: string,
   objectType: ObjectType,
@@ -75,6 +75,41 @@ export async function addCommentToDb(
       },
       //   },
       // },
+      ...defaultParams,
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Add comment to ${objectType} with id: ${objectId} by user ${author}`,
+      err as Error,
+      objectId,
+    );
+    logger.error(error);
+    throw err;
+  }
+}
+
+export async function addCommentToDb(comment: {
+  client: PrismaClient;
+  objectId: string;
+  objectType: ObjectType;
+  author: string;
+  text: string;
+  parentId?: string;
+  additionalObjectType?: ObjectType;
+  additionalObjectId?: string;
+  visible?: boolean;
+}) {
+  const { client, objectId, objectType, author, text, parentId, visible } = comment;
+  try {
+    return await client.comment.create({
+      data: {
+        objectType,
+        objectId,
+        author,
+        text,
+        parentId,
+        visible,
+      },
       ...defaultParams,
     });
   } catch (err) {
@@ -113,7 +148,7 @@ export async function deleteCommentInDb(client: PrismaClient, commentId: string)
       },
     });
   } catch (err) {
-    const error: InnoPlatformError = dbError(`Delete post for comment with id: ${commentId}`, err as Error, commentId);
+    const error: InnoPlatformError = dbError(`Delete for comment with id: ${commentId}`, err as Error, commentId);
     logger.error(error);
     throw err;
   }
@@ -125,7 +160,62 @@ export async function getCommentsStartingFrom(client: PrismaClient, from: Date, 
       where: { objectType, updatedAt: { gte: from } },
     });
   } catch (err) {
-    const error: InnoPlatformError = dbError(`Get post comments starting from ${from}`, err as Error);
+    const error: InnoPlatformError = dbError(`Get comments starting from ${from}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
+}
+
+export async function getCommentsByParentId(client: PrismaClient, parentId: string) {
+  try {
+    return await client.comment.findMany({
+      where: {
+        parentId,
+      },
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Get comments by parent with id: ${parentId}`, err as Error, parentId);
+    logger.error(error);
+    throw err;
+  }
+}
+
+export async function getCommentResponseCount(client: PrismaClient, commentId: string) {
+  try {
+    const comment = await client.comment.findFirst({
+      where: {
+        id: commentId,
+      },
+      include: {
+        responses: true,
+      },
+    });
+    return comment?.responses.length;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Get comment response count for comment with id: ${commentId}`,
+      err as Error,
+      commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
+}
+
+export async function getCommentsByAdditionalObjectId(
+  client: PrismaClient,
+  objectId: string,
+  additionalObjectId: string,
+) {
+  try {
+    return await client.comment.findMany({
+      where: {
+        objectId,
+        additionalObjectId,
+      },
+    });
+  } catch (err) {
+    const error: InnoPlatformError = dbError(`Get comments by object with id: ${objectId}`, err as Error, objectId);
     logger.error(error);
     throw err;
   }
@@ -136,8 +226,53 @@ export async function isCommentLikedBy(client: PrismaClient, commentId: string, 
   const likedCommentsCount = await client.comment.count({
     where: {
       id: commentId,
-      likes: { some: { likedBy } }, //todo test this
+      likes: { some: { likedBy } }, //todo test this some/has
     },
   });
   return likedCommentsCount > 0;
+}
+
+export async function getCommentLikes(client: PrismaClient, commentId: string) {
+  const comment = await client.comment.findUnique({
+    where: {
+      id: commentId,
+    },
+    select: {
+      likes: true,
+    },
+  });
+
+  return comment?.likes;
+}
+
+export async function handleCommentLike(client: PrismaClient, commentId: string, likedBy: string) {
+  try {
+    return client.$transaction(async (tx) => {
+      const existingLike = await tx.like.findFirst({
+        where: {
+          objectId: commentId,
+          likedBy,
+        },
+      });
+
+      if (existingLike) {
+        return tx.like.delete({
+          where: {
+            id: existingLike.id,
+          },
+        });
+      } else {
+        return tx.like.create({
+          data: {
+            objectId: commentId,
+            objectType: 'COMMENT',
+            likedBy,
+          },
+        });
+      }
+    });
+  } catch (err) {
+    console.error(`Error handling like for comment with id: ${commentId} by user: ${likedBy}`, err);
+    throw err;
+  }
 }
