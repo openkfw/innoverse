@@ -1,6 +1,5 @@
 import { ObjectType } from '@/common/types';
 import { getFollowedByForEntity } from '@/repository/db/follow';
-import { countNewsResponses } from '@/repository/db/news_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getAllPushSubscriptions } from '@/repository/db/push_subscriptions';
 import { dbError, InnoPlatformError } from '@/utils/errors';
@@ -10,6 +9,7 @@ import { mapToRedisUsers, mapUpdateToRedisNewsFeedEntry } from '@/utils/newsFeed
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { NotificationRequest, sendPushNotifications } from '@/utils/notification/notificationSender';
+import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
 import { getProjectUpdateByIdWithReactions } from '@/utils/requests/updates/requests';
 import { StrapiEntityLifecycle, StrapiEntry } from '@/utils/strapiEvents/entityLifecycles/strapiEntityLifecycle';
 
@@ -77,12 +77,14 @@ export class UpdateLifecycle extends StrapiEntityLifecycle {
       const followerIds = await getFollowedByForEntity(dbClient, ObjectType.UPDATE, updateId);
       const followers = await mapToRedisUsers(followerIds);
       const updateWithReactions = mapObjectWithReactions(update);
-      const responseCount = await countNewsResponses(dbClient, update.id);
+      const comments = await getRedisNewsCommentsWithResponses(update.id, ObjectType.UPDATE);
+      const commentsIds = comments.map((comment) => comment.commentId);
+
       const newsFeedEntry = mapUpdateToRedisNewsFeedEntry(
         updateWithReactions,
         update.reactions,
         followers,
-        responseCount,
+        commentsIds,
       );
       await saveNewsFeedEntry(redisClient, newsFeedEntry);
     } catch (err) {

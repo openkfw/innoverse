@@ -310,7 +310,7 @@
 
   "components_newsPage_thread_fetch_error": "Kommentare konnten nicht geladen werden. Bitte versuche es noch einmal.",
 
-  "components_newsPage_thread_add_response_error": "Kommentar konnte nicht erstellt werden. Bitte versuche es noch einmal.",
+  "components_newsPage_thread_add_comment_error": "Kommentar konnte nicht erstellt werden. Bitte versuche es noch einmal.",
 
   "components_newsPage_newsFilter_applyFilterButton_apply": "Auswahl bestätigen",
 

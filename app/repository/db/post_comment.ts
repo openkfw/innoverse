@@ -6,6 +6,7 @@ import getLogger from '@/utils/logger';
 
 const logger = getLogger();
 
+// TODO: remove when the comments will be fetched from Redis cache, not DB
 export async function countPostResponses(client: PrismaClient, postId: string) {
   try {
     return await client.postComment.count({
