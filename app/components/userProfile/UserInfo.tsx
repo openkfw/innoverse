@@ -31,7 +31,6 @@ export default function UserInfo() {
     reset,
     handleSubmit,
     control,
-    getValues,
     setValue,
     formState: { isDirty, isValid },
   } = useForm<UserSessionFormValidationSchema>({
