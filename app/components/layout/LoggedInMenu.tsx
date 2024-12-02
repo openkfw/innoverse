@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -12,6 +11,8 @@ import { styled } from '@mui/material/styles';
 import { UserSession } from '@/common/types';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
+
+import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
 
 import UserMenu from './UserMenu';
 
@@ -65,9 +66,7 @@ export default function LoggedInMenu({ user, isUserLoading }: LoggedInMenuProps)
                   alt={m.components_layout_loggedInMenu_imageAlt()}
                 />
               ) : (
-                <Avatar sx={{ width: 32, height: 32 }}>
-                  <AccountCircleIcon fontSize="large" sx={{ fill: 'black' }} />
-                </Avatar>
+                <AvatarInitialsIcon name={user.name} size={32} />
               )}
             </StyledBadge>
           </IconButton>
