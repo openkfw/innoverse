@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { StatusCodes } from 'http-status-codes';
 
 import Box from '@mui/material/Box';
-
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 
@@ -14,6 +13,7 @@ import { Filters } from '@/common/types';
 import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { AutocompleteDropdownField } from '@/components/common/form/AutocompleteDropdownField';
 import { CheckboxInputField } from '@/components/common/form/CheckboxInputField';
+import { FormSaveButton } from '@/components/common/form/SaveButton';
 import * as m from '@/src/paraglide/messages.js';
 
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
@@ -21,7 +21,6 @@ import { MultilineTextInputField } from '../../../common/form/MultilineTextInput
 import { handleProjectUpdate } from './actions';
 import formFieldNames from './formFields';
 import { formValidationSchema, UpdateFormValidationSchema } from './validationSchema';
-import { FormSaveButton } from '@/components/common/form/SaveButton';
 
 export interface AddUpdateData {
   comment: string;
