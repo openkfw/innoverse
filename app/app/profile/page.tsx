@@ -1,12 +1,14 @@
 import Image from 'next/image';
 
+import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 
+import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
+import UserInfo from '@/components/userProfile/UserInfo';
 import * as m from '@/src/paraglide/messages.js';
 
 import backgroundImage from '/public/images/news-background.png';
-import UserInfo from '@/components/userProfile/UserInfo';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,6 +30,10 @@ async function UserProfilePage() {
         }}
       />
       <Container>
+        <Box style={{ position: 'relative' }}>
+          <BreadcrumbsNav activePage={m.app_user_profile()} />
+        </Box>
+
         <UserInfo />
       </Container>
     </Stack>
