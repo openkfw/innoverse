@@ -6,9 +6,9 @@ import Box from '@mui/material/Box';
 
 import { useMentions } from '@/app/contexts/mentions-context';
 import { MultilineFormInputProps } from '@/common/formTypes';
-import { fetchMentionData } from '@/components/collaboration/comments/actions';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
+import { fetchMentionData } from '@/utils/requests/innoUsers/requests';
 
 type MentionCallbackType = (data: SuggestionDataItem[]) => void;
 

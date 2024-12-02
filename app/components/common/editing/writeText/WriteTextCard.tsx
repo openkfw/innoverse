@@ -14,12 +14,12 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 
 import { useUser } from '@/app/contexts/user-context';
-import { fetchEmailsByUsernames } from '@/components/collaboration/comments/actions';
 import CustomButton from '@/components/common/CustomButton';
 import { errorMessage } from '@/components/common/CustomToast';
 import { UserAvatarProps } from '@/components/common/UserAvatar';
 import * as m from '@/src/paraglide/messages.js';
 import { mentionRegex } from '@/utils/mentions/formatMentionToText';
+import { fetchEmailsByUsernames } from '@/utils/requests/innoUsers/requests';
 
 import AvatarIcon from '../../AvatarIcon';
 import MultilineMentionInput from '../../form/MultilineMentionInput';

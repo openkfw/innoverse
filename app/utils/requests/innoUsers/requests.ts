@@ -1,13 +1,13 @@
 'use server';
 
-import { User, UserSession } from '@/common/types';
+import { User, UserSession, Mention } from '@/common/types';
 import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { RequestError } from '@/entities/error';
 import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
-import { CreateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
+import { CreateInnoUserMutation, UpdateInnoUserUsernameMutation } from '@/utils/requests/innoUsers/mutations';
 import {
   GetAllInnoUsers,
   GetEmailsByUsernamesQuery,
@@ -112,13 +112,63 @@ export async function getAllInnoUsers() {
 export async function createInnoUserIfNotExist(body: UserSession, image?: string | null) {
   try {
     if (!body.email) throw new Error('User session does not contain email');
+
     const user = await getInnoUserByEmail(body.email);
-    console.log('START', user);
-    return user ? user : await createInnoUser(body, image);
+
+    if (user) {
+      if (!user.username || user.username.trim() === '') {
+        const username = await generateUniqueUsername(body.email);
+        await updateInnoUserUsername(user.id!, username);
+        user.username = username;
+      }
+      return user;
+    } else {
+      return await createInnoUser(body, image);
+    }
   } catch (err) {
-    const error = strapiError('Trying to create a InnoUser if it does not exist', err as RequestError, body.name);
+    const error = strapiError('Trying to create or update an InnoUser', err as RequestError, body.name);
     logger.error(error);
+    throw err;
   }
+}
+
+export async function updateInnoUserUsername(userId: string, username: string) {
+  try {
+    const response = await strapiGraphQLFetcher(UpdateInnoUserUsernameMutation, {
+      id: userId,
+      username,
+    });
+
+    const updatedUserData = response.updateInnoUser?.data;
+    if (!updatedUserData) throw new Error('Failed to update user username');
+
+    return mapToUser(updatedUserData);
+  } catch (err) {
+    const error = strapiError('Updating Inno user username', err as RequestError, userId);
+    logger.error(error);
+    throw err;
+  }
+}
+
+async function generateUniqueUsername(email: string): Promise<string> {
+  const baseUsername = email.split('@')[0];
+  let username = baseUsername;
+  let count = 1;
+
+  while (true) {
+    try {
+      const response = await strapiGraphQLFetcher(GetInnoUserByUsernameQuery, { username });
+      if (!response?.innoUsers?.data.length) break;
+
+      username = `${baseUsername}${count}`;
+      count++;
+    } catch (error) {
+      logger.error('Error checking username existence:', error);
+      throw error;
+    }
+  }
+
+  return username;
 }
 
 async function uploadImage(imageUrl: string, fileName: string) {
@@ -144,23 +194,34 @@ async function uploadImage(imageUrl: string, fileName: string) {
     });
 }
 
-async function generateUniqueUsername(email: string): Promise<string> {
-  const baseUsername = email.split('@')[0];
-  let username = baseUsername;
-  let count = 1;
+export async function fetchMentionData(search: string): Promise<Mention[]> {
+  try {
+    const data = await getAllInnoUsers();
 
-  while (true) {
-    try {
-      const response = await strapiGraphQLFetcher(GetInnoUserByUsernameQuery, { username });
-      if (!response?.innoUsers?.data.length) break;
-
-      username = `${baseUsername}${count}`;
-      count++;
-    } catch (error) {
-      logger.error('Error checking username existence:', error);
-      throw error;
-    }
+    const formattedData = data.map((user) => ({ username: user.username as string }));
+    return formattedData.filter((user) => user.username?.toLowerCase().includes(search.toLowerCase()));
+  } catch (error) {
+    console.error('Failed to load users:', error);
+    return [];
   }
+}
 
-  return username;
+export async function fetchEmailsByUsernames(usernames: string[]): Promise<string[]> {
+  try {
+    const emails = await getEmailsByUsernames(usernames);
+    return emails;
+  } catch (error) {
+    console.error('Failed to fetch emails by usernames:', error);
+    throw error;
+  }
+}
+
+export async function fetchUserByUsername(username: string): Promise<User | null> {
+  try {
+    const userData = await getInnoUserByUsername(username);
+    return userData;
+  } catch (error) {
+    console.error('Failed to fetch user by username:', error);
+    return null;
+  }
 }
