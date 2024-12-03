@@ -21,21 +21,32 @@ export interface ContentCardProps {
 }
 
 export default function ContentCard(props: ContentCardProps) {
+  const [descriptionMaxLines, setDescriptionMaxLines] = React.useState(2);
+  const descriptionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    // Calculate the number of lines that can be displayed in the description
+    const descriptionElement = descriptionRef.current;
+    if (descriptionElement) {
+      const lineHeight = parseFloat(window.getComputedStyle(descriptionElement).lineHeight);
+      const maxHeight = parseFloat(window.getComputedStyle(descriptionElement).height);
+      const lines = Math.floor(maxHeight / lineHeight);
+      setDescriptionMaxLines(lines);
+    }
+  }, [descriptionRef]);
+
   const image =
     'src' in props.image ? (
       <Image
         src={props.image.src}
-        width={props.size?.width}
         height={0}
+        width={props.size?.width}
         alt={m.components_landing_projectSection_projectCard_imageAlt()}
         style={{
+          height: props.image.height,
           width: '100%',
           objectFit: 'cover',
           display: 'block',
-          height: props.image.height,
-          [theme.breakpoints.down('sm')]: {
-            height: 175,
-          },
         }}
       />
     ) : (
@@ -50,16 +61,22 @@ export default function ContentCard(props: ContentCardProps) {
         ...props.size,
       }}
     >
-      <CardMedia sx={{ overflow: 'hidden', padding: '24px' }}>{image}</CardMedia>
+      <CardMedia sx={cardMediaStyles}>{image}</CardMedia>
 
       <CardContent sx={cardContentStyles}>
         {props.header}
 
         {props.title}
 
-        <Typography variant="subtitle1" sx={descriptionStyles}>
-          {props.description}
-        </Typography>
+        <div ref={descriptionRef} style={{ flexGrow: 1 }}>
+          <Typography
+            ref={descriptionRef}
+            variant="subtitle1"
+            sx={{ ...descriptionStyles, maxHeight: '100%', WebkitLineClamp: descriptionMaxLines }}
+          >
+            {props.description}
+          </Typography>
+        </div>
 
         <Box sx={statusStyles}>{props.status}</Box>
       </CardContent>
@@ -79,6 +96,15 @@ const cardStyles = {
   maxWidth: '100%',
   display: 'flex',
   flexDirection: 'column',
+  gap: 2,
+};
+
+const cardMediaStyles = {
+  px: 3,
+  pt: 3,
+  [theme.breakpoints.down('sm')]: {
+    height: 175,
+  },
 };
 
 const cardContentStyles = {
@@ -92,14 +118,15 @@ const cardContentStyles = {
 
 const descriptionStyles = {
   color: 'secondary.contrastText',
-  marginBottom: 3,
   display: '-webkit-box',
   overflow: 'hidden',
   WebkitBoxOrient: 'vertical',
+  WebkitLineClamp: 2,
 };
 
 const statusStyles = {
-  flexGrow: 1,
+  marginTop: 'auto',
+  paddingTop: 3,
   display: 'flex',
   alignItems: 'flex-end',
 };

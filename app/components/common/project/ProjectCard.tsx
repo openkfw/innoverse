@@ -25,11 +25,6 @@ interface ProjectCardProps {
 export default function ProjectCard(props: ProjectCardProps) {
   const { id, img, imageHeight, contributors, title, summary, status, size, sx } = props;
 
-  const summaryStyle = {
-    ...clampStyles,
-    WebkitLineClamp: (size.height ?? 0) > 500 ? (title?.length > 100 ? 2 : 4) : title?.length > 40 ? 2 : 3,
-  };
-
   return (
     <ContentCard
       size={size}
@@ -43,7 +38,7 @@ export default function ProjectCard(props: ProjectCardProps) {
           </Link>
         </Typography>
       }
-      description={<Box sx={summaryStyle}>{summary}</Box>}
+      description={summary}
       status={
         <Box sx={{ overflow: 'visible' }}>
           <ProgressBar active={status} />
@@ -65,10 +60,4 @@ const linkStyles = {
   textDecoration: 'none',
   cursor: 'pointer',
   color: 'inherit',
-};
-
-const clampStyles = {
-  display: '-webkit-box',
-  overflow: 'hidden',
-  WebkitBoxOrient: 'vertical',
 };
