@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import Box from '@mui/material/Box';
+import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
 import bull from '@/components/common/bull';
 import { StyledTooltip } from '@/components/common/StyledTooltip';
-import theme from '@/styles/theme';
 
 interface VisibleContributorsProps {
   contributors: { name: string }[];
@@ -31,12 +30,12 @@ const HiddenContributorsTooltip: React.FC<HiddenContributorsTooltipProps> = ({ h
 };
 
 const VisibleContributors: React.FC<VisibleContributorsProps> = ({ contributors }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const [visibleContributors, setVisibleContributors] = useState<React.ReactNode>('');
 
-  const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
-
   useEffect(() => {
-    const containerWidth = isWideScreen ? 418 : 200;
+    const containerWidth = containerRef.current?.offsetWidth || 0;
     let currentWidth = 0;
     let hiddenCount = 0;
     const result: React.ReactNode[] = [];
@@ -87,11 +86,11 @@ const VisibleContributors: React.FC<VisibleContributorsProps> = ({ contributors 
     }
 
     setVisibleContributors(result);
-  }, [contributors, isWideScreen]);
+  }, [contributors, containerRef]);
 
   return (
-    <Typography variant="caption" component="div">
-      {visibleContributors}
+    <Typography ref={containerRef} variant="caption" component="div">
+      {visibleContributors || <Skeleton variant="text" width={100} />}
     </Typography>
   );
 };
