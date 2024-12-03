@@ -31,8 +31,8 @@ export default function NewsCarousel({ updates }: NewsSliderProps) {
         slidesToScroll: isSmallScreen ? 1 : 3,
       }}
       renderItem={(projectUpdate, idx) => (
-        <Box sx={{ pr: 3, [theme.breakpoints.down('sm')]: { pr: 2 } }}>
-          <NewsCard key={idx} update={projectUpdate} noClamp sx={{ height: '17rem' }} />
+        <Box key={idx} sx={{ pr: 3, [theme.breakpoints.down('sm')]: { pr: 2 } }}>
+          <NewsCard update={projectUpdate} noClamp sx={{ height: '17rem' }} />
         </Box>
       )}
       moreButton={
