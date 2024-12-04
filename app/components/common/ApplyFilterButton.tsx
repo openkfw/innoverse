@@ -16,29 +16,14 @@ interface ApplyFilterButtonProps {
 
 export default function ApplyFilterButton(props: ApplyFilterButtonProps) {
   const { onClick, applyButtonType } = props;
+  const disabled = applyButtonType === APPLY_BUTTON.DISABLED;
 
-  return applyButtonType == APPLY_BUTTON.DISABLED ? (
+  return (
     <Button
-      sx={{
-        ...buttonStyle,
-        ...disabledButtonStyle,
-      }}
-      endIcon={<CheckIcon />}
+      sx={buttonStyle}
+      endIcon={<CheckIcon sx={{ color: disabled ? 'text.primary' : undefined }} />}
       onClick={onClick}
-      disabled
-    >
-      <Typography variant="subtitle1" sx={typographyStyle}>
-        {m.components_newsPage_newsFilter_applyFilterButton_apply()}
-      </Typography>
-    </Button>
-  ) : (
-    <Button
-      sx={{
-        backgroundColor: 'secondary.main',
-        ...buttonStyle,
-      }}
-      endIcon={<CheckIcon sx={{ color: 'text.primary' }} />}
-      onClick={onClick}
+      disabled={disabled}
     >
       <Typography variant="subtitle1" sx={typographyStyle}>
         {m.components_newsPage_newsFilter_applyFilterButton_apply()}
@@ -57,14 +42,14 @@ const buttonStyle = {
   border: '2px solid rgba(255, 255, 255, 0.40)',
   boxShadow: '0px 12px 32px 0px rgba(0, 0, 0, 0.25), 0px 4px 8px 0px rgba(0, 0, 0, 0.10)',
   backdropFilter: 'blur(24px)',
+  backgroundColor: 'secondary.main',
+  '&:disabled': {
+    backgroundColor: 'rgba(0, 0, 0, 0.20)',
+    color: 'common.white',
+  },
 };
 
 const typographyStyle = {
   fontSize: '20px',
   color: 'text.primary',
-};
-
-const disabledButtonStyle = {
-  backgroundColor: 'rgba(0, 0, 0, 0.20)',
-  '&:disabled': { color: 'common.white' },
 };
