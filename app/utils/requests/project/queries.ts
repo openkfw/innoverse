@@ -43,33 +43,6 @@ export const ProjectFragment = graphql(
   [InnoUserFragment],
 );
 
-// search in title, summary, author, description.text, description.tags.tag
-export const SearchProjectsQuery = graphql(
-  `
-    query SearchProjects($page: Int, $pageSize: Int, $sort: String! = "updatedAt:desc", $searchString: String! = "") {
-      projects(
-        pagination: { page: $page, pageSize: $pageSize }
-        filters: {
-          or: [
-            { title: { contains: $searchString } }
-            { shortTitle: { contains: $searchString } }
-            { summary: { contains: $searchString } }
-            { author: { name: { contains: $searchString } } }
-            { description: { text: { contains: $searchString } } }
-            { description: { tags: { tag: { contains: $searchString } } } }
-          ]
-        }
-        sort: [$sort]
-      ) {
-        data {
-          ...Project
-        }
-      }
-    }
-  `,
-  [ProjectFragment],
-);
-
 export const GetProjectsQuery = graphql(
   `
     query GetProjects($limit: Int, $sort: String! = "updatedAt:desc") {
