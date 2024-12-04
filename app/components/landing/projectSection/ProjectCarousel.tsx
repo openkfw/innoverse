@@ -1,8 +1,12 @@
 'use client';
 
+import Link from 'next/link';
+
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import CustomButton from '@/components/common/CustomButton';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 
@@ -41,6 +45,11 @@ export default function ProjectCarousel({ projects }: ProjectProps) {
           </Box>
         );
       }}
+      moreButton={
+        <Link href="news">
+          <CustomButton>{m.components_landing_projectSection_projectSection_moreInitiatives()}</CustomButton>
+        </Link>
+      }
       sx={carouselStyles}
     />
   );
