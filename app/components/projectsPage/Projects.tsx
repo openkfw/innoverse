@@ -4,7 +4,6 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
