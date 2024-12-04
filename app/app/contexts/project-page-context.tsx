@@ -6,7 +6,10 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { BasicProject } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import getLogger from '@/utils/logger';
 import { GetProjectsBySearchString } from '@/utils/requests/project/requests';
+
+const logger = getLogger();
 
 export type ProjectFilters = {
   searchString: string;
@@ -96,7 +99,7 @@ export const ProjectPageContextProvider = ({ children, ...props }: ProjectPageCo
         setHasMore(result.length >= pageSize);
       } catch (error) {
         errorMessage({ message: 'Error refetching projects. Please check your connection and try again.' });
-        console.error('Error refetching projects:', error);
+        logger.error('Error refetching projects:', error);
         appInsights.trackException({
           exception: new Error('Error refetching projects', { cause: error }),
           severityLevel: SeverityLevel.Error,

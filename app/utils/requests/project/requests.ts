@@ -131,7 +131,7 @@ export async function getProjects(
     const projects = response.projects?.data.map(mapToBasicProject) ?? [];
     return projects;
   } catch (err) {
-    console.info(err);
+    logger.error(err);
   }
 }
 
@@ -159,7 +159,7 @@ export async function GetProjectsBySearchString(
     const projects = response.projects?.data.map(mapToBasicProject) ?? [];
     return projects;
   } catch (err) {
-    console.info(err);
+    logger.error(err);
   }
 }
 
