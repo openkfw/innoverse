@@ -8,7 +8,7 @@ import { BasicProject } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
-import { searchProjects } from '@/utils/requests/project/requests';
+import { getProjectsBySearchString } from '@/utils/requests/project/requests';
 
 import { LandingPageSection } from '../LandingPageSection';
 
@@ -40,7 +40,11 @@ export const ProjectSection = ({ projects }: ProjectProps) => {
         return;
       }
       startTransition(async () => {
-        const response = await searchProjects({ searchString: inputValue, pagination: { page: 0, pageSize: 10 } });
+        const response = await getProjectsBySearchString({
+          searchString: inputValue,
+          pagination: { page: 0, pageSize: 10 },
+          sort: { by: 'updatedAt', order: 'asc' },
+        });
         setSearchResults(response ?? []);
       });
     }, 300);

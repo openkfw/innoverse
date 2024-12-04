@@ -7,7 +7,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import { BasicProject } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import getLogger from '@/utils/logger';
-import { GetProjectsBySearchString } from '@/utils/requests/project/requests';
+import { getProjectsBySearchString } from '@/utils/requests/project/requests';
 
 const logger = getLogger();
 
@@ -85,7 +85,7 @@ export const ProjectPageContextProvider = ({ children, ...props }: ProjectPageCo
           setIsLoading(true);
         }
         const result =
-          (await GetProjectsBySearchString({
+          (await getProjectsBySearchString({
             pagination: {
               page: options.page,
               pageSize: pageSize,
