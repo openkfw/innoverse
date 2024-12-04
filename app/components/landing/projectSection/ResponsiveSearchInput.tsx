@@ -8,29 +8,29 @@ import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import type { Theme } from '@mui/material/styles';
+import type { SxProps, Theme } from '@mui/material/styles';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import ApplyFilterButton, { APPLY_BUTTON } from '@/components/common/ApplyFilterButton';
 import { closeIconButtonStyle } from '@/components/common/CustomDialog';
 import SecondaryIconButton from '@/components/common/SecondaryIconButton';
 import CloseIcon from '@/components/icons/CloseIcon';
-import ApplyFilterButton, { APPLY_BUTTON } from '@/components/newsPage/newsFilter/ApplyFilterButton';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
-type SearchInputProps = { onChange: (event: ChangeEvent<HTMLInputElement>) => void };
+type SearchInputProps = { sx?: SxProps<Theme>; onChange: (event: ChangeEvent<HTMLInputElement>) => void };
 
 export const ResponsiveSearchInput = (props: SearchInputProps) => {
-  const isWideScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
+  const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
 
-  return isWideScreen ? <FullSearchInput {...props} /> : <MobileSearchInput {...props} />;
+  return isSmallScreen ? <MobileSearchInput {...props} /> : <FullSearchInput {...props} />;
 };
 
-const FullSearchInput = ({ onChange }: SearchInputProps) => (
-  <FormControl variant="standard" sx={{ width: '100%' }}>
+const FullSearchInput = ({ sx, onChange }: SearchInputProps) => (
+  <FormControl variant="standard" sx={{ ...sx, width: '100%' }}>
     <TextField
       onChange={onChange}
       variant="outlined"
@@ -65,7 +65,7 @@ const FullSearchInput = ({ onChange }: SearchInputProps) => (
   </FormControl>
 );
 
-const MobileSearchInput = ({ onChange }: SearchInputProps) => {
+const MobileSearchInput = ({ sx, onChange }: SearchInputProps) => {
   const [open, setOpen] = useState(false);
 
   const openDrawer = () => setOpen(true);
@@ -77,6 +77,7 @@ const MobileSearchInput = ({ onChange }: SearchInputProps) => {
         label={m.components_newsFeed_newsFeedContainer_filter()}
         icon={<FilterIcon sx={{ color: 'secondary.main' }} />}
         onClick={openDrawer}
+        sx={sx}
       />
       <SwipeableDrawer
         sx={{

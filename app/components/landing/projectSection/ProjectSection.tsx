@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { BasicProject } from '@/common/types';
 import CustomButton from '@/components/common/CustomButton';
 import * as m from '@/src/paraglide/messages.js';
+import theme from '@/styles/theme';
 import { searchProjects } from '@/utils/requests/project/requests';
 
 import { LandingPageSection } from '../LandingPageSection';
@@ -51,9 +52,20 @@ export const ProjectSection = ({ projects }: ProjectProps) => {
     <LandingPageSection
       id="initiativen"
       title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <span>{m.components_landing_projectSection_projectSection_title()}</span>
-          <ResponsiveSearchInput onChange={handleInputChange} />
+        <div style={{ display: 'inline-block', width: 'auto' }}>
+          <div>{m.components_landing_projectSection_projectSection_title()}</div>
+          <ResponsiveSearchInput
+            sx={{
+              MozBoxSizing: 'border-box',
+              WebkitBoxSizing: 'border-box',
+              boxSizing: 'border-box',
+              width: '100%',
+              justifyContent: 'start',
+              marginTop: '1rem',
+              [theme.breakpoints.down('sm')]: { marginTop: '0.5rem' },
+            }}
+            onChange={handleInputChange}
+          />
         </div>
       }
       subtitle={m.components_landing_projectSection_projectSection_subtitle()}
