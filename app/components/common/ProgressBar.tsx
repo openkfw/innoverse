@@ -226,8 +226,6 @@ function Step({ idx, step, activeStep }: ProgressStepProps) {
   const stepIsDone = isStepDone(idx, activeStep);
   const statusLabel = getStepStatusLabel(stepIsDone, active);
 
-  const labelSize = 0.6 * 14 * label.length + idx * 10;
-
   return (
     <CustomTooltip tooltip={`${label}: ${statusLabel}`}>
       <Box sx={stepStyles}>
