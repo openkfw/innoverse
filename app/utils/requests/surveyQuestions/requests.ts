@@ -60,13 +60,13 @@ export async function getSurveyQuestionsByProjectId(projectId: string) {
   }
 }
 
-export const findUserVote = withAuth((user: UserSession, body: { votes: SurveyVote[] }) => {
+export const findUserVote = withAuth(async (user: UserSession, body: { votes: SurveyVote[] }) => {
   const userVote = body.votes.find((vote) => vote.votedBy === user.providerId);
 
-  return Promise.resolve({
+  return {
     status: StatusCodes.OK,
     data: userVote,
-  });
+  };
 });
 
 export const countSurveyQuestionsForProject = async (projectId: string) => {
