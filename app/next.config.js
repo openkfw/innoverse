@@ -8,7 +8,6 @@ const { paraglide } = require('@inlang/paraglide-next/plugin');
 const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     remotePatterns: [
       {
@@ -86,7 +85,6 @@ const nextConfig = {
       dynamic: 3,
       static: 180,
     },
-    instrumentationHook: true,
   },
   i18n: {
     locales: ['de'],
