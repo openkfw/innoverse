@@ -56,6 +56,34 @@ export const GetProjectsQuery = graphql(
   [ProjectFragment],
 );
 
+export const GetProjectsBySearchStringQuery = graphql(
+  `
+    query GetProjects($page: Int, $pageSize: Int, $sort: String! = "updatedAt:desc", $searchString: String! = "") {
+      projects(
+        filters: {
+          or: [
+            { title: { containsi: $searchString } }
+            { shortTitle: { containsi: $searchString } }
+            { summary: { containsi: $searchString } }
+            { author: { name: { containsi: $searchString } } }
+            { team: { name: { containsi: $searchString } } }
+            { description: { text: { containsi: $searchString } } }
+            { description: { tags: { tag: { containsi: $searchString } } } }
+            { status: { containsi: $searchString } }
+          ]
+        }
+        pagination: { page: $page, pageSize: $pageSize }
+        sort: [$sort]
+      ) {
+        data {
+          ...Project
+        }
+      }
+    }
+  `,
+  [ProjectFragment],
+);
+
 export const GetProjectByIdQuery = graphql(
   `
     query GetProjectById($id: ID!) {
