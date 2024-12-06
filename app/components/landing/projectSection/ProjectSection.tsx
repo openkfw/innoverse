@@ -25,7 +25,7 @@ export type ProjectProps = {
 
 export const ProjectSection = ({ projects }: ProjectProps) => {
   const [inputValue, setInputValue] = useState('');
-  const [searchResults, setSearchResults] = useState<BasicProject[]>();
+  const [searchResults, setSearchResults] = useState<BasicProject[] | null>(null);
   const [isLoading, startTransition] = useTransition();
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -36,7 +36,7 @@ export const ProjectSection = ({ projects }: ProjectProps) => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (!inputValue) {
-        setSearchResults([]);
+        setSearchResults(null);
         return;
       }
       startTransition(async () => {
