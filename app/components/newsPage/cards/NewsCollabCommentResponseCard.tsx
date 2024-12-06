@@ -10,14 +10,14 @@ import { TextCard } from '@/components/common/TextCard';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
 
 interface NewsCollabCommentResponseCardProps {
-  response: CommentResponse;
+  comment: CommentResponse;
   onDelete: () => void;
 }
 
 export const NewsCollabCommentResponseCard = (props: NewsCollabCommentResponseCardProps) => {
   const { response, updateResponse, deleteResponse } = useCollaborationCommentResponseCard({
     onDelete: props.onDelete,
-    response: props.response,
+    response: props.comment,
   });
 
   const state = useEditingState();
@@ -25,7 +25,7 @@ export const NewsCollabCommentResponseCard = (props: NewsCollabCommentResponseCa
   const { user } = useUser();
   const userIsAuthor = user?.providerId === response.author.providerId;
 
-  return state.isEditing(props.response) ? (
+  return state.isEditing(props.comment) ? (
     <WriteCommentCard
       content={{
         author: response.author,

@@ -26,13 +26,13 @@ type DeleteResponse = {
 
 export const addCollaborationCommentResponse = async ({ user, response, comment }: AddResponse) => {
   const createdResponse = await addCollaborationCommentResponseToDb(dbClient, user.providerId, response, comment.id);
-  const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
-  await updateCollaborationCommentInCache({ user, comment: { id: comment.id, responseCount } });
+  const commentCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
+  await updateCollaborationCommentInCache({ user, comment: { id: comment.id, commentCount } });
   return createdResponse;
 };
 
 export const deleteCollaborationCommentResponse = async ({ user, response }: DeleteResponse) => {
   const deletedResponse = await deleteCollaborationCommentResponseInDb(dbClient, response.id);
-  const responseCount = await getCollaborationCommentResponseCount(dbClient, deletedResponse.commentId);
-  await updateCollaborationCommentInCache({ user, comment: { id: deletedResponse.commentId, responseCount } });
+  const commentCount = await getCollaborationCommentResponseCount(dbClient, deletedResponse.commentId);
+  await updateCollaborationCommentInCache({ user, comment: { id: deletedResponse.commentId, commentCount } });
 };

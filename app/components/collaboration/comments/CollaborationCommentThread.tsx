@@ -12,15 +12,15 @@ interface CollaborationCommentThreadProps {
 
 export const CollaborationCommentThread = (props: CollaborationCommentThreadProps) => {
   const { comment, projectName, onDelete } = props;
-  const { fetchResponses, addResponse } = useCollaborationCommentThread(props);
+  const { fetchComments, addComment } = useCollaborationCommentThread(props);
 
   return (
     <CommentThread
       comment={comment}
       card={<CollaborationCommentCard comment={comment} projectName={projectName} onDelete={onDelete} />}
-      fetchResponses={fetchResponses}
-      addResponse={addResponse}
-      renderResponse={(response, idx, deleteResponse) => (
+      fetchComments={fetchComments}
+      addComment={addComment}
+      renderComment={(response, idx, deleteResponse) => (
         <CollaborationCommentResponseThread
           key={`${idx}-${response.id}`}
           response={response}
@@ -28,7 +28,7 @@ export const CollaborationCommentThread = (props: CollaborationCommentThreadProp
         />
       )}
       disableDivider={true}
-      indentResponses={'3em'}
+      indentComments={'3em'}
     />
   );
 };

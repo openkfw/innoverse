@@ -6,7 +6,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { AmountOfNews, NewsFeedEntry, ObjectType } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
-import { NewsType } from '@/utils/newsFeed/redis/models';
+import { getNewsTypeByString } from '@/utils/newsFeed/redis/mappings';
 import { getNewsFeed } from '@/utils/newsFeed/redis/redisService';
 import { getProjectTitleById } from '@/utils/requests/project/requests';
 
@@ -34,28 +34,6 @@ const safeIncrement = (dictionary: { [key: string]: number }, key: string, incre
   return dictionary;
 };
 
-const getNewsTypeByString = (type: string) => {
-  switch (type) {
-    case ObjectType.COLLABORATION_COMMENT:
-      return NewsType.COLLABORATION_COMMENT;
-    case ObjectType.COLLABORATION_QUESTION:
-      return NewsType.COLLABORATION_QUESTION;
-    case ObjectType.PROJECT:
-      return NewsType.PROJECT;
-    case ObjectType.EVENT:
-      return NewsType.EVENT;
-    case ObjectType.OPPORTUNITY:
-      return NewsType.OPPORTUNITY;
-    case ObjectType.POST:
-      return NewsType.POST;
-    case ObjectType.SURVEY_QUESTION:
-      return NewsType.SURVEY_QUESTION;
-    case ObjectType.UPDATE:
-      return NewsType.UPDATE;
-    default:
-      throw Error(`Unknown new feed object type '${type}'`);
-  }
-};
 interface NewsFeedContextInterface {
   feed: NewsFeedEntry[];
   sort: SortValues;

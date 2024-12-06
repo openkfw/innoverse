@@ -13,7 +13,6 @@ export const updateUserComment = withAuth(
   ) => {
     try {
       await updateComment({
-        author: user,
         commentId: body.commentId,
         content: body.content,
         commentType: body.commentType,

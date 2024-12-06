@@ -32,6 +32,7 @@ import {
   transactionalDeleteItemsFromRedis,
   transactionalSaveNewsFeedEntry,
 } from './redis/redisService';
+import { saveEntryNewsComments } from '../requests/comments/requests';
 
 const logger = getLogger();
 const maxSyncRetries = 3;
@@ -158,6 +159,11 @@ const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEn
   }
   const mapEntries = posts.map(async (post) => createNewsFeedEntryForPost(post));
   const newsFeedEntries = await getPromiseResults(mapEntries);
+
+  newsFeedEntries.map(async (entry) => {
+    const comments = await saveEntryNewsComments(entry);
+    entry.item.comments = comments;
+  });
   return newsFeedEntries.filter((entry): entry is RedisNewsFeedEntry => entry !== null);
 };
 
@@ -181,6 +187,11 @@ const aggregateProjectUpdates = async ({ from }: { from: Date }): Promise<RedisN
 
   const createdProjectUpdates = projectUpdates.map((update) => createNewsFeedEntryForProjectUpdate(update));
   const newsFeedEntries = await getPromiseResults(createdProjectUpdates);
+
+  newsFeedEntries.map(async (entry) => {
+    const comments = await saveEntryNewsComments(entry);
+    entry.item.comments = comments;
+  });
   return newsFeedEntries;
 };
 

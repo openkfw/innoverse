@@ -1,6 +1,6 @@
 import { ResultOf } from 'gql.tada';
 
-import { ProjectUpdate } from '@/common/types';
+import { ObjectType, ProjectUpdate } from '@/common/types';
 import { toDate } from '@/utils/helpers';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { ProjectUpdateFragment } from '@/utils/requests/updates/queries';
@@ -30,5 +30,6 @@ export function mapToProjectUpdate(updateData: ResultOf<typeof ProjectUpdateFrag
     author: mapToUser(author),
     linkToCollaborationTab: updateData.attributes.linkToCollaborationTab ?? false,
     anonymous: updateData.attributes.anonymous ?? false,
+    objectType: ObjectType.UPDATE,
   };
 }

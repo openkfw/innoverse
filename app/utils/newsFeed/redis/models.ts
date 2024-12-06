@@ -1,4 +1,4 @@
-import { PROJECT_PROGRESS, ProjectDescription } from '@/common/types';
+import { HashedNewsComment, PROJECT_PROGRESS, ProjectDescription } from '@/common/types';
 import { InnoPlatformError } from '@/utils/errors';
 
 export enum NewsType {
@@ -10,9 +10,15 @@ export enum NewsType {
   SURVEY_QUESTION = 'survey-question',
   OPPORTUNITY = 'opportunity',
   PROJECT = 'project',
+  NEWS_COMMENT = 'news-comment',
 }
 
-export type RedisNewsFeedEntry = { updatedAt: number; search: string } & RedisNewsFeedTypeEntry;
+export type RedisNewsFeedEntry = {
+  updatedAt: number;
+  search: string;
+  // TODO: fix types when the comments will be fetched from cache
+  comments?: any[];
+} & RedisNewsFeedTypeEntry;
 
 type RedisNewsFeedTypeEntry =
   | {
@@ -58,6 +64,7 @@ export type RedisItem = {
   reactions: RedisReaction[];
   followedBy: RedisUser[];
   projectId?: string;
+  comments?: any[];
 };
 
 export type RedisPost = RedisItem & {
@@ -65,7 +72,6 @@ export type RedisPost = RedisItem & {
   author: RedisUser;
   content: string;
   upvotedBy: string[];
-  responseCount: number;
   anonymous: boolean;
 };
 
@@ -91,7 +97,6 @@ export type RedisProjectUpdate = RedisItem & {
   projectName: string;
   projectStart?: string;
   linkToCollaborationTab: boolean;
-  responseCount: number;
   anonymous: boolean;
 };
 
@@ -108,6 +113,31 @@ export type RedisProject = RedisItem & {
   description: ProjectDescription;
   projectId: string;
   author?: RedisUser;
+};
+
+export type RedisNewsComment = {
+  id: string;
+  commentId: string;
+  comment: string;
+  author?: RedisUser;
+  upvotedBy?: string[];
+  commentCount?: number;
+  comments?: RedisNewsComment[];
+  updatedAt: number;
+  createdAt?: number;
+  parentId?: string;
+};
+
+export type RedisHashedNewsComment = {
+  id: string;
+  commentId: string;
+  comment: string;
+  author?: string;
+  updatedAt: number;
+  createdAt: number;
+  itemType: NewsType;
+  itemId: string;
+  comments?: RedisHashedNewsComment[];
 };
 
 export type RedisCollaborationQuestion = RedisItem & {
@@ -148,7 +178,7 @@ export type RedisCollaborationComment = RedisItem & {
   author: RedisUser;
   comment: string;
   upvotedBy: string[];
-  responseCount: number;
+  commentCount: number;
   projectId: string;
   question: Omit<RedisCollaborationQuestion, 'reactions' | 'followedBy' | 'updatedAt'>;
   createdAt: number;

@@ -223,7 +223,7 @@ export const getProjectComments = async (body: { projectId: string }) => {
           const upvotes = await Promise.allSettled(
             comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote)),
           ).then((results) => getFulfilledResults(results));
-          const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
+          const commentCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
           const projectTitle = await getProjectTitleById(comment.projectId);
 
           return {
@@ -231,7 +231,7 @@ export const getProjectComments = async (body: { projectId: string }) => {
             projectName: projectTitle,
             upvotedBy: upvotes,
             author,
-            responseCount,
+            commentCount,
           } as Comment;
         }),
       ).then((results) => getFulfilledResults(results));

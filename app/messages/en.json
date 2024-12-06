@@ -311,7 +311,7 @@
 
   "components_newsPage_thread_fetch_error": "Failed to load comments. Please try again.",
 
-  "components_newsPage_thread_add_response_error": "Failed to add comment. Please try again.",
+  "components_newsPage_thread_add_comment_error": "Failed to add comment. Please try again.",
 
   "components_newsPage_newsFilter_applyFilterButton_apply": "Apply selection",
 
