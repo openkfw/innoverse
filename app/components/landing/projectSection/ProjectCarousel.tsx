@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import CustomButton from '@/components/common/CustomButton';
+import { CardSkeleton } from '@/components/common/skeletons/CardSkeleton';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
@@ -23,7 +24,7 @@ type ProjectCarouselProps = ProjectProps & {
   isLoading: boolean;
 };
 
-export default function ProjectCarousel({ projects }: ProjectCarouselProps) {
+export default function ProjectCarousel({ isLoading, projects }: ProjectCarouselProps) {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
@@ -37,15 +38,19 @@ export default function ProjectCarousel({ projects }: ProjectCarouselProps) {
         const image = getImageByBreakpoint(isSmallScreen, project.image) || defaultImage;
         return (
           <Box key={project.id} sx={cardContainerStyles}>
-            <ProjectCard
-              id={project.id}
-              img={image}
-              contributors={project.team}
-              title={project.title}
-              summary={project.summary}
-              status={project.status}
-              size={{ height: 490, width: 466 }}
-            />
+            {isLoading ? (
+              <CardSkeleton size={cardSize} />
+            ) : (
+              <ProjectCard
+                id={project.id}
+                img={image}
+                contributors={project.team}
+                title={project.title}
+                summary={project.summary}
+                status={project.status}
+                size={cardSize}
+              />
+            )}
           </Box>
         );
       }}
@@ -58,6 +63,8 @@ export default function ProjectCarousel({ projects }: ProjectCarouselProps) {
     />
   );
 }
+
+const cardSize = { height: 490, width: 466 };
 
 const cardContainerStyles = {
   pr: 3,
