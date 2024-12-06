@@ -32,6 +32,7 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
       commentType: 'NEWS_COMMENT',
       objectId: update.id,
       objectType: ObjectType.UPDATE,
+      projectId: currentUpdate.projectId,
     });
     const data = comment.data ? { ...comment.data, comments: [] } : undefined;
     return { ...comment, data };

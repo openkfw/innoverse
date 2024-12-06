@@ -2,7 +2,6 @@ import { NewsType, RedisNewsComment, RedisNewsFeedEntry } from '../models';
 import { getRedisClient, RedisClient, RedisIndex } from '../redisClient';
 import { getNewsFeedEntryByKey } from '../redisService';
 import { SearchOptions } from 'redis';
-import { escapeRedisTextSeparators } from '../helpers';
 import { getUnixTimestamp } from '@/utils/helpers';
 import { InnoPlatformError, redisError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
@@ -10,7 +9,13 @@ import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/req
 
 const logger = getLogger();
 
-export type AddNewsComment = { newsType: NewsType; newsId: string; comment: RedisNewsComment; parentId?: string };
+export type AddNewsComment = {
+  newsType: NewsType;
+  newsId: string;
+  comment: RedisNewsComment;
+  parentId?: string;
+  projectId?: string;
+};
 
 export async function setCommentsIdsToEntry(redisClient: RedisClient, redisKey: string, commentsIds: string[]) {
   await redisClient.json.set(redisKey, '.item.comments', commentsIds);
@@ -38,6 +43,7 @@ async function addNewsCommentToRedisCache(redisClient: RedisClient, body: AddNew
     await redisClient.hSet(hashKey, {
       id: body.comment.id,
       ...(body.parentId && { parentId: body.parentId }),
+      ...(body.projectId && { projectId: body.projectId }),
       comment: comment.comment,
       itemType: newsType,
       itemId: newsId,
@@ -127,6 +133,7 @@ export async function saveHashedComments(
         newsId: entry.item.id,
         comment,
         parentId: comment.parentId,
+        projectId: entry.item.projectId,
       });
       if (comment.comments) {
         await saveHashedComments(redisClient, entry, comment.comments);
@@ -177,20 +184,24 @@ export async function getNewsFeedEntryWithComments(client: RedisClient, entryTyp
   }
 }
 
-async function searchComments(client: RedisClient, searchString: string, searchOptions: SearchOptions) {
-  const query = escapeRedisTextSeparators(searchString);
-  const comments = await client.ft.search(RedisIndex.COMMENTS, `@comment:*${query}*`, searchOptions);
+async function searchComments(client: RedisClient, index: RedisIndex, query: string, searchOptions: SearchOptions) {
+  const comments = await client.ft.search(index, query, searchOptions);
   if (comments) {
     return comments.documents.map((doc) => doc.value.itemId as string);
   }
   return [];
 }
 
-export async function searchNewsComments(client: RedisClient, searchString: string, searchOptions: SearchOptions) {
+export async function searchNewsComments(
+  client: RedisClient,
+  index: RedisIndex,
+  query: string,
+  searchOptions: SearchOptions,
+) {
   const itemTypes = [NewsType.POST, NewsType.UPDATE];
   const result = await Promise.all(
     itemTypes.map(async (itemType, id) => {
-      const resultComments = await searchComments(client, searchString, searchOptions);
+      const resultComments = await searchComments(client, index, query, searchOptions);
       const result = await Promise.all(
         resultComments.map(async (itemId) => {
           const res = await getNewsFeedEntryWithComments(client, itemType, itemId);

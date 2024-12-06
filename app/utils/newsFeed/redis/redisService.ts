@@ -9,6 +9,9 @@ import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from 
 
 import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
 import { searchNewsComments } from './services/commentsService';
+import getLogger from '@/utils/logger';
+
+const logger = getLogger();
 
 interface RedisJson {
   [key: string]: any;
@@ -117,6 +120,16 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     return { filters, index, parameters };
   };
 
+  const getSearchCommentsOptions = (parameters: SearchOptions['PARAMS']) => {
+    // change the index and remove the last query filter - @search
+    const index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_COMMENTS;
+    const newFilters = [...filters.slice(0, -1)];
+    // query parameter = searchString
+    newFilters.push(`@comment:{$query*}`);
+    const query = newFilters.join(' ');
+    return { index, query, parameters };
+  };
+
   const getSortingOption = (): SearchOptions['SORTBY'] => {
     const sortBy = options?.sortBy?.updatedAt ?? 'DESC';
     const result = sortBy ? { BY: 'updatedAt', DIRECTION: sortBy } : undefined;
@@ -132,10 +145,12 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     };
   };
 
+  const filterBy = options?.filterBy;
   const { filters, parameters, index } = getFiltersAndIndex();
   const sortOption = getSortingOption();
   const paginationOptions = getPaginationOptions();
-  const query = filters.join(' ');
+  let query = filters.join(' ');
+  let idx = index;
   const searchOptions: SearchOptions = {
     SORTBY: sortOption,
     LIMIT: paginationOptions,
@@ -145,8 +160,20 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
 
   try {
     const result = await client.ft.search(index, query, searchOptions);
-    if (options?.filterBy?.searchString) {
-      const resultComments = await searchNewsComments(client, options?.filterBy?.searchString, searchOptions);
+    if (filterBy?.searchString?.length) {
+      const {
+        query: commentsQuery,
+        index: commentsIndex,
+        parameters: commentsParameters,
+      } = getSearchCommentsOptions(parameters);
+
+      query = commentsQuery;
+      idx = commentsIndex;
+      let commentsSearchOptions: SearchOptions = {
+        ...searchOptions,
+        PARAMS: commentsParameters,
+      };
+      const resultComments = await searchNewsComments(client, commentsIndex, query, commentsSearchOptions);
       const commentsDocuments = filterDuplicateEntries(resultComments.documents);
       const resultDocuments = filterDuplicateEntries(
         result.documents as unknown as { id: string; value: RedisNewsFeedEntry }[],
@@ -161,7 +188,7 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     return result;
   } catch (err) {
     const error = err as Error;
-    error.cause = `${error.message}; Index: ${index}; Query: ${query}`;
+    error.cause = `${error.message}; Index: ${idx}; Query: ${query}`;
     const extendedError = redisError('Failed to get items from redis', err as Error);
     throw extendedError;
   }
