@@ -24,6 +24,8 @@ export default ({ env }) => ({
       sizeLimit: 250 * 1024 * 1024, // 256mb in bytes
     },
   },
+
+  // Setup strapi email service using sendgrid
   email: {
     config: {
       provider: 'sendgrid',
