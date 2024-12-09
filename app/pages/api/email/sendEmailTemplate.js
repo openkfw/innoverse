@@ -1,4 +1,4 @@
-import sgMail, { verified_email_address } from "@/repository/sendgrid";
+import sgMail, { verified_email_address } from "@/repository/sendgrid/sendgrid";
 
 
 // Send email template 
