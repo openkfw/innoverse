@@ -17,10 +17,10 @@
     "strapi": "strapi"
   },
   "dependencies": {
-    "@strapi/plugin-graphql": "4.25.9",
-    "@strapi/plugin-i18n": "4.25.9",
-    "@strapi/plugin-users-permissions": "4.25.9",
-    "@strapi/strapi": "4.25.9",
+    "@strapi/plugin-graphql": "4.25.17",
+    "@strapi/plugin-i18n": "4.25.17",
+    "@strapi/plugin-users-permissions": "4.25.17",
+    "@strapi/strapi": "4.25.17",
     "@strapi/utils": "4.25.8",
     "better-npm-audit": "^3.8.3",
     "better-sqlite3": "^11.3.0",
