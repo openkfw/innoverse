@@ -10,8 +10,13 @@ import { getProjectById } from '@/utils/requests/project/requests';
 
 export const dynamic = 'force-dynamic';
 
-async function ProjectPage({ params }: { params: { id: string } }) {
-  const project = await getProjectById(params.id);
+type ProjectPageProps = {
+  params: Promise<{ id: string }>;
+};
+
+async function ProjectPage({ params }: ProjectPageProps) {
+  const resolvedParams = await params;
+  const project = await getProjectById(resolvedParams.id);
 
   if (!project) {
     return <ErrorPage message={m.app_projects_page_projectsNotFoundError()} />;
