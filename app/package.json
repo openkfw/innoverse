@@ -71,28 +71,26 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "^1.10.1",
+    "@0no-co/graphqlsp": "^1.12.16",
     "@inlang/paraglide-js": "^1.11.3",
     "@types/emoji-mart": "^3.0.14",
-    "@types/lodash": "^4.14.202",
-    "@types/next": "^9.0.0",
-    "@types/next-auth": "^3.15.0",
+    "@types/lodash": "^4.17.13",
     "@types/node": "^20.4.5",
     "@types/react": "18.3.13",
     "@types/react-dom": "18.3.1",
-    "@types/react-show-more-text": "^1.4.4",
-    "@types/react-slick": "^0.23.10",
-    "@types/web-push": "^3.6.3",
+    "@types/react-show-more-text": "^1.4.5",
+    "@types/react-slick": "^0.23.13",
+    "@types/web-push": "^3.6.4",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "eslint": "8.46.0",
     "eslint-config-next": "^15.0.4",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
-    "prettier": "^3.0.0",
+    "prettier": "^3.4.2",
     "prisma": "^5.1.0",
     "raw-loader": "^4.0.2",
     "ts-node": "^10.9.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.7.2"
   },
   "prisma": {
     "schema": "./repository/db/prisma/schema.prisma"
