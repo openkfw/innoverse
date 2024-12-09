@@ -43,7 +43,7 @@ export default function ContentCard(props: ContentCardProps) {
         width={props.size?.width}
         alt={m.components_landing_projectSection_projectCard_imageAlt()}
         style={{
-          height: props.image.height,
+          height: '100%',
           width: '100%',
           objectFit: 'cover',
           display: 'block',
@@ -52,6 +52,10 @@ export default function ContentCard(props: ContentCardProps) {
     ) : (
       props.image
     );
+
+  if ('height' in props.image) {
+    cardMediaStyles.height = props.image.height;
+  }
 
   return (
     <Card
@@ -102,6 +106,7 @@ const cardStyles = {
 const cardMediaStyles = {
   px: 3,
   pt: 3,
+  height: 237,
   [theme.breakpoints.down('sm')]: {
     height: 175,
   },
