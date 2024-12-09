@@ -24,16 +24,26 @@ export default function ContentCard(props: ContentCardProps) {
   const [descriptionMaxLines, setDescriptionMaxLines] = React.useState(2);
   const descriptionRef = React.useRef(null);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     // Calculate the number of lines that can be displayed in the description
-    const descriptionElement = descriptionRef.current;
-    if (descriptionElement) {
-      const lineHeight = parseFloat(window.getComputedStyle(descriptionElement).lineHeight);
-      const maxHeight = parseFloat(window.getComputedStyle(descriptionElement).height);
-      const lines = Math.floor(maxHeight / lineHeight);
-      setDescriptionMaxLines(lines);
+    if (descriptionRef.current) {
+      const descriptionElement = descriptionRef.current;
+
+      const observer = new ResizeObserver(() => {
+        const lineHeight = parseFloat(window.getComputedStyle(descriptionElement).lineHeight);
+        const maxHeight = parseFloat(window.getComputedStyle(descriptionElement).height);
+        const lines = Math.floor(maxHeight / lineHeight) - 1;
+        setDescriptionMaxLines(lines);
+      });
+
+      observer.observe(descriptionRef.current);
+
+      // Cleanup function
+      return () => {
+        observer.disconnect();
+      };
     }
-  }, [descriptionRef]);
+  }, []);
 
   const image =
     'src' in props.image ? (
@@ -74,7 +84,6 @@ export default function ContentCard(props: ContentCardProps) {
 
         <div ref={descriptionRef} style={{ flexGrow: 1 }}>
           <Typography
-            ref={descriptionRef}
             variant="subtitle1"
             sx={{ ...descriptionStyles, maxHeight: '100%', WebkitLineClamp: descriptionMaxLines }}
           >
