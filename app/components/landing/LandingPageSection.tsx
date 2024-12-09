@@ -10,7 +10,7 @@ import theme from '@/styles/theme';
 
 type LandingPageSectionProps = PropsWithChildren & {
   id: string;
-  title: string;
+  title: string | React.JSX.Element;
   subtitle: string;
   beforeContent?: React.JSX.Element;
   topRightMenu?: React.JSX.Element;
