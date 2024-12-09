@@ -10,9 +10,10 @@ import Typography from '@mui/material/Typography';
 
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { ObjectType } from '@/common/types';
-import { NewsSkeleton } from '@/components/newsPage/skeletons/NewsSkeleton';
 import { NewsCollaborationCommentThread } from '@/components/newsPage/threads/NewsCollaborationCommentThread';
 import * as m from '@/src/paraglide/messages.js';
+
+import { CommonSkeleton } from '../common/skeletons/CommonSkeleton';
 
 import NewsCardWrapper from './cards/common/NewsCardWrapper';
 import NewsCollabQuestionCard from './cards/NewsCollabQuestionCard';
@@ -33,7 +34,7 @@ export const NewsFeed = (props: NewsProps) => {
   return (
     <Box sx={{ width: '100%', ...sx }} data-testid="news-container">
       {isLoading ? (
-        <NewsSkeleton count={5} />
+        <CommonSkeleton count={5} size={{ width: 'full', height: '200px' }} />
       ) : (
         <InfiniteScroll
           dataLength={feed.length}
