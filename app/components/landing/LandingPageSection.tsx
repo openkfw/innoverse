@@ -80,7 +80,7 @@ const titleContainerStyles = {
 
 const buttonContainerStyles = {
   marginTop: 6,
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     display: 'none',
   },
 };

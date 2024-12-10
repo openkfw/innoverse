@@ -139,7 +139,7 @@ const navigationStyles = {
 };
 
 const buttonStyles = {
-  [theme.breakpoints.up('sm')]: {
+  [theme.breakpoints.up('md')]: {
     display: 'none',
   },
 };
