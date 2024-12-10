@@ -19,7 +19,7 @@ import { validateParams } from '@/utils/validationHelper';
 import dbClient from '../../../repository/db/prisma/prisma';
 
 import {
-  commentUpvotedBySchema,
+  commentLikedBySchema,
   deleteCommentSchema,
   handleCommentSchema,
   updateCommentSchema,
@@ -44,9 +44,10 @@ export const addProjectComment = withAuth(async (user: UserSession, body: { proj
         data: {
           ...newComment,
           author,
-          upvotedBy: [],
+          likedBy: [],
           responseCount: 0,
           questionId: '',
+          responses: [],
         } as Comment,
       };
     }
@@ -69,14 +70,14 @@ export const addProjectComment = withAuth(async (user: UserSession, body: { proj
   }
 });
 
-export const handleProjectCommentUpvoteBy = withAuth(async (user: UserSession, body: { commentId: string }) => {
+export const handleProjectCommentLikeBy = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
-    const validatedParams = validateParams(commentUpvotedBySchema, body);
+    const validatedParams = validateParams(commentLikedBySchema, body);
     if (validatedParams.status === StatusCodes.OK) {
       const updatedComment = await handleCommentLike(dbClient, body.commentId, user.providerId);
       return {
         status: StatusCodes.OK,
-        upvotedBy: updatedComment?.likedBy,
+        likedBy: updatedComment?.likedBy,
       };
     }
     return {
@@ -86,14 +87,14 @@ export const handleProjectCommentUpvoteBy = withAuth(async (user: UserSession, b
     };
   } catch (err) {
     const error: InnoPlatformError = dbError(
-      `Adding an upvote of a Comment ${body.commentId} for user ${user.providerId}`,
+      `Adding an like of a Comment ${body.commentId} for user ${user.providerId}`,
       err as Error,
       body.commentId,
     );
     logger.error(error);
     return {
       status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Upvoting comment failed',
+      message: 'Liking comment failed',
     };
   }
 });

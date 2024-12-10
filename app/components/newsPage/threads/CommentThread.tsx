@@ -119,7 +119,7 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
       setResponses({ isVisible: true, data: newResponses });
     } catch (error) {
       console.error('Error adding response:', error);
-      errorMessage({ message: m.components_newsPage_thread_add_response_error() });
+      errorMessage({ message: m.components_newsPage_thread_add_comment_error() });
       appInsights.trackException({
         exception: new Error('Failed to add response', { cause: error }),
         severityLevel: SeverityLevel.Error,

@@ -24,7 +24,7 @@ model Comment {
 
   additionalObjectType ObjectType?
   additionalObjectId String?
-  visible Boolean? // not visible in case the Feedback is set to not visible
+  anonymous Boolean? // in case the Feedback is set to anonymous
 
 
   parent      Comment?     @relation("CommentResponseRelation", fields: [parentId], references: [id], onDelete: Cascade)
@@ -104,7 +104,7 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
 
-  upvotedBy   String[] // ids of users
+  likedBy   String[] // ids of users
   author      String // id of author
   content     String
   anonymous Boolean @default(false)

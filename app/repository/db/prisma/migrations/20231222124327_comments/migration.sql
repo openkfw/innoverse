@@ -14,7 +14,7 @@ CREATE TABLE "project_comments" (
     "comment" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,
     "author" TEXT NOT NULL,
-    "upvotedBy" TEXT[],
+    "likedBy" TEXT[],
 
     CONSTRAINT "project_comments_pkey" PRIMARY KEY ("id")
 );
@@ -27,7 +27,7 @@ CREATE TABLE "collaboration_comments" (
     "projectId" TEXT NOT NULL,
     "questionId" TEXT NOT NULL,
     "author" TEXT NOT NULL,
-    "upvotedBy" TEXT[],
+    "likedBy" TEXT[],
 
     CONSTRAINT "collaboration_comments_pkey" PRIMARY KEY ("id")
 );

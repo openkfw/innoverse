@@ -6,7 +6,7 @@ CREATE TABLE "Post" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "upvotedBy" TEXT[],
+    "likedBy" TEXT[],
     "author" TEXT NOT NULL,
     "content" TEXT NOT NULL,
 

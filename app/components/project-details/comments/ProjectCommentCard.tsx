@@ -8,7 +8,7 @@ import * as m from '@/src/paraglide/messages.js';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
-import { deleteProjectComment, handleProjectCommentUpvoteBy, updateProjectComment } from './actions';
+import { deleteProjectComment, handleProjectCommentLikeBy, updateProjectComment } from './actions';
 
 interface ProjectCommentCardProps {
   comment: Comment;
@@ -18,14 +18,14 @@ interface ProjectCommentCardProps {
 
 export const ProjectCommentCard = (props: ProjectCommentCardProps) => {
   const { comment, projectName } = props;
-  const { isUpvoted, toggleCommentUpvote, updateComment, deleteComment } = useProjectCommentCard(props);
+  const { isLiked, toggleCommentLike, updateComment, deleteComment } = useProjectCommentCard(props);
 
   return (
     <CommentCard
       comment={comment}
       projectName={projectName}
-      isUpvoted={isUpvoted ?? false}
-      onUpvoteToggle={toggleCommentUpvote}
+      isLiked={isLiked ?? false}
+      onLikeToggle={toggleCommentLike}
       onEdit={updateComment}
       onDelete={deleteComment}
     />
@@ -33,13 +33,13 @@ export const ProjectCommentCard = (props: ProjectCommentCardProps) => {
 };
 
 export function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardProps) {
-  const [isUpvoted, setIsUpvoted] = useState<boolean>(comment.isUpvotedByUser || false);
+  const [isLiked, setisLiked] = useState<boolean>(comment.isLikedByUser || false);
   const appInsights = useAppInsightsContext();
 
-  const toggleCommentUpvote = () => {
+  const toggleCommentLike = () => {
     try {
-      handleProjectCommentUpvoteBy({ commentId: comment.id });
-      setIsUpvoted((upvoted) => !upvoted);
+      handleProjectCommentLikeBy({ commentId: comment.id });
+      setisLiked((liked) => !liked);
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
       errorMessage({ message: m.components_projectdetails_comments_projectCommentCard_updateError() });
@@ -78,8 +78,8 @@ export function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardP
   };
 
   return {
-    isUpvoted,
-    toggleCommentUpvote,
+    isLiked,
+    toggleCommentLike,
     updateComment,
     deleteComment,
   };

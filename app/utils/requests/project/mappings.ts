@@ -1,4 +1,3 @@
-import { Like } from '@prisma/client';
 import { ResultOf } from 'gql.tada';
 
 import {
@@ -7,6 +6,8 @@ import {
   Comment,
   EventWithAdditionalData,
   Follow,
+  Like,
+  ObjectType,
   Opportunity,
   Project,
   PROJECT_PROGRESS,
@@ -42,7 +43,9 @@ export const mapToProject = ({
 }): Project => {
   const attributes = projectBaseData.attributes;
   const basicProject = mapToBasicProject(projectBaseData);
-
+  const likes = otherProps.likes.map((l) => {
+    return { ...l, objectType: l.objectType as ObjectType } as Like;
+  });
   return {
     ...attributes,
     ...basicProject,
@@ -52,6 +55,7 @@ export const mapToProject = ({
     projectStart: basicProject.projectStart,
     updatedAt: new Date(attributes.updatedAt ?? new Date()),
     ...otherProps,
+    likes,
   };
 };
 

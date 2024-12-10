@@ -12,7 +12,7 @@ CREATE TABLE "Comment" (
     "objectType" "CommentType" NOT NULL,
     "text" TEXT NOT NULL,
     "author" TEXT NOT NULL,
-    "upvotedBy" TEXT[],
+    "likedBy" TEXT[],
     "parentId" TEXT,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")

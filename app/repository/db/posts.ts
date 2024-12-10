@@ -83,24 +83,24 @@ export async function updatePostInDb(client: PrismaClient, postId: string, conte
   }
 }
 
-export async function handlePostUpvoteInDb(client: PrismaClient, postId: string, upvotedBy: string) {
+export async function handlePostLikeInDb(client: PrismaClient, postId: string, likedBy: string) {
   try {
     return client.$transaction(async (tx) => {
       const result = await tx.post.findFirst({
         where: { id: postId },
         select: {
-          upvotedBy: true,
+          likedBy: true,
         },
       });
-      const upvotes = result?.upvotedBy.filter((upvote) => upvote !== upvotedBy);
+      const likes = result?.likedBy.filter((like) => like !== likedBy);
 
-      if (result?.upvotedBy.includes(upvotedBy)) {
+      if (result?.likedBy.includes(likedBy)) {
         return tx.post.update({
           where: {
             id: postId,
           },
           data: {
-            upvotedBy: upvotes,
+            likedBy: likes,
           },
         });
       }
@@ -111,13 +111,13 @@ export async function handlePostUpvoteInDb(client: PrismaClient, postId: string,
             id: postId,
           },
           data: {
-            upvotedBy: { push: upvotedBy },
+            likedBy: { push: likedBy },
           },
         });
       }
     });
   } catch (err) {
-    const error: InnoPlatformError = dbError(`Upvote post with id: ${postId} by user ${upvotedBy}`, err as Error);
+    const error: InnoPlatformError = dbError(`Like post with id: ${postId} by user ${likedBy}`, err as Error);
     logger.error(error);
     throw error;
   }

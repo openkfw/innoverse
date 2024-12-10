@@ -1,4 +1,4 @@
-import { CollaborationComment, Comment, NewsFeedEntry } from '@/common/types';
+import { Comment, NewsFeedEntry } from '@/common/types';
 import { addProjectCollaborationCommentResponse } from '@/components/collaboration/comments/actions';
 import NewsCollabCommentCard from '@/components/newsPage/cards/NewsCollabCommentCard';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
@@ -11,14 +11,14 @@ interface CollaborationCommentThreadProps {
 
 export const NewsCollaborationCommentThread = (props: CollaborationCommentThreadProps) => {
   const { entry } = props;
-  const comment = entry.item as CollaborationComment;
+  const comment = entry.item as unknown as Comment; //todo fix casting
 
   const { fetchResponses, addResponse } = useCollaborationCommentThread({ comment });
 
   return (
     <>
       <CommentThread
-        comment={{ id: comment.id, responseCount: comment.responseCount }}
+        comment={{ id: comment.id, responseCount: comment.responseCount || 0 }}
         card={<NewsCollabCommentCard entry={entry} />}
         fetchResponses={fetchResponses}
         addResponse={addResponse}
@@ -34,7 +34,7 @@ export const NewsCollaborationCommentThread = (props: CollaborationCommentThread
   );
 };
 
-export function useCollaborationCommentThread(props: { comment: Comment | CollaborationComment }) {
+export function useCollaborationCommentThread(props: { comment: Comment }) {
   const { comment } = props;
 
   const fetchResponses = async () => {
@@ -42,8 +42,8 @@ export function useCollaborationCommentThread(props: { comment: Comment | Collab
     return responses.data?.map((response) => ({ ...response, responseCount: 0 })) ?? [];
   };
 
-  const addResponse = async (response: string) => {
-    const result = await addProjectCollaborationCommentResponse({ comment, response });
+  const addResponse = async (text: string) => {
+    const result = await addProjectCollaborationCommentResponse({ comment, text });
     const data = result.data ? { ...result.data, responseCount: 0 } : undefined;
     return { ...result, data };
   };

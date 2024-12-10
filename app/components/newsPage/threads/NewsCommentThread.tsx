@@ -18,7 +18,7 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
   const { comment, level } = props;
 
   const updateComment = (updatedText: string) => {
-    props.onUpdate({ ...comment, comment: updatedText });
+    props.onUpdate({ ...comment, text: updatedText });
   };
 
   const handleDeleteResponse = (response: CommentWithResponses) => {
@@ -40,7 +40,7 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
       comment: response,
       objectType: props.commentType,
       objectId: props.item.id,
-      parentCommentId: comment?.commentId,
+      parentCommentId: comment?.parentId,
     });
 
     if (!newResponse) return;

@@ -5,7 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import { Comment, ObjectType, StartPagination, UserSession } from '@/common/types';
 import { getCommentsSchema } from '@/components/project-details/comments/validationSchema';
 import { RequestError } from '@/entities/error';
-import { getCommentsByObjectId, isCommentLikedBy } from '@/repository/db/comment';
+import { getCommentResponseCount, getCommentsByObjectId, isCommentLikedBy } from '@/repository/db/comment';
 import { getProjectFollowers, isProjectFollowedBy } from '@/repository/db/follow';
 import { getProjectLikes, isObjectLikedBy } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
@@ -33,7 +33,7 @@ import { getSurveyQuestionsByProjectId } from '@/utils/requests/surveyQuestions/
 import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
 import { validateParams } from '@/utils/validationHelper';
 
-import { getInnoUserByProviderId } from '../innoUsers/requests';
+import { mapToComment } from '../comments/mapping';
 
 const logger = getLogger();
 
@@ -185,13 +185,13 @@ export const isProjectFollowedByUser = withAuth(async (user: UserSession, body: 
   }
 });
 
-export const isProjectCommentUpvotedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
+export const isProjectCommentLikedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
-    const isUpvoted = await isCommentLikedBy(dbClient, body.commentId, user.providerId);
-    return { status: StatusCodes.OK, data: isUpvoted };
+    const isLiked = await isCommentLikedBy(dbClient, body.commentId, user.providerId);
+    return { status: StatusCodes.OK, data: isLiked };
   } catch (err) {
     const error: InnoPlatformError = strapiError(
-      `Find upvote for comment${body.commentId} by user ${user.providerId}`,
+      `Find like for comment${body.commentId} by user ${user.providerId}`,
       err as RequestError,
       body.commentId,
     );
@@ -216,41 +216,34 @@ export const getProjectComments = async (body: { projectId: string }) => {
     if (validatedParams.status === StatusCodes.OK) {
       const result = await getCommentsByObjectId(dbClient, body.projectId);
 
-      //todo refactor upvotedBy to likedBy
       const comments = await Promise.allSettled(
-        sortDateByCreatedAtAsc(result).map(async (comment) => {
-          const author = await getInnoUserByProviderId(comment.author);
-          const upvotes = await Promise.allSettled(
-            comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote)),
-          ).then((results) => getFulfilledResults(results));
-          const responseCount = await getCommentResponseCount(dbClient, comment.id);
-          const projectTitle = await getProjectTitleById(comment.projectId);
-
+        sortDateByCreatedAtAsc(result).map(async (c) => {
+          const responseCount = await getCommentResponseCount(dbClient, c.id);
+          const projectName = await getProjectTitleById(c.objectId);
+          const comment = await mapToComment(c);
           return {
             ...comment,
-            projectName: projectTitle,
-            upvotedBy: upvotes,
-            author,
+            projectName,
             responseCount,
           } as Comment;
         }),
       ).then((results) => getFulfilledResults(results));
 
-      // Get user upvotes
-      const getUpvotes = comments.map(async (comment): Promise<Comment> => {
-        const { data: isUpvotedByUser } = await isProjectCommentUpvotedByUser({ commentId: comment.id });
+      // Get user likes
+      const getLikes = comments.map(async (comment): Promise<Comment> => {
+        const { data: isLikedByUser } = await isProjectCommentLikedByUser({ commentId: comment.id });
 
         return {
           ...comment,
-          isUpvotedByUser,
+          isLikedByUser,
         };
       });
 
-      const commentsWithUserUpvote = await getPromiseResults(getUpvotes);
+      const commentsWithUserLikes = await getPromiseResults(getLikes);
 
       return {
         status: StatusCodes.OK,
-        data: commentsWithUserUpvote,
+        data: commentsWithUserLikes,
       };
     }
     return {

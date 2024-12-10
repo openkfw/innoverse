@@ -21,7 +21,7 @@ import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommen
 import * as m from '@/src/paraglide/messages.js';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
 
-import { addCommentLike, deleteCommentLike } from '../threads/actions';
+// import { addCommentLike, deleteCommentLike } from '../threads/actions';
 
 interface NewsCommentCardProps {
   comment: CommonCommentProps;
@@ -80,11 +80,11 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
   const handleLike = async () => {
     if (isCommentLiked) {
       setIsCommentLiked(false);
-      deleteCommentLike(comment.id);
+      // deleteCommentLike(comment.id); //todo uncomment
       setCommentLikeCount(commentLikeCount - 1);
     } else {
       setIsCommentLiked(true);
-      addCommentLike(comment.id);
+      // addCommentLike(comment.id);
       setCommentLikeCount(commentLikeCount + 1);
     }
   };

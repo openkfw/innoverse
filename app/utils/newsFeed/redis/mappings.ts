@@ -32,13 +32,13 @@ type CollaborationComment = {
   createdAt: Date;
   updatedAt: Date;
   author: User;
-  comment: string;
-  upvotedBy: string[];
+  text: string;
+  likedBy: User[];
   responseCount: number;
-  projectId: string;
+  objectId: string;
   projectName: string;
-  questionId: string;
-  isUpvotedByUser?: boolean;
+  additionalObjectId?: string;
+  isLikedByUser?: boolean;
 };
 
 export const mapPostToRedisNewsFeedEntry = (
@@ -216,7 +216,7 @@ export const mapToRedisPost = (post: Post, reactions: RedisReaction[], followedB
     author: post.author,
     content: post.content,
     reactions: reactions,
-    upvotedBy: post.upvotedBy,
+    likedBy: post.likedBy,
     updatedAt: getUnixTimestamp(post.updatedAt),
     createdAt: getUnixTimestamp(post.createdAt),
     followedBy,
@@ -269,9 +269,9 @@ export const mapToRedisCollaborationComment = (
     id: comment.id,
     createdAt: getUnixTimestamp(comment.createdAt),
     updatedAt: getUnixTimestamp(comment.createdAt),
-    projectId: comment.projectId,
+    projectId: comment.objectId,
     author: comment.author,
-    comment: comment.comment,
+    comment: comment.text,
     question: {
       id: question.id,
       authors: question.authors,
@@ -279,8 +279,8 @@ export const mapToRedisCollaborationComment = (
       title: question.title,
     },
     responseCount: comment.responseCount,
-    upvotedBy: comment.upvotedBy,
-    isUpvotedByUser: comment.isUpvotedByUser,
+    likedBy: comment.likedBy.map((likedBy) => likedBy.id || ''),
+    isLikedByUser: comment.isLikedByUser,
     reactions: reactions,
     followedBy: followedBy,
   };

@@ -13,7 +13,7 @@ export const getCommentsSchema = z
   })
   .required();
 
-export const commentUpvotedBySchema = z
+export const commentLikedBySchema = z
   .object({
     commentId: z.string(),
   })

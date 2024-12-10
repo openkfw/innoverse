@@ -1,8 +1,6 @@
 'use server';
 
-import { ObjectType } from '@prisma/client';
-
-import { NewsComment, PostComment, UserSession } from '@/common/types';
+import { Comment, ObjectType, UserSession } from '@/common/types';
 import { addCommentToDb, countComments, deleteCommentInDb, updateCommentInDb } from '@/repository/db/comment';
 import { getFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
@@ -11,7 +9,7 @@ import { updateProjectUpdateInCache } from '@/services/updateService';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { notifyFollowers } from '@/utils/notification/notificationSender';
-import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
+import { mapToComment } from '@/utils/requests/comments/mapping';
 
 const logger = getLogger();
 
@@ -36,7 +34,7 @@ interface UpdateComment {
 
 //todo refactor this
 
-export const addComment = async (body: AddComment): Promise<NewsComment | PostComment> => {
+export const addComment = async (body: AddComment): Promise<Comment> => {
   const { comment, objectType, author, objectId, parentCommentId } = body;
 
   // switch (objectType) {
@@ -77,8 +75,9 @@ export const addComment = async (body: AddComment): Promise<NewsComment | PostCo
     text: comment,
     parentId: parentCommentId,
   });
-  updateCommentInCache({ objectId, objectType: result.objectType }, author);
+  updateCommentInCache({ objectId, objectType: result.objectType as ObjectType }, author);
   notifyPostFollowers(objectId);
+  return await mapToComment(result);
 };
 
 //todo refactor to not have 2 cases
@@ -97,7 +96,7 @@ export const updateComment = async ({ author, commentId, content }: UpdateCommen
   // }
 
   const result = await updateCommentInDb(dbClient, commentId, content);
-  await updateCommentInCache({ objectId: result.objectId, objectType: result.objectType }, author);
+  await updateCommentInCache({ objectId: result.objectId, objectType: result.objectType as ObjectType }, author);
   return result;
 };
 
@@ -106,7 +105,7 @@ export const removeComment = async ({ user, commentId }: RemoveComment) => {
   const result = await deleteCommentInDb(dbClient, commentId);
   const objectId = result.objectId;
   if (objectId) {
-    await removeCommentInCache({ objectId, objectType: result.objectType }, user);
+    await removeCommentInCache({ objectId, objectType: result.objectType as ObjectType }, user);
   }
 };
 

@@ -8,7 +8,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ArrowUpIcon from '@/components/icons/ArrowUpIcon';
 
 interface UpvoteControlsProps {
-  isUpvoted: boolean;
+  isLiked: boolean;
   upvoteCount: number;
   onUpvote: () => void;
   sx?: SxProps;
@@ -23,12 +23,12 @@ export const UpvoteControls = (props: UpvoteControlsProps) => {
       onClick={upvote}
       sx={[toggleButtonStyle, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}
     >
-      <ArrowUpIcon color={props.isUpvoted ? 'green' : 'black'} /> {upvotes}
+      <ArrowUpIcon color={props.isLiked ? 'green' : 'black'} /> {upvotes}
     </ToggleButton>
   );
 };
 
-function useUpvoteControls({ upvoteCount, isUpvoted, onUpvote }: UpvoteControlsProps) {
+function useUpvoteControls({ upvoteCount, isLiked, onUpvote }: UpvoteControlsProps) {
   const [upvotes, setUpvotes] = useState<number>(upvoteCount);
 
   const upvote = () => {
@@ -36,7 +36,7 @@ function useUpvoteControls({ upvoteCount, isUpvoted, onUpvote }: UpvoteControlsP
       onUpvote();
     }
 
-    if (isUpvoted) {
+    if (isLiked) {
       setUpvotes((upvotes) => upvotes - 1);
     } else {
       setUpvotes((upvotes) => upvotes + 1);

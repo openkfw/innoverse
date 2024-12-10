@@ -1,4 +1,5 @@
-import { ObjectType, PrismaClient } from '@prisma/client';
+import { ObjectType as PrismaObjectType, PrismaClient } from '@prisma/client';
+import { ObjectType } from '@/common/types';
 
 import { defaultParamsComment as defaultParams } from '@/repository/db/utils/types';
 import { dbError, InnoPlatformError } from '@/utils/errors';
@@ -30,6 +31,7 @@ export async function getCommentsByObjectId(client: PrismaClient, objectId: stri
       where: {
         objectId,
       },
+      ...defaultParams,
     });
   } catch (err) {
     const error: InnoPlatformError = dbError(`Get comments by object with id: ${objectId}`, err as Error, objectId);
@@ -44,45 +46,10 @@ export async function getCommentById(client: PrismaClient, commentId: string) {
       where: {
         id: commentId,
       },
-    });
-  } catch (err) {
-    const error: InnoPlatformError = dbError(`Get comment by id: ${commentId}`, err as Error, commentId);
-    logger.error(error);
-    throw err;
-  }
-}
-
-export async function addCommentToDb2(
-  client: PrismaClient,
-  objectId: string,
-  objectType: ObjectType,
-  author: string,
-  comment: string,
-  parentCommentId?: string,
-  visible?: boolean,
-) {
-  try {
-    return await client.comment.create({
-      data: {
-        objectType,
-        objectId,
-        // comment: {
-        //   create: {
-        author,
-        text: comment,
-        parentId: parentCommentId,
-        visible,
-      },
-      //   },
-      // },
       ...defaultParams,
     });
   } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Add comment to ${objectType} with id: ${objectId} by user ${author}`,
-      err as Error,
-      objectId,
-    );
+    const error: InnoPlatformError = dbError(`Get comment by id: ${commentId}`, err as Error, commentId);
     logger.error(error);
     throw err;
   }
@@ -97,18 +64,21 @@ export async function addCommentToDb(comment: {
   parentId?: string;
   additionalObjectType?: ObjectType;
   additionalObjectId?: string;
-  visible?: boolean;
+  anonymous?: boolean;
 }) {
-  const { client, objectId, objectType, author, text, parentId, visible } = comment;
+  const { client, objectId, objectType, author, text, parentId, anonymous, additionalObjectId, additionalObjectType } =
+    comment;
   try {
     return await client.comment.create({
       data: {
-        objectType,
+        objectType: objectType as PrismaObjectType,
         objectId,
         author,
         text,
         parentId,
-        visible,
+        anonymous,
+        additionalObjectId,
+        additionalObjectType: additionalObjectType as PrismaObjectType,
       },
       ...defaultParams,
     });
@@ -157,7 +127,8 @@ export async function deleteCommentInDb(client: PrismaClient, commentId: string)
 export async function getCommentsStartingFrom(client: PrismaClient, from: Date, objectType: ObjectType) {
   try {
     return await client.comment.findMany({
-      where: { objectType, updatedAt: { gte: from } },
+      where: { objectType: objectType as PrismaObjectType, updatedAt: { gte: from } },
+      ...defaultParams,
     });
   } catch (err) {
     const error: InnoPlatformError = dbError(`Get comments starting from ${from}`, err as Error);
@@ -172,6 +143,7 @@ export async function getCommentsByParentId(client: PrismaClient, parentId: stri
       where: {
         parentId,
       },
+      ...defaultParams,
     });
   } catch (err) {
     const error: InnoPlatformError = dbError(`Get comments by parent with id: ${parentId}`, err as Error, parentId);
@@ -186,9 +158,7 @@ export async function getCommentResponseCount(client: PrismaClient, commentId: s
       where: {
         id: commentId,
       },
-      include: {
-        responses: true,
-      },
+      ...defaultParams,
     });
     return comment?.responses.length;
   } catch (err) {
@@ -213,6 +183,7 @@ export async function getCommentsByAdditionalObjectId(
         objectId,
         additionalObjectId,
       },
+      ...defaultParams,
     });
   } catch (err) {
     const error: InnoPlatformError = dbError(`Get comments by object with id: ${objectId}`, err as Error, objectId);
@@ -221,7 +192,6 @@ export async function getCommentsByAdditionalObjectId(
   }
 }
 
-//replace upvote with like
 export async function isCommentLikedBy(client: PrismaClient, commentId: string, likedBy: string) {
   const likedCommentsCount = await client.comment.count({
     where: {

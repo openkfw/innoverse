@@ -8,14 +8,8 @@ export const defaultParamsComment = {
   },
 };
 
-const withPostComment = Prisma.validator<Prisma.PostCommentDefaultArgs>()({
+const withComment = Prisma.validator<Prisma.CommentDefaultArgs>()({
   ...defaultParamsComment,
 });
 
-const withNewsComment = Prisma.validator<Prisma.NewsCommentDefaultArgs>()({
-  ...defaultParamsComment,
-});
-
-export type PostCommentDB = Prisma.PostCommentGetPayload<typeof withPostComment>;
-
-export type NewsCommentDB = Prisma.NewsCommentGetPayload<typeof withNewsComment>;
+export type CommentDB = Prisma.CommentGetPayload<typeof withComment>;

@@ -64,7 +64,7 @@ export type RedisPost = RedisItem & {
   createdAt: number;
   author: RedisUser;
   content: string;
-  upvotedBy: string[];
+  likedBy: string[];
   responseCount: number;
   anonymous: boolean;
 };
@@ -147,12 +147,12 @@ export type RedisSurveyQuestion = RedisItem & {
 export type RedisCollaborationComment = RedisItem & {
   author: RedisUser;
   comment: string;
-  upvotedBy: string[];
+  likedBy: string[];
   responseCount: number;
   projectId: string;
   question: Omit<RedisCollaborationQuestion, 'reactions' | 'followedBy' | 'updatedAt'>;
   createdAt: number;
-  isUpvotedByUser?: boolean;
+  isLikedByUser?: boolean;
 };
 
 export interface RedisUser {

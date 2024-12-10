@@ -1,7 +1,7 @@
 'use server';
 import { StatusCodes } from 'http-status-codes';
 
-import { CollaborationComment, Comment, User, UserSession } from '@/common/types';
+import { Comment, User, UserSession } from '@/common/types';
 import { getCommentById, getCommentsByObjectId, handleCommentLike, updateCommentInDb } from '@/repository/db/comment';
 import {
   addCollaborationCommentResponse,
@@ -10,7 +10,7 @@ import {
 import {
   addCollaborationComment,
   deleteCollaborationComment,
-  handleCollaborationCommentUpvote,
+  handleCollaborationCommentLike,
   updateCollaborationComment,
 } from '@/services/collaborationCommentService';
 import { withAuth } from '@/utils/auth';
@@ -25,8 +25,8 @@ import dbClient from '../../../repository/db/prisma/prisma';
 import {
   addCollaborationCommentResponseSchema,
   addCollaborationCommentSchema,
-  collaborationCommentResponseUpvotedBySchema,
-  collaborationCommentUpvotedBySchema,
+  collaborationCommentResponseLikedBySchema,
+  collaborationCommentLikedBySchema,
   deleteCollaborationCommentResponseSchema,
   deleteCollaborationCommentSchema,
   updateCollaborationCommentResponseSchema,
@@ -54,7 +54,7 @@ export const addProjectCollaborationComment = withAuth(
           data: {
             ...newComment,
             author,
-            upvotedBy: [],
+            likedBy: [],
             responseCount: 0,
           },
         };
@@ -176,12 +176,12 @@ export const updateProjectCollaborationComment = withAuth(
   },
 );
 
-export const handleProjectCollaborationCommentUpvotedBy = withAuth(
+export const handleProjectCollaborationCommentLikedBy = withAuth(
   async (user: UserSession, body: { commentId: string }) => {
     try {
-      const validatedParams = validateParams(collaborationCommentUpvotedBySchema, body);
+      const validatedParams = validateParams(collaborationCommentLikedBySchema, body);
       if (validatedParams.status === StatusCodes.OK) {
-        await handleCollaborationCommentUpvote({ commentId: body.commentId, user });
+        await handleCollaborationCommentLike({ commentId: body.commentId, user });
         return { status: StatusCodes.OK };
       }
       return {
@@ -191,21 +191,21 @@ export const handleProjectCollaborationCommentUpvotedBy = withAuth(
       };
     } catch (err) {
       const error: InnoPlatformError = dbError(
-        `Adding an upvote of a Collaboration Comment ${body.commentId} for user ${user.providerId}`,
+        `Adding a like of a Collaboration Comment ${body.commentId} for user ${user.providerId}`,
         err as Error,
         body.commentId,
       );
       logger.error(error);
       return {
         status: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: 'Upvoting the comment failed',
+        message: 'Liking the comment failed',
       };
     }
   },
 );
 
 export const addProjectCollaborationCommentResponse = withAuth(
-  async (user: UserSession, body: { comment: Comment | CollaborationComment; response: string }) => {
+  async (user: UserSession, body: { comment: Comment; text: string }) => {
     const validatedParams = validateParams(addCollaborationCommentResponseSchema, body);
 
     if (validatedParams.status !== StatusCodes.OK) {
@@ -216,14 +216,14 @@ export const addProjectCollaborationCommentResponse = withAuth(
     }
 
     const author = await getInnoUserByProviderId(user.providerId);
-    const response = await addCollaborationCommentResponse({ user, response: body.response, comment: body.comment });
-    const getUpvoters = response.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote));
-    const upvoters = await getPromiseResults(getUpvoters);
+    const response = await addCollaborationCommentResponse({ user, text: body.text, comment: body.comment });
+    const getLikedBy = response.likes.map(async (like) => await getInnoUserByProviderId(like.likedBy));
+    const likedBy = await getPromiseResults(getLikedBy);
 
     const createdResponse = {
       ...response,
       comment: body.comment,
-      upvotedBy: upvoters.filter((u) => u) as User[],
+      likedBy: likedBy.filter((l) => l) as User[],
       author,
     };
 
@@ -327,10 +327,10 @@ export const updateProjectCollaborationCommentResponse = withAuth(
   },
 );
 
-export const handleProjectCollaborationCommentResponseUpvotedBy = withAuth(
+export const handleProjectCollaborationCommentResponseLikedBy = withAuth(
   async (user: UserSession, body: { responseId: string }) => {
     try {
-      const validatedParams = validateParams(collaborationCommentResponseUpvotedBySchema, body);
+      const validatedParams = validateParams(collaborationCommentResponseLikedBySchema, body);
       if (validatedParams.status === StatusCodes.OK) {
         await handleCommentLike(dbClient, body.responseId, user.providerId);
         return { status: StatusCodes.OK };
@@ -341,7 +341,7 @@ export const handleProjectCollaborationCommentResponseUpvotedBy = withAuth(
       };
     } catch (err) {
       const error: InnoPlatformError = dbError(
-        `Adding an upvote to a Collaboration Comment Response with id: ${body.responseId} by user ${user.providerId}`,
+        `Adding an like to a Collaboration Comment Response with id: ${body.responseId} by user ${user.providerId}`,
         err as Error,
         body.responseId,
       );

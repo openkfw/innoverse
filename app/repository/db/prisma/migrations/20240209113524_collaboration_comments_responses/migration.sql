@@ -4,7 +4,7 @@ CREATE TABLE "collaboration_comments_responses" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "response" TEXT NOT NULL,
     "author" TEXT NOT NULL,
-    "upvotedBy" TEXT[],
+    "likedBy" TEXT[],
     "commentId" TEXT NOT NULL,
 
     CONSTRAINT "collaboration_comments_responses_pkey" PRIMARY KEY ("id")

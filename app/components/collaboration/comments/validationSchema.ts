@@ -28,7 +28,7 @@ export const updateCollaborationCommentSchema = z
   })
   .required();
 
-export const collaborationCommentUpvotedBySchema = z
+export const collaborationCommentLikedBySchema = z
   .object({
     commentId: z.string(),
   })
@@ -68,7 +68,7 @@ export const updateCollaborationCommentResponseSchema = z
   })
   .required();
 
-export const collaborationCommentResponseUpvotedBySchema = z
+export const collaborationCommentResponseLikedBySchema = z
   .object({
     responseId: z.string(),
   })

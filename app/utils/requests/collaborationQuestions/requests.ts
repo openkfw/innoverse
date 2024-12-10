@@ -35,13 +35,13 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
       const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData.id });
       const comments = getComments.data ?? [];
 
-      const getCommentsWithUpvote = comments.map(async (comment) => {
-        const { data: isUpvotedByUser } = await isCollaborationCommentUpvotedByUser({ commentId: comment.id });
-        return { ...comment, isUpvotedByUser };
+      const getCommentsWithLike = comments.map(async (comment) => {
+        const { data: isLikedByUser } = await isCollaborationCommentLikedByUser({ commentId: comment.id });
+        return { ...comment, isLikedByUser };
       });
 
-      const commentsWithUserUpvote = await getPromiseResults(getCommentsWithUpvote);
-      return mapToCollaborationQuestion(questionData, commentsWithUserUpvote);
+      const commentsWithUserLike = await getPromiseResults(getCommentsWithLike);
+      return mapToCollaborationQuestion(questionData, commentsWithUserLike);
     });
 
     const collaborationQuestions = await getPromiseResults(mapToEntities);
@@ -129,13 +129,13 @@ export async function getPlatformFeedbackCollaborationQuestion() {
   }
 }
 
-export const isCollaborationCommentUpvotedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
+export const isCollaborationCommentLikedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
-    const isUpvotedBy = await isCommentLikedBy(dbClient, body.commentId, user.providerId);
-    return { status: StatusCodes.OK, data: isUpvotedBy };
+    const isLikedBy = await isCommentLikedBy(dbClient, body.commentId, user.providerId);
+    return { status: StatusCodes.OK, data: isLikedBy };
   } catch (err) {
     const error: InnoPlatformError = strapiError(
-      `Find upvote for comment with id: ${body.commentId} by user ${user.providerId}`,
+      `Find like for comment with id: ${body.commentId} by user ${user.providerId}`,
       err as RequestError,
       body.commentId,
     );
