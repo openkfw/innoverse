@@ -1,14 +1,14 @@
 'use server';
-
 import { AggregateGroupByReducers, AggregateSteps, SearchOptions } from 'redis';
 
 import { redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
-import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
+import { escapeRedisTextSeparators, filterDuplicateEntries } from '@/utils/newsFeed/redis/helpers';
 import { NewsType, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
 
 import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
+import { searchNewsComments } from './services/commentsService';
 
 interface RedisJson {
   [key: string]: any;
@@ -106,6 +106,7 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
       const queryParameter = 'query';
       filters.push(`@search:*$${queryParameter}*`);
       parameters[queryParameter] = escapeRedisTextSeparators(filterBy.searchString);
+
       index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_SEARCH;
     }
 
@@ -135,14 +136,28 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
   const sortOption = getSortingOption();
   const paginationOptions = getPaginationOptions();
   const query = filters.join(' ');
+  const searchOptions: SearchOptions = {
+    SORTBY: sortOption,
+    LIMIT: paginationOptions,
+    PARAMS: parameters,
+    DIALECT: 2,
+  };
 
   try {
-    const result = await client.ft.search(index, query, {
-      SORTBY: sortOption,
-      LIMIT: paginationOptions,
-      PARAMS: parameters,
-      DIALECT: 2,
-    });
+    const result = await client.ft.search(index, query, searchOptions);
+    if (options?.filterBy?.searchString) {
+      const resultComments = await searchNewsComments(client, options?.filterBy?.searchString, searchOptions);
+      const commentsDocuments = filterDuplicateEntries(resultComments.documents);
+      const resultDocuments = filterDuplicateEntries(
+        result.documents as unknown as { id: string; value: RedisNewsFeedEntry }[],
+      );
+      const documents = filterDuplicateEntries([...commentsDocuments, ...resultDocuments]);
+
+      return {
+        total: documents.length,
+        documents,
+      };
+    }
     return result;
   } catch (err) {
     const error = err as Error;
@@ -277,7 +292,7 @@ export const performRedisTransaction = async (
 export const getRedisNewsFeed = async (options?: GetItemsOptions) => {
   const client = await getRedisClient();
   const entries = await getNewsFeedEntries(client, options);
-  const newsFeedEntries = entries.documents.map((x) => x.value);
+  const newsFeedEntries = entries.documents?.map((x) => x.value);
   // TODO: temporary solution to get rid of [Object: null prototype]
   const data = JSON.parse(JSON.stringify(newsFeedEntries, null, 2)) as RedisNewsFeedEntry[];
   return data;

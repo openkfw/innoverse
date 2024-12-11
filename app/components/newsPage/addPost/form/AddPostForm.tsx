@@ -12,7 +12,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Option } from '@/common/formTypes';
-import { Post, ProjectUpdate } from '@/common/types';
+import { ObjectType, Post, ProjectUpdate } from '@/common/types';
 import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { AutocompleteDropdownField } from '@/components/common/form/AutocompleteDropdownField';
 import { CheckboxInputField } from '@/components/common/form/CheckboxInputField';
@@ -79,7 +79,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
     } else {
       const response = await handlePost({ content, anonymous });
       if (response.status === StatusCodes.OK && response.data) {
-        const post: Post = { ...response.data, responseCount: 0 };
+        const post: Post = { ...response.data, objectType: ObjectType.POST };
         successMessage({ message: 'Post wurde erstellt' });
         onAddPost(post);
       } else {

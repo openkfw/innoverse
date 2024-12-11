@@ -39,7 +39,7 @@ export const addProjectComment = withAuth(async (user: UserSession, body: { proj
           ...newComment,
           author,
           upvotedBy: [],
-          responseCount: 0,
+          commentCount: 0,
           questionId: '',
         } as Comment,
       };

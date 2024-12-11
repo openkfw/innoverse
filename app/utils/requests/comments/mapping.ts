@@ -15,7 +15,7 @@ export const mapToPostComment = async (postComment: PostCommentDB): Promise<Post
     author: author,
     upvotedBy: comment.upvotedBy,
     parentId: comment.parent?.id,
-    responseCount: comment.responses.length,
+    commentCount: comment.responses.length,
     postId: postComment.postId,
   };
 };
@@ -33,7 +33,7 @@ export const mapToNewsComment = async (newsComment: NewsCommentDB): Promise<News
     author: author,
     upvotedBy: comment.upvotedBy,
     parentId: comment.parent?.id,
-    responseCount: comment.responses.length,
+    commentCount: comment.responses.length,
     newsId: newsComment.newsId,
   };
 };

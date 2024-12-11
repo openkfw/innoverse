@@ -1,15 +1,19 @@
 'use client';
 
-import Grid from '@mui/material/Grid';
+import Link from 'next/link';
+
+import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import CustomButton from '@/components/common/CustomButton';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 
+import ProjectCard from '../../common/project/ProjectCard';
 import Carousel from '../Carousel';
 import { defaultImage } from '../featuredProjectSection/FeaturedProjectSlider';
 
-import ProjectCard from './ProjectCard';
 import { ProjectProps } from './ProjectSection';
 
 import 'slick-carousel/slick/slick-theme.css';
@@ -28,7 +32,7 @@ export default function ProjectCarousel({ projects }: ProjectProps) {
       renderItem={(project) => {
         const image = getImageByBreakpoint(isSmallScreen, project.image) || defaultImage;
         return (
-          <Grid item key={project.id} sx={cardContainerStyles}>
+          <Box key={project.id} sx={cardContainerStyles}>
             <ProjectCard
               id={project.id}
               img={image}
@@ -36,23 +40,31 @@ export default function ProjectCarousel({ projects }: ProjectProps) {
               title={project.title}
               summary={project.summary}
               status={project.status}
+              size={{ height: 490, width: 466 }}
             />
-          </Grid>
+          </Box>
         );
       }}
-      sx={{ zIndex: 1, minHeight: '490px' }}
+      moreButton={
+        <Link href="news">
+          <CustomButton>{m.components_landing_projectSection_projectSection_moreInitiatives()}</CustomButton>
+        </Link>
+      }
+      sx={carouselStyles}
     />
   );
 }
 
 const cardContainerStyles = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  margin: 0,
-  padding: 0,
-  zIndex: -1,
+  pr: 3,
+  [theme.breakpoints.down('sm')]: { pr: 2 },
+};
+
+const carouselStyles = {
+  zIndex: 1,
+  minHeight: '490px',
+  ml: -2,
   [theme.breakpoints.down('sm')]: {
-    marginLeft: '3px',
+    ml: -3,
   },
 };
