@@ -82,7 +82,10 @@ const PhaseColumFooter = ({ phaseName, projects }: { projects: BasicProject[]; p
 
 // Phase Columns Styles
 const descriptionStyles = {
-  height: '100%',
+  height: {
+    md: 'auto',
+    lg: '100%',
+  },
 };
 
 const footerWrapperStyles = {
