@@ -3,7 +3,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { ObjectType, UserSession } from '@/common/types';
-import { addLike, deleteProjectAndUserLike } from '@/repository/db/like';
+import { addLike, deleteObjectAndUserLike } from '@/repository/db/like';
 import { addFollow, removeFollow } from '@/services/followService';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
@@ -46,7 +46,7 @@ export const handleRemoveLike = withAuth(async (user: UserSession, body: { proje
   try {
     const validatedParams = validateParams(likeSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      await deleteProjectAndUserLike(dbClient, body.projectId, user.providerId);
+      await deleteObjectAndUserLike(dbClient, body.projectId, user.providerId);
       return { status: StatusCodes.OK };
     }
     return {

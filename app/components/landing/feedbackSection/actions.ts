@@ -27,7 +27,7 @@ export const saveFeedback = withAuth(
             projectId: question.projectId,
             questionId: question.collaborationQuestionId,
             comment: feedback,
-            visible: showOnProjectPage,
+            anonymous: showOnProjectPage,
           },
           user,
         });

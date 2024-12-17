@@ -2,24 +2,16 @@ import { Prisma } from '@prisma/client';
 
 export const defaultParamsComment = {
   include: {
-    comment: {
-      include: {
-        reactions: true,
-        responses: true,
-        parent: true,
-      },
-    },
+    reactions: true,
+    responses: true,
+    likes: true,
   },
 };
 
-const withPostComment = Prisma.validator<Prisma.PostCommentDefaultArgs>()({
+const withComment = Prisma.validator<Prisma.CommentDefaultArgs>()({
   ...defaultParamsComment,
 });
 
-const withNewsComment = Prisma.validator<Prisma.NewsCommentDefaultArgs>()({
-  ...defaultParamsComment,
-});
+export type CommentDB = Prisma.CommentGetPayload<typeof withComment>;
 
-export type PostCommentDB = Prisma.PostCommentGetPayload<typeof withPostComment>;
-
-export type NewsCommentDB = Prisma.NewsCommentGetPayload<typeof withNewsComment>;
+export type LikeDB = Prisma.LikeGetPayload<Prisma.LikeDefaultArgs>;

@@ -4,7 +4,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import Typography from '@mui/material/Typography';
 
 import { useUser } from '@/app/contexts/user-context';
-import { CollaborationComment, NewsFeedEntry } from '@/common/types';
+import { Comment, NewsFeedEntry } from '@/common/types';
 import { updateProjectCollaborationComment } from '@/components/collaboration/comments/actions';
 import CardContentWrapper from '@/components/common/CardContentWrapper';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
@@ -30,19 +30,21 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   const { entry } = props;
   const { comment, question, isEditing, cancelEditing, handleUpdate } = useNewsCollabCommentCard(props);
 
+  //todo refactor here
+
   return isEditing ? (
     <WriteCommentCard
-      content={{ author: comment.author, comment: comment.comment, updatedAt: comment.updatedAt }}
+      content={{ author: comment.author, text: comment.text, updatedAt: comment.updatedAt }}
       onSubmit={handleUpdate}
       onDiscard={cancelEditing}
     />
   ) : (
     <>
-      <CommentOverview title={question.title} description={question.description} projectId={comment.projectId} />
+      <CommentOverview title={question.title} description={question.description} projectId={comment.objectId} />
       <CommentCardHeader content={comment} avatar={{ size: 32 }} />
       <CardContentWrapper>
         <Typography color="text.primary" variant="body1">
-          <HighlightText text={comment.comment} />
+          <HighlightText text={comment.text} />
         </Typography>
       </CardContentWrapper>
       <NewsCardActions entry={entry} />
@@ -52,8 +54,8 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
 
 export function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   const { entry } = props;
-  const item = entry.item as CollaborationComment;
-  const question = item.question;
+  const item = entry.item as Comment;
+  const question = item.additionalObjectId;
 
   const [comment, setComment] = useState(item);
 
@@ -66,7 +68,7 @@ export function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   const handleUpdate = async (updatedText: string) => {
     try {
       await updateProjectCollaborationComment({ commentId: comment.id, updatedText });
-      setComment({ ...comment, comment: updatedText });
+      setComment({ ...comment, text: updatedText });
       editingInteractions.onSubmit();
     } catch (error) {
       console.error('Error updating collaboration comment:', error);

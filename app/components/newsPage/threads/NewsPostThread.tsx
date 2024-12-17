@@ -3,7 +3,7 @@ import NewsPostCard from '@/components/newsPage/cards/NewsPostCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
 import { NewsCommentThread } from '@/components/newsPage/threads/NewsCommentThread';
-import { getPostCommentByPostId } from '@/utils/requests/comments/requests';
+import { getCommentByObjectId } from '@/utils/requests/comments/requests';
 
 interface NewsPostThreadProps {
   entry: NewsFeedEntry;
@@ -12,17 +12,19 @@ interface NewsPostThreadProps {
 export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
   const post = entry.item as Post;
 
-  const fetchResponses = async () => await getPostCommentByPostId(post.id);
+  const fetchResponses = async () => await getCommentByObjectId(post.id);
 
   const addResponse = async (text: string) => {
     const response = await addUserComment({
       comment: text,
-      commentType: 'POST_COMMENT',
+      objectType: 'POST',
       objectId: post.id,
     });
     const data = response.data ? { ...response.data, responseCount: 0, responses: [] } : undefined;
     return { ...response, data };
   };
+
+  //todo refactor
 
   return (
     <CommentThread
@@ -35,7 +37,7 @@ export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
           key={`${idx}-${response.id}`}
           item={post}
           comment={response}
-          commentType="POST_COMMENT"
+          commentType="POST"
           level={1}
           onDelete={deleteResponse}
           onUpdate={updateResponse}

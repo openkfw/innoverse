@@ -12,93 +12,41 @@ datasource db {
 }
 
 model Comment {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  objectType CommentType
+  id          String       @id @default(uuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  objectType  ObjectType   
+  objectId    String       @default(uuid()) // ID of the object (if it's a post, news, project, etc)
 
-  postComment PostComment?
-  newsComment NewsComment?
+  text        String       // Text of the comment
+  author      String       // ID of the author
+  reactions   Reaction[]   // Associated reactions
 
-  text   String // text of comment
-  author    String // id of author
-  upvotedBy String[] // ids of users
-  reactions Reaction[]
-
-  parent  Comment? @relation("CommentResponseRelation",fields: [parentId], references: [id], onDelete: Cascade)
-  parentId String?
-
-  responses  Comment[]  @relation("CommentResponseRelation")
-
-}
-
-model NewsComment {
-  id        String   @id @default(uuid())
-  commentId String      @unique
-  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  newsId    String
-}
-
-model PostComment {
-  id        String   @id @default(uuid())
-  commentId String      @unique
-  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  postId    String
-}
-
-model ProjectComment {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  comment   String // text of comment
-  projectId String // commented project
-  author    String // id of author
-  upvotedBy String[] // ids of users
-
-  @@map(name: "project_comments")
-}
+  additionalObjectType ObjectType?
+  additionalObjectId String?
+  anonymous Boolean? // in case the Feedback is set to anonymous
 
 
-model CollaborationComment {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  parent      Comment?     @relation("CommentResponseRelation", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId    String?      // ID of the parent comment (if it's a response)
 
-  comment    String // text of comment
-  projectId  String // commented project
-  questionId String // commented question
-  author     String // id of author
-  upvotedBy  String[] // ids of users
-  visible    Boolean                        @default(true) // visibility of the comment (default: true) only used for the platform feedback (can only be false on the platform feedback)
-  responses  CollaborationCommentResponse[] @relation("Response") // responses to the comment
+  responses   Comment[]    @relation("CommentResponseRelation") // Responses to this comment
 
-  @@map(name: "collaboration_comments")
-}
-
-
-model CollaborationCommentResponse {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  response    String // text of response
-  author      String // id of the author
-  upvotedBy   String[] // ids of users
-  commentId   String // id of comment this responds to to
-  comment     CollaborationComment @relation("Response", fields: [commentId], references: [id], onDelete: Cascade) // comment this responds to
-
-  @@map("collaboration_comments_responses")
+  likes       Like[]
 }
 
 model Like {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  projectId String // liked project
+  objectType  ObjectType
+  objectId String
+
+  comment   Comment? @relation(fields: [objectId], references: [id])
+
   likedBy   String // user id  
 
-   @@unique(fields: [projectId, likedBy])
+   @@unique(fields: [objectId, likedBy])
 }
 
 model Follow {
@@ -156,7 +104,7 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
 
-  upvotedBy   String[] // ids of users
+  likedBy   String[] // ids of users
   author      String // id of author
   content     String
   anonymous Boolean @default(false)
@@ -166,13 +114,8 @@ enum ObjectType {
   UPDATE
   EVENT
   COLLABORATION_QUESTION
-  COLLABORATION_COMMENT
   POST
   PROJECT
   SURVEY_QUESTION
-}
-
-enum CommentType {
-  POST_COMMENT
-  NEWS_COMMENT
+  COMMENT
 }

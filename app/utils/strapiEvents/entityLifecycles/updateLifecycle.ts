@@ -1,6 +1,6 @@
 import { ObjectType } from '@/common/types';
+import { countComments } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
-import { countNewsResponses } from '@/repository/db/news_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getAllPushSubscriptions } from '@/repository/db/push_subscriptions';
 import { dbError, InnoPlatformError } from '@/utils/errors';
@@ -77,7 +77,7 @@ export class UpdateLifecycle extends StrapiEntityLifecycle {
       const followerIds = await getFollowedByForEntity(dbClient, ObjectType.UPDATE, updateId);
       const followers = await mapToRedisUsers(followerIds);
       const updateWithReactions = mapObjectWithReactions(update);
-      const responseCount = await countNewsResponses(dbClient, update.id);
+      const responseCount = await countComments(dbClient, update.id);
       const newsFeedEntry = mapUpdateToRedisNewsFeedEntry(
         updateWithReactions,
         update.reactions,

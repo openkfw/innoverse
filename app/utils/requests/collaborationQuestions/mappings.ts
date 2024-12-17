@@ -1,7 +1,6 @@
 import { ResultOf } from 'gql.tada';
 
-import { BasicCollaborationQuestion, CollaborationQuestion } from '@/common/types';
-import { Comment } from '@/common/types';
+import { BasicCollaborationQuestion, CollaborationQuestion, Comment } from '@/common/types';
 import { toDate } from '@/utils/helpers';
 import { CollaborationQuestionFragment } from '@/utils/requests/collaborationQuestions/queries';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';

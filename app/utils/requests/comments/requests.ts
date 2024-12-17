@@ -1,42 +1,27 @@
 'use server';
 
 import { CommentWithResponses, CommonCommentProps } from '@/common/types';
-import { getNewsCommentsByUpdateId } from '@/repository/db/news_comment';
-import { getNewsCommentsByPostId } from '@/repository/db/post_comment';
+import { getCommentsByObjectId } from '@/repository/db/comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
-import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
+import { mapToComment } from '@/utils/requests/comments/mapping';
 
 const logger = getLogger();
 
-export const getNewsCommentProjectUpdateId = async (updateId: string) => {
+export const getCommentByObjectId = async (objectId: string) => {
   try {
-    const dbComments = await getNewsCommentsByUpdateId(dbClient, updateId);
-    const mapComments = dbComments.map(mapToNewsComment);
+    const dbComments = await getCommentsByObjectId(dbClient, objectId);
+    const mapComments = dbComments.map(mapToComment);
     const comments = await Promise.all(mapComments);
     const commensWithResponses = setResponses(comments);
     return commensWithResponses;
   } catch (err) {
     const error: InnoPlatformError = dbError(
-      `Getting news comments for project update with id: ${updateId}`,
+      `Getting comments for object with id: ${objectId}`,
       err as Error,
-      updateId,
+      objectId,
     );
-    logger.error(error);
-    throw err;
-  }
-};
-
-export const getPostCommentByPostId = async (postId: string) => {
-  try {
-    const dbComments = await getNewsCommentsByPostId(dbClient, postId);
-    const mapComments = dbComments.map(mapToPostComment);
-    const comments = await Promise.all(mapComments);
-    const commensWithResponses = setResponses(comments);
-    return commensWithResponses;
-  } catch (err) {
-    const error: InnoPlatformError = dbError(`Getting news comments for post with id: ${postId}`, err as Error, postId);
     logger.error(error);
     throw err;
   }
@@ -64,6 +49,6 @@ const getResponsesForComment = (
   rootComment: CommentWithResponses,
 ): CommentWithResponses[] => {
   return comments
-    .filter((comment) => comment.parentId === rootComment.commentId)
+    .filter((comment) => comment.parentId === rootComment.id)
     .map((response) => ({ ...response, responses: [] }));
 };

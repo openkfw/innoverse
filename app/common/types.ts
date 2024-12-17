@@ -9,6 +9,7 @@ export enum ObjectType {
   SURVEY_QUESTION = 'SURVEY_QUESTION',
   OPPORTUNITY = 'OPPORTUNITY',
   COLLABORATION_QUESTION = 'COLLABORATION_QUESTION',
+  COMMENT = 'COMMENT',
 }
 
 export type NewsFeedEntry =
@@ -39,12 +40,12 @@ export type CollaborationComment = CommonNewsFeedProps & {
   id: string;
   author: User;
   comment: string;
-  upvotedBy: string[];
+  likedBy: string[];
   responseCount: number;
   projectId: string;
   projectName: string;
   question: CollaborationQuestion;
-  isUpvotedByUser?: boolean;
+  isLikedByUser?: boolean;
   anonymous: boolean;
 };
 
@@ -61,26 +62,26 @@ export type User = {
 
 export type Comment = {
   id: string;
-  author: User;
-  comment: string;
-  upvotedBy: User[];
-  responseCount: number;
-  projectId: string;
-  projectName?: string | undefined;
-  questionId?: string;
   createdAt: Date;
-  isUpvotedByUser?: boolean;
   updatedAt: Date;
-};
 
-export type CommentResponse = {
-  id: string;
   author: User;
-  response: string;
-  createdAt: Date;
-  upvotedBy: User[];
-  comment: Comment | CollaborationComment;
-  updatedAt: Date;
+  text: string;
+  objectId: string;
+  objectType: ObjectType;
+  likedBy: User[];
+
+  likes?: Like[];
+  responseCount: number;
+
+  objectName?: string | undefined;
+  additionalObjectId?: string;
+  additionalObjectType?: ObjectType;
+  isLikedByUser?: boolean;
+  parentId?: string;
+  responses?: Comment[];
+  anonymous?: boolean;
+  reactions?: Reaction[];
 };
 
 export type ResponseOption = {
@@ -160,7 +161,8 @@ export type BasicProject = CommonNewsFeedProps & {
 };
 
 export type Like = {
-  projectId: string;
+  objectId: string;
+  objectType: ObjectType;
   likedBy: string;
 };
 
@@ -388,7 +390,7 @@ export type Post = CommonNewsFeedProps & {
   id: string;
   author: User;
   content: string;
-  upvotedBy: string[];
+  likedBy: string[];
   responseCount: number;
   anonymous: boolean;
 };
@@ -407,22 +409,14 @@ export type ImageFormat = {
 
 export type CommonCommentProps = {
   id: string;
-  commentId: string;
+  objectId: string;
   createdAt: Date;
   updatedAt: Date;
-  comment: string;
+  text: string;
   author: User;
-  upvotedBy: string[];
+  likes?: Like[];
   responseCount: number;
   parentId?: string;
-};
-
-export type PostComment = CommonCommentProps & {
-  postId: string;
-};
-
-export type NewsComment = CommonCommentProps & {
-  newsId: string;
 };
 
 export type CommentWithResponses = CommonCommentProps & {

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 
 import { ObjectType } from '@/common/types';
-import { getCollaborationCommentStartingFrom } from '@/repository/db/collaboration_comment';
+import { getCommentsStartingFrom } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import { getPostsStartingFrom } from '@/repository/db/posts';
 import dbClient from '@/repository/db/prisma/prisma';
@@ -20,6 +20,7 @@ import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient'
 import { getBasicCollaborationQuestionStartingFromWithAdditionalData } from '@/utils/requests/collaborationQuestions/requests';
 import { getProjectsStartingFrom } from '@/utils/requests/project/requests';
 
+import { mapToComment } from '../requests/comments/mapping';
 import { getEventsStartingFrom } from '../requests/events/requests';
 import { getSurveyQuestionsStartingFrom } from '../requests/surveyQuestions/requests';
 import { getProjectUpdatesStartingFrom } from '../requests/updates/requests';
@@ -163,11 +164,13 @@ const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEn
 
 export const aggregateCollaborationComments = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
   // collaboration comments fetched from prisma, hence no pagination required
-  const comments = await getCollaborationCommentStartingFrom(dbClient, from);
+  const comments = await getCommentsStartingFrom(dbClient, from, ObjectType.COMMENT); //todo check if type is COMMENT or a new type is needed
   if (comments.length === 0) {
     logger.info('No collaboration comments found to sync');
   }
-  const mapToNewsFeedEntries = comments.map(async (comment) => createNewsFeedEntryForComment(comment));
+  const mapToNewsFeedEntries = comments.map(async (comment) =>
+    createNewsFeedEntryForComment(await mapToComment(comment)),
+  );
   const newsFeedEntries = await getPromiseResults(mapToNewsFeedEntries);
   return newsFeedEntries.filter((entry): entry is RedisNewsFeedEntry => entry !== null);
 };

@@ -7,16 +7,12 @@ import { removeComment, updateComment } from '@/services/commentService';
 import { withAuth } from '@/utils/auth';
 
 export const updateUserComment = withAuth(
-  async (
-    user: UserSession,
-    body: { commentId: string; content: string; commentType: 'NEWS_COMMENT' | 'POST_COMMENT' },
-  ) => {
+  async (user: UserSession, body: { commentId: string; content: string; objectType: 'UPDATE' | 'POST' }) => {
     try {
       await updateComment({
         author: user,
         commentId: body.commentId,
         content: body.content,
-        commentType: body.commentType,
       });
       return {
         status: StatusCodes.OK,
@@ -30,9 +26,9 @@ export const updateUserComment = withAuth(
 );
 
 export const removeUserComment = withAuth(
-  async (user: UserSession, body: { commentId: string; commentType: 'NEWS_COMMENT' | 'POST_COMMENT' }) => {
+  async (user: UserSession, body: { commentId: string; objectType: 'UPDATE' | 'POST' }) => {
     try {
-      await removeComment({ user, commentId: body.commentId, commentType: body.commentType });
+      await removeComment({ user, commentId: body.commentId });
       return {
         status: StatusCodes.OK,
       };

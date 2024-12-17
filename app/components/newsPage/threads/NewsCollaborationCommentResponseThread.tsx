@@ -1,10 +1,10 @@
-import { CommentResponse } from '@/common/types';
+import { Comment } from '@/common/types';
 import { useCollaborationCommentResponseThread } from '@/components/collaboration/comments/CollaborationCommentResponseThread';
 import { NewsCollabCommentResponseCard } from '@/components/newsPage/cards/NewsCollabCommentResponseCard';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
 
 interface NewsCollaborationCommentResponseThreadProps {
-  response: CommentResponse;
+  response: Comment;
   onDelete: () => void;
 }
 
