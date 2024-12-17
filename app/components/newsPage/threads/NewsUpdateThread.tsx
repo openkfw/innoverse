@@ -36,7 +36,6 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
     return { ...response, data };
   };
 
-  //todo refactor
   return (
     <CommentThread
       comment={{ id: update.id, responseCount: update.responseCount ?? 0 }}
@@ -49,7 +48,7 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
             key={`${idx}-${response.id}`}
             item={update}
             comment={response}
-            commentType="NEWS_COMMENT"
+            commentType="UPDATE"
             level={1}
             onDelete={deleteResponse}
             onUpdate={updateResponse}

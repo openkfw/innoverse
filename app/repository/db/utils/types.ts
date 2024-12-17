@@ -13,3 +13,5 @@ const withComment = Prisma.validator<Prisma.CommentDefaultArgs>()({
 });
 
 export type CommentDB = Prisma.CommentGetPayload<typeof withComment>;
+
+export type LikeDB = Prisma.LikeGetPayload<Prisma.LikeDefaultArgs>;

@@ -72,7 +72,7 @@ export type Comment = {
   likedBy: User[];
 
   likes?: Like[];
-  responseCount?: number;
+  responseCount: number;
 
   objectName?: string | undefined;
   additionalObjectId?: string;
@@ -414,7 +414,7 @@ export type CommonCommentProps = {
   updatedAt: Date;
   text: string;
   author: User;
-  likes: Like[];
+  likes?: Like[];
   responseCount: number;
   parentId?: string;
 };

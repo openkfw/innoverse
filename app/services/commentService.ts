@@ -8,7 +8,7 @@ import { updatePostInCache } from '@/services/postService';
 import { updateProjectUpdateInCache } from '@/services/updateService';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
-import { notifyFollowers } from '@/utils/notification/notificationSender';
+import { NotificationTopic, notifyFollowers } from '@/utils/notification/notificationSender';
 import { mapToComment } from '@/utils/requests/comments/mapping';
 
 const logger = getLogger();
@@ -32,41 +32,8 @@ interface UpdateComment {
   content: string;
 }
 
-//todo refactor this
-
 export const addComment = async (body: AddComment): Promise<Comment> => {
   const { comment, objectType, author, objectId, parentCommentId } = body;
-
-  // switch (objectType) {
-  //   case 'POST_COMMENT':
-  //     const postCommentDb = await addCommentToDb({
-  //       client: dbClient,
-  //       objectId,
-  //       objectType: 'POST',
-  //       author: author.providerId,
-  //       text: comment,
-  //       parent: parentCommentId,
-  //     });
-  //     updatePostCommentInCache(postCommentDb, author);
-  //     notifyPostFollowers(objectId);
-  //     const postComment = await mapToPostComment(postCommentDb);
-  //     return postComment;
-  //   case 'NEWS_COMMENT':
-  //     const newsCommentDb = await addCommentToDb(
-  //       dbClient,
-  //       objectId,
-  //       'UPDATE',
-  //       author.providerId,
-  //       comment,
-  //       parentCommentId,
-  //     );
-  //     updateNewsCommentInCache(newsCommentDb);
-  //     notifyUpdateFollowers(objectId);
-  //     const newsComment = await mapToNewsComment(newsCommentDb);
-  //     return newsComment;
-  //   default:
-  //     throw Error(`Failed to add comment: Unknown comment type '${commentType}'`);
-  // }
   const result = await addCommentToDb({
     client: dbClient,
     objectId,
@@ -76,31 +43,16 @@ export const addComment = async (body: AddComment): Promise<Comment> => {
     parentId: parentCommentId,
   });
   updateCommentInCache({ objectId, objectType: result.objectType as ObjectType }, author);
-  notifyPostFollowers(objectId);
+  notifyObjectFollowers(objectId, objectType);
   return await mapToComment(result);
 };
 
-//todo refactor to not have 2 cases
 export const updateComment = async ({ author, commentId, content }: UpdateComment) => {
-  // switch (commentType) {
-  //   case 'POST_COMMENT':
-  //     const postCommentDb = await updateCommentInDb(dbClient, commentId, content);
-  //     await updateCommentInCache(postCommentDb, author);
-  //     return await mapToPostComment(postCommentDb);
-  //   case 'NEWS_COMMENT':
-  //     const newsCommentDb = await updateCommentInDb(dbClient, commentId, content);
-  //     await updateCommentInCache(newsCommentDb);
-  //     return await mapToNewsComment(newsCommentDb);
-  //   default:
-  //     throw Error(`Failed to add comment: Unknown comment type '${commentType}'`);
-  // }
-
   const result = await updateCommentInDb(dbClient, commentId, content);
   await updateCommentInCache({ objectId: result.objectId, objectType: result.objectType as ObjectType }, author);
   return result;
 };
 
-//todo refactor to not have 2 cases
 export const removeComment = async ({ user, commentId }: RemoveComment) => {
   const result = await deleteCommentInDb(dbClient, commentId);
   const objectId = result.objectId;
@@ -108,8 +60,6 @@ export const removeComment = async ({ user, commentId }: RemoveComment) => {
     await removeCommentInCache({ objectId, objectType: result.objectType as ObjectType }, user);
   }
 };
-
-//todo refactor to only use one of the updatePostCommentInCache and updateNewsCommentInCache
 
 const updateCommentInCache = async (comment: { objectId: string; objectType: ObjectType }, author: UserSession) => {
   const commentCount = await countComments(dbClient, comment.objectId);
@@ -122,37 +72,25 @@ const updateCommentInCache = async (comment: { objectId: string; objectType: Obj
 const removeCommentInCache = async (comment: { objectId: string; objectType: ObjectType }, author: UserSession) => {
   const commentCount = await countComments(dbClient, comment.objectId);
   const body = { id: comment.objectId, responseCount: commentCount };
-  //todo check if updatePostInCache and updateProjectUpdateInCache can be merged
   return comment.objectType === 'POST'
     ? await updatePostInCache({ post: body, user: author })
     : await updateProjectUpdateInCache({ update: body });
 };
 
-//todo make sure this is called
-const notifyUpdateFollowers = async (updateId: string) => {
+const notifyObjectFollowers = async (objectId: string, objectType: ObjectType) => {
   try {
-    const follows = await getFollowers(dbClient, ObjectType.UPDATE, updateId);
-    await notifyFollowers(follows, 'update', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Notify followers about updated update with id: ${updateId}`,
-      err as Error,
-      updateId,
+    const follows = await getFollowers(dbClient, objectType, objectId);
+    await notifyFollowers(
+      follows,
+      ObjectType.POST.toLowerCase() as NotificationTopic,
+      `Jemand hat auf einen ${objectType}, dem du folgst, kommentiert.`,
+      '/news',
     );
-    logger.error(error);
-    throw err;
-  }
-};
-
-const notifyPostFollowers = async (postId: string) => {
-  try {
-    const follows = await getFollowers(dbClient, ObjectType.POST, postId);
-    await notifyFollowers(follows, 'post', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
   } catch (err) {
     const error: InnoPlatformError = dbError(
-      `Notify followers about updated post with id: ${postId}`,
+      `Notify followers about updated ${objectType} with id: ${objectId}`,
       err as Error,
-      postId,
+      objectId,
     );
     logger.error(error);
     throw err;

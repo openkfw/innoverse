@@ -1,5 +1,5 @@
-import { Comment, ObjectType } from '@/common/types';
-import { CommentDB } from '@/repository/db/utils/types';
+import { Comment, Like, ObjectType } from '@/common/types';
+import { CommentDB, LikeDB } from '@/repository/db/utils/types';
 import { getFulfilledResults } from '@/utils/helpers';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 
@@ -20,6 +20,14 @@ export const mapToComment = async (comment: CommentDB): Promise<Comment> => {
     likedBy,
     ...(comment.anonymous && { anonymous: comment.anonymous }),
     ...(comment.parentId && { parentId: comment.parentId }),
+    ...(comment.likes && { likes: mapLikes(comment.likes) }),
     responseCount: comment.responses.length,
   };
+};
+
+const mapLikes = (likes: LikeDB[]): Like[] => {
+  return likes.map((like: LikeDB) => ({
+    ...like,
+    objectType: like.objectType as ObjectType,
+  }));
 };

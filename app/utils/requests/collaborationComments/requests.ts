@@ -1,6 +1,5 @@
 'use server';
 
-import { User } from 'next-auth';
 import { StatusCodes } from 'http-status-codes';
 
 import { Comment, UserSession } from '@/common/types';
@@ -22,6 +21,7 @@ import { getPromiseResults, sortDateByCreatedAtAsc } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 import { validateParams } from '@/utils/validationHelper';
+
 import { mapToComment } from '../comments/mapping';
 
 const logger = getLogger();

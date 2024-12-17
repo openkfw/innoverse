@@ -18,7 +18,7 @@ import { mapFollow } from '@/utils/newsFeed/redis/redisMappings';
 import { getCollaborationQuestionsByProjectId } from '@/utils/requests/collaborationQuestions/requests';
 import { getEventsWithAdditionalData, getProjectEventsPage } from '@/utils/requests/events/requests';
 import { getOpportunitiesByProjectId } from '@/utils/requests/opportunities/requests';
-import { mapToBasicProject, mapToProject, mapToProjects } from '@/utils/requests/project/mappings';
+import { mapToBasicProject, mapToLike, mapToProject, mapToProjects } from '@/utils/requests/project/mappings';
 import {
   GetProjectAuthorIdByProjectIdQuery,
   GetProjectByIdQuery,
@@ -100,7 +100,7 @@ export async function getProjectById(id: string) {
       collaborationQuestions,
       comments,
       followers: followers.map(mapFollow),
-      likes,
+      likes: mapToLike(likes),
       isLiked: isLiked ?? false,
       isFollowed: isFollowed ?? false,
       updates: updatesWithAdditionalData,

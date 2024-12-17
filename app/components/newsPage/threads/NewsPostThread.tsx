@@ -37,7 +37,7 @@ export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
           key={`${idx}-${response.id}`}
           item={post}
           comment={response}
-          commentType="POST_COMMENT"
+          commentType="POST"
           level={1}
           onDelete={deleteResponse}
           onUpdate={updateResponse}

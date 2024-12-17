@@ -89,7 +89,7 @@ export const handleCollaborationCommentLike = async ({ user, commentId }: LikeCo
   if (updatedComment) {
     await updateCollaborationCommentInCache({
       user,
-      comment: { ...updatedComment, likedBy: [updatedComment.likedBy] }, //todo refactor likedBy to get all likes
+      comment: { ...updatedComment, likedBy: [updatedComment.likedBy] },
     });
   }
 };

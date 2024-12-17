@@ -25,8 +25,8 @@ import dbClient from '../../../repository/db/prisma/prisma';
 import {
   addCollaborationCommentResponseSchema,
   addCollaborationCommentSchema,
-  collaborationCommentResponseLikedBySchema,
   collaborationCommentLikedBySchema,
+  collaborationCommentResponseLikedBySchema,
   deleteCollaborationCommentResponseSchema,
   deleteCollaborationCommentSchema,
   updateCollaborationCommentResponseSchema,

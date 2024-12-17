@@ -3,6 +3,7 @@
 import type { Post as PrismaPost } from '@prisma/client';
 
 import { ObjectType, Post, User, UserSession } from '@/common/types';
+import { countComments } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import { addPostToDb, deletePostFromDb, getPostById, handlePostLikeInDb, updatePostInDb } from '@/repository/db/posts';
 import dbClient from '@/repository/db/prisma/prisma';
@@ -15,7 +16,6 @@ import { NewsType, RedisPost } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
-import { countComments } from '@/repository/db/comment';
 
 const logger = getLogger();
 

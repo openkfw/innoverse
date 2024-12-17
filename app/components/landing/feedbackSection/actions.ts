@@ -22,13 +22,12 @@ export const saveFeedback = withAuth(
       if (validatedParams.status === StatusCodes.OK && question) {
         const { feedback, showOnProjectPage } = body;
 
-        //todo: refactor this
         await addCollaborationComment({
           comment: {
             projectId: question.projectId,
             questionId: question.collaborationQuestionId,
             comment: feedback,
-            visible: showOnProjectPage,
+            anonymous: showOnProjectPage,
           },
           user,
         });

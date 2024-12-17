@@ -1,6 +1,6 @@
 import { ObjectType as PrismaObjectType, PrismaClient } from '@prisma/client';
-import { ObjectType } from '@/common/types';
 
+import { ObjectType } from '@/common/types';
 import { defaultParamsComment as defaultParams } from '@/repository/db/utils/types';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';

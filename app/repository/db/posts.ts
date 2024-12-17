@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
+import { ObjectType } from '@/common/types';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getUniqueValues } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
@@ -15,12 +16,12 @@ export async function getPostById(client: PrismaClient, id: string) {
 export async function getPostsStartingFrom(client: PrismaClient, from: Date) {
   const [posts, postsComments] = await Promise.all([
     getPostsFromDbStartingFrom(client, from),
-    getCommentsStartingFrom(client, from, 'POST'),
+    getCommentsStartingFrom(client, from, ObjectType.POST),
   ]);
 
   // Get unique ids of posts
   const postIds = getUniqueValues(
-    postsComments.map((comment) => comment.postComment?.postId).filter((id): id is string => id !== undefined),
+    postsComments.map((comment) => comment.objectId).filter((id): id is string => id !== undefined),
   );
   const postsWithComments = await getPostsByIds(client, postIds);
   const allPosts = [...posts, ...postsWithComments];
