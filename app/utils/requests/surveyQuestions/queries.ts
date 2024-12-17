@@ -2,8 +2,24 @@ import { graphql } from '@/types/graphql';
 
 export const SurveyQuestionFragment = graphql(`
   fragment SurveyQuestion on SurveyQuestionEntity @_unmask {
-    id
-    attributes {
+    documentId
+    question
+    updatedAt
+    createdAt
+    responseOptions {
+      responseOption
+    }
+    project {
+      documentId
+      title
+    }
+  }
+`);
+
+export const GetSurveyQuestionByIdQuery = graphql(`
+  query GetSurveyQuestionById($id: ID!) {
+    surveyQuestion(documentId: $id) {
+      documentId
       question
       updatedAt
       createdAt
@@ -11,77 +27,31 @@ export const SurveyQuestionFragment = graphql(`
         responseOption
       }
       project {
-        data {
-          id
-          attributes {
-            title
-          }
-        }
+        documentId
+        title
       }
     }
   }
 `);
 
-export const GetSurveyQuestionByIdQuery = graphql(`
-  query GetSurveyQuestionById($id: ID) {
-    surveyQuestion(id: $id) {
-      data {
-        id
-        attributes {
-          question
-          updatedAt
-          createdAt
-          responseOptions {
-            responseOption
-          }
-          project {
-            data {
-              id
-              attributes {
-                title
-              }
-            }
-          }
+export const GetSurveyQuestionsByProjectIdQuery = graphql(
+  `
+    query GetSurveyQuestions($projectId: ID) {
+      surveyQuestions(filters: { project: { documentId: { eq: $projectId } } }) {
+        nodes {
+          ...SurveyQuestion
         }
       }
     }
-  }
-`);
-
-export const GetSurveyQuestionsByProjectIdQuery = graphql(`
-  query GetSurveyQuestions($projectId: ID) {
-    surveyQuestions(filters: { project: { id: { eq: $projectId } } }) {
-      data {
-        id
-        attributes {
-          updatedAt
-          question
-          updatedAt
-          createdAt
-          responseOptions {
-            responseOption
-          }
-          project {
-            data {
-              id
-              attributes {
-                title
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`);
+  `,
+  [SurveyQuestionFragment],
+);
 
 export const GetSurveyQuestionsCountByProjectIdQuery = graphql(`
   query GetSurveyQuestions($projectId: ID) {
-    surveyQuestions(filters: { project: { id: { eq: $projectId } } }) {
-      meta {
-        pagination {
-          total
-        }
+    surveyQuestions(filters: { project: { documentId: { eq: $projectId } } }) {
+      pageInfo {
+        total
       }
     }
   }
@@ -90,15 +60,11 @@ export const GetSurveyQuestionsCountByProjectIdQuery = graphql(`
 export const GetUpdatedSurveysQuery = graphql(`
   query GetUpdatedSurveys($from: DateTime) {
     surveyQuestions(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
-      data {
-        id
-        attributes {
-          question
-          project {
-            data {
-              id
-            }
-          }
+      nodes {
+        documentId
+        question
+        project {
+          documentId
         }
       }
     }
@@ -112,7 +78,7 @@ export const GetSurveysStartingFromQuery = graphql(
         filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
         pagination: { page: $page, pageSize: $pageSize }
       ) {
-        data {
+        nodes {
           ...SurveyQuestion
         }
       }
