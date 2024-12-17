@@ -1,8 +1,10 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { BasicProject } from '@/common/types';
+import CustomButton from '@/components/common/CustomButton';
 import * as m from '@/src/paraglide/messages.js';
 
 import { LandingPageSection } from '../LandingPageSection';
@@ -23,6 +25,11 @@ export const ProjectSection = ({ projects }: ProjectProps) => {
       id="initiativen"
       title={m.components_landing_projectSection_projectSection_title()}
       subtitle={m.components_landing_projectSection_projectSection_subtitle()}
+      topRightMenu={
+        <Link href="projects">
+          <CustomButton>{m.components_landing_projectSection_projectSection_moreInitiatives()}</CustomButton>
+        </Link>
+      }
       beforeContent={
         <div
           style={{

@@ -23,6 +23,7 @@ import { mapToBasicProject, mapToProject, mapToProjects } from '@/utils/requests
 import {
   GetProjectAuthorIdByProjectIdQuery,
   GetProjectByIdQuery,
+  GetProjectsBySearchStringQuery,
   GetProjectsQuery,
   GetProjectsStartingFromQuery,
   GetProjectTitleByIdQuery,
@@ -137,6 +138,34 @@ export async function getProjects(
   }
 }
 
+export async function GetProjectsBySearchString(
+  {
+    sort,
+    searchString,
+    pagination,
+  }: {
+    sort: { by: 'updatedAt' | 'title'; order: 'asc' | 'desc' };
+    searchString: string;
+    pagination: {
+      page: number;
+      pageSize?: number;
+    };
+  } = { pagination: { pageSize: 80, page: 1 }, sort: { by: 'updatedAt', order: 'desc' }, searchString: '' },
+) {
+  try {
+    const response = await strapiGraphQLFetcher(GetProjectsBySearchStringQuery, {
+      page: pagination.page,
+      pageSize: pagination?.pageSize,
+      sort: `${sort.by}:${sort.order}`,
+      searchString,
+    });
+    const projects = response.projects?.data.map(mapToBasicProject) ?? [];
+    return projects;
+  } catch (err) {
+    console.info(err);
+  }
+}
+
 export async function getProjectAuthorIdByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectAuthorIdByProjectIdQuery, { projectId });
@@ -226,7 +255,7 @@ export const getProjectComments = async (body: { projectId: string }) => {
           const upvotes = await Promise.allSettled(
             comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote)),
           ).then((results) => getFulfilledResults(results));
-          const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
+          const commentCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
           const projectTitle = await getProjectTitleById(comment.projectId);
 
           return {
@@ -234,7 +263,7 @@ export const getProjectComments = async (body: { projectId: string }) => {
             projectName: projectTitle,
             upvotedBy: upvotes,
             author,
-            responseCount,
+            commentCount,
           } as Comment;
         }),
       ).then((results) => getFulfilledResults(results));

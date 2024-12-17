@@ -53,7 +53,7 @@ type UpdateCollaborationCommentInCache = {
     id: string;
     comment?: string;
     upvotedBy?: string[];
-    responseCount?: number;
+    commentCount?: number;
   };
   user: User;
 };
@@ -133,7 +133,7 @@ export const updateCollaborationCommentInCache = async ({ user, comment }: Updat
     const cachedItem = newsFeedEntry.item as RedisCollaborationComment;
     cachedItem.comment = comment.comment ?? cachedItem.comment;
     cachedItem.upvotedBy = comment.upvotedBy ?? cachedItem.upvotedBy;
-    cachedItem.responseCount = comment.responseCount ?? cachedItem.responseCount;
+    cachedItem.commentCount = comment.commentCount ?? cachedItem.commentCount;
     newsFeedEntry.item = cachedItem;
 
     await saveNewsFeedEntry(redisClient, newsFeedEntry);
@@ -182,7 +182,7 @@ export const createNewsFeedEntryForComment = async (comment: PrismaCollaboration
   }
 
   const author = user ?? (await mapToRedisUser(comment.author));
-  const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
+  const commentCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
   const upvotedBy = (await getCollaborationCommentUpvotedBy(dbClient, comment.id)) ?? [];
   const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_COMMENT, comment.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, question.projectId);
@@ -190,7 +190,7 @@ export const createNewsFeedEntryForComment = async (comment: PrismaCollaboration
   const projectName = await getProjectTitleById(comment.projectId);
 
   return mapCollaborationCommentToRedisNewsFeedEntry(
-    { ...comment, projectName: projectName ?? '', upvotedBy, author, responseCount },
+    { ...comment, projectName: projectName ?? '', upvotedBy, author, commentCount },
     question,
     reactions,
     followers,

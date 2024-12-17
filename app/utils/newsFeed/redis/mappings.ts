@@ -1,6 +1,7 @@
 import {
   BasicCollaborationQuestion,
   BasicProject,
+  CommentWithResponses,
   Event,
   ImageFormats,
   ObjectType,
@@ -10,12 +11,14 @@ import {
   User,
 } from '@/common/types';
 import { clientConfig } from '@/config/client';
+import { NewsCommentDB, PostCommentDB } from '@/repository/db/utils/types';
 import { getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
   NewsType,
   RedisCollaborationComment as RedisCollaborationComment,
   RedisCollaborationQuestion,
+  RedisNewsComment,
   RedisNewsFeedEntry,
   RedisPost,
   RedisProject,
@@ -34,7 +37,7 @@ type CollaborationComment = {
   author: User;
   comment: string;
   upvotedBy: string[];
-  responseCount: number;
+  commentCount: number;
   projectId: string;
   projectName: string;
   questionId: string;
@@ -45,8 +48,9 @@ export const mapPostToRedisNewsFeedEntry = (
   post: Post,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: RedisNewsComment[],
 ): RedisNewsFeedEntry => {
-  const item = mapToRedisPost(post, reactions, followedBy);
+  const item = mapToRedisPost(post, reactions, followedBy, comments);
 
   post.author.image = mapImageUrlToRelativeUrl(post.author.image);
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
@@ -114,9 +118,9 @@ export const mapUpdateToRedisNewsFeedEntry = (
   update: ProjectUpdate,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  responseCount: number,
+  comments: string[],
 ): RedisNewsFeedEntry => {
-  const item = mapToRedisProjectUpdate(update, reactions, followedBy, responseCount);
+  const item = mapToRedisProjectUpdate(update, reactions, followedBy, comments);
   item.author.image = mapImageUrlToRelativeUrl(item.author.image);
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
@@ -204,13 +208,19 @@ export const mapRedisNewsFeedEntryToProjectUpdate = (item: RedisProjectUpdate): 
     projectName: item.projectName,
     updatedAt: unixTimestampToDate(item.updatedAt),
     createdAt: unixTimestampToDate(item.createdAt),
+    objectType: ObjectType.UPDATE,
     reactions: item.reactions.map((r) => {
       return { ...r, objectId: item.id, objectType: ObjectType.UPDATE };
     }),
   };
 };
 
-export const mapToRedisPost = (post: Post, reactions: RedisReaction[], followedBy: RedisUser[]): RedisPost => {
+export const mapToRedisPost = (
+  post: Post,
+  reactions: RedisReaction[],
+  followedBy: RedisUser[],
+  comments: RedisNewsComment[],
+): RedisPost => {
   return {
     id: post.id,
     author: post.author,
@@ -220,8 +230,8 @@ export const mapToRedisPost = (post: Post, reactions: RedisReaction[], followedB
     updatedAt: getUnixTimestamp(post.updatedAt),
     createdAt: getUnixTimestamp(post.createdAt),
     followedBy,
-    responseCount: post.responseCount,
     anonymous: post.anonymous,
+    comments,
   };
 };
 
@@ -278,7 +288,7 @@ export const mapToRedisCollaborationComment = (
       description: question.description,
       title: question.title,
     },
-    responseCount: comment.responseCount,
+    commentCount: comment.commentCount,
     upvotedBy: comment.upvotedBy,
     isUpvotedByUser: comment.isUpvotedByUser,
     reactions: reactions,
@@ -305,7 +315,7 @@ export const mapToRedisProjectUpdate = (
   update: ProjectUpdate,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  responseCount: number,
+  comments: string[],
 ): RedisProjectUpdate => {
   return {
     ...update,
@@ -313,7 +323,7 @@ export const mapToRedisProjectUpdate = (
     createdAt: getUnixTimestamp(update.createdAt),
     reactions,
     followedBy,
-    responseCount,
+    comments,
   };
 };
 
@@ -329,6 +339,41 @@ const mapToRedisProjectEvent = (
     projectId: event.projectId,
     reactions,
     followedBy,
+  };
+};
+
+export const mapToRedisNewsComments = (comments: CommentWithResponses[]) => {
+  return comments.map(mapToRedisNewsComment);
+};
+
+const mapToRedisNewsComment = (comment: CommentWithResponses): RedisNewsComment => {
+  return {
+    id: comment.id,
+    commentId: comment.commentId,
+    comment: comment.comment,
+    upvotedBy: comment.upvotedBy,
+    commentCount: comment.commentCount,
+    author: comment.author,
+    parentId: comment.parentId,
+    comments: comment.comments.map((comment) => mapToRedisNewsComment(comment)),
+    updatedAt: getUnixTimestamp(comment.updatedAt),
+    createdAt: getUnixTimestamp(comment.createdAt),
+  };
+};
+
+export const mapToRedisComment = async (newsComment: NewsCommentDB | PostCommentDB): Promise<RedisNewsComment> => {
+  const comment = newsComment.comment;
+  const author = await getInnoUserByProviderId(comment.author);
+
+  return {
+    id: newsComment.id,
+    commentId: newsComment.commentId,
+    createdAt: getUnixTimestamp(comment.createdAt),
+    updatedAt: getUnixTimestamp(comment.updatedAt),
+    comment: comment.text,
+    author: author,
+    upvotedBy: comment.upvotedBy,
+    commentCount: comment.responses.length,
   };
 };
 
@@ -374,4 +419,27 @@ const mapImageUrlToRelativeUrl = (imageUrl: string | undefined): string | undefi
 
   const path = url.pathname;
   return `{strapi_host}${path}`;
+};
+
+export const getNewsTypeByString = (type: string) => {
+  switch (type) {
+    case ObjectType.COLLABORATION_COMMENT:
+      return NewsType.COLLABORATION_COMMENT;
+    case ObjectType.COLLABORATION_QUESTION:
+      return NewsType.COLLABORATION_QUESTION;
+    case ObjectType.PROJECT:
+      return NewsType.PROJECT;
+    case ObjectType.EVENT:
+      return NewsType.EVENT;
+    case ObjectType.OPPORTUNITY:
+      return NewsType.OPPORTUNITY;
+    case ObjectType.POST:
+      return NewsType.POST;
+    case ObjectType.SURVEY_QUESTION:
+      return NewsType.SURVEY_QUESTION;
+    case ObjectType.UPDATE:
+      return NewsType.UPDATE;
+    default:
+      throw Error(`Unknown new feed object type '${type}'`);
+  }
 };

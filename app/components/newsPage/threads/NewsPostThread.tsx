@@ -1,9 +1,9 @@
-import { NewsFeedEntry, Post } from '@/common/types';
+import { NewsFeedEntry, ObjectType, Post } from '@/common/types';
 import NewsPostCard from '@/components/newsPage/cards/NewsPostCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
 import { NewsCommentThread } from '@/components/newsPage/threads/NewsCommentThread';
-import { getPostCommentByPostId } from '@/utils/requests/comments/requests';
+import { getPostCommentsByPostId } from '@/utils/requests/comments/requests';
 
 interface NewsPostThreadProps {
   entry: NewsFeedEntry;
@@ -12,33 +12,34 @@ interface NewsPostThreadProps {
 export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
   const post = entry.item as Post;
 
-  const fetchResponses = async () => await getPostCommentByPostId(post.id);
+  const fetchComments = async () => await getPostCommentsByPostId(post.id);
 
-  const addResponse = async (text: string) => {
-    const response = await addUserComment({
+  const addComment = async (text: string) => {
+    const comment = await addUserComment({
       comment: text,
       commentType: 'POST_COMMENT',
       objectId: post.id,
+      objectType: ObjectType.POST,
     });
-    const data = response.data ? { ...response.data, responseCount: 0, responses: [] } : undefined;
-    return { ...response, data };
+    const data = comment.data ? { ...comment.data, comments: [] } : undefined;
+    return { ...comment, data };
   };
 
   return (
     <CommentThread
       comment={post}
       card={<NewsPostCard entry={entry} />}
-      fetchResponses={fetchResponses}
-      addResponse={addResponse}
-      renderResponse={(response, idx, deleteResponse, updateResponse) => (
+      fetchComments={fetchComments}
+      addComment={addComment}
+      renderComment={(comment, idx, deleteComment, updateComment) => (
         <NewsCommentThread
-          key={`${idx}-${response.id}`}
-          item={post}
-          comment={response}
+          key={`${idx}-${comment.id}`}
+          item={{ ...post, objectType: ObjectType.POST }}
+          comment={comment}
           commentType="POST_COMMENT"
           level={1}
-          onDelete={deleteResponse}
-          onUpdate={updateResponse}
+          onDelete={deleteComment}
+          onUpdate={updateComment}
         />
       )}
     />

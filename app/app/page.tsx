@@ -34,15 +34,11 @@ async function IndexPage() {
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
           <FeedbackSection />
         </Box>
-        <div style={{ position: 'relative' }}>
-          <NewsSection updates={updates} />
-          <BackgroundArrows />
-        </div>
+        <NewsSection updates={updates} />
+        <BackgroundArrows />
         <EventSection events={events} />
         <ProjectSection projects={projects} />
-        <Box>
-          <MappingProjectsCard projects={projects} />
-        </Box>
+        <MappingProjectsCard projects={projects} />
       </Stack>
       <CustomToast />
     </>

@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
-import { isEqual } from 'lodash';
+import React from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -9,45 +8,30 @@ import IconButton from '@mui/material/IconButton';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Typography from '@mui/material/Typography';
 
-import { useNewsFilter } from '@/app/contexts/news-filter-context';
 import { closeIconButtonStyle } from '@/components/common/CustomDialog';
 import CloseIcon from '@/components/icons/CloseIcon';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
-import ApplyFilterButton, { APPLY_BUTTON } from '../../common/ApplyFilterButton';
+import ApplyFilterButton from './ApplyFilterButton';
 
-import NewsProjectsFilter from './NewsProjectsFilter';
-import NewsTopicFilter from './NewsTopicFilter';
-
-interface MobileNewsFilterProps {
+interface MobileFilterDrawerProps {
   open: boolean;
   setOpen: (open: boolean) => void;
+  applyFilters: () => void;
+  applyButtonType: string;
+  FilterContent: React.ReactNode;
 }
 
-export default function MobileNewsFilter(props: MobileNewsFilterProps) {
-  const { open, setOpen } = props;
-  const { filters, setFilters } = useNewsFilter();
-  const [newFilters, setNewFilters] = useState(filters);
+export default function MobileFilterDrawer(props: MobileFilterDrawerProps) {
+  const { open, setOpen, applyFilters, applyButtonType, FilterContent } = props;
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
 
-  const applyFilters = () => {
-    setFilters(newFilters);
-    setOpen(false);
-  };
-
-  const getApplyButtonType = useCallback(() => {
-    if (isEqual(filters, newFilters)) {
-      return APPLY_BUTTON.DISABLED;
-    }
-    return APPLY_BUTTON.ENABLED;
-  }, [newFilters, filters]);
-
   return (
-    <Box mb={0} sx={{ backgroundColor: theme.palette.background.paper }} date-testid="news-filter">
+    <Box mb={0} sx={{ backgroundColor: theme.palette.background.paper }}>
       <SwipeableDrawer
         sx={{
           '& .MuiPaper-root': {
@@ -60,7 +44,7 @@ export default function MobileNewsFilter(props: MobileNewsFilterProps) {
         onClose={toggleDrawer(false)}
         onOpen={toggleDrawer(true)}
       >
-        <Box mr="15px" display="flex" justifyContent="flex-end" alignItems="flex-end">
+        <Box mr={2} display="flex" justifyContent="flex-end" alignItems="flex-end">
           <IconButton onClick={toggleDrawer(false)} sx={closeIconButtonStyle}>
             <CloseIcon color={theme.palette.text.primary} />
           </IconButton>
@@ -68,25 +52,23 @@ export default function MobileNewsFilter(props: MobileNewsFilterProps) {
 
         <Box sx={drawerBoxStyle}>
           <Typography variant="overline">{m.components_newsPage_newsFilter_mobileNewsFilter_filter()}</Typography>
-          <Card sx={cardStyles}>
-            <NewsProjectsFilter filters={newFilters} setFilters={setNewFilters} />
-            <NewsTopicFilter filters={newFilters} setFilters={setNewFilters} />
-          </Card>
+          <Card sx={cardStyles}>{FilterContent}</Card>
         </Box>
-        <ApplyFilterButton onClick={applyFilters} applyButtonType={getApplyButtonType()} />
+
+        <ApplyFilterButton onClick={applyFilters} applyButtonType={applyButtonType} />
       </SwipeableDrawer>
     </Box>
   );
 }
 
-// News Card Styles
 const cardStyles = {
-  borderRadius: '16px 16px 0 0',
+  borderRadius: '16px',
   border: '1px solid rgba(255, 255, 255, 0.20)',
   background: 'rgba(255, 255, 255, 0.10)',
   boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
   backdropFilter: 'blur(20px)',
-  height: '120% !important',
+  height: 'fit-content !important',
+  marginBottom: 4,
 };
 
 const drawerBoxStyle = {
@@ -95,7 +77,7 @@ const drawerBoxStyle = {
   pb: 0,
   m: '15px',
   mb: 0,
-  borderRadius: '16px 16px 0 0',
+  borderRadius: '16px',
   border: '1px solid rgba(0, 90, 140, 0.20)',
   backgroundColor: 'primary.light',
   boxShadow:

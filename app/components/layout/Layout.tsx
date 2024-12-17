@@ -27,7 +27,7 @@ export type Headers = {
 };
 
 const pages: Headers[] = [
-  { text: m.components_layout_layout_initiatives(), link: '/#initiativen' },
+  { text: m.components_layout_layout_initiatives(), link: '/projects' },
   { text: m.components_layout_layout_news(), link: '/news' },
   { text: m.components_layout_layout_aiAssistant() },
 ];
