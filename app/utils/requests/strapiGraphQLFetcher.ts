@@ -27,7 +27,7 @@ const getOperationName = (graphqlQuery: DocumentNode) => {
   return operationName;
 };
 
-const strapiFetcher = async (query: unknown, variables?: unknown, operationName?: string) => {
+const strapiFetcher = async (query: string, variables?: unknown, operationName?: string) => {
   const res = await fetch(clientConfig.NEXT_PUBLIC_STRAPI_GRAPHQL_ENDPOINT as string, {
     method: 'POST',
     headers: {
@@ -62,7 +62,6 @@ const strapiFetcher = async (query: unknown, variables?: unknown, operationName?
       message: 'An error occurred while fetching the data.',
       info: mapError(),
       status: parsedError.error.status,
-      cause: mapError(),
       stack: JSON.stringify([parsedError]),
     };
 

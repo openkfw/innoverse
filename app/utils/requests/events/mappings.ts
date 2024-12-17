@@ -10,26 +10,26 @@ export async function mapToEvents(events: ResultOf<typeof EventFragment>[] | und
 }
 
 export function mapToEvent(eventData: ResultOf<typeof EventFragment>): Event {
-  const attributes = eventData.attributes;
-  const author = attributes.author?.data;
-  const projectId = attributes.project?.data?.id;
-  const projectName = attributes.project?.data?.attributes.title;
-  const endTime = attributes.endTime ?? attributes.startTime;
-  const themes = attributes.Themes?.filter((t) => t?.theme).map((t) => t?.theme) as string[];
+  const author = eventData.author;
+  const project = eventData.project;
+  const projectId = project?.documentId;
+  const projectName = project?.title;
+  const endTime = eventData.endTime ?? eventData.startTime;
+  const themes = eventData.Themes?.filter((t) => t?.theme).map((t) => t?.theme) as string[];
 
   return {
-    id: eventData.id,
-    title: attributes.title,
+    id: eventData.documentId,
+    title: eventData.title,
     projectName,
-    description: attributes.description ?? undefined,
-    startTime: new Date(attributes.startTime),
+    description: eventData.description ?? undefined,
+    startTime: new Date(eventData.startTime),
     endTime: new Date(endTime),
-    author: author && author.attributes ? mapToUser(author) : undefined,
-    image: mapToImageUrl(attributes.image),
+    author: author && author ? mapToUser(author) : undefined,
+    image: mapToImageUrl(eventData.image),
     themes: themes,
-    type: attributes.type ?? undefined,
-    location: attributes.location ?? undefined,
+    type: eventData.type ?? undefined,
+    location: eventData.location ?? undefined,
     projectId: projectId ?? '',
-    updatedAt: toDate(attributes.updatedAt),
+    updatedAt: toDate(eventData.updatedAt),
   };
 }

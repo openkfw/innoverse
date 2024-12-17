@@ -8,8 +8,13 @@ import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { CreateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
-import { GetInnoUserByEmailQuery, GetInnoUserByProviderIdQuery } from '@/utils/requests/innoUsers/queries';
+import {
+  GetInnoUserByEmailQuery,
+  GetInnoUserByProviderIdQuery,
+  InnoUserFragment,
+} from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
+import { ResultOf } from 'gql.tada';
 import { request, FormData } from 'undici';
 
 const logger = getLogger();
@@ -24,7 +29,7 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
       avatarId: uploadedImage ? (uploadedImage.id as unknown as string) : null,
     });
 
-    const userData = response.createInnoUser?.data;
+    const userData = response.createInnoUser as ResultOf<typeof InnoUserFragment>;
     if (!userData) throw new Error('Response contained no user data');
     const createdUser = mapToUser(userData);
     return createdUser;
@@ -38,7 +43,7 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
 export async function getInnoUserByEmail(email: string) {
   try {
     const response = await strapiGraphQLFetcher(GetInnoUserByEmailQuery, { email });
-    const user = mapFirstToUser(response.innoUsers?.data);
+    const user = mapFirstToUser(response.innoUsers?.nodes);
     return user;
   } catch (err) {
     const error = strapiError('Getting Inno user by email', err as RequestError, email);
@@ -50,7 +55,7 @@ export async function getInnoUserByEmail(email: string) {
 export async function getInnoUserByProviderId(providerId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetInnoUserByProviderIdQuery, { providerId });
-    const user = mapFirstToUserOrThrow(response.innoUsers?.data);
+    const user = mapFirstToUserOrThrow(response.innoUsers?.nodes);
     return user;
   } catch (err) {
     const error = strapiError('Getting Inno user by providerId', err as RequestError, providerId);

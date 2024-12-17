@@ -42,15 +42,17 @@ import {
   GetUpdatesPageQuery,
   GetUpdatesQuery,
   GetUpdatesStartingFromQuery,
+  ProjectUpdateFragment,
 } from '@/utils/requests/updates/queries';
 import { validateParams } from '@/utils/validationHelper';
+import { ResultOf } from 'gql.tada';
 
 const logger = getLogger();
 
 export async function getProjectUpdates(limit = 100) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesQuery, { limit });
-    const updatesData = response.updates?.data;
+    const updatesData = response.updates?.nodes;
     if (!updatesData) throw new Error('Response contained no updates');
 
     const updates = updatesData.map(mapToProjectUpdate);
@@ -65,7 +67,7 @@ export async function getProjectUpdates(limit = 100) {
 export async function getProjectUpdateById(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdateByIdQuery, { id });
-    const updateData = response.update?.data;
+    const updateData = response.update as ResultOf<typeof ProjectUpdateFragment>;
     if (!updateData) return null;
     const update = mapToProjectUpdate(updateData);
     return update;
@@ -78,8 +80,8 @@ export async function getProjectUpdateById(id: string) {
 export async function getProjectUpdateByIdWithReactions(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdateByIdQuery, { id });
-    if (!response?.update?.data) throw new Error('Response contained no update');
-    const update = mapToProjectUpdate(response.update.data);
+    if (!response?.update) throw new Error('Response contained no update');
+    const update = mapToProjectUpdate(response.update as ResultOf<typeof ProjectUpdateFragment>);
     const reactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
     return { ...update, reactions };
   } catch (err) {
@@ -91,7 +93,7 @@ export async function getProjectUpdateByIdWithReactions(id: string) {
 export async function getUpdatesByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesByProjectIdQuery, { projectId });
-    const updatesData = response.updates?.data;
+    const updatesData = response.updates?.nodes;
     if (!updatesData) throw new Error('Response contained no updates');
     const updates = updatesData.map(mapToProjectUpdate);
     const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
@@ -118,7 +120,7 @@ export async function createProjectUpdateInStrapi(body: {
       anonymous: body.anonymous ?? false,
     });
 
-    const updateData = response.createUpdate?.data;
+    const updateData = response.createUpdate as ResultOf<typeof ProjectUpdateFragment>;
     if (!updateData) throw 'Response contained no update';
 
     const update = mapToProjectUpdate(updateData);
@@ -132,7 +134,7 @@ export async function createProjectUpdateInStrapi(body: {
 export async function deleteProjectUpdateInStrapi(id: string) {
   try {
     const response = await strapiGraphQLFetcher(DeleteProjectUpdateMutation, { updateId: id });
-    const updateData = response.deleteUpdate?.data;
+    const updateData = response.deleteUpdate as ResultOf<typeof ProjectUpdateFragment>;
     if (!updateData) throw new Error('Response contained no removed project update');
     const removedUpdate = mapToProjectUpdate(updateData);
     return removedUpdate;
@@ -148,7 +150,7 @@ export async function updateProjectUpdateInStrapi(id: string, comment: string) {
       updateId: id,
       comment,
     });
-    const updatedUpdate = response.updateUpdate?.data;
+    const updatedUpdate = response.updateUpdate as ResultOf<typeof ProjectUpdateFragment>;
     if (!updatedUpdate) throw new Error('Response contained no updated project update');
     const update = mapToProjectUpdate(updatedUpdate);
     return update;
@@ -172,7 +174,7 @@ export async function getProjectUpdatesPage({
   try {
     const { projects, topics } = filters;
     const response = await getUpdatesPageData({ projectTitles: projects, topics, page, pageSize, sortDirection: sort });
-    const updates = response.updates?.data.map(mapToProjectUpdate) ?? [];
+    const updates = response.updates?.nodes.map(mapToProjectUpdate) ?? [];
     const updatesWithAdditionalData = await getUpdatesWithAdditionalData(updates);
     return updatesWithAdditionalData;
   } catch (err) {
@@ -334,7 +336,7 @@ export const countUpdatesForProject = async (body: { projectId: string }) => {
     }
 
     const response = await strapiGraphQLFetcher(GetUpdateCountQuery, { projectId: body.projectId });
-    const countResult = response.updates?.meta.pagination.total ?? 0;
+    const countResult = response.updates?.pageInfo.total ?? 0;
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {
@@ -347,7 +349,7 @@ export const countUpdatesForProject = async (body: { projectId: string }) => {
 export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesStartingFromQuery, { from, page, pageSize });
-    const updates = await mapToProjectUpdates(response.updates?.data);
+    const updates = await mapToProjectUpdates(response.updates?.nodes);
 
     const newsComments = await getNewsCommentsStartingFrom(dbClient, from);
     // Get unique ids of updates
@@ -357,7 +359,7 @@ export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: St
 
     if (updatesIds.length > 0) {
       const res = await strapiGraphQLFetcher(GetUpdatesByIdsQuery, { ids: updatesIds });
-      const updatesWithComments = await mapToProjectUpdates(res.updates?.data);
+      const updatesWithComments = await mapToProjectUpdates(res.updates?.nodes);
 
       const combinedUpdates = [...updates, ...updatesWithComments];
       const uniqueUpdates = combinedUpdates.filter(
@@ -376,7 +378,7 @@ export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: St
 export async function getCommentsForProjectUpdateStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesStartingFromQuery, { from, page, pageSize });
-    const updates = mapToProjectUpdates(response.updates?.data);
+    const updates = mapToProjectUpdates(response.updates?.nodes);
     return updates;
   } catch (err) {
     const error = strapiError('Getting updates', err as RequestError);

@@ -4,39 +4,27 @@ import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 export const EventFragment = graphql(
   `
     fragment Event on EventEntity @_unmask {
-      id
-      attributes {
-        updatedAt
+      documentId
+      updatedAt
+      title
+      startTime
+      endTime
+      type
+      description
+      location
+      author {
+        ...InnoUser
+      }
+      project {
+        documentId
         title
-        startTime
-        endTime
-        type
-        description
-        location
-        author {
-          data {
-            ...InnoUser
-          }
-        }
-        project {
-          data {
-            id
-            attributes {
-              title
-            }
-          }
-        }
-        Themes {
-          theme
-        }
-        image {
-          data {
-            attributes {
-              url
-              formats
-            }
-          }
-        }
+      }
+      Themes {
+        theme
+      }
+      image {
+        url
+        formats
       }
     }
   `,
@@ -46,10 +34,8 @@ export const EventFragment = graphql(
 export const GetEventByIdQuery = graphql(
   `
     query GetEventById($id: ID) {
-      event(id: $id) {
-        data {
-          ...Event
-        }
+      event(documentId: $id) {
+        ...Event
       }
     }
   `,
@@ -60,7 +46,7 @@ export const GetUpcomingEventsQuery = graphql(
   `
     query GetUpcomingEvents($now: DateTime) {
       events(filters: { startTime: { gte: $now } }, sort: "startTime:asc") {
-        data {
+        nodes {
           ...Event
         }
       }
@@ -72,8 +58,11 @@ export const GetUpcomingEventsQuery = graphql(
 export const GetEventsPageQuery = graphql(
   `
     query getEvents($projectId: ID!, $page: Int, $pageSize: Int) {
-      events(filters: { project: { id: { eq: $projectId } } }, pagination: { page: $page, pageSize: $pageSize }) {
-        data {
+      events(
+        filters: { project: { documentId: { eq: $projectId } } }
+        pagination: { page: $page, pageSize: $pageSize }
+      ) {
+        nodes {
           ...Event
         }
       }
@@ -86,10 +75,10 @@ export const GetPastEventsPageQuery = graphql(
   `
     query getPastEvents($projectId: ID!, $now: DateTime, $page: Int, $pageSize: Int) {
       events(
-        filters: { project: { id: { eq: $projectId } }, startTime: { lt: $now } }
+        filters: { project: { documentId: { eq: $projectId } }, startTime: { lt: $now } }
         pagination: { page: $page, pageSize: $pageSize }
       ) {
-        data {
+        nodes {
           ...Event
         }
       }
@@ -102,10 +91,10 @@ export const GetFutureEventsPageQuery = graphql(
   `
     query getFutureEvents($projectId: ID!, $now: DateTime, $page: Int, $pageSize: Int) {
       events(
-        filters: { project: { id: { eq: $projectId } }, startTime: { gte: $now } }
+        filters: { project: { documentId: { eq: $projectId } }, startTime: { gte: $now } }
         pagination: { page: $page, pageSize: $pageSize }
       ) {
-        data {
+        nodes {
           ...Event
         }
       }
@@ -116,11 +105,9 @@ export const GetFutureEventsPageQuery = graphql(
 
 export const GetFutureEventCountQuery = graphql(`
   query getEventCount($projectId: ID!, $now: DateTime) {
-    events(filters: { project: { id: { eq: $projectId } }, startTime: { gte: $now } }) {
-      meta {
-        pagination {
-          total
-        }
+    events(filters: { project: { documentId: { eq: $projectId } }, startTime: { gte: $now } }) {
+      pageInfo {
+        total
       }
     }
   }
@@ -133,7 +120,7 @@ export const GetEventsStartingFromQuery = graphql(
         filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
         pagination: { page: $page, pageSize: $pageSize }
       ) {
-        data {
+        nodes {
           ...Event
         }
       }

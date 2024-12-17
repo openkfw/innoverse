@@ -13,6 +13,7 @@ import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapToEvent, mapToEvents } from '@/utils/requests/events/mappings';
 import {
+  EventFragment,
   GetEventByIdQuery,
   GetEventsPageQuery,
   GetEventsStartingFromQuery,
@@ -24,14 +25,15 @@ import {
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { findReactionByUser } from '@/utils/requests/updates/requests';
 import { validateParams } from '@/utils/validationHelper';
+import { ResultOf } from 'gql.tada';
 
 const logger = getLogger();
 
 export async function getEventById(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetEventByIdQuery, { id });
-    if (!response.event?.data) return null;
-    const event = mapToEvent(response.event.data);
+    if (!response.event) return null;
+    const event = mapToEvent(response.event as ResultOf<typeof EventFragment>);
     return event;
   } catch (err) {
     const error = strapiError('Getting event by id', err as RequestError, id);
@@ -42,8 +44,8 @@ export async function getEventById(id: string) {
 export async function getEventByIdWithReactions(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetEventByIdQuery, { id });
-    if (!response.event?.data) throw new Error('Response contained no event');
-    const event = mapToEvent(response.event.data);
+    if (!response.event) throw new Error('Response contained no event');
+    const event = mapToEvent(response.event as ResultOf<typeof EventFragment>);
     const reactions = await getReactionsForEntity(dbClient, ObjectType.EVENT, event.id);
     return { ...event, reactions };
   } catch (err) {
@@ -55,7 +57,7 @@ export async function getEventByIdWithReactions(id: string) {
 export async function getEventsStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetEventsStartingFromQuery, { from, page, pageSize });
-    const events = mapToEvents(response.events?.data);
+    const events = mapToEvents(response.events?.nodes);
     return events;
   } catch (err) {
     const error = strapiError('Getting upcoming events', err as RequestError);
@@ -67,7 +69,7 @@ export async function getUpcomingEvents() {
   try {
     const now = new Date();
     const response = await strapiGraphQLFetcher(GetUpcomingEventsQuery, { now });
-    const events = mapToEvents(response.events?.data);
+    const events = mapToEvents(response.events?.nodes);
     return events;
   } catch (err) {
     const error = strapiError('Getting upcoming events', err as RequestError);
@@ -79,7 +81,7 @@ export async function getCountOfFutureEvents(projectId: string) {
   try {
     const now = new Date();
     const response = await strapiGraphQLFetcher(GetFutureEventCountQuery, { projectId, now });
-    return (response.events && response.events?.meta.pagination.total) ?? 0;
+    return (response.events && response.events?.pageInfo.total) ?? 0;
   } catch (err) {
     const error = strapiError('Getting count of future events', err as RequestError);
     logger.error(error);
@@ -94,7 +96,7 @@ export async function getProjectEventsPage(
 ) {
   try {
     const response = await requestEventsPage(projectId, timeframe, page, pageSize);
-    const events = mapToEvents(response.events?.data);
+    const events = mapToEvents(response.events?.nodes);
     return events;
   } catch (err) {
     const error = strapiError('Getting all events', err as RequestError);

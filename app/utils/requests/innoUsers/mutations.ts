@@ -21,23 +21,15 @@ export const CreateInnoUserMutation = graphql(`
         avatar: $avatarId
       }
     ) {
-      data {
-        id
-        attributes {
-          providerId
-          provider
-          name
-          role
-          department
-          email
-          avatar {
-            data {
-              attributes {
-                url
-              }
-            }
-          }
-        }
+      documentId
+      providerId
+      provider
+      name
+      role
+      department
+      email
+      avatar {
+        url
       }
     }
   }
@@ -64,23 +56,15 @@ export const CreateOpportunityParticipantMutation = graphql(`
         avatar: $avatarId
       }
     ) {
-      data {
-        id
-        attributes {
-          providerId
-          provider
-          name
-          role
-          department
-          email
-          avatar {
-            data {
-              attributes {
-                url
-              }
-            }
-          }
-        }
+      documentId
+      providerId
+      provider
+      name
+      role
+      department
+      email
+      avatar {
+        url
       }
     }
   }
