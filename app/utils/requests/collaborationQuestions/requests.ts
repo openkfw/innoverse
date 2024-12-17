@@ -14,6 +14,7 @@ import getLogger from '@/utils/logger';
 import { getProjectCollaborationComments } from '@/utils/requests/collaborationComments/requests';
 import { mapToCollaborationQuestion } from '@/utils/requests/collaborationQuestions/mappings';
 import {
+  CollaborationQuestionFragment,
   GetCollaborationQuestionByIdQuery,
   GetCollaborationQuestionsByProjectIdQuery,
   GetCollaborationQuestionsCountProjectIdQuery,
@@ -23,16 +24,18 @@ import {
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 import { mapToBasicCollaborationQuestion } from './mappings';
+import { ResultOf } from 'gql.tada';
+import { ProjectFragment } from '../project/queries';
 
 const logger = getLogger();
 
 export async function getCollaborationQuestionsByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetCollaborationQuestionsByProjectIdQuery, { projectId });
-    const questionsData = response.collaborationQuestions?.data ?? [];
+    const questionsData = response.collaborationQuestions?.nodes ?? [];
 
     const mapToEntities = questionsData.map(async (questionData) => {
-      const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData.id });
+      const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData.documentId });
       const comments = getComments.data ?? [];
 
       const getCommentsWithLike = comments.map(async (comment) => {
@@ -54,8 +57,8 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
 
 export async function getBasicCollaborationQuestionById(id: string): Promise<BasicCollaborationQuestion | undefined> {
   try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { id });
-    const data = response.collaborationQuestion?.data;
+    const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { documentId: id });
+    const data = response.collaborationQuestion as ResultOf<typeof CollaborationQuestionFragment>;
     if (!data) throw new Error('Response contained no collaboration question data');
     const collaborationQuestion = mapToBasicCollaborationQuestion(data);
     return collaborationQuestion;
@@ -67,8 +70,8 @@ export async function getBasicCollaborationQuestionById(id: string): Promise<Bas
 
 export async function getBasicCollaborationQuestionByIdWithAdditionalData(id: string) {
   try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { id });
-    const data = response.collaborationQuestion?.data;
+    const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { documentId: id });
+    const data = response.collaborationQuestion as ResultOf<typeof CollaborationQuestionFragment>;
     if (!data) throw new Error('Response contained no collaboration question data');
     const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, id);
     const collaborationQuestion = mapToBasicCollaborationQuestion(data);
@@ -90,12 +93,16 @@ export async function getBasicCollaborationQuestionStartingFromWithAdditionalDat
 }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetCollaborationQuestsionsStartingFromQuery, { from, page, pageSize });
-    const data = response.collaborationQuestions?.data;
+    const data = response.collaborationQuestions?.nodes;
     if (!data) throw new Error('Response contained no collaboration question data');
 
     const mapQuestions = data.map(async (questionData) => {
       const basicQuestion = mapToBasicCollaborationQuestion(questionData);
-      const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, questionData.id);
+      const reactions = await getReactionsForEntity(
+        dbClient,
+        ObjectType.COLLABORATION_QUESTION,
+        questionData.documentId,
+      );
       return { ...basicQuestion, reactions };
     });
 
@@ -113,13 +120,14 @@ export async function getBasicCollaborationQuestionStartingFromWithAdditionalDat
 export async function getPlatformFeedbackCollaborationQuestion() {
   try {
     const response = await strapiGraphQLFetcher(GetPlatformFeedbackCollaborationQuestion);
-    if (!response.collaborationQuestions?.data || !response.collaborationQuestions.data.length) return;
-    const questionData = response.collaborationQuestions.data[0];
-    if (!questionData.attributes.project?.data) throw new Error('Collaboration question is not linked to a project');
+    if (!response.collaborationQuestions?.nodes || !response.collaborationQuestions.nodes.length) return;
+    const questionData = response.collaborationQuestions.nodes[0];
+    if (!questionData.project) throw new Error('Collaboration question is not linked to a project');
+    const project = questionData.project as ResultOf<typeof ProjectFragment>;
 
     const collaborationQuestion = {
-      collaborationQuestionId: questionData.id,
-      projectId: questionData.attributes.project.data.id,
+      collaborationQuestionId: questionData.documentId,
+      projectId: project.documentId,
     };
 
     return collaborationQuestion;
@@ -149,7 +157,7 @@ export const countCollaborationQuestionsForProject = async (projectId: string) =
     const response = await strapiGraphQLFetcher(GetCollaborationQuestionsCountProjectIdQuery, {
       projectId,
     });
-    const countResult = response.collaborationQuestions?.meta.pagination.total;
+    const countResult = response.collaborationQuestions?.pageInfo.total;
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {

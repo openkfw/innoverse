@@ -27,6 +27,7 @@ import {
   GetProjectsStartingFromQuery,
   GetProjectTitleByIdQuery,
   GetProjectTitleByIdsQuery,
+  ProjectFragment,
 } from '@/utils/requests/project/queries';
 import { getProjectQuestionsByProjectId } from '@/utils/requests/questions/requests';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
@@ -35,17 +36,20 @@ import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import { mapToComment } from '../comments/mapping';
+import { getInnoUserByProviderId } from '../innoUsers/requests';
+import { ResultOf } from 'gql.tada';
+import { InnoUserFragment } from '../innoUsers/queries';
 
 const logger = getLogger();
 
 export async function getProjectTitleById(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectTitleByIdQuery, { id });
-    const title = response.project?.data?.attributes.title;
+    const title = response.project?.title;
     if (title === undefined) {
       throw new Error('Response contained no title');
     }
-    return title;
+    return title as string;
   } catch (err) {
     const e: InnoPlatformError = strapiError('Getting Project title by ID', err as RequestError, id);
     logger.error(e);
@@ -55,9 +59,9 @@ export async function getProjectTitleById(id: string) {
 export async function getProjectTitleByIds(ids: string[], page: number, pageSize: number) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectTitleByIdsQuery, { ids, page, pageSize });
-    const data = response.projects?.data;
+    const data = response.projects?.nodes;
     if (!data) throw 'Response contained no project data';
-    const projectTitles = data.map((project) => ({ id: project.id, title: project.attributes.title }));
+    const projectTitles = data.map((project) => ({ id: project.documentId, title: project.title as string }));
     return projectTitles;
   } catch (err) {
     const e: InnoPlatformError = strapiError('Getting Project titles by ID list', err as RequestError);
@@ -68,11 +72,11 @@ export async function getProjectTitleByIds(ids: string[], page: number, pageSize
 export async function getProjectById(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectByIdQuery, { id });
-    const projectData = response.project?.data;
+    const projectData = response.project as ResultOf<typeof ProjectFragment>;
 
     if (!projectData) throw new Error('Response contained no project data');
 
-    const projectComments = await getProjectComments({ projectId: projectData.id });
+    const projectComments = await getProjectComments({ projectId: projectData.documentId });
 
     if (!projectComments.data) throw new Error('Failed to load project comments for project');
 
@@ -85,10 +89,10 @@ export async function getProjectById(id: string) {
 
     const comments = projectComments.data;
     const updatesWithAdditionalData = (await getUpdatesByProjectId(id)) ?? [];
-    const opportunities = (await getOpportunitiesByProjectId(projectData.id)) ?? [];
-    const questions = (await getProjectQuestionsByProjectId(projectData.id)) ?? [];
-    const surveyQuestions = (await getSurveyQuestionsByProjectId(projectData.id)) ?? [];
-    const collaborationQuestions = (await getCollaborationQuestionsByProjectId(projectData.id)) ?? [];
+    const opportunities = (await getOpportunitiesByProjectId(projectData.documentId)) ?? [];
+    const questions = (await getProjectQuestionsByProjectId(projectData.documentId)) ?? [];
+    const surveyQuestions = (await getSurveyQuestionsByProjectId(projectData.documentId)) ?? [];
+    const collaborationQuestions = (await getCollaborationQuestionsByProjectId(projectData.documentId)) ?? [];
 
     const futureEventsWithAdditionalData = await getEventsWithAdditionalData(futureEvents);
     const pastEventsWithAdditionalData = await getEventsWithAdditionalData(pastEvents);
@@ -127,7 +131,7 @@ export async function getProjects(
 ) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectsQuery, { limit, sort: `${sort.by}:${sort.order}` });
-    const projects = response.projects?.data.map(mapToBasicProject) ?? [];
+    const projects = response.projects?.map(mapToBasicProject) ?? [];
     return projects;
   } catch (err) {
     console.info(err);
@@ -155,7 +159,7 @@ export async function getProjectsBySearchString(
       sort: `${sort.by}:${sort.order}`,
       searchString,
     });
-    const projects = response.projects?.data.map(mapToBasicProject) ?? [];
+    const projects = response.projects.map(mapToBasicProject) ?? [];
     return projects;
   } catch (err) {
     console.info(err);
@@ -165,12 +169,12 @@ export async function getProjectsBySearchString(
 export async function getProjectAuthorIdByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectAuthorIdByProjectIdQuery, { projectId });
-    const projectData = response.project?.data;
-    const authorData = projectData?.attributes.author?.data;
+    const projectData = response.project;
+    const authorData = projectData?.author as ResultOf<typeof InnoUserFragment>;
 
     if (!projectData) throw new Error('Response contained no project data');
 
-    return { authorId: authorData?.id };
+    return { authorId: authorData?.documentId };
   } catch (err) {
     const error = strapiError('Getting project author by project id', err as RequestError, projectId);
     logger.error(error);
@@ -280,8 +284,8 @@ export const getProjectComments = async (body: { projectId: string }) => {
 export async function getProjectByIdWithReactions(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectByIdQuery, { id });
-    if (!response?.project?.data) throw new Error('Response contained no project');
-    const project = mapToBasicProject(response.project.data);
+    if (!response?.project) throw new Error('Response contained no project');
+    const project = mapToBasicProject(response.project as ResultOf<typeof ProjectFragment>);
     const reactions = await getReactionsForEntity(dbClient, ObjectType.PROJECT, project.id);
     return { ...project, reactions };
   } catch (err) {
@@ -293,7 +297,7 @@ export async function getProjectByIdWithReactions(id: string) {
 export async function getProjectsStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectsStartingFromQuery, { from, page, pageSize });
-    const projects = mapToProjects(response.projects?.data);
+    const projects = mapToProjects(response.projects);
     return projects;
   } catch (err) {
     const error = strapiError('Getting upcoming projects', err as RequestError);

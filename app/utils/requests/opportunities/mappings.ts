@@ -17,18 +17,17 @@ export function mapToOpportunity(
   opportunityData: ResultOf<typeof OpportunityFragment>,
   hasApplied: boolean = false,
 ): Opportunity {
-  const attributes = opportunityData.attributes;
-  const contactPerson = attributes.contactPerson?.data;
-  const participants = attributes.participants?.data;
+  const contactPerson = opportunityData.contactPerson;
+  const participants = opportunityData.participants;
 
   return {
-    id: opportunityData.id,
-    ...attributes,
-    description: attributes.description ?? undefined,
-    expense: attributes.expense ?? undefined,
+    id: opportunityData.documentId,
+    ...opportunityData,
+    description: opportunityData.description ?? undefined,
+    expense: opportunityData.expense ?? undefined,
     contactPerson: contactPerson ? mapToUser(contactPerson) : undefined,
     participants: participants ? participants.map(mapToUser) : [],
     hasApplied,
-    updatedAt: toDate(attributes.updatedAt),
+    updatedAt: toDate(opportunityData.updatedAt),
   };
 }
