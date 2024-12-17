@@ -18,19 +18,32 @@
     "strapi": "strapi"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@strapi/typescript-utils": "^5.7.0",
     "@strapi/plugin-graphql": "4.25.17",
     "@strapi/plugin-i18n": "4.25.17",
     "@strapi/plugin-users-permissions": "4.25.17",
     "@strapi/strapi": "4.25.17",
+=======
+    "@strapi/plugin-graphql": "5.5.0",
+    "@strapi/plugin-users-permissions": "5.5.0",
+    "@strapi/strapi": "5.5.0",
+>>>>>>> 6407c26 (feat: update to v5, adjust the types)
     "@strapi/utils": "4.25.8",
     "better-sqlite3": "^11.7.2",
     "pg": "8.8.0",
+<<<<<<< HEAD
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^5.3.4",
     "styled-components": "^5.3.11",
     "typescript": "^5.7.2"
+=======
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.0.0",
+    "styled-components": "^6.0.0"
+>>>>>>> 6407c26 (feat: update to v5, adjust the types)
   },
   "engines": {
     "node": ">=16.0.0 <=20.x.x",
