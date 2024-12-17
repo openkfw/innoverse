@@ -56,14 +56,13 @@ export default {
 };
 
 const getPlatformFeedbackQuestions = async () => {
-  const platformFeedbackQuestions = await strapi.entityService.findMany(
-    "api::collaboration-question.collaboration-question",
-    {
-      filters: {
-        isPlatformFeedback: true,
-      },
-    }
-  );
+  const platformFeedbackQuestions = await
+    strapi.documents("api::collaboration-question.collaboration-question").findMany({
+        filters: {
+          isPlatformFeedback: true,
+        }
+      });
+  
   console.info(
     `[Lifecycle-Hook]: Found ${platformFeedbackQuestions.length} platform feedback question(s)`
   );
