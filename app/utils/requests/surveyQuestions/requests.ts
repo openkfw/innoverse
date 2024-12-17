@@ -26,7 +26,7 @@ const logger = getLogger();
 export async function getBasicSurveyQuestionById(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetSurveyQuestionByIdQuery, { id });
-    const data = response.surveyQuestion?.data;
+    const data = response.surveyQuestion;
 
     if (!data) throw new Error('Response contained no survey question data');
 
@@ -43,10 +43,10 @@ export async function getSurveyQuestionsByProjectId(projectId: string) {
     const response = await strapiGraphQLFetcher(GetSurveyQuestionsByProjectIdQuery, { projectId });
     const surveyQuestionsData = response.surveyQuestions;
 
-    if (!surveyQuestionsData?.data) throw new Error('Response contained no survey question data');
+    if (!surveyQuestionsData?.nodes) throw new Error('Response contained no survey question data');
 
-    const mapToEntities = surveyQuestionsData.data.map(async (surveyQuestionData) => {
-      const votes = await getSurveyVotes(dbClient, surveyQuestionData.id);
+    const mapToEntities = surveyQuestionsData.nodes.map(async (surveyQuestionData) => {
+      const votes = await getSurveyVotes(dbClient, surveyQuestionData.documentId);
       const userVote = await findUserVote({ votes });
       const surveyQuestion = mapToSurveyQuestion(surveyQuestionData, votes, userVote.data);
       return surveyQuestion;
@@ -72,7 +72,7 @@ export const findUserVote = withAuth(async (user: UserSession, body: { votes: Su
 export const countSurveyQuestionsForProject = async (projectId: string) => {
   try {
     const response = await strapiGraphQLFetcher(GetSurveyQuestionsCountByProjectIdQuery, { projectId });
-    const countResult = response.surveyQuestions?.meta.pagination.total;
+    const countResult = response.surveyQuestions?.pageInfo.total;
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {
@@ -85,9 +85,10 @@ export const countSurveyQuestionsForProject = async (projectId: string) => {
 export async function getSurveyQuestionByIdWithReactions(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetSurveyQuestionByIdQuery, { id });
-    if (!response?.surveyQuestion?.data) throw new Error('Response contained no survey question');
-    const votes = await getSurveyVotes(dbClient, response.surveyQuestion?.data.id);
-    const surveyQuestion = mapToSurveyQuestion(response.surveyQuestion.data, votes);
+    if (!response?.surveyQuestion) throw new Error('Response contained no survey question');
+    const surveyQuestionResponse = response.surveyQuestion;
+    const votes = await getSurveyVotes(dbClient, surveyQuestionResponse.documentId);
+    const surveyQuestion = mapToSurveyQuestion(surveyQuestionResponse, votes);
     const reactions = await getReactionsForEntity(dbClient, ObjectType.SURVEY_QUESTION, surveyQuestion.id);
     return { ...surveyQuestion, reactions };
   } catch (err) {
@@ -99,10 +100,10 @@ export async function getSurveyQuestionByIdWithReactions(id: string) {
 export async function getSurveyQuestionById(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetSurveyQuestionByIdQuery, { id });
-    const survey = response.surveyQuestion?.data;
+    const survey = response.surveyQuestion;
     if (!survey) return null;
-    if (!response?.surveyQuestion?.data) throw new Error('Response contained no survey question');
-    const votes = await getSurveyVotes(dbClient, response.surveyQuestion?.data?.id);
+    if (!response?.surveyQuestion) throw new Error('Response contained no survey question');
+    const votes = await getSurveyVotes(dbClient, survey.documentId);
     const surveyQuestion = mapToSurveyQuestion(survey, votes);
     return surveyQuestion;
   } catch (err) {
@@ -116,10 +117,10 @@ export async function getSurveyQuestionsStartingFrom({ from, page, pageSize }: S
     const response = await strapiGraphQLFetcher(GetSurveysStartingFromQuery, { from, page, pageSize });
     const surveyQuestionsData = response.surveyQuestions;
 
-    if (!surveyQuestionsData?.data) throw new Error('Response contained no survey question data');
+    if (!surveyQuestionsData?.nodes) throw new Error('Response contained no survey question data');
 
-    const mapToEntities = surveyQuestionsData.data.map(async (surveyQuestionData) => {
-      const votes = await getSurveyVotes(dbClient, surveyQuestionData.id);
+    const mapToEntities = surveyQuestionsData.nodes.map(async (surveyQuestionData) => {
+      const votes = await getSurveyVotes(dbClient, surveyQuestionData.documentId);
       const surveyQuestion = mapToSurveyQuestion(surveyQuestionData, votes);
       return surveyQuestion;
     });

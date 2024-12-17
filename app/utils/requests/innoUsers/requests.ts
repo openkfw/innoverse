@@ -9,7 +9,7 @@ import { RequestError } from '@/entities/error';
 import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
-import { CreateInnoUserMutation, UpdateInnoUserUsernameMutation } from '@/utils/requests/innoUsers/mutations';
+import { CreateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
 import {
   GetAllInnoUsers,
   GetEmailsByUsernamesQuery,
@@ -18,6 +18,7 @@ import {
   GetInnoUserByUsernameQuery,
 } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
+import { ResultOf } from 'gql.tada';
 
 const logger = getLogger();
 
@@ -34,7 +35,7 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
       avatarId: uploadedImage ? (uploadedImage.id as unknown as string) : null,
     });
 
-    const userData = response.createInnoUser?.data;
+    const userData = response.createInnoUser as ResultOf<typeof InnoUserFragment>;
     if (!userData) throw new Error('Response contained no user data');
     const createdUser = mapToUser(userData);
     return createdUser;
@@ -48,7 +49,7 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
 export async function getInnoUserByEmail(email: string) {
   try {
     const response = await strapiGraphQLFetcher(GetInnoUserByEmailQuery, { email });
-    const user = mapFirstToUser(response.innoUsers?.data);
+    const user = mapFirstToUser(response.innoUsers);
     return user;
   } catch (err) {
     const error = strapiError('Getting Inno user by email', err as RequestError, email);
@@ -60,7 +61,7 @@ export async function getInnoUserByEmail(email: string) {
 export async function getInnoUserByProviderId(providerId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetInnoUserByProviderIdQuery, { providerId });
-    const user = mapFirstToUserOrThrow(response.innoUsers?.data);
+    const user = mapFirstToUserOrThrow(response.innoUsers);
     return user;
   } catch (err) {
     const error = strapiError('Getting Inno user by providerId', err as RequestError, providerId);
@@ -73,7 +74,7 @@ export async function getEmailsByUsernames(usernames: string[]): Promise<string[
   try {
     const response = await strapiGraphQLFetcher(GetEmailsByUsernamesQuery, { usernames });
 
-    const emails = response.innoUsers?.data
+    const emails = response.innoUsers
       ?.map((user) => user.attributes.email)
       .filter((email): email is string => email !== null && email !== undefined);
 
@@ -87,7 +88,7 @@ export async function getEmailsByUsernames(usernames: string[]): Promise<string[
 export async function getInnoUserByUsername(username: string): Promise<User | null> {
   try {
     const response = await strapiGraphQLFetcher(GetInnoUserByUsernameQuery, { username });
-    const user = mapFirstToUser(response?.innoUsers?.data);
+    const user = mapFirstToUser(response?.innoUsers);
     return user || null;
   } catch (error) {
     console.error('Error fetching user by username:', error);
@@ -113,11 +114,11 @@ async function getAllInnoUserNames() {
 async function getAllInnoUsers() {
   try {
     const response = await strapiGraphQLFetcher(GetAllInnoUsers, { limit: 1000 });
-    if (!response.innoUsers?.data) {
+    if (!response.innoUsers) {
       throw new Error('No users data available');
     }
 
-    return response.innoUsers.data;
+    return response.innoUsers;
   } catch (err) {
     const error = strapiError('Getting All Inno users', err as RequestError);
     logger.error(error);

@@ -10,26 +10,25 @@ export async function mapToProjectUpdates(updates: ResultOf<typeof ProjectUpdate
 }
 
 export function mapToProjectUpdate(updateData: ResultOf<typeof ProjectUpdateFragment>): ProjectUpdate {
-  const attributes = updateData.attributes;
-  const author = attributes.author?.data;
-  const project = attributes.project?.data;
-  const projectName = project?.attributes.title;
+  const author = updateData.author;
+  const project = updateData.project;
+  const projectName = project?.title;
 
   if (!author) {
     throw new Error('Update contained no author');
   }
 
   return {
-    id: updateData.id,
-    projectId: project?.id ?? '',
+    id: updateData.documentId,
+    projectId: project?.documentId ?? '',
     projectName: projectName ?? '',
-    title: project?.attributes.title ?? '',
-    comment: attributes.comment,
-    updatedAt: toDate(attributes.updatedAt),
-    topic: attributes.topic as string,
+    title: project?.title ?? '',
+    comment: updateData.comment,
+    updatedAt: toDate(updateData.updatedAt),
+    topic: updateData.topic as string,
     author: mapToUser(author),
-    linkToCollaborationTab: updateData.attributes.linkToCollaborationTab ?? false,
-    anonymous: updateData.attributes.anonymous ?? false,
+    linkToCollaborationTab: updateData.linkToCollaborationTab ?? false,
+    anonymous: updateData.anonymous ?? false,
     objectType: ObjectType.UPDATE,
   };
 }
