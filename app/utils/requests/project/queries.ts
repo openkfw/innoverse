@@ -4,38 +4,28 @@ import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 export const ProjectFragment = graphql(
   `
     fragment Project on ProjectEntity @_unmask {
-      id
-      attributes {
-        title
-        shortTitle
-        summary
-        status
-        featured
-        projectStart
-        updatedAt
-        image {
-          data {
-            attributes {
-              url
-              formats
-            }
-          }
-        }
-        team {
-          data {
-            ...InnoUser
-          }
-        }
-        author {
-          data {
-            ...InnoUser
-          }
-        }
-        description {
-          text
-          tags {
-            tag
-          }
+      documentId
+      title
+      shortTitle
+      summary
+      status
+      featured
+      projectStart
+      updatedAt
+      image {
+        url
+        formats
+      }
+      team {
+        ...InnoUser
+      }
+      author {
+        ...InnoUser
+      }
+      description {
+        text
+        tags {
+          tag
         }
       }
     }
@@ -47,7 +37,7 @@ export const GetProjectsQuery = graphql(
   `
     query GetProjects($limit: Int, $sort: String! = "updatedAt:desc") {
       projects(pagination: { limit: $limit }, sort: [$sort]) {
-        data {
+        nodes {
           ...Project
         }
       }
@@ -87,10 +77,8 @@ export const GetProjectsBySearchStringQuery = graphql(
 export const GetProjectByIdQuery = graphql(
   `
     query GetProjectById($id: ID!) {
-      project(id: $id) {
-        data {
-          ...Project
-        }
+      project(documentId: $id) {
+        ...Project
       }
     }
   `,
@@ -99,25 +87,19 @@ export const GetProjectByIdQuery = graphql(
 
 export const GetProjectTitleByIdQuery = graphql(`
   query GetProjectTitleById($id: ID!) {
-    project(id: $id) {
-      data {
-        id
-        attributes {
-          title
-        }
-      }
+    project(documentId: $id) {
+      documentId
+      title
     }
   }
 `);
 
 export const GetProjectTitleByIdsQuery = graphql(`
   query GetProjectTitlesByIds($ids: [ID!], $page: Int, $pageSize: Int) {
-    projects(filters: { id: { in: $ids } }, pagination: { page: $page, pageSize: $pageSize }) {
-      data {
-        id
-        attributes {
-          title
-        }
+    projects(filters: { documentId: { in: $ids } }, pagination: { page: $page, pageSize: $pageSize }) {
+      nodes {
+        documentId
+        title
       }
     }
   }
@@ -127,7 +109,7 @@ export const GetProjectsPageQuery = graphql(
   `
     query GetProjectsPage($page: Int, $pageSize: Int) {
       projects(pagination: { page: $page, pageSize: $pageSize }) {
-        data {
+        nodes {
           ...Project
         }
       }
@@ -137,17 +119,11 @@ export const GetProjectsPageQuery = graphql(
 );
 
 export const GetProjectAuthorIdByProjectIdQuery = graphql(`
-  query GetProjectAuthorIdByProjectId($projectId: ID) {
-    project(id: $projectId) {
-      data {
-        id
-        attributes {
-          author {
-            data {
-              id
-            }
-          }
-        }
+  query GetProjectAuthorIdByProjectId($projectId: ID!) {
+    project(documentId: $projectId) {
+      documentId
+      author {
+        documentId
       }
     }
   }
@@ -160,7 +136,7 @@ export const GetProjectsStartingFromQuery = graphql(
         filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
         pagination: { page: $page, pageSize: $pageSize }
       ) {
-        data {
+        nodes {
           ...Project
         }
       }
