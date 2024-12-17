@@ -28,11 +28,13 @@ input BooleanFilterInput {
 }
 
 type CollaborationQuestion {
-  authors(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
+  authors(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
+  authors_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
   createdAt: DateTime
   description: String!
+  documentId: ID!
   isPlatformFeedback: Boolean!
-  project: ProjectEntityResponse
+  project: Project
   publishedAt: DateTime
   title: String!
   updatedAt: DateTime
@@ -44,12 +46,12 @@ type CollaborationQuestionEntity {
 }
 
 type CollaborationQuestionEntityResponse {
-  data: CollaborationQuestionEntity
+  data: CollaborationQuestion
 }
 
 type CollaborationQuestionEntityResponseCollection {
-  data: [CollaborationQuestionEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [CollaborationQuestion!]!
+  pageInfo: Pagination!
 }
 
 input CollaborationQuestionFiltersInput {
@@ -57,7 +59,7 @@ input CollaborationQuestionFiltersInput {
   authors: InnoUserFiltersInput
   createdAt: DateTimeFilterInput
   description: StringFilterInput
-  id: IDFilterInput
+  documentId: IDFilterInput
   isPlatformFeedback: BooleanFilterInput
   not: CollaborationQuestionFiltersInput
   or: [CollaborationQuestionFiltersInput]
@@ -77,7 +79,7 @@ input CollaborationQuestionInput {
 }
 
 type CollaborationQuestionRelationResponseCollection {
-  data: [CollaborationQuestionEntity!]!
+  nodes: [CollaborationQuestion!]!
 }
 
 type ComponentDescriptionDescription {
@@ -104,7 +106,7 @@ type ComponentImageImage {
   id: ID!
   projectFrom: String
   projectTo: String
-  sliderImage: UploadFileEntityResponse
+  sliderImage: UploadFile
   title: String
   year: String
 }
@@ -203,7 +205,7 @@ input ComponentThemeThemeInput {
 }
 
 type ComponentUserAuthor {
-  avatar: UploadFileEntityResponse
+  avatar: UploadFile
   department: String
   id: ID!
   name: String!
@@ -287,6 +289,10 @@ input DateTimeFilterInput {
   startsWith: DateTime
 }
 
+type DeleteMutationResponse {
+  documentId: ID!
+}
+
 enum ENUM_EVENT_TYPE {
   In_office
   Remote
@@ -307,13 +313,14 @@ type Error {
 
 type Event {
   Themes(filters: ComponentThemeThemeFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [ComponentThemeTheme]
-  author: InnoUserEntityResponse
+  author: InnoUser
   createdAt: DateTime
   description: String
+  documentId: ID!
   endTime: DateTime
-  image: UploadFileEntityResponse
+  image: UploadFile
   location: String
-  project: ProjectEntityResponse
+  project: Project
   publishedAt: DateTime
   startTime: DateTime!
   title: String!
@@ -327,12 +334,12 @@ type EventEntity {
 }
 
 type EventEntityResponse {
-  data: EventEntity
+  data: Event
 }
 
 type EventEntityResponseCollection {
-  data: [EventEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [Event!]!
+  pageInfo: Pagination!
 }
 
 input EventFiltersInput {
@@ -341,8 +348,8 @@ input EventFiltersInput {
   author: InnoUserFiltersInput
   createdAt: DateTimeFilterInput
   description: StringFilterInput
+  documentId: IDFilterInput
   endTime: DateTimeFilterInput
-  id: IDFilterInput
   location: StringFilterInput
   not: EventFiltersInput
   or: [EventFiltersInput]
@@ -369,7 +376,7 @@ input EventInput {
 }
 
 type EventRelationResponseCollection {
-  data: [EventEntity!]!
+  nodes: [Event!]!
 }
 
 input FileInfoInput {
@@ -403,12 +410,14 @@ input FloatFilterInput {
   startsWith: Float
 }
 
-union GenericMorph = CollaborationQuestion | ComponentDescriptionDescription | ComponentImageImage | ComponentResponseOptionsResponseOptions | ComponentSliderTextSliderText | ComponentTagsTags | ComponentThemeTheme | ComponentUserAuthor | Event | I18NLocale | InnoUser | Opportunity | Project | Question | SurveyQuestion | Update | UploadFile | UploadFolder | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser
+union GenericMorph = CollaborationQuestion | ComponentDescriptionDescription | ComponentImageImage | ComponentResponseOptionsResponseOptions | ComponentSliderTextSliderText | ComponentTagsTags | ComponentThemeTheme | ComponentUserAuthor | Event | I18NLocale | InnoUser | Opportunity | Project | Question | ReviewWorkflowsWorkflow | ReviewWorkflowsWorkflowStage | SurveyQuestion | Update | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser
 
 type I18NLocale {
   code: String
   createdAt: DateTime
+  documentId: ID!
   name: String
+  publishedAt: DateTime
   updatedAt: DateTime
 }
 
@@ -421,32 +430,34 @@ type I18NLocaleEntity {
 }
 
 type I18NLocaleEntityResponse {
-  data: I18NLocaleEntity
+  data: I18NLocale
 }
 
 type I18NLocaleEntityResponseCollection {
-  data: [I18NLocaleEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [I18NLocale!]!
+  pageInfo: Pagination!
 }
 
 input I18NLocaleFiltersInput {
   and: [I18NLocaleFiltersInput]
   code: StringFilterInput
   createdAt: DateTimeFilterInput
-  id: IDFilterInput
+  documentId: IDFilterInput
   name: StringFilterInput
   not: I18NLocaleFiltersInput
   or: [I18NLocaleFiltersInput]
+  publishedAt: DateTimeFilterInput
   updatedAt: DateTimeFilterInput
 }
 
 input I18NLocaleInput {
   code: String
   name: String
+  publishedAt: DateTime
 }
 
 type I18NLocaleRelationResponseCollection {
-  data: [I18NLocaleEntity!]!
+  nodes: [I18NLocale!]!
 }
 
 input IDFilterInput {
@@ -475,18 +486,23 @@ input IDFilterInput {
 }
 
 type InnoUser {
-  avatar: UploadFileEntityResponse
-  collaboration_questions(filters: CollaborationQuestionFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): CollaborationQuestionRelationResponseCollection
+  avatar: UploadFile
+  collaboration_questions(filters: CollaborationQuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [CollaborationQuestion]!
+  collaboration_questions_connection(filters: CollaborationQuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): CollaborationQuestionRelationResponseCollection
   createdAt: DateTime
   department: String
+  documentId: ID!
   email: String
   name: String!
-  opportunities(filters: OpportunityFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): OpportunityRelationResponseCollection
-  project: ProjectEntityResponse
-  projects: ProjectEntityResponse
+  opportunities(filters: OpportunityFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [Opportunity]!
+  opportunities_connection(filters: OpportunityFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): OpportunityRelationResponseCollection
+  project: Project
+  projects: Project
   provider: String
   providerId: String
-  questions(filters: QuestionFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): QuestionRelationResponseCollection
+  publishedAt: DateTime
+  questions(filters: QuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [Question]!
+  questions_connection(filters: QuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): QuestionRelationResponseCollection
   role: String
   updatedAt: DateTime
 }
@@ -497,12 +513,12 @@ type InnoUserEntity {
 }
 
 type InnoUserEntityResponse {
-  data: InnoUserEntity
+  data: InnoUser
 }
 
 type InnoUserEntityResponseCollection {
-  data: [InnoUserEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [InnoUser!]!
+  pageInfo: Pagination!
 }
 
 input InnoUserFiltersInput {
@@ -510,8 +526,8 @@ input InnoUserFiltersInput {
   collaboration_questions: CollaborationQuestionFiltersInput
   createdAt: DateTimeFilterInput
   department: StringFilterInput
+  documentId: IDFilterInput
   email: StringFilterInput
-  id: IDFilterInput
   name: StringFilterInput
   not: InnoUserFiltersInput
   opportunities: OpportunityFiltersInput
@@ -520,6 +536,7 @@ input InnoUserFiltersInput {
   projects: ProjectFiltersInput
   provider: StringFilterInput
   providerId: StringFilterInput
+  publishedAt: DateTimeFilterInput
   questions: QuestionFiltersInput
   role: StringFilterInput
   updatedAt: DateTimeFilterInput
@@ -536,12 +553,13 @@ input InnoUserInput {
   projects: ID
   provider: String
   providerId: String
+  publishedAt: DateTime
   questions: [ID]
   role: String
 }
 
 type InnoUserRelationResponseCollection {
-  data: [InnoUserEntity!]!
+  nodes: [InnoUser!]!
 }
 
 input IntFilterInput {
@@ -632,32 +650,33 @@ input LongFilterInput {
 type Mutation {
   """Change user password. Confirm with the current password."""
   changePassword(currentPassword: String!, password: String!, passwordConfirmation: String!): UsersPermissionsLoginPayload
-  createCollaborationQuestion(data: CollaborationQuestionInput!): CollaborationQuestionEntityResponse
-  createEvent(data: EventInput!): EventEntityResponse
-  createInnoUser(data: InnoUserInput!): InnoUserEntityResponse
-  createOpportunity(data: OpportunityInput!): OpportunityEntityResponse
-  createProject(data: ProjectInput!): ProjectEntityResponse
-  createQuestion(data: QuestionInput!): QuestionEntityResponse
-  createSurveyQuestion(data: SurveyQuestionInput!): SurveyQuestionEntityResponse
-  createUpdate(data: UpdateInput!): UpdateEntityResponse
-  createUploadFile(data: UploadFileInput!): UploadFileEntityResponse
-  createUploadFolder(data: UploadFolderInput!): UploadFolderEntityResponse
+  createCollaborationQuestion(data: CollaborationQuestionInput!, status: PublicationStatus = PUBLISHED): CollaborationQuestion
+  createEvent(data: EventInput!, status: PublicationStatus = PUBLISHED): Event
+  createInnoUser(data: InnoUserInput!, status: PublicationStatus = PUBLISHED): InnoUser
+  createOpportunity(data: OpportunityInput!, status: PublicationStatus = PUBLISHED): Opportunity
+  createProject(data: ProjectInput!, status: PublicationStatus = PUBLISHED): Project
+  createQuestion(data: QuestionInput!, status: PublicationStatus = PUBLISHED): Question
+  createReviewWorkflowsWorkflow(data: ReviewWorkflowsWorkflowInput!, status: PublicationStatus = PUBLISHED): ReviewWorkflowsWorkflow
+  createReviewWorkflowsWorkflowStage(data: ReviewWorkflowsWorkflowStageInput!, status: PublicationStatus = PUBLISHED): ReviewWorkflowsWorkflowStage
+  createSurveyQuestion(data: SurveyQuestionInput!, status: PublicationStatus = PUBLISHED): SurveyQuestion
+  createUpdate(data: UpdateInput!, status: PublicationStatus = PUBLISHED): Update
 
   """Create a new role"""
   createUsersPermissionsRole(data: UsersPermissionsRoleInput!): UsersPermissionsCreateRolePayload
 
   """Create a new user"""
   createUsersPermissionsUser(data: UsersPermissionsUserInput!): UsersPermissionsUserEntityResponse!
-  deleteCollaborationQuestion(id: ID!): CollaborationQuestionEntityResponse
-  deleteEvent(id: ID!): EventEntityResponse
-  deleteInnoUser(id: ID!): InnoUserEntityResponse
-  deleteOpportunity(id: ID!): OpportunityEntityResponse
-  deleteProject(id: ID!): ProjectEntityResponse
-  deleteQuestion(id: ID!): QuestionEntityResponse
-  deleteSurveyQuestion(id: ID!): SurveyQuestionEntityResponse
-  deleteUpdate(id: ID!): UpdateEntityResponse
-  deleteUploadFile(id: ID!): UploadFileEntityResponse
-  deleteUploadFolder(id: ID!): UploadFolderEntityResponse
+  deleteCollaborationQuestion(documentId: ID!): DeleteMutationResponse
+  deleteEvent(documentId: ID!): DeleteMutationResponse
+  deleteInnoUser(documentId: ID!): DeleteMutationResponse
+  deleteOpportunity(documentId: ID!): DeleteMutationResponse
+  deleteProject(documentId: ID!): DeleteMutationResponse
+  deleteQuestion(documentId: ID!): DeleteMutationResponse
+  deleteReviewWorkflowsWorkflow(documentId: ID!): DeleteMutationResponse
+  deleteReviewWorkflowsWorkflowStage(documentId: ID!): DeleteMutationResponse
+  deleteSurveyQuestion(documentId: ID!): DeleteMutationResponse
+  deleteUpdate(documentId: ID!): DeleteMutationResponse
+  deleteUploadFile(id: ID!): UploadFile
 
   """Delete an existing role"""
   deleteUsersPermissionsRole(id: ID!): UsersPermissionsDeleteRolePayload
@@ -671,43 +690,42 @@ type Mutation {
   """Request a reset password token"""
   forgotPassword(email: String!): UsersPermissionsPasswordPayload
   login(input: UsersPermissionsLoginInput!): UsersPermissionsLoginPayload!
-  multipleUpload(field: String, files: [Upload]!, ref: String, refId: ID): [UploadFileEntityResponse]!
 
   """Register a user"""
   register(input: UsersPermissionsRegisterInput!): UsersPermissionsLoginPayload!
-  removeFile(id: ID!): UploadFileEntityResponse
 
   """
   Reset user password. Confirm with a code (resetToken from forgotPassword)
   """
   resetPassword(code: String!, password: String!, passwordConfirmation: String!): UsersPermissionsLoginPayload
-  updateCollaborationQuestion(data: CollaborationQuestionInput!, id: ID!): CollaborationQuestionEntityResponse
-  updateEvent(data: EventInput!, id: ID!): EventEntityResponse
-  updateFileInfo(id: ID!, info: FileInfoInput): UploadFileEntityResponse!
-  updateInnoUser(data: InnoUserInput!, id: ID!): InnoUserEntityResponse
-  updateOpportunity(data: OpportunityInput!, id: ID!): OpportunityEntityResponse
-  updateProject(data: ProjectInput!, id: ID!): ProjectEntityResponse
-  updateQuestion(data: QuestionInput!, id: ID!): QuestionEntityResponse
-  updateSurveyQuestion(data: SurveyQuestionInput!, id: ID!): SurveyQuestionEntityResponse
-  updateUpdate(data: UpdateInput!, id: ID!): UpdateEntityResponse
-  updateUploadFile(data: UploadFileInput!, id: ID!): UploadFileEntityResponse
-  updateUploadFolder(data: UploadFolderInput!, id: ID!): UploadFolderEntityResponse
+  updateCollaborationQuestion(data: CollaborationQuestionInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): CollaborationQuestion
+  updateEvent(data: EventInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): Event
+  updateInnoUser(data: InnoUserInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): InnoUser
+  updateOpportunity(data: OpportunityInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): Opportunity
+  updateProject(data: ProjectInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): Project
+  updateQuestion(data: QuestionInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): Question
+  updateReviewWorkflowsWorkflow(data: ReviewWorkflowsWorkflowInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): ReviewWorkflowsWorkflow
+  updateReviewWorkflowsWorkflowStage(data: ReviewWorkflowsWorkflowStageInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): ReviewWorkflowsWorkflowStage
+  updateSurveyQuestion(data: SurveyQuestionInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): SurveyQuestion
+  updateUpdate(data: UpdateInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): Update
+  updateUploadFile(id: ID!, info: FileInfoInput): UploadFile!
 
   """Update an existing role"""
   updateUsersPermissionsRole(data: UsersPermissionsRoleInput!, id: ID!): UsersPermissionsUpdateRolePayload
 
   """Update an existing user"""
   updateUsersPermissionsUser(data: UsersPermissionsUserInput!, id: ID!): UsersPermissionsUserEntityResponse!
-  upload(field: String, file: Upload!, info: FileInfoInput, ref: String, refId: ID): UploadFileEntityResponse!
 }
 
 type Opportunity {
-  contactPerson: InnoUserEntityResponse
+  contactPerson: InnoUser
   createdAt: DateTime
   description: String
+  documentId: ID!
   expense: String
-  participants(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
-  project: ProjectEntityResponse
+  participants(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
+  participants_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
+  project: Project
   publishedAt: DateTime
   title: String!
   updatedAt: DateTime
@@ -719,12 +737,12 @@ type OpportunityEntity {
 }
 
 type OpportunityEntityResponse {
-  data: OpportunityEntity
+  data: Opportunity
 }
 
 type OpportunityEntityResponseCollection {
-  data: [OpportunityEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [Opportunity!]!
+  pageInfo: Pagination!
 }
 
 input OpportunityFiltersInput {
@@ -732,8 +750,8 @@ input OpportunityFiltersInput {
   contactPerson: InnoUserFiltersInput
   createdAt: DateTimeFilterInput
   description: StringFilterInput
+  documentId: IDFilterInput
   expense: StringFilterInput
-  id: IDFilterInput
   not: OpportunityFiltersInput
   or: [OpportunityFiltersInput]
   participants: InnoUserFiltersInput
@@ -754,7 +772,7 @@ input OpportunityInput {
 }
 
 type OpportunityRelationResponseCollection {
-  data: [OpportunityEntity!]!
+  nodes: [Opportunity!]!
 }
 
 type Pagination {
@@ -772,18 +790,21 @@ input PaginationArg {
 }
 
 type Project {
-  author: InnoUserEntityResponse
+  author: InnoUser
   createdAt: DateTime
   description: ComponentDescriptionDescription!
-  events(filters: EventFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): EventRelationResponseCollection
+  documentId: ID!
+  events(filters: EventFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [Event]!
+  events_connection(filters: EventFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): EventRelationResponseCollection
   featured: Boolean!
-  image: UploadFileEntityResponse
+  image: UploadFile
   projectStart: Date!
   publishedAt: DateTime
   shortTitle: String
   status: ENUM_PROJECT_STATUS!
   summary: String!
-  team(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
+  team(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
+  team_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
   title: String!
   updatedAt: DateTime
 }
@@ -794,12 +815,12 @@ type ProjectEntity {
 }
 
 type ProjectEntityResponse {
-  data: ProjectEntity
+  data: Project
 }
 
 type ProjectEntityResponseCollection {
-  data: [ProjectEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [Project!]!
+  pageInfo: Pagination!
 }
 
 input ProjectFiltersInput {
@@ -807,9 +828,9 @@ input ProjectFiltersInput {
   author: InnoUserFiltersInput
   createdAt: DateTimeFilterInput
   description: ComponentDescriptionDescriptionFiltersInput
+  documentId: IDFilterInput
   events: EventFiltersInput
   featured: BooleanFilterInput
-  id: IDFilterInput
   not: ProjectFiltersInput
   or: [ProjectFiltersInput]
   projectStart: DateFilterInput
@@ -838,49 +859,67 @@ input ProjectInput {
 }
 
 type ProjectRelationResponseCollection {
-  data: [ProjectEntity!]!
+  nodes: [Project!]!
 }
 
-enum PublicationState {
-  LIVE
-  PREVIEW
+enum PublicationStatus {
+  DRAFT
+  PUBLISHED
 }
 
 type Query {
-  collaborationQuestion(id: ID): CollaborationQuestionEntityResponse
-  collaborationQuestions(filters: CollaborationQuestionFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): CollaborationQuestionEntityResponseCollection
-  event(id: ID): EventEntityResponse
-  events(filters: EventFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): EventEntityResponseCollection
-  i18NLocale(id: ID): I18NLocaleEntityResponse
-  i18NLocales(filters: I18NLocaleFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): I18NLocaleEntityResponseCollection
-  innoUser(id: ID): InnoUserEntityResponse
-  innoUsers(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserEntityResponseCollection
+  collaborationQuestion(documentId: ID!, status: PublicationStatus = PUBLISHED): CollaborationQuestion
+  collaborationQuestions(filters: CollaborationQuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [CollaborationQuestion]!
+  collaborationQuestions_connection(filters: CollaborationQuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): CollaborationQuestionEntityResponseCollection
+  event(documentId: ID!, status: PublicationStatus = PUBLISHED): Event
+  events(filters: EventFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [Event]!
+  events_connection(filters: EventFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): EventEntityResponseCollection
+  i18NLocale(documentId: ID!, status: PublicationStatus = PUBLISHED): I18NLocale
+  i18NLocales(filters: I18NLocaleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [I18NLocale]!
+  i18NLocales_connection(filters: I18NLocaleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): I18NLocaleEntityResponseCollection
+  innoUser(documentId: ID!, status: PublicationStatus = PUBLISHED): InnoUser
+  innoUsers(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [InnoUser]!
+  innoUsers_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): InnoUserEntityResponseCollection
   me: UsersPermissionsMe
-  opportunities(filters: OpportunityFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): OpportunityEntityResponseCollection
-  opportunity(id: ID): OpportunityEntityResponse
-  project(id: ID): ProjectEntityResponse
-  projects(filters: ProjectFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): ProjectEntityResponseCollection
-  question(id: ID): QuestionEntityResponse
-  questions(filters: QuestionFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): QuestionEntityResponseCollection
-  surveyQuestion(id: ID): SurveyQuestionEntityResponse
-  surveyQuestions(filters: SurveyQuestionFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): SurveyQuestionEntityResponseCollection
-  update(id: ID): UpdateEntityResponse
-  updateOpportunityParticipants(id: ID!, participantId: ID!): OpportunityEntityResponse
-  updates(filters: UpdateFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UpdateEntityResponseCollection
-  uploadFile(id: ID): UploadFileEntityResponse
-  uploadFiles(filters: UploadFileFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UploadFileEntityResponseCollection
-  uploadFolder(id: ID): UploadFolderEntityResponse
-  uploadFolders(filters: UploadFolderFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UploadFolderEntityResponseCollection
-  usersPermissionsRole(id: ID): UsersPermissionsRoleEntityResponse
-  usersPermissionsRoles(filters: UsersPermissionsRoleFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsRoleEntityResponseCollection
-  usersPermissionsUser(id: ID): UsersPermissionsUserEntityResponse
-  usersPermissionsUsers(filters: UsersPermissionsUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsUserEntityResponseCollection
+  opportunities(filters: OpportunityFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [Opportunity]!
+  opportunities_connection(filters: OpportunityFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): OpportunityEntityResponseCollection
+  opportunity(documentId: ID!, status: PublicationStatus = PUBLISHED): Opportunity
+  project(documentId: ID!, status: PublicationStatus = PUBLISHED): Project
+  projects(filters: ProjectFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [Project]!
+  projects_connection(filters: ProjectFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): ProjectEntityResponseCollection
+  question(documentId: ID!, status: PublicationStatus = PUBLISHED): Question
+  questions(filters: QuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [Question]!
+  questions_connection(filters: QuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): QuestionEntityResponseCollection
+  reviewWorkflowsWorkflow(documentId: ID!, status: PublicationStatus = PUBLISHED): ReviewWorkflowsWorkflow
+  reviewWorkflowsWorkflowStage(documentId: ID!, status: PublicationStatus = PUBLISHED): ReviewWorkflowsWorkflowStage
+  reviewWorkflowsWorkflowStages(filters: ReviewWorkflowsWorkflowStageFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [ReviewWorkflowsWorkflowStage]!
+  reviewWorkflowsWorkflowStages_connection(filters: ReviewWorkflowsWorkflowStageFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): ReviewWorkflowsWorkflowStageEntityResponseCollection
+  reviewWorkflowsWorkflows(filters: ReviewWorkflowsWorkflowFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [ReviewWorkflowsWorkflow]!
+  reviewWorkflowsWorkflows_connection(filters: ReviewWorkflowsWorkflowFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): ReviewWorkflowsWorkflowEntityResponseCollection
+  surveyQuestion(documentId: ID!, status: PublicationStatus = PUBLISHED): SurveyQuestion
+  surveyQuestions(filters: SurveyQuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [SurveyQuestion]!
+  surveyQuestions_connection(filters: SurveyQuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): SurveyQuestionEntityResponseCollection
+  update(documentId: ID!, status: PublicationStatus = PUBLISHED): Update
+  updateOpportunityParticipants(documentId: ID!, participantId: ID!): OpportunityEntityResponse
+  updates(filters: UpdateFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [Update]!
+  updates_connection(filters: UpdateFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): UpdateEntityResponseCollection
+  uploadFile(documentId: ID!, status: PublicationStatus = PUBLISHED): UploadFile
+  uploadFiles(filters: UploadFileFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [UploadFile]!
+  uploadFiles_connection(filters: UploadFileFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): UploadFileEntityResponseCollection
+  usersPermissionsRole(documentId: ID!, status: PublicationStatus = PUBLISHED): UsersPermissionsRole
+  usersPermissionsRoles(filters: UsersPermissionsRoleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [UsersPermissionsRole]!
+  usersPermissionsRoles_connection(filters: UsersPermissionsRoleFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): UsersPermissionsRoleEntityResponseCollection
+  usersPermissionsUser(documentId: ID!, status: PublicationStatus = PUBLISHED): UsersPermissionsUser
+  usersPermissionsUsers(filters: UsersPermissionsUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [UsersPermissionsUser]!
+  usersPermissionsUsers_connection(filters: UsersPermissionsUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): UsersPermissionsUserEntityResponseCollection
 }
 
 type Question {
-  authors(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
+  authors(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
+  authors_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
   createdAt: DateTime
-  project: ProjectEntityResponse
+  documentId: ID!
+  project: Project
   publishedAt: DateTime
   title: String!
   updatedAt: DateTime
@@ -892,19 +931,19 @@ type QuestionEntity {
 }
 
 type QuestionEntityResponse {
-  data: QuestionEntity
+  data: Question
 }
 
 type QuestionEntityResponseCollection {
-  data: [QuestionEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [Question!]!
+  pageInfo: Pagination!
 }
 
 input QuestionFiltersInput {
   and: [QuestionFiltersInput]
   authors: InnoUserFiltersInput
   createdAt: DateTimeFilterInput
-  id: IDFilterInput
+  documentId: IDFilterInput
   not: QuestionFiltersInput
   or: [QuestionFiltersInput]
   project: ProjectFiltersInput
@@ -921,11 +960,111 @@ input QuestionInput {
 }
 
 type QuestionRelationResponseCollection {
-  data: [QuestionEntity!]!
+  nodes: [Question!]!
 }
 
 type ResponseCollectionMeta {
   pagination: Pagination!
+}
+
+type ReviewWorkflowsWorkflow {
+  contentTypes: JSON!
+  createdAt: DateTime
+  documentId: ID!
+  name: String!
+  publishedAt: DateTime
+  stageRequiredToPublish: ReviewWorkflowsWorkflowStage
+  stages(filters: ReviewWorkflowsWorkflowStageFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [ReviewWorkflowsWorkflowStage]!
+  stages_connection(filters: ReviewWorkflowsWorkflowStageFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): ReviewWorkflowsWorkflowStageRelationResponseCollection
+  updatedAt: DateTime
+}
+
+type ReviewWorkflowsWorkflowEntity {
+  attributes: ReviewWorkflowsWorkflow
+  id: ID
+}
+
+type ReviewWorkflowsWorkflowEntityResponse {
+  data: ReviewWorkflowsWorkflow
+}
+
+type ReviewWorkflowsWorkflowEntityResponseCollection {
+  nodes: [ReviewWorkflowsWorkflow!]!
+  pageInfo: Pagination!
+}
+
+input ReviewWorkflowsWorkflowFiltersInput {
+  and: [ReviewWorkflowsWorkflowFiltersInput]
+  contentTypes: JSONFilterInput
+  createdAt: DateTimeFilterInput
+  documentId: IDFilterInput
+  name: StringFilterInput
+  not: ReviewWorkflowsWorkflowFiltersInput
+  or: [ReviewWorkflowsWorkflowFiltersInput]
+  publishedAt: DateTimeFilterInput
+  stageRequiredToPublish: ReviewWorkflowsWorkflowStageFiltersInput
+  stages: ReviewWorkflowsWorkflowStageFiltersInput
+  updatedAt: DateTimeFilterInput
+}
+
+input ReviewWorkflowsWorkflowInput {
+  contentTypes: JSON
+  name: String
+  publishedAt: DateTime
+  stageRequiredToPublish: ID
+  stages: [ID]
+}
+
+type ReviewWorkflowsWorkflowRelationResponseCollection {
+  nodes: [ReviewWorkflowsWorkflow!]!
+}
+
+type ReviewWorkflowsWorkflowStage {
+  color: String
+  createdAt: DateTime
+  documentId: ID!
+  name: String
+  publishedAt: DateTime
+  updatedAt: DateTime
+  workflow: ReviewWorkflowsWorkflow
+}
+
+type ReviewWorkflowsWorkflowStageEntity {
+  attributes: ReviewWorkflowsWorkflowStage
+  id: ID
+}
+
+type ReviewWorkflowsWorkflowStageEntityResponse {
+  data: ReviewWorkflowsWorkflowStage
+}
+
+type ReviewWorkflowsWorkflowStageEntityResponseCollection {
+  nodes: [ReviewWorkflowsWorkflowStage!]!
+  pageInfo: Pagination!
+}
+
+input ReviewWorkflowsWorkflowStageFiltersInput {
+  and: [ReviewWorkflowsWorkflowStageFiltersInput]
+  color: StringFilterInput
+  createdAt: DateTimeFilterInput
+  documentId: IDFilterInput
+  name: StringFilterInput
+  not: ReviewWorkflowsWorkflowStageFiltersInput
+  or: [ReviewWorkflowsWorkflowStageFiltersInput]
+  publishedAt: DateTimeFilterInput
+  updatedAt: DateTimeFilterInput
+  workflow: ReviewWorkflowsWorkflowFiltersInput
+}
+
+input ReviewWorkflowsWorkflowStageInput {
+  color: String
+  name: String
+  publishedAt: DateTime
+  workflow: ID
+}
+
+type ReviewWorkflowsWorkflowStageRelationResponseCollection {
+  nodes: [ReviewWorkflowsWorkflowStage!]!
 }
 
 input StringFilterInput {
@@ -955,7 +1094,8 @@ input StringFilterInput {
 
 type SurveyQuestion {
   createdAt: DateTime
-  project: ProjectEntityResponse
+  documentId: ID!
+  project: Project
   publishedAt: DateTime
   question: String!
   responseOptions(filters: ComponentResponseOptionsResponseOptionsFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [ComponentResponseOptionsResponseOptions]!
@@ -968,18 +1108,18 @@ type SurveyQuestionEntity {
 }
 
 type SurveyQuestionEntityResponse {
-  data: SurveyQuestionEntity
+  data: SurveyQuestion
 }
 
 type SurveyQuestionEntityResponseCollection {
-  data: [SurveyQuestionEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [SurveyQuestion!]!
+  pageInfo: Pagination!
 }
 
 input SurveyQuestionFiltersInput {
   and: [SurveyQuestionFiltersInput]
   createdAt: DateTimeFilterInput
-  id: IDFilterInput
+  documentId: IDFilterInput
   not: SurveyQuestionFiltersInput
   or: [SurveyQuestionFiltersInput]
   project: ProjectFiltersInput
@@ -997,7 +1137,7 @@ input SurveyQuestionInput {
 }
 
 type SurveyQuestionRelationResponseCollection {
-  data: [SurveyQuestionEntity!]!
+  nodes: [SurveyQuestion!]!
 }
 
 """A time string with format HH:mm:ss.SSS"""
@@ -1030,11 +1170,13 @@ input TimeFilterInput {
 
 type Update {
   anonymous: Boolean
-  author: InnoUserEntityResponse
+  author: InnoUser
   comment: String!
   createdAt: DateTime
+  documentId: ID!
   linkToCollaborationTab: Boolean
-  project: ProjectEntityResponse
+  project: Project
+  publishedAt: DateTime
   topic: String
   updatedAt: DateTime
 }
@@ -1045,12 +1187,12 @@ type UpdateEntity {
 }
 
 type UpdateEntityResponse {
-  data: UpdateEntity
+  data: Update
 }
 
 type UpdateEntityResponseCollection {
-  data: [UpdateEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [Update!]!
+  pageInfo: Pagination!
 }
 
 input UpdateFiltersInput {
@@ -1059,11 +1201,12 @@ input UpdateFiltersInput {
   author: InnoUserFiltersInput
   comment: StringFilterInput
   createdAt: DateTimeFilterInput
-  id: IDFilterInput
+  documentId: IDFilterInput
   linkToCollaborationTab: BooleanFilterInput
   not: UpdateFiltersInput
   or: [UpdateFiltersInput]
   project: ProjectFiltersInput
+  publishedAt: DateTimeFilterInput
   topic: StringFilterInput
   updatedAt: DateTimeFilterInput
 }
@@ -1074,20 +1217,19 @@ input UpdateInput {
   comment: String
   linkToCollaborationTab: Boolean
   project: ID
+  publishedAt: DateTime
   topic: String
 }
 
 type UpdateRelationResponseCollection {
-  data: [UpdateEntity!]!
+  nodes: [Update!]!
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 type UploadFile {
   alternativeText: String
   caption: String
   createdAt: DateTime
+  documentId: ID!
   ext: String
   formats: JSON
   hash: String!
@@ -1097,6 +1239,7 @@ type UploadFile {
   previewUrl: String
   provider: String!
   provider_metadata: JSON
+  publishedAt: DateTime
   related: [GenericMorph]
   size: Float!
   updatedAt: DateTime
@@ -1110,12 +1253,12 @@ type UploadFileEntity {
 }
 
 type UploadFileEntityResponse {
-  data: UploadFileEntity
+  data: UploadFile
 }
 
 type UploadFileEntityResponseCollection {
-  data: [UploadFileEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [UploadFile!]!
+  pageInfo: Pagination!
 }
 
 input UploadFileFiltersInput {
@@ -1123,13 +1266,11 @@ input UploadFileFiltersInput {
   and: [UploadFileFiltersInput]
   caption: StringFilterInput
   createdAt: DateTimeFilterInput
+  documentId: IDFilterInput
   ext: StringFilterInput
-  folder: UploadFolderFiltersInput
-  folderPath: StringFilterInput
   formats: JSONFilterInput
   hash: StringFilterInput
   height: IntFilterInput
-  id: IDFilterInput
   mime: StringFilterInput
   name: StringFilterInput
   not: UploadFileFiltersInput
@@ -1137,6 +1278,7 @@ input UploadFileFiltersInput {
   previewUrl: StringFilterInput
   provider: StringFilterInput
   provider_metadata: JSONFilterInput
+  publishedAt: DateTimeFilterInput
   size: FloatFilterInput
   updatedAt: DateTimeFilterInput
   url: StringFilterInput
@@ -1147,8 +1289,6 @@ input UploadFileInput {
   alternativeText: String
   caption: String
   ext: String
-  folder: ID
-  folderPath: String
   formats: JSON
   hash: String
   height: Int
@@ -1157,66 +1297,14 @@ input UploadFileInput {
   previewUrl: String
   provider: String
   provider_metadata: JSON
+  publishedAt: DateTime
   size: Float
   url: String
   width: Int
 }
 
 type UploadFileRelationResponseCollection {
-  data: [UploadFileEntity!]!
-}
-
-type UploadFolder {
-  children(filters: UploadFolderFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UploadFolderRelationResponseCollection
-  createdAt: DateTime
-  files(filters: UploadFileFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UploadFileRelationResponseCollection
-  name: String!
-  parent: UploadFolderEntityResponse
-  path: String!
-  pathId: Int!
-  updatedAt: DateTime
-}
-
-type UploadFolderEntity {
-  attributes: UploadFolder
-  id: ID
-}
-
-type UploadFolderEntityResponse {
-  data: UploadFolderEntity
-}
-
-type UploadFolderEntityResponseCollection {
-  data: [UploadFolderEntity!]!
-  meta: ResponseCollectionMeta!
-}
-
-input UploadFolderFiltersInput {
-  and: [UploadFolderFiltersInput]
-  children: UploadFolderFiltersInput
-  createdAt: DateTimeFilterInput
-  files: UploadFileFiltersInput
-  id: IDFilterInput
-  name: StringFilterInput
-  not: UploadFolderFiltersInput
-  or: [UploadFolderFiltersInput]
-  parent: UploadFolderFiltersInput
-  path: StringFilterInput
-  pathId: IntFilterInput
-  updatedAt: DateTimeFilterInput
-}
-
-input UploadFolderInput {
-  children: [ID]
-  files: [ID]
-  name: String
-  parent: ID
-  path: String
-  pathId: Int
-}
-
-type UploadFolderRelationResponseCollection {
-  data: [UploadFolderEntity!]!
+  nodes: [UploadFile!]!
 }
 
 type UsersPermissionsCreateRolePayload {
@@ -1241,6 +1329,7 @@ type UsersPermissionsLoginPayload {
 type UsersPermissionsMe {
   blocked: Boolean
   confirmed: Boolean
+  documentId: ID!
   email: String
   id: ID!
   role: UsersPermissionsMeRole
@@ -1261,7 +1350,9 @@ type UsersPermissionsPasswordPayload {
 type UsersPermissionsPermission {
   action: String!
   createdAt: DateTime
-  role: UsersPermissionsRoleEntityResponse
+  documentId: ID!
+  publishedAt: DateTime
+  role: UsersPermissionsRole
   updatedAt: DateTime
 }
 
@@ -1271,32 +1362,34 @@ type UsersPermissionsPermissionEntity {
 }
 
 type UsersPermissionsPermissionEntityResponse {
-  data: UsersPermissionsPermissionEntity
+  data: UsersPermissionsPermission
 }
 
 type UsersPermissionsPermissionEntityResponseCollection {
-  data: [UsersPermissionsPermissionEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [UsersPermissionsPermission!]!
+  pageInfo: Pagination!
 }
 
 input UsersPermissionsPermissionFiltersInput {
   action: StringFilterInput
   and: [UsersPermissionsPermissionFiltersInput]
   createdAt: DateTimeFilterInput
-  id: IDFilterInput
+  documentId: IDFilterInput
   not: UsersPermissionsPermissionFiltersInput
   or: [UsersPermissionsPermissionFiltersInput]
+  publishedAt: DateTimeFilterInput
   role: UsersPermissionsRoleFiltersInput
   updatedAt: DateTimeFilterInput
 }
 
 input UsersPermissionsPermissionInput {
   action: String
+  publishedAt: DateTime
   role: ID
 }
 
 type UsersPermissionsPermissionRelationResponseCollection {
-  data: [UsersPermissionsPermissionEntity!]!
+  nodes: [UsersPermissionsPermission!]!
 }
 
 input UsersPermissionsRegisterInput {
@@ -1308,11 +1401,15 @@ input UsersPermissionsRegisterInput {
 type UsersPermissionsRole {
   createdAt: DateTime
   description: String
+  documentId: ID!
   name: String!
-  permissions(filters: UsersPermissionsPermissionFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsPermissionRelationResponseCollection
+  permissions(filters: UsersPermissionsPermissionFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [UsersPermissionsPermission]!
+  permissions_connection(filters: UsersPermissionsPermissionFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsPermissionRelationResponseCollection
+  publishedAt: DateTime
   type: String
   updatedAt: DateTime
-  users(filters: UsersPermissionsUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsUserRelationResponseCollection
+  users(filters: UsersPermissionsUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [UsersPermissionsUser]!
+  users_connection(filters: UsersPermissionsUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsUserRelationResponseCollection
 }
 
 type UsersPermissionsRoleEntity {
@@ -1321,23 +1418,24 @@ type UsersPermissionsRoleEntity {
 }
 
 type UsersPermissionsRoleEntityResponse {
-  data: UsersPermissionsRoleEntity
+  data: UsersPermissionsRole
 }
 
 type UsersPermissionsRoleEntityResponseCollection {
-  data: [UsersPermissionsRoleEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [UsersPermissionsRole!]!
+  pageInfo: Pagination!
 }
 
 input UsersPermissionsRoleFiltersInput {
   and: [UsersPermissionsRoleFiltersInput]
   createdAt: DateTimeFilterInput
   description: StringFilterInput
-  id: IDFilterInput
+  documentId: IDFilterInput
   name: StringFilterInput
   not: UsersPermissionsRoleFiltersInput
   or: [UsersPermissionsRoleFiltersInput]
   permissions: UsersPermissionsPermissionFiltersInput
+  publishedAt: DateTimeFilterInput
   type: StringFilterInput
   updatedAt: DateTimeFilterInput
   users: UsersPermissionsUserFiltersInput
@@ -1347,12 +1445,13 @@ input UsersPermissionsRoleInput {
   description: String
   name: String
   permissions: [ID]
+  publishedAt: DateTime
   type: String
   users: [ID]
 }
 
 type UsersPermissionsRoleRelationResponseCollection {
-  data: [UsersPermissionsRoleEntity!]!
+  nodes: [UsersPermissionsRole!]!
 }
 
 type UsersPermissionsUpdateRolePayload {
@@ -1363,9 +1462,11 @@ type UsersPermissionsUser {
   blocked: Boolean
   confirmed: Boolean
   createdAt: DateTime
+  documentId: ID!
   email: String!
   provider: String
-  role: UsersPermissionsRoleEntityResponse
+  publishedAt: DateTime
+  role: UsersPermissionsRole
   updatedAt: DateTime
   username: String!
 }
@@ -1376,27 +1477,25 @@ type UsersPermissionsUserEntity {
 }
 
 type UsersPermissionsUserEntityResponse {
-  data: UsersPermissionsUserEntity
+  data: UsersPermissionsUser
 }
 
 type UsersPermissionsUserEntityResponseCollection {
-  data: [UsersPermissionsUserEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [UsersPermissionsUser!]!
+  pageInfo: Pagination!
 }
 
 input UsersPermissionsUserFiltersInput {
   and: [UsersPermissionsUserFiltersInput]
   blocked: BooleanFilterInput
-  confirmationToken: StringFilterInput
   confirmed: BooleanFilterInput
   createdAt: DateTimeFilterInput
+  documentId: IDFilterInput
   email: StringFilterInput
-  id: IDFilterInput
   not: UsersPermissionsUserFiltersInput
   or: [UsersPermissionsUserFiltersInput]
-  password: StringFilterInput
   provider: StringFilterInput
-  resetPasswordToken: StringFilterInput
+  publishedAt: DateTimeFilterInput
   role: UsersPermissionsRoleFiltersInput
   updatedAt: DateTimeFilterInput
   username: StringFilterInput
@@ -1404,16 +1503,15 @@ input UsersPermissionsUserFiltersInput {
 
 input UsersPermissionsUserInput {
   blocked: Boolean
-  confirmationToken: String
   confirmed: Boolean
   email: String
   password: String
   provider: String
-  resetPasswordToken: String
+  publishedAt: DateTime
   role: ID
   username: String
 }
 
 type UsersPermissionsUserRelationResponseCollection {
-  data: [UsersPermissionsUserEntity!]!
+  nodes: [UsersPermissionsUser!]!
 }
