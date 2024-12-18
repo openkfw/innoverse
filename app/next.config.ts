@@ -1,11 +1,15 @@
-const { clientConfig } = require('./config/client');
-const { serverConfig } = require('./config/server');
+import { NextConfig } from 'next';
+import { Configuration } from 'webpack';
+import { clientConfig } from './config/client';
+import { serverConfig } from './config/server';
+import withBundleAnalyzer from '@next/bundle-analyzer';
+import { paraglide } from '@inlang/paraglide-next/plugin';
 
 const withFonts = require('next-fonts');
-const withBundleAnalyzer = require('@next/bundle-analyzer')();
-const { paraglide } = require('@inlang/paraglide-next/plugin');
 
-const nextConfig = {
+const bundleAnalyzer = withBundleAnalyzer();
+
+const nextConfig: NextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   images: {
@@ -25,8 +29,16 @@ const nextConfig = {
         pathname: '/**',
         port: '',
       },
-      { hostname: '127.0.0.1', pathname: '/uploads/**', port: '1337' },
-      { hostname: 'strapi', pathname: '/uploads/**', port: '1337' },
+      {
+        hostname: '127.0.0.1',
+        pathname: '/uploads/**',
+        port: '1337',
+      },
+      {
+        hostname: 'strapi',
+        pathname: '/uploads/**',
+        port: '1337',
+      },
     ],
   },
   async rewrites() {
@@ -55,14 +67,15 @@ const nextConfig = {
       },
     ];
   },
-  webpack: function (config, { isServer }) {
+  webpack: (config: Configuration, { isServer }: { isServer: boolean }) => {
+    config.module = config.module || { rules: [] };
+    config.module.rules = config.module.rules || [];
     config.module.rules.push(
       {
         test: /\.md$/,
         use: 'raw-loader',
       },
       {
-        // Supports only images which are not optimized by next
         test: /^.*\.svg$/,
         type: 'asset/resource',
         generator: {
@@ -71,30 +84,26 @@ const nextConfig = {
       },
     );
     if (isServer) {
-      // required for @azure/monitor-opentelemetry-exporter to work
-      config.resolve.fallback ??= {};
-      config.resolve.fallback.os = false;
-      config.resolve.fallback.fs = false;
-      config.resolve.fallback.child_process = false;
-      config.resolve.fallback.path = false;
+      config.resolve = config.resolve || { fallback: {} };
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        os: false,
+        fs: false,
+        child_process: false,
+        path: false,
+      };
     }
     return config;
   },
-  experimental: {
-    staleTimes: {
-      dynamic: 3,
-      static: 180,
-    },
-  },
+  experimental: {},
   i18n: {
     locales: ['de'],
     defaultLocale: 'de',
   },
 };
 
-module.exports =
-  serverConfig.ANALYZE === true
-    ? withBundleAnalyzer(
+export default serverConfig.ANALYZE === true
+  ? bundleAnalyzer(
       paraglide({
         paraglide: {
           project: './project.inlang',
@@ -103,7 +112,7 @@ module.exports =
         ...nextConfig,
       }),
     )
-    : withFonts(
+  : withFonts(
       paraglide({
         paraglide: {
           project: './project.inlang',
