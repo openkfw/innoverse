@@ -3,6 +3,7 @@
 import { PropsWithChildren } from 'react';
 import { SessionProvider } from 'next-auth/react';
 import { AppInsightsContext, AppInsightsErrorBoundary } from '@microsoft/applicationinsights-react-js';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -32,6 +33,8 @@ const pages: Headers[] = [
   { text: m.components_layout_layout_aiAssistant() },
 ];
 
+const queryClient = new QueryClient();
+
 function AppLayout({ children }: PropsWithChildren) {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   return (
@@ -53,13 +56,15 @@ export default function Layout({ children }: PropsWithChildren) {
     <AppInsightsErrorBoundary onError={() => <ErrorPage />} appInsights={reactPlugin}>
       <AppInsightsContext.Provider value={reactPlugin}>
         <SessionProvider>
-          <SWRProvider>
-            <UserContextProvider>
-              <NotificationContextProvider>
-                <AppLayout>{children}</AppLayout>
-              </NotificationContextProvider>
-            </UserContextProvider>
-          </SWRProvider>
+          <QueryClientProvider client={queryClient}>
+            <SWRProvider>
+              <UserContextProvider>
+                <NotificationContextProvider>
+                  <AppLayout>{children}</AppLayout>
+                </NotificationContextProvider>
+              </UserContextProvider>
+            </SWRProvider>
+          </QueryClientProvider>
         </SessionProvider>
       </AppInsightsContext.Provider>
     </AppInsightsErrorBoundary>
