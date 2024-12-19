@@ -16,7 +16,6 @@ interface HiddenContributorsTooltipProps {
 }
 
 const HiddenContributorsTooltip: React.FC<HiddenContributorsTooltipProps> = ({ hiddenContributors }) => {
-  // todo - pending design for this section
   return (
     <Box display="flex" flexDirection="row" flexWrap="wrap">
       {hiddenContributors.map((contributor, index) => (
@@ -31,7 +30,6 @@ const HiddenContributorsTooltip: React.FC<HiddenContributorsTooltipProps> = ({ h
 
 const VisibleContributors: React.FC<VisibleContributorsProps> = ({ contributors }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-
   const [visibleContributors, setVisibleContributors] = useState<React.ReactNode>('');
 
   useEffect(() => {
@@ -94,7 +92,6 @@ const VisibleContributors: React.FC<VisibleContributorsProps> = ({ contributors 
 
       observer.observe(containerRef.current);
 
-      // Cleanup function
       return () => {
         observer.disconnect();
       };
