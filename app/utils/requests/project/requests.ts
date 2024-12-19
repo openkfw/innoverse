@@ -23,6 +23,7 @@ import { mapToBasicProject, mapToProject, mapToProjects } from '@/utils/requests
 import {
   GetProjectAuthorIdByProjectIdQuery,
   GetProjectByIdQuery,
+  GetProjectsBySearchStringQuery,
   GetProjectsQuery,
   GetProjectsStartingFromQuery,
   GetProjectTitleByIdQuery,
@@ -127,6 +128,34 @@ export async function getProjects(
 ) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectsQuery, { limit, sort: `${sort.by}:${sort.order}` });
+    const projects = response.projects?.data.map(mapToBasicProject) ?? [];
+    return projects;
+  } catch (err) {
+    console.info(err);
+  }
+}
+
+export async function GetProjectsBySearchString(
+  {
+    sort,
+    searchString,
+    pagination,
+  }: {
+    sort: { by: 'updatedAt' | 'title'; order: 'asc' | 'desc' };
+    searchString: string;
+    pagination: {
+      page: number;
+      pageSize?: number;
+    };
+  } = { pagination: { pageSize: 80, page: 1 }, sort: { by: 'updatedAt', order: 'desc' }, searchString: '' },
+) {
+  try {
+    const response = await strapiGraphQLFetcher(GetProjectsBySearchStringQuery, {
+      page: pagination.page,
+      pageSize: pagination?.pageSize,
+      sort: `${sort.by}:${sort.order}`,
+      searchString,
+    });
     const projects = response.projects?.data.map(mapToBasicProject) ?? [];
     return projects;
   } catch (err) {
