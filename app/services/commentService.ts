@@ -28,6 +28,7 @@ interface AddComment {
   comment: string;
   commentType: CommentType;
   parentCommentId?: string;
+  projectId?: string;
 }
 
 interface RemoveComment {
@@ -43,7 +44,7 @@ interface UpdateComment {
 }
 
 export const addComment = async (body: AddComment): Promise<NewsComment | PostComment> => {
-  const { comment, commentType, author, objectId, objectType, parentCommentId } = body;
+  const { comment, commentType, author, objectId, objectType, parentCommentId, projectId } = body;
 
   switch (commentType) {
     case 'POST_COMMENT':
@@ -55,6 +56,7 @@ export const addComment = async (body: AddComment): Promise<NewsComment | PostCo
         newsId: objectId,
         comment: redisPostComment,
         parentId: parentCommentId,
+        projectId,
       });
       notifyPostFollowers(objectId);
       return postComment;
@@ -67,6 +69,7 @@ export const addComment = async (body: AddComment): Promise<NewsComment | PostCo
         newsId: objectId,
         comment: redisNewsComment,
         parentId: parentCommentId,
+        projectId,
       });
       notifyUpdateFollowers(objectId);
       return newsComment;
