@@ -7,7 +7,7 @@ import { RequestError } from '@/entities/error';
 import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
-import { CreateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
+import { CreateInnoUserMutation, UpdateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
 import { GetInnoUserByEmailQuery, GetInnoUserByProviderIdQuery } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { request, FormData } from 'undici';
@@ -30,6 +30,34 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
     return createdUser;
   } catch (err) {
     const error = strapiError('Create Inno User', err as RequestError, body.name);
+    logger.error(error);
+    throw error;
+  }
+}
+
+export async function updateInnoUser(body: Omit<UserSession, 'image'> & { id: string; image: FormData | null }) {
+  try {
+    // TODO: check if the image was changed
+
+    let uploadedImage: UploadImageResponse | null = null;
+    if (body.image) {
+      const image = body.image.get('image') as string;
+      console.log('image', image);
+      const uploadedImages = await uploadFileImage(image, `avatar-${body.name}`);
+      uploadedImage = uploadedImages ? uploadedImages[0] : null;
+    }
+
+    const response = await strapiGraphQLFetcher(UpdateInnoUserMutation, {
+      ...body,
+      avatarId: uploadedImage ? (uploadedImage.id as unknown as string) : null,
+    });
+
+    const userData = response.updateInnoUser?.data;
+    if (!userData) throw new Error('Response contained no user data');
+    const updatedUser = mapToUser(userData);
+    return updatedUser;
+  } catch (err) {
+    const error = strapiError('Update Inno User', err as RequestError, body.name);
     logger.error(error);
     throw error;
   }
@@ -100,5 +128,29 @@ async function uploadImage(imageUrl: string, fileName: string) {
         .then((result) => {
           return result as UploadImageResponse[];
         });
+    });
+}
+
+export async function uploadFileImage(image: string, fileName: string) {
+  const formData = new FormData();
+  formData.append('file', image, fileName);
+  formData.append('ref', 'api::event.event');
+  formData.append('field', 'image');
+  return request(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
+    },
+    body: formData,
+  })
+    .catch((e) => {
+      logger.error('Error while uploading image:', e);
+      throw new Error('Error while uploading image');
+    })
+    .then((response) => {
+      return response.body.json();
+    })
+    .then((result) => {
+      return result as UploadImageResponse[];
     });
 }
