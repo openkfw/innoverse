@@ -1,8 +1,9 @@
 'use client';
 
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
+import { InfiniteData, QueryKey, useInfiniteQuery } from '@tanstack/react-query';
 
 import { BasicProject } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
@@ -23,10 +24,9 @@ interface ProjectPageContextInterface {
   filters: ProjectFilters;
   isLoading: boolean;
   hasMore: boolean;
-  refetchProjects: () => Promise<void>;
   toggleSort: () => void;
   setFilters: (filters: ProjectFilters) => void;
-  loadNextPage: () => Promise<void>;
+  loadNextPage: () => void;
 }
 
 const defaultState: ProjectPageContextInterface = {
@@ -35,12 +35,10 @@ const defaultState: ProjectPageContextInterface = {
   hasMore: true,
   sort: SortValues.DESC,
   filters: { searchString: '' },
-  refetchProjects: () => Promise.resolve(),
   toggleSort: () => {},
   setFilters: () => {},
-  loadNextPage: () => Promise.resolve(),
+  loadNextPage: () => {},
 };
-
 interface ProjectPageContextProviderProps {
   initalProjects: BasicProject[];
   children: React.ReactNode;
@@ -48,86 +46,74 @@ interface ProjectPageContextProviderProps {
 
 const ProjectPageContext = createContext(defaultState);
 
-export const ProjectPageContextProvider = ({ children, ...props }: ProjectPageContextProviderProps) => {
-  const [projects, setProjects] = useState<BasicProject[]>(props.initalProjects);
-  const [sort, setSort] = useState<SortValues.ASC | SortValues.DESC>(defaultState.sort);
-  const [filters, setFilters] = useState<ProjectFilters>(defaultState.filters);
-  const [pageNumber, setPageNumber] = useState<number>(1);
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState<boolean>(defaultState.hasMore);
-
-  const toggleSort = () => {
-    setSort((previous) => (previous === SortValues.ASC ? SortValues.DESC : SortValues.ASC));
-    const reversed = projects.reverse();
-    setProjects(reversed);
-  };
-
-  const loadNextPage = async () => {
-    if (hasMore) {
-      const page = pageNumber + 1;
-      setPageNumber(page);
-      await refetchProjects({ page, filters });
-    }
-  };
+export const ProjectPageContextProvider = ({ children }: ProjectPageContextProviderProps) => {
   const appInsights = useAppInsightsContext();
 
-  const refetchProjects = useCallback(
-    async (options: { page: number; filters: ProjectFilters }) => {
-      const searchString = options.filters.searchString;
-      const pageSize = 10;
+  const [filters, setFilters] = useState<ProjectFilters>(defaultState.filters);
+  const [sort, setSort] = useState<SortValues>(defaultState.sort);
 
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery<
+    BasicProject[],
+    Error,
+    InfiniteData<BasicProject[]>,
+    QueryKey,
+    number
+  >({
+    queryKey: ['projects', filters, sort],
+    queryFn: async ({ pageParam = 1 }: { pageParam: number }) => {
       try {
-        if (options.page === 1) {
-          setIsLoading(true);
-        }
-        const result =
-          (await getProjectsBySearchString({
-            pagination: {
-              page: options.page,
-              pageSize: pageSize,
-            },
-            sort: { by: 'updatedAt', order: 'desc' },
-            searchString,
-          })) || [];
-
-        const entries = options.page > 1 ? [...projects, ...result] : result;
-        setProjects(entries);
-        setHasMore(result.length >= pageSize);
+        const pageSize = 10;
+        const result = await getProjectsBySearchString({
+          pagination: { page: pageParam, pageSize },
+          sort: { by: 'updatedAt', order: sort === SortValues.DESC ? 'desc' : 'asc' },
+          searchString: filters.searchString || '',
+        });
+        return result || [];
       } catch (error) {
-        errorMessage({ message: 'Error refetching projects. Please check your connection and try again.' });
-        console.error('Error refetching projects:', error);
+        errorMessage({ message: 'Error fetching projects. Please check your connection and try again.' });
+        console.error('Error fetching projects:', error);
         appInsights.trackException({
-          exception: new Error('Error refetching projects', { cause: error }),
+          exception: new Error('Error fetching projects', { cause: error }),
           severityLevel: SeverityLevel.Error,
         });
-      } finally {
-        setIsLoading(false);
+        throw error;
       }
     },
-    [appInsights, projects],
-  );
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.length === 10 ? allPages.length + 1 : undefined;
+    },
+    retry: false,
+  });
 
-  const updateFilters = (filters: ProjectFilters) => {
-    const page = 1;
-    setFilters(filters);
-    setPageNumber(page);
-    refetchProjects({ page, filters });
+  const hasMore = !!hasNextPage;
+
+  const loadNextPage = () => {
+    if (hasNextPage) fetchNextPage();
   };
 
-  const contextObject: ProjectPageContextInterface = {
+  const toggleSort = () => {
+    setSort((prev) => (prev === SortValues.ASC ? SortValues.DESC : SortValues.ASC));
+  };
+
+  const updateFilters = (newFilters: ProjectFilters) => {
+    setFilters(newFilters);
+  };
+
+  const projects = useMemo(() => (data?.pages.flat() as BasicProject[]) || [], [data]);
+
+  const contextObject = {
     projects,
     sort,
     filters,
-    isLoading,
+    isLoading: isLoading || isFetchingNextPage,
     hasMore,
-    refetchProjects: () => refetchProjects({ filters, page: pageNumber }),
     toggleSort,
     setFilters: updateFilters,
     loadNextPage,
   };
 
-  return <ProjectPageContext.Provider value={contextObject}> {children}</ProjectPageContext.Provider>;
+  return <ProjectPageContext.Provider value={contextObject}>{children}</ProjectPageContext.Provider>;
 };
 
 export const useProjects = () => useContext(ProjectPageContext);
