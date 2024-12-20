@@ -188,6 +188,7 @@ export type RedisCollaborationComment = RedisItem & {
 export interface RedisUser {
   id?: string;
   name: string;
+  username?: string;
   role?: string;
   department?: string;
   image?: string;
