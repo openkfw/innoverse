@@ -55,8 +55,8 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# You only need to copy next.config.js if you are NOT using the default configuration
-COPY --from=builder /app/next.config.js ./
+# You only need to copy next.config.ts if you are NOT using the default configuration
+COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/config ./config
 COPY --from=builder /app/public/fonts ./public/fonts
 COPY --from=builder /app/public/manifest.json ./public/manifest.json
