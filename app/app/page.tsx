@@ -7,7 +7,6 @@ import { EventSection } from '@/components/landing/eventsSection/EventsSection';
 import FeaturedProjectSlider from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
 import FeedbackSection from '@/components/landing/feedbackSection/FeedbackSection';
 import { MappingProjectsCard } from '@/components/landing/mappingProjectsSection/MappingProjectsCard';
-import { BackgroundArrows } from '@/components/landing/newsSection/BackgroundArrows';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
 import { getMainPageData } from '@/utils/requests/pageRequests';
@@ -35,7 +34,6 @@ async function IndexPage() {
           <FeedbackSection />
         </Box>
         <NewsSection updates={updates} />
-        <BackgroundArrows />
         <EventSection events={events} />
         <ProjectSection projects={projects} />
         <MappingProjectsCard projects={projects} />
