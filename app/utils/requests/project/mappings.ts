@@ -40,39 +40,36 @@ export const mapToProject = ({
   pastEvents: EventWithAdditionalData[];
   futureEvents: EventWithAdditionalData[];
 }): Project => {
-  const attributes = projectBaseData.attributes;
   const basicProject = mapToBasicProject(projectBaseData);
 
   return {
-    ...attributes,
+    ...projectBaseData,
     ...basicProject,
     image: basicProject.image,
     author: basicProject.author,
     shortTitle: basicProject.shortTitle,
     projectStart: basicProject.projectStart,
-    updatedAt: new Date(attributes.updatedAt ?? new Date()),
+    updatedAt: new Date(basicProject.updatedAt ?? new Date()),
     ...otherProps,
   };
 };
 
 export const mapToBasicProject = (projectData: ResultOf<typeof ProjectFragment>): BasicProject => {
-  const attributes = projectData.attributes;
-  const descriptionTags = attributes.description.tags.filter((tag) => tag?.tag) as { tag: string }[];
-
+  const descriptionTags = projectData.description.tags.filter((tag) => tag?.tag) as { tag: string }[];
   return {
-    id: projectData.id,
-    summary: attributes.summary,
-    title: attributes.title,
-    projectName: attributes.title,
-    projectStart: formatDate(attributes.projectStart) ?? undefined,
-    shortTitle: attributes.shortTitle ?? undefined,
-    status: mapToProjectStatus(attributes.status),
-    description: { tags: descriptionTags, text: attributes.description.text },
-    author: attributes.author?.data ? mapToUser(attributes.author.data) : undefined,
-    team: attributes.team?.data.map(mapToUser) ?? [],
-    image: mapToImageUrl(attributes.image),
-    featured: attributes.featured,
-    updatedAt: toDate(attributes.updatedAt),
+    id: projectData.documentId,
+    summary: projectData.summary,
+    title: projectData.title,
+    projectName: projectData.title,
+    projectStart: formatDate(projectData.projectStart) ?? undefined,
+    shortTitle: projectData.shortTitle ?? undefined,
+    status: mapToProjectStatus(projectData.status),
+    description: { tags: descriptionTags, text: projectData.description.text },
+    author: projectData.author ? mapToUser(projectData.author) : undefined,
+    team: projectData.team?.map(mapToUser) ?? [],
+    image: mapToImageUrl(projectData.image),
+    featured: projectData.featured,
+    updatedAt: toDate(projectData.updatedAt),
   };
 };
 
