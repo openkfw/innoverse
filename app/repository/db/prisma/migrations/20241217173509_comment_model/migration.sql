@@ -19,10 +19,20 @@
 */
 -- AlterEnum
 BEGIN;
+
+-- AlterTable
+ALTER TABLE "Comment" DROP COLUMN "upvotedBy",
+ADD COLUMN     "additionalObjectId" TEXT,
+ADD COLUMN     "anonymous" BOOLEAN,
+ADD COLUMN     "objectId" TEXT;
+
 CREATE TYPE "ObjectType_new" AS ENUM ('UPDATE', 'EVENT', 'COLLABORATION_QUESTION', 'POST', 'PROJECT', 'SURVEY_QUESTION', 'COMMENT');
 ALTER TABLE "Follow" ALTER COLUMN "objectType" DROP DEFAULT;
 ALTER TABLE "Comment" ALTER COLUMN "objectType" TYPE "ObjectType_new" USING ("objectType"::text::"ObjectType_new");
+ALTER TABLE "Comment" ADD COLUMN   "additionalObjectType" "ObjectType";
 ALTER TABLE "Comment" ALTER COLUMN "additionalObjectType" TYPE "ObjectType_new" USING ("additionalObjectType"::text::"ObjectType_new");
+
+ALTER TABLE "Like" ADD COLUMN "objectType" "ObjectType";
 ALTER TABLE "Like" ALTER COLUMN "objectType" TYPE "ObjectType_new" USING ("objectType"::text::"ObjectType_new");
 ALTER TABLE "Follow" ALTER COLUMN "objectType" TYPE "ObjectType_new" USING ("objectType"::text::"ObjectType_new");
 ALTER TABLE "reactions" ALTER COLUMN "objectType" TYPE "ObjectType_new" USING ("objectType"::text::"ObjectType_new");
@@ -44,23 +54,23 @@ ALTER TABLE "collaboration_comments_responses" DROP CONSTRAINT "collaboration_co
 -- DropIndex
 DROP INDEX "Like_projectId_likedBy_key";
 
--- AlterTable
-ALTER TABLE "Comment" DROP COLUMN "upvotedBy",
-ADD COLUMN     "additionalObjectId" TEXT,
-ADD COLUMN     "additionalObjectType" "ObjectType",
-ADD COLUMN     "anonymous" BOOLEAN,
-ADD COLUMN     "objectId" TEXT NOT NULL,
-DROP COLUMN "objectType",
-ADD COLUMN     "objectType" "ObjectType" NOT NULL;
+
+UPDATE "Comment"
+SET "objectId" = '' WHERE "objectId" IS NULL;
+
+ALTER TABLE "Comment"
+ALTER COLUMN "objectId" SET NOT NULL;
+
+-- DROP COLUMN "objectType",
+-- ADD COLUMN     "objectType" "ObjectType" NOT NULL;
 
 -- AlterTable
-ALTER TABLE "Like" DROP COLUMN "projectId",
-ADD COLUMN     "objectId" TEXT NOT NULL,
-ADD COLUMN     "objectType" "ObjectType" NOT NULL;
+ALTER TABLE "Like" RENAME COLUMN "projectId" TO "objectId";
+ALTER TABLE "Like" ALTER COLUMN "objectId" SET NOT NULL,
+ALTER COLUMN "objectType" SET NOT NULL;
 
 -- AlterTable
-ALTER TABLE "Post" DROP COLUMN "upvotedBy",
-ADD COLUMN     "likedBy" TEXT[];
+ALTER TABLE "Post" RENAME COLUMN "upvotedBy" to "likedBy";
 
 -- DropTable
 DROP TABLE "NewsComment";

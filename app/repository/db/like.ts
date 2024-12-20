@@ -1,9 +1,9 @@
 import { ObjectType, PrismaClient } from '@prisma/client';
 
-export async function getProjectLikes(client: PrismaClient, projectId: string, limit?: number) {
+export async function getProjectLikes(client: PrismaClient, objectId: string, limit?: number) {
   const query: any = {
     where: {
-      projectId,
+      objectId,
     },
   };
 
