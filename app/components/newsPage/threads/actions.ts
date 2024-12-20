@@ -13,13 +13,22 @@ interface AddUserComment {
   comment: string;
   commentType: CommentType;
   parentCommentId?: string;
+  projectId?: string;
 }
 
 export const addUserComment = withAuth(async (user: UserSession, body: AddUserComment) => {
-  const { comment, commentType, objectId, objectType, parentCommentId } = body;
+  const { comment, commentType, objectId, objectType, parentCommentId, projectId } = body;
   const author = user;
 
-  const createdComment = await addComment({ author, comment, commentType, objectId, objectType, parentCommentId });
+  const createdComment = await addComment({
+    author,
+    comment,
+    commentType,
+    objectId,
+    objectType,
+    parentCommentId,
+    projectId,
+  });
 
   return {
     status: StatusCodes.OK,
