@@ -95,7 +95,6 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
-  experimental: {},
   i18n: {
     locales: ['de'],
     defaultLocale: 'de',
