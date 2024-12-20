@@ -1,4 +1,4 @@
-export default {
+export default ({ env }) => ({
   graphql: {
     config: {
       generateArtifacts: true,
@@ -24,4 +24,18 @@ export default {
       sizeLimit: 250 * 1024 * 1024, // 256mb in bytes
     },
   },
-};
+
+  // Setup strapi email service using sendgrid
+  email: {
+    config: {
+      provider: 'sendgrid',
+      providerOptions: {
+        apiKey: env('SENDGRID_API_KEY'),
+      },
+      settings: {
+        defaultFrom: env('SENDGRID_VERIFIED_EMAIL_ADDRESS'),
+        defaultReplyTo: env('SENDGRID_VERIFIED_EMAIL_ADDRESS'), 
+      },
+    },
+  },
+});
