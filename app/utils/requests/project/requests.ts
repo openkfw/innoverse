@@ -138,7 +138,7 @@ export async function getProjects(
   }
 }
 
-export async function GetProjectsBySearchString(
+export async function getProjectsBySearchString(
   {
     sort,
     searchString,
