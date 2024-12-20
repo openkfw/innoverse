@@ -16,7 +16,9 @@ export function NewsFeedHighlightContextProvider(props: PropsWithChildren) {
 
   useEffect(
     function updateNewsFeedSearchTerm() {
-      setHighlightString(filters.searchString);
+      if (filters.searchString.length !== 1) {
+        setHighlightString(filters.searchString);
+      }
     },
     [filters.searchString],
   );

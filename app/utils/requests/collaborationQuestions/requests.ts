@@ -113,9 +113,7 @@ export async function getBasicCollaborationQuestionStartingFromWithAdditionalDat
 export async function getPlatformFeedbackCollaborationQuestion() {
   try {
     const response = await strapiGraphQLFetcher(GetPlatformFeedbackCollaborationQuestion);
-    if (!response.collaborationQuestions?.data || !response.collaborationQuestions.data.length)
-      throw new Error('Response contained no collaboration questions');
-
+    if (!response.collaborationQuestions?.data || !response.collaborationQuestions.data.length) return;
     const questionData = response.collaborationQuestions.data[0];
     if (!questionData.attributes.project?.data) throw new Error('Collaboration question is not linked to a project');
 
@@ -146,10 +144,10 @@ export const isCollaborationCommentUpvotedByUser = withAuth(async (user: UserSes
   }
 });
 
-export const countCollaborationQuestionsForProject = withAuth(async (user, body: { projectId: string }) => {
+export const countCollaborationQuestionsForProject = async (projectId: string) => {
   try {
     const response = await strapiGraphQLFetcher(GetCollaborationQuestionsCountProjectIdQuery, {
-      projectId: body.projectId,
+      projectId,
     });
     const countResult = response.collaborationQuestions?.meta.pagination.total;
 
@@ -159,4 +157,4 @@ export const countCollaborationQuestionsForProject = withAuth(async (user, body:
     logger.error(error);
     throw err;
   }
-});
+};

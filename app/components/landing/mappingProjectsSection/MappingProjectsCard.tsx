@@ -51,15 +51,8 @@ export const MappingProjectsCard = (props: ProjectProps) => {
   const { projects } = props;
   return (
     <Box sx={mappingProjectsCardContainerStyles}>
-      {/* Left bubble in the background */}
       <BubbleImage />
-      <Box
-        sx={{
-          width: '90%',
-          mx: 'auto',
-          px: { xs: '0', sm: '64px' },
-        }}
-      >
+      <Box sx={mappingProjectsCardWrapperStyles}>
         <Card sx={mappingProjectsCardStyles}>
           <CardHeader
             sx={{ textAlign: 'left', mb: '35px' }}
@@ -98,6 +91,7 @@ const BubbleImage = () => (
   />
 );
 
+// Mapping Projects Card Styles
 const mappingProjectsCardContainerStyles = {
   position: 'relative',
   overflowX: 'hidden',
@@ -106,6 +100,12 @@ const mappingProjectsCardContainerStyles = {
   [theme.breakpoints.down('sm')]: {
     marginTop: '80px',
   },
+};
+
+const mappingProjectsCardWrapperStyles = {
+  width: '90%',
+  mx: 'auto',
+  px: { xs: '0', sm: '64px' },
 };
 
 const mappingProjectsCardStyles = {

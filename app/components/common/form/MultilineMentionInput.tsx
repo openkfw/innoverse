@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Controller } from 'react-hook-form';
-import { Mention, MentionsInput, SuggestionDataItem } from 'react-mentions';
+import { Mention, MentionsInput, MentionsInputStyle, SuggestionDataItem } from 'react-mentions';
 
 import Box from '@mui/material/Box';
 
@@ -109,7 +109,7 @@ const mentionInputStyle = {
     position: 'relative',
     top: 1,
     left: 1,
-  },
+  } as MentionsInputStyle,
   mentionsInput: {
     padding: '16px 24px 36px 24px',
     control: {
@@ -152,6 +152,6 @@ const mentionInputStyle = {
           color: theme.palette.common.white,
         },
       },
-    },
+    } as MentionsInputStyle,
   },
 };

@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.2.0](https://github.com/openkfw/innoverse/compare/v1.1.1...v1.2.0) (2024-11-19)
+
+### Features
+
+- add mininum length to the search field [#120](https://github.com/openkfw/innoverse/issues/120) PR[#123](https://github.com/openkfw/innoverse/pull/123)
+
+### Bug Fixes
+
+- error on user creation [#126](https://github.com/openkfw/innoverse/issues/126) PR[#128](https://github.com/openkfw/innoverse/pull/128) PR[#127](https://github.com/openkfw/innoverse/pull/127)
+- feedback button now always visible [#97](https://github.com/openkfw/innoverse/issues/97) PR[#108](https://github.com/openkfw/innoverse/pull/108)
+- fix project page scrolling [#124](https://github.com/openkfw/innoverse/issues/124) PR([#125](https://github.com/openkfw/innoverse/issues/125))
+- remove time from main carousel pill [#94](https://github.com/openkfw/innoverse/issues/94) PR[#102](https://github.com/openkfw/innoverse/issues/102)
+- standardize wording from updates to news de/en [#96](https://github.com/openkfw/innoverse/issues/96) PR[#106](https://github.com/openkfw/innoverse/issues/106)
+
+### Refactor
+
+- change color of the progress bar [#95](https://github.com/openkfw/innoverse/issues/95) PR[#105](https://github.com/openkfw/innoverse/pull/105)
+- remove allowed_origins from next.config.js [#99](https://github.com/openkfw/innoverse/issues/99) PR[#100](https://github.com/openkfw/innoverse/pull/100)
+
 ## [1.1.1](https://github.com/openkfw/innoverse/compare/v1.1.0...v1.1.1) (2024-10-07)
 
 ### Bug Fixes

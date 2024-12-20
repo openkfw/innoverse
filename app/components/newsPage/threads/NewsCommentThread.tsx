@@ -1,12 +1,12 @@
 import Stack from '@mui/material/Stack';
 
-import { CommentWithResponses } from '@/common/types';
+import { CommentWithResponses, ObjectType } from '@/common/types';
 import WriteCommentResponseCard from '@/components/common/comments/WriteCommentResponseCard';
 import { NewsCommentCard } from '@/components/newsPage/cards/NewsCommentCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 
 interface NewsCommentThreadProps {
-  item: { id: string };
+  item: { id: string; objectType: ObjectType; projectId?: string };
   comment: CommentWithResponses;
   commentType: 'NEWS_COMMENT' | 'POST_COMMENT';
   level: number;
@@ -22,16 +22,16 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
   };
 
   const handleDeleteResponse = (response: CommentWithResponses) => {
-    const responses = comment.responses.filter((r) => r.id !== response.id);
-    const updatedComment = { ...comment, responses };
+    const responses = comment.comments.filter((r) => r.id !== response.id);
+    const updatedComment = { ...comment, comments: responses };
     props.onUpdate(updatedComment);
   };
 
   const handleUpdateResponse = (response: CommentWithResponses) => {
-    const idx = comment.responses.findIndex((r) => r.id === response.id);
+    const idx = comment.comments.findIndex((r) => r.id === response.id);
     if (idx < 0) return;
     const updatedComment = comment;
-    updatedComment.responses[idx] = response;
+    updatedComment.comments[idx] = response;
     props.onUpdate(updatedComment);
   };
 
@@ -40,14 +40,16 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
       comment: response,
       commentType: props.commentType,
       objectId: props.item.id,
+      objectType: props.item.objectType,
       parentCommentId: comment?.commentId,
+      projectId: props.item.projectId,
     });
 
     if (!newResponse) return;
 
-    const threadResponse = { ...newResponse, responseCount: 0, responses: [] };
-    const responses = [threadResponse, ...comment.responses];
-    const updatedComment = { ...comment, responses };
+    const threadResponse = { ...newResponse, comments: [] };
+    const responses = [threadResponse, ...comment.comments];
+    const updatedComment = { ...comment, comments: responses };
     props.onUpdate(updatedComment);
   };
 
@@ -64,17 +66,18 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
       <WriteCommentResponseCard sx={{ mt: 2 }} comment={comment} onRespond={handleResponse} />
 
       <Stack sx={{ ml: 4, mt: 2 }} style={{ marginLeft: '2em' }}>
-        {comment.responses.map((response, idx) => (
-          <NewsCommentThread
-            key={idx}
-            item={props.item}
-            comment={response}
-            commentType={props.commentType}
-            level={level + 1}
-            onDelete={() => handleDeleteResponse(response)}
-            onUpdate={handleUpdateResponse}
-          />
-        ))}
+        {comment.comments &&
+          comment.comments.map((response, idx) => (
+            <NewsCommentThread
+              key={idx}
+              item={props.item}
+              comment={response}
+              commentType={props.commentType}
+              level={level + 1}
+              onDelete={() => handleDeleteResponse(response)}
+              onUpdate={handleUpdateResponse}
+            />
+          ))}
       </Stack>
     </>
   );

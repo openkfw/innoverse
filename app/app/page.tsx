@@ -7,7 +7,6 @@ import { EventSection } from '@/components/landing/eventsSection/EventsSection';
 import FeaturedProjectSlider from '@/components/landing/featuredProjectSection/FeaturedProjectSlider';
 import FeedbackSection from '@/components/landing/feedbackSection/FeedbackSection';
 import { MappingProjectsCard } from '@/components/landing/mappingProjectsSection/MappingProjectsCard';
-import { BackgroundArrows } from '@/components/landing/newsSection/BackgroundArrows';
 import { NewsSection } from '@/components/landing/newsSection/NewsSection';
 import { ProjectSection } from '@/components/landing/projectSection/ProjectSection';
 import { getMainPageData } from '@/utils/requests/pageRequests';
@@ -34,15 +33,10 @@ async function IndexPage() {
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
           <FeedbackSection />
         </Box>
-        <div style={{ position: 'relative' }}>
-          <NewsSection updates={updates} />
-          <BackgroundArrows />
-        </div>
+        <NewsSection updates={updates} />
         <EventSection events={events} />
         <ProjectSection projects={projects} />
-        <Box>
-          <MappingProjectsCard projects={projects} />
-        </Box>
+        <MappingProjectsCard projects={projects} />
       </Stack>
       <CustomToast />
     </>

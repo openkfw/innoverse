@@ -1,6 +1,6 @@
 'use server';
 
-import { User, UserSession, Mention } from '@/common/types';
+import { User, UserSession, Mention, UploadImageResponse } from '@/common/types';
 import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { RequestError } from '@/entities/error';
@@ -16,10 +16,11 @@ import {
   GetInnoUserByUsernameQuery,
 } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
+import { request, FormData } from 'undici';
 
 const logger = getLogger();
 
-export async function createInnoUser(body: UserSession, image?: string | null) {
+export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: string | null) {
   try {
     const username = await generateUniqueUsername(body.email);
 
@@ -29,17 +30,17 @@ export async function createInnoUser(body: UserSession, image?: string | null) {
     const response = await strapiGraphQLFetcher(CreateInnoUserMutation, {
       ...body,
       username,
-      avatarId: uploadedImage ? uploadedImage.id : null,
+      avatarId: uploadedImage ? (uploadedImage.id as unknown as string) : null,
     });
 
     const userData = response.createInnoUser?.data;
     if (!userData) throw new Error('Response contained no user data');
-
     const createdUser = mapToUser(userData);
     return createdUser;
   } catch (err) {
     const error = strapiError('Create Inno User', err as RequestError, body.name);
     logger.error(error);
+    throw error;
   }
 }
 
@@ -51,6 +52,7 @@ export async function getInnoUserByEmail(email: string) {
   } catch (err) {
     const error = strapiError('Getting Inno user by email', err as RequestError, email);
     logger.error(error);
+    throw error;
   }
 }
 
@@ -62,7 +64,7 @@ export async function getInnoUserByProviderId(providerId: string) {
   } catch (err) {
     const error = strapiError('Getting Inno user by providerId', err as RequestError, providerId);
     logger.error(error);
-    throw err;
+    throw error;
   }
 }
 
@@ -109,7 +111,7 @@ export async function getAllInnoUsers() {
   }
 }
 
-export async function createInnoUserIfNotExist(body: UserSession, image?: string | null) {
+export async function createInnoUserIfNotExist(body: Omit<UserSession, 'image'>, image?: string | null) {
   try {
     if (!body.email) throw new Error('User session does not contain email');
 
@@ -173,23 +175,34 @@ async function generateUniqueUsername(email: string): Promise<string> {
 
 async function uploadImage(imageUrl: string, fileName: string) {
   return fetch(imageUrl)
-    .then((response) => response.blob())
+    .catch((e) => {
+      logger.error('Error while fetching image:', e);
+      throw new Error('Error while fetching image');
+    })
+    .then((response) => {
+      return response.blob();
+    })
     .then(async function (myBlob) {
       const formData = new FormData();
       formData.append('files', myBlob, fileName);
       formData.append('ref', 'api::event.event');
       formData.append('field', 'image');
-
-      return fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
+      return request(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
         },
         body: formData,
       })
-        .then((response) => response.json())
+        .catch((e) => {
+          logger.error('Error while uploading image:', e);
+          throw new Error('Error while uploading image');
+        })
+        .then((response) => {
+          return response.body.json();
+        })
         .then((result) => {
-          return result;
+          return result as UploadImageResponse[];
         });
     });
 }

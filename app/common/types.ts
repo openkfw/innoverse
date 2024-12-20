@@ -9,6 +9,7 @@ export enum ObjectType {
   SURVEY_QUESTION = 'SURVEY_QUESTION',
   OPPORTUNITY = 'OPPORTUNITY',
   COLLABORATION_QUESTION = 'COLLABORATION_QUESTION',
+  NEWS_COMMENT = 'NEWS_COMMENT',
 }
 
 export type NewsFeedEntry =
@@ -40,7 +41,7 @@ export type CollaborationComment = CommonNewsFeedProps & {
   author: User;
   comment: string;
   upvotedBy: string[];
-  responseCount: number;
+  commentCount: number;
   projectId: string;
   projectName: string;
   question: CollaborationQuestion;
@@ -65,7 +66,7 @@ export type Comment = {
   author: User;
   comment: string;
   upvotedBy: User[];
-  responseCount: number;
+  commentCount: number;
   projectId: string;
   projectName?: string | undefined;
   questionId?: string;
@@ -193,8 +194,8 @@ export type ProjectUpdate = CommonNewsFeedProps & {
   projectName: string;
   projectStart?: string;
   linkToCollaborationTab: boolean;
-  responseCount?: number;
   anonymous: boolean;
+  objectType: ObjectType;
 };
 
 export type ProjectUpdateWithAdditionalData = ProjectUpdate & ReactionOnObject;
@@ -391,8 +392,9 @@ export type Post = CommonNewsFeedProps & {
   author: User;
   content: string;
   upvotedBy: string[];
-  responseCount: number;
   anonymous: boolean;
+  createdAt: Date;
+  objectType: ObjectType;
 };
 
 export type ImageFormat = {
@@ -415,7 +417,7 @@ export type CommonCommentProps = {
   comment: string;
   author: User;
   upvotedBy: string[];
-  responseCount: number;
+  commentCount: number;
   parentId?: string;
 };
 
@@ -427,8 +429,19 @@ export type NewsComment = CommonCommentProps & {
   newsId: string;
 };
 
+export type HashedNewsComment = {
+  id: string;
+  commentId: string;
+  comment: string;
+  author?: string;
+  updatedAt: Date;
+  createdAt: Date;
+  itemType: ObjectType;
+  itemId: string;
+};
+
 export type CommentWithResponses = CommonCommentProps & {
-  responses: CommentWithResponses[];
+  comments: CommentWithResponses[];
 };
 
 export type ImageFormats = {
@@ -439,6 +452,25 @@ export type ImageFormats = {
   small?: ImageFormat;
   xsmall?: ImageFormat;
   thumbnail?: ImageFormat;
+};
+
+export type UploadImageResponse = {
+  id: number;
+  name: string;
+  alternativeText: string | null;
+  caption: string | null;
+  width: number;
+  height: number;
+  formats: ImageFormats;
+  hash: string;
+  ext: string;
+  mime: string;
+  size: number;
+  url: string;
+  previewUrl: string | null;
+  provider: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export enum SortValues {

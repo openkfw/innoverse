@@ -14,6 +14,7 @@ export enum RedisIndex {
   UPDATED_AT_TYPE_PROJECT_ID_SEARCH = 'idx:updatedAt:type:projectId:search',
   UPDATED_AT = 'idx:updatedAt',
   SYNCED_AT = 'idx:syncedAt:status',
+  UPDATED_AT_TYPE_PROJECT_ID_COMMENTS = 'idx:updatedAt:type:projectId:comments',
 }
 
 export const getRedisClient = async () => {
@@ -22,6 +23,7 @@ export const getRedisClient = async () => {
     await createIndices(client);
     return client;
   }
+  await createIndices(client);
 
   if (!client.isOpen || !client.isReady) {
     client = await client.connect();
@@ -111,20 +113,50 @@ const createIndices = async (client: RedisClient) => {
       },
     },
   });
+
+  await createIndexOrCatch({
+    client,
+    index: RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_COMMENTS,
+    schema: {
+      updatedAt: {
+        type: SchemaFieldTypes.NUMERIC,
+        AS: 'updatedAt',
+        SORTABLE: true,
+      },
+      itemType: {
+        type: SchemaFieldTypes.TAG,
+        AS: 'type',
+      },
+      comment: {
+        type: SchemaFieldTypes.TAG,
+        AS: 'comment',
+      },
+      projectId: {
+        type: SchemaFieldTypes.TAG,
+        AS: 'projectId',
+      },
+    },
+    on: {
+      ON: 'HASH',
+      PREFIX: 'comment:',
+    },
+  });
 };
 
 const createIndexOrCatch = async ({
   client,
   index,
   schema,
+  on = { ON: 'JSON' },
 }: {
   client: RedisClient;
   index: string;
   schema: RediSearchSchema;
+  on?: { ON: 'JSON' | 'HASH'; PREFIX?: string };
 }) => {
   try {
     logger.debug(`Trying to create redis index '${index}' ...`);
-    await client.ft.create(index, schema, { ON: 'JSON' });
+    await client.ft.create(index, schema, on);
     logger.info(`Created redis index '${index}'`);
   } catch (e: unknown) {
     const error = e as Error;

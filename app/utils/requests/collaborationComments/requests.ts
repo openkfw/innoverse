@@ -37,13 +37,13 @@ export const getProjectCollaborationComments = async (body: { projectId: string;
         const author = await getInnoUserByProviderId(comment.author);
         const getUpvotes = comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote));
         const upvotes = await getPromiseResults(getUpvotes);
-        const responseCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
+        const commentCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
 
         return {
           ...comment,
           author: author,
           upvotedBy: upvotes,
-          responseCount: responseCount,
+          commentCount: commentCount,
         };
       });
 
@@ -69,40 +69,38 @@ export const getProjectCollaborationComments = async (body: { projectId: string;
   }
 };
 
-export const getProjectCollaborationCommentResponses = withAuth(
-  async (user: UserSession, body: { comment: Comment | CollaborationComment }) => {
-    const validatedParams = validateParams(getCollaborationCommentResponsesSchema, body);
+export const getProjectCollaborationCommentResponses = async (body: { comment: Comment | CollaborationComment }) => {
+  const validatedParams = validateParams(getCollaborationCommentResponsesSchema, body);
 
-    if (validatedParams.status !== StatusCodes.OK) {
-      return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-      };
-    }
+  if (validatedParams.status !== StatusCodes.OK) {
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+    };
+  }
 
-    const responses = await getCollaborationCommentResponsesByCommentId(dbClient, body.comment.id);
+  const responses = await getCollaborationCommentResponsesByCommentId(dbClient, body.comment.id);
 
-    const responsePromises = responses.map(async (response) => {
-      const getUpvoters = response.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote));
-      const upvoters = await getPromiseResults(getUpvoters);
-      const author = await getInnoUserByProviderId(response.author);
-
-      return {
-        ...response,
-        author: author,
-        comment: body.comment,
-        upvotedBy: upvoters.filter((u) => u) as User[],
-      };
-    });
-
-    const commentResponses = (await getPromiseResults(responsePromises)) as CommentResponse[];
+  const responsePromises = responses.map(async (response) => {
+    const getUpvoters = response.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote));
+    const upvoters = await getPromiseResults(getUpvoters);
+    const author = await getInnoUserByProviderId(response.author);
 
     return {
-      status: StatusCodes.OK,
-      data: sortDateByCreatedAtAsc(commentResponses),
+      ...response,
+      author: author,
+      comment: body.comment,
+      upvotedBy: upvoters.filter((u) => u) as User[],
     };
-  },
-);
+  });
+
+  const commentResponses = (await getPromiseResults(responsePromises)) as CommentResponse[];
+
+  return {
+    status: StatusCodes.OK,
+    data: sortDateByCreatedAtAsc(commentResponses),
+  };
+};
 
 export const isProjectCollaborationCommentResponseUpvotedBy = withAuth(
   async (user: UserSession, body: { responseId: string }) => {
