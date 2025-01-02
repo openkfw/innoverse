@@ -13,6 +13,9 @@ import { parseStringForLinks } from '@/components/common/LinkString';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { mergeStyles } from '@/utils/helpers';
+import { mentionRegex } from '@/utils/mentions/formatMentionToText';
+
+import { ClickTooltip } from './ClickTooltip';
 
 interface TextCardProps {
   text: string;
@@ -28,12 +31,45 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const getText = () => {
-    const slicedText = isCollapsed ? text : text.slice(0, MAX_TEXT_LENGTH);
-    return parseStringForLinks(slicedText);
+    return isCollapsed ? text : text.slice(0, MAX_TEXT_LENGTH);
   };
 
   const handleToggle = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const processTextWithHighlighting = (text: string): React.ReactNode => {
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = mentionRegex.exec(text)) !== null) {
+      const [_fullMatch, username] = match;
+      const matchStart = match.index;
+      const matchEnd = mentionRegex.lastIndex;
+
+      if (matchStart > lastIndex) {
+        const nonMentionText = text.substring(lastIndex, matchStart);
+        parts.push(parseStringForLinks(nonMentionText));
+      }
+
+      parts.push(
+        <ClickTooltip key={`mention-${username}-${matchStart}`} username={username}>
+          <Typography variant="body1" component="span" style={mentionStyle}>
+            {username}
+          </Typography>
+        </ClickTooltip>,
+      );
+
+      lastIndex = matchEnd;
+    }
+
+    if (lastIndex < text.length) {
+      const remainingText = text.substring(lastIndex);
+      parts.push(parseStringForLinks(remainingText));
+    }
+
+    return parts;
   };
 
   useEffect(() => {
@@ -49,7 +85,7 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
         <Stack direction="column" spacing={2}>
           <Box sx={{ ...textContainerStyle, overflowWrap: isCollapsed ? 'break-word' : 'unset' }}>
             <Typography variant="body1" sx={textStyle}>
-              {getText()}
+              {processTextWithHighlighting(getText())}
             </Typography>
             {!isCollapsed && (
               <Typography variant="subtitle2" onClick={handleToggle} sx={buttonOverlayStyle}>
@@ -65,7 +101,6 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
 };
 
 // Text Card Styles
-
 const cardStyle = {
   background: 'transparent',
   border: 'none',
@@ -93,6 +128,7 @@ const textContainerStyle = {
 
 const textStyle = {
   color: 'secondary.contrastText',
+  lineHeight: 1.5,
 };
 
 const buttonOverlayStyle = {
@@ -105,10 +141,20 @@ const buttonOverlayStyle = {
     background: '#ffffff',
     color: theme.palette.primary.main,
   },
-  fontSize: '14px',
+  fontSize: 14,
   fontWeight: '500',
   marginBottom: '-1px',
   paddingLeft: '4px',
   cursor: 'pointer',
   boxShadow: '-10px 0 10px white',
+};
+
+const mentionStyle = {
+  fontFamily: 'SansDefaultMed',
+  fontWeight: 500,
+  fontSize: 14,
+  lineHeight: 1.5,
+  letterSpacing: '0.15px',
+  display: 'inline',
+  color: '#398357',
 };

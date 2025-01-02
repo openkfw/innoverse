@@ -17,7 +17,7 @@ export const NewsCollaborationCommentThread = (props: CollaborationCommentThread
 
   return (
     <CommentThread
-      comment={{ id: comment.id }}
+      comment={{ id: comment.id, author: comment.author }}
       card={<NewsCollabCommentCard entry={entry} />}
       fetchComments={fetchComments}
       addComment={addComment}

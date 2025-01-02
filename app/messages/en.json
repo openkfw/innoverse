@@ -404,5 +404,7 @@
 
   "components_updates_updatesTab_refetchError": "Failed to refetch project news. Please try again later.",
   "components_updates_updatesTab_noNews": "There is no news for this project yet. Click here to add one.",
-  "components_updates_updatesTab_addNewNews": "Keep your audience informed! Click here to add news."
+  "components_updates_updatesTab_addNewNews": "Keep your audience informed! Click here to add news.",
+
+  "components_common_form_MultilineMentionInput_loading" : "Loading..."
 }

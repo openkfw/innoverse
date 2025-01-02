@@ -15,7 +15,7 @@ export const CollaborationCommentResponseThread = (props: CollaborationCommentRe
 
   return (
     <CommentThread
-      comment={{ id: response.id }}
+      comment={{ id: response.id, author: response.author }}
       card={<CollaborationCommentResponseCard response={response} onDelete={onDelete} />}
       fetchComments={fetchComments}
       renderComment={(_comment, _idx, _deleteComment) => <></>}
