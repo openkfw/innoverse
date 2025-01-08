@@ -49,18 +49,18 @@ export const GetInnoUserByProviderIdQuery = graphql(
   [InnoUserFragment],
 );
 
-export const GetAllInnoUsers = graphql(`
-  query GetInnoUsers($limit: Int) {
-    innoUsers(pagination: { limit: $limit }) {
-      data {
-        id
-        attributes {
-          username
+export const GetAllInnoUsers = graphql(
+  `
+    query GetInnoUsers($limit: Int) {
+      innoUsers(pagination: { limit: $limit }) {
+        data {
+          ...InnoUser
         }
       }
     }
-  }
-`);
+  `,
+  [InnoUserFragment],
+);
 
 export const GetEmailsByUsernamesQuery = graphql(`
   query GetEmailsByUsernames($usernames: [String!]) {
