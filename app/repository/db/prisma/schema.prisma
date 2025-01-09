@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl"]
 }
 
@@ -12,36 +12,35 @@ datasource db {
 }
 
 model Comment {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String      @id @default(uuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
   objectType CommentType
 
   postComment PostComment?
   newsComment NewsComment?
 
-  text   String // text of comment
+  text      String // text of comment
   author    String // id of author
   upvotedBy String[] // ids of users
   reactions Reaction[]
 
-  parent  Comment? @relation("CommentResponseRelation",fields: [parentId], references: [id], onDelete: Cascade)
+  parent   Comment? @relation("CommentResponseRelation", fields: [parentId], references: [id], onDelete: Cascade)
   parentId String?
 
-  responses  Comment[]  @relation("CommentResponseRelation")
-
+  responses Comment[] @relation("CommentResponseRelation")
 }
 
 model NewsComment {
-  id        String   @id @default(uuid())
-  commentId String      @unique
+  id        String  @id @default(uuid())
+  commentId String  @unique
   comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   newsId    String
 }
 
 model PostComment {
-  id        String   @id @default(uuid())
-  commentId String      @unique
+  id        String  @id @default(uuid())
+  commentId String  @unique
   comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   postId    String
 }
@@ -59,7 +58,6 @@ model ProjectComment {
   @@map(name: "project_comments")
 }
 
-
 model CollaborationComment {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
@@ -76,17 +74,16 @@ model CollaborationComment {
   @@map(name: "collaboration_comments")
 }
 
-
 model CollaborationCommentResponse {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  response    String // text of response
-  author      String // id of the author
-  upvotedBy   String[] // ids of users
-  commentId   String // id of comment this responds to to
-  comment     CollaborationComment @relation("Response", fields: [commentId], references: [id], onDelete: Cascade) // comment this responds to
+  response  String // text of response
+  author    String // id of the author
+  upvotedBy String[] // ids of users
+  commentId String // id of comment this responds to to
+  comment   CollaborationComment @relation("Response", fields: [commentId], references: [id], onDelete: Cascade) // comment this responds to
 
   @@map("collaboration_comments_responses")
 }
@@ -98,26 +95,27 @@ model Like {
   projectId String // liked project
   likedBy   String // user id  
 
-   @@unique(fields: [projectId, likedBy])
+  @@unique(fields: [projectId, likedBy])
 }
 
 model Follow {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  objectId  String // followed object
+  objectId   String // followed object
   objectType ObjectType @default(PROJECT) // type of object that was followed
   followedBy String // user id  
 
-   @@unique(fields: [objectId, objectType, followedBy])
+  @@unique(fields: [objectId, objectType, followedBy])
 }
 
 model PushSubscription {
-  id        String   @id @default(uuid())
-  userId    String
-  createdAt DateTime @default(now())
-  subscription String // JSON of push subscription
+  id                 String   @id @default(uuid())
+  userId             String
+  createdAt          DateTime @default(now())
+  subscription       String // JSON of push subscription
   browserFingerprint String // Fingerprint to uniquely identify user by their browser
+
   @@unique([userId, browserFingerprint])
 }
 
@@ -141,7 +139,7 @@ model Reaction {
 
 model SurveyVote {
   id        String   @id @default(uuid())
-  createdAt DateTime @updatedAt @default(now())
+  createdAt DateTime @default(now()) @updatedAt
 
   vote             String // vote
   projectId        String // project
@@ -154,12 +152,12 @@ model SurveyVote {
 model Post {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  upvotedBy   String[] // ids of users
-  author      String // id of author
-  content     String
-  anonymous Boolean @default(false)
+  upvotedBy String[] // ids of users
+  author    String // id of author
+  content   String
+  anonymous Boolean  @default(false)
 }
 
 enum ObjectType {
