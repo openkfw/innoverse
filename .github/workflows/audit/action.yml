@@ -1,8 +1,12 @@
 name: "Audit"
 description: "Audit information"
+inputs:
+  project:
+    description: "The project directory"
+    required: true
 runs:
   using: "composite"
   steps:
-    - name: Audit project cd ${{ matrix.project }}
-      run: cd ${{ matrix.project }} && npm ci --no-audit && npm run audit -- --production
+    - name: Audit project cd ${{ inputs.project }}
+      run: cd ${{ inputs.project }} && pnpm install && pnpm run audit --prod
       shell: bash
