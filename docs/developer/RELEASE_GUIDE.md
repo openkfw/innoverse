@@ -10,11 +10,11 @@ To create a release
 
 2. Bump the version, generate the release changelog and create a git tag with the following command:
 
-   `npm run release`
+   `pnpm run release`
 
    This bumps the version according to semver. Alternatively a specific version can be set using:
 
-   `npm run release --release-as <release_version>`
+   `pnpm run release --release-as <release_version>`
 
    For more options, see the [commit and tag version github page](https://github.com/absolute-version/commit-and-tag-version/tree/master?tab=readme-ov-file#cli-usage)
 
@@ -38,7 +38,7 @@ Which commits should be part of the changelog and what headings are part of a re
 
 ## In-depth explanation
 
-The command `npm run release` command does the following:
+The command `pnpm run release` command does the following:
 
 - Extract the versions stored in `app/package.json` and `strapi/package.json`
 - Bump the version number up according to semantic versioning

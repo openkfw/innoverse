@@ -1,22 +1,21 @@
 ARG BUILDTIMESTAMP
 ARG CI_COMMIT_SHA
 
-# Install dependencies only when needed
 FROM node:18-alpine AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 
 WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN npm ci
 
-# If using npm with a `package-lock.json` comment out above and use below instead
-# COPY package.json package-lock.json ./
-# RUN npm ci
+COPY package.json pnpm-lock.yaml* ./
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM node:18-alpine AS builder
 ARG BUILDTIMESTAMP
 ARG CI_COMMIT_SHA
+
+# Install pnpm
+RUN npm install -g pnpm
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -25,23 +24,24 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 ENV NEXT_PUBLIC_BUILDTIMESTAMP ${BUILDTIMESTAMP}
 ENV NEXT_PUBLIC_CI_COMMIT_SHA ${CI_COMMIT_SHA}
-
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 
 COPY . .
 
 # Run Prisma migration
-RUN npm run prisma generate --schema ./repository/db/prisma/schema.prisma
-# RUN yarn run prisma db push
-# RUN yarn run prisma migrate dev --name init
+RUN pnpm run prisma generate --schema ./repository/db/prisma/schema.prisma
+# RUN pnpm run prisma db push
+# RUN pnpm run prisma migrate dev --name init
 
-RUN npm run build
+RUN pnpm run build
 
 # Production image, copy all the files and run next
 FROM node:18-alpine AS runner
 ARG BUILDTIMESTAMP
 ARG CI_COMMIT_SHA
+
+
 
 ENV NEXT_PUBLIC_BUILDTIMESTAMP ${BUILDTIMESTAMP}
 ENV NEXT_PUBLIC_CI_COMMIT_SHA ${CI_COMMIT_SHA}
@@ -54,6 +54,10 @@ WORKDIR /app
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+
+# Install pnpm
+RUN npm install -g pnpm
+
 
 # You only need to copy next.config.ts if you are NOT using the default configuration
 COPY --from=builder /app/next.config.ts ./
@@ -79,5 +83,5 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD [  "npm", "run", "start:migrate:prod" ]
 
+CMD [ "pnpm", "run", "start:migrate:prod" ]

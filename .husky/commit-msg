@@ -2,4 +2,4 @@ echo ""
 echo "Checking if commit message uses conventional commit format:"
 echo "\033[1m<type>: <subject>\033[0m"
 echo "\033[1m<type>(<scope>): <subject>\033[0m"
-npm run commitlint ${1}
+pnpm run commitlint ${1}
