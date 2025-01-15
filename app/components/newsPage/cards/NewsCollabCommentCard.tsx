@@ -54,7 +54,7 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
 
 export function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   const { entry } = props;
-  const item = entry.item as Comment;
+  const item = entry.item as unknown as Comment;
   const question = item.additionalObjectId;
 
   const [comment, setComment] = useState(item);
