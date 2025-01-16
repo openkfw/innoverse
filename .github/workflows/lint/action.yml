@@ -1,12 +1,8 @@
 name: "Lint"
 description: "Runs a lint check on the innoverse next app"
-inputs:
-  project:
-    description: "The project directory"
-    required: true
 runs:
   using: "composite"
   steps:
-    - name: Install node in ${{ inputs.project }}
-      run: cd ${{ inputs.project }} && pnpm install && pnpm run lint
+    - name: Install node in ${{ matrix.project }}
+      run: cd ${{ matrix.project }} && pnpm install && pnpm run lint
       shell: bash

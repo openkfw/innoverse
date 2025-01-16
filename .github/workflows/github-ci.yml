@@ -34,8 +34,6 @@ jobs:
           cache: "pnpm"
       - name: Run lint
         uses: ./.github/workflows/lint
-        with:
-          project: ${{ matrix.project }}
 
   audit:
     runs-on: ubuntu-22.04
@@ -60,8 +58,6 @@ jobs:
           cache: "pnpm"
       - name: Run audit
         uses: ./.github/workflows/audit
-        with:
-          project: ${{ matrix.project }}
 
   build:
     runs-on: ubuntu-22.04
