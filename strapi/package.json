@@ -8,33 +8,53 @@
     "name": "A Strapi developer"
   },
   "scripts": {
-    "audit": "better-npm-audit audit",
-    "build": "npm run build:strapi && npm run build:health-plugin",
+    "audit": "pnpm audit",
+    "build": "pnpm run build:strapi && pnpm run build:health-plugin",
     "build:health-plugin": "cd src/plugins/healthcheck && npm run build",
     "build:strapi": "strapi build",
     "develop": "strapi develop",
     "start": "strapi start",
-    "strapi": "strapi"
+    "strapi": "strapi",
+    "create-migration": "./create-migration.sh"
   },
   "dependencies": {
     "@strapi/plugin-graphql": "4.25.9",
     "@strapi/plugin-i18n": "4.25.9",
     "@strapi/plugin-users-permissions": "4.25.9",
     "@strapi/strapi": "4.25.9",
+    "@strapi/typescript-utils": "^5.7.0",
     "@strapi/utils": "4.25.8",
-    "better-npm-audit": "^3.8.3",
-    "better-sqlite3": "^11.3.0",
+    "better-sqlite3": "^11.7.2",
     "pg": "8.8.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^5.3.4",
-    "styled-components": "^5.3.3"
+    "styled-components": "^5.3.11",
+    "typescript": "^5.7.2"
   },
   "engines": {
     "node": ">=16.0.0 <=20.x.x",
-    "npm": ">=6.0.0"
+    "npm": ">=6.0.0",
+    "pnpm": ">=9.0.0"
   },
   "strapi": {
     "uuid": "59cfa33d-463b-4911-8898-498e793d3789"
+  },
+  "pnpm": {
+    "overrides": {
+      "@koa/cors@<5.0.0": ">=5.0.0",
+      "tar@<6.2.1": ">=6.2.1",
+      "braces@<3.0.3": ">=3.0.3",
+      "ws@>=8.0.0 <8.17.1": ">=8.17.1",
+      "micromatch@<4.0.8": ">=4.0.8",
+      "vite@>=5.0.0 <=5.1.7": ">=5.1.8",
+      "vite@>=5.0.0 <5.1.8": ">=5.1.8",
+      "cookie@<0.7.0": ">=0.7.0"
+    },
+    "auditConfig": {
+      "ignoreCves": [
+        "CVE-2022-24434"
+      ]
+    }
   }
 }
