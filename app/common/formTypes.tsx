@@ -24,3 +24,7 @@ export type Option = {
   id: string;
   label: string;
 };
+
+export interface MultilineMentionInputProps extends FormInputProps {
+  rows?: number;
+}

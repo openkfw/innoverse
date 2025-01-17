@@ -7,7 +7,6 @@ export type RedisClient = ReturnType<typeof createClient>;
 export type RedisTransactionClient = ReturnType<RedisClient['multi']>;
 
 let client: RedisClient | undefined = undefined;
-const searchClient = createClient(client);
 
 const logger = getLogger();
 
@@ -15,7 +14,7 @@ export enum RedisIndex {
   UPDATED_AT_TYPE_PROJECT_ID_SEARCH = 'idx:updatedAt:type:projectId:search',
   UPDATED_AT = 'idx:updatedAt',
   SYNCED_AT = 'idx:syncedAt:status',
-  COMMENTS = 'idx:comments',
+  UPDATED_AT_TYPE_PROJECT_ID_COMMENTS = 'idx:updatedAt:type:projectId:comments',
 }
 
 export const getRedisClient = async () => {
@@ -117,16 +116,24 @@ const createIndices = async (client: RedisClient) => {
 
   await createIndexOrCatch({
     client,
-    index: RedisIndex.COMMENTS,
+    index: RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_COMMENTS,
     schema: {
-      comment: {
-        type: SchemaFieldTypes.TEXT,
-        AS: 'comment',
-      },
       updatedAt: {
         type: SchemaFieldTypes.NUMERIC,
         AS: 'updatedAt',
         SORTABLE: true,
+      },
+      itemType: {
+        type: SchemaFieldTypes.TAG,
+        AS: 'type',
+      },
+      comment: {
+        type: SchemaFieldTypes.TAG,
+        AS: 'comment',
+      },
+      projectId: {
+        type: SchemaFieldTypes.TAG,
+        AS: 'projectId',
       },
     },
     on: {

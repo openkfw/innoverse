@@ -52,6 +52,7 @@ export type CollaborationComment = CommonNewsFeedProps & {
 export type User = {
   id?: string;
   name: string;
+  username?: string;
   role?: string;
   department?: string;
   image?: string;
@@ -312,6 +313,7 @@ export type UserSession = {
   providerId: string;
   provider: string;
   name: string;
+  username?: string;
   role?: string;
   department?: string;
   image?: string;
@@ -486,3 +488,7 @@ export type StartPagination = {
 export type ChildTestProps = {
   'data-testid'?: string;
 };
+
+export interface Mention {
+  username: string;
+}

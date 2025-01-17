@@ -55,13 +55,14 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# You only need to copy next.config.js if you are NOT using the default configuration
-COPY --from=builder /app/next.config.js ./
+# You only need to copy next.config.ts if you are NOT using the default configuration
+COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/config ./config
 COPY --from=builder /app/public/fonts ./public/fonts
 COPY --from=builder /app/public/manifest.json ./public/manifest.json
 COPY --from=builder /app/public/robots.txt ./public/robots.txt
 COPY --from=builder /app/public/sw.js ./public/sw.js
+COPY --from=builder --chown=nextjs:nodejs /app/public/images ./public/images
 
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
@@ -71,7 +72,6 @@ COPY --from=builder /app/repository/db/prisma ./repository/db/prisma
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/public/images ./.next/static/chunks/images
 
 USER nextjs
 

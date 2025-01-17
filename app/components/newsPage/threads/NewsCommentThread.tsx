@@ -6,7 +6,7 @@ import { NewsCommentCard } from '@/components/newsPage/cards/NewsCommentCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 
 interface NewsCommentThreadProps {
-  item: { id: string; objectType: ObjectType };
+  item: { id: string; objectType: ObjectType; projectId?: string };
   comment: CommentWithResponses;
   commentType: 'NEWS_COMMENT' | 'POST_COMMENT';
   level: number;
@@ -42,6 +42,7 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
       objectId: props.item.id,
       objectType: props.item.objectType,
       parentCommentId: comment?.commentId,
+      projectId: props.item.projectId,
     });
 
     if (!newResponse) return;
