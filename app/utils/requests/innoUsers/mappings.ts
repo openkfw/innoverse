@@ -29,6 +29,7 @@ export function mapToUser(userData: ResultOf<typeof InnoUserFragment>): User {
     providerId: attributes.providerId ?? undefined,
     provider: attributes.provider ?? undefined,
     image: mapToAvatarUrl(attributes.avatar),
+    imageId: attributes.avatar?.data?.id,
   };
 }
 
