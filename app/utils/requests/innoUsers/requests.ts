@@ -20,7 +20,6 @@ import {
   GetInnoUserByUsernameQuery,
 } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { request, FormData } from 'undici';
 
 const logger = getLogger();
 
@@ -48,21 +47,23 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
   }
 }
 
-export async function updateInnoUser(body: Omit<UserSession, 'image'> & { id: string; image: FormData | null }) {
+export async function updateInnoUser(body: Omit<UserSession, 'image'> & { id: string; image: FormData }) {
   try {
-    // TODO: check if the image was changed
-
     let uploadedImage: UploadImageResponse | null = null;
     if (body.image) {
-      const image = body.image.get('image') as string;
-      console.log('image', image);
-      const uploadedImages = await uploadFileImage(image, `avatar-${body.name}`);
-      uploadedImage = uploadedImages ? uploadedImages[0] : null;
+      const image = body.image.get('image');
+      if (image !== 'null') {
+        const uploadedImages = await uploadFileImage(image as Blob, `avatar-${body.name}`);
+        uploadedImage = uploadedImages ? uploadedImages[0] : null;
+      }
     }
 
+    if (body.oldImageId) {
+      await deleteFileImage(body.oldImageId);
+    }
     const response = await strapiGraphQLFetcher(UpdateInnoUserMutation, {
       ...body,
-      avatarId: uploadedImage ? (uploadedImage.id as unknown as string) : null,
+      ...(body.image && { avatarId: uploadedImage ? (uploadedImage.id as string) : null }),
     });
 
     const userData = response.updateInnoUser?.data;
@@ -206,7 +207,7 @@ async function generateUniqueUsername(email: string): Promise<string> {
 }
 
 async function uploadImage(imageUrl: string, fileName: string) {
-  return fetch(imageUrl)
+  return await fetch(imageUrl)
     .catch((e) => {
       logger.error('Error while fetching image:', e);
       throw new Error('Error while fetching image');
@@ -219,7 +220,7 @@ async function uploadImage(imageUrl: string, fileName: string) {
       formData.append('files', myBlob, fileName);
       formData.append('ref', 'api::event.event');
       formData.append('field', 'image');
-      return request(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
+      return await fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
@@ -231,7 +232,7 @@ async function uploadImage(imageUrl: string, fileName: string) {
           throw new Error('Error while uploading image');
         })
         .then((response) => {
-          return response.body.json();
+          return response.json();
         })
         .then((result) => {
           return result as UploadImageResponse[];
@@ -239,12 +240,32 @@ async function uploadImage(imageUrl: string, fileName: string) {
     });
 }
 
-export async function uploadFileImage(image: string, fileName: string) {
+export async function deleteFileImage(imageId: string) {
+  return await fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload/files/${encodeURIComponent(imageId)}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
+    },
+  })
+    .catch((e) => {
+      logger.error('Error while uploading image:', e);
+      throw new Error('Error while uploading image');
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((result) => {
+      return result as UploadImageResponse[];
+    });
+}
+
+export async function uploadFileImage(image: Blob, fileName: string) {
   const formData = new FormData();
-  formData.append('file', image, fileName);
+  formData.append('files', image, fileName);
   formData.append('ref', 'api::event.event');
   formData.append('field', 'image');
-  return request(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
+
+  return await fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
@@ -256,7 +277,7 @@ export async function uploadFileImage(image: string, fileName: string) {
       throw new Error('Error while uploading image');
     })
     .then((response) => {
-      return response.body.json();
+      return response.json();
     })
     .then((result) => {
       return result as UploadImageResponse[];
