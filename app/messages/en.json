@@ -408,5 +408,8 @@
   "components_updates_updatesTab_noNews": "There is no news for this project yet. Click here to add one.",
   "components_updates_updatesTab_addNewNews": "Keep your audience informed! Click here to add news.",
 
-  "components_common_form_MultilineMentionInput_loading": "Loading..."
+  "components_common_form_MultilineMentionInput_loading": "Loading...",
+  "components_profilePage_form_updateUserForm_success": "User was successfully saved",
+  "components_profilePage_form_updateUserForm_error": "User could not be saved",
+  "components_profilePage_form_updateUserForm_placeholder": "Upload the photo"
 }

@@ -408,5 +408,8 @@
   "components_updates_updatesTab_noNews": "Es gibt noch keine Neuigkeiten zu diesem Projekt. Klick hier um eine hinzuzufügen.",
   "components_updates_updatesTab_addNewNews": "Halte Dein Publikum auf dem Laufenden! Klicke hier, um eine Neuigkeit hinzuzufügen.",
 
-  "components_common_form_MultilineMentionInput_loading": "Lädt..."
+  "components_common_form_MultilineMentionInput_loading": "Lädt...",
+  "components_profilePage_form_updateUserForm_success": "Benutzerinformationen wurden erfolgreich gespeichert",
+  "components_profilePage_form_updateUserForm_error": "Benutzerinformationen konnten nicht gespeichert werden",
+  "components_profilePage_form_updateUserForm_placeholder": "Foto hochladen"
 }
