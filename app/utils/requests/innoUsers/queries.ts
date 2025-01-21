@@ -1,6 +1,7 @@
 import { graphql } from '@/types/graphql';
 
 export const InnoUserFragment = graphql(`
+<<<<<<< HEAD
   fragment InnoUser on InnoUser @_unmask {
     documentId
     providerId
@@ -13,6 +14,27 @@ export const InnoUserFragment = graphql(`
     avatar {
       url
       formats
+=======
+  fragment InnoUser on InnoUserEntity @_unmask {
+    id
+    attributes {
+      providerId
+      provider
+      name
+      username
+      role
+      department
+      email
+      avatar {
+        data {
+          id
+          attributes {
+            url
+            formats
+          }
+        }
+      }
+>>>>>>> d3d3efe (feat: delete image in uploads strapi)
     }
   }
 `);

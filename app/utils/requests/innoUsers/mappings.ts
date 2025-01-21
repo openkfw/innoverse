@@ -26,6 +26,7 @@ export function mapToUser(userData: ResultOf<typeof InnoUserFragment | null>): U
     email: userData.email ?? undefined,
     providerId: userData.providerId ?? undefined,
     image: mapToAvatarUrl(userData.avatar),
+    imageId: avatar.documentId,
   };
 }
 
