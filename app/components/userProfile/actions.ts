@@ -43,17 +43,22 @@ export const updateUserProfile = withAuth(
         errors: 'Updating an Inno User failed',
       };
     }
+    try {
+      const updatedUser = await updateInnoUser({
+        oldImageId: author.imageId,
+        ...user,
+        ...body,
+        id: author.id as string,
+      });
 
-    const updatedUser = await updateInnoUser({
-      ...user,
-      // TODO: fix any
-      ...(body as any),
-      id: author.id as string,
-    });
-
-    return {
-      status: StatusCodes.OK,
-      data: updatedUser,
-    };
+      return {
+        status: StatusCodes.OK,
+        data: updatedUser,
+      };
+    } catch (error) {
+      return {
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+      };
+    }
   },
 );

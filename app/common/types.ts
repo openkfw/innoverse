@@ -60,6 +60,7 @@ export type User = {
   badge?: boolean;
   providerId?: string;
   provider?: string;
+  imageId?: string;
 };
 
 export type Comment = {
@@ -327,6 +328,7 @@ export type UserSession = {
   department?: string;
   image?: string;
   email: string;
+  oldImageId?: string;
 };
 
 export type Opportunity = CommonNewsFeedProps & {
@@ -459,7 +461,7 @@ export type ImageFormats = {
 };
 
 export type UploadImageResponse = {
-  id: number;
+  id: number | string;
   name: string;
   alternativeText: string | null;
   caption: string | null;

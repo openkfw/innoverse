@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { StatusCodes } from 'http-status-codes';
 
 import Card from '@mui/material/Card';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -12,6 +13,7 @@ import Typography from '@mui/material/Typography';
 
 import { useUser } from '@/app/contexts/user-context';
 import { UserSession } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 
 import { errorMessage, successMessage } from '../common/CustomToast';
 import { ImageDropzoneField } from '../common/form/ImageDropzoneField';
@@ -48,20 +50,19 @@ export default function UserInfo() {
     if (user) {
       reset(user);
     }
-  }, [user]);
+  }, [user, reset]);
 
   const onSubmit: SubmitHandler<UserSession & { image: FormData | string | null }> = async (submitData) => {
-    const formData = new FormData();
     const { image, ...rest } = submitData;
+    const formData = new FormData();
     formData.append('image', image);
-
-    const { data: updatedUser } = await updateUserProfile({ ...rest, image: formData });
-    if (updatedUser) {
+    const { data: updatedUser, status } = await updateUserProfile({ ...rest, image: formData });
+    if (status === StatusCodes.OK) {
       await updateUser(updatedUser as UserSession);
-      successMessage({ message: 'User was successfully saved' });
+      successMessage({ message: m.components_profilePage_form_updateUserForm_success() });
       return;
     } else {
-      errorMessage({ message: 'User could not be saved' });
+      errorMessage({ message: m.components_profilePage_form_updateUserForm_error() });
     }
   };
 
@@ -70,7 +71,7 @@ export default function UserInfo() {
       <Grid item xs={12}>
         <Card sx={cardStyles}>
           <Typography variant="h2" sx={cardTitleStyles}>
-            Benutzerprofil
+            {m.app_user_profile()}
           </Typography>
           {isLoading && !user ? (
             <CircularProgress aria-label="loading" />
@@ -86,7 +87,7 @@ export default function UserInfo() {
                   <TextInputField name={DEPARTMENT} label="Department" control={control} secondary />
                 </Stack>
                 <ImageDropzoneField name={IMAGE} control={control} setValue={setValue} />
-                <FormSaveButton onSave={handleSubmit(onSubmit)} disabled={isDirty || !isValid} />
+                <FormSaveButton onSave={handleSubmit(onSubmit)} disabled={!isDirty || !isValid} />
               </Stack>
             </form>
           )}

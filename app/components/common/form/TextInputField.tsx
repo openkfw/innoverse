@@ -3,6 +3,7 @@ import { Controller } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 
 import { FormInputProps } from '@/common/formTypes';
+import { mergeStyles } from '@/utils/helpers';
 
 import { inputStyle } from './formStyle';
 
@@ -15,6 +16,7 @@ export const TextInputField = ({
   sx,
   secondary = false,
 }: FormInputProps) => {
+  const style = secondary ? inputStyle(secondary) : inputStyle();
   return (
     <Controller
       name={name}
@@ -22,7 +24,7 @@ export const TextInputField = ({
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
-          sx={{ ...(inputStyle(secondary) as any), ...sx }}
+          sx={mergeStyles(style, sx)}
           helperText={error ? error.message : null}
           size="small"
           error={!!error}
