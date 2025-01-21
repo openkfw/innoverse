@@ -1,8 +1,8 @@
 'use server';
 import { StatusCodes } from 'http-status-codes';
 
-import { Comment, User, UserSession } from '@/common/types';
-import { getCommentById, getCommentsByObjectId, handleCommentLike, updateCommentInDb } from '@/repository/db/comment';
+import { CollaborationComment, User, UserSession } from '@/common/types';
+import { getCommentById, handleCommentLike, updateCommentInDb } from '@/repository/db/comment';
 import {
   addCollaborationCommentResponse,
   deleteCollaborationCommentResponse,
@@ -91,7 +91,7 @@ export const deleteProjectCollaborationComment = withAuth(async (user: UserSessi
       };
     }
 
-    const comment = await getCommentsByObjectId(dbClient, body.commentId);
+    const comment = await getCommentById(dbClient, body.commentId);
 
     if (comment === null) {
       return {
@@ -136,7 +136,7 @@ export const updateProjectCollaborationComment = withAuth(
         };
       }
 
-      const comment = await getCommentsByObjectId(dbClient, body.commentId);
+      const comment = await getCommentById(dbClient, body.commentId);
 
       if (comment === null) {
         return {
@@ -205,7 +205,7 @@ export const handleProjectCollaborationCommentLikedBy = withAuth(
 );
 
 export const addProjectCollaborationCommentResponse = withAuth(
-  async (user: UserSession, body: { comment: Comment; text: string }) => {
+  async (user: UserSession, body: { comment: CollaborationComment; text: string }) => {
     const validatedParams = validateParams(addCollaborationCommentResponseSchema, body);
 
     if (validatedParams.status !== StatusCodes.OK) {

@@ -1,4 +1,4 @@
-import { NewsFeedEntry, Post } from '@/common/types';
+import { NewsFeedEntry, ObjectType, Post } from '@/common/types';
 import NewsPostCard from '@/components/newsPage/cards/NewsPostCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
@@ -17,14 +17,12 @@ export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
   const addResponse = async (text: string) => {
     const response = await addUserComment({
       comment: text,
-      objectType: 'POST',
+      objectType: ObjectType.POST,
       objectId: post.id,
     });
     const data = response.data ? { ...response.data, responseCount: 0, responses: [] } : undefined;
     return { ...response, data };
   };
-
-  //todo refactor
 
   return (
     <CommentThread
@@ -37,7 +35,7 @@ export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
           key={`${idx}-${response.id}`}
           item={post}
           comment={response}
-          commentType="POST"
+          commentType={ObjectType.POST}
           level={1}
           onDelete={deleteResponse}
           onUpdate={updateResponse}

@@ -39,12 +39,12 @@ export type NewsFeedEntry =
 export type CollaborationComment = CommonNewsFeedProps & {
   id: string;
   author: User;
-  comment: string;
-  likedBy: string[];
+  text: string;
+  likedBy: User[];
   responseCount: number;
   projectId: string;
   projectName: string;
-  question: CollaborationQuestion;
+  question?: CollaborationQuestion;
   isLikedByUser?: boolean;
   anonymous: boolean;
 };
@@ -71,7 +71,7 @@ export type Comment = {
   objectType: ObjectType;
   likedBy: User[];
 
-  likes?: Like[];
+  likes: CommentLike[];
   responseCount: number;
 
   objectName?: string | undefined;
@@ -160,10 +160,16 @@ export type BasicProject = CommonNewsFeedProps & {
   author?: User;
 };
 
-export type Like = {
-  objectId: string;
-  objectType: ObjectType;
+export type CommentLike = {
+  id: string;
+  commentId: string;
   likedBy: string;
+};
+
+export type Like = {
+  id: string;
+  objectType: ObjectType;
+  objectId: string;
 };
 
 export type Follow = {
@@ -343,7 +349,7 @@ export type CollaborationQuestion = CommonNewsFeedProps & {
   isPlatformFeedback: boolean;
   description: string;
   authors: User[];
-  comments: Comment[];
+  comments: CollaborationComment[];
   projectId?: string;
 };
 
@@ -414,7 +420,7 @@ export type CommonCommentProps = {
   updatedAt: Date;
   text: string;
   author: User;
-  likes?: Like[];
+  likes?: CommentLike[];
   responseCount: number;
   parentId?: string;
 };

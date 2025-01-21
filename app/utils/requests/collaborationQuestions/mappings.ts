@@ -1,23 +1,30 @@
 import { ResultOf } from 'gql.tada';
 
-import { BasicCollaborationQuestion, CollaborationQuestion, Comment } from '@/common/types';
+import { BasicCollaborationQuestion, CollaborationQuestion, CollaborationComment } from '@/common/types';
 import { toDate } from '@/utils/helpers';
 import { CollaborationQuestionFragment } from '@/utils/requests/collaborationQuestions/queries';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
+import { CommentDB } from '@/repository/db/utils/types';
+import { mapToCollborationComments } from '../comments/mapping';
 
-export const mapToCollaborationQuestion = (
+export const mapToCollaborationQuestion = async (
   questionData: ResultOf<typeof CollaborationQuestionFragment>,
-  comments: Comment[],
-): CollaborationQuestion => {
+  dbComments: CommentDB[],
+): Promise<CollaborationQuestion> => {
   const attributes = questionData.attributes;
-  return {
+  const question = {
     id: questionData.id,
     authors: attributes.authors?.data.map(mapToUser) ?? [],
-    comments: comments,
     description: attributes.description,
     isPlatformFeedback: attributes.isPlatformFeedback,
     title: attributes.title,
     updatedAt: toDate(attributes.updatedAt),
+    comments: [],
+  };
+  const comments = await mapToCollborationComments(dbComments, question);
+  return {
+    ...question,
+    comments,
   };
 };
 

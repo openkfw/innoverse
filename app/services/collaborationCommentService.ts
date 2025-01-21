@@ -19,7 +19,7 @@ import { NewsType, RedisCollaborationComment } from '@/utils/newsFeed/redis/mode
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { getBasicCollaborationQuestionById } from '@/utils/requests/collaborationQuestions/requests';
-import { mapToComment } from '@/utils/requests/comments/mapping';
+import { mapToCollborationComment, mapToComment } from '@/utils/requests/comments/mapping';
 import { getProjectTitleById } from '@/utils/requests/project/requests';
 
 const logger = getLogger();
@@ -63,13 +63,13 @@ export const addCollaborationComment = async ({ user, comment }: AddCollaboratio
     objectId: comment.projectId,
     objectType: ObjectType.PROJECT,
     additionalObjectId: comment.questionId,
-    additionalObjectType: ObjectType.SURVEY_QUESTION,
+    additionalObjectType: ObjectType.COLLABORATION_QUESTION,
     author: user.providerId,
     text: comment.comment,
     anonymous: comment.anonymous,
   });
   await addCollaborationCommentToCache(user, createdComment);
-  return await mapToComment(createdComment);
+  return await mapToCollborationComment(createdComment);
 };
 
 export const deleteCollaborationComment = async (commentId: string) => {
@@ -130,7 +130,7 @@ export const updateCollaborationCommentInCache = async ({ user, comment }: Updat
     if (!newsFeedEntry) return;
 
     const cachedItem = newsFeedEntry.item as RedisCollaborationComment;
-    cachedItem.comment = comment.comment ?? cachedItem.comment;
+    cachedItem.text = comment.comment ?? cachedItem.text;
     cachedItem.likedBy = comment.likedBy ?? cachedItem.likedBy;
     cachedItem.responseCount = comment.responseCount ?? cachedItem.responseCount;
     newsFeedEntry.item = cachedItem;
@@ -160,7 +160,6 @@ export const getNewsFeedEntryForComment = async (
 };
 
 export const createNewsFeedEntryForCommentById = async (commentId: string, user?: User) => {
-  //todo update type
   const comment = await getCommentById(dbClient, commentId);
 
   if (!comment) {
@@ -174,7 +173,7 @@ export const createNewsFeedEntryForCommentById = async (commentId: string, user?
 export const createNewsFeedEntryForComment = async (comment: Comment, user?: User) => {
   if (!comment.additionalObjectId) {
     logger.warn(
-      `Failed to create news feed entry for collaboration comment with id ${comment.id}: Failed to get basic collaboration question`,
+      `Failed to create news feed entry for collaboration comment with id ${comment.id}: No additional object id found to get basic collaboration question`,
     );
     return null;
   }
@@ -195,7 +194,7 @@ export const createNewsFeedEntryForComment = async (comment: Comment, user?: Use
   const projectName = await getProjectTitleById(comment.objectId);
 
   return mapCollaborationCommentToRedisNewsFeedEntry(
-    { ...comment, projectName: projectName ?? '', likedBy: comment.likedBy, author, responseCount },
+    { ...comment, objectName: projectName ?? '', likedBy: comment.likedBy, author, responseCount },
     question,
     reactions,
     followers,

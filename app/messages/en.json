@@ -33,6 +33,7 @@
   "components_collaboration_comments_collaborationCommentCard_upvoteError": "Failed to upvote collaboration comment. Please try again later.",
   "components_collaboration_comments_collaborationCommentCard_updateError": "Failed to update collaboration comment. Please try again later.",
   "components_collaboration_comments_collaborationCommentCard_deleteError": "Failed to delete collaboration comment. Please try again later.",
+  "components_collaboration_comments_collaborationCommentCard_questionMissing": "Failed to get the collaboration question. Please try again later",
 
   "components_collaboration_comments_collaborationCommentResponseCard_updateError": "Failed to update collaboration comment response. Please try again later.",
   "components_collaboration_comments_collaborationCommentResponseCard_upvoteError": "Failed to upvote collaboration comment response. Please try again later.",

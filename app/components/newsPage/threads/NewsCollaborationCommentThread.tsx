@@ -1,4 +1,4 @@
-import { Comment, NewsFeedEntry } from '@/common/types';
+import { CollaborationComment, NewsFeedEntry } from '@/common/types';
 import { addProjectCollaborationCommentResponse } from '@/components/collaboration/comments/actions';
 import NewsCollabCommentCard from '@/components/newsPage/cards/NewsCollabCommentCard';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
@@ -11,8 +11,7 @@ interface CollaborationCommentThreadProps {
 
 export const NewsCollaborationCommentThread = (props: CollaborationCommentThreadProps) => {
   const { entry } = props;
-  const comment = entry.item as unknown as Comment; //todo fix casting
-
+  const comment = entry.item as CollaborationComment;
   const { fetchResponses, addResponse } = useCollaborationCommentThread({ comment });
 
   return (
@@ -34,7 +33,7 @@ export const NewsCollaborationCommentThread = (props: CollaborationCommentThread
   );
 };
 
-export function useCollaborationCommentThread(props: { comment: Comment }) {
+export function useCollaborationCommentThread(props: { comment: CollaborationComment }) {
   const { comment } = props;
 
   const fetchResponses = async () => {

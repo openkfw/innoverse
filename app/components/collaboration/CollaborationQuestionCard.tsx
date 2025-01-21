@@ -12,7 +12,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { useProject } from '@/app/contexts/project-context';
-import { CollaborationQuestion, Comment } from '@/common/types';
+import { CollaborationComment,CollaborationQuestion } from '@/common/types';
 import { UserAvatar } from '@/components/common/UserAvatar';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
@@ -33,6 +33,11 @@ interface CollaborationQuestionCardProps {
   projectName?: string;
 }
 
+type CollaborationCommentWithDate = CollaborationComment & {
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export const CollaborationQuestionCard = ({
   content,
   projectId,
@@ -41,9 +46,9 @@ export const CollaborationQuestionCard = ({
 }: CollaborationQuestionCardProps) => {
   const { title, description, authors, comments: projectComments } = content;
   const { setCollaborationCommentsAmount } = useProject();
-  const sortedProjectComments = sortDateByCreatedAtDesc(projectComments);
+  const sortedProjectComments = sortDateByCreatedAtDesc(projectComments as CollaborationCommentWithDate[]); //todo check
 
-  const [comments, setComments] = useState<Comment[]>(sortedProjectComments);
+  const [comments, setComments] = useState<CollaborationComment[]>(sortedProjectComments);
   const [writeNewComment, setWriteNewComment] = useState(false);
   const appInsights = useAppInsightsContext();
 
@@ -74,7 +79,7 @@ export const CollaborationQuestionCard = ({
     setWriteNewComment(true);
   };
 
-  const handleDeleteComment = (comment: Comment) => {
+  const handleDeleteComment = (comment: CollaborationComment) => {
     setComments((old) => old.filter((c) => c.id !== comment.id));
   };
 

@@ -42,8 +42,6 @@ model Like {
   objectType  ObjectType
   objectId String
 
-  // comment   Comment? @relation(fields: [objectId], references: [objectId])
-
   likedBy   String // user id  
 
    @@unique(fields: [objectId, likedBy])
@@ -53,11 +51,8 @@ model CommentLike {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  // objectType  ObjectType
-  // objectId String
-
-  comment   Comment? @relation(fields: [commentId], references: [id])
-  commentId String?
+  comment   Comment @relation(fields: [commentId], references: [id])
+  commentId String
 
   likedBy   String // user id  
 

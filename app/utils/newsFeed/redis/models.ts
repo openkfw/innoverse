@@ -146,7 +146,7 @@ export type RedisSurveyQuestion = RedisItem & {
 
 export type RedisCollaborationComment = RedisItem & {
   author: RedisUser;
-  comment: string;
+  text: string;
   likedBy: string[];
   responseCount: number;
   projectId: string;

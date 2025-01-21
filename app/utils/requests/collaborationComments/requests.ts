@@ -2,7 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { Comment, UserSession } from '@/common/types';
+import { CollaborationComment, Comment, UserSession } from '@/common/types';
 import {
   collaborationCommentResponseLikedBySchema,
   getCollaborationCommentResponsesSchema,
@@ -31,18 +31,16 @@ export const getProjectCollaborationComments = async (body: { projectId: string;
     const validatedParams = validateParams(getCollaborationCommentsSchema, body);
 
     if (validatedParams.status === StatusCodes.OK) {
-      const questionComments = await getCommentsByAdditionalObjectId(dbClient, body.projectId, body.questionId);
+      const questionComments = await getCommentsByAdditionalObjectId(dbClient, body.projectId, body.questionId, true);
       const sortedComments = sortDateByCreatedAtAsc(questionComments);
 
       const getComments = sortedComments.map(async (comment) => {
-        const author = await getInnoUserByProviderId(comment.author);
         const getLikes = comment.likes.map(async (like) => await getInnoUserByProviderId(like.likedBy));
         const likes = await getPromiseResults(getLikes);
         const responseCount = await getCommentResponseCount(dbClient, comment.id);
 
         return {
           ...comment,
-          author: author,
           likedBy: likes,
           responseCount: responseCount,
         };
@@ -70,7 +68,7 @@ export const getProjectCollaborationComments = async (body: { projectId: string;
   }
 };
 
-export const getProjectCollaborationCommentResponses = async (body: { comment: Comment }) => {
+export const getProjectCollaborationCommentResponses = async (body: { comment: CollaborationComment }) => {
   const validatedParams = validateParams(getCollaborationCommentResponsesSchema, body);
 
   if (validatedParams.status !== StatusCodes.OK) {

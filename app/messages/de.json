@@ -33,6 +33,7 @@
   "components_collaboration_comments_collaborationCommentCard_upvoteError": "Der Kommentar konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",
   "components_collaboration_comments_collaborationCommentCard_updateError": "Der Kommentar konnte nicht aktualisiert werden. Bitte versuche es später noch einmal.",
   "components_collaboration_comments_collaborationCommentCard_deleteError": "Der Kommentar konnte nicht gelöscht werden. Bitte versuche es später noch einmal.",
+  "components_collaboration_comments_collaborationCommentCard_questionMissing": "Die Frage konnte nicht gefunden werden. Bitte versuche es später noch einmal.",
 
   "components_collaboration_comments_collaborationCommentResponseCard_updateError": "Die Antwort konnte nicht aktualisiert werden. Bitte versuche es später noch einmal.",
   "components_collaboration_comments_collaborationCommentResponseCard_upvoteError": "Die Antwort konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",

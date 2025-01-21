@@ -4,7 +4,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import Typography from '@mui/material/Typography';
 
 import { useUser } from '@/app/contexts/user-context';
-import { Comment, NewsFeedEntry } from '@/common/types';
+import { CollaborationComment, NewsFeedEntry } from '@/common/types';
 import { updateProjectCollaborationComment } from '@/components/collaboration/comments/actions';
 import CardContentWrapper from '@/components/common/CardContentWrapper';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
@@ -30,8 +30,6 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   const { entry } = props;
   const { comment, question, isEditing, cancelEditing, handleUpdate } = useNewsCollabCommentCard(props);
 
-  //todo refactor here
-
   return isEditing ? (
     <WriteCommentCard
       content={{ author: comment.author, text: comment.text, updatedAt: comment.updatedAt }}
@@ -40,7 +38,11 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
     />
   ) : (
     <>
-      <CommentOverview title={question.title} description={question.description} projectId={comment.objectId} />
+      <CommentOverview
+        title={question?.title || ''}
+        description={question?.description || ''}
+        projectId={comment.projectId}
+      />
       <CommentCardHeader content={comment} avatar={{ size: 32 }} />
       <CardContentWrapper>
         <Typography color="text.primary" variant="body1">
@@ -54,8 +56,16 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
 
 export function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   const { entry } = props;
-  const item = entry.item as unknown as Comment;
-  const question = item.additionalObjectId;
+  const item = entry.item as CollaborationComment;
+  const question = item.question;
+
+  if (!question) {
+    errorMessage({ message: m.components_collaboration_comments_collaborationCommentCard_questionMissing() });
+    appInsights.trackException({
+      exception: new Error('Failed to get collaboration question'),
+      severityLevel: SeverityLevel.Error,
+    });
+  }
 
   const [comment, setComment] = useState(item);
 

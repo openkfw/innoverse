@@ -1,6 +1,7 @@
 import {
   BasicCollaborationQuestion,
   BasicProject,
+  Comment,
   Event,
   ImageFormats,
   ObjectType,
@@ -26,20 +27,6 @@ import {
   RedisUser,
 } from '@/utils/newsFeed/redis/models';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
-
-type CollaborationComment = {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  author: User;
-  text: string;
-  likedBy: User[];
-  responseCount: number;
-  objectId: string;
-  projectName: string;
-  additionalObjectId?: string;
-  isLikedByUser?: boolean;
-};
 
 export const mapPostToRedisNewsFeedEntry = (
   post: Post,
@@ -180,7 +167,7 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
 };
 
 export const mapCollaborationCommentToRedisNewsFeedEntry = (
-  comment: CollaborationComment,
+  comment: Comment,
   question: BasicCollaborationQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
@@ -194,7 +181,7 @@ export const mapCollaborationCommentToRedisNewsFeedEntry = (
     updatedAt: getUnixTimestamp(comment.createdAt),
     item: item,
     type: NewsType.COLLABORATION_COMMENT,
-    search: escapeRedisTextSeparators((item.question || '') + ' ' + (item.comment || '')),
+    search: escapeRedisTextSeparators((item.question || '') + ' ' + (item.text || '')),
   };
 };
 
@@ -260,7 +247,7 @@ export const mapToRedisCollaborationQuestion = (
 };
 
 export const mapToRedisCollaborationComment = (
-  comment: CollaborationComment,
+  comment: Comment,
   question: BasicCollaborationQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
@@ -271,7 +258,7 @@ export const mapToRedisCollaborationComment = (
     updatedAt: getUnixTimestamp(comment.createdAt),
     projectId: comment.objectId,
     author: comment.author,
-    comment: comment.text,
+    text: comment.text,
     question: {
       id: question.id,
       authors: question.authors,

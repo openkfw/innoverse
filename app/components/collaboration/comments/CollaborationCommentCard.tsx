@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
-import { Comment } from '@/common/types';
+import { CollaborationComment } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import * as m from '@/src/paraglide/messages.js';
 
@@ -17,7 +17,7 @@ import {
 } from './actions';
 
 interface CollaborationCommentCardProps {
-  comment: Comment;
+  comment: CollaborationComment;
   projectName?: string;
   onDelete?: () => void;
 }

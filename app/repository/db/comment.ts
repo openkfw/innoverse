@@ -176,12 +176,14 @@ export async function getCommentsByAdditionalObjectId(
   client: PrismaClient,
   objectId: string,
   additionalObjectId: string,
+  topLevel?: boolean,
 ) {
   try {
     return await client.comment.findMany({
       where: {
         objectId,
         additionalObjectId,
+        ...(topLevel ? { parentId: null } : {}),
       },
       ...defaultParams,
     });
@@ -235,7 +237,7 @@ export async function handleCommentLike(client: PrismaClient, commentId: string,
         return tx.like.create({
           data: {
             objectId: commentId,
-            objectType: 'COMMENT',
+            objectType: ObjectType.COMMENT,
             likedBy,
           },
         });

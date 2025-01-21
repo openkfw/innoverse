@@ -47,7 +47,16 @@ export const NewsUpdateCard = (props: UpdateCardProps) => {
   };
 
   return state.isEditing(update) ? (
-    <WriteCommentCard content={update} onSubmit={handleUpdate} onDiscard={editingInteractions.onCancel} />
+    <WriteCommentCard
+      content={{
+        author: update.author,
+        updatedAt: update.updatedAt,
+        text: update.comment,
+        anonymous: update.anonymous,
+      }}
+      onSubmit={handleUpdate}
+      onDiscard={editingInteractions.onCancel}
+    />
   ) : (
     <>
       <CommentCardHeader content={update} avatar={{ size: 32 }} />

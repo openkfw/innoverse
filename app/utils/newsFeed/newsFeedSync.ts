@@ -164,7 +164,7 @@ const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEn
 
 export const aggregateCollaborationComments = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
   // collaboration comments fetched from prisma, hence no pagination required
-  const comments = await getCommentsStartingFrom(dbClient, from, ObjectType.COMMENT); //todo check if type is COMMENT or a new type is needed
+  const comments = await getCommentsStartingFrom(dbClient, from, ObjectType.COLLABORATION_COMMENT);
   if (comments.length === 0) {
     logger.info('No collaboration comments found to sync');
   }

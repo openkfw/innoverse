@@ -1,6 +1,6 @@
 import Stack from '@mui/material/Stack';
 
-import { CommentWithResponses } from '@/common/types';
+import { CommentWithResponses, ObjectType } from '@/common/types';
 import WriteCommentResponseCard from '@/components/common/comments/WriteCommentResponseCard';
 import { NewsCommentCard } from '@/components/newsPage/cards/NewsCommentCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
@@ -8,7 +8,7 @@ import { addUserComment } from '@/components/newsPage/threads/actions';
 interface NewsCommentThreadProps {
   item: { id: string };
   comment: CommentWithResponses;
-  commentType: 'UPDATE' | 'POST';
+  commentType: ObjectType.POST | ObjectType.UPDATE;
   level: number;
   onDelete: () => void;
   onUpdate: (updatedComment: CommentWithResponses) => void;
@@ -40,7 +40,7 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
       comment: response,
       objectType: props.commentType,
       objectId: props.item.id,
-      parentCommentId: comment?.parentId,
+      parentCommentId: comment?.id,
     });
 
     if (!newResponse) return;
@@ -55,7 +55,7 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
     <>
       <NewsCommentCard
         comment={comment}
-        commentType={props.commentType}
+        objectType={props.commentType}
         displayResponseControls={level < 3}
         onDelete={props.onDelete}
         onUpdate={updateComment}

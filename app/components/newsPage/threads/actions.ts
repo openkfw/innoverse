@@ -1,9 +1,8 @@
 'use server';
 
-import { ObjectType } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 
-import { UserSession } from '@/common/types';
+import { ObjectType, UserSession } from '@/common/types';
 import { addComment } from '@/services/commentService';
 import { withAuth } from '@/utils/auth';
 

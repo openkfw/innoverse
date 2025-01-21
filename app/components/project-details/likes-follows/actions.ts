@@ -20,7 +20,7 @@ export const handleLike = withAuth(async (user: UserSession, body: { projectId: 
   try {
     const validatedParams = validateParams(likeSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      await addLike(dbClient, body.projectId, user.providerId);
+      await addLike(dbClient, body.projectId, ObjectType.PROJECT, user.providerId);
       return { status: StatusCodes.OK };
     }
     return {

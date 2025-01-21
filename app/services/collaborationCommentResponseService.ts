@@ -1,15 +1,16 @@
 'use server';
 
-import { Comment, ObjectType, UserSession } from '@/common/types';
+import { CollaborationComment, ObjectType, UserSession } from '@/common/types';
 import { addCommentToDb, deleteCommentInDb, getCommentResponseCount } from '@/repository/db/comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { updateCollaborationCommentInCache } from '@/services/collaborationCommentService';
 import getLogger from '@/utils/logger';
+import { mapToComment } from '@/utils/requests/comments/mapping';
 
 type AddResponse = {
   user: UserSession;
   text: string;
-  comment: Comment;
+  comment: CollaborationComment;
 };
 
 type DeleteResponse = {
@@ -24,15 +25,17 @@ const logger = getLogger();
 export const addCollaborationCommentResponse = async ({ user, text, comment }: AddResponse) => {
   const createdResponse = await addCommentToDb({
     client: dbClient,
-    objectId: comment.objectId,
-    objectType: ObjectType.COMMENT,
+    objectId: comment.projectId,
+    objectType: ObjectType.PROJECT,
+    additionalObjectType: ObjectType.COLLABORATION_QUESTION,
+    additionalObjectId: comment.question?.id,
     author: user.providerId,
     text,
     parentId: comment.id,
   });
   const responseCount = await getCommentResponseCount(dbClient, comment.id);
   await updateCollaborationCommentInCache({ user, comment: { id: comment.id, responseCount } });
-  return createdResponse;
+  return await mapToComment(createdResponse);
 };
 
 export const deleteCollaborationCommentResponse = async ({ user, response }: DeleteResponse) => {
@@ -41,6 +44,6 @@ export const deleteCollaborationCommentResponse = async ({ user, response }: Del
     const responseCount = await getCommentResponseCount(dbClient, deletedResponse.parentId);
     await updateCollaborationCommentInCache({ user, comment: { id: deletedResponse.parentId, responseCount } });
   } else {
-    logger.info('no parentID'); //todo test
+    logger.info('no parentID');
   }
 };

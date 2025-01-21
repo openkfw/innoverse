@@ -51,7 +51,7 @@ export const addCollaborationCommentResponseSchema = z
         id: z.string(),
       })
       .required(),
-    response: z.string(),
+    text: z.string(),
   })
   .required();
 

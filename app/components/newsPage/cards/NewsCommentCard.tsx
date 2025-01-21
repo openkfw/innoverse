@@ -4,7 +4,7 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import Stack from '@mui/material/Stack';
 
 import { useUser } from '@/app/contexts/user-context';
-import { CommonCommentProps } from '@/common/types';
+import { CommonCommentProps, ObjectType } from '@/common/types';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { errorMessage } from '@/components/common/CustomToast';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
@@ -25,7 +25,7 @@ import { appInsights } from '@/utils/instrumentation/AppInsights';
 
 interface NewsCommentCardProps {
   comment: CommonCommentProps;
-  objectType: 'UPDATE' | 'POST';
+  objectType: ObjectType.POST | ObjectType.UPDATE;
   displayResponseControls: boolean;
   onDelete: () => void;
   onUpdate: (text: string) => void;

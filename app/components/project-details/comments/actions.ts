@@ -2,7 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { Comment, UserSession } from '@/common/types';
+import { Comment, ObjectType, UserSession } from '@/common/types';
 import {
   addCommentToDb,
   deleteCommentInDb,
@@ -34,7 +34,7 @@ export const addProjectComment = withAuth(async (user: UserSession, body: { proj
       const newComment = await addCommentToDb({
         client: dbClient,
         objectId: body.projectId,
-        objectType: 'PROJECT',
+        objectType: ObjectType.PROJECT,
         author: user.providerId,
         text: body.comment,
       });

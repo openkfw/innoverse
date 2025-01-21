@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 
-import { NewsFeedEntry, ProjectUpdate } from '@/common/types';
+import { NewsFeedEntry, ObjectType, ProjectUpdate } from '@/common/types';
 import { NewsUpdateCard } from '@/components/newsPage/cards/NewsUpdateCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
@@ -29,7 +29,7 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
   const addResponse = async (text: string) => {
     const response = await addUserComment({
       comment: text,
-      objectType: 'UPDATE',
+      objectType: ObjectType.UPDATE,
       objectId: update.id,
     });
     const data = response.data ? { ...response.data, responseCount: 0, responses: [] } : undefined;
@@ -43,12 +43,12 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
       fetchResponses={fetchResponses}
       addResponse={addResponse}
       renderResponse={(response, idx, deleteResponse, updateResponse) => (
-        <Box width="98%" display="block" alignSelf="end">
+        <Box width="98%" display="block" alignSelf="end" key={`${idx}-${response.id}`}>
           <NewsCommentThread
             key={`${idx}-${response.id}`}
             item={update}
             comment={response}
-            commentType="UPDATE"
+            commentType={ObjectType.UPDATE}
             level={1}
             onDelete={deleteResponse}
             onUpdate={updateResponse}

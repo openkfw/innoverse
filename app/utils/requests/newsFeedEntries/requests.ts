@@ -15,9 +15,6 @@ export const getNewsFeedPageProps = async () => {
   try {
     const initialNewsFeed = await getNewsFeed();
 
-    // initialNewsFeed.map((f) => {
-    //   if (f.item.projectId === '7') console.log(f.item);
-    // });
     const countByType = await countNewsFeedEntriesByType();
     const countByProjectId = await countNewsFeedEntriesByProjectIds();
 

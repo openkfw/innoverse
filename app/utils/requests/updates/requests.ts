@@ -349,10 +349,10 @@ export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: St
     const response = await strapiGraphQLFetcher(GetUpdatesStartingFromQuery, { from, page, pageSize });
     const updates = await mapToProjectUpdates(response.updates?.data);
 
-    const newsComments = await getCommentsStartingFrom(dbClient, from, 'UPDATE');
+    const newsComments = await getCommentsStartingFrom(dbClient, from, ObjectType.UPDATE);
     // Get unique ids of updates
     const updatesIds = getUniqueValues(
-      newsComments.map((comment) => comment.newsComment?.newsId).filter((id): id is string => id !== undefined),
+      newsComments.map((comment) => comment?.objectId).filter((id): id is string => id !== undefined),
     );
 
     if (updatesIds.length > 0) {
