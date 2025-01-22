@@ -168,7 +168,7 @@ DROP TABLE "project_comments";
 DROP TYPE "CommentType";
 
 -- CreateIndex
-CREATE UNIQUE INDEX "CommentLike_likedBy_key" ON "CommentLike"("likedBy");
+CREATE UNIQUE INDEX "CommentLike_commentId_likedBy_key" ON "CommentLike"("likedBy", "commentId");
 
 -- AddForeignKey
 ALTER TABLE "CommentLike" ADD CONSTRAINT "CommentLike_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE SET NULL ON UPDATE CASCADE;

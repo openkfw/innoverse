@@ -2,6 +2,7 @@
 
 import { Comment, ObjectType, UserSession } from '@/common/types';
 import { addCommentToDb, countComments, deleteCommentInDb, updateCommentInDb } from '@/repository/db/comment';
+import { addCommentLike, deleteCommentAndUserLike } from '@/repository/db/comment_like';
 import { getFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { updatePostInCache } from '@/services/postService';
@@ -97,14 +98,14 @@ const notifyObjectFollowers = async (objectId: string, objectType: ObjectType) =
   }
 };
 
-// export const addLike = async (body: { author: UserSession; commentId: string }): Promise<void> => {
-//   const { author, commentId } = body;
+export const addLike = async (body: { author: UserSession; commentId: string }): Promise<void> => {
+  const { author, commentId } = body;
 
-//   await addLikeToDb(dbClient, commentId, author.providerId);
-// };
+  await addCommentLike(dbClient, commentId, author.providerId);
+};
 
-// export const deleteLike = async (body: { author: UserSession; commentId: string }): Promise<void> => {
-//   const { author, commentId } = body;
+export const deleteLike = async (body: { author: UserSession; commentId: string }): Promise<void> => {
+  const { author, commentId } = body;
 
-//   await deleteLikeFromDb(dbClient, commentId, author.providerId);
-// };
+  await deleteCommentAndUserLike(dbClient, commentId, author.providerId);
+};

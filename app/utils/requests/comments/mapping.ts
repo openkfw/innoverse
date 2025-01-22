@@ -3,11 +3,12 @@ import { CommentDB, CommentLikeDB } from '@/repository/db/utils/types';
 import { getFulfilledResults } from '@/utils/helpers';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 
-export const mapToComment = async (comment: CommentDB): Promise<Comment> => {
+export const mapToComment = async (comment: CommentDB, currentUser?: string): Promise<Comment> => {
   const author = await getInnoUserByProviderId(comment.author);
   const likedBy = await Promise.allSettled(
     comment.likes.map(async (like) => await getInnoUserByProviderId(like.likedBy)),
   ).then((results) => getFulfilledResults(results));
+  const isLikedByUser = likedBy.some((user) => user.providerId === currentUser);
 
   return {
     id: comment.id,
@@ -18,6 +19,7 @@ export const mapToComment = async (comment: CommentDB): Promise<Comment> => {
     objectId: comment.objectId,
     objectType: comment.objectType as ObjectType,
     likedBy,
+    isLikedByUser,
     ...(comment.anonymous && { anonymous: comment.anonymous }),
     ...(comment.additionalObjectId && { additionalObjectId: comment.additionalObjectId }),
     ...(comment.additionalObjectType &&
@@ -27,12 +29,6 @@ export const mapToComment = async (comment: CommentDB): Promise<Comment> => {
     ...(comment.likes && { likes: mapLikes(comment.likes) }),
     responseCount: comment.responses.length,
   };
-};
-
-export const mapToComments = async (comments: CommentDB[]): Promise<Comment[]> => {
-  return await Promise.allSettled(comments.map(async (comment) => await mapToComment(comment))).then((results) =>
-    getFulfilledResults(results),
-  );
 };
 
 export const mapToCollborationComment = async (

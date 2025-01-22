@@ -3,7 +3,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { ObjectType, UserSession } from '@/common/types';
-import { addComment } from '@/services/commentService';
+import { addComment, addLike, deleteLike } from '@/services/commentService';
 import { withAuth } from '@/utils/auth';
 
 interface AddUserComment {
@@ -25,16 +25,16 @@ export const addUserComment = withAuth(async (user: UserSession, body: AddUserCo
   };
 });
 
-// export const addCommentLike = withAuth(async (user: UserSession, commentId: string) => {
-//   const author = user;
+export const addCommentLike = withAuth(async (user: UserSession, commentId: string) => {
+  const author = user;
 
-//   await addLike({ author, commentId });
-//   return { status: StatusCodes.OK };
-// });
+  await addLike({ author, commentId });
+  return { status: StatusCodes.OK };
+});
 
-// export const deleteCommentLike = withAuth(async (user: UserSession, commentId: string) => {
-//   const author = user;
+export const deleteCommentLike = withAuth(async (user: UserSession, commentId: string) => {
+  const author = user;
 
-//   await deleteLike({ author, commentId });
-//   return { status: StatusCodes.OK };
-// });
+  await deleteLike({ author, commentId });
+  return { status: StatusCodes.OK };
+});

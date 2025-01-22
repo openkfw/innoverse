@@ -12,8 +12,10 @@ interface NewsPostThreadProps {
 export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
   const post = entry.item as Post;
 
-  const fetchResponses = async () => await getCommentByObjectId(post.id);
-
+  const fetchResponses = async () => {
+    const result = await getCommentByObjectId({ objectId: post.id });
+    return result.data;
+  };
   const addResponse = async (text: string) => {
     const response = await addUserComment({
       comment: text,

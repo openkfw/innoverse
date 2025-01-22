@@ -56,7 +56,7 @@ model CommentLike {
 
   likedBy   String // user id  
 
-   @@unique(fields: [likedBy])
+   @@unique(fields: [likedBy, commentId])
 }
 
 model Follow {

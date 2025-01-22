@@ -22,7 +22,7 @@ interface CommentThreadProps<TComment> {
   card: React.ReactNode;
   disableDivider?: boolean;
   indentResponses?: React.CSSProperties['paddingLeft'];
-  fetchResponses: () => Promise<TComment[]>;
+  fetchResponses: () => Promise<TComment[] | undefined>; //todo fix undefined
   renderResponse: (
     comment: TComment,
     idx: number,

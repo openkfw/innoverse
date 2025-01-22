@@ -421,6 +421,7 @@ export type CommonCommentProps = {
   text: string;
   author: User;
   likes?: CommentLike[];
+  isLikedByUser?: boolean;
   responseCount: number;
   parentId?: string;
 };
