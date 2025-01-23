@@ -36,9 +36,7 @@ export const mapToCollborationComment = async (
   question?: CollaborationQuestion,
 ): Promise<CollaborationComment> => {
   const author = await getInnoUserByProviderId(comment.author);
-  const likedBy = await Promise.allSettled(
-    comment.likes.map(async (like) => await getInnoUserByProviderId(like.likedBy)),
-  ).then((results) => getFulfilledResults(results));
+
   return {
     id: comment.id,
     createdAt: comment.createdAt,
@@ -46,7 +44,7 @@ export const mapToCollborationComment = async (
     text: comment.text,
     author,
     projectId: comment.objectId,
-    likedBy,
+    likedBy: comment.likes.map((like) => like.likedBy),
     anonymous: comment.anonymous || false,
     question,
     projectName: question?.projectName || '',

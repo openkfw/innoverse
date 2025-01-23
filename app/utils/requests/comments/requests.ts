@@ -18,9 +18,7 @@ const logger = getLogger();
 
 export const getCommentsByObjectId = withAuth(async (user: UserSession, body: { objectId: string }) => {
   try {
-    const dbComments = await getCommentsByObjectIdFromDB(dbClient, body.objectId);
-    const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment, user.providerId)));
-    const commensWithResponses = setResponses(comments);
+    const commensWithResponses = await getCommentsByObjectIdWithResponses(body.objectId, user.providerId);
     return {
       status: StatusCodes.OK,
       data: commensWithResponses,
@@ -39,23 +37,21 @@ export const getCommentsByObjectId = withAuth(async (user: UserSession, body: { 
   }
 });
 
-//todo error handling
 export const getRedisNewsCommentsWithResponses = async (objectId: string) => {
   try {
-    // const { data } = await getCommentByObjectId({ objectId });
-    // if (!data) {
-    //   const error: InnoPlatformError = dbError(`Getting news comment by id: ${objectId}`, new Error(), objectId);
-    //   logger.error(error);
-    // }
-    const dbComments = await getCommentsByObjectIdFromDB(dbClient, objectId);
-    const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment)));
-    const commensWithResponses = setResponses(comments);
+    const commensWithResponses = await getCommentsByObjectIdWithResponses(objectId);
     return mapCommentWithResponsesToRedisNewsComments(commensWithResponses);
   } catch (err) {
     const error: InnoPlatformError = dbError(`Getting news comment by id: ${objectId}`, err as Error, objectId);
     logger.error(error);
     throw err;
   }
+};
+
+export const getCommentsByObjectIdWithResponses = async (objectId: string, userId?: string) => {
+  const dbComments = await getCommentsByObjectIdFromDB(dbClient, objectId);
+  const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment, userId)));
+  return setResponses(comments);
 };
 
 const setResponses = (comments: CommonCommentProps[]) => {

@@ -15,7 +15,7 @@ import { NewsType, RedisNewsComment, RedisPost } from '@/utils/newsFeed/redis/mo
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { deleteCommentsInCache } from '@/utils/newsFeed/redis/services/commentsService';
-import { getCommentsByObjectId } from '@/utils/requests/comments/requests';
+import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 
 const logger = getLogger();
@@ -137,14 +137,14 @@ export const createNewsFeedEntryForPostById = async (postId: string, author?: Us
 };
 
 export const createNewsFeedEntryForPost = async (post: PrismaPost, author?: User) => {
-  const comments = await getCommentsByObjectId({ objectId: post.id });
+  const comments = await getRedisNewsCommentsWithResponses(post.id);
   const reactions = await getReactionsForEntity(dbClient, ObjectType.POST, post.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
   const followers = await mapToRedisUsers(followerIds);
 
   const postAuthor = author ?? (await getInnoUserByProviderId(post.author));
   const postWithAuthor = { ...post, author: postAuthor, objectType: ObjectType.POST };
-  return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers, comments.data);
+  return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers, comments);
 };
 
 const getRedisKey = (postId: string) => `${NewsType.POST}:${postId}`;
