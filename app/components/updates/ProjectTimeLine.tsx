@@ -101,10 +101,10 @@ const ProjectYearTimeline = ({ year, projectUpdates, isLastYear, widthOfDateColu
               showDivider={!isLastYear || idx < projectUpdates.length - 1}
             />
           </Box>
+
           <TextCard
-            sx={updateCommentCardStyles}
-            header={<CommentCardHeaderSecondary content={update} sx={updateCommentCardHeaderStyles} />}
             text={update.comment}
+            header={<CommentCardHeaderSecondary content={update} sx={updateCommentCardHeaderStyles} />}
             footer={<UpdateEmojiReactionCard update={update} />}
           />
         </Stack>
@@ -125,14 +125,6 @@ const timeLineDateStyles: SxProps = {
   height: '100%',
   [theme.breakpoints.down('md')]: {
     maxWidth: '75px',
-  },
-};
-
-const updateCommentCardStyles: SxProps = {
-  marginBottom: '68px',
-  width: '80%',
-  [theme.breakpoints.down('md')]: {
-    marginBottom: '13px',
   },
 };
 

@@ -3,7 +3,6 @@
 import type { Post as PrismaPost } from '@prisma/client';
 
 import { ObjectType, Post, User, UserSession } from '@/common/types';
-import { countComments } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import { addPostToDb, deletePostFromDb, getPostById, handlePostLikeInDb, updatePostInDb } from '@/repository/db/posts';
 import dbClient from '@/repository/db/prisma/prisma';
@@ -12,9 +11,11 @@ import { InnoPlatformError, redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapPostToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
-import { NewsType, RedisPost } from '@/utils/newsFeed/redis/models';
+import { NewsType, RedisNewsComment, RedisPost } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
+import { deleteCommentsInCache } from '@/utils/newsFeed/redis/services/commentsService';
+import { getCommentsByObjectId } from '@/utils/requests/comments/requests';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 
 const logger = getLogger();
@@ -24,7 +25,7 @@ type AddPost = { content: string; user: UserSession; anonymous?: boolean };
 type UpdatePost = { postId: string; content: string; user: UserSession };
 
 type UpdatePostInCache = {
-  post: { id: string; content?: string; likedBy?: string[]; responseCount?: number };
+  post: { id: string; content?: string; likedBy?: string[]; comments?: RedisNewsComment[] };
   user: UserSession;
 };
 
@@ -34,7 +35,7 @@ type DeletePost = { postId: string };
 
 export const addPost = async ({ content, user, anonymous }: AddPost) => {
   const createdPost = await addPostToDb(dbClient, content, user.providerId, anonymous ?? false);
-  await addPostToCache({ ...createdPost, author: user, responseCount: 0 });
+  await addPostToCache({ ...createdPost, author: user, objectType: ObjectType.POST });
   return createdPost;
 };
 
@@ -61,7 +62,7 @@ export const handleUpvotePost = async ({ postId, user }: UpvotePost) => {
 export const addPostToCache = async (post: Post) => {
   try {
     const redisClient = await getRedisClient();
-    const newsFeedEntry = mapPostToRedisNewsFeedEntry(post, [], []);
+    const newsFeedEntry = mapPostToRedisNewsFeedEntry(post, [], [], []);
     await saveNewsFeedEntry(redisClient, newsFeedEntry);
   } catch (err) {
     const error: InnoPlatformError = redisError(`Add post with id: ${post.id} to cache`, err as Error);
@@ -79,7 +80,6 @@ export const updatePostInCache = async ({ post, user }: UpdatePostInCache) => {
     const cachedItem = newsFeedEntry.item as RedisPost;
     cachedItem.content = post.content ?? cachedItem.content;
     cachedItem.likedBy = post.likedBy ?? cachedItem.likedBy;
-    cachedItem.responseCount = post.responseCount ?? cachedItem.responseCount;
     newsFeedEntry.item = cachedItem;
     newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
 
@@ -98,7 +98,11 @@ export const deletePostFromCache = async (postId: string) => {
   try {
     const redisClient = await getRedisClient();
     const redisKey = getRedisKey(postId);
-    await deleteItemFromRedis(redisClient, redisKey);
+    const entry = await getNewsFeedEntryByKey(redisClient, redisKey);
+    if (entry) {
+      await deleteCommentsInCache(entry);
+      await deleteItemFromRedis(redisClient, redisKey);
+    }
   } catch (err) {
     const error: InnoPlatformError = redisError(`Delete post with id: ${postId} from cache`, err as Error);
     logger.error(error);
@@ -133,14 +137,14 @@ export const createNewsFeedEntryForPostById = async (postId: string, author?: Us
 };
 
 export const createNewsFeedEntryForPost = async (post: PrismaPost, author?: User) => {
+  const comments = await getCommentsByObjectId({ objectId: post.id });
   const reactions = await getReactionsForEntity(dbClient, ObjectType.POST, post.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
   const followers = await mapToRedisUsers(followerIds);
-  const responseCount = await countComments(dbClient, post.id);
 
   const postAuthor = author ?? (await getInnoUserByProviderId(post.author));
-  const postWithAuthor = { ...post, author: postAuthor, responseCount };
-  return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers);
+  const postWithAuthor = { ...post, author: postAuthor, objectType: ObjectType.POST };
+  return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers, comments.data);
 };
 
 const getRedisKey = (postId: string) => `${NewsType.POST}:${postId}`;

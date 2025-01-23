@@ -22,6 +22,7 @@ export function mapToUser(userData: ResultOf<typeof InnoUserFragment>): User {
   return {
     id: userData.id,
     name: attributes.name,
+    username: attributes.username ?? undefined,
     role: attributes.role ?? undefined,
     department: attributes.department ?? undefined,
     email: attributes.email ?? undefined,

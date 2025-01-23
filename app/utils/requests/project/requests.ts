@@ -5,14 +5,14 @@ import { StatusCodes } from 'http-status-codes';
 import { Comment, ObjectType, StartPagination, UserSession } from '@/common/types';
 import { getCommentsSchema } from '@/components/project-details/comments/validationSchema';
 import { RequestError } from '@/entities/error';
-import { getCommentResponseCount, getCommentsByObjectId, isCommentLikedBy } from '@/repository/db/comment';
+import { getCommentsByObjectId, isCommentLikedBy } from '@/repository/db/comment';
 import { getProjectFollowers, isProjectFollowedBy } from '@/repository/db/follow';
 import { getProjectLikes, isObjectLikedBy } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
-import { getFulfilledResults, getPromiseResults, sortDateByCreatedAtAsc } from '@/utils/helpers';
+import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapFollow } from '@/utils/newsFeed/redis/redisMappings';
 import { getCollaborationQuestionsByProjectId } from '@/utils/requests/collaborationQuestions/requests';
@@ -22,6 +22,7 @@ import { mapToBasicProject, mapToLike, mapToProject, mapToProjects } from '@/uti
 import {
   GetProjectAuthorIdByProjectIdQuery,
   GetProjectByIdQuery,
+  GetProjectsBySearchStringQuery,
   GetProjectsQuery,
   GetProjectsStartingFromQuery,
   GetProjectTitleByIdQuery,
@@ -133,6 +134,34 @@ export async function getProjects(
   }
 }
 
+export async function getProjectsBySearchString(
+  {
+    sort,
+    searchString,
+    pagination,
+  }: {
+    sort: { by: 'updatedAt' | 'title'; order: 'asc' | 'desc' };
+    searchString: string;
+    pagination: {
+      page: number;
+      pageSize?: number;
+    };
+  } = { pagination: { pageSize: 80, page: 1 }, sort: { by: 'updatedAt', order: 'desc' }, searchString: '' },
+) {
+  try {
+    const response = await strapiGraphQLFetcher(GetProjectsBySearchStringQuery, {
+      page: pagination.page,
+      pageSize: pagination?.pageSize,
+      sort: `${sort.by}:${sort.order}`,
+      searchString,
+    });
+    const projects = response.projects?.data.map(mapToBasicProject) ?? [];
+    return projects;
+  } catch (err) {
+    console.info(err);
+  }
+}
+
 export async function getProjectAuthorIdByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectAuthorIdByProjectIdQuery, { projectId });
@@ -214,22 +243,9 @@ export const getProjectComments = async (body: { projectId: string }) => {
   try {
     const validatedParams = validateParams(getCommentsSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      const result = await getCommentsByObjectId(dbClient, body.projectId);
+      const dbComments = await getCommentsByObjectId(dbClient, body.projectId);
+      const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment)));
 
-      const comments = await Promise.allSettled(
-        sortDateByCreatedAtAsc(result).map(async (c) => {
-          const responseCount = await getCommentResponseCount(dbClient, c.id);
-          const projectName = await getProjectTitleById(c.objectId);
-          const comment = await mapToComment(c);
-          return {
-            ...comment,
-            projectName,
-            responseCount,
-          } as Comment;
-        }),
-      ).then((results) => getFulfilledResults(results));
-
-      // Get user likes
       const getLikes = comments.map(async (comment): Promise<Comment> => {
         const { data: isLikedByUser } = await isProjectCommentLikedByUser({ commentId: comment.id });
 

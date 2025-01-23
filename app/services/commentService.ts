@@ -5,12 +5,15 @@ import { addCommentToDb, countComments, deleteCommentInDb, updateCommentInDb } f
 import { addCommentLike, deleteCommentAndUserLike } from '@/repository/db/comment_like';
 import { getFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
-import { updatePostInCache } from '@/services/postService';
-import { updateProjectUpdateInCache } from '@/services/updateService';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
+import { getNewsTypeByString, mapDBCommentToRedisComment } from '@/utils/newsFeed/redis/mappings';
+import { addNewsCommentToCache } from '@/utils/newsFeed/redis/services/commentsService';
 import { NotificationTopic, notifyFollowers } from '@/utils/notification/notificationSender';
 import { mapToComment } from '@/utils/requests/comments/mapping';
+
+import { updatePostInCache } from './postService';
+import { updateProjectUpdateInCache } from './updateService';
 
 const logger = getLogger();
 
@@ -20,6 +23,7 @@ interface AddComment {
   comment: string;
   objectType: ObjectType;
   parentCommentId?: string;
+  projectId?: string;
 }
 
 interface RemoveComment {
@@ -35,7 +39,7 @@ interface UpdateComment {
 
 export const addComment = async (body: AddComment): Promise<Comment> => {
   const { comment, objectType, author, objectId, parentCommentId } = body;
-  const result = await addCommentToDb({
+  const commentDb = await addCommentToDb({
     client: dbClient,
     objectId,
     objectType,
@@ -43,9 +47,15 @@ export const addComment = async (body: AddComment): Promise<Comment> => {
     text: comment,
     parentId: parentCommentId,
   });
-  updateCommentInCache({ objectId, objectType: result.objectType as ObjectType }, author);
+  const redisComment = await mapDBCommentToRedisComment(commentDb);
+  await addNewsCommentToCache({
+    newsType: getNewsTypeByString(objectType),
+    newsId: objectId,
+    comment: redisComment,
+    parentId: parentCommentId,
+  });
   notifyObjectFollowers(objectId, objectType);
-  return await mapToComment(result);
+  return await mapToComment(commentDb);
 };
 
 export const updateComment = async ({ author, commentId, content }: UpdateComment) => {

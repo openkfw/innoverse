@@ -3,7 +3,7 @@ import NewsPostCard from '@/components/newsPage/cards/NewsPostCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
 import { NewsCommentThread } from '@/components/newsPage/threads/NewsCommentThread';
-import { getCommentByObjectId } from '@/utils/requests/comments/requests';
+import { getCommentsByObjectId } from '@/utils/requests/comments/requests';
 
 interface NewsPostThreadProps {
   entry: NewsFeedEntry;
@@ -12,35 +12,35 @@ interface NewsPostThreadProps {
 export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
   const post = entry.item as Post;
 
-  const fetchResponses = async () => {
-    const result = await getCommentByObjectId({ objectId: post.id });
+  const fetchComments = async () => {
+    const result = await getCommentsByObjectId({ objectId: post.id });
     return result.data;
   };
-  const addResponse = async (text: string) => {
-    const response = await addUserComment({
+  const addComment = async (text: string) => {
+    const comment = await addUserComment({
       comment: text,
       objectType: ObjectType.POST,
       objectId: post.id,
     });
-    const data = response.data ? { ...response.data, responseCount: 0, responses: [] } : undefined;
-    return { ...response, data };
+    const data = comment.data ? { ...comment.data, comments: [] } : undefined;
+    return { ...comment, data };
   };
 
   return (
     <CommentThread
       comment={post}
       card={<NewsPostCard entry={entry} />}
-      fetchResponses={fetchResponses}
-      addResponse={addResponse}
-      renderResponse={(response, idx, deleteResponse, updateResponse) => (
+      fetchComments={fetchComments}
+      addComment={addComment}
+      renderComment={(comment, idx, deleteComment, updateComment) => (
         <NewsCommentThread
-          key={`${idx}-${response.id}`}
+          key={`${idx}-${comment.id}`}
           item={post}
-          comment={response}
+          comment={comment}
           commentType={ObjectType.POST}
           level={1}
-          onDelete={deleteResponse}
-          onUpdate={updateResponse}
+          onDelete={deleteComment}
+          onUpdate={updateComment}
         />
       )}
     />

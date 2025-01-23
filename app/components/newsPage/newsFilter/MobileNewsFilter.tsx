@@ -15,7 +15,8 @@ import CloseIcon from '@/components/icons/CloseIcon';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
-import ApplyFilterButton, { APPLY_BUTTON } from './ApplyFilterButton';
+import ApplyFilterButton, { APPLY_BUTTON } from '../../common/ApplyFilterButton';
+
 import NewsProjectsFilter from './NewsProjectsFilter';
 import NewsTopicFilter from './NewsTopicFilter';
 

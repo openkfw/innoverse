@@ -11,31 +11,31 @@ interface CollaborationCommentResponseThreadProps {
 
 export const CollaborationCommentResponseThread = (props: CollaborationCommentResponseThreadProps) => {
   const { response, onDelete } = props;
-  const { fetchResponses, addResponse } = useCollaborationCommentResponseThread();
+  const { fetchComments, addComment } = useCollaborationCommentResponseThread();
 
   return (
     <CommentThread
-      comment={{ id: response.id, responseCount: 0 }}
+      comment={{ id: response.id, author: response.author }}
       card={<CollaborationCommentResponseCard response={response} onDelete={onDelete} />}
-      fetchResponses={fetchResponses}
-      renderResponse={(_response, _idx, _deleteResponse) => <></>}
-      addResponse={addResponse}
+      fetchComments={fetchComments}
+      renderComment={(_comment, _idx, _deleteComment) => <></>}
+      addComment={addComment}
     />
   );
 };
 
 export function useCollaborationCommentResponseThread() {
-  const fetchResponses = async () => {
-    const responses: { id: string; createdAt: Date; responseCount: number }[] = [];
-    return responses;
+  const fetchComments = async () => {
+    const comments: { id: string; createdAt: Date; commentCount: number }[] = [];
+    return comments;
   };
 
-  const addResponse = async (_response: string) => {
-    return { status: StatusCodes.OK, data: { id: '0', createdAt: new Date(), responseCount: 0 } };
+  const addComment = async (_response: string) => {
+    return { status: StatusCodes.OK, data: { id: '0', createdAt: new Date(), commentCount: 0 } };
   };
 
   return {
-    fetchResponses,
-    addResponse,
+    fetchComments,
+    addComment,
   };
 }

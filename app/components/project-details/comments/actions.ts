@@ -45,7 +45,7 @@ export const addProjectComment = withAuth(async (user: UserSession, body: { proj
           ...newComment,
           author,
           likedBy: [],
-          responseCount: 0,
+          commentCount: 0,
           questionId: '',
           responses: [],
         } as Comment,

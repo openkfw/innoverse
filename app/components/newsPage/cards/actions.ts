@@ -13,9 +13,9 @@ export const updateUserComment = withAuth(
   ) => {
     try {
       await updateComment({
-        author: user,
         commentId: body.commentId,
         content: body.content,
+        author: user,
       });
       return {
         status: StatusCodes.OK,

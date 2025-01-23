@@ -13,9 +13,11 @@ import {
   mapToRedisUsers,
   mapUpdateToRedisNewsFeedEntry,
 } from '@/utils/newsFeed/redis/mappings';
-import { NewsType, RedisProjectUpdate } from '@/utils/newsFeed/redis/models';
+import { NewsType, RedisNewsComment, RedisProjectUpdate } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
+import { deleteCommentsInCache } from '@/utils/newsFeed/redis/services/commentsService';
+import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
 import {
   createProjectUpdateInStrapi,
   deleteProjectUpdateInStrapi,
@@ -34,7 +36,9 @@ type CreateProjectUpdate = {
 };
 type UpdateProjectUpdate = { updateId: string; comment: string; anonymous?: boolean };
 
-type UpdateUpdateInCache = { update: { id: string; comment?: string; responseCount?: number; anonymous?: boolean } };
+type UpdateUpdateInCache = {
+  update: { id: string; comment?: string; anonymous?: boolean; comments?: RedisNewsComment[] };
+};
 
 export const createProjectUpdate = async (update: CreateProjectUpdate) => {
   const createdUpdate = await createProjectUpdateInStrapi(update);
@@ -68,7 +72,11 @@ export const createProjectUpdateInCache = async (update: ProjectUpdate) => {
 export const deleteProjectUpdateInCache = async (updateId: string) => {
   const redisClient = await getRedisClient();
   const redisKey = getRedisKey(updateId);
-  await deleteItemFromRedis(redisClient, redisKey);
+  const entry = await getNewsFeedEntryByKey(redisClient, redisKey);
+  if (entry) {
+    await deleteCommentsInCache(entry);
+    await deleteItemFromRedis(redisClient, redisKey);
+  }
 };
 
 export const updateProjectUpdateInCache = async ({ update }: UpdateUpdateInCache) => {
@@ -78,7 +86,6 @@ export const updateProjectUpdateInCache = async ({ update }: UpdateUpdateInCache
 
     if (!newsFeedEntry) return;
     const cachedItem = newsFeedEntry.item as RedisProjectUpdate;
-    cachedItem.responseCount = update.responseCount ?? cachedItem.responseCount;
     cachedItem.comment = update.comment ?? cachedItem.comment;
     newsFeedEntry.item = cachedItem;
     newsFeedEntry.updatedAt = getUnixTimestamp(new Date());
@@ -113,8 +120,10 @@ export const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate)
     const updateReactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
     const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, update.projectId);
     const mappedUpdateFollowedBy = await mapToRedisUsers(projectFollowedBy);
-    const responseCount = await countComments(dbClient, update.id);
-    return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, responseCount);
+    const comments = await getRedisNewsCommentsWithResponses(update.id);
+    const commentsIds = comments.map((comment) => comment.id);
+
+    return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, commentsIds);
   } catch (err) {
     const error: InnoPlatformError = dbError(
       `Creating news feed entry for project update with id: ${update.projectId}`,

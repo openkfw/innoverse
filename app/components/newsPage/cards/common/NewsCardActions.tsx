@@ -65,13 +65,13 @@ export const NewsCardActions = ({ entry, hideControls = false }: NewsCardActions
     try {
       switch (entry.type) {
         case ObjectType.POST:
-          deletePost({ postId: entry.item.id });
+          await deletePost({ postId: entry.item.id });
           break;
         case ObjectType.COLLABORATION_COMMENT:
-          deleteProjectCollaborationComment({ commentId: entry.item.id });
+          await deleteProjectCollaborationComment({ commentId: entry.item.id });
           break;
         case ObjectType.UPDATE:
-          deleteProjectUpdate(entry.item.id);
+          await deleteProjectUpdate(entry.item.id);
           break;
         default:
           break;

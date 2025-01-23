@@ -8,9 +8,10 @@ import { withAuth } from '@/utils/auth';
 
 interface AddUserComment {
   objectId: string;
-  comment: string;
   objectType: ObjectType;
+  comment: string;
   parentCommentId?: string;
+  projectId?: string;
 }
 
 export const addUserComment = withAuth(async (user: UserSession, body: AddUserComment) => {

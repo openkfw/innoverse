@@ -33,16 +33,16 @@ export const addCollaborationCommentResponse = async ({ user, text, comment }: A
     text,
     parentId: comment.id,
   });
-  const responseCount = await getCommentResponseCount(dbClient, comment.id);
-  await updateCollaborationCommentInCache({ user, comment: { id: comment.id, responseCount } });
+  const commentCount = await getCommentResponseCount(dbClient, comment.id);
+  await updateCollaborationCommentInCache({ user, comment: { id: comment.id, commentCount } });
   return await mapToComment(createdResponse);
 };
 
 export const deleteCollaborationCommentResponse = async ({ user, response }: DeleteResponse) => {
   const deletedResponse = await deleteCommentInDb(dbClient, response.id);
   if (deletedResponse.parentId) {
-    const responseCount = await getCommentResponseCount(dbClient, deletedResponse.parentId);
-    await updateCollaborationCommentInCache({ user, comment: { id: deletedResponse.parentId, responseCount } });
+    const commentCount = await getCommentResponseCount(dbClient, deletedResponse.parentId);
+    await updateCollaborationCommentInCache({ user, comment: { id: deletedResponse.parentId, commentCount } });
   } else {
     logger.info('no parentID');
   }

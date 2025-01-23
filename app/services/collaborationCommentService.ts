@@ -5,6 +5,7 @@ import {
   addCommentToDb,
   deleteCommentInDb,
   getCommentById,
+  getCommentLikes,
   getCommentResponseCount,
   handleCommentLike,
   updateCommentInDb,
@@ -47,7 +48,7 @@ type UpdateCollaborationCommentInCache = {
     id: string;
     comment?: string;
     likedBy?: string[];
-    responseCount?: number;
+    commentCount?: number;
   };
   user: User;
 };
@@ -132,7 +133,7 @@ export const updateCollaborationCommentInCache = async ({ user, comment }: Updat
     const cachedItem = newsFeedEntry.item as RedisCollaborationComment;
     cachedItem.text = comment.comment ?? cachedItem.text;
     cachedItem.likedBy = comment.likedBy ?? cachedItem.likedBy;
-    cachedItem.responseCount = comment.responseCount ?? cachedItem.responseCount;
+    cachedItem.commentCount = comment.commentCount ?? cachedItem.commentCount;
     newsFeedEntry.item = cachedItem;
 
     await saveNewsFeedEntry(redisClient, newsFeedEntry);
@@ -187,14 +188,15 @@ export const createNewsFeedEntryForComment = async (comment: Comment, user?: Use
   }
 
   const author = user ?? comment.author;
-  const responseCount = (await getCommentResponseCount(dbClient, comment.id)) || 0;
+  const commentCount = (await getCommentResponseCount(dbClient, comment.id)) || 0;
+  const likedBy = await getCommentLikes(dbClient, comment.id); //todo
   const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_COMMENT, comment.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, question.projectId);
   const followers = await mapToRedisUsers(followerIds);
   const projectName = await getProjectTitleById(comment.objectId);
 
   return mapCollaborationCommentToRedisNewsFeedEntry(
-    { ...comment, objectName: projectName ?? '', likedBy: comment.likedBy, author, responseCount },
+    { ...comment, objectName: projectName ?? '', likedBy: comment.likedBy, author, commentCount },
     question,
     reactions,
     followers,

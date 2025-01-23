@@ -217,6 +217,7 @@ export async function getCommentLikes(client: PrismaClient, commentId: string) {
   return comment?.likes;
 }
 
+//todo check this ObjectType.COMMENT
 export async function handleCommentLike(client: PrismaClient, commentId: string, likedBy: string) {
   try {
     return client.$transaction(async (tx) => {

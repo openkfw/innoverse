@@ -118,7 +118,8 @@ const wrapper = {
 const sliderBox = {
   marginBottom: 4,
   [theme.breakpoints.down('sm')]: {
-    width: 'min(90%, 368px)',
+    width: '90%',
+    minWidth: 44,
   },
   [theme.breakpoints.up('sm')]: {
     width: '100%',
@@ -138,7 +139,7 @@ const navigationStyles = {
 };
 
 const buttonStyles = {
-  [theme.breakpoints.up('sm')]: {
+  [theme.breakpoints.up('md')]: {
     display: 'none',
   },
 };

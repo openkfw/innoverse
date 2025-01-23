@@ -36,13 +36,15 @@ export const getProjectCollaborationComments = async (body: { projectId: string;
 
       const getComments = sortedComments.map(async (comment) => {
         const getLikes = comment.likes.map(async (like) => await getInnoUserByProviderId(like.likedBy));
-        const likes = await getPromiseResults(getLikes);
-        const responseCount = await getCommentResponseCount(dbClient, comment.id);
+        const likedBy = await getPromiseResults(getLikes);
+        const commentCount = await getCommentResponseCount(dbClient, comment.id);
+        const author = await getInnoUserByProviderId(comment.author);
 
         return {
           ...comment,
-          likedBy: likes,
-          responseCount: responseCount,
+          author,
+          likedBy,
+          commentCount,
         };
       });
 

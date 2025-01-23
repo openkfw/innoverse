@@ -18,7 +18,7 @@ export const mapToComment = async (comment: CommentDB, currentUser?: string): Pr
     author,
     objectId: comment.objectId,
     objectType: comment.objectType as ObjectType,
-    likedBy,
+    likedBy: comment.likes.map((likes) => likes.likedBy),
     isLikedByUser,
     ...(comment.anonymous && { anonymous: comment.anonymous }),
     ...(comment.additionalObjectId && { additionalObjectId: comment.additionalObjectId }),
@@ -27,7 +27,7 @@ export const mapToComment = async (comment: CommentDB, currentUser?: string): Pr
 
     ...(comment.parentId && { parentId: comment.parentId }),
     ...(comment.likes && { likes: mapLikes(comment.likes) }),
-    responseCount: comment.responses.length,
+    commentCount: comment.responses.length,
   };
 };
 
@@ -50,7 +50,7 @@ export const mapToCollborationComment = async (
     anonymous: comment.anonymous || false,
     question,
     projectName: question?.projectName || '',
-    responseCount: comment.responses.length,
+    commentCount: comment.responses.length,
   };
 };
 

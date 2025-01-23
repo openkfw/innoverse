@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import {
   CollaborationComment,
   CollaborationQuestion,
+  Comment,
   Event,
   Follow,
   ImageFormats,
@@ -20,7 +21,14 @@ import { clientConfig } from '@/config/client';
 import { withAuth } from '@/utils/auth';
 import { unixTimestampToDate } from '@/utils/helpers';
 
-import { NewsType, RedisNewsFeedEntry, RedisReaction, RedisSurveyQuestion, RedisUser } from './models';
+import {
+  NewsType,
+  RedisHashedNewsComment,
+  RedisNewsFeedEntry,
+  RedisReaction,
+  RedisSurveyQuestion,
+  RedisUser,
+} from './models';
 
 export const MappedRedisType: Record<NewsType, ObjectType> = {
   [NewsType.UPDATE]: ObjectType.UPDATE,
@@ -132,6 +140,9 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
       });
     case NewsType.POST:
       item.author.image = mapUrlToStrapiUrl(item.author.image);
+      if (item.comments && item.comments.length > 0 && typeof item.comments[0] != 'string') {
+        item.comments = mapComments(item.comments);
+      }
       break;
     case NewsType.COLLABORATION_COMMENT:
       item.author.image = mapUrlToStrapiUrl(item.author.image);
@@ -146,6 +157,10 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
       break;
     case NewsType.UPDATE:
       item.author.image = mapUrlToStrapiUrl(item.author.image);
+      // TODO: check if the comment is not just the id returned from Redis Cache -> will be changed once the comments will be fetched from Redis
+      if (item.comments && item.comments.length > 0 && typeof item.comments[0] != 'string') {
+        item.comments = mapComments(item.comments);
+      }
       break;
     case NewsType.PROJECT:
       item.team = mapUserImagesToStrapiUrls(item.team);
@@ -169,6 +184,20 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
     updatedAt: unixTimestampToDate(item.updatedAt),
     projectId: projectId,
   }) as NewsFeedEntry['item'];
+};
+
+const mapComments = (comments: RedisHashedNewsComment[]): Comment[] => {
+  return comments.map((comment: RedisHashedNewsComment) => {
+    //todo add likes
+    return {
+      ...comment,
+      objectId: comment.itemId,
+      objectType: MappedRedisType[comment.itemType],
+      comments: comment.comments ? mapComments(comment.comments) : [],
+      updatedAt: unixTimestampToDate(comment.updatedAt),
+      createdAt: unixTimestampToDate(comment.createdAt),
+    } as unknown as Comment;
+  });
 };
 
 const mapUserImagesToStrapiUrls = (users: RedisUser[]) => {

@@ -40,8 +40,8 @@ export type CollaborationComment = CommonNewsFeedProps & {
   id: string;
   author: User;
   text: string;
-  likedBy: User[];
-  responseCount: number;
+  likedBy: string[];
+  commentCount: number;
   projectId: string;
   projectName: string;
   question?: CollaborationQuestion;
@@ -52,6 +52,7 @@ export type CollaborationComment = CommonNewsFeedProps & {
 export type User = {
   id?: string;
   name: string;
+  username?: string;
   role?: string;
   department?: string;
   image?: string;
@@ -69,10 +70,10 @@ export type Comment = {
   text: string;
   objectId: string;
   objectType: ObjectType;
-  likedBy: User[];
+  likedBy: string[];
 
   likes: CommentLike[];
-  responseCount: number;
+  commentCount: number;
 
   objectName?: string | undefined;
   additionalObjectId?: string;
@@ -200,8 +201,8 @@ export type ProjectUpdate = CommonNewsFeedProps & {
   projectName: string;
   projectStart?: string;
   linkToCollaborationTab: boolean;
-  responseCount?: number;
   anonymous: boolean;
+  objectType: ObjectType;
 };
 
 export type ProjectUpdateWithAdditionalData = ProjectUpdate & ReactionOnObject;
@@ -318,6 +319,7 @@ export type UserSession = {
   providerId: string;
   provider: string;
   name: string;
+  username?: string;
   role?: string;
   department?: string;
   image?: string;
@@ -397,8 +399,9 @@ export type Post = CommonNewsFeedProps & {
   author: User;
   content: string;
   likedBy: string[];
-  responseCount: number;
   anonymous: boolean;
+  createdAt: Date;
+  objectType: ObjectType;
 };
 
 export type ImageFormat = {
@@ -422,12 +425,23 @@ export type CommonCommentProps = {
   author: User;
   likes?: CommentLike[];
   isLikedByUser?: boolean;
-  responseCount: number;
+  commentCount: number;
   parentId?: string;
 };
 
+export type HashedNewsComment = {
+  id: string;
+  commentId: string;
+  comment: string;
+  author?: string;
+  updatedAt: Date;
+  createdAt: Date;
+  itemType: ObjectType;
+  itemId: string;
+};
+
 export type CommentWithResponses = CommonCommentProps & {
-  responses: CommentWithResponses[];
+  comments: CommentWithResponses[];
 };
 
 export type ImageFormats = {
@@ -470,7 +484,10 @@ export type StartPagination = {
   pageSize: number;
 };
 
-// TODO: move/do the data-testid differently
 export type ChildTestProps = {
   'data-testid'?: string;
 };
+
+export interface Mention {
+  username: string;
+}

@@ -1,7 +1,7 @@
 'use server';
 import { StatusCodes } from 'http-status-codes';
 
-import { CollaborationComment, User, UserSession } from '@/common/types';
+import { CollaborationComment, UserSession } from '@/common/types';
 import { getCommentById, handleCommentLike, updateCommentInDb } from '@/repository/db/comment';
 import {
   addCollaborationCommentResponse,
@@ -15,7 +15,6 @@ import {
 } from '@/services/collaborationCommentService';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
-import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 import { validateParams } from '@/utils/validationHelper';
@@ -55,7 +54,7 @@ export const addProjectCollaborationComment = withAuth(
             ...newComment,
             author,
             likedBy: [],
-            responseCount: 0,
+            commentCount: 0,
           },
         };
       }
@@ -217,13 +216,11 @@ export const addProjectCollaborationCommentResponse = withAuth(
 
     const author = await getInnoUserByProviderId(user.providerId);
     const response = await addCollaborationCommentResponse({ user, text: body.text, comment: body.comment });
-    const getLikedBy = response.likes.map(async (like) => await getInnoUserByProviderId(like.likedBy));
-    const likedBy = await getPromiseResults(getLikedBy);
 
     const createdResponse = {
       ...response,
       comment: body.comment,
-      likedBy: likedBy.filter((l) => l) as User[],
+      likedBy: response.likes.map((like) => like.likedBy),
       author,
     };
 

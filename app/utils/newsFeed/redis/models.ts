@@ -12,7 +12,12 @@ export enum NewsType {
   PROJECT = 'project',
 }
 
-export type RedisNewsFeedEntry = { updatedAt: number; search: string } & RedisNewsFeedTypeEntry;
+export type RedisNewsFeedEntry = {
+  updatedAt: number;
+  search: string;
+  // TODO: fix types when the comments will be fetched from cache
+  comments?: any[];
+} & RedisNewsFeedTypeEntry;
 
 type RedisNewsFeedTypeEntry =
   | {
@@ -58,6 +63,7 @@ export type RedisItem = {
   reactions: RedisReaction[];
   followedBy: RedisUser[];
   projectId?: string;
+  comments?: any[];
 };
 
 export type RedisPost = RedisItem & {
@@ -65,7 +71,6 @@ export type RedisPost = RedisItem & {
   author: RedisUser;
   content: string;
   likedBy: string[];
-  responseCount: number;
   anonymous: boolean;
 };
 
@@ -91,7 +96,6 @@ export type RedisProjectUpdate = RedisItem & {
   projectName: string;
   projectStart?: string;
   linkToCollaborationTab: boolean;
-  responseCount: number;
   anonymous: boolean;
 };
 
@@ -108,6 +112,30 @@ export type RedisProject = RedisItem & {
   description: ProjectDescription;
   projectId: string;
   author?: RedisUser;
+};
+
+export type RedisNewsComment = {
+  id: string;
+  text: string;
+  author?: RedisUser;
+  likedBy?: string[];
+  commentCount?: number;
+  comments?: RedisNewsComment[];
+  updatedAt: number;
+  createdAt?: number;
+  parentId?: string;
+};
+
+export type RedisHashedNewsComment = {
+  id: string;
+  // commentId: string;
+  text: string;
+  author?: RedisUser;
+  updatedAt: number;
+  createdAt: number;
+  itemType: NewsType;
+  itemId: string;
+  comments?: RedisHashedNewsComment[];
 };
 
 export type RedisCollaborationQuestion = RedisItem & {
@@ -148,7 +176,7 @@ export type RedisCollaborationComment = RedisItem & {
   author: RedisUser;
   text: string;
   likedBy: string[];
-  responseCount: number;
+  commentCount: number;
   projectId: string;
   question: Omit<RedisCollaborationQuestion, 'reactions' | 'followedBy' | 'updatedAt'>;
   createdAt: number;
@@ -158,6 +186,7 @@ export type RedisCollaborationComment = RedisItem & {
 export interface RedisUser {
   id?: string;
   name: string;
+  username?: string;
   role?: string;
   department?: string;
   image?: string;

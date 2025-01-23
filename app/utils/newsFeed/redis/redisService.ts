@@ -1,14 +1,17 @@
 'use server';
-
 import { AggregateGroupByReducers, AggregateSteps, SearchOptions } from 'redis';
 
 import { redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
-import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
+import { escapeRedisTextSeparators, filterDuplicateEntries } from '@/utils/newsFeed/redis/helpers';
 import { NewsType, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
 
 import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
+import { searchNewsComments } from './services/commentsService';
+import getLogger from '@/utils/logger';
+
+const logger = getLogger();
 
 interface RedisJson {
   [key: string]: any;
@@ -106,6 +109,7 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
       const queryParameter = 'query';
       filters.push(`@search:*$${queryParameter}*`);
       parameters[queryParameter] = escapeRedisTextSeparators(filterBy.searchString);
+
       index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_SEARCH;
     }
 
@@ -114,6 +118,16 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
       return { filters: ['@updatedAt:[0, +inf]'], index: RedisIndex.UPDATED_AT };
     }
     return { filters, index, parameters };
+  };
+
+  const getSearchCommentsOptions = (parameters: SearchOptions['PARAMS']) => {
+    // change the index and remove the last query filter - @search
+    const index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_COMMENTS;
+    const newFilters = [...filters.slice(0, -1)];
+    // query parameter = searchString
+    newFilters.push(`@comment:{$query*}`);
+    const query = newFilters.join(' ');
+    return { index, query, parameters };
   };
 
   const getSortingOption = (): SearchOptions['SORTBY'] => {
@@ -131,22 +145,50 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     };
   };
 
+  const filterBy = options?.filterBy;
   const { filters, parameters, index } = getFiltersAndIndex();
   const sortOption = getSortingOption();
   const paginationOptions = getPaginationOptions();
-  const query = filters.join(' ');
+  let query = filters.join(' ');
+  let idx = index;
+  const searchOptions: SearchOptions = {
+    SORTBY: sortOption,
+    LIMIT: paginationOptions,
+    PARAMS: parameters,
+    DIALECT: 2,
+  };
 
   try {
-    const result = await client.ft.search(index, query, {
-      SORTBY: sortOption,
-      LIMIT: paginationOptions,
-      PARAMS: parameters,
-      DIALECT: 2,
-    });
+    const result = await client.ft.search(index, query, searchOptions);
+    if (filterBy?.searchString?.length) {
+      const {
+        query: commentsQuery,
+        index: commentsIndex,
+        parameters: commentsParameters,
+      } = getSearchCommentsOptions(parameters);
+
+      query = commentsQuery;
+      idx = commentsIndex;
+      let commentsSearchOptions: SearchOptions = {
+        ...searchOptions,
+        PARAMS: commentsParameters,
+      };
+      const resultComments = await searchNewsComments(client, commentsIndex, query, commentsSearchOptions);
+      const commentsDocuments = filterDuplicateEntries(resultComments.documents);
+      const resultDocuments = filterDuplicateEntries(
+        result.documents as unknown as { id: string; value: RedisNewsFeedEntry }[],
+      );
+      const documents = filterDuplicateEntries([...commentsDocuments, ...resultDocuments]);
+
+      return {
+        total: documents.length,
+        documents,
+      };
+    }
     return result;
   } catch (err) {
     const error = err as Error;
-    error.cause = `${error.message}; Index: ${index}; Query: ${query}`;
+    error.cause = `${error.message}; Index: ${idx}; Query: ${query}`;
     const extendedError = redisError('Failed to get items from redis', err as Error);
     throw extendedError;
   }
@@ -277,7 +319,7 @@ export const performRedisTransaction = async (
 export const getRedisNewsFeed = async (options?: GetItemsOptions) => {
   const client = await getRedisClient();
   const entries = await getNewsFeedEntries(client, options);
-  const newsFeedEntries = entries.documents.map((x) => x.value);
+  const newsFeedEntries = entries.documents?.map((x) => x.value);
   // TODO: temporary solution to get rid of [Object: null prototype]
   const data = JSON.parse(JSON.stringify(newsFeedEntries, null, 2)) as RedisNewsFeedEntry[];
   return data;

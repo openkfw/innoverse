@@ -6,6 +6,7 @@
   "app_export_page_export": "Export",
 
   "app_news_page_news": "News",
+  "app_project_page_projects": "Initiativen",
   "app_news_page_imageAlt": "News Hintergrund",
 
   "app_projects_page_projectsNotFoundError": "Projekt konnte nicht abgerufen werden. Bitte versuche es später noch einmal.",
@@ -189,6 +190,7 @@
   "components_landing_projectSection_projectSection_title": "Innovationsinitiativen",
   "components_landing_projectSection_projectSection_subtitle": "Aktuelle Pipeline",
   "components_landing_projectSection_projectSection_imageAlt": "Hintergrund Bubble",
+  "components_landing_projectSection_projectSection_moreInitiatives": "Mehr Initiativen",
 
   "components_layout_footer_innoVerse": "© InnoVerse Team",
 
@@ -311,13 +313,17 @@
 
   "components_newsPage_thread_fetch_error": "Kommentare konnten nicht geladen werden. Bitte versuche es noch einmal.",
 
-  "components_newsPage_thread_add_response_error": "Kommentar konnte nicht erstellt werden. Bitte versuche es noch einmal.",
+  "components_newsPage_thread_add_comment_error": "Kommentar konnte nicht erstellt werden. Bitte versuche es noch einmal.",
 
   "components_newsPage_newsFilter_applyFilterButton_apply": "Auswahl bestätigen",
 
   "components_newsPage_newsFilter_mobileNewsFilter_filter": "Filtern",
 
   "components_newsPage_newsFilter_newsTopicFilter_topics": "Themen",
+
+  "components_projectpage_projectPageContainer_projects": "Initiativen",
+  "components_projectpage_projectPageContainer_projectText": "Alle Initiativen im Überblick.",
+  "components_projectpage_projectPageContainer_search": "Suche",
 
   "components_notifications_notificationBanner_notificationError": "Dein Browser verhindert die Aktivierung von Benachrichtigungen. Bitte gehe zu den Einstellungen, um die Aktivierung zu ermöglichen um Benachrichtigungen zu erhalten: Settings → Cookies and site permissions → Notifications",
   "components_notifications_notificationBanner_dismiss": "Später erinnern",
@@ -397,7 +403,9 @@
 
   "components_updates_projectTimeLineDate_kickoff": "Projekt Kickoff",
 
-  "components_updates_updatesTab_refetchError": "Projektnews konnten nicht erneut abgerufen werden. Bitte versuche es später noch einmal.",
-  "components_updates_updatesTab_noNews": "Es gibt noch keine News zu diesem Projekt. Klick hier, um aktuelle News hinzuzufügen.",
-  "components_updates_updatesTab_addNewNews": "Halte Dein Publikum auf dem Laufenden! Klicke hier, um aktuelle News hinzuzufügen."
+  "components_updates_updatesTab_refetchError": "Projektupdates konnten nicht erneut abgerufen werden. Bitte versuche es später noch einmal.",
+  "components_updates_updatesTab_noNews": "Es gibt noch keine Neuigkeiten zu diesem Projekt. Klick hier um eine hinzuzufügen.",
+  "components_updates_updatesTab_addNewNews": "Halte Dein Publikum auf dem Laufenden! Klicke hier, um eine Neuigkeit hinzuzufügen.",
+
+  "components_common_form_MultilineMentionInput_loading" : "Lädt..."
 }

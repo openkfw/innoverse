@@ -46,7 +46,6 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
     commentLikeCount,
   } = useNewsCommentCard(props);
 
-  //TODO todo addLikeAction
   return isEditing ? (
     <WriteCommentCard content={comment} onSubmit={updateComment} onDiscard={cancelEdit} />
   ) : (
@@ -75,7 +74,7 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
   const respondingInteractions = useRespondingInteractions();
   const { user } = useUser();
 
-  const userIsAuthor = user?.providerId === comment.author.providerId;
+  const userIsAuthor = user?.providerId === comment.author?.providerId;
 
   const handleLike = async () => {
     if (isCommentLiked) {
