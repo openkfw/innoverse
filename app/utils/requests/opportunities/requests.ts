@@ -45,7 +45,7 @@ export async function getOpportunitiesByProjectId(projectId: string) {
 export async function getOpportunityById(opportunityId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetOpportunitiesByIdQuery, { opportunityId });
-    const opportunity = mapFirstToOpportunity(response.opportunities?.nodes);
+    const opportunity = mapFirstToOpportunity(response.opportunities);
     return opportunity;
   } catch (err) {
     const error = strapiError('Getting an opporunity', err as RequestError, opportunityId);
@@ -137,7 +137,7 @@ export const userParticipatesInOpportunity = withAuth(async (user: UserSession, 
 export const countOpportunitiesForProject = async (projectId: string) => {
   try {
     const response = await strapiGraphQLFetcher(GetOpportunityCountProjectIdQuery, { projectId });
-    const countResult = response.opportunities?.pageInfo.total;
+    const countResult = response.opportunities_connection?.pageInfo.total;
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {
