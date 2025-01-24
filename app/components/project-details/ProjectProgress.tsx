@@ -26,8 +26,6 @@ import CommentsSection from './comments/CommentsSection';
 import { UserInformation } from './AuthorInformation';
 import { ProjectTags } from './ProjectTags';
 
-import robotic_hand from '/public/images/robotic-hand.png';
-
 interface MarkdownHeading {
   title: string;
   depth: number;
@@ -175,7 +173,7 @@ const InfoItemRight = ({ title, summary }: InfoItemProps) => {
 
       <CardMedia sx={{ px: '18px' }}>
         <Image
-          src={robotic_hand}
+          src="/images/robotic-hand.png"
           alt={m.components_projectDetails_projectProgress_imageAlt()}
           width={0}
           height={0}

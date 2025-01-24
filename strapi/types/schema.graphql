@@ -505,6 +505,7 @@ type InnoUser {
   questions_connection(filters: QuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): QuestionRelationResponseCollection
   role: String
   updatedAt: DateTime
+  username: String
 }
 
 type InnoUserEntity {
@@ -540,6 +541,7 @@ input InnoUserFiltersInput {
   questions: QuestionFiltersInput
   role: StringFilterInput
   updatedAt: DateTimeFilterInput
+  username: StringFilterInput
 }
 
 input InnoUserInput {
@@ -556,6 +558,7 @@ input InnoUserInput {
   publishedAt: DateTime
   questions: [ID]
   role: String
+  username: String
 }
 
 type InnoUserRelationResponseCollection {

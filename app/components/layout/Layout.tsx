@@ -7,6 +7,7 @@ import { AppInsightsContext, AppInsightsErrorBoundary } from '@microsoft/applica
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { MentionsContextProvider } from '@/app/contexts/mentions-context';
 import { NotificationContextProvider } from '@/app/contexts/notification-context';
 import { UserContextProvider } from '@/app/contexts/user-context';
 import { SWRProvider } from '@/app/swr-provider';
@@ -54,11 +55,13 @@ export default function Layout({ children }: PropsWithChildren) {
       <AppInsightsContext.Provider value={reactPlugin}>
         <SessionProvider>
           <SWRProvider>
-            <UserContextProvider>
-              <NotificationContextProvider>
-                <AppLayout>{children}</AppLayout>
-              </NotificationContextProvider>
-            </UserContextProvider>
+            <MentionsContextProvider>
+              <UserContextProvider>
+                <NotificationContextProvider>
+                  <AppLayout>{children}</AppLayout>
+                </NotificationContextProvider>
+              </UserContextProvider>
+            </MentionsContextProvider>
           </SWRProvider>
         </SessionProvider>
       </AppInsightsContext.Provider>

@@ -3,7 +3,7 @@ import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
 export const ProjectFragment = graphql(
   `
-    fragment Project on ProjectEntity @_unmask {
+    fragment Project on Project @_unmask {
       documentId
       title
       shortTitle
@@ -37,9 +37,7 @@ export const GetProjectsQuery = graphql(
   `
     query GetProjects($limit: Int, $sort: String! = "updatedAt:desc") {
       projects(pagination: { limit: $limit }, sort: [$sort]) {
-        nodes {
-          ...Project
-        }
+        ...Project
       }
     }
   `,
@@ -65,9 +63,7 @@ export const GetProjectsBySearchStringQuery = graphql(
         pagination: { page: $page, pageSize: $pageSize }
         sort: [$sort]
       ) {
-        data {
-          ...Project
-        }
+        ...Project
       }
     }
   `,
@@ -97,10 +93,8 @@ export const GetProjectTitleByIdQuery = graphql(`
 export const GetProjectTitleByIdsQuery = graphql(`
   query GetProjectTitlesByIds($ids: [ID!], $page: Int, $pageSize: Int) {
     projects(filters: { documentId: { in: $ids } }, pagination: { page: $page, pageSize: $pageSize }) {
-      nodes {
-        documentId
-        title
-      }
+      documentId
+      title
     }
   }
 `);
@@ -109,9 +103,7 @@ export const GetProjectsPageQuery = graphql(
   `
     query GetProjectsPage($page: Int, $pageSize: Int) {
       projects(pagination: { page: $page, pageSize: $pageSize }) {
-        nodes {
-          ...Project
-        }
+        ...Project
       }
     }
   `,
@@ -136,9 +128,7 @@ export const GetProjectsStartingFromQuery = graphql(
         filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
         pagination: { page: $page, pageSize: $pageSize }
       ) {
-        nodes {
-          ...Project
-        }
+        ...Project
       }
     }
   `,

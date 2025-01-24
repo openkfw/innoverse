@@ -5,6 +5,7 @@ export const CreateInnoUserMutation = graphql(`
     $providerId: String
     $provider: String
     $name: String!
+    $username: String
     $role: String
     $department: String
     $email: String
@@ -15,6 +16,7 @@ export const CreateInnoUserMutation = graphql(`
         providerId: $providerId
         provider: $provider
         name: $name
+        username: $username
         role: $role
         department: $department
         email: $email
@@ -40,6 +42,7 @@ export const CreateOpportunityParticipantMutation = graphql(`
     $providerId: String
     $provider: String
     $name: String!
+    $username: String
     $role: String
     $department: String
     $email: String
@@ -50,6 +53,7 @@ export const CreateOpportunityParticipantMutation = graphql(`
         providerId: $providerId
         provider: $provider
         name: $name
+        username: $username
         role: $role
         department: $department
         email: $email
@@ -65,6 +69,25 @@ export const CreateOpportunityParticipantMutation = graphql(`
       email
       avatar {
         url
+      }
+    }
+  }
+`);
+
+export const UpdateInnoUserUsernameMutation = graphql(`
+  mutation UpdateInnoUser($id: ID!, $username: String!) {
+    updateInnoUser(documentId: $id, data: { username: $username }) {
+      documentId
+      providerId
+      provider
+      name
+      username
+      role
+      department
+      email
+      avatar {
+        url
+        formats
       }
     }
   }

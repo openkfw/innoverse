@@ -9,6 +9,7 @@ import * as m from '@/src/paraglide/messages.js';
 
 import { LandingPageSection } from '../LandingPageSection';
 
+import { BackgroundArrows } from './BackgroundArrows';
 import NewsCarousel from './NewsCarousel';
 
 type NewsProps = {
@@ -25,6 +26,7 @@ export const NewsSection = ({ updates }: NewsProps) => {
       id="news"
       title={m.components_landing_newsSection_newsSection_titleNews()}
       subtitle={m.components_landing_newsSection_newsSection_subtitleNews()}
+      beforeContent={<BackgroundArrows />}
       topRightMenu={
         <Link href="news">
           <CustomButton>{m.components_landing_newsSection_newsSection_moreNews()}</CustomButton>

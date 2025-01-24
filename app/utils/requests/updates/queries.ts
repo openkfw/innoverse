@@ -3,7 +3,7 @@ import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
 export const ProjectUpdateFragment = graphql(
   `
-    fragment ProjectUpdate on UpdateEntity @_unmask {
+    fragment ProjectUpdate on Update @_unmask {
       documentId
       comment
       topic
@@ -26,9 +26,7 @@ export const GetUpdatesQuery = graphql(
   `
     query GetUpdates($limit: Int) {
       updates(sort: "updatedAt:desc", pagination: { limit: $limit }) {
-        nodes {
-          ...ProjectUpdate
-        }
+        ...ProjectUpdate
       }
     }
   `,
@@ -50,9 +48,7 @@ export const GetUpdatesByProjectIdQuery = graphql(
   `
     query GetUpdates($projectId: ID, $sort: String! = "updatedAt:desc") {
       updates(sort: [$sort], filters: { project: { documentId: { eq: $projectId } } }) {
-        nodes {
-          ...ProjectUpdate
-        }
+        ...ProjectUpdate
       }
     }
   `,
@@ -63,9 +59,7 @@ export const GetUpdatesByIdsQuery = graphql(
   `
     query GetUpdates($ids: [ID], $sort: String! = "updatedAt:desc") {
       updates(sort: [$sort], filters: { documentId: { in: $ids } }) {
-        nodes {
-          ...ProjectUpdate
-        }
+        ...ProjectUpdate
       }
     }
   `,
@@ -86,9 +80,7 @@ export const GetUpdatesPageByProjectsTitlesAndTopicsQuery = graphql(
         pagination: { page: $page, pageSize: $pageSize }
         sort: [$sort]
       ) {
-        nodes {
-          ...ProjectUpdate
-        }
+        ...ProjectUpdate
       }
     }
   `,
@@ -103,9 +95,7 @@ export const GetUpdatesPageByProjectTitlesQuery = graphql(
         pagination: { page: $page, pageSize: $pageSize }
         sort: [$sort]
       ) {
-        nodes {
-          ...ProjectUpdate
-        }
+        ...ProjectUpdate
       }
     }
   `,
@@ -116,9 +106,7 @@ export const GetUpdatesPageByTopicsQuery = graphql(
   `
     query GetUpdatesByTitleAndTopics($topics: [String], $page: Int, $pageSize: Int, $sort: String!) {
       updates(filters: { topic: { in: $topics } }, pagination: { page: $page, pageSize: $pageSize }, sort: [$sort]) {
-        nodes {
-          ...ProjectUpdate
-        }
+        ...ProjectUpdate
       }
     }
   `,
@@ -129,9 +117,7 @@ export const GetUpdatesPageQuery = graphql(
   `
     query GetUpdates($page: Int, $pageSize: Int, $sort: String!) {
       updates(pagination: { page: $page, pageSize: $pageSize }, sort: [$sort]) {
-        nodes {
-          ...ProjectUpdate
-        }
+        ...ProjectUpdate
       }
     }
   `,
@@ -140,7 +126,7 @@ export const GetUpdatesPageQuery = graphql(
 
 export const GetUpdateCountQuery = graphql(`
   query getUpdateCount($projectId: ID!) {
-    updates(filters: { project: { documentId: { eq: $projectId } } }) {
+    updates_connection(filters: { project: { documentId: { eq: $projectId } } }) {
       pageInfo {
         total
       }
@@ -155,9 +141,7 @@ export const GetUpdatesStartingFromQuery = graphql(
         filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
         pagination: { page: $page, pageSize: $pageSize }
       ) {
-        nodes {
-          ...ProjectUpdate
-        }
+        ...ProjectUpdate
       }
     }
   `,

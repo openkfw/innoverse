@@ -4,13 +4,13 @@ import { ImageFormats, User } from '@/common/types';
 import { clientConfig } from '@/config/client';
 import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
-export function mapFirstToUser(users: ResultOf<typeof InnoUserFragment>[] | undefined): User | undefined {
+export function mapFirstToUser(users: ResultOf<typeof InnoUserFragment>[] | null): User | undefined {
   if (!users || !users.length) return undefined;
   const user = users[0];
   return mapToUser(user);
 }
 
-export function mapFirstToUserOrThrow(users: ResultOf<typeof InnoUserFragment>[] | undefined): User {
+export function mapFirstToUserOrThrow(users: ResultOf<typeof InnoUserFragment>[] | null): User {
   if (!users || !users.length) throw new Error('Response contained no users');
   const user = users[0];
   return mapToUser(user);

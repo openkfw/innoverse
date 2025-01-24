@@ -1,7 +1,7 @@
 import { graphql } from '@/types/graphql';
 
 export const InnoUserFragment = graphql(`
-  fragment InnoUser on InnoUserEntity @_unmask {
+  fragment InnoUser on InnoUser @_unmask {
     documentId
     providerId
     provider
@@ -20,9 +20,7 @@ export const GetInnoUserByEmailQuery = graphql(
   `
     query GetInnoUser($email: String) {
       innoUsers(filters: { email: { eq: $email } }) {
-        nodes {
-          ...InnoUser
-        }
+        ...InnoUser
       }
     }
   `,
@@ -33,9 +31,35 @@ export const GetInnoUserByProviderIdQuery = graphql(
   `
     query GetInnoUser($providerId: String) {
       innoUsers(filters: { providerId: { eq: $providerId } }) {
-        nodes {
-          ...InnoUser
-        }
+        ...InnoUser
+      }
+    }
+  `,
+  [InnoUserFragment],
+);
+
+export const GetAllInnoUsers = graphql(`
+  query GetInnoUsers($limit: Int) {
+    innoUsers(pagination: { limit: $limit }) {
+      documentId
+      username
+    }
+  }
+`);
+
+export const GetEmailsByUsernamesQuery = graphql(`
+  query GetEmailsByUsernames($usernames: [String!]) {
+    innoUsers(filters: { username: { in: $usernames } }) {
+      email
+    }
+  }
+`);
+
+export const GetInnoUserByUsernameQuery = graphql(
+  `
+    query GetInnoUserByUsername($username: String!) {
+      innoUsers(filters: { username: { eq: $username } }) {
+        ...InnoUser
       }
     }
   `,

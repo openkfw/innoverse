@@ -59,7 +59,7 @@ export async function getProjectTitleById(id: string) {
 export async function getProjectTitleByIds(ids: string[], page: number, pageSize: number) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectTitleByIdsQuery, { ids, page, pageSize });
-    const data = response.projects?.nodes;
+    const data = response.projects;
     if (!data) throw 'Response contained no project data';
     const projectTitles = data.map((project) => ({ id: project.documentId, title: project.title as string }));
     return projectTitles;
@@ -131,7 +131,7 @@ export async function getProjects(
 ) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectsQuery, { limit, sort: `${sort.by}:${sort.order}` });
-    const projects = response.projects?.nodes.map(mapToBasicProject) ?? [];
+    const projects = response.projects.map(mapToBasicProject) ?? [];
     return projects;
   } catch (err) {
     console.info(err);
@@ -159,7 +159,7 @@ export async function getProjectsBySearchString(
       sort: `${sort.by}:${sort.order}`,
       searchString,
     });
-    const projects = response.projects?.data.map(mapToBasicProject) ?? [];
+    const projects = response.projects.map(mapToBasicProject) ?? [];
     return projects;
   } catch (err) {
     console.info(err);
@@ -316,7 +316,7 @@ export async function getProjectByIdWithReactions(id: string) {
 export async function getProjectsStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectsStartingFromQuery, { from, page, pageSize });
-    const projects = mapToProjects(response.projects?.nodes);
+    const projects = mapToProjects(response.projects);
     return projects;
   } catch (err) {
     const error = strapiError('Getting upcoming projects', err as RequestError);
