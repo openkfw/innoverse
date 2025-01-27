@@ -10,7 +10,7 @@
   "scripts": {
     "audit": "pnpm audit",
     "build": "pnpm run build:strapi && pnpm run build:health-plugin",
-    "build:health-plugin": "cd src/plugins/healthcheck && npm run build",
+    "build:health-plugin": "cd src/plugins/healthcheck && pnpm run build",
     "build:strapi": "strapi build",
     "develop": "strapi develop",
     "start": "strapi start",
