@@ -74,7 +74,7 @@ export const removeComment = async ({ user, commentId }: RemoveComment) => {
 
 const updateCommentInCache = async (comment: { objectId: string; objectType: ObjectType }, author: UserSession) => {
   const commentCount = await countComments(dbClient, comment.objectId);
-  const body = { id: comment.objectId, responseCount: commentCount };
+  const body = { id: comment.objectId, commentCount };
   return comment.objectType === 'POST'
     ? await updatePostInCache({ post: body, user: author })
     : await updateProjectUpdateInCache({ update: body });
@@ -82,7 +82,7 @@ const updateCommentInCache = async (comment: { objectId: string; objectType: Obj
 
 const removeCommentInCache = async (comment: { objectId: string; objectType: ObjectType }, author: UserSession) => {
   const commentCount = await countComments(dbClient, comment.objectId);
-  const body = { id: comment.objectId, responseCount: commentCount };
+  const body = { id: comment.objectId, commentCount };
   return comment.objectType === 'POST'
     ? await updatePostInCache({ post: body, user: author })
     : await updateProjectUpdateInCache({ update: body });

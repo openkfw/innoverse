@@ -1,7 +1,6 @@
 'use server';
 
 import { ObjectType, ProjectUpdate } from '@/common/types';
-import { countComments } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';

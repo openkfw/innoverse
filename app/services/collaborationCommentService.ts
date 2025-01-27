@@ -5,7 +5,6 @@ import {
   addCommentToDb,
   deleteCommentInDb,
   getCommentById,
-  getCommentLikes,
   getCommentResponseCount,
   handleCommentLike,
   updateCommentInDb,
@@ -189,7 +188,6 @@ export const createNewsFeedEntryForComment = async (comment: Comment, user?: Use
 
   const author = user ?? comment.author;
   const commentCount = (await getCommentResponseCount(dbClient, comment.id)) || 0;
-  const likedBy = await getCommentLikes(dbClient, comment.id); //todo
   const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_COMMENT, comment.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, question.projectId);
   const followers = await mapToRedisUsers(followerIds);

@@ -60,14 +60,6 @@ export function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   const item = entry.item as CollaborationComment;
   const question = item.question;
 
-  if (!question) {
-    errorMessage({ message: m.components_collaboration_comments_collaborationCommentCard_questionMissing() });
-    appInsights.trackException({
-      exception: new Error('Failed to get collaboration question'),
-      severityLevel: SeverityLevel.Error,
-    });
-  }
-
   const [comment, setComment] = useState(item);
 
   const state = useEditingState();
