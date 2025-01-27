@@ -8,7 +8,7 @@ overrides:
   cookie@<0.7.0: '>=0.7.0'
   tar@<6.2.1: '>=6.2.1'
   ws@>=8.0.0 <8.17.1: '>=8.17.1'
-  vite@>=5.0.0 <=5.1.7: '>=5.1.8'
+  vite@>=5.0.0 <=5.1.7: '>=6.0.9'
 
 importers:
 
@@ -2095,7 +2095,7 @@ packages:
   '@vitejs/plugin-react-swc@3.5.0':
     resolution: {integrity: sha512-1PrOvAaDpqlCV+Up8RkAh9qaiUjoDUcjtttyhXDKw53XA6Ve16SOp6cCOpRs8Dj8DqUQs6eTW5YkLcLJjrXAig==}
     peerDependencies:
-      vite: '>=5.1.8'
+      vite: '>=6.0.9'
 
   '@webassemblyjs/ast@1.14.1':
     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
@@ -6269,8 +6269,8 @@ packages:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
 
-  vite@6.0.7:
-    resolution: {integrity: sha512-RDt8r/7qx9940f8FcOIAH9PTViRrghKaK2K1jY3RaAURrEUbm9Du1mJ72G+jlhtG3WwodnfzY8ORQZbBavZEAQ==}
+  vite@6.0.11:
+    resolution: {integrity: sha512-4VL9mQPKoHy4+FE0NnRE/kbY51TOfaknxAjt3fJbGJxhIpBZiqVzlZDEesWWsuREXHwNdAoOFZ9MkPEVXczHwg==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
     peerDependencies:
@@ -7932,7 +7932,7 @@ snapshots:
       '@strapi/types': 4.25.9(@types/node@22.10.5)(better-sqlite3@11.7.2)(pg@8.8.0)
       '@strapi/typescript-utils': 4.25.9
       '@strapi/utils': 4.25.9
-      '@vitejs/plugin-react-swc': 3.5.0(@swc/helpers@0.5.15)(vite@6.0.7(@types/node@22.10.5)(terser@5.37.0))
+      '@vitejs/plugin-react-swc': 3.5.0(@swc/helpers@0.5.15)(vite@6.0.11(@types/node@22.10.5)(terser@5.37.0))
       axios: 1.7.4(debug@4.3.4)
       bcryptjs: 2.4.3
       boxen: 5.1.2
@@ -8018,7 +8018,7 @@ snapshots:
       style-loader: 3.3.4(webpack@5.97.1(esbuild@0.19.11))
       styled-components: 5.3.11(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
       typescript: 5.2.2
-      vite: 6.0.7(@types/node@22.10.5)(terser@5.37.0)
+      vite: 6.0.11(@types/node@22.10.5)(terser@5.37.0)
       webpack: 5.97.1(esbuild@0.19.11)
       webpack-bundle-analyzer: 4.10.2
       webpack-dev-middleware: 6.1.2(webpack@5.97.1(esbuild@0.19.11))
@@ -8332,7 +8332,7 @@ snapshots:
 
   '@strapi/pack-up@4.23.0(@swc/helpers@0.5.15)(@types/node@22.10.5)(debug@4.3.4)(terser@5.37.0)':
     dependencies:
-      '@vitejs/plugin-react-swc': 3.5.0(@swc/helpers@0.5.15)(vite@6.0.7(@types/node@22.10.5)(terser@5.37.0))
+      '@vitejs/plugin-react-swc': 3.5.0(@swc/helpers@0.5.15)(vite@6.0.11(@types/node@22.10.5)(terser@5.37.0))
       boxen: 5.1.2
       browserslist-to-esbuild: 1.2.0
       chalk: 4.1.2
@@ -8351,7 +8351,7 @@ snapshots:
       prompts: 2.4.2
       rxjs: 7.8.1
       typescript: 5.2.2
-      vite: 6.0.7(@types/node@22.10.5)(terser@5.37.0)
+      vite: 6.0.11(@types/node@22.10.5)(terser@5.37.0)
       yup: 0.32.9
     transitivePeerDependencies:
       - '@swc/helpers'
@@ -9201,10 +9201,10 @@ snapshots:
       - '@codemirror/lint'
       - '@codemirror/search'
 
-  '@vitejs/plugin-react-swc@3.5.0(@swc/helpers@0.5.15)(vite@6.0.7(@types/node@22.10.5)(terser@5.37.0))':
+  '@vitejs/plugin-react-swc@3.5.0(@swc/helpers@0.5.15)(vite@6.0.11(@types/node@22.10.5)(terser@5.37.0))':
     dependencies:
       '@swc/core': 1.10.4(@swc/helpers@0.5.15)
-      vite: 6.0.7(@types/node@22.10.5)(terser@5.37.0)
+      vite: 6.0.11(@types/node@22.10.5)(terser@5.37.0)
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -13731,7 +13731,7 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite@6.0.7(@types/node@22.10.5)(terser@5.37.0):
+  vite@6.0.11(@types/node@22.10.5)(terser@5.37.0):
     dependencies:
       esbuild: 0.24.2
       postcss: 8.4.49
