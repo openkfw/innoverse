@@ -94,16 +94,29 @@ export async function getInnoUserByUsername(username: string): Promise<User | nu
   }
 }
 
-export async function getAllInnoUsers() {
+async function getAllInnoUserNames() {
+  try {
+    const response = await getAllInnoUsers();
+    if (!response) {
+      throw new Error('No users data available');
+    }
+    const users = response.map((user) => ({ username: user.attributes.username }));
+    return users;
+  } catch (err) {
+    const error = strapiError('Getting All Inno users', err as RequestError);
+    logger.error(error);
+    throw err;
+  }
+}
+
+async function getAllInnoUsers() {
   try {
     const response = await strapiGraphQLFetcher(GetAllInnoUsers, { limit: 1000 });
     if (!response.innoUsers?.data) {
       throw new Error('No users data available');
     }
 
-    const users = response.innoUsers?.data.map((user) => ({ username: user.attributes.username }));
-
-    return users;
+    return response.innoUsers.data;
   } catch (err) {
     const error = strapiError('Getting All Inno users', err as RequestError);
     logger.error(error);
@@ -209,7 +222,7 @@ async function uploadImage(imageUrl: string, fileName: string) {
 
 export async function fetchMentionData(search: string): Promise<Mention[]> {
   try {
-    const data = await getAllInnoUsers();
+    const data = await getAllInnoUserNames();
 
     const formattedData = data.map((user) => ({ username: user.username as string }));
     return formattedData.filter((user) => user.username?.toLowerCase().includes(search.toLowerCase()));
