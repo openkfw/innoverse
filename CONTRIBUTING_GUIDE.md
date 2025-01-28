@@ -39,7 +39,7 @@ If this is your first time starting InnoVerse, you should follow the [StartUp Gu
 
 At first, please run
 
-`npm run prepare`
+`pnpm run prepare`
 
 in the repository's root folder to set up our git hooks, which we use to enforce the [conventional commit message format](https://www.conventionalcommits.org/).
 
