@@ -94,7 +94,7 @@ export async function getInnoUserByUsername(username: string): Promise<User | nu
   }
 }
 
-export async function getAllInnoUserNames() {
+async function getAllInnoUserNames() {
   try {
     const response = await getAllInnoUsers();
     if (!response) {
@@ -108,7 +108,8 @@ export async function getAllInnoUserNames() {
     throw err;
   }
 }
-export async function getAllInnoUsers() {
+
+async function getAllInnoUsers() {
   try {
     const response = await strapiGraphQLFetcher(GetAllInnoUsers, { limit: 1000 });
     if (!response.innoUsers?.data) {
@@ -164,7 +165,7 @@ export async function updateInnoUserUsername(userId: string, username: string) {
   }
 }
 
-export async function generateUniqueUsername(email: string): Promise<string> {
+async function generateUniqueUsername(email: string): Promise<string> {
   const baseUsername = email.split('@')[0];
   let username = baseUsername;
   let count = 1;
