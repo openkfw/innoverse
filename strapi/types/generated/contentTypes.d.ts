@@ -928,6 +928,7 @@ export interface ApiInnoUserInnoUser extends Schema.CollectionType {
       'manyToMany',
       'api::opportunity.opportunity'
     >;
+    username: Attribute.String & Attribute.Unique;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
