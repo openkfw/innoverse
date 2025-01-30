@@ -37,8 +37,8 @@ SET "objectType_new" =
         ELSE "objectType"::text::"ObjectType_new"
     END;
 
-ALTER TABLE "Comment" drop column "objectType";
-Alter table "Comment" rename COLUMN "objectType_new" to "objectType";
+ALTER TABLE "Comment" DROP column "objectType";
+ALTER TABLE "Comment" RENAME COLUMN "objectType_new" TO "objectType";
 ALTER TABLE "Comment" ALTER COLUMN "objectType" SET NOT NULL;
 
 
@@ -68,8 +68,9 @@ SELECT "collaboration_comments_responses"."id", "collaboration_comments_response
 FROM "collaboration_comments_responses" JOIN "collaboration_comments" ON "collaboration_comments_responses"."commentId" = "collaboration_comments"."id";
 
 -- ALTER TABLE "Like"
-ALTER TABLE "Like" ADD COLUMN "objectType" "ObjectType";
-ALTER TABLE "Like" ALTER COLUMN "objectType" TYPE "ObjectType_new" USING ("objectType"::text::"ObjectType_new");
+ALTER TABLE "Like" RENAME TO "ObjectLike";
+ALTER TABLE "ObjectLike" ADD COLUMN "objectType" "ObjectType";
+ALTER TABLE "ObjectLike" ALTER COLUMN "objectType" TYPE "ObjectType_new" USING ("objectType"::text::"ObjectType_new");
 
 -- CreateTable CommentLike
 CREATE TABLE "CommentLike" (
@@ -95,7 +96,7 @@ SET "objectType_new" =
         WHEN "objectType" = 'SURVEY_QUESTION' THEN 'SURVEY_QUESTION'::"ObjectType_new"
     END;
 ALTER TABLE "Follow" DROP COLUMN "objectType";
-Alter table "Follow" rename COLUMN "objectType_new" to "objectType";
+ALTER TABLE "Follow" RENAME COLUMN "objectType_new" TO "objectType";
 ALTER TABLE "Follow" ALTER COLUMN "objectType" SET NOT NULL;
 ALTER TABLE "Follow" ALTER COLUMN "objectType" SET DEFAULT 'PROJECT';
 
@@ -113,7 +114,7 @@ SET "objectType_new" =
         WHEN "objectType" = 'SURVEY_QUESTION' THEN 'SURVEY_QUESTION'::"ObjectType_new"
     END;
 ALTER TABLE "reactions" DROP COLUMN "objectType";
-Alter table "reactions" rename COLUMN "objectType_new" to "objectType";
+ALTER TABLE "reactions" RENAME COLUMN "objectType_new" TO "objectType";
 ALTER TABLE "reactions" ALTER COLUMN "objectType" SET NOT NULL;
 
 
@@ -141,13 +142,13 @@ ALTER TABLE "Comment" ALTER COLUMN "objectId" SET NOT NULL;
 
 -- AlterTable
 
-ALTER TABLE "Like" RENAME COLUMN "projectId" TO "objectId";
-UPDATE "Like" SET "objectType" = 'PROJECT' WHERE "objectType" IS NULL;
-ALTER TABLE "Like" ALTER COLUMN "objectId" SET NOT NULL;
-ALTER TABLE "Like" ALTER COLUMN "objectType" SET NOT NULL;
+ALTER TABLE "ObjectLike" RENAME COLUMN "projectId" TO "objectId";
+UPDATE "ObjectLike" SET "objectType" = 'PROJECT' WHERE "objectType" IS NULL;
+ALTER TABLE "ObjectLike" ALTER COLUMN "objectId" SET NOT NULL;
+ALTER TABLE "ObjectLike" ALTER COLUMN "objectType" SET NOT NULL;
 
 -- AlterTable
-ALTER TABLE "Post" RENAME COLUMN "upvotedBy" to "likedBy";
+ALTER TABLE "Post" RENAME COLUMN "upvotedBy" TO "likedBy";
 
 -- DropTable
 DROP TABLE "NewsComment";
@@ -174,7 +175,7 @@ CREATE UNIQUE INDEX "CommentLike_commentId_likedBy_key" ON "CommentLike"("likedB
 ALTER TABLE "CommentLike" ADD CONSTRAINT "CommentLike_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Like_objectId_likedBy_key" ON "Like"("objectId", "likedBy");
+CREATE UNIQUE INDEX "ObjectLike_objectId_likedBy_key" ON "ObjectLike"("objectId", "likedBy");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Follow_objectId_objectType_followedBy_key" ON "Follow"("objectId", "objectType", "followedBy");

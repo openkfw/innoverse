@@ -9,7 +9,7 @@ export async function getProjectLikes(client: PrismaClient, objectId: string, li
 
   if (limit) query.take = limit;
 
-  const res = await client.like.findMany(query);
+  const res = await client.objectLike.findMany(query);
   return res;
 }
 
@@ -22,10 +22,10 @@ export async function getUserLikes(client: PrismaClient, likedBy: string, limit?
 
   if (limit) query.take = limit;
 
-  return client.like.findMany(query);
+  return client.objectLike.findMany(query);
 }
 export async function isObjectLikedBy(client: PrismaClient, objectId: string, likedBy: string) {
-  const isLikedByUserCount = await client.like.count({
+  const isLikedByUserCount = await client.objectLike.count({
     where: {
       objectId,
       likedBy,
@@ -35,7 +35,7 @@ export async function isObjectLikedBy(client: PrismaClient, objectId: string, li
 }
 
 export async function deleteObjectAndUserLike(client: PrismaClient, objectId: string, likedBy: string) {
-  return client.like.deleteMany({
+  return client.objectLike.deleteMany({
     where: {
       objectId,
       likedBy,
@@ -44,7 +44,7 @@ export async function deleteObjectAndUserLike(client: PrismaClient, objectId: st
 }
 
 export async function addLike(client: PrismaClient, objectId: string, objectType: ObjectType, likedBy: string) {
-  return client.like.upsert({
+  return client.objectLike.upsert({
     where: {
       objectId_likedBy: {
         objectId,

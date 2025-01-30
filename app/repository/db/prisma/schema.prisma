@@ -35,7 +35,7 @@ model Comment {
   likes       CommentLike[]
 }
 
-model Like {
+model ObjectLike {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
