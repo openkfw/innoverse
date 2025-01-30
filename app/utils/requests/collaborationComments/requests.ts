@@ -68,27 +68,29 @@ export const getProjectCollaborationComments = async (body: { projectId: string;
   }
 };
 
-export const getProjectCollaborationCommentResponses = async (body: { comment: CollaborationComment }) => {
-  const validatedParams = validateParams(getCollaborationCommentResponsesSchema, body);
+export const getProjectCollaborationCommentResponses = withAuth(
+  async (user: UserSession, body: { comment: CollaborationComment }) => {
+    const validatedParams = validateParams(getCollaborationCommentResponsesSchema, body);
 
-  if (validatedParams.status !== StatusCodes.OK) {
+    if (validatedParams.status !== StatusCodes.OK) {
+      return {
+        status: validatedParams.status,
+        errors: validatedParams.errors,
+      };
+    }
+
+    const responses = await getCommentsByParentId(dbClient, body.comment.id);
+
+    const responsePromises = responses.map(async (response) => mapToComment(response, user.providerId));
+
+    const commentResponses = (await getPromiseResults(responsePromises)) as Comment[];
+
     return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
+      status: StatusCodes.OK,
+      data: sortDateByCreatedAtAsc(commentResponses),
     };
-  }
-
-  const responses = await getCommentsByParentId(dbClient, body.comment.id);
-
-  const responsePromises = responses.map(async (response) => mapToComment(response));
-
-  const commentResponses = (await getPromiseResults(responsePromises)) as Comment[];
-
-  return {
-    status: StatusCodes.OK,
-    data: sortDateByCreatedAtAsc(commentResponses),
-  };
-};
+  },
+);
 
 export const isProjectCollaborationCommentResponseLikedBy = withAuth(
   async (user: UserSession, body: { responseId: string }) => {

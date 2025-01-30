@@ -43,6 +43,7 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
     updateComment,
     deleteComment,
     handleLike,
+    isCommentLiked,
     commentLikeCount,
   } = useNewsCommentCard(props);
 
@@ -54,7 +55,7 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
       header={<CommentCardHeader content={comment} avatar={{ size: 24 }} />}
       footer={
         <Stack direction={'row'} sx={{ mt: 0 }} style={{ marginTop: '8px', marginLeft: '-8px', gap: 16 }}>
-          <LikeControl onLike={handleLike} isSelected={false} likeNumber={commentLikeCount} commentId={comment.id} />
+          <LikeControl onLike={handleLike} isSelected={isCommentLiked} likeNumber={commentLikeCount} />
           {displayResponseControls && <ResponseControls onResponse={startResponse} />}
           {displayEditingControls && <EditControls onEdit={startEdit} onDelete={deleteComment} />}
         </Stack>
@@ -128,6 +129,7 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
     updateComment: handleUpdate,
     deleteComment: handleDelete,
     handleLike,
+    isCommentLiked,
     commentLikeCount,
   };
 };

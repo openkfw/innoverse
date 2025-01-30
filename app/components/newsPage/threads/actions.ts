@@ -3,8 +3,10 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { ObjectType, UserSession } from '@/common/types';
-import { addComment, addLike, deleteLike } from '@/services/commentService';
+import { addComment } from '@/services/commentService';
 import { withAuth } from '@/utils/auth';
+import dbClient from '../../../repository/db/prisma/prisma';
+import { addCommentLike as addCommentLikeToDB, deleteCommentAndUserLike } from '@/repository/db/comment_like';
 
 interface AddUserComment {
   objectId: string;
@@ -27,15 +29,12 @@ export const addUserComment = withAuth(async (user: UserSession, body: AddUserCo
 });
 
 export const addCommentLike = withAuth(async (user: UserSession, commentId: string) => {
-  const author = user;
+  await addCommentLikeToDB(dbClient, commentId, user.providerId);
 
-  await addLike({ author, commentId });
   return { status: StatusCodes.OK };
 });
 
 export const deleteCommentLike = withAuth(async (user: UserSession, commentId: string) => {
-  const author = user;
-
-  await deleteLike({ author, commentId });
+  await deleteCommentAndUserLike(dbClient, commentId, user.providerId);
   return { status: StatusCodes.OK };
 });

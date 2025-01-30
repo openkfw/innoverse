@@ -198,54 +198,8 @@ export async function isCommentLikedBy(client: PrismaClient, commentId: string, 
   const likedCommentsCount = await client.comment.count({
     where: {
       id: commentId,
-      likes: { some: { likedBy } }, //todo test this some/has
+      likes: { some: { likedBy } },
     },
   });
   return likedCommentsCount > 0;
-}
-
-export async function getCommentLikes(client: PrismaClient, commentId: string) {
-  const comment = await client.comment.findUnique({
-    where: {
-      id: commentId,
-    },
-    select: {
-      likes: true,
-    },
-  });
-
-  return comment?.likes;
-}
-
-//todo check this ObjectType.COMMENT
-export async function handleCommentLike(client: PrismaClient, commentId: string, likedBy: string) {
-  try {
-    return client.$transaction(async (tx) => {
-      const existingLike = await tx.like.findFirst({
-        where: {
-          objectId: commentId,
-          likedBy,
-        },
-      });
-
-      if (existingLike) {
-        return tx.like.delete({
-          where: {
-            id: existingLike.id,
-          },
-        });
-      } else {
-        return tx.like.create({
-          data: {
-            objectId: commentId,
-            objectType: ObjectType.COMMENT,
-            likedBy,
-          },
-        });
-      }
-    });
-  } catch (err) {
-    console.error(`Error handling like for comment with id: ${commentId} by user: ${likedBy}`, err);
-    throw err;
-  }
 }

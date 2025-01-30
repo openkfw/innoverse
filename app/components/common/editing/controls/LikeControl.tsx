@@ -5,16 +5,15 @@ import Typography from '@mui/material/Typography';
 import { mergeStyles } from '@/utils/helpers';
 
 interface LikeControlProps {
-  onLike: (commentId: string) => void;
+  onLike: () => void;
   isSelected: boolean;
   likeNumber: number;
-  commentId: string;
 }
 
-export const LikeControl = ({ onLike, isSelected, likeNumber, commentId }: LikeControlProps) => {
+export const LikeControl = ({ onLike, isSelected, likeNumber }: LikeControlProps) => {
   return (
     <Button
-      onClick={() => onLike(commentId)}
+      onClick={() => onLike()}
       sx={mergeStyles(iconButtonOnlyStyles, isSelected ? buttonStylesSelected : buttonStyles)}
     >
       <FavoriteBorderOutlinedIcon sx={iconStyles} />
@@ -35,6 +34,7 @@ const iconButtonOnlyStyles = {
   borderRadius: '2px',
   gap: '3px',
   minWidth: '40px',
+  mr: 1,
 };
 
 const buttonStyles = {

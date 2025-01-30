@@ -43,7 +43,5 @@ export const deleteCollaborationCommentResponse = async ({ user, response }: Del
   if (deletedResponse.parentId) {
     const commentCount = await getCommentResponseCount(dbClient, deletedResponse.parentId);
     await updateCollaborationCommentInCache({ user, comment: { id: deletedResponse.parentId, commentCount } });
-  } else {
-    logger.info('no parentID');
   }
 };

@@ -5,7 +5,7 @@ import { User } from '@/common/types';
 
 import { EditControls } from '../editing/controls/EditControls';
 import { ResponseControls } from '../editing/controls/ResponseControl';
-// import { UpvoteControls } from '../editing/controls/UpvoteControls';
+import { LikeControl } from '../editing/controls/LikeControl';
 
 interface CommentFooterProps {
   author?: User;
@@ -19,9 +19,9 @@ interface CommentFooterProps {
 
 export const CommentFooter = ({
   author,
-  // likeCount,
-  // isLiked,
-  // onLike,
+  likeCount,
+  isLiked,
+  onLike,
   onResponse,
   onEdit,
   onDelete,
@@ -32,10 +32,9 @@ export const CommentFooter = ({
   const displayResponseControls = !!onResponse;
   const displayEditControls = userIsAuthor && onEdit && onDelete;
 
-  //todo add like control
   return (
     <Stack direction={'row'}>
-      {/* <UpvoteControls upvoteCount={upvoteCount} isLiked={isLiked} onUpvote={onUpvote} sx={{ mr: 0.5 }} /> */}
+      <LikeControl onLike={onLike} isSelected={isLiked} likeNumber={likeCount} />
       {displayResponseControls && <ResponseControls onResponse={onResponse} />}
       {displayEditControls && <EditControls onEdit={onEdit} onDelete={onDelete} />}
     </Stack>

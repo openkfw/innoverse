@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
@@ -8,15 +8,11 @@ import { Comment } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import { useEditingInteractions } from '@/components/common/editing/editing-context';
 import * as m from '@/src/paraglide/messages.js';
-import { isProjectCollaborationCommentResponseLikedBy } from '@/utils/requests/collaborationComments/requests';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
-import {
-  deleteProjectCollaborationCommentResponse,
-  handleProjectCollaborationCommentResponseLikedBy,
-  updateProjectCollaborationCommentResponse,
-} from './actions';
+import { deleteProjectCollaborationCommentResponse, updateProjectCollaborationCommentResponse } from './actions';
+import { addCommentLike, deleteCommentLike } from '@/components/newsPage/threads/actions';
 
 interface CollaborationCommentResponseCardProps {
   response: Comment;
@@ -26,7 +22,7 @@ interface CollaborationCommentResponseCardProps {
 
 export const CollaborationCommentResponseCard = (props: CollaborationCommentResponseCardProps) => {
   const { projectName } = props;
-  const { response, isLiked, toggleResponseLike, updateResponse, deleteResponse } =
+  const { response, isLiked, toggleCommentLike, updateResponse, deleteResponse, commentLikeCount } =
     useCollaborationCommentResponseCard(props);
 
   return (
@@ -35,9 +31,10 @@ export const CollaborationCommentResponseCard = (props: CollaborationCommentResp
         comment={{ ...response, text: response.text }}
         projectName={projectName}
         isLiked={isLiked ?? false}
-        onLikeToggle={toggleResponseLike}
+        onLikeToggle={toggleCommentLike}
         onDelete={deleteResponse}
         onEdit={updateResponse}
+        commentLikeCount={commentLikeCount}
       />
     </>
   );
@@ -45,35 +42,25 @@ export const CollaborationCommentResponseCard = (props: CollaborationCommentResp
 
 export function useCollaborationCommentResponseCard(props: CollaborationCommentResponseCardProps) {
   const [response, setResponse] = useState(props.response);
-  const [isLiked, setisLiked] = useState<boolean>();
+  const [isLiked, setIsLiked] = useState<boolean>(props.response.isLikedByUser || false);
+  const [commentLikeCount, setCommentLikeCount] = useState<number>(props.response?.likes?.length || 0);
   const appInsights = useAppInsightsContext();
   const interactions = useEditingInteractions();
 
-  useEffect(() => {
-    async function loadAndSetisLiked() {
-      try {
-        const result = await isProjectCollaborationCommentResponseLikedBy({ responseId: response.id });
-        setisLiked(result.data);
-      } catch (error) {
-        console.error('Error updating collaboration comment:', error);
-        errorMessage({ message: m.components_collaboration_comments_collaborationCommentResponseCard_updateError() });
-        appInsights.trackException({
-          exception: new Error('Failed to update collaboration comment.', { cause: error }),
-          severityLevel: SeverityLevel.Error,
-        });
-      }
-    }
-    loadAndSetisLiked();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [response]);
-
-  const toggleResponseLike = () => {
+  const toggleCommentLike = () => {
     try {
-      handleProjectCollaborationCommentResponseLikedBy({ responseId: response.id });
-      setisLiked((liked) => !liked);
+      if (isLiked) {
+        setIsLiked(false);
+        deleteCommentLike(response.id);
+        setCommentLikeCount(commentLikeCount - 1);
+      } else {
+        setIsLiked(true);
+        addCommentLike(response.id);
+        setCommentLikeCount(commentLikeCount + 1);
+      }
     } catch (error) {
-      console.error('Error like collaboration comment response:', error);
-      errorMessage({ message: m.components_collaboration_comments_collaborationCommentResponseCard_upvoteError() });
+      console.error('Error while liking collaboration comment response:', error);
+      errorMessage({ message: m.components_projectdetails_comments_projectCommentCard_updateError() });
       appInsights.trackException({
         exception: new Error('Failed to like collaboration comment response.', { cause: error }),
         severityLevel: SeverityLevel.Error,
@@ -113,8 +100,9 @@ export function useCollaborationCommentResponseCard(props: CollaborationCommentR
   return {
     response,
     isLiked,
-    toggleResponseLike,
+    toggleCommentLike,
     updateResponse,
     deleteResponse,
+    commentLikeCount,
   };
 }

@@ -13,12 +13,6 @@ export const getCommentsSchema = z
   })
   .required();
 
-export const commentLikedBySchema = z
-  .object({
-    commentId: z.string(),
-  })
-  .required();
-
 export const updateCommentSchema = z
   .object({
     commentId: z.string(),

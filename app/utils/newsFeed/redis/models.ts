@@ -128,7 +128,6 @@ export type RedisNewsComment = {
 
 export type RedisHashedNewsComment = {
   id: string;
-  // commentId: string;
   text: string;
   author?: RedisUser;
   updatedAt: number;

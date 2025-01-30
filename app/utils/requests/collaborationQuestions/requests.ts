@@ -18,11 +18,11 @@ import {
   GetCollaborationQuestionsByProjectIdQuery,
   GetCollaborationQuestionsCountProjectIdQuery,
   GetPlatformFeedbackCollaborationQuestion,
+  GetCollaborationQuestsionsStartingFromQuery,
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 import { mapToBasicCollaborationQuestion } from './mappings';
-import { GetCollaborationQuestsionsStartingFromQuery } from './queries';
 
 const logger = getLogger();
 

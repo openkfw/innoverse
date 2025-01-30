@@ -29,6 +29,7 @@ interface CommentCardProps {
   onLikeToggle: () => void;
   onEdit?: (updatedText: string) => Promise<void>;
   onDelete?: () => void;
+  commentLikeCount: number;
 }
 
 interface BasicComment {
@@ -40,7 +41,16 @@ interface BasicComment {
 }
 
 export const CommentCard = (props: CommentCardProps) => {
-  const { comment, isLiked: isLiked, projectName, enableResponses = false, onLikeToggle, onEdit, onDelete } = props;
+  const {
+    comment,
+    isLiked,
+    projectName,
+    enableResponses = false,
+    onLikeToggle,
+    onEdit,
+    onDelete,
+    commentLikeCount,
+  } = props;
 
   const state = useEditingState();
   const editingInteractions = useEditingInteractions();
@@ -112,7 +122,7 @@ export const CommentCard = (props: CommentCardProps) => {
       footer={
         <CommentFooter
           author={comment.author}
-          likeCount={comment.likedBy.length}
+          likeCount={commentLikeCount}
           isLiked={isLiked}
           onLike={onLikeToggle}
           onEdit={() => editingInteractions.onStart(comment)}

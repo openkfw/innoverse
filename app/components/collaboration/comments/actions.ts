@@ -2,7 +2,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { CollaborationComment, UserSession } from '@/common/types';
-import { getCommentById, handleCommentLike, updateCommentInDb } from '@/repository/db/comment';
+import { getCommentById, updateCommentInDb } from '@/repository/db/comment';
 import {
   addCollaborationCommentResponse,
   deleteCollaborationCommentResponse,
@@ -10,7 +10,6 @@ import {
 import {
   addCollaborationComment,
   deleteCollaborationComment,
-  handleCollaborationCommentLike,
   updateCollaborationComment,
 } from '@/services/collaborationCommentService';
 import { withAuth } from '@/utils/auth';
@@ -24,8 +23,6 @@ import dbClient from '../../../repository/db/prisma/prisma';
 import {
   addCollaborationCommentResponseSchema,
   addCollaborationCommentSchema,
-  collaborationCommentLikedBySchema,
-  collaborationCommentResponseLikedBySchema,
   deleteCollaborationCommentResponseSchema,
   deleteCollaborationCommentSchema,
   updateCollaborationCommentResponseSchema,
@@ -175,34 +172,6 @@ export const updateProjectCollaborationComment = withAuth(
   },
 );
 
-export const handleProjectCollaborationCommentLikedBy = withAuth(
-  async (user: UserSession, body: { commentId: string }) => {
-    try {
-      const validatedParams = validateParams(collaborationCommentLikedBySchema, body);
-      if (validatedParams.status === StatusCodes.OK) {
-        await handleCollaborationCommentLike({ commentId: body.commentId, user });
-        return { status: StatusCodes.OK };
-      }
-      return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-        message: validatedParams.message,
-      };
-    } catch (err) {
-      const error: InnoPlatformError = dbError(
-        `Adding a like of a Collaboration Comment ${body.commentId} for user ${user.providerId}`,
-        err as Error,
-        body.commentId,
-      );
-      logger.error(error);
-      return {
-        status: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: 'Liking the comment failed',
-      };
-    }
-  },
-);
-
 export const addProjectCollaborationCommentResponse = withAuth(
   async (user: UserSession, body: { comment: CollaborationComment; text: string }) => {
     const validatedParams = validateParams(addCollaborationCommentResponseSchema, body);
@@ -315,30 +284,6 @@ export const updateProjectCollaborationCommentResponse = withAuth(
     } catch (err) {
       const error: InnoPlatformError = dbError(
         `Updating a Collaboration Comment Response with id: ${body.responseId} by user ${user.providerId}`,
-        err as Error,
-        body.responseId,
-      );
-      logger.error(error);
-      throw err;
-    }
-  },
-);
-
-export const handleProjectCollaborationCommentResponseLikedBy = withAuth(
-  async (user: UserSession, body: { responseId: string }) => {
-    try {
-      const validatedParams = validateParams(collaborationCommentResponseLikedBySchema, body);
-      if (validatedParams.status === StatusCodes.OK) {
-        await handleCommentLike(dbClient, body.responseId, user.providerId);
-        return { status: StatusCodes.OK };
-      }
-      return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-      };
-    } catch (err) {
-      const error: InnoPlatformError = dbError(
-        `Adding an like to a Collaboration Comment Response with id: ${body.responseId} by user ${user.providerId}`,
         err as Error,
         body.responseId,
       );

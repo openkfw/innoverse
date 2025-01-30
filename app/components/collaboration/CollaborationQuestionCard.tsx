@@ -12,7 +12,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { useProject } from '@/app/contexts/project-context';
-import { CollaborationComment,CollaborationQuestion } from '@/common/types';
+import { CollaborationComment, CollaborationQuestion } from '@/common/types';
 import { UserAvatar } from '@/components/common/UserAvatar';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
@@ -46,7 +46,7 @@ export const CollaborationQuestionCard = ({
 }: CollaborationQuestionCardProps) => {
   const { title, description, authors, comments: projectComments } = content;
   const { setCollaborationCommentsAmount } = useProject();
-  const sortedProjectComments = sortDateByCreatedAtDesc(projectComments as CollaborationCommentWithDate[]); //todo check
+  const sortedProjectComments = sortDateByCreatedAtDesc(projectComments as CollaborationCommentWithDate[]);
 
   const [comments, setComments] = useState<CollaborationComment[]>(sortedProjectComments);
   const [writeNewComment, setWriteNewComment] = useState(false);

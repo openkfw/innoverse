@@ -3,13 +3,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { Comment, ObjectType, UserSession } from '@/common/types';
-import {
-  addCommentToDb,
-  deleteCommentInDb,
-  getCommentById,
-  handleCommentLike,
-  updateCommentInDb,
-} from '@/repository/db/comment';
+import { addCommentToDb, deleteCommentInDb, getCommentById, updateCommentInDb } from '@/repository/db/comment';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
@@ -18,12 +12,7 @@ import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
 
-import {
-  commentLikedBySchema,
-  deleteCommentSchema,
-  handleCommentSchema,
-  updateCommentSchema,
-} from './validationSchema';
+import { deleteCommentSchema, handleCommentSchema, updateCommentSchema } from './validationSchema';
 
 const logger = getLogger();
 
@@ -66,35 +55,6 @@ export const addProjectComment = withAuth(async (user: UserSession, body: { proj
     return {
       status: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'Adding a Comment failed',
-    };
-  }
-});
-
-export const handleProjectCommentLikeBy = withAuth(async (user: UserSession, body: { commentId: string }) => {
-  try {
-    const validatedParams = validateParams(commentLikedBySchema, body);
-    if (validatedParams.status === StatusCodes.OK) {
-      const updatedComment = await handleCommentLike(dbClient, body.commentId, user.providerId);
-      return {
-        status: StatusCodes.OK,
-        likedBy: updatedComment?.likedBy,
-      };
-    }
-    return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
-      message: validatedParams.message,
-    };
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Adding an like of a Comment ${body.commentId} for user ${user.providerId}`,
-      err as Error,
-      body.commentId,
-    );
-    logger.error(error);
-    return {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Liking comment failed',
     };
   }
 });

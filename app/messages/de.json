@@ -34,7 +34,6 @@
   "components_collaboration_comments_collaborationCommentCard_upvoteError": "Der Kommentar konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",
   "components_collaboration_comments_collaborationCommentCard_updateError": "Der Kommentar konnte nicht aktualisiert werden. Bitte versuche es später noch einmal.",
   "components_collaboration_comments_collaborationCommentCard_deleteError": "Der Kommentar konnte nicht gelöscht werden. Bitte versuche es später noch einmal.",
-  "components_collaboration_comments_collaborationCommentCard_questionMissing": "Die Frage konnte nicht gefunden werden. Bitte versuche es später noch einmal.",
 
   "components_collaboration_comments_collaborationCommentResponseCard_updateError": "Die Antwort konnte nicht aktualisiert werden. Bitte versuche es später noch einmal.",
   "components_collaboration_comments_collaborationCommentResponseCard_upvoteError": "Die Antwort konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",
@@ -407,5 +406,5 @@
   "components_updates_updatesTab_noNews": "Es gibt noch keine Neuigkeiten zu diesem Projekt. Klick hier um eine hinzuzufügen.",
   "components_updates_updatesTab_addNewNews": "Halte Dein Publikum auf dem Laufenden! Klicke hier, um eine Neuigkeit hinzuzufügen.",
 
-  "components_common_form_MultilineMentionInput_loading" : "Lädt..."
+  "components_common_form_MultilineMentionInput_loading": "Lädt..."
 }

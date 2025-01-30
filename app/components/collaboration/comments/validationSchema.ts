@@ -28,12 +28,6 @@ export const updateCollaborationCommentSchema = z
   })
   .required();
 
-export const collaborationCommentLikedBySchema = z
-  .object({
-    commentId: z.string(),
-  })
-  .required();
-
 export const getCollaborationCommentResponsesSchema = z
   .object({
     comment: z

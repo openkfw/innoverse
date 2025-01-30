@@ -6,9 +6,9 @@ import {
   deleteCommentInDb,
   getCommentById,
   getCommentResponseCount,
-  handleCommentLike,
   updateCommentInDb,
 } from '@/repository/db/comment';
+import { addCommentLike } from '@/repository/db/comment_like';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
@@ -84,12 +84,14 @@ export const updateCollaborationComment = async ({ user, comment }: UpdateCollab
 };
 
 export const handleCollaborationCommentLike = async ({ user, commentId }: LikeCollaborationComment) => {
-  const updatedComment = await handleCommentLike(dbClient, commentId, user.providerId);
+  const commentLike = await addCommentLike(dbClient, commentId, user.providerId);
+  const updatedComment = await getCommentById(dbClient, commentId);
 
-  if (updatedComment) {
+  if (commentLike && updatedComment) {
+    const comment = await mapToComment(updatedComment);
     await updateCollaborationCommentInCache({
       user,
-      comment: { ...updatedComment, likedBy: [updatedComment.likedBy] },
+      comment,
     });
   }
 };
