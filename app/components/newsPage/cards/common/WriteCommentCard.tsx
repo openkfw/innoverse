@@ -7,7 +7,7 @@ import WriteTextCard from '@/components/common/editing/writeText/WriteTextCard';
 import * as m from '@/src/paraglide/messages.js';
 
 interface WriteCommentCardProps {
-  content: { author: User; updatedAt: Date; comment: string; anonymous?: boolean };
+  content: { author: User; updatedAt: Date; text: string; anonymous?: boolean };
   onSubmit: (updatedText: string) => Promise<void>;
   onDiscard: ({ isDirty }: { isDirty: boolean }) => void;
 }
@@ -19,7 +19,7 @@ export const WriteCommentCard = ({ content, onSubmit, onDiscard }: WriteCommentC
       <WriteTextCard
         onSubmit={onSubmit}
         onDiscard={onDiscard}
-        defaultValues={{ text: content.comment }}
+        defaultValues={{ text: content.text }}
         disableAvatar
         sx={{ mt: 2 }}
         submitButton={

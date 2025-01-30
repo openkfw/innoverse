@@ -1,20 +1,16 @@
 'use server';
 
-import { UserSession } from '@/common/types';
-import {
-  addCollaborationCommentResponseToDb,
-  deleteCollaborationCommentResponseInDb,
-  getCollaborationCommentResponseCount,
-} from '@/repository/db/collaboration_comment_response';
+import { CollaborationComment, ObjectType, UserSession } from '@/common/types';
+import { addCommentToDb, deleteCommentInDb, getCommentResponseCount } from '@/repository/db/comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { updateCollaborationCommentInCache } from '@/services/collaborationCommentService';
+import getLogger from '@/utils/logger';
+import { mapToComment } from '@/utils/requests/comments/mapping';
 
 type AddResponse = {
   user: UserSession;
-  response: string;
-  comment: {
-    id: string;
-  };
+  text: string;
+  comment: CollaborationComment;
 };
 
 type DeleteResponse = {
@@ -24,15 +20,28 @@ type DeleteResponse = {
   };
 };
 
-export const addCollaborationCommentResponse = async ({ user, response, comment }: AddResponse) => {
-  const createdResponse = await addCollaborationCommentResponseToDb(dbClient, user.providerId, response, comment.id);
-  const commentCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
+const logger = getLogger();
+
+export const addCollaborationCommentResponse = async ({ user, text, comment }: AddResponse) => {
+  const createdResponse = await addCommentToDb({
+    client: dbClient,
+    objectId: comment.projectId,
+    objectType: ObjectType.PROJECT,
+    additionalObjectType: ObjectType.COLLABORATION_QUESTION,
+    additionalObjectId: comment.question?.id,
+    author: user.providerId,
+    text,
+    parentId: comment.id,
+  });
+  const commentCount = await getCommentResponseCount(dbClient, comment.id);
   await updateCollaborationCommentInCache({ user, comment: { id: comment.id, commentCount } });
-  return createdResponse;
+  return await mapToComment(createdResponse);
 };
 
 export const deleteCollaborationCommentResponse = async ({ user, response }: DeleteResponse) => {
-  const deletedResponse = await deleteCollaborationCommentResponseInDb(dbClient, response.id);
-  const commentCount = await getCollaborationCommentResponseCount(dbClient, deletedResponse.commentId);
-  await updateCollaborationCommentInCache({ user, comment: { id: deletedResponse.commentId, commentCount } });
+  const deletedResponse = await deleteCommentInDb(dbClient, response.id);
+  if (deletedResponse.parentId) {
+    const commentCount = await getCommentResponseCount(dbClient, deletedResponse.parentId);
+    await updateCollaborationCommentInCache({ user, comment: { id: deletedResponse.parentId, commentCount } });
+  }
 };

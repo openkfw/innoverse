@@ -2,20 +2,20 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { UserSession } from '@/common/types';
+import { ObjectType, UserSession } from '@/common/types';
 import { removeComment, updateComment } from '@/services/commentService';
 import { withAuth } from '@/utils/auth';
 
 export const updateUserComment = withAuth(
   async (
     user: UserSession,
-    body: { commentId: string; content: string; commentType: 'NEWS_COMMENT' | 'POST_COMMENT' },
+    body: { commentId: string; content: string; objectType: ObjectType.POST | ObjectType.UPDATE },
   ) => {
     try {
       await updateComment({
         commentId: body.commentId,
         content: body.content,
-        commentType: body.commentType,
+        author: user,
       });
       return {
         status: StatusCodes.OK,
@@ -29,9 +29,9 @@ export const updateUserComment = withAuth(
 );
 
 export const removeUserComment = withAuth(
-  async (user: UserSession, body: { commentId: string; commentType: 'NEWS_COMMENT' | 'POST_COMMENT' }) => {
+  async (user: UserSession, body: { commentId: string; objectType: ObjectType.POST | ObjectType.UPDATE }) => {
     try {
-      await removeComment({ user, commentId: body.commentId, commentType: body.commentType });
+      await removeComment({ user, commentId: body.commentId });
       return {
         status: StatusCodes.OK,
       };

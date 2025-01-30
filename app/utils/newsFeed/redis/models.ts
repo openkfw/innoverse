@@ -1,4 +1,4 @@
-import { HashedNewsComment, PROJECT_PROGRESS, ProjectDescription } from '@/common/types';
+import { PROJECT_PROGRESS, ProjectDescription } from '@/common/types';
 import { InnoPlatformError } from '@/utils/errors';
 
 export enum NewsType {
@@ -10,7 +10,6 @@ export enum NewsType {
   SURVEY_QUESTION = 'survey-question',
   OPPORTUNITY = 'opportunity',
   PROJECT = 'project',
-  NEWS_COMMENT = 'news-comment',
 }
 
 export type RedisNewsFeedEntry = {
@@ -71,7 +70,7 @@ export type RedisPost = RedisItem & {
   createdAt: number;
   author: RedisUser;
   content: string;
-  upvotedBy: string[];
+  likedBy: string[];
   anonymous: boolean;
 };
 
@@ -117,10 +116,9 @@ export type RedisProject = RedisItem & {
 
 export type RedisNewsComment = {
   id: string;
-  commentId: string;
-  comment: string;
+  text: string;
   author?: RedisUser;
-  upvotedBy?: string[];
+  likedBy?: string[];
   commentCount?: number;
   comments?: RedisNewsComment[];
   updatedAt: number;
@@ -130,9 +128,8 @@ export type RedisNewsComment = {
 
 export type RedisHashedNewsComment = {
   id: string;
-  commentId: string;
-  comment: string;
-  author?: string;
+  text: string;
+  author?: RedisUser;
   updatedAt: number;
   createdAt: number;
   itemType: NewsType;
@@ -176,13 +173,13 @@ export type RedisSurveyQuestion = RedisItem & {
 
 export type RedisCollaborationComment = RedisItem & {
   author: RedisUser;
-  comment: string;
-  upvotedBy: string[];
+  text: string;
+  likedBy: string[];
   commentCount: number;
   projectId: string;
   question: Omit<RedisCollaborationQuestion, 'reactions' | 'followedBy' | 'updatedAt'>;
   createdAt: number;
-  isUpvotedByUser?: boolean;
+  isLikedByUser?: boolean;
 };
 
 export interface RedisUser {

@@ -33,17 +33,21 @@ function NewsCollabCommentCard(props: NewsCollabCommentCardProps) {
 
   return isEditing ? (
     <WriteCommentCard
-      content={{ author: comment.author, comment: comment.comment, updatedAt: comment.updatedAt }}
+      content={{ author: comment.author, text: comment.text, updatedAt: comment.updatedAt }}
       onSubmit={handleUpdate}
       onDiscard={cancelEditing}
     />
   ) : (
     <>
-      <CommentOverview title={question.title} description={question.description} projectId={comment.projectId} />
+      <CommentOverview
+        title={question?.title || ''}
+        description={question?.description || ''}
+        projectId={comment.projectId}
+      />
       <CommentCardHeader content={comment} avatar={{ size: 32 }} />
       <CardContentWrapper>
         <Typography color="text.primary" variant="body1">
-          <HighlightText text={formatMentionToText(comment.comment)} />
+          <HighlightText text={formatMentionToText(comment.text)} />
         </Typography>
       </CardContentWrapper>
       <NewsCardActions entry={entry} />
@@ -67,7 +71,7 @@ export function useNewsCollabCommentCard(props: NewsCollabCommentCardProps) {
   const handleUpdate = async (updatedText: string) => {
     try {
       await updateProjectCollaborationComment({ commentId: comment.id, updatedText });
-      setComment({ ...comment, comment: updatedText });
+      setComment({ ...comment, text: updatedText });
       editingInteractions.onSubmit();
     } catch (error) {
       console.error('Error updating collaboration comment:', error);

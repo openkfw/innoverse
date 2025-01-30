@@ -7,7 +7,7 @@ import { NewsUpdateCard } from '@/components/newsPage/cards/NewsUpdateCard';
 import { addUserComment } from '@/components/newsPage/threads/actions';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
 import { NewsCommentThread } from '@/components/newsPage/threads/NewsCommentThread';
-import { getNewsCommentsProjectUpdateId } from '@/utils/requests/comments/requests';
+import { getCommentsByObjectId } from '@/utils/requests/comments/requests';
 
 interface NewsUpdateThreadProps {
   entry: NewsFeedEntry;
@@ -23,15 +23,15 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
   };
 
   const fetchComments = async () => {
-    return await getNewsCommentsProjectUpdateId(update.id);
+    const result = await getCommentsByObjectId({ objectId: update.id });
+    return result.data;
   };
 
   const addComment = async (text: string) => {
     const comment = await addUserComment({
       comment: text,
-      commentType: 'NEWS_COMMENT',
-      objectId: update.id,
       objectType: ObjectType.UPDATE,
+      objectId: update.id,
       projectId: currentUpdate.projectId,
     });
     const data = comment.data ? { ...comment.data, comments: [] } : undefined;
@@ -45,11 +45,12 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
       fetchComments={fetchComments}
       addComment={addComment}
       renderComment={(comment, idx, deleteComment, updateComment) => (
-        <Box width="98%" display="block " alignSelf="end" key={`${idx}-${comment.id}`}>
+        <Box width="98%" display="block" alignSelf="end" key={`${idx}-${comment.id}`}>
           <NewsCommentThread
-            item={{ ...update, objectType: ObjectType.UPDATE }}
+            key={`${idx}-${comment.id}`}
+            item={update}
             comment={comment}
-            commentType="NEWS_COMMENT"
+            commentType={ObjectType.UPDATE}
             level={1}
             onDelete={deleteComment}
             onUpdate={updateComment}

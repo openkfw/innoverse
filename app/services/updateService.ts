@@ -2,7 +2,6 @@
 
 import { ObjectType, ProjectUpdate } from '@/common/types';
 import { getFollowedByForEntity } from '@/repository/db/follow';
-import { countNewsResponses } from '@/repository/db/news_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { dbError, InnoPlatformError, redisError } from '@/utils/errors';
@@ -120,8 +119,8 @@ export const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate)
     const updateReactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
     const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, update.projectId);
     const mappedUpdateFollowedBy = await mapToRedisUsers(projectFollowedBy);
-    const comments = await getRedisNewsCommentsWithResponses(update.id, ObjectType.UPDATE);
-    const commentsIds = comments.map((comment) => comment.commentId);
+    const comments = await getRedisNewsCommentsWithResponses(update.id);
+    const commentsIds = comments.map((comment) => comment.id);
 
     return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, commentsIds);
   } catch (err) {

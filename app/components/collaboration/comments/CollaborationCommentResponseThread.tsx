@@ -1,11 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { CommentResponse } from '@/common/types';
+import { Comment } from '@/common/types';
 import { CollaborationCommentResponseCard } from '@/components/collaboration/comments/CollaborationCommentResponseCard';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
 
 interface CollaborationCommentResponseThreadProps {
-  response: CommentResponse;
+  response: Comment;
   onDelete: () => void;
 }
 

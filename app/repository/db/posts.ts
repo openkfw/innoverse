@@ -1,10 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 
+import { ObjectType } from '@/common/types';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import { getUniqueValues } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 
-import { getPostCommentsStartingFrom } from './post_comment';
+import { getCommentsStartingFrom } from './comment';
 
 const logger = getLogger();
 
@@ -15,12 +16,12 @@ export async function getPostById(client: PrismaClient, id: string) {
 export async function getPostsStartingFrom(client: PrismaClient, from: Date) {
   const [posts, postsComments] = await Promise.all([
     getPostsFromDbStartingFrom(client, from),
-    getPostCommentsStartingFrom(client, from),
+    getCommentsStartingFrom(client, from, ObjectType.POST),
   ]);
 
   // Get unique ids of posts
   const postIds = getUniqueValues(
-    postsComments.map((comment) => comment.postComment?.postId).filter((id): id is string => id !== undefined),
+    postsComments.map((comment) => comment.objectId).filter((id): id is string => id !== undefined),
   );
   const postsWithComments = await getPostsByIds(client, postIds);
   const allPosts = [...posts, ...postsWithComments];
@@ -83,24 +84,24 @@ export async function updatePostInDb(client: PrismaClient, postId: string, conte
   }
 }
 
-export async function handlePostUpvoteInDb(client: PrismaClient, postId: string, upvotedBy: string) {
+export async function handlePostLikeInDb(client: PrismaClient, postId: string, likedBy: string) {
   try {
     return client.$transaction(async (tx) => {
       const result = await tx.post.findFirst({
         where: { id: postId },
         select: {
-          upvotedBy: true,
+          likedBy: true,
         },
       });
-      const upvotes = result?.upvotedBy.filter((upvote) => upvote !== upvotedBy);
+      const likes = result?.likedBy.filter((like) => like !== likedBy);
 
-      if (result?.upvotedBy.includes(upvotedBy)) {
+      if (result?.likedBy.includes(likedBy)) {
         return tx.post.update({
           where: {
             id: postId,
           },
           data: {
-            upvotedBy: upvotes,
+            likedBy: likes,
           },
         });
       }
@@ -111,13 +112,13 @@ export async function handlePostUpvoteInDb(client: PrismaClient, postId: string,
             id: postId,
           },
           data: {
-            upvotedBy: { push: upvotedBy },
+            likedBy: { push: likedBy },
           },
         });
       }
     });
   } catch (err) {
-    const error: InnoPlatformError = dbError(`Upvote post with id: ${postId} by user ${upvotedBy}`, err as Error);
+    const error: InnoPlatformError = dbError(`Like post with id: ${postId} by user ${likedBy}`, err as Error);
     logger.error(error);
     throw error;
   }

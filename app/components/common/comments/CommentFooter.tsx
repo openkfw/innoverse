@@ -5,23 +5,23 @@ import { User } from '@/common/types';
 
 import { EditControls } from '../editing/controls/EditControls';
 import { ResponseControls } from '../editing/controls/ResponseControl';
-import { UpvoteControls } from '../editing/controls/UpvoteControls';
+import { LikeControl } from '../editing/controls/LikeControl';
 
 interface CommentFooterProps {
   author?: User;
   onResponse?: () => void;
-  upvoteCount: number;
-  isUpvoted: boolean;
-  onUpvote: () => void;
+  likeCount: number;
+  isLiked: boolean;
+  onLike: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
 }
 
 export const CommentFooter = ({
   author,
-  upvoteCount,
-  isUpvoted,
-  onUpvote,
+  likeCount,
+  isLiked,
+  onLike,
   onResponse,
   onEdit,
   onDelete,
@@ -34,7 +34,7 @@ export const CommentFooter = ({
 
   return (
     <Stack direction={'row'}>
-      <UpvoteControls upvoteCount={upvoteCount} isUpvoted={isUpvoted} onUpvote={onUpvote} sx={{ mr: 0.5 }} />
+      <LikeControl onLike={onLike} isSelected={isLiked} likeNumber={likeCount} />
       {displayResponseControls && <ResponseControls onResponse={onResponse} />}
       {displayEditControls && <EditControls onEdit={onEdit} onDelete={onDelete} />}
     </Stack>

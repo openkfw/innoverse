@@ -19,11 +19,11 @@ import { appInsights } from '@/utils/instrumentation/AppInsights';
 import { useRespondingState } from '../../common/editing/editing-context';
 
 interface CommentThreadProps<TComment> {
-  comment: { id: string; comments?: TComment[]; author?: User; anonymous?: boolean };
+  comment: { id: string; comments?: TComment[]; author?: User; anonymous?: boolean; commentCount?: number };
   card: React.ReactNode;
   disableDivider?: boolean;
   indentComments?: React.CSSProperties['paddingLeft'];
-  fetchComments: () => Promise<TComment[]>;
+  fetchComments: () => Promise<TComment[] | undefined>;
   renderComment: (
     comment: TComment,
     idx: number,
@@ -73,7 +73,8 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
           style={{ marginBottom: 2 }}
           onClick={loadComments}
         >
-          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} ({comment.comments?.length})
+          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} (
+          {comment.comments?.length || comment.commentCount})
         </Button>
       )}
       {comments.isLoading && <CommentThreadSkeleton sx={{ pl: indentComments, mt: 2 }} />}
@@ -176,7 +177,10 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     comments,
     indentComments,
     showLoadCommentsButton:
-      !searchedResult && !comments.isVisible && !comments.isLoading && comment.comments && comment.comments.length > 0,
+      !searchedResult &&
+      !comments.isVisible &&
+      !comments.isLoading &&
+      ((comment.comments && comment.comments.length > 0) || comment.commentCount),
     showDivider: !disableDivider && (commentsExist || state.isEditing(comment)),
     handleComment,
     deleteComment,

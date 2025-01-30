@@ -1,11 +1,13 @@
+import { SearchOptions } from 'redis';
+
+import { InnoPlatformError, redisError } from '@/utils/errors';
+import { getUnixTimestamp } from '@/utils/helpers';
+import getLogger from '@/utils/logger';
+import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
+
 import { NewsType, RedisNewsComment, RedisNewsFeedEntry } from '../models';
 import { getRedisClient, RedisClient, RedisIndex } from '../redisClient';
 import { getNewsFeedEntryByKey } from '../redisService';
-import { SearchOptions } from 'redis';
-import { getUnixTimestamp } from '@/utils/helpers';
-import { InnoPlatformError, redisError } from '@/utils/errors';
-import getLogger from '@/utils/logger';
-import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
 
 const logger = getLogger();
 
@@ -25,12 +27,11 @@ export async function setCommentsIdsToEntry(redisClient: RedisClient, redisKey: 
 
 export async function updateNewsCommentInCache(comment: RedisNewsComment) {
   const redisClient = await getRedisClient();
-  const hashKey = `comment:${comment.commentId}`;
+  const hashKey = `comment:${comment.id}`;
 
   await redisClient.hSet(hashKey, {
     id: comment.id,
-    commentId: comment.commentId,
-    comment: comment.comment,
+    comment: comment.text,
     updatedAt: getUnixTimestamp(new Date()),
     authorId: JSON.stringify(comment.author),
   });
@@ -38,13 +39,13 @@ export async function updateNewsCommentInCache(comment: RedisNewsComment) {
 
 async function addNewsCommentToRedisCache(redisClient: RedisClient, body: AddNewsComment) {
   try {
-    const hashKey = `comment:${body.comment.commentId}`;
+    const hashKey = `comment:${body.comment.id}`;
     const { newsType, newsId, comment } = body;
     await redisClient.hSet(hashKey, {
       id: body.comment.id,
       ...(body.parentId && { parentId: body.parentId }),
       ...(body.projectId && { projectId: body.projectId }),
-      comment: comment.comment,
+      comment: comment.text,
       itemType: newsType,
       itemId: newsId,
       updatedAt: getUnixTimestamp(new Date()),
@@ -65,7 +66,7 @@ export async function addNewsCommentToCache(body: AddNewsComment) {
   const redisClient = await getRedisClient();
   const { newsType, newsId, comment } = body;
   await addNewsCommentToRedisCache(redisClient, body);
-  await redisClient.json.arrAppend(`${newsType}:${newsId}`, '.item.comments', comment.commentId);
+  await redisClient.json.arrAppend(`${newsType}:${newsId}`, '.item.comments', comment.id);
   await redisClient.json.set(`${newsType}:${newsId}`, '.item.updatedAt', comment.updatedAt);
 }
 
@@ -109,10 +110,10 @@ export const deleteCommentsInCache = async (entry: RedisNewsFeedEntry) => {
 export async function saveComments(redisClient: RedisClient, entry: RedisNewsFeedEntry, comments: RedisNewsComment[]) {
   await saveHashedComments(redisClient, entry, comments);
   let queue = comments;
-  let commentsIds: string[] = [];
+  const commentsIds: string[] = [];
   while (queue.length) {
     queue.forEach((comment) => {
-      commentsIds.push(comment.commentId);
+      commentsIds.push(comment.id);
     });
     queue = queue.flatMap((comment) => comment.comments) as RedisNewsComment[];
   }
@@ -179,7 +180,7 @@ export async function getNewsFeedEntryWithComments(client: RedisClient, entryTyp
   const entry = await getNewsFeedEntryByKey(client, `${entryType}:${entryId}`);
   if (entry) {
     // TODO: return the comments from Redis Cache instead of the DB
-    const comments = await getRedisNewsCommentsWithResponses(entry.item.id, entry.type);
+    const comments = await getRedisNewsCommentsWithResponses(entry.item.id);
     return { ...entry, item: { ...entry.item, comments } } as RedisNewsFeedEntry;
   }
 }

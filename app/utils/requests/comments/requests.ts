@@ -1,63 +1,57 @@
 'use server';
-import { CommentWithResponses, CommonCommentProps, ObjectType } from '@/common/types';
-import { getNewsCommentsByUpdateId } from '@/repository/db/news_comment';
-import { getNewsCommentsByPostId, getPostCommentById } from '@/repository/db/post_comment';
+
+import { StatusCodes } from 'http-status-codes';
+
+import { CommentWithResponses, CommonCommentProps, UserSession } from '@/common/types';
+import { getCommentById, getCommentsByObjectId as getCommentsByObjectIdFromDB } from '@/repository/db/comment';
+import dbClient from '@/repository/db/prisma/prisma';
+import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
-import { mapToRedisNewsComments } from '@/utils/newsFeed/redis/mappings';
-import { saveComments } from '@/utils/newsFeed/redis/services/commentsService';
-import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
-import dbClient from '@/repository/db/prisma/prisma';
-import { NewsType, RedisNewsFeedEntry } from '@/utils/newsFeed/redis/models';
+import { mapCommentWithResponsesToRedisNewsComments } from '@/utils/newsFeed/redis/mappings';
+import { RedisNewsFeedEntry } from '@/utils/newsFeed/redis/models';
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
+import { saveComments } from '@/utils/newsFeed/redis/services/commentsService';
+import { mapToComment } from '@/utils/requests/comments/mapping';
 
 const logger = getLogger();
 
-export const getNewsCommentsProjectUpdateId = async (updateId: string) => {
+export const getCommentsByObjectId = withAuth(async (user: UserSession, body: { objectId: string }) => {
   try {
-    const dbComments = await getNewsCommentsByUpdateId(dbClient, updateId);
-    const mapComments = dbComments.map(mapToNewsComment);
-    const comments = await Promise.all(mapComments);
-    const commentsWithResponses = setResponses(comments);
-    return commentsWithResponses;
+    const commensWithResponses = await getCommentsByObjectIdWithResponses(body.objectId, user.providerId);
+    return {
+      status: StatusCodes.OK,
+      data: commensWithResponses,
+    };
   } catch (err) {
     const error: InnoPlatformError = dbError(
-      `Getting news comments for project update with id: ${updateId}`,
+      `Getting comments for object with id: ${body.objectId}`,
       err as Error,
-      updateId,
+      body.objectId,
     );
     logger.error(error);
-    throw err;
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Getting comments for object failed',
+    };
   }
-};
+});
 
-export const getPostCommentsByPostId = async (postId: string) => {
+export const getRedisNewsCommentsWithResponses = async (objectId: string) => {
   try {
-    const dbComments = await getNewsCommentsByPostId(dbClient, postId);
-    const mapComments = dbComments.map(mapToPostComment);
-    const comments = await Promise.all(mapComments);
-    const commentsWithResponses = setResponses(comments);
-    return commentsWithResponses;
+    const commensWithResponses = await getCommentsByObjectIdWithResponses(objectId);
+    return mapCommentWithResponsesToRedisNewsComments(commensWithResponses);
   } catch (err) {
-    const error: InnoPlatformError = dbError(`Getting news comments for post with id: ${postId}`, err as Error, postId);
+    const error: InnoPlatformError = dbError(`Getting news comment by id: ${objectId}`, err as Error, objectId);
     logger.error(error);
     throw err;
   }
 };
 
-export const getRedisNewsCommentsWithResponses = async (newsId: string, newsType: NewsType | ObjectType) => {
-  try {
-    if (newsType === NewsType.POST) {
-      const comments = await getPostCommentsByPostId(newsId);
-      return mapToRedisNewsComments(comments);
-    }
-    const comments = await getNewsCommentsProjectUpdateId(newsId);
-    return mapToRedisNewsComments(comments);
-  } catch (err) {
-    const error: InnoPlatformError = dbError(`Getting news comment by id: ${newsId}`, err as Error, newsId);
-    logger.error(error);
-    throw err;
-  }
+export const getCommentsByObjectIdWithResponses = async (objectId: string, userId?: string) => {
+  const dbComments = await getCommentsByObjectIdFromDB(dbClient, objectId);
+  const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment, userId)));
+  return setResponses(comments);
 };
 
 const setResponses = (comments: CommonCommentProps[]) => {
@@ -79,11 +73,11 @@ const setResponses = (comments: CommonCommentProps[]) => {
 
 export const getCommentWithResponses = async (commentId: string) => {
   try {
-    const comment = await getPostCommentById(dbClient, commentId);
+    const comment = await getCommentById(dbClient, commentId);
     if (!comment) {
       throw Error(`Failed to find a comment with id: ${commentId}`);
     }
-    const mappedComment = await mapToPostComment(comment);
+    const mappedComment = await mapToComment(comment);
     const commentWithResponses = setResponses([mappedComment]);
     return commentWithResponses;
   } catch (err) {
@@ -102,13 +96,13 @@ const getResponsesForComment = (
   rootComment: CommentWithResponses,
 ): CommentWithResponses[] => {
   return comments
-    .filter((comment) => comment.parentId === rootComment.commentId)
+    .filter((comment) => comment.parentId === rootComment.id)
     .map((response) => ({ ...response, comments: [] }));
 };
 
 export async function saveEntryNewsComments(entry: RedisNewsFeedEntry) {
   const redisClient = await getRedisClient();
-  const comments = await getRedisNewsCommentsWithResponses(entry.item.id, entry.type);
+  const comments = await getRedisNewsCommentsWithResponses(entry.item.id);
   if (comments.length > 0) {
     return await saveComments(redisClient, entry, comments);
   }

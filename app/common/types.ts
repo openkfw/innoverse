@@ -9,7 +9,7 @@ export enum ObjectType {
   SURVEY_QUESTION = 'SURVEY_QUESTION',
   OPPORTUNITY = 'OPPORTUNITY',
   COLLABORATION_QUESTION = 'COLLABORATION_QUESTION',
-  NEWS_COMMENT = 'NEWS_COMMENT',
+  COMMENT = 'COMMENT',
 }
 
 export type NewsFeedEntry =
@@ -39,13 +39,13 @@ export type NewsFeedEntry =
 export type CollaborationComment = CommonNewsFeedProps & {
   id: string;
   author: User;
-  comment: string;
-  upvotedBy: string[];
+  text: string;
+  likedBy: string[];
   commentCount: number;
   projectId: string;
   projectName: string;
-  question: CollaborationQuestion;
-  isUpvotedByUser?: boolean;
+  question?: CollaborationQuestion;
+  isLikedByUser?: boolean;
   anonymous: boolean;
 };
 
@@ -63,26 +63,26 @@ export type User = {
 
 export type Comment = {
   id: string;
-  author: User;
-  comment: string;
-  upvotedBy: User[];
-  commentCount: number;
-  projectId: string;
-  projectName?: string | undefined;
-  questionId?: string;
   createdAt: Date;
-  isUpvotedByUser?: boolean;
   updatedAt: Date;
-};
 
-export type CommentResponse = {
-  id: string;
   author: User;
-  response: string;
-  createdAt: Date;
-  upvotedBy: User[];
-  comment: Comment | CollaborationComment;
-  updatedAt: Date;
+  text: string;
+  objectId: string;
+  objectType: ObjectType;
+  likedBy: string[];
+
+  likes: CommentLike[];
+  commentCount: number;
+
+  objectName?: string | undefined;
+  additionalObjectId?: string;
+  additionalObjectType?: ObjectType;
+  isLikedByUser?: boolean;
+  parentId?: string;
+  responses?: Comment[];
+  anonymous?: boolean;
+  reactions?: Reaction[];
 };
 
 export type ResponseOption = {
@@ -161,9 +161,16 @@ export type BasicProject = CommonNewsFeedProps & {
   author?: User;
 };
 
-export type Like = {
-  projectId: string;
+export type CommentLike = {
+  id: string;
+  commentId: string;
   likedBy: string;
+};
+
+export type Like = {
+  id: string;
+  objectType: ObjectType;
+  objectId: string;
 };
 
 export type Follow = {
@@ -344,7 +351,7 @@ export type CollaborationQuestion = CommonNewsFeedProps & {
   isPlatformFeedback: boolean;
   description: string;
   authors: User[];
-  comments: Comment[];
+  comments: CollaborationComment[];
   projectId?: string;
 };
 
@@ -391,7 +398,7 @@ export type Post = CommonNewsFeedProps & {
   id: string;
   author: User;
   content: string;
-  upvotedBy: string[];
+  likedBy: string[];
   anonymous: boolean;
   createdAt: Date;
   objectType: ObjectType;
@@ -411,22 +418,15 @@ export type ImageFormat = {
 
 export type CommonCommentProps = {
   id: string;
-  commentId: string;
+  objectId: string;
   createdAt: Date;
   updatedAt: Date;
-  comment: string;
+  text: string;
   author: User;
-  upvotedBy: string[];
+  likes?: CommentLike[];
+  isLikedByUser?: boolean;
   commentCount: number;
   parentId?: string;
-};
-
-export type PostComment = CommonCommentProps & {
-  postId: string;
-};
-
-export type NewsComment = CommonCommentProps & {
-  newsId: string;
 };
 
 export type HashedNewsComment = {

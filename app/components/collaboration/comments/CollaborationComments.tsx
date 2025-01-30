@@ -6,16 +6,16 @@ import AddIcon from '@mui/icons-material/Add';
 import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
 
-import { Comment } from '@/common/types';
+import { CollaborationComment } from '@/common/types';
 import { TransparentButton } from '@/components/common/TransparentButton';
 import * as m from '@/src/paraglide/messages.js';
 
 import { CollaborationCommentThread } from './CollaborationCommentThread';
 
 interface CommentsProps {
-  comments: Comment[];
+  comments: CollaborationComment[];
   projectName?: string;
-  onDeleteComment: (comment: Comment) => void;
+  onDeleteComment: (comment: CollaborationComment) => void;
 }
 
 const MAX_NUM_OF_COMMENTS = 2;
@@ -23,8 +23,8 @@ const MAX_NUM_OF_COMMENTS = 2;
 export const CollaborationComments = (props: CommentsProps) => {
   const { comments, projectName, onDeleteComment } = props;
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const [maxVisibleComments, setMaxVisibleComments] = useState<Comment[]>();
-  const [remainingComments, setRemainingComments] = useState<Comment[]>();
+  const [maxVisibleComments, setMaxVisibleComments] = useState<CollaborationComment[]>();
+  const [remainingComments, setRemainingComments] = useState<CollaborationComment[]>();
   const [lengthOfNotShownComments, setLengthOfNotShownComments] = useState<number>();
 
   const handleToggle = () => {

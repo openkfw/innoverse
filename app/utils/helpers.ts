@@ -162,6 +162,7 @@ export const getNewsTypeProjectId = (entry: NewsFeedEntry) => {
     type === ObjectType.EVENT ||
     type === ObjectType.UPDATE ||
     type === ObjectType.SURVEY_QUESTION ||
+    type === ObjectType.COLLABORATION_COMMENT ||
     type === ObjectType.COLLABORATION_QUESTION
   ) {
     return item.projectId;

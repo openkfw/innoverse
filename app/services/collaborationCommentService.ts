@@ -1,31 +1,25 @@
 'use server';
 
-import type { CollaborationComment as PrismaCollaborationComment } from '@prisma/client';
-
-import { ObjectType, User, UserSession } from '@/common/types';
+import { Comment, ObjectType, User, UserSession } from '@/common/types';
 import {
-  addCollaborationCommentToDb,
-  deleteCollaborationCommentInDb,
-  getCollaborationCommentById,
-  getCollaborationCommentUpvotedBy,
-  handleCollaborationCommentUpvoteInDb,
-} from '@/repository/db/collaboration_comment';
-import { updateCollaborationCommentInDb } from '@/repository/db/collaboration_comment';
-import { getCollaborationCommentResponseCount } from '@/repository/db/collaboration_comment_response';
+  addCommentToDb,
+  deleteCommentInDb,
+  getCommentById,
+  getCommentResponseCount,
+  updateCommentInDb,
+} from '@/repository/db/comment';
+import { addCommentLike } from '@/repository/db/comment_like';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { InnoPlatformError, redisError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
-import {
-  mapCollaborationCommentToRedisNewsFeedEntry,
-  mapToRedisUser,
-  mapToRedisUsers,
-} from '@/utils/newsFeed/redis/mappings';
+import { mapCollaborationCommentToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
 import { NewsType, RedisCollaborationComment } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { getBasicCollaborationQuestionById } from '@/utils/requests/collaborationQuestions/requests';
+import { mapToCollborationComment, mapToComment } from '@/utils/requests/comments/mapping';
 import { getProjectTitleById } from '@/utils/requests/project/requests';
 
 const logger = getLogger();
@@ -36,7 +30,7 @@ type AddCollaborationComment = {
     projectId: string;
     questionId: string;
     comment: string;
-    visible?: boolean;
+    anonymous?: boolean;
   };
 };
 
@@ -52,46 +46,53 @@ type UpdateCollaborationCommentInCache = {
   comment: {
     id: string;
     comment?: string;
-    upvotedBy?: string[];
+    likedBy?: string[];
     commentCount?: number;
   };
   user: User;
 };
 
-type UpvoteCollaborationComment = {
+type LikeCollaborationComment = {
   user: UserSession;
   commentId: string;
 };
 
 export const addCollaborationComment = async ({ user, comment }: AddCollaborationComment) => {
-  const createdComment = await addCollaborationCommentToDb(
-    dbClient,
-    comment.projectId,
-    comment.questionId,
-    user.providerId,
-    comment.comment,
-    comment.visible,
-  );
+  const createdComment = await addCommentToDb({
+    client: dbClient,
+    objectId: comment.projectId,
+    objectType: ObjectType.PROJECT,
+    additionalObjectId: comment.questionId,
+    additionalObjectType: ObjectType.COLLABORATION_QUESTION,
+    author: user.providerId,
+    text: comment.comment,
+    anonymous: comment.anonymous,
+  });
   await addCollaborationCommentToCache(user, createdComment);
-  return createdComment;
+  return await mapToCollborationComment(createdComment);
 };
 
 export const deleteCollaborationComment = async (commentId: string) => {
-  await deleteCollaborationCommentInDb(dbClient, commentId);
+  await deleteCommentInDb(dbClient, commentId);
   await deleteCollaborationCommentInCache(commentId);
 };
 
 export const updateCollaborationComment = async ({ user, comment }: UpdateCollaborationComment) => {
-  const updatedComment = await updateCollaborationCommentInDb(dbClient, comment.id, comment.comment);
+  const updatedComment = await updateCommentInDb(dbClient, comment.id, comment.comment);
   await updateCollaborationCommentInCache({ user, comment });
   return updatedComment;
 };
 
-export const handleCollaborationCommentUpvote = async ({ user, commentId }: UpvoteCollaborationComment) => {
-  const updatedComment = await handleCollaborationCommentUpvoteInDb(dbClient, commentId, user.providerId);
+export const handleCollaborationCommentLike = async ({ user, commentId }: LikeCollaborationComment) => {
+  const commentLike = await addCommentLike(dbClient, commentId, user.providerId);
+  const updatedComment = await getCommentById(dbClient, commentId);
 
-  if (updatedComment) {
-    await updateCollaborationCommentInCache({ user, comment: updatedComment });
+  if (commentLike && updatedComment) {
+    const comment = await mapToComment(updatedComment);
+    await updateCollaborationCommentInCache({
+      user,
+      comment,
+    });
   }
 };
 
@@ -131,8 +132,8 @@ export const updateCollaborationCommentInCache = async ({ user, comment }: Updat
     if (!newsFeedEntry) return;
 
     const cachedItem = newsFeedEntry.item as RedisCollaborationComment;
-    cachedItem.comment = comment.comment ?? cachedItem.comment;
-    cachedItem.upvotedBy = comment.upvotedBy ?? cachedItem.upvotedBy;
+    cachedItem.text = comment.comment ?? cachedItem.text;
+    cachedItem.likedBy = comment.likedBy ?? cachedItem.likedBy;
     cachedItem.commentCount = comment.commentCount ?? cachedItem.commentCount;
     newsFeedEntry.item = cachedItem;
 
@@ -161,18 +162,24 @@ export const getNewsFeedEntryForComment = async (
 };
 
 export const createNewsFeedEntryForCommentById = async (commentId: string, user?: User) => {
-  const comment: PrismaCollaborationComment | null = await getCollaborationCommentById(dbClient, commentId);
+  const comment = await getCommentById(dbClient, commentId);
 
   if (!comment) {
     logger.warn(`Failed to create news feed entry for collaboration comment with id ${commentId}: Comment not found`);
     return null;
   }
 
-  return await createNewsFeedEntryForComment(comment, user);
+  return await createNewsFeedEntryForComment(await mapToComment(comment), user);
 };
 
-export const createNewsFeedEntryForComment = async (comment: PrismaCollaborationComment, user?: User) => {
-  const question = await getBasicCollaborationQuestionById(comment.questionId);
+export const createNewsFeedEntryForComment = async (comment: Comment, user?: User) => {
+  if (!comment.additionalObjectId) {
+    logger.warn(
+      `Failed to create news feed entry for collaboration comment with id ${comment.id}: No additional object id found to get basic collaboration question`,
+    );
+    return null;
+  }
+  const question = await getBasicCollaborationQuestionById(comment.additionalObjectId || '');
 
   if (!question) {
     logger.warn(
@@ -181,16 +188,15 @@ export const createNewsFeedEntryForComment = async (comment: PrismaCollaboration
     return null;
   }
 
-  const author = user ?? (await mapToRedisUser(comment.author));
-  const commentCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
-  const upvotedBy = (await getCollaborationCommentUpvotedBy(dbClient, comment.id)) ?? [];
+  const author = user ?? comment.author;
+  const commentCount = (await getCommentResponseCount(dbClient, comment.id)) || 0;
   const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_COMMENT, comment.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, question.projectId);
   const followers = await mapToRedisUsers(followerIds);
-  const projectName = await getProjectTitleById(comment.projectId);
+  const projectName = await getProjectTitleById(comment.objectId);
 
   return mapCollaborationCommentToRedisNewsFeedEntry(
-    { ...comment, projectName: projectName ?? '', upvotedBy, author, commentCount },
+    { ...comment, objectName: projectName ?? '', likedBy: comment.likedBy, author, commentCount },
     question,
     reactions,
     followers,

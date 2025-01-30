@@ -28,12 +28,6 @@ export const updateCollaborationCommentSchema = z
   })
   .required();
 
-export const collaborationCommentUpvotedBySchema = z
-  .object({
-    commentId: z.string(),
-  })
-  .required();
-
 export const getCollaborationCommentResponsesSchema = z
   .object({
     comment: z
@@ -51,7 +45,7 @@ export const addCollaborationCommentResponseSchema = z
         id: z.string(),
       })
       .required(),
-    response: z.string(),
+    text: z.string(),
   })
   .required();
 
@@ -68,7 +62,7 @@ export const updateCollaborationCommentResponseSchema = z
   })
   .required();
 
-export const collaborationCommentResponseUpvotedBySchema = z
+export const collaborationCommentResponseLikedBySchema = z
   .object({
     responseId: z.string(),
   })

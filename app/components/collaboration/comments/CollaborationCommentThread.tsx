@@ -1,11 +1,11 @@
-import { Comment } from '@/common/types';
+import { CollaborationComment } from '@/common/types';
 import { CollaborationCommentCard } from '@/components/collaboration/comments/CollaborationCommentCard';
 import { CollaborationCommentResponseThread } from '@/components/collaboration/comments/CollaborationCommentResponseThread';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
 import { useCollaborationCommentThread } from '@/components/newsPage/threads/NewsCollaborationCommentThread';
 
 interface CollaborationCommentThreadProps {
-  comment: Comment;
+  comment: CollaborationComment;
   projectName?: string;
   onDelete: () => void;
 }

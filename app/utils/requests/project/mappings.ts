@@ -1,4 +1,3 @@
-import { Like } from '@prisma/client';
 import { ResultOf } from 'gql.tada';
 
 import {
@@ -7,6 +6,8 @@ import {
   Comment,
   EventWithAdditionalData,
   Follow,
+  Like,
+  ObjectType,
   Opportunity,
   Project,
   PROJECT_PROGRESS,
@@ -14,6 +15,7 @@ import {
   ProjectUpdateWithAdditionalData,
   SurveyQuestion,
 } from '@/common/types';
+import { LikeDB } from '@/repository/db/utils/types';
 import { formatDate, toDate } from '@/utils/helpers';
 import { mapToImageUrl, mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { ProjectFragment } from '@/utils/requests/project/queries';
@@ -74,6 +76,13 @@ export const mapToBasicProject = (projectData: ResultOf<typeof ProjectFragment>)
     featured: attributes.featured,
     updatedAt: toDate(attributes.updatedAt),
   };
+};
+
+export const mapToLike = (likes: LikeDB[]): Like[] => {
+  return likes.map((l: LikeDB) => ({
+    ...l,
+    objectType: l.objectType as ObjectType,
+  }));
 };
 
 const mapToProjectStatus = (status: 'Exploration' | 'Konzeption' | 'Live' | 'Proof_of_Concept'): PROJECT_PROGRESS => {

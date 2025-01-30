@@ -5,6 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import { ObjectType, StartPagination, SurveyVote, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import dbClient from '@/repository/db/prisma/prisma';
+import { getReactionsForEntity } from '@/repository/db/reaction';
 import { getSurveyVotes } from '@/repository/db/survey_votes';
 import { withAuth } from '@/utils/auth';
 import { strapiError } from '@/utils/errors';
@@ -19,7 +20,6 @@ import {
 } from '@/utils/requests/surveyQuestions/queries';
 
 import { GetSurveyQuestionByIdQuery } from './queries';
-import { getReactionsForEntity } from '@/repository/db/reaction';
 
 const logger = getLogger();
 

@@ -14,6 +14,7 @@ const logger = getLogger();
 export const getNewsFeedPageProps = async () => {
   try {
     const initialNewsFeed = await getNewsFeed();
+
     const countByType = await countNewsFeedEntriesByType();
     const countByProjectId = await countNewsFeedEntriesByProjectIds();
 

@@ -4,10 +4,10 @@ import { StatusCodes } from 'http-status-codes';
 import {
   CollaborationComment,
   CollaborationQuestion,
+  Comment,
   Event,
   Follow,
   ImageFormats,
-  NewsComment,
   NewsFeedEntry,
   ObjectType,
   Post,
@@ -39,7 +39,6 @@ export const MappedRedisType: Record<NewsType, ObjectType> = {
   [NewsType.OPPORTUNITY]: ObjectType.OPPORTUNITY,
   [NewsType.PROJECT]: ObjectType.PROJECT,
   [NewsType.COLLABORATION_COMMENT]: ObjectType.COLLABORATION_COMMENT,
-  [NewsType.NEWS_COMMENT]: ObjectType.NEWS_COMMENT,
 };
 
 type RedisNewsFeedEntryWithAdditionalData = RedisNewsFeedEntry & {
@@ -187,14 +186,16 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
   }) as NewsFeedEntry['item'];
 };
 
-const mapComments = (comments: RedisHashedNewsComment[]): NewsComment[] => {
+const mapComments = (comments: RedisHashedNewsComment[]): Comment[] => {
   return comments.map((comment: RedisHashedNewsComment) => {
     return {
       ...comment,
+      objectId: comment.itemId,
+      objectType: MappedRedisType[comment.itemType],
       comments: comment.comments ? mapComments(comment.comments) : [],
       updatedAt: unixTimestampToDate(comment.updatedAt),
       createdAt: unixTimestampToDate(comment.createdAt),
-    } as unknown as NewsComment;
+    } as unknown as Comment;
   });
 };
 
