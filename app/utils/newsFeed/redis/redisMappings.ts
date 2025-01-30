@@ -188,7 +188,6 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
 
 const mapComments = (comments: RedisHashedNewsComment[]): Comment[] => {
   return comments.map((comment: RedisHashedNewsComment) => {
-    //todo add likes
     return {
       ...comment,
       objectId: comment.itemId,
