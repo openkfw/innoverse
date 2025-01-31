@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
-import { options } from '@/pages/api/auth/[...nextauth]';
+import { options } from '@/app/api/auth/[...nextauth]/route';
 import { createInnoUserIfNotExist } from '@/utils/requests/innoUsers/requests';
 
 import getLogger from './logger';
