@@ -17,7 +17,7 @@ export default function ImagePreview(props: ImagePreviewProps) {
 
   return (
     <Box sx={thumbStyle}>
-      <Image src={file} alt="preview" style={img} layout="fill" />
+      <Image src={file} alt="preview" style={img} fill sizes="33vw" />
       <CancelIcon sx={closeIconStyle} onClick={onCancel} aria-label="close dialog" />
     </Box>
   );

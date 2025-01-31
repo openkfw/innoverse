@@ -4,9 +4,12 @@ import { Controller } from 'react-hook-form';
 
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Box from '@mui/material/Box';
+import FormHelperText from '@mui/material/FormHelperText';
 import Typography from '@mui/material/Typography';
 
 import { FormInputProps } from '@/common/formTypes';
+import { invalid_file_size } from '@/common/formValidation';
+import { clientConfig } from '@/config/client';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
@@ -21,18 +24,29 @@ export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFie
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      if (acceptedFiles) {
+      if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
         setFile(URL.createObjectURL(file));
         setValue(name, file, { shouldDirty: true });
       }
     },
+
     [name, setValue],
   );
 
   const onCancel = () => {
     setFile(null);
     setValue(name, null, { shouldDirty: true });
+  };
+
+  const fileValidator = (file: File) => {
+    if (file.size > clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT) {
+      return {
+        code: 'invalid-size',
+        message: invalid_file_size.message,
+      };
+    }
+    return null;
   };
 
   return (
@@ -45,14 +59,24 @@ export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFie
             onDrop={async (acceptedFiles: File[]) => {
               onDrop(acceptedFiles);
             }}
+            validator={fileValidator}
             accept={{ 'image/*': [] }}
             multiple={false}
           >
-            {({ getRootProps, getInputProps, isFocused }) => {
+            {({ getRootProps, getInputProps, isFocused, isDragReject, fileRejections }) => {
               const style = {
                 ...baseStyle,
                 ...(isFocused ? focusedStyle : {}),
+                ...(isDragReject ? rejectedStyle : {}),
               };
+
+              const fileRejectionItems =
+                fileRejections &&
+                fileRejections[0].errors.map((e) => (
+                  <FormHelperText key={e.code} sx={{ color: 'formText.main' }}>
+                    {e.message}
+                  </FormHelperText>
+                ));
 
               return (
                 <div {...getRootProps({ style })}>
@@ -63,10 +87,12 @@ export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFie
                       {m.components_profilePage_form_updateUserForm_placeholder()}
                     </Typography>
                   </Box>
+                  <Box sx={{ flexDirection: 'column' }}>{fileRejectionItems}</Box>
                 </div>
               );
             }}
           </Dropzone>
+
           {(file && <ImagePreview file={file} onCancel={onCancel} />) ||
             (value && <ImagePreview file={value} onCancel={onCancel} />)}
         </>
@@ -96,4 +122,8 @@ const baseStyle: React.CSSProperties = {
 
 const focusedStyle = {
   borderColor: theme.palette.secondary.main,
+};
+
+const rejectedStyle = {
+  borderColor: theme.palette.error.main,
 };

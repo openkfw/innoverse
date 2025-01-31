@@ -47,29 +47,37 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
   }
 }
 
-export async function updateInnoUser(body: Omit<UserSession, 'image'> & { id: string; image: FormData }) {
+export async function updateInnoUser(
+  body: Omit<UserSession, 'image'> & { id: string; image?: FormData | null | string },
+) {
   try {
-    let uploadedImage: UploadImageResponse | null = null;
-    if (body.image) {
-      const image = body.image.get('image');
-      if (image !== 'null') {
-        const uploadedImages = await uploadFileImage(image as Blob, `avatar-${body.name}`);
-        uploadedImage = uploadedImages ? uploadedImages[0] : null;
+    const handleResponse = async (body: Omit<UserSession, 'image'> & { id: string; avatarId?: string | null }) => {
+      const response = await strapiGraphQLFetcher(UpdateInnoUserMutation, body);
+      const userData = response.updateInnoUser?.data;
+      if (!userData) throw new Error('Response contained no user data');
+      return mapToUser(userData);
+    };
+    // if the image is null, the avatar is deleted
+    if (body.image === null) {
+      if (body.oldImageId) {
+        await deleteFileImage(body.oldImageId);
       }
+      return await handleResponse({ ...body, avatarId: null });
     }
 
-    if (body.oldImageId) {
-      await deleteFileImage(body.oldImageId);
+    // if the image is type of FormData, the file is uploaded and the id saved as avatarId
+    if (body.image instanceof FormData) {
+      if (body.oldImageId) {
+        await deleteFileImage(body.oldImageId);
+      }
+      const image = body.image.get('image');
+      const uploadedImages = await uploadFileImage(image as Blob, `avatar-${body.name}`);
+      const uploadedImage = uploadedImages ? uploadedImages[0] : null;
+      return await handleResponse({ ...body, avatarId: uploadedImage && (uploadedImage.id as string) });
     }
-    const response = await strapiGraphQLFetcher(UpdateInnoUserMutation, {
-      ...body,
-      ...(body.image && { avatarId: uploadedImage ? (uploadedImage.id as string) : null }),
-    });
 
-    const userData = response.updateInnoUser?.data;
-    if (!userData) throw new Error('Response contained no user data');
-    const updatedUser = mapToUser(userData);
-    return updatedUser;
+    // if the image is not changed, update other user info
+    return await handleResponse(body);
   } catch (err) {
     const error = strapiError('Update Inno User', err as RequestError, body.name);
     logger.error(error);
