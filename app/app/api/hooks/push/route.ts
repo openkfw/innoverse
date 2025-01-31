@@ -1,4 +1,3 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import { literal, number, object, string, z } from 'zod';
 
@@ -21,15 +20,13 @@ const bodySchema = z.object({
 });
 
 //For information about how the rules work & the challenges head to: ***URL_REMOVED***
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { method, body, headers } = req;
+export async function POST({ body, headers }: Request) {
   const { authorization } = headerSchema.parse(headers);
   const { event, model, entry } = bodySchema.parse(body);
 
-  if (method !== 'POST') res.status(StatusCodes.METHOD_NOT_ALLOWED).send(ReasonPhrases.METHOD_NOT_ALLOWED);
   if (authorization !== serverConfig.STRAPI_PUSH_NOTIFICATION_SECRET)
-    res.status(StatusCodes.UNAUTHORIZED).send(ReasonPhrases.UNAUTHORIZED);
+    return new Response(ReasonPhrases.UNAUTHORIZED, { status: StatusCodes.UNAUTHORIZED });
 
   await onStrapiEvent(event, model, entry);
-  res.status(StatusCodes.OK).send(ReasonPhrases.OK);
+  return new Response(ReasonPhrases.OK);
 }

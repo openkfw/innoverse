@@ -1,14 +1,13 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
 import { StatusCodes } from 'http-status-codes';
 import { string, z } from 'zod';
 
-import { options } from '@/pages/api/auth/[...nextauth]';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { updatePushSubscriptionForUser } from '@/repository/db/push_subscriptions';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 
-import dbClient from './../../../repository/db/prisma/prisma';
+import dbClient from '../../../../repository/db/prisma/prisma';
 
 const logger = getLogger();
 
@@ -17,16 +16,11 @@ const bodySchema = z.object({
   newSubscription: string(),
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function POST({ body }: Request) {
   try {
-    const { method, body } = req;
-    const session = await getServerSession(options);
-    if (method !== 'POST') return res.status(StatusCodes.METHOD_NOT_ALLOWED);
+    const session = await getServerSession(authOptions);
     if (session == undefined) {
-      return {
-        status: StatusCodes.UNAUTHORIZED,
-        errors: new Error('User is not authenticated'),
-      };
+      return Response.json({ errors: new Error('User is not authenticated') }, { status: StatusCodes.UNAUTHORIZED });
     }
 
     const { oldSubscription, newSubscription } = bodySchema.parse(body);
@@ -36,9 +30,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       JSON.parse(oldSubscription),
       JSON.parse(newSubscription),
     );
-    return res.status(StatusCodes.OK);
+    return new Response('OK');
   } catch (err) {
-    const session = await getServerSession(options);
+    const session = await getServerSession(authOptions);
     const error: InnoPlatformError = dbError(
       `Update push subscription for user ${session?.user.providerId}`,
       err as Error,

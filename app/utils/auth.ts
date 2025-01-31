@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { StatusCodes } from 'http-status-codes';
 
 import { UserSession } from '@/common/types';
-import { options } from '@/pages/api/auth/[...nextauth]';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { createInnoUserIfNotExist } from '@/utils/requests/innoUsers/requests';
 
 import getLogger from './logger';
@@ -18,7 +18,7 @@ const logger = getLogger();
 
 export function withAuth<TArgs, TReturn>(func: (user: UserSession, body: TArgs) => Promise<AuthResponse<TReturn>>) {
   return async function (args: TArgs) {
-    const session = await getServerSession(options);
+    const session = await getServerSession(authOptions);
     if (!session) {
       return {
         status: StatusCodes.UNAUTHORIZED,

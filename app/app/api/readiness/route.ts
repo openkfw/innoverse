@@ -1,4 +1,3 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { StatusCodes } from 'http-status-codes';
 
 import { clientConfig } from '@/config/client';
@@ -7,18 +6,26 @@ import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 
 const logger = getLogger();
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function GET() {
   const [strapiReady, redisReady] = await Promise.all([checkIfStrapiIsReady(), checkIfRedisIsReady()]);
   const ready = strapiReady && redisReady;
   const statusCode = ready ? StatusCodes.OK : StatusCodes.INTERNAL_SERVER_ERROR;
 
-  return res.status(statusCode).json({
-    ready: readyToString(ready),
-    services: {
-      redis: readyToString(redisReady),
-      strapi: readyToString(strapiReady),
+  return Response.json(
+    {
+      ready: readyToString(ready),
+      services: {
+        redis: readyToString(redisReady),
+        strapi: readyToString(strapiReady),
+      },
     },
-  });
+    {
+      status: statusCode,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
 }
 
 const readyToString = (ready: boolean) => (ready ? 'ready' : 'not ready');
