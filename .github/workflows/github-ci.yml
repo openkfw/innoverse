@@ -23,7 +23,17 @@ jobs:
         working-directory: ${{ matrix.project }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/lint
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+      - name: Run lint
+        uses: ./.github/workflows/lint
 
   audit:
     runs-on: ubuntu-22.04
@@ -37,11 +47,17 @@ jobs:
         working-directory: ${{ matrix.project }}
     steps:
       - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: ./.github/workflows/audit
+          cache: "pnpm"
+      - name: Run audit
+        uses: ./.github/workflows/audit
 
   build:
     runs-on: ubuntu-22.04

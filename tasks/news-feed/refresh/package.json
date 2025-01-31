@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "prestart": "npm run build",
+    "prestart": "pnpm run build",
     "start": "func start",
     "test": "echo \"No tests yet...\"",
     "publish:preprod": "func azure functionapp publish fa-innobuddy-preprod --typescript",

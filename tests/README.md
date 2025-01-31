@@ -6,7 +6,7 @@ This repository contains the end-to-end tests for the innobuddy web app. The tes
 
 To set up the test environment, follow these steps:
 
-1. Install dependencies: `npm install`
+1. Install dependencies: `pnpm install`
 2. Install Playwright browsers: `npx playwright install`
 3. Set following environment variables in `../app/.env`
    - `NEXTAUTH_CREDENTIALS_USERNAME=<Username for test user>`

@@ -1,8 +1,8 @@
 name: "Lint"
-description: "Runs a lint check on the innoverse next.js app"
+description: "Runs a lint check on the innoverse next app"
 runs:
   using: "composite"
   steps:
-    - name: Install node in cd ${{ matrix.project }}
-      run: cd ${{ matrix.project }} && npm ci && npm run lint
+    - name: Install node in ${{ matrix.project }}
+      run: cd ${{ matrix.project }} && pnpm install && pnpm run lint
       shell: bash

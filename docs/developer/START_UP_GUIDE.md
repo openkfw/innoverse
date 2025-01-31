@@ -36,7 +36,7 @@ For easier local development we suggest starting the InnoVerse app locally:
 
 ```bash
 cd ./app
-npm run dev
+pnpm run dev
 ```
 
 > **IMPORTANT:**
@@ -52,14 +52,14 @@ in the `./app/.env` file under STRAPI_TOKEN.
 Now you need to migrate the database to prisma by running from inside the `app` folder:
 
 ```bash
-npm run prisma migrate dev
+pnpm run prisma migrate dev
 ```
 
 now your app should be reachable under [http://localhost:3000](http://localhost:3000)
 
 #### Database: Accessing/Viewing the DB (Prisma Studio)
 
-- Run `npm run prisma studio` from inside the `app` folder to run the database browser and check the database.
+- Run `pnpm run prisma studio` from inside the `app` folder to run the database browser and check the database.
 
 > **Important:**
 > The CMS is not filled with data by default. You can create your own data or opt for importing data from an existing
@@ -103,7 +103,7 @@ You can find an Azure Function App which can handle the refresh for you. The Fun
 
 ### Analyze the build
 
-You can analyze the bundle size running `npm run build:analyze`, this will generate a report and can help identify large chunks.
+You can analyze the bundle size running `pnpm run build:analyze`, this will generate a report and can help identify large chunks.
 The main focus should here be the `client` report, as we do not use any edge functions.
 
 ### Environment variables

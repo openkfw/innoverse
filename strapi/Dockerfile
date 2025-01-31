@@ -1,23 +1,21 @@
 FROM node:18-alpine3.18
-# Installing libvips-dev for sharp Compatibility
 RUN apk update && apk add --no-cache build-base gcc autoconf automake zlib-dev libpng-dev nasm bash vips-dev
+RUN npm install -g pnpm
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
-
 WORKDIR /opt/
-COPY package.json package-lock.json ./
-RUN npm config set fetch-retry-maxtimeout 600000 -g && npm install
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm config set fetch-retry-maxtimeout 600000 -g && pnpm install
 ENV PATH /opt/node_modules/.bin:$PATH
 
 WORKDIR /opt/app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 COPY . .
-
 RUN chown -R node:node /opt/app
 USER node
-RUN ["npm", "run", "build"]
+RUN ["pnpm", "run", "build"]
 EXPOSE 1337
-CMD ["npm", "run", "develop"]
+CMD ["pnpm", "run", "develop"]
 
 # TODO: run strapi import to import the demo data
