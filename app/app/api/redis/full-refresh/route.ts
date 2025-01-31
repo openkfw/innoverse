@@ -3,8 +3,13 @@ import { StatusCodes } from 'http-status-codes';
 
 import { sync as synchronizeNewsFeed } from '@/utils/newsFeed/newsFeedSync';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.setHeader('Cache-Control', 'no-store');
+export async function GET() {
   const sync = await synchronizeNewsFeed();
-  return res.json({ status: StatusCodes.OK, result: sync });
+  // return as json with no cache
+  return Response.json(sync, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-store',
+    },
+  });
 }
