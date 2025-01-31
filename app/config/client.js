@@ -47,6 +47,12 @@ const clientEnvConfig = createEnvConfig({
     NEXT_PUBLIC_CI_COMMIT_SHA: {
       defaultRule: z.string().optional(),
     },
+
+    NEXT_PUBLIC_BODY_SIZE_LIMIT: {
+      defaultRule: z.string().default(''),
+      required: true,
+      stages: [],
+    },
   },
   groups: [
     {
@@ -68,6 +74,7 @@ const clientConfig = schema.safeParse({
   NEXT_PUBLIC_STRAPI_ENDPOINT: env('NEXT_PUBLIC_STRAPI_ENDPOINT'),
   NEXT_PUBLIC_BUILDTIMESTAMP: env('NEXT_PUBLIC_BUILDTIMESTAMP'),
   NEXT_PUBLIC_CI_COMMIT_SHA: env('NEXT_PUBLIC_CI_COMMIT_SHA'),
+  NEXT_PUBLIC_BODY_SIZE_LIMIT: env('NEXT_PUBLIC_BODY_SIZE_LIMIT'),
 });
 
 if (!clientConfig.success) {

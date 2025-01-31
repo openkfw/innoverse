@@ -5,6 +5,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StatusCodes } from 'http-status-codes';
 
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
@@ -52,11 +53,21 @@ export default function UserInfo() {
     }
   }, [user, reset]);
 
-  const onSubmit: SubmitHandler<UserSession & { image: FormData | string | null }> = async (submitData) => {
+  const onSubmit: SubmitHandler<UserSessionFormValidationSchema> = async (submitData) => {
     const { image, ...rest } = submitData;
-    const formData = new FormData();
-    formData.append('image', image);
-    const { data: updatedUser, status } = await updateUserProfile({ ...rest, image: formData });
+
+    let userImage = image;
+    if (userImage && userImage instanceof File) {
+      const formData = new FormData();
+      formData.append('image', userImage);
+      userImage = formData;
+    }
+
+    const { data: updatedUser, status } = await updateUserProfile({
+      ...rest,
+      image: userImage,
+    });
+
     if (status === StatusCodes.OK) {
       await updateUser(updatedUser as UserSession);
       successMessage({ message: m.components_profilePage_form_updateUserForm_success() });
@@ -74,7 +85,9 @@ export default function UserInfo() {
             {m.app_user_profile()}
           </Typography>
           {isLoading && !user ? (
-            <CircularProgress aria-label="loading" />
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <CircularProgress aria-label="loading" />
+            </Box>
           ) : (
             <form>
               <Stack spacing={2} direction="column">

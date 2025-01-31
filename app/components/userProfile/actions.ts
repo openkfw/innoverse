@@ -15,9 +15,8 @@ import { handleUpdateUserSession } from './validationSchema';
 const logger = getLogger();
 
 export const updateUserProfile = withAuth(
-  async (user: Omit<UserSession, 'image'>, body: Omit<UserSession, 'image'> & { image: FormData | null }) => {
+  async (user: Omit<UserSession, 'image'>, body: Omit<UserSession, 'image'> & { image?: FormData | null }) => {
     const validatedParams = validateParams(handleUpdateUserSession, body);
-
     if (validatedParams.status !== StatusCodes.OK) {
       return {
         status: validatedParams.status,
