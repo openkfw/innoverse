@@ -33,7 +33,6 @@ async function UserProfilePage() {
         <Box style={{ position: 'relative' }}>
           <BreadcrumbsNav activePage={m.app_user_profile()} />
         </Box>
-
         <UserInfo />
       </Container>
     </Stack>
