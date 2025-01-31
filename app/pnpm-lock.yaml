@@ -124,6 +124,9 @@ importers:
       react-dom:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
+      react-dropzone:
+        specifier: ^14.3.5
+        version: 14.3.5(react@18.3.1)
       react-hook-form:
         specifier: ^7.49.3
         version: 7.54.2(react@18.3.1)
@@ -154,9 +157,6 @@ importers:
       swr:
         specifier: ^2.2.5
         version: 2.3.0(react@18.3.1)
-      undici:
-        specifier: ^7.3.0
-        version: 7.3.0
       usehooks-ts:
         specifier: ^3.1.0
         version: 3.1.0(react@18.3.1)
@@ -1888,6 +1888,11 @@ packages:
     resolution:
       { integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q== }
 
+  attr-accept@2.2.5:
+    resolution:
+      { integrity: sha512-0bDNnY/u6pPwHDMoF0FieU354oBi0a8rD9FcsLwzcGWbc8KS8KPIi7y+s13OlVY+gMWc/9xEMUgNE6Qm8ZllYQ== }
+    engines: { node: '>=4' }
+
   available-typed-arrays@1.0.7:
     resolution:
       { integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ== }
@@ -2599,6 +2604,11 @@ packages:
     engines: { node: '>= 10.13.0' }
     peerDependencies:
       webpack: ^4.0.0 || ^5.0.0
+
+  file-selector@2.1.2:
+    resolution:
+      { integrity: sha512-QgXo+mXTe8ljeqUFaX3QVHc5osSItJ/Km+xpocx0aSqWGMSCf6qYs/VnzZgS864Pjn5iceMRFigeAV7AfTlaig== }
+    engines: { node: '>= 12' }
 
   fill-range@7.1.1:
     resolution:
@@ -3705,6 +3715,13 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
+  react-dropzone@14.3.5:
+    resolution:
+      { integrity: sha512-9nDUaEEpqZLOz5v5SUcFA0CjM4vq8YbqO0WRls+EYT7+DvxUdzDPKNCPLqGfj3YL9MsniCLCD4RFA6M95V6KMQ== }
+    engines: { node: '>= 10.13' }
+    peerDependencies:
+      react: '>= 16.8 || 18.0.0'
+
   react-hook-form@7.54.2:
     resolution:
       { integrity: sha512-eHpAUgUjWbZocoQYUHposymRb4ZP6d0uwUnooL2uOybA9/3tPUvoAKqEWK1WaSiTxxOfTpffNZP7QwlnM3/gEg== }
@@ -4323,11 +4340,6 @@ packages:
   undici-types@6.19.8:
     resolution:
       { integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw== }
-
-  undici@7.3.0:
-    resolution:
-      { integrity: sha512-Qy96NND4Dou5jKoSJ2gm8ax8AJM/Ey9o9mz7KN1bb9GP+G0l20Zw8afxTnY2f4b7hmhn/z8aC2kfArVQlAhFBw== }
-    engines: { node: '>=20.18.1' }
 
   universal-github-app-jwt@1.2.0:
     resolution:
@@ -6134,6 +6146,8 @@ snapshots:
 
   asynckit@0.4.0: {}
 
+  attr-accept@2.2.5: {}
+
   available-typed-arrays@1.0.7:
     dependencies:
       possible-typed-array-names: 1.0.0
@@ -6808,6 +6822,10 @@ snapshots:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
       webpack: 5.97.1
+
+  file-selector@2.1.2:
+    dependencies:
+      tslib: 2.8.1
 
   fill-range@7.1.1:
     dependencies:
@@ -7708,6 +7726,13 @@ snapshots:
       react: 18.3.1
       scheduler: 0.23.2
 
+  react-dropzone@14.3.5(react@18.3.1):
+    dependencies:
+      attr-accept: 2.2.5
+      file-selector: 2.1.2
+      prop-types: 15.8.1
+      react: 18.3.1
+
   react-hook-form@7.54.2(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -8287,8 +8312,6 @@ snapshots:
       which-boxed-primitive: 1.1.1
 
   undici-types@6.19.8: {}
-
-  undici@7.3.0: {}
 
   universal-github-app-jwt@1.2.0:
     dependencies:
