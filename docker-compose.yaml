@@ -5,6 +5,7 @@ services:
       context: ./postgres
     volumes:
       - ./postgres/pg-init-scripts:/docker-entrypoint-initdb.d
+      - ./postgres/data:/var/lib/postgresql/data
     env_file: ./postgres/.env
     ports:
       - 5432:5432
