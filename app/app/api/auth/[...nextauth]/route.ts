@@ -1,4 +1,3 @@
-import { NextApiHandler } from 'next';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import AzureADProvider from 'next-auth/providers/azure-ad';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -62,7 +61,7 @@ const loadProviders = () => {
   return providers;
 };
 
-export const options: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: loadProviders(),
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
@@ -131,5 +130,5 @@ const getStrapiUserImage = async (email: string) => {
   return undefined;
 };
 
-const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
-export default authHandler;
+const authHandler = NextAuth(authOptions);
+export { authHandler as GET, authHandler as POST };

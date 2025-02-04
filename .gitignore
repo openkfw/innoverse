@@ -2,6 +2,7 @@
 .env
 
 redis/data
+postgres/data
 
 /node_modules
 
