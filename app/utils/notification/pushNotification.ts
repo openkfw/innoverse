@@ -16,12 +16,6 @@ import getLogger from '../logger';
 
 const logger = getLogger();
 
-webpush.setVapidDetails(
-  serverConfig.VAPID_ADMIN_EMAIL,
-  clientConfig.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-  serverConfig.VAPID_PRIVATE_KEY,
-);
-
 export const sendPushNotification = async (subscription: WebPushSubscription, pushNotification: PushNotification) => {
   const { type, userId, topic, title, body, urgency, icon, ttl, url } = pushNotification;
   if (type !== 'push') {
@@ -37,6 +31,11 @@ export const sendPushNotification = async (subscription: WebPushSubscription, pu
     TTL: ttl || 60,
     topic,
     urgency: urgency || 'normal',
+    vapidDetails: {
+      subject: serverConfig.VAPID_ADMIN_EMAIL,
+      publicKey: clientConfig.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+      privateKey: serverConfig.VAPID_PRIVATE_KEY,
+    },
   };
   try {
     const res = await webpush.sendNotification(subscription, payload, options);
