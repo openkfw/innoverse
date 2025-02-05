@@ -25,11 +25,14 @@ export async function countComments(client: PrismaClient, objectId: string) {
   }
 }
 
-export async function getCommentsByObjectId(client: PrismaClient, objectId: string) {
+export async function getCommentsByObjectId(client: PrismaClient, objectId: string, sort: 'asc' | 'desc' = 'desc') {
   try {
     return await client.comment.findMany({
       where: {
         objectId,
+      },
+      orderBy: {
+        createdAt: sort,
       },
       ...defaultParams,
     });

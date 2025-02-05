@@ -3,10 +3,11 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { ObjectType, UserSession } from '@/common/types';
+import { addCommentLike as addCommentLikeToDB, deleteCommentAndUserLike } from '@/repository/db/comment_like';
 import { addComment } from '@/services/commentService';
 import { withAuth } from '@/utils/auth';
+
 import dbClient from '../../../repository/db/prisma/prisma';
-import { addCommentLike as addCommentLikeToDB, deleteCommentAndUserLike } from '@/repository/db/comment_like';
 
 interface AddUserComment {
   objectId: string;

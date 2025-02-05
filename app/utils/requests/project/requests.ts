@@ -243,7 +243,7 @@ export const getProjectComments = async (body: { projectId: string }) => {
   try {
     const validatedParams = validateParams(getCommentsSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      const dbComments = await getCommentsByObjectId(dbClient, body.projectId);
+      const dbComments = await getCommentsByObjectId(dbClient, body.projectId, 'asc');
       const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment)));
 
       const getLikes = comments.map(async (comment): Promise<Comment> => {

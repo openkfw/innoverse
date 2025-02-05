@@ -4,12 +4,12 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { Comment } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import { addCommentLike, deleteCommentLike } from '@/components/newsPage/threads/actions';
 import * as m from '@/src/paraglide/messages.js';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
 import { deleteProjectComment, updateProjectComment } from './actions';
-import { addCommentLike, deleteCommentLike } from '@/components/newsPage/threads/actions';
 
 interface ProjectCommentCardProps {
   comment: Comment;

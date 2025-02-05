@@ -4,8 +4,8 @@ import { useUser } from '@/app/contexts/user-context';
 import { User } from '@/common/types';
 
 import { EditControls } from '../editing/controls/EditControls';
-import { ResponseControls } from '../editing/controls/ResponseControl';
 import { LikeControl } from '../editing/controls/LikeControl';
+import { ResponseControls } from '../editing/controls/ResponseControl';
 
 interface CommentFooterProps {
   author?: User;

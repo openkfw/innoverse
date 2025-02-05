@@ -7,12 +7,12 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 import { Comment } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import { useEditingInteractions } from '@/components/common/editing/editing-context';
+import { addCommentLike, deleteCommentLike } from '@/components/newsPage/threads/actions';
 import * as m from '@/src/paraglide/messages.js';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
 import { deleteProjectCollaborationCommentResponse, updateProjectCollaborationCommentResponse } from './actions';
-import { addCommentLike, deleteCommentLike } from '@/components/newsPage/threads/actions';
 
 interface CollaborationCommentResponseCardProps {
   response: Comment;
