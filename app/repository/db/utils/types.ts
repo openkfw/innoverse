@@ -16,4 +16,4 @@ export type CommentDB = Prisma.CommentGetPayload<typeof withComment>;
 
 export type CommentLikeDB = Prisma.CommentLikeGetPayload<Prisma.CommentLikeDefaultArgs>;
 
-export type LikeDB = Prisma.LikeGetPayload<Prisma.LikeDefaultArgs>;
+export type LikeDB = Prisma.ObjectLikeGetPayload<Prisma.ObjectLikeDefaultArgs>;

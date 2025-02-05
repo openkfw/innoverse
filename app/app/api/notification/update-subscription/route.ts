@@ -2,12 +2,12 @@ import { getServerSession } from 'next-auth';
 import { StatusCodes } from 'http-status-codes';
 import { string, z } from 'zod';
 
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { updatePushSubscriptionForUser } from '@/repository/db/push_subscriptions';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 
 import dbClient from '../../../../repository/db/prisma/prisma';
+import { authOptions } from '../../auth/[...nextauth]/options';
 
 const logger = getLogger();
 

@@ -12,7 +12,7 @@ export async function getTotalReactions(client: PrismaClient, type: ObjectType) 
 }
 
 export async function getTotalProjectLikes(client: PrismaClient, objectId?: string) {
-  return client.like.groupBy({
+  return client.objectLike.groupBy({
     by: ['objectId'],
     where: objectId ? { objectId } : undefined,
     _count: true,
