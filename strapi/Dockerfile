@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18-alpine
 RUN npm install -g pnpm
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
