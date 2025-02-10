@@ -29,7 +29,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <meta name="description" content={m.app_layout_content()} />
           <PublicEnvScript />
         </head>
-        <body style={{ background: 'linear-gradient(90deg, rgb(0, 66, 103) 0%, rgb(0, 90, 140) 100%)' }}>
+        <body
+          style={{
+            background: 'linear-gradient(90deg, rgb(0, 66, 103) 0%, rgb(0, 90, 140) 100%)',
+          }}
+        >
           <Layout>{children}</Layout>
         </body>
       </html>

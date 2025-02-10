@@ -18,11 +18,13 @@ const userSessionSchema = z.object({
 
 export const handleUpdateUserSession = userSessionSchema.extend({
   image: z
-    .union([z.string(), z.number(), z.instanceof(File), z.any()])
-    .optional()
-    .refine((file) => {
-      return !file || (file instanceof File && file.size < MAX_FILE_SIZE);
-    }, invalid_file_size),
+    .union([
+      z.string(),
+      z.number(),
+      z.instanceof(File).refine((file) => file.size < MAX_FILE_SIZE, invalid_file_size),
+      z.any(),
+    ])
+    .optional(),
 });
 
 export type UserSessionFormValidationSchema = z.infer<typeof handleUpdateUserSession>;

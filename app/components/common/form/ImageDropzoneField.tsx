@@ -66,17 +66,15 @@ export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFie
             {({ getRootProps, getInputProps, isFocused, isDragReject, fileRejections }) => {
               const style = {
                 ...baseStyle,
-                ...(isFocused ? focusedStyle : {}),
-                ...(isDragReject ? rejectedStyle : {}),
+                ...(isFocused && focusedStyle),
+                ...(isDragReject && rejectedStyle),
               };
 
-              const fileRejectionItems =
-                fileRejections &&
-                fileRejections[0].errors.map((e) => (
-                  <FormHelperText key={e.code} sx={{ color: 'formText.main' }}>
-                    {e.message}
-                  </FormHelperText>
-                ));
+              const fileRejectionItems = fileRejections[0]?.errors.map((e) => (
+                <FormHelperText key={e.code} sx={{ color: 'formText.main' }}>
+                  {e.message}
+                </FormHelperText>
+              ));
 
               return (
                 <div {...getRootProps({ style })}>
