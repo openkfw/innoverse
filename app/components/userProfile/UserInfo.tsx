@@ -35,7 +35,7 @@ export default function UserInfo() {
     handleSubmit,
     control,
     setValue,
-    formState: { isDirty, isValid },
+    formState: { isDirty, isValid, errors },
   } = useForm<UserSessionFormValidationSchema>({
     mode: 'all',
     resolver: zodResolver(handleUpdateUserSession),
@@ -77,6 +77,8 @@ export default function UserInfo() {
     }
   };
 
+  console.log('isDirty', isDirty, isValid, errors);
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
@@ -113,13 +115,11 @@ export default function UserInfo() {
 const cardStyles = {
   px: 3,
   py: 4,
-  my: 5,
   borderRadius: '16px',
   border: '1px solid rgba(255, 255, 255, 0.20)',
   backgroundColor: 'rgba(255, 255, 255, 0.10)',
   boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
   backdropFilter: 'blur(20px)',
-  height: '100%',
 };
 
 const cardTitleStyles = {

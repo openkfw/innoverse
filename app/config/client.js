@@ -49,7 +49,8 @@ const clientEnvConfig = createEnvConfig({
     },
 
     NEXT_PUBLIC_BODY_SIZE_LIMIT: {
-      defaultRule: z.string().default(''),
+      // By default, the maximum size of the request body sent to a Server Action is 1mb
+      defaultRule: z.string().default('1mb'),
       required: true,
       stages: [],
     },
