@@ -1,4 +1,4 @@
-import { CollaborationComment, Comment, NewsFeedEntry } from '@/common/types';
+import { CollaborationComment, NewsFeedEntry } from '@/common/types';
 import { addProjectCollaborationCommentResponse } from '@/components/collaboration/comments/actions';
 import NewsCollabCommentCard from '@/components/newsPage/cards/NewsCollabCommentCard';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
@@ -32,7 +32,7 @@ export const NewsCollaborationCommentThread = (props: CollaborationCommentThread
   );
 };
 
-export function useCollaborationCommentThread(props: { comment: Comment | CollaborationComment }) {
+export function useCollaborationCommentThread(props: { comment: CollaborationComment }) {
   const { comment } = props;
 
   const fetchComments = async () => {
@@ -40,8 +40,8 @@ export function useCollaborationCommentThread(props: { comment: Comment | Collab
     return comments.data?.map((comment) => ({ ...comment, commentCount: 0 })) ?? [];
   };
 
-  const addComment = async (response: string) => {
-    const result = await addProjectCollaborationCommentResponse({ comment, response });
+  const addComment = async (text: string) => {
+    const result = await addProjectCollaborationCommentResponse({ comment, text });
     const data = result.data ? { ...result.data, commentCount: 0 } : undefined;
     return { ...result, data };
   };

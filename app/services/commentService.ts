@@ -1,32 +1,26 @@
 'use server';
 
-import { CommentType } from '@prisma/client';
-
-import { NewsComment, NewsFeedEntry, ObjectType, PostComment, UserSession } from '@/common/types';
+import { Comment, ObjectType, UserSession } from '@/common/types';
+import { addCommentToDb, countComments, deleteCommentInDb, updateCommentInDb } from '@/repository/db/comment';
 import { getFollowers } from '@/repository/db/follow';
-import { addNewsCommentToDb, deleteNewsCommentInDb, updateNewsCommentInDb } from '@/repository/db/news_comment';
-import { addPostCommentToDb, deletePostCommentInDb, updatePostCommentInDb } from '@/repository/db/post_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
-import { notifyFollowers } from '@/utils/notification/notificationSender';
-import { mapToNewsComment, mapToPostComment } from '@/utils/requests/comments/mapping';
-import {
-  addNewsCommentToCache,
-  deleteNewsCommentInCache,
-  updateNewsCommentInCache,
-} from '@/utils/newsFeed/redis/services/commentsService';
-import { NewsType } from '@/utils/newsFeed/redis/models';
-import { getNewsTypeByString, mapToRedisComment } from '@/utils/newsFeed/redis/mappings';
+import { getNewsTypeByString, mapDBCommentToRedisComment } from '@/utils/newsFeed/redis/mappings';
+import { addNewsCommentToCache } from '@/utils/newsFeed/redis/services/commentsService';
+import { NotificationTopic, notifyFollowers } from '@/utils/notification/notificationSender';
+import { mapToComment } from '@/utils/requests/comments/mapping';
+
+import { updatePostInCache } from './postService';
+import { updateProjectUpdateInCache } from './updateService';
 
 const logger = getLogger();
 
 interface AddComment {
   author: UserSession;
   objectId: string;
-  objectType: ObjectType;
   comment: string;
-  commentType: CommentType;
+  objectType: ObjectType;
   parentCommentId?: string;
   projectId?: string;
 }
@@ -34,112 +28,79 @@ interface AddComment {
 interface RemoveComment {
   user: UserSession;
   commentId: string;
-  commentType: CommentType;
 }
 
 interface UpdateComment {
+  author: UserSession;
   commentId: string;
-  commentType: CommentType;
   content: string;
 }
 
-export const addComment = async (body: AddComment): Promise<NewsComment | PostComment> => {
-  const { comment, commentType, author, objectId, objectType, parentCommentId, projectId } = body;
+export const addComment = async (body: AddComment): Promise<Comment> => {
+  const { comment, objectType, author, objectId, parentCommentId } = body;
+  const commentDb = await addCommentToDb({
+    client: dbClient,
+    objectId,
+    objectType,
+    author: author.providerId,
+    text: comment,
+    parentId: parentCommentId,
+  });
+  const redisComment = await mapDBCommentToRedisComment(commentDb);
+  await addNewsCommentToCache({
+    newsType: getNewsTypeByString(objectType),
+    newsId: objectId,
+    comment: redisComment,
+    parentId: parentCommentId,
+  });
+  notifyObjectFollowers(objectId, objectType);
+  return await mapToComment(commentDb);
+};
 
-  switch (commentType) {
-    case 'POST_COMMENT':
-      const postCommentDb = await addPostCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
-      const redisPostComment = await mapToRedisComment(postCommentDb);
-      const postComment = await mapToPostComment(postCommentDb);
-      await addNewsCommentToCache({
-        newsType: getNewsTypeByString(objectType),
-        newsId: objectId,
-        comment: redisPostComment,
-        parentId: parentCommentId,
-        projectId,
-      });
-      notifyPostFollowers(objectId);
-      return postComment;
-    case 'NEWS_COMMENT':
-      const newsCommentDb = await addNewsCommentToDb(dbClient, objectId, author.providerId, comment, parentCommentId);
-      const redisNewsComment = await mapToRedisComment(newsCommentDb);
-      const newsComment = await mapToNewsComment(newsCommentDb);
-      await addNewsCommentToCache({
-        newsType: getNewsTypeByString(objectType),
-        newsId: objectId,
-        comment: redisNewsComment,
-        parentId: parentCommentId,
-        projectId,
-      });
-      notifyUpdateFollowers(objectId);
-      return newsComment;
-    default:
-      throw Error(`Failed to add comment: Unknown comment type '${commentType}'`);
+export const updateComment = async ({ author, commentId, content }: UpdateComment) => {
+  const result = await updateCommentInDb(dbClient, commentId, content);
+  await updateCommentInCache({ objectId: result.objectId, objectType: result.objectType as ObjectType }, author);
+  return result;
+};
+
+export const removeComment = async ({ user, commentId }: RemoveComment) => {
+  const result = await deleteCommentInDb(dbClient, commentId);
+  const objectId = result.objectId;
+  if (objectId) {
+    await removeCommentInCache({ objectId, objectType: result.objectType as ObjectType }, user);
   }
 };
 
-export const updateComment = async ({ commentId, content, commentType }: UpdateComment) => {
-  switch (commentType) {
-    case 'POST_COMMENT':
-      const postCommentDb = await updatePostCommentInDb(dbClient, commentId, content);
-      const redisPostComment = await mapToRedisComment(postCommentDb);
-      await updateNewsCommentInCache(redisPostComment);
-      return await mapToPostComment(postCommentDb);
-    case 'NEWS_COMMENT':
-      const newsCommentDb = await updateNewsCommentInDb(dbClient, commentId, content);
-      const redisNewsComment = await mapToRedisComment(newsCommentDb);
-      await updateNewsCommentInCache(redisNewsComment);
-      return await mapToNewsComment(newsCommentDb);
-    default:
-      throw Error(`Failed to add comment: Unknown comment type '${commentType}'`);
-  }
+const updateCommentInCache = async (comment: { objectId: string; objectType: ObjectType }, author: UserSession) => {
+  const commentCount = await countComments(dbClient, comment.objectId);
+  const body = { id: comment.objectId, commentCount };
+  return comment.objectType === 'POST'
+    ? await updatePostInCache({ post: body, user: author })
+    : await updateProjectUpdateInCache({ update: body });
 };
 
-export const removeComment = async ({ commentId, commentType }: RemoveComment) => {
-  switch (commentType) {
-    case 'POST_COMMENT':
-      const postCommentInDb = await deletePostCommentInDb(dbClient, commentId);
-      const postId = postCommentInDb.postComment?.postId;
-      if (postId) {
-        await deleteNewsCommentInCache(NewsType.POST, postId, commentId);
-      }
-      return;
-    case 'NEWS_COMMENT':
-      const newsCommentInDb = await deleteNewsCommentInDb(dbClient, commentId);
-      const updateId = newsCommentInDb.newsComment?.newsId;
-      if (updateId) {
-        await deleteNewsCommentInCache(NewsType.UPDATE, updateId, commentId);
-      }
-      return;
-    default:
-      throw Error(`Failed to remove comment: Unknown comment type '${commentType}'`);
-  }
+const removeCommentInCache = async (comment: { objectId: string; objectType: ObjectType }, author: UserSession) => {
+  const commentCount = await countComments(dbClient, comment.objectId);
+  const body = { id: comment.objectId, commentCount };
+  return comment.objectType === 'POST'
+    ? await updatePostInCache({ post: body, user: author })
+    : await updateProjectUpdateInCache({ update: body });
 };
 
-const notifyUpdateFollowers = async (updateId: string) => {
+const notifyObjectFollowers = async (objectId: string, objectType: ObjectType) => {
   try {
-    const follows = await getFollowers(dbClient, ObjectType.UPDATE, updateId);
-    await notifyFollowers(follows, 'update', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Notify followers about updated update with id: ${updateId}`,
-      err as Error,
-      updateId,
+    const follows = await getFollowers(dbClient, objectType, objectId);
+    await notifyFollowers(
+      follows,
+      ObjectType.POST.toLowerCase() as NotificationTopic,
+      `Jemand hat auf einen ${objectType}, dem du folgst, kommentiert.`,
+      '/news',
     );
-    logger.error(error);
-    throw err;
-  }
-};
-
-const notifyPostFollowers = async (postId: string) => {
-  try {
-    const follows = await getFollowers(dbClient, ObjectType.POST, postId);
-    await notifyFollowers(follows, 'post', 'Jemand hat auf einen Post, dem du folgst, kommentiert.', '/news');
   } catch (err) {
     const error: InnoPlatformError = dbError(
-      `Notify followers about updated post with id: ${postId}`,
+      `Notify followers about updated ${objectType} with id: ${objectId}`,
       err as Error,
-      postId,
+      objectId,
     );
     logger.error(error);
     throw err;

@@ -2,14 +2,8 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { Comment, UserSession } from '@/common/types';
-import {
-  addComment,
-  deleteComment,
-  getCommentbyId,
-  handleCommentUpvotedBy,
-  updateComment,
-} from '@/repository/db/project_comment';
+import { Comment, ObjectType, UserSession } from '@/common/types';
+import { addCommentToDb, deleteCommentInDb, getCommentById, updateCommentInDb } from '@/repository/db/comment';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
@@ -18,12 +12,7 @@ import { validateParams } from '@/utils/validationHelper';
 
 import dbClient from '../../../repository/db/prisma/prisma';
 
-import {
-  commentUpvotedBySchema,
-  deleteCommentSchema,
-  handleCommentSchema,
-  updateCommentSchema,
-} from './validationSchema';
+import { deleteCommentSchema, handleCommentSchema, updateCommentSchema } from './validationSchema';
 
 const logger = getLogger();
 
@@ -31,16 +20,23 @@ export const addProjectComment = withAuth(async (user: UserSession, body: { proj
   try {
     const validatedParams = validateParams(handleCommentSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      const newComment = await addComment(dbClient, body.projectId, user.providerId, body.comment);
+      const newComment = await addCommentToDb({
+        client: dbClient,
+        objectId: body.projectId,
+        objectType: ObjectType.PROJECT,
+        author: user.providerId,
+        text: body.comment,
+      });
       const author = await getInnoUserByProviderId(user.providerId);
       return {
         status: StatusCodes.OK,
         data: {
           ...newComment,
           author,
-          upvotedBy: [],
+          likedBy: [],
           commentCount: 0,
           questionId: '',
+          responses: [],
         } as Comment,
       };
     }
@@ -63,35 +59,6 @@ export const addProjectComment = withAuth(async (user: UserSession, body: { proj
   }
 });
 
-export const handleProjectCommentUpvoteBy = withAuth(async (user: UserSession, body: { commentId: string }) => {
-  try {
-    const validatedParams = validateParams(commentUpvotedBySchema, body);
-    if (validatedParams.status === StatusCodes.OK) {
-      const updatedComment = await handleCommentUpvotedBy(dbClient, body.commentId, user.providerId);
-      return {
-        status: StatusCodes.OK,
-        upvotedBy: updatedComment?.upvotedBy,
-      };
-    }
-    return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
-      message: validatedParams.message,
-    };
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Adding an upvote of a Comment ${body.commentId} for user ${user.providerId}`,
-      err as Error,
-      body.commentId,
-    );
-    logger.error(error);
-    return {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Upvoting comment failed',
-    };
-  }
-});
-
 export const deleteProjectComment = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
     const validatedParams = validateParams(deleteCommentSchema, body);
@@ -104,7 +71,7 @@ export const deleteProjectComment = withAuth(async (user: UserSession, body: { c
       };
     }
 
-    const comment = await getCommentbyId(dbClient, body.commentId);
+    const comment = await getCommentById(dbClient, body.commentId);
 
     if (comment === null) {
       return {
@@ -120,7 +87,7 @@ export const deleteProjectComment = withAuth(async (user: UserSession, body: { c
       };
     }
 
-    await deleteComment(dbClient, body.commentId);
+    await deleteCommentInDb(dbClient, body.commentId);
 
     return {
       status: StatusCodes.OK,
@@ -149,7 +116,7 @@ export const updateProjectComment = withAuth(
         };
       }
 
-      const comment = await getCommentbyId(dbClient, body.commentId);
+      const comment = await getCommentById(dbClient, body.commentId);
 
       if (comment === null) {
         return {
@@ -165,7 +132,7 @@ export const updateProjectComment = withAuth(
         };
       }
 
-      const updatedComment = await updateComment(dbClient, body.commentId, body.updatedText);
+      const updatedComment = await updateCommentInDb(dbClient, body.commentId, body.updatedText);
 
       return {
         status: StatusCodes.OK,

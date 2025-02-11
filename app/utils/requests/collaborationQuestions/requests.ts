@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { BasicCollaborationQuestion, ObjectType, StartPagination, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
-import { getCollaborationCommentIsUpvotedBy } from '@/repository/db/collaboration_comment';
+import { isCommentLikedBy } from '@/repository/db/comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
@@ -18,11 +18,11 @@ import {
   GetCollaborationQuestionsByProjectIdQuery,
   GetCollaborationQuestionsCountProjectIdQuery,
   GetPlatformFeedbackCollaborationQuestion,
+  GetCollaborationQuestsionsStartingFromQuery,
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 import { mapToBasicCollaborationQuestion } from './mappings';
-import { GetCollaborationQuestsionsStartingFromQuery } from './queries';
 
 const logger = getLogger();
 
@@ -35,13 +35,13 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
       const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData.id });
       const comments = getComments.data ?? [];
 
-      const getCommentsWithUpvote = comments.map(async (comment) => {
-        const { data: isUpvotedByUser } = await isCollaborationCommentUpvotedByUser({ commentId: comment.id });
-        return { ...comment, isUpvotedByUser };
+      const getCommentsWithLike = comments.map(async (comment) => {
+        const { data: isLikedByUser } = await isCollaborationCommentLikedByUser({ commentId: comment.id });
+        return { ...comment, isLikedByUser };
       });
 
-      const commentsWithUserUpvote = await getPromiseResults(getCommentsWithUpvote);
-      return mapToCollaborationQuestion(questionData, commentsWithUserUpvote);
+      const commentsWithUserLike = await getPromiseResults(getCommentsWithLike);
+      return mapToCollaborationQuestion(questionData, commentsWithUserLike);
     });
 
     const collaborationQuestions = await getPromiseResults(mapToEntities);
@@ -129,13 +129,13 @@ export async function getPlatformFeedbackCollaborationQuestion() {
   }
 }
 
-export const isCollaborationCommentUpvotedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
+export const isCollaborationCommentLikedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
-    const isUpvotedBy = await getCollaborationCommentIsUpvotedBy(dbClient, body.commentId, user.providerId);
-    return { status: StatusCodes.OK, data: isUpvotedBy };
+    const isLikedBy = await isCommentLikedBy(dbClient, body.commentId, user.providerId);
+    return { status: StatusCodes.OK, data: isLikedBy };
   } catch (err) {
     const error: InnoPlatformError = strapiError(
-      `Find upvote for comment with id: ${body.commentId} by user ${user.providerId}`,
+      `Find like for comment with id: ${body.commentId} by user ${user.providerId}`,
       err as RequestError,
       body.commentId,
     );

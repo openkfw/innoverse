@@ -11,7 +11,7 @@ export async function getFollowers(client: PrismaClient, objectType: ObjectType,
   const query: any = {
     where: {
       objectId,
-      objectType,
+      objectType: objectType as PrismaObjectType,
     },
   };
 

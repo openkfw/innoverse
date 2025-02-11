@@ -1,6 +1,7 @@
 import {
   BasicCollaborationQuestion,
   BasicProject,
+  Comment,
   CommentWithResponses,
   Event,
   ImageFormats,
@@ -11,7 +12,7 @@ import {
   User,
 } from '@/common/types';
 import { clientConfig } from '@/config/client';
-import { NewsCommentDB, PostCommentDB } from '@/repository/db/utils/types';
+import { CommentDB } from '@/repository/db/utils/types';
 import { getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
@@ -29,20 +30,6 @@ import {
   RedisUser,
 } from '@/utils/newsFeed/redis/models';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
-
-type CollaborationComment = {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  author: User;
-  comment: string;
-  upvotedBy: string[];
-  commentCount: number;
-  projectId: string;
-  projectName: string;
-  questionId: string;
-  isUpvotedByUser?: boolean;
-};
 
 export const mapPostToRedisNewsFeedEntry = (
   post: Post,
@@ -184,7 +171,7 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
 };
 
 export const mapCollaborationCommentToRedisNewsFeedEntry = (
-  comment: CollaborationComment,
+  comment: Comment,
   question: BasicCollaborationQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
@@ -198,7 +185,7 @@ export const mapCollaborationCommentToRedisNewsFeedEntry = (
     updatedAt: getUnixTimestamp(comment.createdAt),
     item: item,
     type: NewsType.COLLABORATION_COMMENT,
-    search: escapeRedisTextSeparators((item.question || '') + ' ' + (item.comment || '')),
+    search: escapeRedisTextSeparators((item.question || '') + ' ' + (item.text || '')),
   };
 };
 
@@ -226,7 +213,7 @@ export const mapToRedisPost = (
     author: post.author,
     content: post.content,
     reactions: reactions,
-    upvotedBy: post.upvotedBy,
+    likedBy: post.likedBy,
     updatedAt: getUnixTimestamp(post.updatedAt),
     createdAt: getUnixTimestamp(post.createdAt),
     followedBy,
@@ -270,7 +257,7 @@ export const mapToRedisCollaborationQuestion = (
 };
 
 export const mapToRedisCollaborationComment = (
-  comment: CollaborationComment,
+  comment: Comment,
   question: BasicCollaborationQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
@@ -279,9 +266,9 @@ export const mapToRedisCollaborationComment = (
     id: comment.id,
     createdAt: getUnixTimestamp(comment.createdAt),
     updatedAt: getUnixTimestamp(comment.createdAt),
-    projectId: comment.projectId,
+    projectId: comment.objectId,
     author: comment.author,
-    comment: comment.comment,
+    text: comment.text,
     question: {
       id: question.id,
       authors: question.authors,
@@ -289,8 +276,8 @@ export const mapToRedisCollaborationComment = (
       title: question.title,
     },
     commentCount: comment.commentCount,
-    upvotedBy: comment.upvotedBy,
-    isUpvotedByUser: comment.isUpvotedByUser,
+    likedBy: comment.likedBy,
+    isLikedByUser: comment.isLikedByUser,
     reactions: reactions,
     followedBy: followedBy,
   };
@@ -342,17 +329,15 @@ const mapToRedisProjectEvent = (
   };
 };
 
-export const mapToRedisNewsComments = (comments: CommentWithResponses[]) => {
+export const mapCommentWithResponsesToRedisNewsComments = (comments: CommentWithResponses[]) => {
   return comments.map(mapToRedisNewsComment);
 };
 
 const mapToRedisNewsComment = (comment: CommentWithResponses): RedisNewsComment => {
   return {
     id: comment.id,
-    commentId: comment.commentId,
-    comment: comment.comment,
-    upvotedBy: comment.upvotedBy,
-    commentCount: comment.commentCount,
+    text: comment.text,
+    likedBy: comment.likes?.map((like) => like.likedBy),
     author: comment.author,
     parentId: comment.parentId,
     comments: comment.comments.map((comment) => mapToRedisNewsComment(comment)),
@@ -361,19 +346,17 @@ const mapToRedisNewsComment = (comment: CommentWithResponses): RedisNewsComment 
   };
 };
 
-export const mapToRedisComment = async (newsComment: NewsCommentDB | PostCommentDB): Promise<RedisNewsComment> => {
-  const comment = newsComment.comment;
-  const author = await getInnoUserByProviderId(comment.author);
+export const mapDBCommentToRedisComment = async (newsComment: CommentDB): Promise<RedisNewsComment> => {
+  const author = await getInnoUserByProviderId(newsComment.author);
 
   return {
     id: newsComment.id,
-    commentId: newsComment.commentId,
-    createdAt: getUnixTimestamp(comment.createdAt),
-    updatedAt: getUnixTimestamp(comment.updatedAt),
-    comment: comment.text,
+    createdAt: getUnixTimestamp(newsComment.createdAt),
+    updatedAt: getUnixTimestamp(newsComment.updatedAt),
+    text: newsComment.text,
     author: author,
-    upvotedBy: comment.upvotedBy,
-    commentCount: comment.responses.length,
+    likedBy: newsComment.likes?.map((like) => like.likedBy),
+    commentCount: newsComment.responses.length,
   };
 };
 

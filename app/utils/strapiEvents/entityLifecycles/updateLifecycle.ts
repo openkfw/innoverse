@@ -1,4 +1,5 @@
 import { ObjectType } from '@/common/types';
+import { countComments } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getAllPushSubscriptions } from '@/repository/db/push_subscriptions';
@@ -77,8 +78,8 @@ export class UpdateLifecycle extends StrapiEntityLifecycle {
       const followerIds = await getFollowedByForEntity(dbClient, ObjectType.UPDATE, updateId);
       const followers = await mapToRedisUsers(followerIds);
       const updateWithReactions = mapObjectWithReactions(update);
-      const comments = await getRedisNewsCommentsWithResponses(update.id, ObjectType.UPDATE);
-      const commentsIds = comments.map((comment) => comment.commentId);
+      const comments = await getRedisNewsCommentsWithResponses(update.id);
+      const commentsIds = comments.map((comment) => comment.id);
 
       const newsFeedEntry = mapUpdateToRedisNewsFeedEntry(
         updateWithReactions,

@@ -4,11 +4,12 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import { Comment } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import { addCommentLike, deleteCommentLike } from '@/components/newsPage/threads/actions';
 import * as m from '@/src/paraglide/messages.js';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
-import { deleteProjectComment, handleProjectCommentUpvoteBy, updateProjectComment } from './actions';
+import { deleteProjectComment, updateProjectComment } from './actions';
 
 interface ProjectCommentCardProps {
   comment: Comment;
@@ -18,33 +19,43 @@ interface ProjectCommentCardProps {
 
 export const ProjectCommentCard = (props: ProjectCommentCardProps) => {
   const { comment, projectName } = props;
-  const { isUpvoted, toggleCommentUpvote, updateComment, deleteComment } = useProjectCommentCard(props);
+  const { isLiked, toggleCommentLike, updateComment, deleteComment, commentLikeCount } = useProjectCommentCard(props);
 
   return (
     <CommentCard
       comment={comment}
       projectName={projectName}
-      isUpvoted={isUpvoted ?? false}
-      onUpvoteToggle={toggleCommentUpvote}
+      isLiked={isLiked ?? false}
+      onLikeToggle={toggleCommentLike}
       onEdit={updateComment}
       onDelete={deleteComment}
+      commentLikeCount={commentLikeCount}
     />
   );
 };
 
 export function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardProps) {
-  const [isUpvoted, setIsUpvoted] = useState<boolean>(comment.isUpvotedByUser || false);
+  const [isLiked, setIsLiked] = useState<boolean>(comment.isLikedByUser || false);
+  const [commentLikeCount, setCommentLikeCount] = useState<number>(comment?.likes?.length || 0);
+
   const appInsights = useAppInsightsContext();
 
-  const toggleCommentUpvote = () => {
+  const toggleCommentLike = () => {
     try {
-      handleProjectCommentUpvoteBy({ commentId: comment.id });
-      setIsUpvoted((upvoted) => !upvoted);
+      if (isLiked) {
+        setIsLiked(false);
+        deleteCommentLike(comment.id);
+        setCommentLikeCount(commentLikeCount - 1);
+      } else {
+        setIsLiked(true);
+        addCommentLike(comment.id);
+        setCommentLikeCount(commentLikeCount + 1);
+      }
     } catch (error) {
-      console.error('Error updating collaboration comment:', error);
+      console.error('Error while liking project comment:', error);
       errorMessage({ message: m.components_projectdetails_comments_projectCommentCard_updateError() });
       appInsights.trackException({
-        exception: new Error('Failed to update collaboration comment response.', { cause: error }),
+        exception: new Error('Failed to like project comment.', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
     }
@@ -78,9 +89,10 @@ export function useProjectCommentCard({ comment, onDelete }: ProjectCommentCardP
   };
 
   return {
-    isUpvoted,
-    toggleCommentUpvote,
+    isLiked,
+    toggleCommentLike,
     updateComment,
     deleteComment,
+    commentLikeCount,
   };
 }

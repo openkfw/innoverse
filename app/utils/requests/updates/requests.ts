@@ -14,8 +14,8 @@ import {
 } from '@/common/types';
 import { handleProjectUpdatesSchema } from '@/components/updates/validationSchema';
 import { RequestError } from '@/entities/error';
+import { getCommentsStartingFrom } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
-import { getNewsCommentsStartingFrom } from '@/repository/db/news_comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { countNumberOfReactions, findReaction, getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
@@ -349,10 +349,10 @@ export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: St
     const response = await strapiGraphQLFetcher(GetUpdatesStartingFromQuery, { from, page, pageSize });
     const updates = await mapToProjectUpdates(response.updates?.data);
 
-    const newsComments = await getNewsCommentsStartingFrom(dbClient, from);
+    const newsComments = await getCommentsStartingFrom(dbClient, from, ObjectType.UPDATE);
     // Get unique ids of updates
     const updatesIds = getUniqueValues(
-      newsComments.map((comment) => comment.newsComment?.newsId).filter((id): id is string => id !== undefined),
+      newsComments.map((comment) => comment?.objectId).filter((id): id is string => id !== undefined),
     );
 
     if (updatesIds.length > 0) {

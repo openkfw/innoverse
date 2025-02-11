@@ -5,7 +5,7 @@ import { json2csv } from 'json-2-csv';
 
 import { ObjectType } from '@/common/types';
 import { serverConfig } from '@/config/server';
-import { getCollaborationQuestionComments } from '@/repository/db/collaboration_comment';
+import { getCommentsByAdditionalObjectId } from '@/repository/db/comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getTotalComments, getTotalProjectLikes, getTotalReactions } from '@/repository/db/statistics';
 import { dbError, InnoPlatformError } from '@/utils/errors';
@@ -35,7 +35,7 @@ export const getFeedback = async (body: { username: string; password: string }) 
       };
     }
 
-    const feedback = await getCollaborationQuestionComments(
+    const feedback = await getCommentsByAdditionalObjectId(
       dbClient,
       response.projectId,
       response.collaborationQuestionId,

@@ -1,15 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import { ObjectType, PrismaClient } from '@prisma/client';
 
-export async function getProjectLikes(client: PrismaClient, projectId: string, limit?: number) {
+export async function getProjectLikes(client: PrismaClient, objectId: string, limit?: number) {
   const query: any = {
     where: {
-      projectId,
+      objectId,
     },
   };
 
   if (limit) query.take = limit;
 
-  const res = await client.like.findMany(query);
+  const res = await client.objectLike.findMany(query);
   return res;
 }
 
@@ -22,41 +22,42 @@ export async function getUserLikes(client: PrismaClient, likedBy: string, limit?
 
   if (limit) query.take = limit;
 
-  return client.like.findMany(query);
+  return client.objectLike.findMany(query);
 }
-export async function isProjectLikedBy(client: PrismaClient, projectId: string, likedBy: string) {
-  const isLikedByUserCount = await client.like.count({
+export async function isObjectLikedBy(client: PrismaClient, objectId: string, likedBy: string) {
+  const isLikedByUserCount = await client.objectLike.count({
     where: {
-      projectId,
+      objectId,
       likedBy,
     },
   });
   return isLikedByUserCount > 0;
 }
 
-export async function deleteProjectAndUserLike(client: PrismaClient, projectId: string, likedBy: string) {
-  return client.like.deleteMany({
+export async function deleteObjectAndUserLike(client: PrismaClient, objectId: string, likedBy: string) {
+  return client.objectLike.deleteMany({
     where: {
-      projectId,
+      objectId,
       likedBy,
     },
   });
 }
 
-export async function addLike(client: PrismaClient, projectId: string, likedBy: string) {
-  return client.like.upsert({
+export async function addLike(client: PrismaClient, objectId: string, objectType: ObjectType, likedBy: string) {
+  return client.objectLike.upsert({
     where: {
-      projectId_likedBy: {
-        projectId,
+      objectId_likedBy: {
+        objectId,
         likedBy,
       },
     },
     update: {
-      projectId,
+      objectId,
       likedBy,
     },
     create: {
-      projectId,
+      objectId,
+      objectType,
       likedBy,
     },
   });

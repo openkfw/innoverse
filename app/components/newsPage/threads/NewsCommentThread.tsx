@@ -8,7 +8,7 @@ import { addUserComment } from '@/components/newsPage/threads/actions';
 interface NewsCommentThreadProps {
   item: { id: string; objectType: ObjectType; projectId?: string };
   comment: CommentWithResponses;
-  commentType: 'NEWS_COMMENT' | 'POST_COMMENT';
+  commentType: ObjectType.POST | ObjectType.UPDATE;
   level: number;
   onDelete: () => void;
   onUpdate: (updatedComment: CommentWithResponses) => void;
@@ -18,7 +18,7 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
   const { comment, level } = props;
 
   const updateComment = (updatedText: string) => {
-    props.onUpdate({ ...comment, comment: updatedText });
+    props.onUpdate({ ...comment, text: updatedText });
   };
 
   const handleDeleteResponse = (response: CommentWithResponses) => {
@@ -38,11 +38,9 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
   const handleResponse = async (response: string) => {
     const { data: newResponse } = await addUserComment({
       comment: response,
-      commentType: props.commentType,
+      objectType: props.commentType,
       objectId: props.item.id,
-      objectType: props.item.objectType,
-      parentCommentId: comment?.commentId,
-      projectId: props.item.projectId,
+      parentCommentId: comment?.id,
     });
 
     if (!newResponse) return;
@@ -57,7 +55,7 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
     <>
       <NewsCommentCard
         comment={comment}
-        commentType={props.commentType}
+        objectType={props.commentType}
         displayResponseControls={level < 3}
         onDelete={props.onDelete}
         onUpdate={updateComment}

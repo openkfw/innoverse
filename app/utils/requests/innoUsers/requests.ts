@@ -1,6 +1,8 @@
 'use server';
 
-import { User, UserSession, Mention, UploadImageResponse } from '@/common/types';
+import { FormData, request } from 'undici';
+
+import { Mention, UploadImageResponse, User, UserSession } from '@/common/types';
 import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { RequestError } from '@/entities/error';
@@ -16,7 +18,6 @@ import {
   GetInnoUserByUsernameQuery,
 } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { request, FormData } from 'undici';
 
 const logger = getLogger();
 

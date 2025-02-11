@@ -1,7 +1,7 @@
 import Stack from '@mui/material/Stack';
 
 import { useUser } from '@/app/contexts/user-context';
-import { CommentResponse } from '@/common/types';
+import { Comment } from '@/common/types';
 import { useCollaborationCommentResponseCard } from '@/components/collaboration/comments/CollaborationCommentResponseCard';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
@@ -10,7 +10,7 @@ import { TextCard } from '@/components/common/TextCard';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
 
 interface NewsCollabCommentResponseCardProps {
-  comment: CommentResponse;
+  comment: Comment;
   onDelete: () => void;
 }
 
@@ -29,7 +29,7 @@ export const NewsCollabCommentResponseCard = (props: NewsCollabCommentResponseCa
     <WriteCommentCard
       content={{
         author: response.author,
-        comment: response.response,
+        text: response.text,
         updatedAt: response.createdAt,
       }}
       onSubmit={updateResponse}
@@ -37,7 +37,7 @@ export const NewsCollabCommentResponseCard = (props: NewsCollabCommentResponseCa
     />
   ) : (
     <TextCard
-      text={response.response}
+      text={response.text}
       header={
         <CommentCardHeader content={{ author: response.author, updatedAt: response.createdAt }} avatar={{ size: 24 }} />
       }

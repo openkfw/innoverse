@@ -11,18 +11,18 @@ export async function getTotalReactions(client: PrismaClient, type: ObjectType) 
   });
 }
 
-export async function getTotalProjectLikes(client: PrismaClient, projectId?: string) {
-  return client.like.groupBy({
-    by: ['projectId'],
-    where: projectId ? { projectId } : undefined,
+export async function getTotalProjectLikes(client: PrismaClient, objectId?: string) {
+  return client.objectLike.groupBy({
+    by: ['objectId'],
+    where: objectId ? { objectId } : undefined,
     _count: true,
   });
 }
 
-export async function getTotalComments(client: PrismaClient, projectId?: string) {
-  return client.projectComment.groupBy({
-    by: ['projectId'],
-    where: projectId ? { projectId } : undefined,
+export async function getTotalComments(client: PrismaClient, objectId?: string) {
+  return client.comment.groupBy({
+    by: ['objectId'],
+    where: objectId ? { objectId } : undefined,
     _count: true,
   });
 }

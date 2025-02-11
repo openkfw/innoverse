@@ -1,12 +1,14 @@
+import { useState } from 'react';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import Stack from '@mui/material/Stack';
 
 import { useUser } from '@/app/contexts/user-context';
-import { CommonCommentProps } from '@/common/types';
+import { CommonCommentProps, ObjectType } from '@/common/types';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { errorMessage } from '@/components/common/CustomToast';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
+import { LikeControl } from '@/components/common/editing/controls/LikeControl';
 import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
 import {
   useEditingInteractions,
@@ -19,9 +21,11 @@ import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommen
 import * as m from '@/src/paraglide/messages.js';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
 
+import { addCommentLike, deleteCommentLike } from '../threads/actions';
+
 interface NewsCommentCardProps {
   comment: CommonCommentProps;
-  commentType: 'NEWS_COMMENT' | 'POST_COMMENT';
+  objectType: ObjectType.POST | ObjectType.UPDATE;
   displayResponseControls: boolean;
   onDelete: () => void;
   onUpdate: (text: string) => void;
@@ -38,16 +42,20 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
     cancelEdit,
     updateComment,
     deleteComment,
+    handleLike,
+    isCommentLiked,
+    commentLikeCount,
   } = useNewsCommentCard(props);
 
   return isEditing ? (
     <WriteCommentCard content={comment} onSubmit={updateComment} onDiscard={cancelEdit} />
   ) : (
     <TextCard
-      text={comment.comment}
+      text={comment.text}
       header={<CommentCardHeader content={comment} avatar={{ size: 24 }} />}
       footer={
-        <Stack direction="row" sx={{ mt: 0 }} style={{ marginTop: '8px', marginLeft: '-8px', gap: 16 }}>
+        <Stack direction={'row'} sx={{ mt: 0 }} style={{ marginTop: '8px', marginLeft: '-8px', gap: 16 }}>
+          <LikeControl onLike={handleLike} isSelected={isCommentLiked} likeNumber={commentLikeCount} />
           {displayResponseControls && <ResponseControls onResponse={startResponse} />}
           {displayEditingControls && <EditControls onEdit={startEdit} onDelete={deleteComment} />}
         </Stack>
@@ -58,7 +66,9 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
 };
 
 const useNewsCommentCard = (props: NewsCommentCardProps) => {
-  const { comment, commentType, displayResponseControls, onDelete, onUpdate } = props;
+  const { comment, objectType, displayResponseControls, onDelete, onUpdate } = props;
+  const [isCommentLiked, setIsCommentLiked] = useState<boolean>(comment.isLikedByUser || false);
+  const [commentLikeCount, setCommentLikeCount] = useState<number>(comment?.likes?.length || 0);
 
   const state = useEditingState();
   const editingInteractions = useEditingInteractions();
@@ -67,9 +77,21 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
 
   const userIsAuthor = user?.providerId === comment.author?.providerId;
 
+  const handleLike = async () => {
+    if (isCommentLiked) {
+      setIsCommentLiked(false);
+      deleteCommentLike(comment.id);
+      setCommentLikeCount(commentLikeCount - 1);
+    } else {
+      setIsCommentLiked(true);
+      addCommentLike(comment.id);
+      setCommentLikeCount(commentLikeCount + 1);
+    }
+  };
+
   const handleDelete = async () => {
     try {
-      await removeUserComment({ commentId: comment.commentId, commentType });
+      await removeUserComment({ commentId: comment.id, objectType });
       onDelete();
     } catch (error) {
       console.error('Error deleting comment:', error);
@@ -83,7 +105,7 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
 
   const handleUpdate = async (updatedText: string) => {
     try {
-      await updateUserComment({ commentId: comment.commentId, content: updatedText, commentType });
+      await updateUserComment({ commentId: comment.id, content: updatedText, objectType });
       onUpdate(updatedText);
       editingInteractions.onSubmit();
     } catch (error) {
@@ -106,5 +128,8 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
     cancelEdit: editingInteractions.onCancel,
     updateComment: handleUpdate,
     deleteComment: handleDelete,
+    handleLike,
+    isCommentLiked,
+    commentLikeCount,
   };
 };

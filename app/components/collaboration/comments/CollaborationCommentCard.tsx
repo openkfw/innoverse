@@ -4,37 +4,35 @@ import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
-import { Comment } from '@/common/types';
+import { CollaborationComment } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
+import { addCommentLike, deleteCommentLike } from '@/components/newsPage/threads/actions';
 import * as m from '@/src/paraglide/messages.js';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
-import {
-  deleteProjectCollaborationComment,
-  handleProjectCollaborationCommentUpvotedBy,
-  updateProjectCollaborationComment,
-} from './actions';
+import { deleteProjectCollaborationComment, updateProjectCollaborationComment } from './actions';
 
 interface CollaborationCommentCardProps {
-  comment: Comment;
+  comment: CollaborationComment;
   projectName?: string;
   onDelete?: () => void;
 }
 
 export const CollaborationCommentCard = (props: CollaborationCommentCardProps) => {
-  const { comment, projectName, isUpvoted, toggleCommentUpvote, updateComment, deleteComment } =
+  const { comment, projectName, isLiked, toggleCommentLike, updateComment, deleteComment, commentLikeCount } =
     useCollaborationCommentCardProps(props);
 
   return (
     <CommentCard
       comment={comment}
       projectName={projectName}
-      isUpvoted={isUpvoted ?? false}
+      isLiked={isLiked ?? false}
       enableResponses={true}
-      onUpvoteToggle={toggleCommentUpvote}
+      onLikeToggle={toggleCommentLike}
       onEdit={updateComment}
       onDelete={deleteComment}
+      commentLikeCount={commentLikeCount}
     />
   );
 };
@@ -43,18 +41,26 @@ function useCollaborationCommentCardProps(props: CollaborationCommentCardProps) 
   const { projectName, onDelete } = props;
 
   const [comment, setComment] = useState(props.comment);
-  const [isUpvoted, setIsUpvoted] = useState<boolean>(comment.isUpvotedByUser || false);
+  const [isLiked, setIsLiked] = useState<boolean>(comment.isLikedByUser || false);
+  const [commentLikeCount, setCommentLikeCount] = useState<number>(comment?.likedBy?.length || 0);
   const appInsights = useAppInsightsContext();
 
-  const toggleCommentUpvote = () => {
+  const toggleCommentLike = () => {
     try {
-      handleProjectCollaborationCommentUpvotedBy({ commentId: comment.id });
-      setIsUpvoted((upvoted) => !upvoted);
+      if (isLiked) {
+        setIsLiked(false);
+        deleteCommentLike(comment.id);
+        setCommentLikeCount(commentLikeCount - 1);
+      } else {
+        setIsLiked(true);
+        addCommentLike(comment.id);
+        setCommentLikeCount(commentLikeCount + 1);
+      }
     } catch (error) {
-      console.error('Error upvoting collaboration comment:', error);
-      errorMessage({ message: m.components_collaboration_comments_collaborationCommentCard_upvoteError() });
+      console.error('Error while liking project comment:', error);
+      errorMessage({ message: m.components_projectdetails_comments_projectCommentCard_updateError() });
       appInsights.trackException({
-        exception: new Error('Failed to upvote collaboration comment', { cause: error }),
+        exception: new Error('Failed to like project comment.', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
     }
@@ -63,7 +69,7 @@ function useCollaborationCommentCardProps(props: CollaborationCommentCardProps) 
   const updateComment = async (updatedText: string) => {
     try {
       await updateProjectCollaborationComment({ commentId: comment.id, updatedText });
-      setComment({ ...comment, comment: updatedText });
+      setComment({ ...comment, text: updatedText });
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
       errorMessage({ message: m.components_collaboration_comments_collaborationCommentCard_updateError() });
@@ -91,9 +97,10 @@ function useCollaborationCommentCardProps(props: CollaborationCommentCardProps) 
   return {
     comment,
     projectName,
-    isUpvoted,
-    toggleCommentUpvote,
+    isLiked,
+    toggleCommentLike,
     updateComment,
     deleteComment,
+    commentLikeCount,
   };
 }

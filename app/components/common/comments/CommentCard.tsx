@@ -23,24 +23,34 @@ import { TextCard } from '../TextCard';
 
 interface CommentCardProps {
   comment: BasicComment;
-  isUpvoted: boolean;
+  isLiked: boolean;
   projectName?: string;
   enableResponses?: boolean;
-  onUpvoteToggle: () => void;
+  onLikeToggle: () => void;
   onEdit?: (updatedText: string) => Promise<void>;
   onDelete?: () => void;
+  commentLikeCount: number;
 }
 
 interface BasicComment {
   id: string;
   author: User;
-  comment: string;
-  upvotedBy: User[];
+  text: string;
+  likedBy: string[];
   updatedAt: Date;
 }
 
 export const CommentCard = (props: CommentCardProps) => {
-  const { comment, isUpvoted, projectName, enableResponses = false, onUpvoteToggle, onEdit, onDelete } = props;
+  const {
+    comment,
+    isLiked,
+    projectName,
+    enableResponses = false,
+    onLikeToggle,
+    onEdit,
+    onDelete,
+    commentLikeCount,
+  } = props;
 
   const state = useEditingState();
   const editingInteractions = useEditingInteractions();
@@ -57,7 +67,7 @@ export const CommentCard = (props: CommentCardProps) => {
     const mentionedUsers = new Set<string>();
     let match;
 
-    while ((match = mentionRegex.exec(comment.comment)) !== null) {
+    while ((match = mentionRegex.exec(comment.text)) !== null) {
       const username = match[1];
       if (username) {
         mentionedUsers.add(username);
@@ -77,7 +87,7 @@ export const CommentCard = (props: CommentCardProps) => {
     } else {
       return null;
     }
-  }, [comment.comment]);
+  }, [comment.text]);
 
   const renderHeader = (comment: BasicComment, mentionedUsers: JSX.Element[] | null) => (
     <Box sx={styles.headerWrapper}>
@@ -91,7 +101,7 @@ export const CommentCard = (props: CommentCardProps) => {
     <WriteTextCard
       onSubmit={updateComment}
       onDiscard={editingInteractions.onCancel}
-      defaultValues={{ text: comment.comment }}
+      defaultValues={{ text: comment.text }}
       metadata={{ projectName }}
       submitButton={
         <CustomButton
@@ -107,14 +117,14 @@ export const CommentCard = (props: CommentCardProps) => {
     />
   ) : (
     <TextCard
-      text={comment.comment}
+      text={comment.text}
       header={renderHeader(comment, mentionedUsers)}
       footer={
         <CommentFooter
           author={comment.author}
-          upvoteCount={comment.upvotedBy.length}
-          isUpvoted={isUpvoted}
-          onUpvote={onUpvoteToggle}
+          likeCount={commentLikeCount}
+          isLiked={isLiked}
+          onLike={onLikeToggle}
           onEdit={() => editingInteractions.onStart(comment)}
           onDelete={onDelete}
           onResponse={enableResponses ? () => respondingInteractions.onStart(comment) : undefined}

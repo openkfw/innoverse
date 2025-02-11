@@ -18,22 +18,22 @@ import ReplyIcon from '../../icons/ReplyIcon';
 
 interface CommentVoteComponentProps {
   commentId: string;
-  upvotedBy: User[];
-  isUpvoted: ({ commentId }: { commentId: string }) => Promise<AuthResponse<boolean>>;
+  likedBy: User[];
+  isLiked: ({ commentId }: { commentId: string }) => Promise<AuthResponse<boolean>>;
   handleUpvote: ({ commentId }: { commentId: string }) => Promise<unknown>;
   handleClickOnResponse?: () => void;
 }
 
 export const CommentVoteComponent = ({
   commentId,
-  upvotedBy,
-  isUpvoted,
+  likedBy,
+  isLiked,
   handleUpvote,
   handleClickOnResponse,
 }: CommentVoteComponentProps) => {
   const appInsights = useAppInsightsContext();
-  const checkIfCommentIsUpvoted = async () => {
-    const response = await isUpvoted({ commentId });
+  const checkIfCommentisLiked = async () => {
+    const response = await isLiked({ commentId });
     return response.data ?? false;
   };
 
@@ -52,8 +52,8 @@ export const CommentVoteComponent = ({
 
   return (
     <VoteComponent
-      upvoteCount={upvotedBy.length}
-      isUpvoted={checkIfCommentIsUpvoted}
+      upvoteCount={likedBy.length}
+      isLiked={checkIfCommentisLiked}
       handleUpvote={upvoteComment}
       handleClickOnResponse={handleClickOnResponse}
     />
@@ -61,13 +61,13 @@ export const CommentVoteComponent = ({
 };
 
 interface VoteComponentProps {
-  isUpvoted: () => Promise<boolean>;
+  isLiked: () => Promise<boolean>;
   upvoteCount: number;
   handleUpvote: () => void;
   handleClickOnResponse?: () => void;
 }
 
-export const VoteComponent = ({ isUpvoted, upvoteCount, handleUpvote, handleClickOnResponse }: VoteComponentProps) => {
+export const VoteComponent = ({ isLiked, upvoteCount, handleUpvote, handleClickOnResponse }: VoteComponentProps) => {
   const [upvotes, setUpvotes] = useState<number>(upvoteCount);
   const [upvoted, setUpvoted] = useState<boolean>(false);
 
@@ -75,11 +75,11 @@ export const VoteComponent = ({ isUpvoted, upvoteCount, handleUpvote, handleClic
 
   useEffect(() => {
     const setCommentUpvoted = async () => {
-      const upvotedByUser = await isUpvoted();
+      const upvotedByUser = await isLiked();
       setUpvoted(upvotedByUser);
     };
     setCommentUpvoted();
-  }, [user, isUpvoted]);
+  }, [user, isLiked]);
 
   const handleClickOnUpvote = () => {
     if (handleUpvote) {

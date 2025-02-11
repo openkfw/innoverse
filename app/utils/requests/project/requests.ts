@@ -5,21 +5,20 @@ import { StatusCodes } from 'http-status-codes';
 import { Comment, ObjectType, StartPagination, UserSession } from '@/common/types';
 import { getCommentsSchema } from '@/components/project-details/comments/validationSchema';
 import { RequestError } from '@/entities/error';
-import { getCollaborationCommentResponseCount } from '@/repository/db/collaboration_comment_response';
+import { getCommentsByObjectId, isCommentLikedBy } from '@/repository/db/comment';
 import { getProjectFollowers, isProjectFollowedBy } from '@/repository/db/follow';
-import { getProjectLikes, isProjectLikedBy } from '@/repository/db/like';
+import { getProjectLikes, isObjectLikedBy } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
-import { getComments, isCommentUpvotedBy } from '@/repository/db/project_comment';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
-import { getFulfilledResults, getPromiseResults, sortDateByCreatedAtAsc } from '@/utils/helpers';
+import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapFollow } from '@/utils/newsFeed/redis/redisMappings';
 import { getCollaborationQuestionsByProjectId } from '@/utils/requests/collaborationQuestions/requests';
 import { getEventsWithAdditionalData, getProjectEventsPage } from '@/utils/requests/events/requests';
 import { getOpportunitiesByProjectId } from '@/utils/requests/opportunities/requests';
-import { mapToBasicProject, mapToProject, mapToProjects } from '@/utils/requests/project/mappings';
+import { mapToBasicProject, mapToLike, mapToProject, mapToProjects } from '@/utils/requests/project/mappings';
 import {
   GetProjectAuthorIdByProjectIdQuery,
   GetProjectByIdQuery,
@@ -35,7 +34,7 @@ import { getSurveyQuestionsByProjectId } from '@/utils/requests/surveyQuestions/
 import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
 import { validateParams } from '@/utils/validationHelper';
 
-import { getInnoUserByProviderId } from '../innoUsers/requests';
+import { mapToComment } from '../comments/mapping';
 
 const logger = getLogger();
 
@@ -102,7 +101,7 @@ export async function getProjectById(id: string) {
       collaborationQuestions,
       comments,
       followers: followers.map(mapFollow),
-      likes,
+      likes: mapToLike(likes),
       isLiked: isLiked ?? false,
       isFollowed: isFollowed ?? false,
       updates: updatesWithAdditionalData,
@@ -180,7 +179,7 @@ export async function getProjectAuthorIdByProjectId(projectId: string) {
 
 export const isProjectLikedByUser = withAuth(async (user: UserSession, body: { projectId: string }) => {
   try {
-    const isLiked = await isProjectLikedBy(dbClient, body.projectId, user.providerId);
+    const isLiked = await isObjectLikedBy(dbClient, body.projectId, user.providerId);
     return {
       status: StatusCodes.OK,
       data: isLiked,
@@ -215,13 +214,13 @@ export const isProjectFollowedByUser = withAuth(async (user: UserSession, body: 
   }
 });
 
-export const isProjectCommentUpvotedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
+export const isProjectCommentLikedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
-    const isUpvoted = await isCommentUpvotedBy(dbClient, body.commentId, user.providerId);
-    return { status: StatusCodes.OK, data: isUpvoted };
+    const isLiked = await isCommentLikedBy(dbClient, body.commentId, user.providerId);
+    return { status: StatusCodes.OK, data: isLiked };
   } catch (err) {
     const error: InnoPlatformError = strapiError(
-      `Find upvote for comment${body.commentId} by user ${user.providerId}`,
+      `Find like for comment${body.commentId} by user ${user.providerId}`,
       err as RequestError,
       body.commentId,
     );
@@ -244,42 +243,23 @@ export const getProjectComments = async (body: { projectId: string }) => {
   try {
     const validatedParams = validateParams(getCommentsSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      const result = await getComments(dbClient, body.projectId);
+      const dbComments = await getCommentsByObjectId(dbClient, body.projectId, 'asc');
+      const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment)));
 
-      const comments = await Promise.allSettled(
-        sortDateByCreatedAtAsc(result).map(async (comment) => {
-          const author = await getInnoUserByProviderId(comment.author);
-          const upvotes = await Promise.allSettled(
-            comment.upvotedBy.map(async (upvote) => await getInnoUserByProviderId(upvote)),
-          ).then((results) => getFulfilledResults(results));
-          const commentCount = await getCollaborationCommentResponseCount(dbClient, comment.id);
-          const projectTitle = await getProjectTitleById(comment.projectId);
-
-          return {
-            ...comment,
-            projectName: projectTitle,
-            upvotedBy: upvotes,
-            author,
-            commentCount,
-          } as Comment;
-        }),
-      ).then((results) => getFulfilledResults(results));
-
-      // Get user upvotes
-      const getUpvotes = comments.map(async (comment): Promise<Comment> => {
-        const { data: isUpvotedByUser } = await isProjectCommentUpvotedByUser({ commentId: comment.id });
+      const getLikes = comments.map(async (comment): Promise<Comment> => {
+        const { data: isLikedByUser } = await isProjectCommentLikedByUser({ commentId: comment.id });
 
         return {
           ...comment,
-          isUpvotedByUser,
+          isLikedByUser,
         };
       });
 
-      const commentsWithUserUpvote = await getPromiseResults(getUpvotes);
+      const commentsWithUserLikes = await getPromiseResults(getLikes);
 
       return {
         status: StatusCodes.OK,
-        data: commentsWithUserUpvote,
+        data: commentsWithUserLikes,
       };
     }
     return {
