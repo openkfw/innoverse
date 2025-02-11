@@ -39,6 +39,7 @@ export const mapToBasicCollaborationQuestion = (
     title: attributes.title,
     description: attributes.description,
     projectId: attributes.project?.data?.id ?? '',
+    projectName: attributes.project?.data?.attributes.title ?? '',
     updatedAt: attributes.updatedAt ? new Date(attributes.updatedAt) : new Date(),
   };
 };
