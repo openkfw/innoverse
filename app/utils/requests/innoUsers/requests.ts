@@ -1,7 +1,5 @@
 'use server';
 
-import { FormData, request } from 'undici';
-
 import { Mention, UploadImageResponse, User, UserSession } from '@/common/types';
 import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
@@ -9,7 +7,6 @@ import { RequestError } from '@/entities/error';
 import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
-import { CreateInnoUserMutation, UpdateInnoUserUsernameMutation } from '@/utils/requests/innoUsers/mutations';
 import {
   GetAllInnoUsers,
   GetEmailsByUsernamesQuery,
@@ -17,6 +14,11 @@ import {
   GetInnoUserByProviderIdQuery,
   GetInnoUserByUsernameQuery,
 } from '@/utils/requests/innoUsers/queries';
+import {
+  CreateInnoUserMutation,
+  UpdateInnoUserMutation,
+  UpdateInnoUserUsernameMutation,
+} from '@/utils/requests/innoUsers/mutations';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 const logger = getLogger();
@@ -40,6 +42,44 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
     return createdUser;
   } catch (err) {
     const error = strapiError('Create Inno User', err as RequestError, body.name);
+    logger.error(error);
+    throw error;
+  }
+}
+
+export async function updateInnoUser(
+  body: Omit<UserSession, 'image'> & { id: string; image?: FormData | null | string },
+) {
+  try {
+    const handleResponse = async (body: Omit<UserSession, 'image'> & { id: string; avatarId?: string | null }) => {
+      const response = await strapiGraphQLFetcher(UpdateInnoUserMutation, body);
+      const userData = response.updateInnoUser?.data;
+      if (!userData) throw new Error('Response contained no user data');
+      return mapToUser(userData);
+    };
+    // if the image is null, the avatar is deleted
+    if (body.image === null) {
+      if (body.oldImageId) {
+        await deleteFileImage(body.oldImageId);
+      }
+      return await handleResponse({ ...body, avatarId: null });
+    }
+
+    // if the image is type of FormData, the file is uploaded and the id saved as avatarId
+    if (body.image instanceof FormData) {
+      if (body.oldImageId) {
+        await deleteFileImage(body.oldImageId);
+      }
+      const image = body.image.get('image');
+      const uploadedImages = await uploadFileImage(image as Blob, `avatar-${body.name}`);
+      const uploadedImage = uploadedImages ? uploadedImages[0] : null;
+      return await handleResponse({ ...body, avatarId: uploadedImage && (uploadedImage.id as string) });
+    }
+
+    // if the image is not changed, update other user info
+    return await handleResponse(body);
+  } catch (err) {
+    const error = strapiError('Update Inno User', err as RequestError, body.name);
     logger.error(error);
     throw error;
   }
@@ -188,7 +228,7 @@ async function generateUniqueUsername(email: string): Promise<string> {
 }
 
 async function uploadImage(imageUrl: string, fileName: string) {
-  return fetch(imageUrl)
+  return await fetch(imageUrl)
     .catch((e) => {
       logger.error('Error while fetching image:', e);
       throw new Error('Error while fetching image');
@@ -201,7 +241,7 @@ async function uploadImage(imageUrl: string, fileName: string) {
       formData.append('files', myBlob, fileName);
       formData.append('ref', 'api::event.event');
       formData.append('field', 'image');
-      return request(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
+      return await fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
@@ -213,11 +253,30 @@ async function uploadImage(imageUrl: string, fileName: string) {
           throw new Error('Error while uploading image');
         })
         .then((response) => {
-          return response.body.json();
+          return response.json();
         })
         .then((result) => {
           return result as UploadImageResponse[];
         });
+    });
+}
+
+export async function deleteFileImage(imageId: string) {
+  return await fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload/files/${encodeURIComponent(imageId)}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
+    },
+  })
+    .catch((e) => {
+      logger.error('Error while uploading image:', e);
+      throw new Error('Error while uploading image');
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((result) => {
+      return result as UploadImageResponse[];
     });
 }
 
@@ -251,4 +310,29 @@ export async function fetchUserByUsername(username: string): Promise<User | null
     console.error('Failed to fetch user by username:', error);
     return null;
   }
+}
+
+export async function uploadFileImage(image: Blob, fileName: string) {
+  const formData = new FormData();
+  formData.append('files', image, fileName);
+  formData.append('ref', 'api::event.event');
+  formData.append('field', 'image');
+
+  return await fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
+    },
+    body: formData,
+  })
+    .catch((e) => {
+      logger.error('Error while uploading image:', e);
+      throw new Error('Error while uploading image');
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((result) => {
+      return result as UploadImageResponse[];
+    });
 }
