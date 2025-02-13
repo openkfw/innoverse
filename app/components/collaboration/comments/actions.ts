@@ -39,7 +39,7 @@ export const addProjectCollaborationComment = withAuth(
         const author = await getInnoUserByProviderId(user.providerId);
         const newComment = await addCollaborationComment({
           comment: {
-            comment: body.comment,
+            text: body.comment,
             projectId: body.projectId,
             questionId: body.questionId,
           },
@@ -152,7 +152,7 @@ export const updateProjectCollaborationComment = withAuth(
         user,
         comment: {
           id: body.commentId,
-          comment: body.updatedText,
+          text: body.updatedText,
         },
       });
 
@@ -188,7 +188,7 @@ export const addProjectCollaborationCommentResponse = withAuth(
 
     const createdResponse = {
       ...response,
-      comment: body.comment,
+      text: body.text,
       likedBy: response.likes.map((like) => like.likedBy),
       author,
     };
