@@ -40,7 +40,6 @@ export default function NewsFeedTypeFilter(props: NewsFeedTypeFilterProps) {
         return m.components_newsFeed_newsFeedTypeFilter_surveys();
       case ObjectType.UPDATE:
         return m.components_newsFeed_newsFeedTypeFilter_updates();
-      case ObjectType.COLLABORATION_COMMENT:
       default:
         return m.components_newsFeed_newsFeedTypeFilter_others();
     }

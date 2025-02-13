@@ -29,7 +29,7 @@ export const mapToComment = async (comment: CommentDB, currentUser?: string): Pr
   };
 };
 
-export const mapToCollborationComment = async (
+export const mapToCollaborationComment = async (
   comment: CommentDB & { isLikedByUser?: boolean },
   question?: CollaborationQuestion,
 ): Promise<CollaborationComment> => {
@@ -55,7 +55,7 @@ export const mapToCollborationComments = async (
   comments: CommentDB[],
   question: CollaborationQuestion,
 ): Promise<CollaborationComment[]> => {
-  const getCollaborationComments = comments.map(async (comment) => await mapToCollborationComment(comment, question));
+  const getCollaborationComments = comments.map(async (comment) => await mapToCollaborationComment(comment, question));
   return await getPromiseResults(getCollaborationComments);
 };
 
