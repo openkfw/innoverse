@@ -92,6 +92,7 @@ export type ResponseOption = {
 export type SurveyQuestion = CommonNewsFeedProps & {
   id: string;
   projectId: string;
+  projectName: string;
   question: string;
   responseOptions: ResponseOption[];
   votes: SurveyVote[];
@@ -362,7 +363,7 @@ export type BasicCollaborationQuestion = {
   description: string;
   authors: User[];
   projectId: string;
-  projectName?: string;
+  projectName: string;
 };
 
 export type Filters = {

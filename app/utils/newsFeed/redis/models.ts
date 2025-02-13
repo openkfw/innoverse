@@ -143,6 +143,7 @@ export type RedisCollaborationQuestion = RedisItem & {
   description: string;
   authors: RedisUser[];
   projectId?: string;
+  projectName?: string;
 };
 
 export type RedisOpportunity = RedisItem & {
@@ -166,6 +167,7 @@ export type RedisSurveyVote = {
 export type RedisSurveyQuestion = RedisItem & {
   id: string;
   projectId: string;
+  projectName: string;
   question: string;
   responseOptions: RedisResponseOption[];
   votes: RedisSurveyVote[];

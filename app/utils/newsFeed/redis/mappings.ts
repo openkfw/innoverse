@@ -230,6 +230,7 @@ export const mapToRedisSurveyQuestion = (
   return {
     id: surveyQuestion.id,
     projectId: surveyQuestion.projectId,
+    projectName: surveyQuestion.projectName,
     question: surveyQuestion.question,
     responseOptions: surveyQuestion.responseOptions,
     votes: surveyQuestion.votes,
@@ -247,6 +248,7 @@ export const mapToRedisCollaborationQuestion = (
   return {
     id: question.id,
     projectId: question.projectId,
+    projectName: question.projectName,
     updatedAt: getUnixTimestamp(question.updatedAt),
     authors: question.authors,
     title: question.title,

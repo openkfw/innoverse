@@ -7,9 +7,8 @@ import Button, { ButtonProps } from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 
-import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { NewsFeedEntry } from '@/common/types';
-import { getNewsTypeProjectId } from '@/utils/helpers';
+import { getNewsTypeProjectId, getNewsTypeProjectName } from '@/utils/helpers';
 
 export interface FollowButtonWithLinkProps extends ButtonProps {
   entry: NewsFeedEntry;
@@ -20,9 +19,8 @@ export interface FollowButtonWithLinkProps extends ButtonProps {
 
 function FollowButtonWithLink(props: FollowButtonWithLinkProps) {
   const { entry, onIconClick, isSelected = false } = props;
-  const { projects } = useNewsFeed();
   const projectId = getNewsTypeProjectId(entry);
-  const projectName = projects?.find((project) => project.id === projectId)?.title;
+  const projectName = getNewsTypeProjectName(entry);
 
   if (projectId && !projectName) {
     return <Skeleton variant="rounded" height={25} width={170} />;
