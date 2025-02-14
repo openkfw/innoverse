@@ -72,10 +72,9 @@ export async function addNewsCommentToCache(body: AddNewsComment) {
 
 export async function deleteNewsCommentInCache(newsType: NewsType, newsId: string, commentId: string) {
   const redisClient = await getRedisClient();
-
   // remove all the replies for the comment
   const replies = await getCommentsByParentId(redisClient, commentId);
-  replies.map(async (reply) => await deleteNewsCommentInCache(newsType, newsId, reply.commentId));
+  replies.map(async (reply) => await deleteNewsCommentInCache(newsType, newsId, reply.id));
 
   await deleteComment(redisClient, commentId);
   await deleteComentsIdsFromEntry(redisClient, newsType, newsId, commentId);

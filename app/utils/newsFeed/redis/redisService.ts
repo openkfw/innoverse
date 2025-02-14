@@ -125,7 +125,7 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
     const index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_COMMENTS;
     const newFilters = [...filters.slice(0, -1)];
     // query parameter = searchString
-    newFilters.push(`@comment:{$query*}`);
+    newFilters.push(`@comment:{*$query*}`);
     const query = newFilters.join(' ');
     return { index, query, parameters };
   };
