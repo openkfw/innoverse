@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import AddIcon from '@mui/icons-material/Add';
@@ -44,7 +44,8 @@ interface ThreadComment {
 type CommentState<TComment> =
   | { isVisible: false; isLoading: false; data?: undefined }
   | { isVisible?: false; isLoading: true; data?: undefined }
-  | { isVisible: true; isLoading?: false; data: TComment[] };
+  | { isVisible: true; isLoading?: false; data: TComment[] }
+  | { isVisible: false; isLoading?: false; data: TComment[] };
 
 export const CommentThread = <TComment extends ThreadComment>(props: CommentThreadProps<TComment>) => {
   const {
@@ -73,22 +74,13 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
           style={{ marginBottom: 2 }}
           onClick={loadComments}
         >
-          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} (
-          {comment.comments?.length || comment.commentCount})
+          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} ({comment.comments?.length})
         </Button>
       )}
       {comments.isLoading && <CommentThreadSkeleton sx={{ pl: indentComments, mt: 2 }} />}
       {comments.isVisible && (
         <Stack spacing={2} sx={{ pl: indentComments }}>
-          {comments.data.map((comment, idx) =>
-            renderComment(comment, idx, () => deleteComment(comment), updateComment),
-          )}
-        </Stack>
-      )}
-      {/* TODO: Temporary solution till the comments are loaded from redis */}
-      {!showLoadCommentsButton && comment && comment.comments && (
-        <Stack spacing={2} sx={{ pl: indentComments }}>
-          {comment.comments.map(
+          {comments.data.map(
             (comment, idx) =>
               typeof comment != 'string' && renderComment(comment, idx, () => deleteComment(comment), updateComment),
           )}
@@ -102,6 +94,16 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
   const { comment, card, disableDivider, indentComments, fetchComments, renderComment, addComment } = props;
   const [comments, setComments] = useState<CommentState<TComment>>({ isVisible: false, isLoading: false });
   const state = useRespondingState();
+
+  /* TODO: Temporary solution till the comments are loaded from redis */
+  useEffect(() => {
+    if (comment.comments) {
+      const searchedComments = comment.comments.filter((comment) => typeof comment != 'string');
+      if (searchedComments.length > 0) {
+        setComments({ isVisible: true, data: searchedComments });
+      }
+    }
+  }, [comment.comments]);
 
   const commentsExist = (comments.data?.length ?? 0) > 0;
 
