@@ -34,10 +34,10 @@ import {
   transactionalDeleteItemsFromRedis,
   transactionalSaveNewsFeedEntry,
 } from './redis/redisService';
+import { serverConfig } from '@/config/server';
 
 const logger = getLogger();
 const maxSyncRetries = 3;
-const months = 12;
 
 export const sync = async (retry?: number): Promise<RedisSync> => {
   const now = new Date();
@@ -47,7 +47,9 @@ export const sync = async (retry?: number): Promise<RedisSync> => {
     logger.info(`Starting news feed synchronization at ${now.toISOString()} (retry: ${retry}) ...`);
     const redisClient = await getRedisClient();
     const lastSync = await getLatestSuccessfulNewsFeedSync(redisClient);
-    const syncFrom = lastSync ? unixTimestampToDate(lastSync.syncedAt) : dayjs(now).subtract(months, 'months').toDate();
+    const syncFrom = lastSync
+      ? unixTimestampToDate(lastSync.syncedAt)
+      : dayjs(now).subtract(serverConfig.NEWS_FEED_SYNC_MONTHS, 'months').toDate();
 
     logger.info(`Sync news feed items starting from ${syncFrom.toISOString()} ...`);
 
