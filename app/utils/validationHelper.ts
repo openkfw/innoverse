@@ -21,5 +21,5 @@ export const validateParams = (schema: ZodType, body: any) => {
       message: 'Validation failed, bad request',
     };
   }
-  return { status: StatusCodes.OK };
+  return { status: StatusCodes.OK, data: validatedParams.data };
 };

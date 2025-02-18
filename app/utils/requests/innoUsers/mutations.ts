@@ -42,28 +42,8 @@ export const CreateInnoUserMutation = graphql(`
 
 export const UpdateInnoUserMutation = graphql(
   `
-    mutation PostInnoUser(
-      $id: ID!
-      $providerId: String
-      $provider: String
-      $name: String!
-      $role: String
-      $department: String
-      $email: String
-      $avatarId: ID
-    ) {
-      updateInnoUser(
-        id: $id
-        data: {
-          providerId: $providerId
-          provider: $provider
-          name: $name
-          role: $role
-          department: $department
-          email: $email
-          avatar: $avatarId
-        }
-      ) {
+    mutation PostInnoUser($id: ID!, $role: String, $department: String, $avatarId: ID) {
+      updateInnoUser(id: $id, data: { role: $role, department: $department, avatar: $avatarId }) {
         data {
           ...InnoUser
         }

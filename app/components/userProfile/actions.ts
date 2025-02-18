@@ -2,7 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { UserSession } from '@/common/types';
+import { UpdateInnoUser, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
@@ -15,7 +15,7 @@ import { handleUpdateUserSession } from './validationSchema';
 const logger = getLogger();
 
 export const updateUserProfile = withAuth(
-  async (user: Omit<UserSession, 'image'>, body: Omit<UserSession, 'image'> & { image?: FormData | null }) => {
+  async (user: Omit<UserSession, 'image'>, body: Omit<UpdateInnoUser, 'id' | 'name'>) => {
     const validatedParams = validateParams(handleUpdateUserSession, body);
     if (validatedParams.status !== StatusCodes.OK) {
       return {
@@ -24,6 +24,7 @@ export const updateUserProfile = withAuth(
         message: validatedParams.message,
       };
     }
+    const parsedData = validatedParams.data;
 
     const createInnoPlatformError = (errorMessage: string) => {
       const error: InnoPlatformError = strapiError(`Updating user profile by user ${user.providerId}`, {
@@ -43,13 +44,7 @@ export const updateUserProfile = withAuth(
       };
     }
     try {
-      const updatedUser = await updateInnoUser({
-        oldImageId: author.imageId,
-        ...user,
-        ...body,
-        id: author.id as string,
-      });
-
+      const updatedUser = await updateInnoUser({ ...parsedData, id: author.id as string });
       return {
         status: StatusCodes.OK,
         data: updatedUser,

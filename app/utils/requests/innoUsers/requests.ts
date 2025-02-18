@@ -1,6 +1,6 @@
 'use server';
 
-import { Mention, UploadImageResponse, User, UserSession } from '@/common/types';
+import { Mention, UpdateInnoUser, UploadImageResponse, User, UserSession } from '@/common/types';
 import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { RequestError } from '@/entities/error';
@@ -48,11 +48,9 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
   }
 }
 
-export async function updateInnoUser(
-  body: Omit<UserSession, 'image'> & { id: string; image?: FormData | null | string },
-) {
+export async function updateInnoUser(body: UpdateInnoUser) {
   try {
-    const handleResponse = async (body: Omit<UserSession, 'image'> & { id: string; avatarId?: string | null }) => {
+    const handleResponse = async (body: Omit<UpdateInnoUser, 'name'>) => {
       const response = await strapiGraphQLFetcher(UpdateInnoUserMutation, body);
       const userData = response.updateInnoUser?.data;
       if (!userData) throw new Error('Response contained no user data');

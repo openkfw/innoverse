@@ -331,6 +331,16 @@ export type UserSession = {
   oldImageId?: string;
 };
 
+export type UpdateInnoUser = {
+  id: string;
+  name: string;
+  role?: string;
+  department?: string;
+  oldImageId?: string;
+  image?: FormData | null | string;
+  avatarId?: string | null;
+};
+
 export type Opportunity = CommonNewsFeedProps & {
   id: string;
   title: string;
