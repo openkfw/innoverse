@@ -35,15 +35,16 @@ export default function UserInfo() {
     handleSubmit,
     control,
     setValue,
-    formState: { isDirty, isValid, errors },
+    formState: { isDirty, isValid },
   } = useForm<UserSessionFormValidationSchema>({
     mode: 'all',
     resolver: zodResolver(handleUpdateUserSession),
     defaultValues: {
-      name: '',
-      email: '',
       role: '',
       department: '',
+      image: '',
+      name: '',
+      email: '',
     },
   });
 
@@ -54,7 +55,7 @@ export default function UserInfo() {
   }, [user, reset]);
 
   const onSubmit: SubmitHandler<UserSessionFormValidationSchema> = async (submitData) => {
-    const { image, ...rest } = submitData;
+    const { image, ...userData } = submitData;
 
     let userImage = image;
     if (userImage && userImage instanceof File) {
@@ -64,7 +65,8 @@ export default function UserInfo() {
     }
 
     const { data: updatedUser, status } = await updateUserProfile({
-      ...rest,
+      role: userData.role,
+      department: userData.department,
       image: userImage,
     });
 
@@ -76,8 +78,6 @@ export default function UserInfo() {
       errorMessage({ message: m.components_profilePage_form_updateUserForm_error() });
     }
   };
-
-  console.log('isDirty', isDirty, isValid, errors);
 
   return (
     <Grid container spacing={2}>
@@ -94,12 +94,34 @@ export default function UserInfo() {
             <form>
               <Stack spacing={2} direction="column">
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                  <TextInputField name={NAME} label="Name" control={control} secondary disabled />
-                  <TextInputField name={EMAIL} label="Email" control={control} secondary disabled />
+                  <TextInputField
+                    name={NAME}
+                    label={m.components_profilePage_form_updateUserForm_name()}
+                    control={control}
+                    secondary
+                    disabled
+                  />
+                  <TextInputField
+                    name={EMAIL}
+                    label={m.components_profilePage_form_updateUserForm_email()}
+                    control={control}
+                    secondary
+                    disabled
+                  />
                 </Stack>
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                  <TextInputField name={ROLE} label="Role" control={control} secondary />
-                  <TextInputField name={DEPARTMENT} label="Department" control={control} secondary />
+                  <TextInputField
+                    name={ROLE}
+                    label={m.components_profilePage_form_updateUserForm_role()}
+                    control={control}
+                    secondary
+                  />
+                  <TextInputField
+                    name={DEPARTMENT}
+                    label={m.components_profilePage_form_updateUserForm_department()}
+                    control={control}
+                    secondary
+                  />
                 </Stack>
                 <ImageDropzoneField name={IMAGE} control={control} setValue={setValue} />
                 <FormSaveButton onSave={handleSubmit(onSubmit)} disabled={!isDirty || !isValid} />
