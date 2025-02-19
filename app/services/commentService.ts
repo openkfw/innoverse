@@ -7,7 +7,7 @@ import dbClient from '@/repository/db/prisma/prisma';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { getNewsTypeByString, mapDBCommentToRedisComment } from '@/utils/newsFeed/redis/mappings';
-import { addNewsCommentToCache } from '@/utils/newsFeed/redis/services/commentsService';
+import { addNewsCommentToCache, deleteNewsCommentInCache } from '@/utils/newsFeed/redis/services/commentsService';
 import { NotificationTopic, notifyFollowers } from '@/utils/notification/notificationSender';
 import { mapToComment } from '@/utils/requests/comments/mapping';
 
@@ -67,24 +67,20 @@ export const removeComment = async ({ user, commentId }: RemoveComment) => {
   const result = await deleteCommentInDb(dbClient, commentId);
   const objectId = result.objectId;
   if (objectId) {
-    await removeCommentInCache({ objectId, objectType: result.objectType as ObjectType }, user);
+    await removeCommentInCache({ objectId, objectType: result.objectType as ObjectType, commentId });
   }
 };
 
 const updateCommentInCache = async (comment: { objectId: string; objectType: ObjectType }, author: UserSession) => {
-  const commentCount = await countComments(dbClient, comment.objectId);
-  const body = { id: comment.objectId, commentCount };
+  const body = { id: comment.objectId };
   return comment.objectType === 'POST'
     ? await updatePostInCache({ post: body, user: author })
     : await updateProjectUpdateInCache({ update: body });
 };
 
-const removeCommentInCache = async (comment: { objectId: string; objectType: ObjectType }, author: UserSession) => {
-  const commentCount = await countComments(dbClient, comment.objectId);
-  const body = { id: comment.objectId, commentCount };
-  return comment.objectType === 'POST'
-    ? await updatePostInCache({ post: body, user: author })
-    : await updateProjectUpdateInCache({ update: body });
+const removeCommentInCache = async (comment: { objectId: string; objectType: ObjectType; commentId: string }) => {
+  const { objectId, objectType, commentId } = comment;
+  await deleteNewsCommentInCache(getNewsTypeByString(objectType), objectId, commentId);
 };
 
 const notifyObjectFollowers = async (objectId: string, objectType: ObjectType) => {
