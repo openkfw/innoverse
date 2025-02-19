@@ -56,7 +56,7 @@ export const TextCard = ({ text, header, footer, sx, contentSx }: TextCardProps)
       parts.push(
         <ClickTooltip key={`mention-${username}-${matchStart}`} username={username}>
           <Typography variant="body1" component="span" style={mentionStyle}>
-            {username}
+            @{username}
           </Typography>
         </ClickTooltip>,
       );
@@ -152,7 +152,7 @@ const buttonOverlayStyle = {
 const mentionStyle = {
   fontFamily: 'SansDefaultMed',
   fontWeight: 500,
-  fontSize: 14,
+  fontSize: 16,
   lineHeight: 1.5,
   letterSpacing: '0.15px',
   display: 'inline',
