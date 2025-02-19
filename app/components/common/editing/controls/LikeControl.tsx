@@ -1,4 +1,6 @@
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
@@ -11,17 +13,22 @@ interface LikeControlProps {
 }
 
 export const LikeControl = ({ onLike, isSelected, likeNumber }: LikeControlProps) => {
+  const LikeCount = () => (
+    <>
+      <Typography variant="caption" sx={isSelected ? textStyleSelected : textStyle}>
+        {likeNumber}
+      </Typography>
+    </>
+  );
+
   return (
     <Button
       onClick={() => onLike()}
       sx={mergeStyles(iconButtonOnlyStyles, isSelected ? buttonStylesSelected : buttonStyles)}
     >
-      <FavoriteBorderOutlinedIcon sx={iconStyles} />
-      {likeNumber > 0 && (
-        <Typography variant="body1" sx={textStyle}>
-          {likeNumber}
-        </Typography>
-      )}
+      {isSelected ? <FavoriteIcon sx={iconStyles} /> : <FavoriteBorderOutlinedIcon sx={iconStyles} />}
+
+      {likeNumber > 0 && <LikeCount />}
     </Button>
   );
 };
@@ -53,4 +60,7 @@ const iconStyles = {
 };
 const textStyle = {
   color: 'secondary.contrastText',
+};
+const textStyleSelected = {
+  color: '#266446',
 };
