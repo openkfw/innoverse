@@ -56,7 +56,7 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
       <NewsCommentCard
         comment={comment}
         objectType={props.commentType}
-        displayResponseControls={level < 3}
+        displayResponseControls={level < 2}
         onDelete={props.onDelete}
         onUpdate={updateComment}
       />
