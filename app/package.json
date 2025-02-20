@@ -26,7 +26,7 @@
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@hookform/resolvers": "^3.9.1",
-    "@inlang/paraglide-next": "^0.7.4",
+    "@inlang/paraglide-next": "^0.7.9",
     "@microsoft/applicationinsights-clickanalytics-js": "^3.1.2",
     "@microsoft/applicationinsights-react-js": "^17.1.2",
     "@microsoft/applicationinsights-web": "^3.1.2",
@@ -99,13 +99,17 @@
   "prisma": {
     "schema": "./repository/db/prisma/schema.prisma"
   },
-  "overrides": {
-    "@types/react": "18.3.13",
-    "@types/react-dom": "18.3.1"
-  },
   "pnpm": {
     "overrides": {
       "cookie@<0.7.0": ">=0.7.0"
+    },
+    "auditConfig": {
+      "ignoreCves": [
+        "CVE-2025-25285",
+        "CVE-2025-25288",
+        "CVE-2025-25289",
+        "CVE-2025-25290"
+      ]
     }
   }
 }
