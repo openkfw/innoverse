@@ -123,6 +123,7 @@ The main focus should here be the `client` report, as we do not use any edge fun
 | NEXT_PUBLIC_STRAPI_ENDPOINT                  | Y        | -       | Buildtime | Innoverse |
 | NEXT_PUBLIC_BUILDTIMESTAMP                   | Y        | -       | Buildtime | Innoverse |
 | NEXT_PUBLIC_CI_COMMIT_HASH                   | Y        | -       | Buildtime | Innoverse |
+| NEXT_PUBLIC_BODY_SIZE_LIMIT                  | Y        | -       | Buildtime | Innoverse |
 | POSTGRES_USER                                | N        | -       | Runtime   | Innoverse |
 | POSTGRES_PASSWORD                            | N        | -       | Runtime   | Innoverse |
 | NEXTAUTH_AZURE_CLIENT_ID                     | N(\*)    | -       | Runtime   | Innoverse |
