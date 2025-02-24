@@ -7,6 +7,7 @@ enum formFieldNames {
   IMAGE = 'image',
   EMAIL_NOTIFICATIONS = 'email_notifications',
   PUSH_NOTIFICATIONS = 'push_notifications',
+  WEEKLY_EMAIL = 'weekly',
 }
 
 export default formFieldNames;
