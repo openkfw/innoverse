@@ -9,6 +9,7 @@ import UserInfo from '@/components/userProfile/UserInfo';
 import * as m from '@/src/paraglide/messages.js';
 
 import backgroundImage from '/public/images/news-background.png';
+import NotificationSettings from '@/components/userProfile/NotificationSettings';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,7 +34,10 @@ async function UserProfilePage() {
         <Box style={{ position: 'relative' }}>
           <BreadcrumbsNav activePage={m.app_user_profile()} />
         </Box>
-        <UserInfo />
+        <Stack spacing={4} direction="column">
+          <UserInfo />
+          <NotificationSettings />
+        </Stack>
       </Container>
     </Stack>
   );
