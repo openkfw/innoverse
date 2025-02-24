@@ -19,7 +19,7 @@ import { NewsType, RedisCollaborationComment } from '@/utils/newsFeed/redis/mode
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { getBasicCollaborationQuestionById } from '@/utils/requests/collaborationQuestions/requests';
-import { mapToCollborationComment, mapToComment } from '@/utils/requests/comments/mapping';
+import { mapToCollaborationComment, mapToComment } from '@/utils/requests/comments/mapping';
 import { getProjectTitleById } from '@/utils/requests/project/requests';
 
 const logger = getLogger();
@@ -29,7 +29,7 @@ type AddCollaborationComment = {
   comment: {
     projectId: string;
     questionId: string;
-    comment: string;
+    text: string;
     anonymous?: boolean;
   };
 };
@@ -37,7 +37,7 @@ type AddCollaborationComment = {
 type UpdateCollaborationComment = {
   comment: {
     id: string;
-    comment: string;
+    text: string;
   };
   user: User;
 };
@@ -45,7 +45,7 @@ type UpdateCollaborationComment = {
 type UpdateCollaborationCommentInCache = {
   comment: {
     id: string;
-    comment?: string;
+    text?: string;
     likedBy?: string[];
     commentCount?: number;
   };
@@ -65,11 +65,11 @@ export const addCollaborationComment = async ({ user, comment }: AddCollaboratio
     additionalObjectId: comment.questionId,
     additionalObjectType: ObjectType.COLLABORATION_QUESTION,
     author: user.providerId,
-    text: comment.comment,
+    text: comment.text,
     anonymous: comment.anonymous,
   });
   await addCollaborationCommentToCache(user, createdComment);
-  return await mapToCollborationComment(createdComment);
+  return await mapToCollaborationComment(createdComment);
 };
 
 export const deleteCollaborationComment = async (commentId: string) => {
@@ -78,7 +78,7 @@ export const deleteCollaborationComment = async (commentId: string) => {
 };
 
 export const updateCollaborationComment = async ({ user, comment }: UpdateCollaborationComment) => {
-  const updatedComment = await updateCommentInDb(dbClient, comment.id, comment.comment);
+  const updatedComment = await updateCommentInDb(dbClient, comment.id, comment.text);
   await updateCollaborationCommentInCache({ user, comment });
   return updatedComment;
 };
@@ -132,7 +132,7 @@ export const updateCollaborationCommentInCache = async ({ user, comment }: Updat
     if (!newsFeedEntry) return;
 
     const cachedItem = newsFeedEntry.item as RedisCollaborationComment;
-    cachedItem.text = comment.comment ?? cachedItem.text;
+    cachedItem.text = comment.text ?? cachedItem.text;
     cachedItem.likedBy = comment.likedBy ?? cachedItem.likedBy;
     cachedItem.commentCount = comment.commentCount ?? cachedItem.commentCount;
     newsFeedEntry.item = cachedItem;

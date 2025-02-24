@@ -17,7 +17,7 @@ import { getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/util
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
   NewsType,
-  RedisCollaborationComment as RedisCollaborationComment,
+  RedisCollaborationComment,
   RedisCollaborationQuestion,
   RedisNewsComment,
   RedisNewsFeedEntry,

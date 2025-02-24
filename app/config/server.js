@@ -83,6 +83,11 @@ const serverEnvConfig = createEnvConfig({
       defaultRule: z.string().default(''),
       required: true,
     },
+    NEWS_FEED_SYNC_MONTHS: {
+      stages: runtimeStages,
+      defaultRule: z.string().default('12'),
+      required: true,
+    },
 
     // Azure auth
     NEXTAUTH_AZURE_CLIENT_ID: {
