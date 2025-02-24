@@ -17,25 +17,21 @@ export function mapFirstToUserOrThrow(users: ResultOf<typeof InnoUserFragment>[]
 }
 
 export function mapToUser(userData: ResultOf<typeof InnoUserFragment>): User {
-  const attributes = userData.attributes;
-
   return {
-    id: userData.id,
-    name: attributes.name,
-    username: attributes.username ?? undefined,
-    role: attributes.role ?? undefined,
-    department: attributes.department ?? undefined,
-    email: attributes.email ?? undefined,
-    providerId: attributes.providerId ?? undefined,
-    image: mapToAvatarUrl(attributes.avatar),
+    id: userData.documentId,
+    name: userData.name,
+    username: userData.username ?? undefined,
+    role: userData.role ?? undefined,
+    department: userData.department ?? undefined,
+    email: userData.email ?? undefined,
+    providerId: userData.providerId ?? undefined,
+    image: mapToAvatarUrl(userData.avatar),
   };
 }
 
-export function mapToImageUrl(
-  image: { data: { attributes: { url: string; formats: unknown } } | null } | null,
-): ImageFormats | undefined {
-  if (!image?.data) return undefined;
-  const formats = image.data.attributes.formats as ImageFormats;
+export function mapToImageUrl(image: { url: string; formats: unknown } | null): ImageFormats | undefined {
+  if (!image) return undefined;
+  const formats = image.formats as ImageFormats;
   if (!formats) {
     return undefined;
   }
@@ -51,7 +47,7 @@ export function mapToImageUrl(
   return { ...mappedFormats };
 }
 
-export function mapToAvatarUrl(image: { data: { attributes: { url: string } } | null } | null): string | undefined {
-  if (!image?.data) return undefined;
-  return `${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.data.attributes.url}`;
+export function mapToAvatarUrl(image: { url: string } | null): string | undefined {
+  if (!image) return undefined;
+  return `${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}${image.url}`;
 }

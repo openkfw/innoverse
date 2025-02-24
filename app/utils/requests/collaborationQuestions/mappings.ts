@@ -12,14 +12,13 @@ export const mapToCollaborationQuestion = async (
   questionData: ResultOf<typeof CollaborationQuestionFragment>,
   dbComments: CommentDB[],
 ): Promise<CollaborationQuestion> => {
-  const attributes = questionData.attributes;
   const question = {
-    id: questionData.id,
-    authors: attributes.authors?.data.map(mapToUser) ?? [],
-    description: attributes.description,
-    isPlatformFeedback: attributes.isPlatformFeedback,
-    title: attributes.title,
-    updatedAt: toDate(attributes.updatedAt),
+    id: questionData.documentId,
+    authors: questionData.authors?.map(mapToUser) ?? [],
+    description: questionData.description,
+    isPlatformFeedback: questionData.isPlatformFeedback,
+    title: questionData.title,
+    updatedAt: toDate(questionData.updatedAt),
     comments: [],
   };
   const comments = await mapToCollborationComments(dbComments, question);
@@ -32,14 +31,13 @@ export const mapToCollaborationQuestion = async (
 export const mapToBasicCollaborationQuestion = (
   questionData: ResultOf<typeof CollaborationQuestionFragment>,
 ): BasicCollaborationQuestion => {
-  const attributes = questionData.attributes;
   return {
-    id: questionData.id,
-    authors: attributes.authors?.data.map(mapToUser) ?? [],
-    title: attributes.title,
-    description: attributes.description,
-    projectId: attributes.project?.data?.id ?? '',
-    projectName: attributes.project?.data?.attributes.title ?? '',
-    updatedAt: attributes.updatedAt ? new Date(attributes.updatedAt) : new Date(),
+    id: questionData.documentId,
+    authors: questionData.authors?.map(mapToUser) ?? [],
+    title: questionData.title,
+    description: questionData.description,
+    projectId: questionData.project?.documentId ?? '',
+    projectName: questionData.project?.title ?? '',
+    updatedAt: questionData.updatedAt ? new Date(questionData.updatedAt) : new Date(),
   };
 };
