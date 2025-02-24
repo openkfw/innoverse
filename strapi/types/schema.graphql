@@ -1196,7 +1196,7 @@ type Query {
     pagination: PaginationArg = {}
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
-  ): [SurveyQuestion]!
+  ): [SurveyQuestion!]!
   surveyQuestions_connection(
     filters: SurveyQuestionFiltersInput
     pagination: PaginationArg = {}
@@ -1213,7 +1213,7 @@ type Query {
     pagination: PaginationArg = {}
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
-  ): [Update]!
+  ): [Update!]!
   updates_connection(
     filters: UpdateFiltersInput
     pagination: PaginationArg = {}
