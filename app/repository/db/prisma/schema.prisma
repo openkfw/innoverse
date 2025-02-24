@@ -121,6 +121,16 @@ model CheckinVote {
   @@unique(fields: [votedBy, checkinQuestionId, answeredOn])
 }
 
+model EmailPreferences {
+  userId    String   @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  username String?
+  email    String?
+  weekly   Boolean @default(true)
+}
+
 enum ObjectType {
   UPDATE
   EVENT
