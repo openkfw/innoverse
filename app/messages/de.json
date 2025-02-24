@@ -6,6 +6,7 @@
   "app_export_page_export": "Export",
 
   "app_user_profile": "Benutzerprofil",
+  "app_notification_settings": "Benachrichtigungen",
   "app_news_page_news": "News",
   "app_project_page_projects": "Initiativen",
   "app_news_page_imageAlt": "News Hintergrund",
@@ -410,6 +411,10 @@
   "components_profilePage_form_updateUserForm_department": "Abteilung",
   "components_profilePage_form_updateUserForm_placeholder": "Foto hochladen",
   "components_profilePage_form_updateUserForm_save": "Speichern",
+  "components_profilePage_form_weeklyEmails": "Ich möchte eine wöchentliche Zusammenfassung per E-Mail erhalten",
+  "components_profilePage_getNotificationSettings_error": "Benachrichtigungseinstellungen konnten nicht geladen werden. Bitte versuche es später noch einmal.",
+  "components_profilePage_emailPreferencesChanged_success": "E-Mail-Einstellungen wurden erfolgreich gespeichert",
+  "components_profilePage_emailPreferencesChanged_error": "E-Mail-Einstellungen konnten nicht gespeichert werden",
   "components_common_formValidation_messages_required_field": "Erforderlich",
   "components_common_formValidation_messages_invalid_date": "Datum ist ungültig",
   "components_common_formValidation_messages_invalid_file_size": "Ihre Datei ist größer als das erlaubte Limit von {fileSize}MB!",
