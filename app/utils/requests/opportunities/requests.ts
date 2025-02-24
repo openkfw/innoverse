@@ -25,7 +25,7 @@ const logger = getLogger();
 export async function getOpportunitiesByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetOpportunitiesByProjectIdQuery, { projectId });
-    const opportunitiesData = response.opportunities?.nodes ?? [];
+    const opportunitiesData = response.opportunities ?? [];
 
     const mapToEntities = opportunitiesData.map(async (opportunityData) => {
       const { data: isParticipant } = await userParticipatesInOpportunity({
@@ -82,7 +82,7 @@ export async function isUserParticipatingInOpportunity(body: { opportunityId: st
       opportunityId: body.opportunityId,
       userId: body.userId,
     });
-    const opportunitiesFound = response.opportunities?.nodes.length ?? 0;
+    const opportunitiesFound = response.opportunities.length ?? 0;
     return opportunitiesFound > 0;
   } catch (err) {
     const error = strapiError(

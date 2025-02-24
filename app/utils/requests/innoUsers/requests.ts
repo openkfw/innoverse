@@ -9,13 +9,14 @@ import { RequestError } from '@/entities/error';
 import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
-import { CreateInnoUserMutation } from '@/utils/requests/innoUsers/mutations';
+import { CreateInnoUserMutation, UpdateInnoUserUsernameMutation } from '@/utils/requests/innoUsers/mutations';
 import {
   GetAllInnoUsers,
   GetEmailsByUsernamesQuery,
   GetInnoUserByEmailQuery,
   GetInnoUserByProviderIdQuery,
   GetInnoUserByUsernameQuery,
+  InnoUserFragment,
 } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { ResultOf } from 'gql.tada';
@@ -75,7 +76,7 @@ export async function getEmailsByUsernames(usernames: string[]): Promise<string[
     const response = await strapiGraphQLFetcher(GetEmailsByUsernamesQuery, { usernames });
 
     const emails = response.innoUsers
-      ?.map((user) => user.attributes.email)
+      ?.map((user) => user.email)
       .filter((email): email is string => email !== null && email !== undefined);
 
     return emails ?? [];
@@ -102,7 +103,7 @@ async function getAllInnoUserNames() {
     if (!response) {
       throw new Error('No users data available');
     }
-    const users = response.map((user) => ({ username: user.attributes.username }));
+    const users = response.map((user) => ({ username: user.username }));
     return users;
   } catch (err) {
     const error = strapiError('Getting All Inno users', err as RequestError);
@@ -156,7 +157,7 @@ export async function updateInnoUserUsername(userId: string, username: string) {
       username,
     });
 
-    const updatedUserData = response.updateInnoUser?.data;
+    const updatedUserData = response.updateInnoUser;
     if (!updatedUserData) throw new Error('Failed to update user username');
 
     return mapToUser(updatedUserData);
@@ -175,7 +176,7 @@ async function generateUniqueUsername(email: string): Promise<string> {
   while (true) {
     try {
       const response = await strapiGraphQLFetcher(GetInnoUserByUsernameQuery, { username });
-      if (!response?.innoUsers?.data.length) break;
+      if (!response?.innoUsers.length) break;
 
       username = `${baseUsername}${count}`;
       count++;

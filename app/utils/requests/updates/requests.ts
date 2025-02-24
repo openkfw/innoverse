@@ -52,7 +52,7 @@ const logger = getLogger();
 export async function getProjectUpdates(limit = 100) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesQuery, { limit });
-    const updatesData = response.updates?.nodes;
+    const updatesData = response.updates;
     if (!updatesData) throw new Error('Response contained no updates');
 
     const updates = updatesData.map(mapToProjectUpdate);
@@ -93,7 +93,7 @@ export async function getProjectUpdateByIdWithReactions(id: string) {
 export async function getUpdatesByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesByProjectIdQuery, { projectId });
-    const updatesData = response.updates?.nodes;
+    const updatesData = response.updates;
     if (!updatesData) throw new Error('Response contained no updates');
     const updates = updatesData.map(mapToProjectUpdate);
     const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
@@ -174,7 +174,7 @@ export async function getProjectUpdatesPage({
   try {
     const { projects, topics } = filters;
     const response = await getUpdatesPageData({ projectTitles: projects, topics, page, pageSize, sortDirection: sort });
-    const updates = response.updates?.nodes.map(mapToProjectUpdate) ?? [];
+    const updates = response.updates.map(mapToProjectUpdate) ?? [];
     const updatesWithAdditionalData = await getUpdatesWithAdditionalData(updates);
     return updatesWithAdditionalData;
   } catch (err) {
@@ -336,7 +336,7 @@ export const countUpdatesForProject = async (body: { projectId: string }) => {
     }
 
     const response = await strapiGraphQLFetcher(GetUpdateCountQuery, { projectId: body.projectId });
-    const countResult = response.updates?.pageInfo.total ?? 0;
+    const countResult = response.updates_connection?.pageInfo.total ?? 0;
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {
@@ -349,7 +349,7 @@ export const countUpdatesForProject = async (body: { projectId: string }) => {
 export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesStartingFromQuery, { from, page, pageSize });
-    const updates = await mapToProjectUpdates(response.updates?.nodes);
+    const updates = await mapToProjectUpdates(response.updates);
 
     const newsComments = await getCommentsStartingFrom(dbClient, from, ObjectType.UPDATE);
     // Get unique ids of updates
@@ -359,7 +359,7 @@ export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: St
 
     if (updatesIds.length > 0) {
       const res = await strapiGraphQLFetcher(GetUpdatesByIdsQuery, { ids: updatesIds });
-      const updatesWithComments = await mapToProjectUpdates(res.updates?.nodes);
+      const updatesWithComments = await mapToProjectUpdates(res.updates);
 
       const combinedUpdates = [...updates, ...updatesWithComments];
       const uniqueUpdates = combinedUpdates.filter(
@@ -378,7 +378,7 @@ export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: St
 export async function getCommentsForProjectUpdateStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesStartingFromQuery, { from, page, pageSize });
-    const updates = mapToProjectUpdates(response.updates?.nodes);
+    const updates = mapToProjectUpdates(response.updates);
     return updates;
   } catch (err) {
     const error = strapiError('Getting updates', err as RequestError);

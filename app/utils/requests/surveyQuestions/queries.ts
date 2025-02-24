@@ -1,7 +1,7 @@
 import { graphql } from '@/types/graphql';
 
 export const SurveyQuestionFragment = graphql(`
-  fragment SurveyQuestion on SurveyQuestionEntity @_unmask {
+  fragment SurveyQuestion on SurveyQuestion @_unmask {
     documentId
     question
     updatedAt
@@ -38,9 +38,7 @@ export const GetSurveyQuestionsByProjectIdQuery = graphql(
   `
     query GetSurveyQuestions($projectId: ID) {
       surveyQuestions(filters: { project: { documentId: { eq: $projectId } } }) {
-        nodes {
-          ...SurveyQuestion
-        }
+        ...SurveyQuestion
       }
     }
   `,
@@ -49,7 +47,7 @@ export const GetSurveyQuestionsByProjectIdQuery = graphql(
 
 export const GetSurveyQuestionsCountByProjectIdQuery = graphql(`
   query GetSurveyQuestions($projectId: ID) {
-    surveyQuestions(filters: { project: { documentId: { eq: $projectId } } }) {
+    surveyQuestions_connection(filters: { project: { documentId: { eq: $projectId } } }) {
       pageInfo {
         total
       }
@@ -60,12 +58,10 @@ export const GetSurveyQuestionsCountByProjectIdQuery = graphql(`
 export const GetUpdatedSurveysQuery = graphql(`
   query GetUpdatedSurveys($from: DateTime) {
     surveyQuestions(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
-      nodes {
+      documentId
+      question
+      project {
         documentId
-        question
-        project {
-          documentId
-        }
       }
     }
   }
@@ -78,9 +74,7 @@ export const GetSurveysStartingFromQuery = graphql(
         filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
         pagination: { page: $page, pageSize: $pageSize }
       ) {
-        nodes {
-          ...SurveyQuestion
-        }
+        ...SurveyQuestion
       }
     }
   `,

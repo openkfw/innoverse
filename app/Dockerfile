@@ -10,7 +10,7 @@ COPY package.json pnpm-lock.yaml* ./
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 # Rebuild the source code only when needed
-FROM node:20.1.0-alpine AS builder
+FROM node:18-alpine AS builder
 RUN apk add --no-cache openssl
 ARG BUILDTIMESTAMP
 ARG CI_COMMIT_SHA
@@ -38,7 +38,7 @@ RUN pnpm run prisma generate --schema ./repository/db/prisma/schema.prisma
 RUN pnpm run build
 
 # Production image, copy all the files and run next
-FROM node:20.1.0-alpine AS runner
+FROM node:18-alpine AS runner
 RUN apk add --no-cache openssl
 ARG BUILDTIMESTAMP
 ARG CI_COMMIT_SHA

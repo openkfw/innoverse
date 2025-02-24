@@ -3,7 +3,7 @@ import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
 export const ProjectFragment = graphql(
   `
-    fragment Project on ProjectEntity @_unmask {
+    fragment Project on Project @_unmask {
       documentId
       title
       shortTitle
