@@ -73,3 +73,22 @@ export const CreateOpportunityParticipantMutation = graphql(`
     }
   }
 `);
+
+export const UpdateInnoUserUsernameMutation = graphql(`
+  mutation UpdateInnoUser($id: ID!, $username: String!) {
+    updateInnoUser(documentId: $id, data: { username: $username }) {
+      documentId
+      providerId
+      provider
+      name
+      username
+      role
+      department
+      email
+      avatar {
+        formats
+        url
+      }
+    }
+  }
+`);

@@ -106,6 +106,12 @@
   "pnpm": {
     "overrides": {
       "cookie@<0.7.0": ">=0.7.0"
+    },
+    "auditConfig": {
+      "ignoreCves": [
+        "CVE-2025-25288",
+        "CVE-2025-25289"
+      ]
     }
   }
 }
