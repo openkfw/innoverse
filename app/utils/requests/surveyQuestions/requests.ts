@@ -43,9 +43,9 @@ export async function getSurveyQuestionsByProjectId(projectId: string) {
     const response = await strapiGraphQLFetcher(GetSurveyQuestionsByProjectIdQuery, { projectId });
     const surveyQuestionsData = response.surveyQuestions;
 
-    if (!surveyQuestionsData?.nodes) throw new Error('Response contained no survey question data');
+    if (!surveyQuestionsData) throw new Error('Response contained no survey question data');
 
-    const mapToEntities = surveyQuestionsData.nodes.map(async (surveyQuestionData) => {
+    const mapToEntities = surveyQuestionsData.map(async (surveyQuestionData) => {
       const votes = await getSurveyVotes(dbClient, surveyQuestionData.documentId);
       const userVote = await findUserVote({ votes });
       const surveyQuestion = mapToSurveyQuestion(surveyQuestionData, votes, userVote.data);
@@ -72,7 +72,7 @@ export const findUserVote = withAuth(async (user: UserSession, body: { votes: Su
 export const countSurveyQuestionsForProject = async (projectId: string) => {
   try {
     const response = await strapiGraphQLFetcher(GetSurveyQuestionsCountByProjectIdQuery, { projectId });
-    const countResult = response.surveyQuestions?.pageInfo.total;
+    const countResult = response.surveyQuestions_connection?.pageInfo.total;
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {
@@ -117,9 +117,9 @@ export async function getSurveyQuestionsStartingFrom({ from, page, pageSize }: S
     const response = await strapiGraphQLFetcher(GetSurveysStartingFromQuery, { from, page, pageSize });
     const surveyQuestionsData = response.surveyQuestions;
 
-    if (!surveyQuestionsData?.nodes) throw new Error('Response contained no survey question data');
+    if (!surveyQuestionsData) throw new Error('Response contained no survey question data');
 
-    const mapToEntities = surveyQuestionsData.nodes.map(async (surveyQuestionData) => {
+    const mapToEntities = surveyQuestionsData.map(async (surveyQuestionData) => {
       const votes = await getSurveyVotes(dbClient, surveyQuestionData.documentId);
       const surveyQuestion = mapToSurveyQuestion(surveyQuestionData, votes);
       return surveyQuestion;

@@ -3,7 +3,7 @@ import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
 export const CollaborationQuestionFragment = graphql(
   `
-    fragment CollaborationQuestion on CollaborationQuestionEntity @_unmask {
+    fragment CollaborationQuestion on CollaborationQuestion @_unmask {
       documentId
       updatedAt
       project {
@@ -24,7 +24,7 @@ export const CollaborationQuestionFragment = graphql(
 
 export const GetCollaborationQuestionByIdQuery = graphql(
   `
-    query GetCollaborationQuestionById($documentId: ID) {
+    query GetCollaborationQuestionById($documentId: ID!) {
       collaborationQuestion(documentId: $documentId) {
         ...CollaborationQuestion
       }
@@ -37,9 +37,7 @@ export const GetCollaborationQuestionsByProjectIdQuery = graphql(
   `
     query GetCollaborationQuestions($projectId: ID) {
       collaborationQuestions(filters: { project: { documentId: { eq: $projectId } } }) {
-        nodes {
-          ...CollaborationQuestion
-        }
+        ...CollaborationQuestion
       }
     }
   `,
@@ -49,11 +47,9 @@ export const GetCollaborationQuestionsByProjectIdQuery = graphql(
 export const GetPlatformFeedbackCollaborationQuestion = graphql(`
   query GetPlatformFeedbackCollaborationQuestion {
     collaborationQuestions(filters: { isPlatformFeedback: { eq: true } }) {
-      nodes {
+      documentId
+      project {
         documentId
-        project {
-          documentId
-        }
       }
     }
   }
@@ -61,7 +57,7 @@ export const GetPlatformFeedbackCollaborationQuestion = graphql(`
 
 export const GetCollaborationQuestionsCountProjectIdQuery = graphql(`
   query GetCollaborationQuestions($projectId: ID) {
-    collaborationQuestions(filters: { project: { documentId: { eq: $projectId } } }) {
+    collaborationQuestions_connection(filters: { project: { documentId: { eq: $projectId } } }) {
       pageInfo {
         total
       }
@@ -76,9 +72,7 @@ export const GetCollaborationQuestsionsStartingFromQuery = graphql(
         filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
         pagination: { page: $page, pageSize: $pageSize }
       ) {
-        nodes {
-          ...CollaborationQuestion
-        }
+        ...CollaborationQuestion
       }
     }
   `,

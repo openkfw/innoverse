@@ -3,7 +3,7 @@ import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
 export const OpportunityFragment = graphql(
   `
-    fragment Opportunity on OpportunityEntity @_unmask {
+    fragment Opportunity on Opportunity @_unmask {
       documentId
       title
       description
@@ -24,9 +24,7 @@ export const GetOpportunitiesByProjectIdQuery = graphql(
   `
     query GetOpportunities($projectId: ID) {
       opportunities(filters: { project: { documentId: { eq: $projectId } } }) {
-        nodes {
-          ...Opportunity
-        }
+        ...Opportunity
       }
     }
   `,
@@ -37,9 +35,7 @@ export const GetOpportunitiesByIdQuery = graphql(
   `
     query GetOpportunities($opportunityId: ID) {
       opportunities(filters: { documentId: { eq: $opportunityId } }) {
-        nodes {
-          ...Opportunity
-        }
+        ...Opportunity
       }
     }
   `,
@@ -48,7 +44,7 @@ export const GetOpportunitiesByIdQuery = graphql(
 
 export const GetBasicOpportunityByIdQuery = graphql(
   `
-    query GetBasicOpportunityById($opportunityId: ID) {
+    query GetBasicOpportunityById($opportunityId: ID!) {
       opportunity(documentId: $opportunityId) {
         ...Opportunity
         project {
@@ -67,9 +63,7 @@ export const GetOpportunityWithParticipantQuery = graphql(
       opportunities(
         filters: { documentId: { eq: $opportunityId }, and: { participants: { providerId: { eq: $userId } } } }
       ) {
-        nodes {
-          ...Opportunity
-        }
+        ...Opportunity
       }
     }
   `,
@@ -89,7 +83,7 @@ export const UpdateOpportunityParticipantsQuery = graphql(
 
 export const GetOpportunityCountProjectIdQuery = graphql(`
   query GetOpportunities($projectId: ID) {
-    opportunities(filters: { project: { documentId: { eq: $projectId } } }) {
+    opportunities_connection(filters: { project: { documentId: { eq: $projectId } } }) {
       pageInfo {
         total
       }
@@ -101,9 +95,7 @@ export const GetUpdatedOpportunitiesQuery = graphql(
   `
     query GetUpdatedOpportunities($from: DateTime) {
       opportunities(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
-        nodes {
-          ...Opportunity
-        }
+        ...Opportunity
       }
     }
   `,

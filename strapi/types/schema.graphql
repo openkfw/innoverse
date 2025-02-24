@@ -77,7 +77,7 @@ input CollaborationQuestionFiltersInput {
 }
 
 input CollaborationQuestionInput {
-  authors: [ID!]
+  authors: [ID]
   description: String
   isPlatformFeedback: Boolean
   project: ID
@@ -560,7 +560,7 @@ type InnoUser {
     filters: QuestionFiltersInput
     pagination: PaginationArg = {}
     sort: [String] = []
-  ): [Question!]!
+  ): [Question]!
   questions_connection(
     filters: QuestionFiltersInput
     pagination: PaginationArg = {}
@@ -913,15 +913,6 @@ type Opportunity {
   updatedAt: DateTime
 }
 
-type OpportunityEntity {
-  attributes: Opportunity
-  id: ID
-}
-
-type OpportunityEntityResponse {
-  data: Opportunity
-}
-
 type OpportunityEntityResponseCollection {
   nodes: [Opportunity!]!
   pageInfo: Pagination!
@@ -1205,7 +1196,7 @@ type Query {
     pagination: PaginationArg = {}
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
-  ): [SurveyQuestion!]!
+  ): [SurveyQuestion]!
   surveyQuestions_connection(
     filters: SurveyQuestionFiltersInput
     pagination: PaginationArg = {}
@@ -1222,7 +1213,7 @@ type Query {
     pagination: PaginationArg = {}
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
-  ): [Update!]!
+  ): [Update]!
   updates_connection(
     filters: UpdateFiltersInput
     pagination: PaginationArg = {}
@@ -1323,7 +1314,7 @@ input QuestionFiltersInput {
 }
 
 input QuestionInput {
-  authors: [ID!]
+  authors: [ID]
   project: ID
   publishedAt: DateTime
   title: String

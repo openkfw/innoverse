@@ -1,7 +1,7 @@
 import { graphql } from '@/types/graphql';
 
 export const InnoUserFragment = graphql(`
-  fragment InnoUser on InnoUserEntity @_unmask {
+  fragment InnoUser on InnoUser @_unmask {
     documentId
     providerId
     provider
@@ -53,9 +53,7 @@ export const GetAllInnoUsers = graphql(
 export const GetEmailsByUsernamesQuery = graphql(`
   query GetEmailsByUsernames($usernames: [String!]) {
     innoUsers(filters: { username: { in: $usernames } }) {
-      attributes {
-        email
-      }
+      email
     }
   }
 `);

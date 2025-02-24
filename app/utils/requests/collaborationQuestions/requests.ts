@@ -32,7 +32,7 @@ const logger = getLogger();
 export async function getCollaborationQuestionsByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetCollaborationQuestionsByProjectIdQuery, { projectId });
-    const questionsData = response.collaborationQuestions?.nodes ?? [];
+    const questionsData = response.collaborationQuestions ?? [];
 
     const mapToEntities = questionsData.map(async (questionData) => {
       const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData.documentId });
@@ -93,7 +93,7 @@ export async function getBasicCollaborationQuestionStartingFromWithAdditionalDat
 }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetCollaborationQuestsionsStartingFromQuery, { from, page, pageSize });
-    const data = response.collaborationQuestions?.nodes;
+    const data = response.collaborationQuestions;
     if (!data) throw new Error('Response contained no collaboration question data');
 
     const mapQuestions = data.map(async (questionData) => {
@@ -120,8 +120,8 @@ export async function getBasicCollaborationQuestionStartingFromWithAdditionalDat
 export async function getPlatformFeedbackCollaborationQuestion() {
   try {
     const response = await strapiGraphQLFetcher(GetPlatformFeedbackCollaborationQuestion);
-    if (!response.collaborationQuestions?.nodes || !response.collaborationQuestions.nodes.length) return;
-    const questionData = response.collaborationQuestions.nodes[0];
+    if (!response.collaborationQuestions || !response.collaborationQuestions.length) return;
+    const questionData = response.collaborationQuestions[0];
     if (!questionData.project) throw new Error('Collaboration question is not linked to a project');
     const project = questionData.project as ResultOf<typeof ProjectFragment>;
 
@@ -157,7 +157,7 @@ export const countCollaborationQuestionsForProject = async (projectId: string) =
     const response = await strapiGraphQLFetcher(GetCollaborationQuestionsCountProjectIdQuery, {
       projectId,
     });
-    const countResult = response.collaborationQuestions?.pageInfo.total;
+    const countResult = response.collaborationQuestions_connection?.pageInfo.total;
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {

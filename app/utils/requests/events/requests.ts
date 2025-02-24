@@ -57,7 +57,7 @@ export async function getEventByIdWithReactions(id: string) {
 export async function getEventsStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetEventsStartingFromQuery, { from, page, pageSize });
-    const events = mapToEvents(response.events?.nodes);
+    const events = mapToEvents(response.events);
     return events;
   } catch (err) {
     const error = strapiError('Getting upcoming events', err as RequestError);
@@ -69,7 +69,7 @@ export async function getUpcomingEvents() {
   try {
     const now = new Date();
     const response = await strapiGraphQLFetcher(GetUpcomingEventsQuery, { now });
-    const events = mapToEvents(response.events?.nodes);
+    const events = mapToEvents(response.events);
     return events;
   } catch (err) {
     const error = strapiError('Getting upcoming events', err as RequestError);
@@ -81,7 +81,7 @@ export async function getCountOfFutureEvents(projectId: string) {
   try {
     const now = new Date();
     const response = await strapiGraphQLFetcher(GetFutureEventCountQuery, { projectId, now });
-    return (response.events && response.events?.pageInfo.total) ?? 0;
+    return (response.events_connection && response.events_connection?.pageInfo.total) ?? 0;
   } catch (err) {
     const error = strapiError('Getting count of future events', err as RequestError);
     logger.error(error);
@@ -96,7 +96,7 @@ export async function getProjectEventsPage(
 ) {
   try {
     const response = await requestEventsPage(projectId, timeframe, page, pageSize);
-    const events = mapToEvents(response.events?.nodes);
+    const events = mapToEvents(response.events);
     return events;
   } catch (err) {
     const error = strapiError('Getting all events', err as RequestError);

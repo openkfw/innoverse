@@ -5,7 +5,7 @@ export const DeleteProjectUpdateMutation = graphql(
   `
     mutation DeleteProjectUpdate($updateId: ID!) {
       deleteUpdate(documentId: $updateId) {
-        ...ProjectUpdate
+        documentId
       }
     }
   `,
