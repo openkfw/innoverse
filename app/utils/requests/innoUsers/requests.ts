@@ -6,6 +6,8 @@ import { Mention, UpdateInnoUser, UploadImageResponse, User, UserSession } from 
 import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { RequestError } from '@/entities/error';
+import { updateEmailPreferencesForUser } from '@/repository/db/email_preferences';
+import dbClient from '@/repository/db/prisma/prisma';
 import { strapiError } from '@/utils/errors';
 import { base64ToBlob, isBase64String } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
@@ -43,6 +45,14 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
     const userData = response.createInnoUser;
     if (!userData) throw new Error('Response contained no user data');
     const createdUser = mapToUser(userData);
+
+    if (createdUser.email)
+      await updateEmailPreferencesForUser(dbClient, userData.id, {
+        email: createdUser.email,
+        username,
+        weekly: true,
+      });
+
     return createdUser;
   } catch (err) {
     const error = strapiError('Create Inno User', err as RequestError, body.name);
@@ -169,7 +179,7 @@ async function getAllInnoUserNames() {
   }
 }
 
-async function getAllInnoUsers() {
+export async function getAllInnoUsers() {
   try {
     const response = await strapiGraphQLFetcher(GetAllInnoUsers, { limit: 1000 });
     if (!response.innoUsers) {
@@ -303,8 +313,10 @@ export async function fetchMentionData(search: string): Promise<Mention[]> {
   try {
     const data = await getAllInnoUserNames();
 
-    const formattedData = data.map((user) => ({ username: user.username as string }));
-    return formattedData.filter((user) => user.username?.toLowerCase().includes(search.toLowerCase()));
+    const formattedData = data.map((user) => ({ username: user.username }));
+    return formattedData.filter(
+      (user): user is { username: string } => !!user.username?.toLowerCase().includes(search.toLowerCase()),
+    );
   } catch (error) {
     console.error('Failed to load users:', error);
     return [];
