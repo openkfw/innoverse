@@ -22,11 +22,11 @@ const bodySchema = z.object({
 //For information about how the rules work & the challenges head to: ***URL_REMOVED***
 export async function POST({ body, headers }: Request) {
   const { authorization } = headerSchema.parse(headers);
-  const { event, model, entry } = bodySchema.parse(body);
 
   if (authorization !== serverConfig.STRAPI_PUSH_NOTIFICATION_SECRET)
     return new Response(ReasonPhrases.UNAUTHORIZED, { status: StatusCodes.UNAUTHORIZED });
 
+  const { event, model, entry } = bodySchema.parse(body);
   await onStrapiEvent(event, model, entry);
   return new Response(ReasonPhrases.OK);
 }

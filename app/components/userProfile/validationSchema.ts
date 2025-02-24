@@ -27,4 +27,10 @@ export const handleUpdateUserSession = userSessionSchema.extend({
     .optional(),
 });
 
+export const handleUpdateNotificationSettings = z.object({
+  weekly: z.boolean(),
+});
+
 export type UserSessionFormValidationSchema = z.infer<typeof handleUpdateUserSession>;
+
+export type NotificationSettingsFormValidationSchema = z.infer<typeof handleUpdateNotificationSettings>;
