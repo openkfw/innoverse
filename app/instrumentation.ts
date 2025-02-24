@@ -25,4 +25,9 @@ export async function register() {
       });
     }
   }
+
+  if (process.env.NEXT_RUNTIME === 'nodejs') {
+    const { populateEmailPreferencesForExistingUsers } = await import('@/utils/notification/emailPreferences');
+    await populateEmailPreferencesForExistingUsers();
+  }
 }

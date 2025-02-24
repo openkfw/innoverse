@@ -59,15 +59,15 @@ export default function UserInfo() {
     const { image, ...userData } = submitData;
     const userImage = image instanceof Blob ? await blobToBase64(image) : null;
 
-    const { data: updatedUser, status } = await updateUserProfile({
+    const result = await updateUserProfile({
       role: userData.role,
       department: userData.department,
       // Include the image in the request only if it's null or a Blob, indicating it has been modified
       ...(typeof image !== 'string' && { image: userImage }),
     });
 
-    if (status === StatusCodes.OK) {
-      await updateUser(updatedUser as UserSession);
+    if (result.status === StatusCodes.OK) {
+      await updateUser(result.data);
       successMessage({ message: m.components_profilePage_form_updateUserForm_success() });
       return;
     } else {
