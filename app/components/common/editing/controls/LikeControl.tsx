@@ -54,12 +54,12 @@ const buttonStylesSelected = {
 };
 
 const iconStyles = {
-  color: '#266446',
+  color: 'primary.main',
   fontSize: '18px',
 };
 const textStyle = {
   color: 'secondary.contrastText',
 };
 const textStyleSelected = {
-  color: '#266446',
+  color: 'primary.main',
 };
