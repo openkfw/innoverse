@@ -299,6 +299,7 @@
   "components_newsPage_cards_common_writeCommentCard_done": "Done",
 
   "components_newsPage_cards_common_threads_itemWithCommentsThread_showMore": "Show more comments",
+  "components_newsPage_cards_common_threads_itemWithCommentsThread_showLess": "Collapse comments",
 
   "components_newsPage_cards_newsCard_error_update": "Failed to update news. Please try again.",
 

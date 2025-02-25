@@ -299,6 +299,7 @@
   "components_newsPage_cards_common_writeCommentCard_done": "Fertig",
 
   "components_newsPage_cards_common_threads_itemWithCommentsThread_showMore": "weitere Kommentare anzeigen",
+  "components_newsPage_cards_common_threads_itemWithCommentsThread_showLess": "Zusammenklappen",
 
   "components_newsPage_cards_newsCard_error_update": "Der Beitrag konnte nicht aktualisiert werden. Bitte versuche es noch einmal",
 

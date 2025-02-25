@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
@@ -55,7 +56,9 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
     indentComments,
     showDivider,
     showLoadCommentsButton,
+    showCloseThreadButton,
     loadComments,
+    collapseComments,
     handleComment,
     updateComment,
     deleteComment,
@@ -74,7 +77,8 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
           style={{ marginBottom: 2 }}
           onClick={loadComments}
         >
-          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} ({comment.comments?.length})
+          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} (
+          {comment.comments?.length || comment.commentCount})
         </Button>
       )}
       {comments.isLoading && <CommentThreadSkeleton sx={{ pl: indentComments, mt: 2 }} />}
@@ -85,6 +89,16 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
               typeof comment != 'string' && renderComment(comment, idx, () => deleteComment(comment), updateComment),
           )}
         </Stack>
+      )}
+      {showCloseThreadButton && (
+        <Button
+          startIcon={<RemoveIcon color="primary" fontSize="large" />}
+          sx={{ ...transparentButtonStyles, pl: indentComments }}
+          style={{ marginBottom: 2 }}
+          onClick={collapseComments}
+        >
+          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showLess()}
+        </Button>
       )}
     </Stack>
   );
@@ -115,6 +129,10 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     } else {
       setComments({ isVisible: false, isLoading: false });
     }
+  };
+
+  const collapseComments = () => {
+    setComments({ isVisible: false, data: [] });
   };
 
   const handleComment = async (commentText: string) => {
@@ -183,11 +201,18 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
       !comments.isVisible &&
       !comments.isLoading &&
       ((comment.comments && comment.comments.length > 0) || comment.commentCount),
+    showCloseThreadButton:
+      !searchedResult &&
+      comments.isVisible &&
+      !comments.isLoading &&
+      ((comment.comments && comment.comments.length > 0) || comment.commentCount),
+
     showDivider: !disableDivider && (commentsExist || state.isEditing(comment)),
     handleComment,
     deleteComment,
     updateComment,
     loadComments,
+    collapseComments,
     renderComment,
   };
 };
