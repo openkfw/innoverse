@@ -56,21 +56,20 @@ export async function updateInnoUser(body: UpdateInnoUser) {
       if (!userData) throw new Error('Response contained no user data');
       return mapToUser(userData);
     };
-    // if the image is null, the avatar is deleted
-    if (body.image === null) {
-      if (body.oldImageId) {
-        await deleteFileImage(body.oldImageId);
-      }
+    const userImage = body.image.get('image');
+
+    // if the userImage is null and the avatar was defined before, delete the avatar
+    if (userImage === null && body.oldImageId) {
+      await deleteFileImage(body.oldImageId);
       return await handleResponse({ ...body, avatarId: null });
     }
 
-    // if the image is type of FormData, the file is uploaded and the id saved as avatarId
-    if (body.image instanceof FormData) {
+    // if the userImage is defined, upload the avatar
+    if (userImage instanceof Blob) {
       if (body.oldImageId) {
         await deleteFileImage(body.oldImageId);
       }
-      const image = body.image.get('image');
-      const uploadedImages = await uploadFileImage(image as Blob, `avatar-${body.name}`);
+      const uploadedImages = await uploadFileImage(userImage as Blob, `avatar-${body.name}`);
       const uploadedImage = uploadedImages ? uploadedImages[0] : null;
       return await handleResponse({ ...body, avatarId: uploadedImage && (uploadedImage.id as string) });
     }
