@@ -23,7 +23,7 @@ import { TextInputField } from '../common/form/TextInputField';
 
 import { updateUserProfile } from './actions';
 import formFieldNames from './formFields';
-import { handleUpdateUserSession, UserSessionFormValidationSchema } from './validationSchema';
+import { handleUpdateUserSessionForm, UserSessionFormValidationSchema } from './validationSchema';
 
 const { NAME, EMAIL, ROLE, DEPARTMENT, IMAGE } = formFieldNames;
 
@@ -35,16 +35,16 @@ export default function UserInfo() {
     handleSubmit,
     control,
     setValue,
-    formState: { isDirty, isValid },
+    formState: { isDirty, isValid, isSubmitting },
   } = useForm<UserSessionFormValidationSchema>({
     mode: 'all',
-    resolver: zodResolver(handleUpdateUserSession),
+    resolver: zodResolver(handleUpdateUserSessionForm),
     defaultValues: {
       role: '',
       department: '',
-      image: '',
       name: '',
       email: '',
+      image: null,
     },
   });
 
@@ -56,18 +56,15 @@ export default function UserInfo() {
 
   const onSubmit: SubmitHandler<UserSessionFormValidationSchema> = async (submitData) => {
     const { image, ...userData } = submitData;
-
-    let userImage = image;
-    if (userImage && userImage instanceof File) {
-      const formData = new FormData();
-      formData.append('image', userImage);
-      userImage = formData;
+    const formData = new FormData();
+    if (image !== null) {
+      formData.append('image', image);
     }
 
     const { data: updatedUser, status } = await updateUserProfile({
       role: userData.role,
       department: userData.department,
-      image: userImage,
+      image: formData,
     });
 
     if (status === StatusCodes.OK) {
@@ -124,7 +121,7 @@ export default function UserInfo() {
                   />
                 </Stack>
                 <ImageDropzoneField name={IMAGE} control={control} setValue={setValue} />
-                <FormSaveButton onSave={handleSubmit(onSubmit)} disabled={!isDirty || !isValid} />
+                <FormSaveButton onSave={handleSubmit(onSubmit)} disabled={!isDirty || !isValid || isSubmitting} />
               </Stack>
             </form>
           )}
@@ -143,7 +140,6 @@ const cardStyles = {
   boxShadow: '0px 12px 40px 0px rgba(0, 0, 0, 0.25)',
   backdropFilter: 'blur(20px)',
 };
-
 const cardTitleStyles = {
   fontSize: 36,
   mb: 3,

@@ -15,7 +15,7 @@ import { handleUpdateUserSession } from './validationSchema';
 const logger = getLogger();
 
 export const updateUserProfile = withAuth(
-  async (user: Omit<UserSession, 'image'>, body: Omit<UpdateInnoUser, 'id' | 'name'>) => {
+  async (user: Omit<UserSession, 'image'>, body: Omit<UpdateInnoUser, 'id' | 'name' | 'oldImageId'>) => {
     const validatedParams = validateParams(handleUpdateUserSession, body);
     if (validatedParams.status !== StatusCodes.OK) {
       return {
@@ -44,7 +44,12 @@ export const updateUserProfile = withAuth(
       };
     }
     try {
-      const updatedUser = await updateInnoUser({ ...parsedData, id: author.id as string });
+      const updatedUser = await updateInnoUser({
+        ...parsedData,
+        id: author.id as string,
+        name: author.name,
+        oldImageId: author.imageId,
+      });
       return {
         status: StatusCodes.OK,
         data: updatedUser,
