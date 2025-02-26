@@ -419,5 +419,5 @@
   "components_profilePage_form_updateUserForm_save": "Save",
   "components_common_formValidation_messages_required_field": "Required",
   "components_common_formValidation_messages_invalid_date": "Invalid date",
-  "components_common_formValidation_messages_invalid_file_size": "File size exceeds the allowed limit"
+  "components_common_formValidation_messages_invalid_file_size": "File size exceeds the allowed limit {fileSize}!"
 }

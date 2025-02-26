@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { invalid_file_size } from '@/common/formValidation';
 import { clientConfig } from '@/config/client';
+import { bytesToMegabytes } from '@/utils/helpers';
 
 const MAX_FILE_SIZE = clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT;
 
@@ -21,7 +22,7 @@ export const handleUpdateUserSessionForm = userSessionSchemaForm.extend({
   image: z.union([
     z.null(),
     z.string(),
-    z.instanceof(File).refine((file) => file.size < MAX_FILE_SIZE, invalid_file_size),
+    z.instanceof(File).refine((file) => file.size < MAX_FILE_SIZE, invalid_file_size(bytesToMegabytes(MAX_FILE_SIZE))),
   ]),
 });
 
