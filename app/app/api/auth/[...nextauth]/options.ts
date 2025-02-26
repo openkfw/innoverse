@@ -71,7 +71,16 @@ export const authOptions: NextAuthOptions = {
     async signIn({}) {
       return true;
     },
-    async jwt({ token, account }) {
+    async jwt({ token, account, trigger, session }) {
+      if (trigger === 'update') {
+        token.name = session.name;
+        token.email = session.email;
+        token.role = session.role;
+        token.department = session.department;
+        token.picture = session.image;
+        return token;
+      }
+
       if (account && token.name && token.email) {
         const providerId = token.sub ?? account.providerAccountId;
         const strapiImage = await getStrapiUserImage(token.email);
@@ -105,6 +114,8 @@ export const authOptions: NextAuthOptions = {
           id: token.sub,
           providerId: token.sub as string,
           provider: token.provider as string,
+          role: token.role,
+          department: token.department,
         },
         provider: token.provider,
       };
