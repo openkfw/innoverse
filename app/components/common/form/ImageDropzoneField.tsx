@@ -12,6 +12,7 @@ import { invalid_file_size } from '@/common/formValidation';
 import { clientConfig } from '@/config/client';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
+import { bytesToMegabytes } from '@/utils/helpers';
 
 import ImagePreview from './ImagePreview';
 
@@ -41,9 +42,10 @@ export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFie
 
   const fileValidator = (file: File) => {
     if (file.size > clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT) {
+      const maxFileSize = bytesToMegabytes(clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT);
       return {
         code: 'invalid-size',
-        message: invalid_file_size.message,
+        message: invalid_file_size(maxFileSize).message,
       };
     }
     return null;
@@ -71,7 +73,7 @@ export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFie
               };
 
               const fileRejectionItems = fileRejections[0]?.errors.map((e) => (
-                <FormHelperText key={e.code} sx={{ color: 'formText.main' }}>
+                <FormHelperText key={e.code} sx={{ color: 'common.white', fontWeight: 'bold' }}>
                   {e.message}
                 </FormHelperText>
               ));
@@ -85,7 +87,9 @@ export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFie
                       {m.components_profilePage_form_updateUserForm_placeholder()}
                     </Typography>
                   </Box>
-                  <Box sx={{ flexDirection: 'column' }}>{fileRejectionItems}</Box>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    {fileRejectionItems}
+                  </Box>
                 </div>
               );
             }}

@@ -419,5 +419,5 @@
   "components_profilePage_form_updateUserForm_save": "Speichern",
   "components_common_formValidation_messages_required_field": "Erforderlich",
   "components_common_formValidation_messages_invalid_date": "Datum ist ungültig",
-  "components_common_formValidation_messages_invalid_file_size": "Die Dateigröße überschreitet die zulässige Grenze"
+  "components_common_formValidation_messages_invalid_file_size": "Ihre Datei ist größer als das erlaubte Limit von {fileSize}!"
 }
