@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   experimental: {
     serverActions: {
-      bodySizeLimit: clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT,
+      bodySizeLimit: `${clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT}mb`,
     },
   },
   images: {
