@@ -41,11 +41,10 @@ export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFie
   };
 
   const fileValidator = (file: File) => {
-    if (file.size > clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT) {
-      const maxFileSize = bytesToMegabytes(clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT);
+    if (bytesToMegabytes(file.size) > clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT) {
       return {
-        code: 'invalid-size',
-        message: invalid_file_size(maxFileSize).message,
+        code: 'invalid-file-size',
+        message: invalid_file_size(clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT).message,
       };
     }
     return null;
