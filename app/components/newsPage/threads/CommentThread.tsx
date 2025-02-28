@@ -20,7 +20,7 @@ import { appInsights } from '@/utils/instrumentation/AppInsights';
 import { useRespondingState } from '../../common/editing/editing-context';
 
 interface CommentThreadProps<TComment> {
-  comment: { id: string; comments?: TComment[]; author?: User; anonymous?: boolean };
+  comment: { id: string; comments?: TComment[]; author?: User; anonymous?: boolean; commentCount?: number };
   card: React.ReactNode;
   disableDivider?: boolean;
   indentComments?: React.CSSProperties['paddingLeft'];
@@ -107,12 +107,9 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
 const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadProps<TComment>) => {
   const { comment, card, disableDivider, indentComments, fetchComments, renderComment, addComment } = props;
   const [comments, setComments] = useState<CommentState<TComment>>({ isVisible: false, isLoading: false });
-  const [commentsExist, setCommentsExist] = useState<boolean>(
-    (comment.comments && comment.comments.length > 0) || false,
-  );
-  const [commentCount, setCommentCount] = useState<number>(
-    comment.comments && comment.comments.length > 0 ? comment.comments.length : 0,
-  );
+  const initialCommentCount = comment.comments?.length ?? comment.commentCount ?? 0;
+  const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
+  const [commentsExist, setCommentsExist] = useState<boolean>(initialCommentCount > 0);
 
   const state = useRespondingState();
 
