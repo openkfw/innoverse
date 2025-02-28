@@ -123,8 +123,6 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     }
   }, [comment.comments]);
 
-  // const commentsExist = (comments.data?.length ?? 0) > 0;
-
   const loadComments = async () => {
     setComments({ isLoading: true });
     const comments = await fetchSortedComments();
