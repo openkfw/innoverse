@@ -65,9 +65,9 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
 
       <Stack sx={{ ml: 4, mt: 2 }} style={{ marginLeft: '2em' }}>
         {comment.comments &&
-          comment.comments.map((response, idx) => (
+          comment.comments.map((response) => (
             <NewsCommentThread
-              key={idx}
+              key={response.id}
               item={props.item}
               comment={response}
               commentType={props.commentType}
