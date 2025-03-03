@@ -37,9 +37,9 @@ interface CommentThreadProps<TComment> {
 interface ThreadComment {
   id: string;
   createdAt: Date;
-  commentCount?: number;
   author?: User;
   anonymous?: boolean;
+  comments?: ThreadComment[];
 }
 
 type CommentState<TComment> =
@@ -57,6 +57,7 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
     showDivider,
     showLoadCommentsButton,
     showCloseThreadButton,
+    commentCount,
     loadComments,
     collapseComments,
     handleComment,
@@ -77,8 +78,7 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
           style={{ marginBottom: 2 }}
           onClick={loadComments}
         >
-          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} (
-          {comment.comments?.length || comment.commentCount})
+          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} ({commentCount})
         </Button>
       )}
       {comments.isLoading && <CommentThreadSkeleton sx={{ pl: indentComments, mt: 2 }} />}
@@ -107,6 +107,10 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
 const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadProps<TComment>) => {
   const { comment, card, disableDivider, indentComments, fetchComments, renderComment, addComment } = props;
   const [comments, setComments] = useState<CommentState<TComment>>({ isVisible: false, isLoading: false });
+  const initialCommentCount = comment.comments?.length ?? comment.commentCount ?? 0;
+  const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
+  const [commentsExist, setCommentsExist] = useState<boolean>(initialCommentCount > 0);
+
   const state = useRespondingState();
 
   /* TODO: Temporary solution till the comments are loaded from redis */
@@ -118,8 +122,6 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
       }
     }
   }, [comment.comments]);
-
-  const commentsExist = (comments.data?.length ?? 0) > 0;
 
   const loadComments = async () => {
     setComments({ isLoading: true });
@@ -146,6 +148,8 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
 
       const newComments = [createdComment, ...currentComments];
       setComments({ isVisible: true, data: newComments });
+      setCommentCount(commentCount + 1);
+      setCommentsExist(true);
     } catch (error) {
       console.error('Error adding comment:', error);
       errorMessage({ message: m.components_newsPage_thread_add_comment_error() });
@@ -159,6 +163,8 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
   const deleteComment = (comment: TComment) => {
     const filteredComments = comments.data?.filter((r) => r.id !== comment.id) ?? [];
     setComments({ isVisible: true, data: filteredComments });
+    setCommentCount(commentCount - 1);
+    if (filteredComments.length === 0) setCommentsExist(false);
   };
 
   const updateComment = (comment: TComment) => {
@@ -169,7 +175,9 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     }
     const newComments = comments.data;
     newComments[idx] = comment;
+    const commentResponsesLength = comment.comments ? comment.comments.length : 0;
     setComments({ data: newComments, isVisible: true });
+    setCommentCount(newComments.length + commentResponsesLength);
   };
 
   const fetchSortedComments = async () => {
@@ -196,18 +204,11 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     card,
     comments,
     indentComments,
-    showLoadCommentsButton:
-      !searchedResult &&
-      !comments.isVisible &&
-      !comments.isLoading &&
-      ((comment.comments && comment.comments.length > 0) || comment.commentCount),
-    showCloseThreadButton:
-      !searchedResult &&
-      comments.isVisible &&
-      !comments.isLoading &&
-      ((comment.comments && comment.comments.length > 0) || comment.commentCount),
-
+    showLoadCommentsButton: !searchedResult && !comments.isVisible && !comments.isLoading && commentsExist,
+    showCloseThreadButton: !searchedResult && comments.isVisible && !comments.isLoading && commentsExist,
     showDivider: !disableDivider && (commentsExist || state.isEditing(comment)),
+    commentCount,
+    setCommentCount,
     handleComment,
     deleteComment,
     updateComment,
