@@ -149,6 +149,7 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
       const newComments = [createdComment, ...currentComments];
       setComments({ isVisible: true, data: newComments });
       setCommentCount(commentCount + 1);
+      setCommentsExist(true);
     } catch (error) {
       console.error('Error adding comment:', error);
       errorMessage({ message: m.components_newsPage_thread_add_comment_error() });
