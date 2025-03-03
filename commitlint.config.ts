@@ -9,8 +9,6 @@ const Configuration = {
     "type-case": [2, "always", ["lower-case"]],
     // Scope must be lowercase
     "scope-case": [2, "always", ["lower-case"]],
-    // Subject may have any case
-    "subject-case": [2, "always", ["lower-case"]],
     // Type must be in the following list
     "type-enum": [
       2, // Causes an error on violation
