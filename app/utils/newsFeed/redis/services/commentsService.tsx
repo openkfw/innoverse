@@ -1,7 +1,7 @@
 import { SearchOptions } from 'redis';
 
 import { InnoPlatformError, redisError } from '@/utils/errors';
-import { getUnixTimestamp } from '@/utils/helpers';
+import { getPromiseResults, getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
 
@@ -74,21 +74,21 @@ export async function deleteNewsCommentInCache(newsType: NewsType, newsId: strin
   const redisClient = await getRedisClient();
   // remove all the replies for the comment
   const replies = await getCommentsByParentId(redisClient, commentId);
-  replies.map(async (reply) => await deleteNewsCommentInCache(newsType, newsId, reply.id));
-
+  getPromiseResults(replies.map(async (reply) => await deleteComment(redisClient, reply.id)));
+  const replyIds = replies.map((reply) => reply.id);
   await deleteComment(redisClient, commentId);
-  await deleteComentsIdsFromEntry(redisClient, newsType, newsId, commentId);
+  await deleteCommentsIdsFromEntry(redisClient, newsType, newsId, [commentId, ...replyIds]);
 }
 
-async function deleteComentsIdsFromEntry(
+async function deleteCommentsIdsFromEntry(
   redisClient: RedisClient,
   newsType: string,
   newsId: string,
-  commentId: string,
+  idsToDelete: string[],
 ) {
   const entry = await getNewsFeedEntryByKey(redisClient, `${newsType}:${newsId}`);
   if (entry && entry.item.comments) {
-    const updatedCommentsIds = entry.item.comments.filter((comment) => comment !== commentId);
+    const updatedCommentsIds = entry.item.comments.filter((commentId) => !idsToDelete.includes(commentId));
     await setCommentsIdsToEntry(redisClient, `${newsType}:${newsId}`, updatedCommentsIds);
   }
 }
