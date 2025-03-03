@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.3.0](https://github.com/openkfw/innoverse/compare/v1.2.0...v1.3.0) (2025-03-03)
+
+
+### Features
+
+* add button to collapse comment thread ([#176](https://github.com/openkfw/innoverse/issues/176))
+* add initiatives page ([#107](https://github.com/openkfw/innoverse/issues/107))
+* include discussions / comments in search ([#103](https://github.com/openkfw/innoverse/issues/103))
+* initiatives search ([#109](https://github.com/openkfw/innoverse/issues/109))
+* mention feature in comments thread ([#24](https://github.com/openkfw/innoverse/issues/24))
+
+### Bug Fixes
+
+* add a migration to update the usernames field in strapi ([#152](https://github.com/openkfw/innoverse/issues/152))
+* adjust deleting comments ([#167](https://github.com/openkfw/innoverse/issues/167))
+* bugs in comments ([#179](https://github.com/openkfw/innoverse/issues/179))
+* change comment index type, fix multi filtering ([#140](https://github.com/openkfw/innoverse/issues/140))
+* collaboration comment fixes ([#165](https://github.com/openkfw/innoverse/issues/165))
+* fonts consistency ([#173](https://github.com/openkfw/innoverse/issues/173))
+* get project name from entry directly instead of news feed context ([#163](https://github.com/openkfw/innoverse/issues/163))
+* Layout shift in homepage ([#134](https://github.com/openkfw/innoverse/issues/134))
+* limit comment levels to 2 for new comments ([#174](https://github.com/openkfw/innoverse/issues/174))
+* move background arrows to news section so they show up but don't block interactive elements ([#148](https://github.com/openkfw/innoverse/issues/148))
+* persist database in dev environment docker application ([#161](https://github.com/openkfw/innoverse/issues/161))
+
+### Refactor
+
+* database redesign ([#136](https://github.com/openkfw/innoverse/issues/136))
+* migrate api routes to app router ([#160](https://github.com/openkfw/innoverse/issues/160))
+* update next.js version to v15 ([#143](https://github.com/openkfw/innoverse/issues/143))
+
+### Chore
+
+* allow uppercase subject case ([#181](https://github.com/openkfw/innoverse/issues/181))
+* introduce pnpm as a package manager ([#154](https://github.com/openkfw/innoverse/issues/154))
+
 ## [1.2.0](https://github.com/openkfw/innoverse/compare/v1.1.1...v1.2.0) (2024-11-19)
 
 ### Features
