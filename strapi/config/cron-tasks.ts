@@ -28,7 +28,7 @@ export default {
         await strapi.webhookStore.createWebhook({
           id: "weekly-email",
           name: "weekly email",
-          url: "http://localhost:3000/api/hooks/weekly-email", //TODO
+          url: "https://<backend_url>/api/hooks/weekly-email",
           headers: {
             Authorization: "<changeme>",
           },

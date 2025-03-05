@@ -300,6 +300,69 @@ enum ENUM_PROJECT_STATUS {
   Proof_of_Concept
 }
 
+type EmailBaseTemplate {
+  createdAt: DateTime
+  footerActivityNote: String!
+  footerAddress: String!
+  footerContactUs: String!
+  footerEmailSettings: String!
+  footerPrivacy: String!
+  footerSmallLogo: UploadFileEntityResponse
+  footerUnsubscribe: String!
+  headerLogo: UploadFileEntityResponse
+  locale: String
+  localizations(publicationState: PublicationState = LIVE): EmailBaseTemplateRelationResponseCollection
+  publishedAt: DateTime
+  updatedAt: DateTime
+}
+
+type EmailBaseTemplateEntity {
+  attributes: EmailBaseTemplate
+  id: ID
+}
+
+type EmailBaseTemplateEntityResponse {
+  data: EmailBaseTemplateEntity
+}
+
+type EmailBaseTemplateEntityResponseCollection {
+  data: [EmailBaseTemplateEntity!]!
+  meta: ResponseCollectionMeta!
+}
+
+input EmailBaseTemplateFiltersInput {
+  and: [EmailBaseTemplateFiltersInput]
+  createdAt: DateTimeFilterInput
+  footerActivityNote: StringFilterInput
+  footerAddress: StringFilterInput
+  footerContactUs: StringFilterInput
+  footerEmailSettings: StringFilterInput
+  footerPrivacy: StringFilterInput
+  footerUnsubscribe: StringFilterInput
+  locale: StringFilterInput
+  localizations: EmailBaseTemplateFiltersInput
+  not: EmailBaseTemplateFiltersInput
+  or: [EmailBaseTemplateFiltersInput]
+  publishedAt: DateTimeFilterInput
+  updatedAt: DateTimeFilterInput
+}
+
+input EmailBaseTemplateInput {
+  footerActivityNote: String
+  footerAddress: String
+  footerContactUs: String
+  footerEmailSettings: String
+  footerPrivacy: String
+  footerSmallLogo: ID
+  footerUnsubscribe: String
+  headerLogo: ID
+  publishedAt: DateTime
+}
+
+type EmailBaseTemplateRelationResponseCollection {
+  data: [EmailBaseTemplateEntity!]!
+}
+
 type Error {
   code: String!
   message: String
@@ -403,7 +466,7 @@ input FloatFilterInput {
   startsWith: Float
 }
 
-union GenericMorph = CollaborationQuestion | ComponentDescriptionDescription | ComponentImageImage | ComponentResponseOptionsResponseOptions | ComponentSliderTextSliderText | ComponentTagsTags | ComponentThemeTheme | ComponentUserAuthor | Event | I18NLocale | InnoUser | Opportunity | Project | Question | SurveyQuestion | Update | UploadFile | UploadFolder | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser
+union GenericMorph = CollaborationQuestion | ComponentDescriptionDescription | ComponentImageImage | ComponentResponseOptionsResponseOptions | ComponentSliderTextSliderText | ComponentTagsTags | ComponentThemeTheme | ComponentUserAuthor | EmailBaseTemplate | Event | I18NLocale | InnoUser | Opportunity | Project | Question | SurveyQuestion | Update | UploadFile | UploadFolder | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | WeeklyEmailTemplate
 
 type I18NLocale {
   code: String
@@ -636,6 +699,7 @@ type Mutation {
   """Change user password. Confirm with the current password."""
   changePassword(currentPassword: String!, password: String!, passwordConfirmation: String!): UsersPermissionsLoginPayload
   createCollaborationQuestion(data: CollaborationQuestionInput!): CollaborationQuestionEntityResponse
+  createEmailBaseTemplateLocalization(data: EmailBaseTemplateInput, id: ID, locale: I18NLocaleCode): EmailBaseTemplateEntityResponse
   createEvent(data: EventInput!): EventEntityResponse
   createInnoUser(data: InnoUserInput!): InnoUserEntityResponse
   createOpportunity(data: OpportunityInput!): OpportunityEntityResponse
@@ -651,7 +715,9 @@ type Mutation {
 
   """Create a new user"""
   createUsersPermissionsUser(data: UsersPermissionsUserInput!): UsersPermissionsUserEntityResponse!
+  createWeeklyEmailTemplateLocalization(data: WeeklyEmailTemplateInput, id: ID, locale: I18NLocaleCode): WeeklyEmailTemplateEntityResponse
   deleteCollaborationQuestion(id: ID!): CollaborationQuestionEntityResponse
+  deleteEmailBaseTemplate(locale: I18NLocaleCode): EmailBaseTemplateEntityResponse
   deleteEvent(id: ID!): EventEntityResponse
   deleteInnoUser(id: ID!): InnoUserEntityResponse
   deleteOpportunity(id: ID!): OpportunityEntityResponse
@@ -667,6 +733,7 @@ type Mutation {
 
   """Delete an existing user"""
   deleteUsersPermissionsUser(id: ID!): UsersPermissionsUserEntityResponse!
+  deleteWeeklyEmailTemplate(locale: I18NLocaleCode): WeeklyEmailTemplateEntityResponse
 
   """Confirm an email users email address"""
   emailConfirmation(confirmation: String!): UsersPermissionsLoginPayload
@@ -685,6 +752,7 @@ type Mutation {
   """
   resetPassword(code: String!, password: String!, passwordConfirmation: String!): UsersPermissionsLoginPayload
   updateCollaborationQuestion(data: CollaborationQuestionInput!, id: ID!): CollaborationQuestionEntityResponse
+  updateEmailBaseTemplate(data: EmailBaseTemplateInput!, locale: I18NLocaleCode): EmailBaseTemplateEntityResponse
   updateEvent(data: EventInput!, id: ID!): EventEntityResponse
   updateFileInfo(id: ID!, info: FileInfoInput): UploadFileEntityResponse!
   updateInnoUser(data: InnoUserInput!, id: ID!): InnoUserEntityResponse
@@ -701,6 +769,7 @@ type Mutation {
 
   """Update an existing user"""
   updateUsersPermissionsUser(data: UsersPermissionsUserInput!, id: ID!): UsersPermissionsUserEntityResponse!
+  updateWeeklyEmailTemplate(data: WeeklyEmailTemplateInput!, locale: I18NLocaleCode): WeeklyEmailTemplateEntityResponse
   upload(field: String, file: Upload!, info: FileInfoInput, ref: String, refId: ID): UploadFileEntityResponse!
 }
 
@@ -852,6 +921,7 @@ enum PublicationState {
 type Query {
   collaborationQuestion(id: ID): CollaborationQuestionEntityResponse
   collaborationQuestions(filters: CollaborationQuestionFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): CollaborationQuestionEntityResponseCollection
+  emailBaseTemplate(locale: I18NLocaleCode, publicationState: PublicationState = LIVE): EmailBaseTemplateEntityResponse
   event(id: ID): EventEntityResponse
   events(filters: EventFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): EventEntityResponseCollection
   i18NLocale(id: ID): I18NLocaleEntityResponse
@@ -878,6 +948,7 @@ type Query {
   usersPermissionsRoles(filters: UsersPermissionsRoleFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsRoleEntityResponseCollection
   usersPermissionsUser(id: ID): UsersPermissionsUserEntityResponse
   usersPermissionsUsers(filters: UsersPermissionsUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): UsersPermissionsUserEntityResponseCollection
+  weeklyEmailTemplate(locale: I18NLocaleCode, publicationState: PublicationState = LIVE): WeeklyEmailTemplateEntityResponse
 }
 
 type Question {
@@ -1419,4 +1490,59 @@ input UsersPermissionsUserInput {
 
 type UsersPermissionsUserRelationResponseCollection {
   data: [UsersPermissionsUserEntity!]!
+}
+
+type WeeklyEmailTemplate {
+  createdAt: DateTime
+  headerImage: UploadFileEntityResponse
+  headerSubtitle: String!
+  headerTitle: String!
+  locale: String
+  localizations(publicationState: PublicationState = LIVE): WeeklyEmailTemplateRelationResponseCollection
+  preview: String!
+  publishedAt: DateTime
+  subject: String!
+  updatedAt: DateTime
+}
+
+type WeeklyEmailTemplateEntity {
+  attributes: WeeklyEmailTemplate
+  id: ID
+}
+
+type WeeklyEmailTemplateEntityResponse {
+  data: WeeklyEmailTemplateEntity
+}
+
+type WeeklyEmailTemplateEntityResponseCollection {
+  data: [WeeklyEmailTemplateEntity!]!
+  meta: ResponseCollectionMeta!
+}
+
+input WeeklyEmailTemplateFiltersInput {
+  and: [WeeklyEmailTemplateFiltersInput]
+  createdAt: DateTimeFilterInput
+  headerSubtitle: StringFilterInput
+  headerTitle: StringFilterInput
+  locale: StringFilterInput
+  localizations: WeeklyEmailTemplateFiltersInput
+  not: WeeklyEmailTemplateFiltersInput
+  or: [WeeklyEmailTemplateFiltersInput]
+  preview: StringFilterInput
+  publishedAt: DateTimeFilterInput
+  subject: StringFilterInput
+  updatedAt: DateTimeFilterInput
+}
+
+input WeeklyEmailTemplateInput {
+  headerImage: ID
+  headerSubtitle: String
+  headerTitle: String
+  preview: String
+  publishedAt: DateTime
+  subject: String
+}
+
+type WeeklyEmailTemplateRelationResponseCollection {
+  data: [WeeklyEmailTemplateEntity!]!
 }

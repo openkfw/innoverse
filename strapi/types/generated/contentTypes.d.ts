@@ -834,6 +834,102 @@ export interface ApiCollaborationQuestionCollaborationQuestion
   };
 }
 
+export interface ApiEmailBaseTemplateEmailBaseTemplate
+  extends Schema.SingleType {
+  collectionName: 'email_base_templates';
+  info: {
+    singularName: 'email-base-template';
+    pluralName: 'email-base-templates';
+    displayName: 'EmailBaseTemplate';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    footerActivityNote: Attribute.Text &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    footerContactUs: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    footerPrivacy: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    footerAddress: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    footerUnsubscribe: Attribute.Text &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    footerEmailSettings: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    footerSmallLogo: Attribute.Media<'images'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    headerLogo: Attribute.Media<'images'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::email-base-template.email-base-template',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::email-base-template.email-base-template',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::email-base-template.email-base-template',
+      'oneToMany',
+      'api::email-base-template.email-base-template'
+    >;
+    locale: Attribute.String;
+  };
+}
+
 export interface ApiEventEvent extends Schema.CollectionType {
   collectionName: 'events';
   info: {
@@ -1186,6 +1282,82 @@ export interface ApiUpdateUpdate extends Schema.CollectionType {
   };
 }
 
+export interface ApiWeeklyEmailTemplateWeeklyEmailTemplate
+  extends Schema.SingleType {
+  collectionName: 'weekly_email_templates';
+  info: {
+    singularName: 'weekly-email-template';
+    pluralName: 'weekly-email-templates';
+    displayName: 'WeeklyEmailTemplate';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    subject: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    preview: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    headerTitle: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    headerSubtitle: Attribute.Text &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    headerImage: Attribute.Media<'images'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::weekly-email-template.weekly-email-template',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::weekly-email-template.weekly-email-template',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::weekly-email-template.weekly-email-template',
+      'oneToMany',
+      'api::weekly-email-template.weekly-email-template'
+    >;
+    locale: Attribute.String;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1205,6 +1377,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::collaboration-question.collaboration-question': ApiCollaborationQuestionCollaborationQuestion;
+      'api::email-base-template.email-base-template': ApiEmailBaseTemplateEmailBaseTemplate;
       'api::event.event': ApiEventEvent;
       'api::inno-user.inno-user': ApiInnoUserInnoUser;
       'api::opportunity.opportunity': ApiOpportunityOpportunity;
@@ -1212,6 +1385,7 @@ declare module '@strapi/types' {
       'api::question.question': ApiQuestionQuestion;
       'api::survey-question.survey-question': ApiSurveyQuestionSurveyQuestion;
       'api::update.update': ApiUpdateUpdate;
+      'api::weekly-email-template.weekly-email-template': ApiWeeklyEmailTemplateWeeklyEmailTemplate;
     }
   }
 }
