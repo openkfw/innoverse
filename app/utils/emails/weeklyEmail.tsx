@@ -3,8 +3,13 @@ import { collectWeeklyNotificationEmails } from '@/repository/db/email_preferenc
 import dbClient from '@/repository/db/prisma/prisma';
 import NotificationEmail from '@/utils/emails/notificationTemplate';
 import { generateUnsubscribeUrl, sendEmail } from '@/utils/emails/send';
+import { getEmailBaseTemplates, getWeeklyEmailTemplates } from '@/utils/requests/singleTypes/requests';
+import { groupByLocale } from '@/utils/requests/singleTypes/mappings';
 
 export async function sendWeeklyEmail() {
+  const baseTemplates = groupByLocale(await getEmailBaseTemplates());
+  const weeklyEmailTemplates = groupByLocale(await getWeeklyEmailTemplates());
+
   const users = (await collectWeeklyNotificationEmails(dbClient)).filter(
     (user): user is { userId: string; email: string; username: string } => !!user.email && !!user.username,
   );
@@ -19,11 +24,12 @@ export async function sendWeeklyEmail() {
         const posts: { id: number; content: string }[] = []; //TODO: get the posts
         const news: { id: number; content: string }[] = []; //TODO: get the news
 
-        const html = NotificationEmail({ includeUnsubscribe, lang, posts, news });
-        const subject = 'Weekly News and Initiatives Notifications';
+        const content = { ...baseTemplates[lang], ...weeklyEmailTemplates[lang], lang };
+        const html = NotificationEmail({ includeUnsubscribe, content, posts, news });
+        const subject = weeklyEmailTemplates[lang].subject;
         const from = `"InnoVerse" <${serverConfig.EMAIL_FROM ?? serverConfig.EMAIL_USER}>`;
         const mailOpts = {
-          list: { unsubscribe: { url: unsubscribeUrl, comment: 'Unsubscribe from Email notifications' } },
+          list: { unsubscribe: { url: unsubscribeUrl, comment: baseTemplates[lang].footerUnsubscribe } },
         };
 
         return sendEmail(from, user.email, subject, html, mailOpts);

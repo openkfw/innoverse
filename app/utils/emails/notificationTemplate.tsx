@@ -1,41 +1,37 @@
 import * as React from 'react';
-import { Column, Heading, Hr, Img, Link, Row, Section, Text } from '@react-email/components';
+import { Column, Heading, Hr, Img, Row, Section, Text } from '@react-email/components';
 
-import BaseTemplate, { baseUrl, EmailTemplateProps } from './baseTemplate';
+import BaseTemplate, { baseImageUrl, EmailTemplateProps } from './baseTemplate';
 
 interface NotificationEmailProps {
   includeUnsubscribe: NonNullable<EmailTemplateProps['includeUnsubscribe']>;
   posts?: { id: number; content: string }[];
   news?: { id: number; content: string }[];
-  lang?: string;
+  content: {
+    subject: string;
+    headerTitle: string;
+    headerSubtitle: string;
+    headerImage: string;
+  } & EmailTemplateProps['content'];
 }
 
-export const NotificationEmail = ({
-  includeUnsubscribe,
-  lang = 'de',
-  posts = [],
-  news = [],
-}: NotificationEmailProps) => (
-  <BaseTemplate includeUnsubscribe={includeUnsubscribe} lang={lang} preview="Weekly News and Initiatives Notifications">
+export const NotificationEmail = ({ includeUnsubscribe, content, posts = [], news = [] }: NotificationEmailProps) => (
+  <BaseTemplate includeUnsubscribe={includeUnsubscribe} content={content}>
     <Section style={header}>
       <Row>
         <Column style={headerContent}>
-          <Heading style={headerContentTitle}>InnoVerse</Heading>
-          <Text style={headerContentSubtitle}>Weekly News and Initiatives Notifications</Text>
+          <Heading style={headerContentTitle}>{content.headerTitle}</Heading>
+          <Text style={headerContentSubtitle}>{content.headerSubtitle}</Text>
         </Column>
         <Column style={headerImageContainer}>
-          <Img
-            style={headerImage}
-            width={340}
-            src={`${baseUrl}/_next/image?url=http%3A%2F%2Flocalhost%3A1337%2Fuploads%2Flarge_energy_01_f18f4955c0.png&w=1080&q=75`}
-          />
+          <Img style={headerImage} width={340} src={baseImageUrl + content.headerImage} />
         </Column>
       </Row>
     </Section>
 
-    <Section style={content}>
+    <Section style={contentStyle}>
       <Heading as="h2" style={title}>
-        New Posts
+        Posts
       </Heading>
       {posts.map((post) => (
         <Text style={paragraph}>{post.content}</Text>
@@ -95,7 +91,7 @@ const divider = {
   margin: '30px 0',
 };
 
-const content = {
+const contentStyle = {
   padding: '30px 30px 40px 30px',
 };
 

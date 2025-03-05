@@ -2,63 +2,89 @@ import * as React from 'react';
 import { Body, Container, Head, Hr, Html, Img, Link, Preview, Section, Text } from '@react-email/components';
 
 import { serverConfig } from '@/config/server';
+import { clientConfig } from '@/config/client';
 
 // TODO: use something else???
 export const baseUrl = serverConfig.NEXTAUTH_URL;
+export const baseImageUrl = clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT;
 
 export type EmailTemplateProps = {
   children: React.ReactNode;
-  lang: string;
-  preview: string;
-  includeUnsubscribe?: UnsubscribeFooterLinksProps;
+  includeUnsubscribe?: UnsubscribeFooterUrls;
+  content: {
+    preview: string;
+    footerActivityNote: string;
+    footerContactUs: string;
+    footerPrivacy: string;
+    footerAddress: string;
+    footerSmallLogo: string | null;
+    headerLogo: string | null;
+    lang: string;
+    footerUnsubscribe: string;
+    footerEmailSettings: string;
+  };
 };
 
-export type UnsubscribeFooterLinksProps = {
+export type UnsubscribeFooterUrls = {
   unsubscribeUrl: string;
   emailSettingsUrl: string;
 };
 
-export const UnsubscribeFooterLinks = ({ unsubscribeUrl, emailSettingsUrl }: UnsubscribeFooterLinksProps) => (
+export type UnsubscribeFooterLinksProps = UnsubscribeFooterUrls & {
+  unsubscribeText: string;
+  settingsText: string;
+};
+
+export const UnsubscribeFooterLinks = ({
+  unsubscribeUrl,
+  emailSettingsUrl,
+  unsubscribeText,
+  settingsText,
+}: UnsubscribeFooterLinksProps) => (
   <>
     <Link href={unsubscribeUrl} style={footerLink}>
-      Unsubscribe from emails like this{' '}
+      {unsubscribeText + ' '}
     </Link>
     <Link href={emailSettingsUrl} style={footerLink}>
-      Edit email settings{' '}
+      {settingsText + ' '}
     </Link>
   </>
 );
 
-export const InnoVerseEmail = ({ children, lang, preview, includeUnsubscribe }: EmailTemplateProps) => (
-  <Html lang={lang}>
+export const InnoVerseEmail = ({ children, content, includeUnsubscribe }: EmailTemplateProps) => (
+  <Html lang={content.lang}>
     <Head />
-    <Preview>{preview}</Preview>
+    <Preview>{content.preview}</Preview>
     <Body style={main}>
       <Container style={containerStyle}>
         <Section style={logo}>
-          <Img width={146} src={`${baseUrl}/_next/static/chunks/images/logo.svg`} />
+          <Img width={146} src={baseImageUrl + content.headerLogo} />
         </Section>
         {children}
       </Container>
 
       <Section style={footerStyle}>
-        <Text style={footerText}>
-          You&apos;re receiving this email because your InnoVerse activity triggered this notification.
-        </Text>
+        <Text style={footerText}>{content.footerActivityNote}</Text>
 
-        {includeUnsubscribe && <UnsubscribeFooterLinks {...includeUnsubscribe} />}
-        <Link href="/" style={footerLink}>
-          Contact us
+        {includeUnsubscribe && (
+          <UnsubscribeFooterLinks
+            {...includeUnsubscribe}
+            unsubscribeText={content.footerUnsubscribe}
+            settingsText={content.footerEmailSettings}
+          />
+        )}
+        <Link href={baseUrl} style={footerLink}>
+          {content.footerContactUs}
         </Link>
-        <Link href="/" style={footerLink}>
-          Privacy
+        <Link href={baseUrl} style={footerLink}>
+          {content.footerPrivacy}
         </Link>
 
         <Hr style={footerDivider} />
 
-        <Img width={111} src={`${baseUrl}/static/logo-sm.png`} />
+        <Img width={111} src={baseImageUrl + content.footerSmallLogo} />
         <Text style={footerAddress}>
-          <strong>InnoVerse</strong>
+          <strong>{content.footerAddress}</strong>
         </Text>
         <Text style={footerHeart}>{'<3'}</Text>
       </Section>
