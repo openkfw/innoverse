@@ -411,6 +411,79 @@ enum ENUM_PROJECT_STAGE {
   Proof_of_Concept
 }
 
+type EmailBaseTemplate {
+  attributes: EmailBaseTemplate!
+    @deprecated(reason: "Use root level fields instead")
+  createdAt: DateTime
+  data: EmailBaseTemplate! @deprecated(reason: "Use root level fields instead")
+  documentId: ID!
+  footerActivityNote: String!
+  footerAddress: String!
+  footerContactUs: String!
+  footerEmailSettings: String!
+  footerPrivacy: String!
+  footerSmallLogo: UploadFile
+  footerUnsubscribe: String!
+  headerLogo: UploadFile
+  id: ID! @deprecated(reason: "Use `documentId` instead")
+  locale: String
+  localizations: [EmailBaseTemplate]!
+  localizations_connection: EmailBaseTemplateRelationResponseCollection
+  publishedAt: DateTime
+  updatedAt: DateTime
+}
+
+type EmailBaseTemplateEntity {
+  attributes: EmailBaseTemplate
+  id: ID
+}
+
+type EmailBaseTemplateEntityResponse {
+  data: EmailBaseTemplate
+}
+
+type EmailBaseTemplateEntityResponseCollection {
+  data: [EmailBaseTemplate!]! @deprecated(reason: "Use `nodes` field instead")
+  meta: ResponseCollectionMeta!
+    @deprecated(reason: "Use the `pageInfo` field instead")
+  nodes: [EmailBaseTemplate!]!
+  pageInfo: Pagination!
+}
+
+input EmailBaseTemplateFiltersInput {
+  and: [EmailBaseTemplateFiltersInput]
+  createdAt: DateTimeFilterInput
+  footerActivityNote: StringFilterInput
+  footerAddress: StringFilterInput
+  footerContactUs: StringFilterInput
+  footerEmailSettings: StringFilterInput
+  footerPrivacy: StringFilterInput
+  footerUnsubscribe: StringFilterInput
+  locale: StringFilterInput
+  localizations: EmailBaseTemplateFiltersInput
+  not: EmailBaseTemplateFiltersInput
+  or: [EmailBaseTemplateFiltersInput]
+  publishedAt: DateTimeFilterInput
+  updatedAt: DateTimeFilterInput
+}
+
+input EmailBaseTemplateInput {
+  footerActivityNote: String
+  footerAddress: String
+  footerContactUs: String
+  footerEmailSettings: String
+  footerPrivacy: String
+  footerSmallLogo: ID
+  footerUnsubscribe: String
+  headerLogo: ID
+  publishedAt: DateTime
+}
+
+type EmailBaseTemplateRelationResponseCollection {
+  data: [EmailBaseTemplate!]! @deprecated(reason: "Use `nodes` field instead")
+  nodes: [EmailBaseTemplate!]!
+}
+
 type Error {
   code: String!
   message: String
@@ -536,6 +609,7 @@ union GenericMorph =
   | ComponentTagsTags
   | ComponentThemeTheme
   | ComponentUserAuthor
+  | EmailBaseTemplate
   | Event
   | I18NLocale
   | InnoUser
@@ -552,6 +626,7 @@ union GenericMorph =
   | UsersPermissionsPermission
   | UsersPermissionsRole
   | UsersPermissionsUser
+  | WeeklyEmailTemplate
 
 type I18NLocale {
   attributes: I18NLocale! @deprecated(reason: "Use root level fields instead")
@@ -901,6 +976,12 @@ type Mutation {
   ): UsersPermissionsUserEntityResponse!
   deleteCheckinQuestion(documentId: ID!): DeleteMutationResponse
   deleteCollaborationQuestion(documentId: ID!): DeleteMutationResponse
+  deleteEmailBaseTemplate(
+    """
+    The locale to use for the query
+    """
+    locale: I18NLocaleCode
+  ): DeleteMutationResponse
   deleteEvent(documentId: ID!): DeleteMutationResponse
   deleteInnoUser(documentId: ID!): DeleteMutationResponse
   deleteOpportunity(documentId: ID!): DeleteMutationResponse
@@ -923,6 +1004,12 @@ type Mutation {
   Delete an existing user
   """
   deleteUsersPermissionsUser(id: ID!): UsersPermissionsUserEntityResponse!
+  deleteWeeklyEmailTemplate(
+    """
+    The locale to use for the query
+    """
+    locale: I18NLocaleCode
+  ): DeleteMutationResponse
 
   """
   Confirm an email users email address
@@ -958,6 +1045,15 @@ type Mutation {
     documentId: ID!
     status: PublicationStatus = PUBLISHED
   ): CollaborationQuestion
+  updateEmailBaseTemplate(
+    data: EmailBaseTemplateInput!
+
+    """
+    The locale to use for the query
+    """
+    locale: I18NLocaleCode
+    status: PublicationStatus = PUBLISHED
+  ): EmailBaseTemplate
   updateEvent(
     data: EventInput!
     documentId: ID!
@@ -1029,6 +1125,15 @@ type Mutation {
     data: UsersPermissionsUserInput!
     id: ID!
   ): UsersPermissionsUserEntityResponse!
+  updateWeeklyEmailTemplate(
+    data: WeeklyEmailTemplateInput!
+
+    """
+    The locale to use for the query
+    """
+    locale: I18NLocaleCode
+    status: PublicationStatus = PUBLISHED
+  ): WeeklyEmailTemplate
 }
 
 type Opportunity {
@@ -1307,7 +1412,26 @@ type Query {
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
   ): CollaborationQuestionEntityResponseCollection
+  emailBaseTemplate(
+    """
+    The locale to use for the query
+    """
+    locale: I18NLocaleCode
+    status: PublicationStatus = PUBLISHED
+  ): EmailBaseTemplate
   event(documentId: ID!, status: PublicationStatus = PUBLISHED): Event
+  events(
+    filters: EventFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): [Event]!
+  events_connection(
+    filters: EventFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): EventEntityResponseCollection
   events(
     filters: EventFiltersInput
     pagination: PaginationArg = {}
@@ -1333,7 +1457,31 @@ type Query {
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
   ): I18NLocaleEntityResponseCollection
+  i18NLocales(
+    filters: I18NLocaleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): [I18NLocale]!
+  i18NLocales_connection(
+    filters: I18NLocaleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): I18NLocaleEntityResponseCollection
   innoUser(documentId: ID!, status: PublicationStatus = PUBLISHED): InnoUser
+  innoUsers(
+    filters: InnoUserFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): [InnoUser]!
+  innoUsers_connection(
+    filters: InnoUserFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): InnoUserEntityResponseCollection
   innoUsers(
     filters: InnoUserFiltersInput
     pagination: PaginationArg = {}
@@ -1363,7 +1511,35 @@ type Query {
     documentId: ID!
     status: PublicationStatus = PUBLISHED
   ): Opportunity
+  opportunities(
+    filters: OpportunityFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): [Opportunity]!
+  opportunities_connection(
+    filters: OpportunityFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): OpportunityEntityResponseCollection
+  opportunity(
+    documentId: ID!
+    status: PublicationStatus = PUBLISHED
+  ): Opportunity
   post(documentId: ID!, status: PublicationStatus = PUBLISHED): Post
+  posts(
+    filters: PostFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): [Post]!
+  posts_connection(
+    filters: PostFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): PostEntityResponseCollection
   posts(
     filters: PostFiltersInput
     pagination: PaginationArg = {}
@@ -1389,7 +1565,79 @@ type Query {
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
   ): ProjectEntityResponseCollection
+  projects(
+    filters: ProjectFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): [Project]!
+  projects_connection(
+    filters: ProjectFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): ProjectEntityResponseCollection
   question(documentId: ID!, status: PublicationStatus = PUBLISHED): Question
+  questions(
+    filters: QuestionFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): [Question]!
+  questions_connection(
+    filters: QuestionFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): QuestionEntityResponseCollection
+  reviewWorkflowsWorkflow(
+    documentId: ID!
+    status: PublicationStatus = PUBLISHED
+  ): ReviewWorkflowsWorkflow
+  reviewWorkflowsWorkflowStage(
+    documentId: ID!
+    status: PublicationStatus = PUBLISHED
+  ): ReviewWorkflowsWorkflowStage
+  reviewWorkflowsWorkflowStages(
+    filters: ReviewWorkflowsWorkflowStageFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): [ReviewWorkflowsWorkflowStage]!
+  reviewWorkflowsWorkflowStages_connection(
+    filters: ReviewWorkflowsWorkflowStageFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): ReviewWorkflowsWorkflowStageEntityResponseCollection
+  reviewWorkflowsWorkflows(
+    filters: ReviewWorkflowsWorkflowFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): [ReviewWorkflowsWorkflow]!
+  reviewWorkflowsWorkflows_connection(
+    filters: ReviewWorkflowsWorkflowFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): ReviewWorkflowsWorkflowEntityResponseCollection
+  surveyQuestion(
+    documentId: ID!
+    status: PublicationStatus = PUBLISHED
+  ): SurveyQuestion
+  surveyQuestions(
+    filters: SurveyQuestionFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): [SurveyQuestion]!
+  surveyQuestions_connection(
+    filters: SurveyQuestionFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): SurveyQuestionEntityResponseCollection
   questions(
     filters: QuestionFiltersInput
     pagination: PaginationArg = {}
@@ -1467,6 +1715,22 @@ type Query {
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
   ): UpdateEntityResponseCollection
+  updateOpportunityParticipants(
+    documentId: ID!
+    participantId: ID!
+  ): Opportunity
+  updates(
+    filters: UpdateFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): [Update]!
+  updates_connection(
+    filters: UpdateFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+    status: PublicationStatus = PUBLISHED
+  ): UpdateEntityResponseCollection
   uploadFile(documentId: ID!, status: PublicationStatus = PUBLISHED): UploadFile
   uploadFiles(
     filters: UploadFileFiltersInput
@@ -1513,10 +1777,27 @@ type Query {
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
   ): UsersPermissionsUserEntityResponseCollection
+  weeklyEmailTemplate(
+    """
+    The locale to use for the query
+    """
+    locale: I18NLocaleCode
+    status: PublicationStatus = PUBLISHED
+  ): WeeklyEmailTemplate
 }
 
 type Question {
   attributes: Question! @deprecated(reason: "Use root level fields instead")
+  authors(
+    filters: InnoUserFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): [InnoUser]!
+  authors_connection(
+    filters: InnoUserFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): InnoUserRelationResponseCollection
   authors(
     filters: InnoUserFiltersInput
     pagination: PaginationArg = {}
@@ -1982,9 +2263,18 @@ type UploadFileRelationResponseCollection {
 }
 
 type UserPermission {
-  attributes: UserPermission! @deprecated(reason: "Use root level fields instead")
-  cachePermissions(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
-  cachePermissions_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
+  attributes: UserPermission!
+    @deprecated(reason: "Use root level fields instead")
+  cachePermissions(
+    filters: InnoUserFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): [InnoUser]!
+  cachePermissions_connection(
+    filters: InnoUserFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): InnoUserRelationResponseCollection
   createdAt: DateTime
   data: UserPermission! @deprecated(reason: "Use root level fields instead")
   documentId: ID!
@@ -2286,4 +2576,70 @@ type UsersPermissionsUserRelationResponseCollection {
   data: [UsersPermissionsUser!]!
     @deprecated(reason: "Use `nodes` field instead")
   nodes: [UsersPermissionsUser!]!
+}
+
+type WeeklyEmailTemplate {
+  attributes: WeeklyEmailTemplate!
+    @deprecated(reason: "Use root level fields instead")
+  createdAt: DateTime
+  data: WeeklyEmailTemplate!
+    @deprecated(reason: "Use root level fields instead")
+  documentId: ID!
+  headerImage: UploadFile
+  headerSubtitle: String!
+  headerTitle: String!
+  id: ID! @deprecated(reason: "Use `documentId` instead")
+  locale: String
+  localizations: [WeeklyEmailTemplate]!
+  localizations_connection: WeeklyEmailTemplateRelationResponseCollection
+  preview: String!
+  publishedAt: DateTime
+  subject: String!
+  updatedAt: DateTime
+}
+
+type WeeklyEmailTemplateEntity {
+  attributes: WeeklyEmailTemplate
+  id: ID
+}
+
+type WeeklyEmailTemplateEntityResponse {
+  data: WeeklyEmailTemplate
+}
+
+type WeeklyEmailTemplateEntityResponseCollection {
+  data: [WeeklyEmailTemplate!]! @deprecated(reason: "Use `nodes` field instead")
+  meta: ResponseCollectionMeta!
+    @deprecated(reason: "Use the `pageInfo` field instead")
+  nodes: [WeeklyEmailTemplate!]!
+  pageInfo: Pagination!
+}
+
+input WeeklyEmailTemplateFiltersInput {
+  and: [WeeklyEmailTemplateFiltersInput]
+  createdAt: DateTimeFilterInput
+  headerSubtitle: StringFilterInput
+  headerTitle: StringFilterInput
+  locale: StringFilterInput
+  localizations: WeeklyEmailTemplateFiltersInput
+  not: WeeklyEmailTemplateFiltersInput
+  or: [WeeklyEmailTemplateFiltersInput]
+  preview: StringFilterInput
+  publishedAt: DateTimeFilterInput
+  subject: StringFilterInput
+  updatedAt: DateTimeFilterInput
+}
+
+input WeeklyEmailTemplateInput {
+  headerImage: ID
+  headerSubtitle: String
+  headerTitle: String
+  preview: String
+  publishedAt: DateTime
+  subject: String
+}
+
+type WeeklyEmailTemplateRelationResponseCollection {
+  data: [WeeklyEmailTemplate!]! @deprecated(reason: "Use `nodes` field instead")
+  nodes: [WeeklyEmailTemplate!]!
 }
