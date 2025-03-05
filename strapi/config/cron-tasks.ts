@@ -1,15 +1,15 @@
-import { Strapi } from "@strapi/strapi";
-
 export default {
   weeklyEmailJob: {
-    task: async ({ strapi }: { strapi: Strapi }) => {
+    task: async ({ strapi }) => {
       console.log("Running weekly email job");
-      const webhooks = await strapi.webhookStore.findWebhooks();
+      const webhookStore = strapi.serviceMap.get("webhookStore");
+      const webhooks = await webhookStore.findWebhooks();
       const weeklyEmailHook = webhooks.find(
         ({ name }) => name === "weekly email"
       );
       if (weeklyEmailHook)
-        await strapi.webhookRunner
+        await strapi.serviceMap
+          .get("webhookRunner")
           .run(weeklyEmailHook, "trigger-cron")
           .then(console.log);
     },
@@ -18,17 +18,18 @@ export default {
     },
   },
   createWeeklyEmailWebhookIfNotExists: {
-    task: async ({ strapi }: { strapi: Strapi }) => {
-      const webhooks = await strapi.webhookStore.findWebhooks();
+    task: async ({ strapi }) => {
+      const webhookStore = strapi.serviceMap.get("webhookStore");
+      const webhooks = await webhookStore.findWebhooks();
       const weeklyEmailHook = webhooks.find(
         ({ name }) => name === "weekly email"
       );
       if (!weeklyEmailHook) {
         console.error("Weekly email webhook not found");
-        await strapi.webhookStore.createWebhook({
+        await webhookStore.createWebhook({
           id: "weekly-email",
           name: "weekly email",
-          url: "http://localhost:3000/api/hooks/weekly-email", //TODO
+          url: "https://<backend_url>/api/hooks/weekly-email",
           headers: {
             Authorization: "<changeme>",
           },
