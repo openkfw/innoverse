@@ -81,15 +81,6 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
           {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} ({commentCount})
         </Button>
       )}
-      {comments.isLoading && <CommentThreadSkeleton sx={{ pl: indentComments, mt: 2 }} />}
-      {comments.isVisible && (
-        <Stack spacing={2} sx={{ pl: indentComments }}>
-          {comments.data.map(
-            (comment, idx) =>
-              typeof comment != 'string' && renderComment(comment, idx, () => deleteComment(comment), updateComment),
-          )}
-        </Stack>
-      )}
       {showCloseThreadButton && (
         <Button
           startIcon={<RemoveIcon color="primary" fontSize="large" />}
@@ -99,6 +90,15 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
         >
           {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showLess()}
         </Button>
+      )}
+      {comments.isLoading && <CommentThreadSkeleton sx={{ pl: indentComments, mt: 2 }} />}
+      {comments.isVisible && (
+        <Stack spacing={2} sx={{ pl: indentComments }}>
+          {comments.data.map(
+            (comment, idx) =>
+              typeof comment != 'string' && renderComment(comment, idx, () => deleteComment(comment), updateComment),
+          )}
+        </Stack>
       )}
     </Stack>
   );
