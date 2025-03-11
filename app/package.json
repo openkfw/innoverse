@@ -74,7 +74,7 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.12.16",
-    "@inlang/paraglide-js": "^1.11.3",
+    "@inlang/paraglide-js": "^1.11.8",
     "@types/emoji-mart": "^3.0.14",
     "@types/lodash": "^4.17.13",
     "@types/node": "^20.4.5",
@@ -108,7 +108,9 @@
         "CVE-2025-25285",
         "CVE-2025-25288",
         "CVE-2025-25289",
-        "CVE-2025-25290"
+        "CVE-2025-25290",
+        "CVE-2025-27152",
+        "CVE-2025-27109"
       ]
     }
   }
