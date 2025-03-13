@@ -16,10 +16,8 @@ import {
   GetInnoUserByEmailQuery,
   GetInnoUserByProviderIdQuery,
   GetInnoUserByUsernameQuery,
-  InnoUserFragment,
 } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { ResultOf } from 'gql.tada';
 
 const logger = getLogger();
 
@@ -36,7 +34,7 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
       avatarId: uploadedImage ? (uploadedImage.id as unknown as string) : null,
     });
 
-    const userData = response.createInnoUser as ResultOf<typeof InnoUserFragment>;
+    const userData = response.createInnoUser;
     if (!userData) throw new Error('Response contained no user data');
     const createdUser = mapToUser(userData);
     return createdUser;

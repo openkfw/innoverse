@@ -3,7 +3,6 @@ import { ResultOf } from 'gql.tada';
 import { BasicSurveyQuestion, SurveyQuestion, SurveyVote } from '@/common/types';
 import { toDate } from '@/utils/helpers';
 import { SurveyQuestionFragment } from '@/utils/requests/surveyQuestions/queries';
-import { ProjectFragment } from '../project/queries';
 
 export const mapToSurveyQuestion = (
   surveyQuestionData: ResultOf<typeof SurveyQuestionFragment>,
@@ -31,11 +30,13 @@ export const mapToSurveyQuestion = (
 export const mapToBasicSurveyQuestion = (
   surveyQuestionData: ResultOf<typeof SurveyQuestionFragment>,
 ): BasicSurveyQuestion => {
-  const project = surveyQuestionData.project as ResultOf<typeof ProjectFragment>;
+  const project = surveyQuestionData.project;
+  const projectId = project?.documentId;
+
   return {
     id: surveyQuestionData.documentId,
     question: surveyQuestionData.question,
-    projectId: project.documentId,
+    projectId: projectId ?? '',
     updatedAt: toDate(surveyQuestionData.updatedAt),
     createdAt: toDate(surveyQuestionData.createdAt),
   };

@@ -46,7 +46,7 @@ export async function getSurveyQuestionsByProjectId(projectId: string) {
     if (!surveyQuestionsData) throw new Error('Response contained no survey question data');
 
     const mapToEntities = surveyQuestionsData.map(async (surveyQuestionData) => {
-      const votes = await getSurveyVotes(dbClient, surveyQuestionData.documentId);
+      const votes = await getSurveyVotes(dbClient, surveyQuestionData?.documentId);
       const userVote = await findUserVote({ votes });
       const surveyQuestion = mapToSurveyQuestion(surveyQuestionData, votes, userVote.data);
       return surveyQuestion;
