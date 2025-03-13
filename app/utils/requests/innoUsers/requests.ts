@@ -16,6 +16,7 @@ import {
   GetInnoUserByEmailQuery,
   GetInnoUserByProviderIdQuery,
   GetInnoUserByUsernameQuery,
+  GetInnoUsersByProviderIdsQuery,
 } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
@@ -64,6 +65,17 @@ export async function getInnoUserByProviderId(providerId: string) {
     return user;
   } catch (err) {
     const error = strapiError('Getting Inno user by providerId', err as RequestError, providerId);
+    logger.error(error);
+    throw error;
+  }
+}
+
+export async function getInnoUsersByProviderIds(providerIds: string[]) {
+  try {
+    const response = await strapiGraphQLFetcher(GetInnoUsersByProviderIdsQuery, { providerIds });
+    return response.innoUsers?.data.map(mapToUser) ?? [];
+  } catch (err) {
+    const error = strapiError('Getting Inno user by providerId', err as RequestError, providerIds.join(', '));
     logger.error(error);
     throw error;
   }

@@ -836,6 +836,50 @@ input PaginationArg {
   start: Int
 }
 
+type Post {
+  anonymous: Boolean
+  author: InnoUserEntityResponse
+  comment: String
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type PostEntity {
+  attributes: Post
+  id: ID
+}
+
+type PostEntityResponse {
+  data: PostEntity
+}
+
+type PostEntityResponseCollection {
+  data: [PostEntity!]!
+  meta: ResponseCollectionMeta!
+}
+
+input PostFiltersInput {
+  and: [PostFiltersInput]
+  anonymous: BooleanFilterInput
+  author: InnoUserFiltersInput
+  comment: StringFilterInput
+  createdAt: DateTimeFilterInput
+  id: IDFilterInput
+  not: PostFiltersInput
+  or: [PostFiltersInput]
+  updatedAt: DateTimeFilterInput
+}
+
+input PostInput {
+  anonymous: Boolean
+  author: ID
+  comment: String
+}
+
+type PostRelationResponseCollection {
+  data: [PostEntity!]!
+}
+
 type Project {
   attributes: Project! @deprecated(reason: "Use root level fields instead")
   author: InnoUser

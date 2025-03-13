@@ -189,3 +189,19 @@ export const updateFollowsId = async (client: PrismaClient, id: string, document
     },
   });
 };
+export async function updateFollowObjectId(
+  client: PrismaClient,
+  oldObjectId: string,
+  newObjectId: string,
+  objectType: ObjectType,
+) {
+  return client.follow.updateMany({
+    where: {
+      objectId: oldObjectId,
+      objectType: objectType as PrismaObjectType,
+    },
+    data: {
+      objectId: newObjectId,
+    },
+  });
+}

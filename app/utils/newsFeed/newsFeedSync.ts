@@ -4,7 +4,6 @@ import { ObjectType } from '@/common/types';
 import { serverConfig } from '@/config/server';
 import { getCommentsStartingFrom } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
-import { getPostsStartingFrom } from '@/repository/db/posts';
 import dbClient from '@/repository/db/prisma/prisma';
 import { createNewsFeedEntryForComment } from '@/services/collaborationCommentService';
 import { createNewsFeedEntryForEvent } from '@/services/eventService';
@@ -35,6 +34,7 @@ import {
   transactionalDeleteItemsFromRedis,
   transactionalSaveNewsFeedEntry,
 } from './redis/redisService';
+import { getPostsStartingFrom } from '../requests/posts/requests';
 
 const logger = getLogger();
 const maxSyncRetries = 3;
@@ -157,9 +157,13 @@ const removeKeysAndSaveNewEntriesAsTransaction = async (
   );
 };
 
-const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
+export const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
   // posts fetched from prisma, hence no pagination required
-  const posts = await getPostsStartingFrom(dbClient, from);
+  const posts = await fetchPages({
+    fetcher: async (page, pageSize) => {
+      return (await getPostsStartingFrom({ from, page, pageSize })) ?? [];
+    },
+  });
   if (posts.length === 0) {
     logger.info('No posts found to sync');
   }
@@ -167,7 +171,7 @@ const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEn
   const newsFeedEntries = await getPromiseResults(mapEntries);
 
   newsFeedEntries.map(async (entry) => {
-    const comments = await saveEntryNewsComments(entry);
+    const comments = await saveEntryNewsComments(entry, ObjectType.POST);
     entry.item.comments = comments;
   });
   return newsFeedEntries.filter((entry): entry is RedisNewsFeedEntry => entry !== null);
@@ -197,7 +201,7 @@ const aggregateProjectUpdates = async ({ from }: { from: Date }): Promise<RedisN
   const newsFeedEntries = await getPromiseResults(createdProjectUpdates);
 
   newsFeedEntries.map(async (entry) => {
-    const comments = await saveEntryNewsComments(entry);
+    const comments = await saveEntryNewsComments(entry, ObjectType.UPDATE);
     entry.item.comments = comments;
   });
   return newsFeedEntries;

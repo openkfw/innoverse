@@ -2,8 +2,8 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { CommentWithResponses, CommonCommentProps, UserSession } from '@/common/types';
-import { getCommentById, getCommentsByObjectId as getCommentsByObjectIdFromDB } from '@/repository/db/comment';
+import { CommentWithResponses, CommonCommentProps, ObjectType, UserSession } from '@/common/types';
+import { getCommentById, getCommentsByObjectIdAndType } from '@/repository/db/comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
@@ -16,30 +16,36 @@ import { mapToComment } from '@/utils/requests/comments/mapping';
 
 const logger = getLogger();
 
-export const getCommentsByObjectId = withAuth(async (user: UserSession, body: { objectId: string }) => {
-  try {
-    const commensWithResponses = await getCommentsByObjectIdWithResponses(body.objectId, user.providerId);
-    return {
-      status: StatusCodes.OK,
-      data: commensWithResponses,
-    };
-  } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Getting comments for object with id: ${body.objectId}`,
-      err as Error,
-      body.objectId,
-    );
-    logger.error(error);
-    return {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Getting comments for object failed',
-    };
-  }
-});
+export const getCommentsByObjectId = withAuth(
+  async (user: UserSession, body: { objectId: string; objectType: ObjectType }) => {
+    try {
+      const commensWithResponses = await getCommentsByObjectIdWithResponses(
+        body.objectId,
+        body.objectType,
+        user.providerId,
+      );
+      return {
+        status: StatusCodes.OK,
+        data: commensWithResponses,
+      };
+    } catch (err) {
+      const error: InnoPlatformError = dbError(
+        `Getting comments for object with id: ${body.objectId}`,
+        err as Error,
+        body.objectId,
+      );
+      logger.error(error);
+      return {
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: 'Getting comments for object failed',
+      };
+    }
+  },
+);
 
-export const getRedisNewsCommentsWithResponses = async (objectId: string) => {
+export const getRedisNewsCommentsWithResponses = async (objectId: string, objectType: ObjectType) => {
   try {
-    const commensWithResponses = await getCommentsByObjectIdWithResponses(objectId);
+    const commensWithResponses = await getCommentsByObjectIdWithResponses(objectId, objectType);
     return mapCommentWithResponsesToRedisNewsComments(commensWithResponses);
   } catch (err) {
     const error: InnoPlatformError = dbError(`Getting news comment by id: ${objectId}`, err as Error, objectId);
@@ -48,8 +54,8 @@ export const getRedisNewsCommentsWithResponses = async (objectId: string) => {
   }
 };
 
-export const getCommentsByObjectIdWithResponses = async (objectId: string, userId?: string) => {
-  const dbComments = await getCommentsByObjectIdFromDB(dbClient, objectId);
+export const getCommentsByObjectIdWithResponses = async (objectId: string, objectType: ObjectType, userId?: string) => {
+  const dbComments = await getCommentsByObjectIdAndType(dbClient, objectId, objectType);
   const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment, userId)));
   return setResponses(comments);
 };
@@ -100,9 +106,9 @@ const getResponsesForComment = (
     .map((response) => ({ ...response, comments: [] }));
 };
 
-export async function saveEntryNewsComments(entry: RedisNewsFeedEntry) {
+export async function saveEntryNewsComments(entry: RedisNewsFeedEntry, objectType: ObjectType) {
   const redisClient = await getRedisClient();
-  const comments = await getRedisNewsCommentsWithResponses(entry.item.id);
+  const comments = await getRedisNewsCommentsWithResponses(entry.item.id, objectType);
   if (comments.length > 0) {
     return await saveComments(redisClient, entry, comments);
   }

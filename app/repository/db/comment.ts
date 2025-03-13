@@ -25,11 +25,17 @@ export async function countComments(client: PrismaClient, objectId: string) {
   }
 }
 
-export async function getCommentsByObjectId(client: PrismaClient, objectId: string, sort: 'asc' | 'desc' = 'desc') {
+export async function getCommentsByObjectIdAndType(
+  client: PrismaClient,
+  objectId: string,
+  objectType: ObjectType,
+  sort: 'asc' | 'desc' = 'desc',
+) {
   try {
     return await client.comment.findMany({
       where: {
         objectId,
+        objectType: objectType as PrismaObjectType,
       },
       orderBy: {
         createdAt: sort,
@@ -223,3 +229,19 @@ export const updateCommentsId = async (
     },
   });
 };
+export async function updateCommentObjectId(
+  client: PrismaClient,
+  oldObjectId: string,
+  newObjectId: string,
+  objectType: ObjectType,
+) {
+  return client.comment.updateMany({
+    where: {
+      objectId: oldObjectId,
+      objectType: objectType as PrismaObjectType,
+    },
+    data: {
+      objectId: newObjectId,
+    },
+  });
+}
