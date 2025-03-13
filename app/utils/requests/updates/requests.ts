@@ -372,14 +372,3 @@ export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: St
     logger.error(error);
   }
 }
-
-export async function getCommentsForProjectUpdateStartingFrom({ from, page, pageSize }: StartPagination) {
-  try {
-    const response = await strapiGraphQLFetcher(GetUpdatesStartingFromQuery, { from, page, pageSize });
-    const updates = mapToProjectUpdates(response.updates?.data);
-    return updates;
-  } catch (err) {
-    const error = strapiError('Getting updates', err as RequestError);
-    logger.error(error);
-  }
-}

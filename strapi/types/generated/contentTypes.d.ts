@@ -994,6 +994,34 @@ export interface ApiOpportunityOpportunity extends Schema.CollectionType {
   };
 }
 
+export interface ApiPostPost extends Schema.CollectionType {
+  collectionName: 'posts';
+  info: {
+    singularName: 'post';
+    pluralName: 'posts';
+    displayName: 'Post';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    comment: Attribute.Text;
+    anonymous: Attribute.Boolean;
+    author: Attribute.Relation<
+      'api::post.post',
+      'oneToOne',
+      'api::inno-user.inno-user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
 export interface ApiProjectProject extends Schema.CollectionType {
   collectionName: 'projects';
   info: {
@@ -1208,6 +1236,7 @@ declare module '@strapi/types' {
       'api::event.event': ApiEventEvent;
       'api::inno-user.inno-user': ApiInnoUserInnoUser;
       'api::opportunity.opportunity': ApiOpportunityOpportunity;
+      'api::post.post': ApiPostPost;
       'api::project.project': ApiProjectProject;
       'api::question.question': ApiQuestionQuestion;
       'api::survey-question.survey-question': ApiSurveyQuestionSurveyQuestion;

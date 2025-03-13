@@ -23,7 +23,7 @@ export const NewsUpdateThread = (props: NewsUpdateThreadProps) => {
   };
 
   const fetchComments = async () => {
-    const result = await getCommentsByObjectId({ objectId: update.id });
+    const result = await getCommentsByObjectId({ objectId: update.id, objectType: ObjectType.UPDATE });
     return result.data;
   };
 

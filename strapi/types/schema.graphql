@@ -403,7 +403,7 @@ input FloatFilterInput {
   startsWith: Float
 }
 
-union GenericMorph = CollaborationQuestion | ComponentDescriptionDescription | ComponentImageImage | ComponentResponseOptionsResponseOptions | ComponentSliderTextSliderText | ComponentTagsTags | ComponentThemeTheme | ComponentUserAuthor | Event | I18NLocale | InnoUser | Opportunity | Project | Question | SurveyQuestion | Update | UploadFile | UploadFolder | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser
+union GenericMorph = CollaborationQuestion | ComponentDescriptionDescription | ComponentImageImage | ComponentResponseOptionsResponseOptions | ComponentSliderTextSliderText | ComponentTagsTags | ComponentThemeTheme | ComponentUserAuthor | Event | I18NLocale | InnoUser | Opportunity | Post | Project | Question | SurveyQuestion | Update | UploadFile | UploadFolder | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser
 
 type I18NLocale {
   code: String
@@ -639,6 +639,7 @@ type Mutation {
   createEvent(data: EventInput!): EventEntityResponse
   createInnoUser(data: InnoUserInput!): InnoUserEntityResponse
   createOpportunity(data: OpportunityInput!): OpportunityEntityResponse
+  createPost(data: PostInput!): PostEntityResponse
   createProject(data: ProjectInput!): ProjectEntityResponse
   createQuestion(data: QuestionInput!): QuestionEntityResponse
   createSurveyQuestion(data: SurveyQuestionInput!): SurveyQuestionEntityResponse
@@ -655,6 +656,7 @@ type Mutation {
   deleteEvent(id: ID!): EventEntityResponse
   deleteInnoUser(id: ID!): InnoUserEntityResponse
   deleteOpportunity(id: ID!): OpportunityEntityResponse
+  deletePost(id: ID!): PostEntityResponse
   deleteProject(id: ID!): ProjectEntityResponse
   deleteQuestion(id: ID!): QuestionEntityResponse
   deleteSurveyQuestion(id: ID!): SurveyQuestionEntityResponse
@@ -689,6 +691,7 @@ type Mutation {
   updateFileInfo(id: ID!, info: FileInfoInput): UploadFileEntityResponse!
   updateInnoUser(data: InnoUserInput!, id: ID!): InnoUserEntityResponse
   updateOpportunity(data: OpportunityInput!, id: ID!): OpportunityEntityResponse
+  updatePost(data: PostInput!, id: ID!): PostEntityResponse
   updateProject(data: ProjectInput!, id: ID!): ProjectEntityResponse
   updateQuestion(data: QuestionInput!, id: ID!): QuestionEntityResponse
   updateSurveyQuestion(data: SurveyQuestionInput!, id: ID!): SurveyQuestionEntityResponse
@@ -772,6 +775,50 @@ input PaginationArg {
   page: Int
   pageSize: Int
   start: Int
+}
+
+type Post {
+  anonymous: Boolean
+  author: InnoUserEntityResponse
+  comment: String
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type PostEntity {
+  attributes: Post
+  id: ID
+}
+
+type PostEntityResponse {
+  data: PostEntity
+}
+
+type PostEntityResponseCollection {
+  data: [PostEntity!]!
+  meta: ResponseCollectionMeta!
+}
+
+input PostFiltersInput {
+  and: [PostFiltersInput]
+  anonymous: BooleanFilterInput
+  author: InnoUserFiltersInput
+  comment: StringFilterInput
+  createdAt: DateTimeFilterInput
+  id: IDFilterInput
+  not: PostFiltersInput
+  or: [PostFiltersInput]
+  updatedAt: DateTimeFilterInput
+}
+
+input PostInput {
+  anonymous: Boolean
+  author: ID
+  comment: String
+}
+
+type PostRelationResponseCollection {
+  data: [PostEntity!]!
 }
 
 type Project {
@@ -861,6 +908,8 @@ type Query {
   me: UsersPermissionsMe
   opportunities(filters: OpportunityFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): OpportunityEntityResponseCollection
   opportunity(id: ID): OpportunityEntityResponse
+  post(id: ID): PostEntityResponse
+  posts(filters: PostFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): PostEntityResponseCollection
   project(id: ID): ProjectEntityResponse
   projects(filters: ProjectFiltersInput, pagination: PaginationArg = {}, publicationState: PublicationState = LIVE, sort: [String] = []): ProjectEntityResponseCollection
   question(id: ID): QuestionEntityResponse

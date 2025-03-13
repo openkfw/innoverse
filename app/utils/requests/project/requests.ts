@@ -5,7 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import { Comment, ObjectType, StartPagination, UserSession } from '@/common/types';
 import { getCommentsSchema } from '@/components/project-details/comments/validationSchema';
 import { RequestError } from '@/entities/error';
-import { getCommentsByObjectId, isCommentLikedBy } from '@/repository/db/comment';
+import { getCommentsByObjectIdAndType, isCommentLikedBy } from '@/repository/db/comment';
 import { getProjectFollowers, isProjectFollowedBy } from '@/repository/db/follow';
 import { getProjectLikes, isObjectLikedBy } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
@@ -243,7 +243,7 @@ export const getProjectComments = async (body: { projectId: string }) => {
   try {
     const validatedParams = validateParams(getCommentsSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
-      const dbComments = await getCommentsByObjectId(dbClient, body.projectId, 'asc');
+      const dbComments = await getCommentsByObjectIdAndType(dbClient, body.projectId, ObjectType.PROJECT, 'asc');
       const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment)));
 
       const getLikes = comments.map(async (comment): Promise<Comment> => {

@@ -13,7 +13,7 @@ export const NewsPostThread = ({ entry }: NewsPostThreadProps) => {
   const post = entry.item as Post;
 
   const fetchComments = async () => {
-    const result = await getCommentsByObjectId({ objectId: post.id });
+    const result = await getCommentsByObjectId({ objectId: post.id, objectType: ObjectType.POST });
     return result.data;
   };
   const addComment = async (text: string) => {
