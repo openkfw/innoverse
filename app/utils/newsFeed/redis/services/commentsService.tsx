@@ -8,6 +8,7 @@ import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/req
 import { NewsType, RedisNewsComment, RedisNewsFeedEntry } from '../models';
 import { getRedisClient, RedisClient, RedisIndex } from '../redisClient';
 import { getNewsFeedEntryByKey } from '../redisService';
+import { ObjectType } from '@/common/types';
 
 const logger = getLogger();
 
@@ -175,11 +176,15 @@ const getCommentsByParentId = async (client: RedisClient, parentId: string) => {
   return items;
 };
 
-export async function getNewsFeedEntryWithComments(client: RedisClient, entryType: NewsType, entryId: string) {
-  const entry = await getNewsFeedEntryByKey(client, `${entryType}:${entryId}`);
+export async function getNewsFeedEntryWithComments(
+  client: RedisClient,
+  itemType: { newsType: NewsType; objectType: ObjectType },
+  entryId: string,
+) {
+  const entry = await getNewsFeedEntryByKey(client, `${itemType.newsType}:${entryId}`);
   if (entry) {
     // TODO: return the comments from Redis Cache instead of the DB
-    const comments = await getRedisNewsCommentsWithResponses(entry.item.id);
+    const comments = await getRedisNewsCommentsWithResponses(entry.item.id, itemType.objectType);
     return { ...entry, item: { ...entry.item, comments } } as RedisNewsFeedEntry;
   }
 }
@@ -198,7 +203,10 @@ export async function searchNewsComments(
   query: string,
   searchOptions: SearchOptions,
 ) {
-  const itemTypes = [NewsType.POST, NewsType.UPDATE];
+  const itemTypes = [
+    { newsType: NewsType.POST, objectType: ObjectType.POST },
+    { newsType: NewsType.UPDATE, objectType: ObjectType.UPDATE },
+  ];
   const result = await Promise.all(
     itemTypes.map(async (itemType, id) => {
       const resultComments = await searchComments(client, index, query, searchOptions);

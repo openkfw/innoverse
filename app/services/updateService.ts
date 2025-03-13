@@ -119,7 +119,7 @@ export const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate)
     const updateReactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
     const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, update.projectId);
     const mappedUpdateFollowedBy = await mapToRedisUsers(projectFollowedBy);
-    const comments = await getRedisNewsCommentsWithResponses(update.id);
+    const comments = await getRedisNewsCommentsWithResponses(update.id, ObjectType.UPDATE);
     const commentsIds = comments.map((comment) => comment.id);
 
     return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, commentsIds);

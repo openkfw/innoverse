@@ -1206,6 +1206,7 @@ declare module '@strapi/strapi' {
       'api::event.event': ApiEventEvent;
       'api::inno-user.inno-user': ApiInnoUserInnoUser;
       'api::opportunity.opportunity': ApiOpportunityOpportunity;
+      'api::post.post': ApiPostPost;
       'api::project.project': ApiProjectProject;
       'api::question.question': ApiQuestionQuestion;
       'api::survey-question.survey-question': ApiSurveyQuestionSurveyQuestion;
