@@ -14,18 +14,15 @@ import getLogger from '@/utils/logger';
 import { getProjectCollaborationComments } from '@/utils/requests/collaborationComments/requests';
 import { mapToCollaborationQuestion } from '@/utils/requests/collaborationQuestions/mappings';
 import {
-  CollaborationQuestionFragment,
+  GetCollaborationQuesstionsStartingFromQuery,
   GetCollaborationQuestionByIdQuery,
   GetCollaborationQuestionsByProjectIdQuery,
   GetCollaborationQuestionsCountProjectIdQuery,
   GetPlatformFeedbackCollaborationQuestion,
-  GetCollaborationQuestsionsStartingFromQuery,
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 import { mapToBasicCollaborationQuestion } from './mappings';
-import { ResultOf } from 'gql.tada';
-import { ProjectFragment } from '../project/queries';
 
 const logger = getLogger();
 
@@ -35,7 +32,7 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
     const questionsData = response.collaborationQuestions ?? [];
 
     const mapToEntities = questionsData.map(async (questionData) => {
-      const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData.documentId });
+      const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData?.documentId });
       const comments = getComments.data ?? [];
 
       const getCommentsWithLike = comments.map(async (comment) => {
@@ -58,7 +55,7 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
 export async function getBasicCollaborationQuestionById(id: string): Promise<BasicCollaborationQuestion | undefined> {
   try {
     const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { documentId: id });
-    const data = response.collaborationQuestion as ResultOf<typeof CollaborationQuestionFragment>;
+    const data = response.collaborationQuestion;
     if (!data) throw new Error('Response contained no collaboration question data');
     const collaborationQuestion = mapToBasicCollaborationQuestion(data);
     return collaborationQuestion;
@@ -71,7 +68,7 @@ export async function getBasicCollaborationQuestionById(id: string): Promise<Bas
 export async function getBasicCollaborationQuestionByIdWithAdditionalData(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { documentId: id });
-    const data = response.collaborationQuestion as ResultOf<typeof CollaborationQuestionFragment>;
+    const data = response.collaborationQuestion;
     if (!data) throw new Error('Response contained no collaboration question data');
     const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, id);
     const collaborationQuestion = mapToBasicCollaborationQuestion(data);
@@ -92,7 +89,7 @@ export async function getBasicCollaborationQuestionStartingFromWithAdditionalDat
   pageSize,
 }: StartPagination) {
   try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestsionsStartingFromQuery, { from, page, pageSize });
+    const response = await strapiGraphQLFetcher(GetCollaborationQuesstionsStartingFromQuery, { from, page, pageSize });
     const data = response.collaborationQuestions;
     if (!data) throw new Error('Response contained no collaboration question data');
 
@@ -101,7 +98,7 @@ export async function getBasicCollaborationQuestionStartingFromWithAdditionalDat
       const reactions = await getReactionsForEntity(
         dbClient,
         ObjectType.COLLABORATION_QUESTION,
-        questionData.documentId,
+        questionData?.documentId,
       );
       return { ...basicQuestion, reactions };
     });
@@ -123,7 +120,7 @@ export async function getPlatformFeedbackCollaborationQuestion() {
     if (!response.collaborationQuestions || !response.collaborationQuestions.length) return;
     const questionData = response.collaborationQuestions[0];
     if (!questionData.project) throw new Error('Collaboration question is not linked to a project');
-    const project = questionData.project as ResultOf<typeof ProjectFragment>;
+    const project = questionData.project;
 
     const collaborationQuestion = {
       collaborationQuestionId: questionData.documentId,

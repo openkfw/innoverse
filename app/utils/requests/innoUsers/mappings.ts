@@ -16,7 +16,7 @@ export function mapFirstToUserOrThrow(users: ResultOf<typeof InnoUserFragment>[]
   return mapToUser(user);
 }
 
-export function mapToUser(userData: ResultOf<typeof InnoUserFragment>): User {
+export function mapToUser(userData: ResultOf<typeof InnoUserFragment | null>): User {
   return {
     id: userData.documentId,
     name: userData.name,

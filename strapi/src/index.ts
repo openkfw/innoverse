@@ -11,7 +11,7 @@ export default {
     const extension = ({}) => ({
       typeDefs: `
         type Query {
-          updateOpportunityParticipants(documentId: ID!, participantId: ID!): OpportunityEntityResponse
+          updateOpportunityParticipants(documentId: ID!, participantId: ID!): Opportunity
         }
       `,
       resolvers: {

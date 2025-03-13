@@ -13,7 +13,6 @@ import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapToEvent, mapToEvents } from '@/utils/requests/events/mappings';
 import {
-  EventFragment,
   GetEventByIdQuery,
   GetEventsPageQuery,
   GetEventsStartingFromQuery,
@@ -25,7 +24,6 @@ import {
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { findReactionByUser } from '@/utils/requests/updates/requests';
 import { validateParams } from '@/utils/validationHelper';
-import { ResultOf } from 'gql.tada';
 
 const logger = getLogger();
 
@@ -33,7 +31,7 @@ export async function getEventById(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetEventByIdQuery, { id });
     if (!response.event) return null;
-    const event = mapToEvent(response.event as ResultOf<typeof EventFragment>);
+    const event = mapToEvent(response.event);
     return event;
   } catch (err) {
     const error = strapiError('Getting event by id', err as RequestError, id);
@@ -45,7 +43,7 @@ export async function getEventByIdWithReactions(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetEventByIdQuery, { id });
     if (!response.event) throw new Error('Response contained no event');
-    const event = mapToEvent(response.event as ResultOf<typeof EventFragment>);
+    const event = mapToEvent(response.event);
     const reactions = await getReactionsForEntity(dbClient, ObjectType.EVENT, event.id);
     return { ...event, reactions };
   } catch (err) {

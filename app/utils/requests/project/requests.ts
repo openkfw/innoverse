@@ -27,7 +27,6 @@ import {
   GetProjectsStartingFromQuery,
   GetProjectTitleByIdQuery,
   GetProjectTitleByIdsQuery,
-  ProjectFragment,
 } from '@/utils/requests/project/queries';
 import { getProjectQuestionsByProjectId } from '@/utils/requests/questions/requests';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
@@ -36,9 +35,6 @@ import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
 import { validateParams } from '@/utils/validationHelper';
 
 import { mapToComment } from '../comments/mapping';
-import { getInnoUserByProviderId } from '../innoUsers/requests';
-import { ResultOf } from 'gql.tada';
-import { InnoUserFragment } from '../innoUsers/queries';
 
 const logger = getLogger();
 
@@ -59,9 +55,11 @@ export async function getProjectTitleById(id: string) {
 export async function getProjectTitleByIds(ids: string[], page: number, pageSize: number) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectTitleByIdsQuery, { ids, page, pageSize });
-    const data = response.projects;
-    if (!data) throw 'Response contained no project data';
-    const projectTitles = data.map((project) => ({ id: project.documentId, title: project.title as string }));
+    if (!response.projects) throw 'Response contained no project data';
+    const projectTitles = response.projects.map((project) => ({
+      id: project?.documentId,
+      title: project?.title as string,
+    }));
     return projectTitles;
   } catch (err) {
     const e: InnoPlatformError = strapiError('Getting Project titles by ID list', err as RequestError);
@@ -72,10 +70,8 @@ export async function getProjectTitleByIds(ids: string[], page: number, pageSize
 export async function getProjectById(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectByIdQuery, { id });
-    const projectData = response.project as ResultOf<typeof ProjectFragment>;
-
+    const projectData = response.project;
     if (!projectData) throw new Error('Response contained no project data');
-
     const projectComments = await getProjectComments({ projectId: projectData.documentId });
 
     if (!projectComments.data) throw new Error('Failed to load project comments for project');
@@ -159,7 +155,7 @@ export async function getProjectsBySearchString(
       sort: `${sort.by}:${sort.order}`,
       searchString,
     });
-    const projects = response.projects.map(mapToBasicProject) ?? [];
+    const projects = response.projects?.map(mapToBasicProject) ?? [];
     return projects;
   } catch (err) {
     console.info(err);
@@ -170,7 +166,7 @@ export async function getProjectAuthorIdByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectAuthorIdByProjectIdQuery, { projectId });
     const projectData = response.project;
-    const authorData = projectData?.author as ResultOf<typeof InnoUserFragment>;
+    const authorData = projectData?.author;
 
     if (!projectData) throw new Error('Response contained no project data');
 
@@ -284,8 +280,8 @@ export const getProjectComments = async (body: { projectId: string }) => {
 export async function getProjectByIdWithReactions(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectByIdQuery, { id });
-    if (!response?.project) throw new Error('Response contained no project');
-    const project = mapToBasicProject(response.project as ResultOf<typeof ProjectFragment>);
+    if (!response.project) throw new Error('Response contained no project');
+    const project = mapToBasicProject(response.project);
     const reactions = await getReactionsForEntity(dbClient, ObjectType.PROJECT, project.id);
     return { ...project, reactions };
   } catch (err) {
@@ -297,6 +293,7 @@ export async function getProjectByIdWithReactions(id: string) {
 export async function getProjectsStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetProjectsStartingFromQuery, { from, page, pageSize });
+    if (!response.projects) throw new Error('Response contained no projects');
     const projects = mapToProjects(response.projects);
     return projects;
   } catch (err) {

@@ -12,6 +12,7 @@ const logger = getLogger();
 export async function getProjectQuestionsByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetQuestionsByProjectIdQuery, { projectId });
+    if (!response.questions) throw 'Response contained no questions';
     const questions = response.questions.map((question) => mapToQuestion(question)) ?? [];
     return questions;
   } catch (err) {

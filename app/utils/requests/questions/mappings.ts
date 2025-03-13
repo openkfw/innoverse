@@ -1,9 +1,9 @@
 import { ResultOf } from 'gql.tada';
 
 import { ProjectQuestion } from '@/common/types';
+import { toDate } from '@/utils/helpers';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
-import { toDate } from '@/utils/helpers';
 
 type ProjectQuestionData = {
   authors: ResultOf<typeof InnoUserFragment>[] | null;

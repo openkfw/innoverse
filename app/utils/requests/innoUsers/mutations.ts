@@ -30,7 +30,9 @@ export const CreateInnoUserMutation = graphql(`
       role
       department
       email
+      username
       avatar {
+        formats
         url
       }
     }

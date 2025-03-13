@@ -65,7 +65,7 @@ export const GetCollaborationQuestionsCountProjectIdQuery = graphql(`
   }
 `);
 
-export const GetCollaborationQuestsionsStartingFromQuery = graphql(
+export const GetCollaborationQuesstionsStartingFromQuery = graphql(
   `
     query GetUpdatedCollaborationQuestions($from: DateTime, $page: Int, $pageSize: Int) {
       collaborationQuestions(
