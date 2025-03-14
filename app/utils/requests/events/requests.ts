@@ -44,10 +44,11 @@ export async function getEventByIdWithReactions(id: string) {
     const response = await strapiGraphQLFetcher(GetEventByIdQuery, { id });
     if (!response.event) throw new Error('Response contained no event');
     const event = mapToEvent(response.event);
+    if (!event) throw new Error('Mapping event failed');
     const reactions = await getReactionsForEntity(dbClient, ObjectType.EVENT, event.id);
     return { ...event, reactions };
   } catch (err) {
-    const error = strapiError('Getting project update', err as RequestError);
+    const error = strapiError('Getting event', err as RequestError);
     logger.error(error);
   }
 }

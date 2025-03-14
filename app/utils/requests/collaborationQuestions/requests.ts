@@ -72,6 +72,8 @@ export async function getBasicCollaborationQuestionByIdWithAdditionalData(id: st
     if (!data) throw new Error('Response contained no collaboration question data');
     const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, id);
     const collaborationQuestion = mapToBasicCollaborationQuestion(data);
+    if (!collaborationQuestion) throw new Error('Mapping collaboration question failed');
+
     return { ...collaborationQuestion, reactions };
   } catch (err) {
     const error = strapiError(
@@ -95,6 +97,7 @@ export async function getBasicCollaborationQuestionStartingFromWithAdditionalDat
 
     const mapQuestions = data.map(async (questionData) => {
       const basicQuestion = mapToBasicCollaborationQuestion(questionData);
+      if (!basicQuestion) throw new Error('Mapping basic collaboration question failed');
       const reactions = await getReactionsForEntity(
         dbClient,
         ObjectType.COLLABORATION_QUESTION,

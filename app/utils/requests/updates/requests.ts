@@ -50,10 +50,8 @@ const logger = getLogger();
 export async function getProjectUpdates(limit = 100) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesQuery, { limit });
-    const updatesData = response.updates;
-    if (!updatesData) throw new Error('Response contained no updates');
-
-    const updates = updatesData.map(mapToProjectUpdate);
+    if (!response.updates) throw new Error('Response contained no updates');
+    const updates = await mapToProjectUpdates(response.updates);
     const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
     return updatesWithAdditionalData;
   } catch (err) {
@@ -65,9 +63,8 @@ export async function getProjectUpdates(limit = 100) {
 export async function getProjectUpdateById(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdateByIdQuery, { id });
-    const updateData = response.update;
-    if (!updateData) return null;
-    const update = mapToProjectUpdate(updateData);
+    if (!response.update) throw new Error('Response contained no update');
+    const update = mapToProjectUpdate(response.update);
     return update;
   } catch (err) {
     const error = strapiError('Getting project update by id', err as RequestError, id);
@@ -80,6 +77,7 @@ export async function getProjectUpdateByIdWithReactions(id: string) {
     const response = await strapiGraphQLFetcher(GetUpdateByIdQuery, { id });
     if (!response?.update) throw new Error('Response contained no update');
     const update = mapToProjectUpdate(response.update);
+    if (!update) throw new Error('Mapping update failed');
     const reactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
     return { ...update, reactions };
   } catch (err) {
@@ -92,8 +90,7 @@ export async function getUpdatesByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesByProjectIdQuery, { projectId });
     if (!response.updates) throw new Error('Response contained no updates');
-    const updatesData = response.updates;
-    const updates = updatesData.map(mapToProjectUpdate);
+    const updates = await mapToProjectUpdates(response.updates);
     const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
     return updatesWithAdditionalData;
   } catch (err) {
@@ -172,7 +169,7 @@ export async function getProjectUpdatesPage({
     const { projects, topics } = filters;
     const response = await getUpdatesPageData({ projectTitles: projects, topics, page, pageSize, sortDirection: sort });
     if (!response.updates) throw 'Response contained no project updates';
-    const updates = response.updates.map(mapToProjectUpdate) ?? [];
+    const updates = await mapToProjectUpdates(response.updates);
     const updatesWithAdditionalData = await getUpdatesWithAdditionalData(updates);
     return updatesWithAdditionalData;
   } catch (err) {
