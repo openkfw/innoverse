@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth';
-import { StatusCodes } from 'http-status-codes';
+import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import { string, z } from 'zod';
 
 import { updatePushSubscriptionForUser } from '@/repository/db/push_subscriptions';
@@ -16,13 +16,14 @@ const bodySchema = z.object({
   newSubscription: string(),
 });
 
-export async function POST({ body }: Request) {
+export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (session == undefined) {
       return Response.json({ errors: new Error('User is not authenticated') }, { status: StatusCodes.UNAUTHORIZED });
     }
 
+    const body = await request.json();
     const { oldSubscription, newSubscription } = bodySchema.parse(body);
     await updatePushSubscriptionForUser(
       dbClient,
@@ -38,6 +39,6 @@ export async function POST({ body }: Request) {
       err as Error,
     );
     logger.error(error);
-    throw err;
+    return new Response(ReasonPhrases.INTERNAL_SERVER_ERROR, { status: StatusCodes.INTERNAL_SERVER_ERROR });
   }
 }
