@@ -225,7 +225,7 @@ export const getUpdateWithReactions = withAuth(async (user: UserSession, body: {
     status: 200,
     data: {
       ...body.update,
-      updatedAt: getUnixTimestamp(new Date(body.update.updatedAt)),
+      updatedAt: getUnixTimestamp(body.update.updatedAt),
       reactions,
       followedByUser: followedByIds.some((followerId) => followerId === user.providerId),
     },
