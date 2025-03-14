@@ -1,9 +1,10 @@
 import { NextConfig } from 'next';
+import { paraglide } from '@inlang/paraglide-next/plugin';
+import withBundleAnalyzer from '@next/bundle-analyzer';
 import { Configuration } from 'webpack';
+
 import { clientConfig } from './config/client';
 import { serverConfig } from './config/server';
-import withBundleAnalyzer from '@next/bundle-analyzer';
-import { paraglide } from '@inlang/paraglide-next/plugin';
 
 const withFonts = require('next-fonts');
 

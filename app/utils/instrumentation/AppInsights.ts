@@ -1,6 +1,7 @@
 import { ClickAnalyticsPlugin } from '@microsoft/applicationinsights-clickanalytics-js';
 import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
+
 import { clientConfig } from '@/config/client';
 
 const defaultBroserHistory = {
