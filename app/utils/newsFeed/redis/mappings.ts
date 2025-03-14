@@ -60,7 +60,7 @@ export const mapSurveyQuestionToRedisNewsFeedEntry = (
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
-    updatedAt: getUnixTimestamp(new Date(surveyQuestion.updatedAt)),
+    updatedAt: item.updatedAt,
     item: item,
     type: NewsType.SURVEY_QUESTION,
     search: escapeRedisTextSeparators(item.question || ''),
@@ -86,7 +86,7 @@ export const mapProjectToRedisNewsFeedEntry = (
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
-    updatedAt: getUnixTimestamp(new Date(item.updatedAt)),
+    updatedAt: item.updatedAt,
     item: item,
     type: NewsType.PROJECT,
     search: escapeRedisTextSeparators(
@@ -112,7 +112,7 @@ export const mapUpdateToRedisNewsFeedEntry = (
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
-    updatedAt: getUnixTimestamp(new Date(update.updatedAt)),
+    updatedAt: item.updatedAt,
     item: item,
     type: NewsType.UPDATE,
     search: escapeRedisTextSeparators((item.comment || '') + ' ' + (item.title || '')),
@@ -137,7 +137,7 @@ export const mapEventToRedisNewsFeedEntry = async (
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
-    updatedAt: getUnixTimestamp(new Date(item.updatedAt)),
+    updatedAt: item.updatedAt,
     item: item,
     type: NewsType.EVENT,
     search: escapeRedisTextSeparators(
@@ -163,7 +163,7 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
   return {
-    updatedAt: getUnixTimestamp(new Date(item.updatedAt)),
+    updatedAt: item.updatedAt,
     item: item,
     type: NewsType.COLLABORATION_QUESTION,
     search: escapeRedisTextSeparators((item.title || '') + ' ' + (item.description || '')),
