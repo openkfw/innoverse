@@ -1,4 +1,3 @@
-import { ObjectType } from '@/common/types';
 import getLogger from '@/utils/logger';
 import { CollaborationQuestionLifecycle } from '@/utils/strapiEvents/entityLifecycles/collaborationQuestionLifecycle';
 import { EventLifecycle } from '@/utils/strapiEvents/entityLifecycles/eventLifecycle';

@@ -1,5 +1,4 @@
 import { ObjectType } from '@/common/types';
-import { countComments } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getAllPushSubscriptions } from '@/repository/db/push_subscriptions';
