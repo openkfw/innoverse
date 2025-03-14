@@ -7,7 +7,7 @@ import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { RequestError, StrapiRequestError } from '@/entities/error';
 
-const strapiGraphQLFetcher = async <Result, Variables = Record<string, never>>(
+const strapiGraphQLFetcher = async <Result, Variables = Record<string, unknown>>(
   graphqlQuery: TadaDocumentNode<Result, Variables>,
   variables?: Variables,
 ): Promise<Result> => {

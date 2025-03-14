@@ -1,43 +1,62 @@
 import { ResultOf } from 'gql.tada';
 
 import { BasicSurveyQuestion, SurveyQuestion, SurveyVote } from '@/common/types';
+import { RequestError } from '@/entities/error';
+import { strapiError } from '@/utils/errors';
 import { toDate } from '@/utils/helpers';
+import getLogger from '@/utils/logger';
 import { SurveyQuestionFragment } from '@/utils/requests/surveyQuestions/queries';
+
+const logger = getLogger();
 
 export const mapToSurveyQuestion = (
   surveyQuestionData: ResultOf<typeof SurveyQuestionFragment>,
   votes: SurveyVote[],
   userVote?: SurveyVote | undefined,
-): SurveyQuestion => {
-  const responseOptions = surveyQuestionData.responseOptions.filter((option) => option?.responseOption) as {
-    responseOption: string;
-  }[];
-  const projectName = surveyQuestionData.project?.title;
-  const projectId = surveyQuestionData.project?.documentId;
-  return {
-    id: surveyQuestionData.documentId,
-    projectId: projectId ?? '',
-    projectName: projectName ?? '',
-    question: surveyQuestionData.question,
-    responseOptions: responseOptions,
-    votes,
-    userVote: userVote?.vote,
-    updatedAt: toDate(surveyQuestionData.updatedAt),
-    createdAt: toDate(surveyQuestionData.createdAt),
-  };
+): SurveyQuestion | undefined => {
+  try {
+    const responseOptions = surveyQuestionData.responseOptions.filter((option) => option?.responseOption) as {
+      responseOption: string;
+    }[];
+    const project = surveyQuestionData.project;
+    if (!project) {
+      throw new Error('Survey question contained no project data');
+    }
+    return {
+      id: surveyQuestionData.documentId,
+      projectId: project.documentId,
+      projectName: project.title,
+      question: surveyQuestionData.question,
+      responseOptions: responseOptions,
+      votes,
+      userVote: userVote?.vote,
+      updatedAt: toDate(surveyQuestionData.updatedAt),
+      createdAt: toDate(surveyQuestionData.createdAt),
+    };
+  } catch (err) {
+    const error = strapiError('Mapping survey question', err as RequestError, surveyQuestionData.documentId);
+    logger.error(error);
+  }
 };
 
 export const mapToBasicSurveyQuestion = (
   surveyQuestionData: ResultOf<typeof SurveyQuestionFragment>,
-): BasicSurveyQuestion => {
+): BasicSurveyQuestion | undefined => {
   const project = surveyQuestionData.project;
-  const projectId = project?.documentId;
-
-  return {
-    id: surveyQuestionData.documentId,
-    question: surveyQuestionData.question,
-    projectId: projectId ?? '',
-    updatedAt: toDate(surveyQuestionData.updatedAt),
-    createdAt: toDate(surveyQuestionData.createdAt),
-  };
+  try {
+    if (!project) {
+      throw new Error('Basic survey question contained no project data');
+    }
+    return {
+      id: surveyQuestionData.documentId,
+      question: surveyQuestionData.question,
+      projectId: project.documentId,
+      projectName: project.title,
+      updatedAt: toDate(surveyQuestionData.updatedAt),
+      createdAt: toDate(surveyQuestionData.createdAt),
+    };
+  } catch (err) {
+    const error = strapiError('Mapping basic survey question', err as RequestError, surveyQuestionData.documentId);
+    logger.error(error);
+  }
 };

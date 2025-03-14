@@ -60,13 +60,15 @@ export async function getBasicOpportunityById(opportunityId: string) {
     const projectData = opportunityData?.project;
 
     if (!opportunityData) throw new Error('Response contained no opportunity data');
+    if (!projectData) throw new Error('Opportunity contained no project data');
     const contactPersonData = opportunityData.contactPerson;
 
     const opportunity: BasicOpportunity = {
       id: opportunityData.documentId,
       title: opportunityData.title,
       description: opportunityData.description,
-      projectId: projectData?.documentId,
+      projectId: projectData.documentId,
+      projectName: projectData.title,
       contactPerson: contactPersonData ? mapToUser(contactPersonData) : undefined,
     };
     return opportunity;

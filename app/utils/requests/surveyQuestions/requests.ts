@@ -46,7 +46,7 @@ export async function getSurveyQuestionsByProjectId(projectId: string) {
     if (!surveyQuestionsData) throw new Error('Response contained no survey question data');
 
     const mapToEntities = surveyQuestionsData.map(async (surveyQuestionData) => {
-      const votes = await getSurveyVotes(dbClient, surveyQuestionData?.documentId);
+      const votes = await getSurveyVotes(dbClient, surveyQuestionData.documentId);
       const userVote = await findUserVote({ votes });
       const surveyQuestion = mapToSurveyQuestion(surveyQuestionData, votes, userVote.data);
       return surveyQuestion;
@@ -89,6 +89,7 @@ export async function getSurveyQuestionByIdWithReactions(id: string) {
     const surveyQuestionResponse = response.surveyQuestion;
     const votes = await getSurveyVotes(dbClient, surveyQuestionResponse.documentId);
     const surveyQuestion = mapToSurveyQuestion(surveyQuestionResponse, votes);
+    if (!surveyQuestion) throw new Error('Mapping survey question failed');
     const reactions = await getReactionsForEntity(dbClient, ObjectType.SURVEY_QUESTION, surveyQuestion.id);
     return { ...surveyQuestion, reactions };
   } catch (err) {
@@ -100,11 +101,11 @@ export async function getSurveyQuestionByIdWithReactions(id: string) {
 export async function getSurveyQuestionById(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetSurveyQuestionByIdQuery, { id });
-    const survey = response.surveyQuestion;
-    if (!survey) return null;
     if (!response?.surveyQuestion) throw new Error('Response contained no survey question');
+    const survey = response.surveyQuestion;
     const votes = await getSurveyVotes(dbClient, survey.documentId);
     const surveyQuestion = mapToSurveyQuestion(survey, votes);
+    if (!surveyQuestion) throw new Error('Mapping survey question failed');
     return surveyQuestion;
   } catch (err) {
     const error = strapiError('Getting project update by id', err as RequestError, id);
@@ -124,7 +125,6 @@ export async function getSurveyQuestionsStartingFrom({ from, page, pageSize }: S
       const surveyQuestion = mapToSurveyQuestion(surveyQuestionData, votes);
       return surveyQuestion;
     });
-
     const surveyQuestions = await getPromiseResults(mapToEntities);
     return surveyQuestions;
   } catch (err) {
