@@ -102,7 +102,8 @@ export type SurveyQuestion = CommonNewsFeedProps & {
 export type BasicSurveyQuestion = CommonNewsFeedProps & {
   id: string;
   question: string;
-  projectId?: string;
+  projectId: string;
+  projectName: string;
   responseOptions?: ResponseOption[];
   votes?: SurveyVote[];
 };
@@ -341,8 +342,8 @@ export type BasicOpportunity = {
   id: string;
   title: string;
   description: string | null;
-  projectId?: string;
-  projectName?: string;
+  projectId: string;
+  projectName: string;
   contactPerson?: User;
 };
 
@@ -353,7 +354,8 @@ export type CollaborationQuestion = CommonNewsFeedProps & {
   description: string;
   authors: User[];
   comments: CollaborationComment[];
-  projectId?: string;
+  projectId: string;
+  projectName: string;
 };
 
 export type BasicCollaborationQuestion = {
@@ -392,7 +394,7 @@ export type Event = CommonNewsFeedProps & {
   image?: ImageFormats;
   themes: string[];
   projectId: string;
-  projectName?: string;
+  projectName: string;
 };
 
 export type Post = CommonNewsFeedProps & {

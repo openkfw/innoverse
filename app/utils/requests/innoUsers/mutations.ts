@@ -23,24 +23,17 @@ export const CreateInnoUserMutation = graphql(`
         avatar: $avatarId
       }
     ) {
-      data {
-        id
-        attributes {
-          providerId
-          provider
-          name
-          username
-          role
-          department
-          email
-          avatar {
-            data {
-              attributes {
-                url
-              }
-            }
-          }
-        }
+      documentId
+      providerId
+      provider
+      name
+      role
+      department
+      email
+      username
+      avatar {
+        formats
+        url
       }
     }
   }
@@ -69,24 +62,15 @@ export const CreateOpportunityParticipantMutation = graphql(`
         avatar: $avatarId
       }
     ) {
-      data {
-        id
-        attributes {
-          providerId
-          provider
-          name
-          username
-          role
-          department
-          email
-          avatar {
-            data {
-              attributes {
-                url
-              }
-            }
-          }
-        }
+      documentId
+      providerId
+      provider
+      name
+      role
+      department
+      email
+      avatar {
+        url
       }
     }
   }
@@ -94,25 +78,18 @@ export const CreateOpportunityParticipantMutation = graphql(`
 
 export const UpdateInnoUserUsernameMutation = graphql(`
   mutation UpdateInnoUser($id: ID!, $username: String!) {
-    updateInnoUser(id: $id, data: { username: $username }) {
-      data {
-        id
-        attributes {
-          providerId
-          provider
-          name
-          username
-          role
-          department
-          email
-          avatar {
-            data {
-              attributes {
-                url
-              }
-            }
-          }
-        }
+    updateInnoUser(documentId: $id, data: { username: $username }) {
+      documentId
+      providerId
+      provider
+      name
+      username
+      role
+      department
+      email
+      avatar {
+        formats
+        url
       }
     }
   }

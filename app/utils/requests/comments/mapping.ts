@@ -51,7 +51,7 @@ export const mapToCollaborationComment = async (
   };
 };
 
-export const mapToCollborationComments = async (
+export const mapToCollaborationComments = async (
   comments: CommentDB[],
   question: CollaborationQuestion,
 ): Promise<CollaborationComment[]> => {

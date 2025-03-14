@@ -4,7 +4,6 @@ import { CollaborationComment, ObjectType, UserSession } from '@/common/types';
 import { addCommentToDb, deleteCommentInDb, getCommentResponseCount } from '@/repository/db/comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { updateCollaborationCommentInCache } from '@/services/collaborationCommentService';
-import getLogger from '@/utils/logger';
 import { mapToComment } from '@/utils/requests/comments/mapping';
 
 type AddResponse = {
@@ -19,8 +18,6 @@ type DeleteResponse = {
     id: string;
   };
 };
-
-const logger = getLogger();
 
 export const addCollaborationCommentResponse = async ({ user, text, comment }: AddResponse) => {
   const createdResponse = await addCommentToDb({

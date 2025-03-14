@@ -16,7 +16,8 @@ export const sortDateByCreatedAtDesc = <T extends { createdAt: Date }>(array: T[
 export function getFulfilledResults<T>(results: PromiseSettledResult<T>[]) {
   return results
     .filter((result): result is PromiseFulfilledResult<T> => result.status === 'fulfilled')
-    .map((result) => result.value);
+    .map((result) => result.value)
+    .filter((value) => value !== undefined);
 }
 
 export async function getPromiseResults<T>(promises: Promise<T>[]) {

@@ -25,10 +25,12 @@ const logger = getLogger();
 export async function getOpportunitiesByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetOpportunitiesByProjectIdQuery, { projectId });
-    const opportunitiesData = response.opportunities?.data ?? [];
+    const opportunitiesData = response.opportunities ?? [];
 
     const mapToEntities = opportunitiesData.map(async (opportunityData) => {
-      const { data: isParticipant } = await userParticipatesInOpportunity({ opportunityId: opportunityData.id });
+      const { data: isParticipant } = await userParticipatesInOpportunity({
+        opportunityId: opportunityData.documentId,
+      });
       return mapToOpportunity(opportunityData, isParticipant);
     });
 
@@ -43,7 +45,7 @@ export async function getOpportunitiesByProjectId(projectId: string) {
 export async function getOpportunityById(opportunityId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetOpportunitiesByIdQuery, { opportunityId });
-    const opportunity = mapFirstToOpportunity(response.opportunities?.data);
+    const opportunity = mapFirstToOpportunity(response.opportunities);
     return opportunity;
   } catch (err) {
     const error = strapiError('Getting an opporunity', err as RequestError, opportunityId);
@@ -54,19 +56,19 @@ export async function getOpportunityById(opportunityId: string) {
 export async function getBasicOpportunityById(opportunityId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetBasicOpportunityByIdQuery, { opportunityId });
-    const opportunityData = response.opportunity?.data;
-    const projectData = opportunityData?.attributes.project?.data;
+    const opportunityData = response.opportunity;
+    const projectData = opportunityData?.project;
 
     if (!opportunityData) throw new Error('Response contained no opportunity data');
-
-    const attributes = opportunityData.attributes;
-    const contactPersonData = attributes.contactPerson?.data;
+    if (!projectData) throw new Error('Opportunity contained no project data');
+    const contactPersonData = opportunityData.contactPerson;
 
     const opportunity: BasicOpportunity = {
-      id: opportunityData.id,
-      title: attributes.title,
-      description: attributes.description,
-      projectId: projectData?.id,
+      id: opportunityData.documentId,
+      title: opportunityData.title,
+      description: opportunityData.description,
+      projectId: projectData.documentId,
+      projectName: projectData.title,
       contactPerson: contactPersonData ? mapToUser(contactPersonData) : undefined,
     };
     return opportunity;
@@ -82,7 +84,7 @@ export async function isUserParticipatingInOpportunity(body: { opportunityId: st
       opportunityId: body.opportunityId,
       userId: body.userId,
     });
-    const opportunitiesFound = response.opportunities?.data.length ?? 0;
+    const opportunitiesFound = response.opportunities.length ?? 0;
     return opportunitiesFound > 0;
   } catch (err) {
     const error = strapiError(
@@ -97,7 +99,7 @@ export async function isUserParticipatingInOpportunity(body: { opportunityId: st
 export async function handleOpportunityAppliedBy(body: { opportunityId: string; userId: string }) {
   try {
     const response = await strapiGraphQLFetcher(UpdateOpportunityParticipantsQuery, body);
-    const opportunityData = response.updateOpportunityParticipants?.data;
+    const opportunityData = response.updateOpportunityParticipants;
 
     if (!opportunityData) throw new Error('Response contained no opportunity data');
 
@@ -137,7 +139,7 @@ export const userParticipatesInOpportunity = withAuth(async (user: UserSession, 
 export const countOpportunitiesForProject = async (projectId: string) => {
   try {
     const response = await strapiGraphQLFetcher(GetOpportunityCountProjectIdQuery, { projectId });
-    const countResult = response.opportunities?.meta.pagination.total;
+    const countResult = response.opportunities_connection?.pageInfo.total;
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {

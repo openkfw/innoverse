@@ -3,27 +3,19 @@ import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
 export const CollaborationQuestionFragment = graphql(
   `
-    fragment CollaborationQuestion on CollaborationQuestionEntity @_unmask {
-      id
-      attributes {
-        updatedAt
-        project {
-          data {
-            id
-            attributes {
-              title
-            }
-          }
-        }
+    fragment CollaborationQuestion on CollaborationQuestion @_unmask {
+      documentId
+      updatedAt
+      project {
+        documentId
         title
-        isPlatformFeedback
-        description
-        updatedAt
-        authors {
-          data {
-            ...InnoUser
-          }
-        }
+      }
+      title
+      isPlatformFeedback
+      description
+      updatedAt
+      authors {
+        ...InnoUser
       }
     }
   `,
@@ -32,11 +24,9 @@ export const CollaborationQuestionFragment = graphql(
 
 export const GetCollaborationQuestionByIdQuery = graphql(
   `
-    query GetCollaborationQuestionById($id: ID) {
-      collaborationQuestion(id: $id) {
-        data {
-          ...CollaborationQuestion
-        }
+    query GetCollaborationQuestionById($documentId: ID!) {
+      collaborationQuestion(documentId: $documentId) {
+        ...CollaborationQuestion
       }
     }
   `,
@@ -46,10 +36,8 @@ export const GetCollaborationQuestionByIdQuery = graphql(
 export const GetCollaborationQuestionsByProjectIdQuery = graphql(
   `
     query GetCollaborationQuestions($projectId: ID) {
-      collaborationQuestions(filters: { project: { id: { eq: $projectId } } }) {
-        data {
-          ...CollaborationQuestion
-        }
+      collaborationQuestions(filters: { project: { documentId: { eq: $projectId } } }) {
+        ...CollaborationQuestion
       }
     }
   `,
@@ -59,15 +47,9 @@ export const GetCollaborationQuestionsByProjectIdQuery = graphql(
 export const GetPlatformFeedbackCollaborationQuestion = graphql(`
   query GetPlatformFeedbackCollaborationQuestion {
     collaborationQuestions(filters: { isPlatformFeedback: { eq: true } }) {
-      data {
-        id
-        attributes {
-          project {
-            data {
-              id
-            }
-          }
-        }
+      documentId
+      project {
+        documentId
       }
     }
   }
@@ -75,26 +57,22 @@ export const GetPlatformFeedbackCollaborationQuestion = graphql(`
 
 export const GetCollaborationQuestionsCountProjectIdQuery = graphql(`
   query GetCollaborationQuestions($projectId: ID) {
-    collaborationQuestions(filters: { project: { id: { eq: $projectId } } }) {
-      meta {
-        pagination {
-          total
-        }
+    collaborationQuestions_connection(filters: { project: { documentId: { eq: $projectId } } }) {
+      pageInfo {
+        total
       }
     }
   }
 `);
 
-export const GetCollaborationQuestsionsStartingFromQuery = graphql(
+export const GetCollaborationQuesstionsStartingFromQuery = graphql(
   `
     query GetUpdatedCollaborationQuestions($from: DateTime, $page: Int, $pageSize: Int) {
       collaborationQuestions(
         filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
         pagination: { page: $page, pageSize: $pageSize }
       ) {
-        data {
-          ...CollaborationQuestion
-        }
+        ...CollaborationQuestion
       }
     }
   `,

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
 import { ObjectType } from '@/common/types';
+import { serverConfig } from '@/config/server';
 import { getCommentsStartingFrom } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import { getPostsStartingFrom } from '@/repository/db/posts';
@@ -34,7 +35,6 @@ import {
   transactionalDeleteItemsFromRedis,
   transactionalSaveNewsFeedEntry,
 } from './redis/redisService';
-import { serverConfig } from '@/config/server';
 
 const logger = getLogger();
 const maxSyncRetries = 3;

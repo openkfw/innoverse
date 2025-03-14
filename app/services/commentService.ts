@@ -1,7 +1,7 @@
 'use server';
 
 import { Comment, ObjectType, UserSession } from '@/common/types';
-import { addCommentToDb, countComments, deleteCommentInDb, updateCommentInDb } from '@/repository/db/comment';
+import { addCommentToDb, deleteCommentInDb, updateCommentInDb } from '@/repository/db/comment';
 import { getFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { dbError, InnoPlatformError } from '@/utils/errors';
@@ -26,7 +26,6 @@ interface AddComment {
 }
 
 interface RemoveComment {
-  user: UserSession;
   commentId: string;
 }
 
@@ -63,7 +62,7 @@ export const updateComment = async ({ author, commentId, content }: UpdateCommen
   return result;
 };
 
-export const removeComment = async ({ user, commentId }: RemoveComment) => {
+export const removeComment = async ({ commentId }: RemoveComment) => {
   const result = await deleteCommentInDb(dbClient, commentId);
   const objectId = result.objectId;
   if (objectId) {

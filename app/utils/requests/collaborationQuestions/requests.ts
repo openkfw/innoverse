@@ -14,11 +14,11 @@ import getLogger from '@/utils/logger';
 import { getProjectCollaborationComments } from '@/utils/requests/collaborationComments/requests';
 import { mapToCollaborationQuestion } from '@/utils/requests/collaborationQuestions/mappings';
 import {
+  GetCollaborationQuesstionsStartingFromQuery,
   GetCollaborationQuestionByIdQuery,
   GetCollaborationQuestionsByProjectIdQuery,
   GetCollaborationQuestionsCountProjectIdQuery,
   GetPlatformFeedbackCollaborationQuestion,
-  GetCollaborationQuestsionsStartingFromQuery,
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
@@ -29,10 +29,10 @@ const logger = getLogger();
 export async function getCollaborationQuestionsByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetCollaborationQuestionsByProjectIdQuery, { projectId });
-    const questionsData = response.collaborationQuestions?.data ?? [];
+    const questionsData = response.collaborationQuestions ?? [];
 
     const mapToEntities = questionsData.map(async (questionData) => {
-      const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData.id });
+      const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData?.documentId });
       const comments = getComments.data ?? [];
 
       const getCommentsWithLike = comments.map(async (comment) => {
@@ -54,8 +54,8 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
 
 export async function getBasicCollaborationQuestionById(id: string): Promise<BasicCollaborationQuestion | undefined> {
   try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { id });
-    const data = response.collaborationQuestion?.data;
+    const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { documentId: id });
+    const data = response.collaborationQuestion;
     if (!data) throw new Error('Response contained no collaboration question data');
     const collaborationQuestion = mapToBasicCollaborationQuestion(data);
     return collaborationQuestion;
@@ -67,11 +67,13 @@ export async function getBasicCollaborationQuestionById(id: string): Promise<Bas
 
 export async function getBasicCollaborationQuestionByIdWithAdditionalData(id: string) {
   try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { id });
-    const data = response.collaborationQuestion?.data;
+    const response = await strapiGraphQLFetcher(GetCollaborationQuestionByIdQuery, { documentId: id });
+    const data = response.collaborationQuestion;
     if (!data) throw new Error('Response contained no collaboration question data');
     const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, id);
     const collaborationQuestion = mapToBasicCollaborationQuestion(data);
+    if (!collaborationQuestion) throw new Error('Mapping collaboration question failed');
+
     return { ...collaborationQuestion, reactions };
   } catch (err) {
     const error = strapiError(
@@ -89,13 +91,18 @@ export async function getBasicCollaborationQuestionStartingFromWithAdditionalDat
   pageSize,
 }: StartPagination) {
   try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestsionsStartingFromQuery, { from, page, pageSize });
-    const data = response.collaborationQuestions?.data;
+    const response = await strapiGraphQLFetcher(GetCollaborationQuesstionsStartingFromQuery, { from, page, pageSize });
+    const data = response.collaborationQuestions;
     if (!data) throw new Error('Response contained no collaboration question data');
 
     const mapQuestions = data.map(async (questionData) => {
       const basicQuestion = mapToBasicCollaborationQuestion(questionData);
-      const reactions = await getReactionsForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, questionData.id);
+      if (!basicQuestion) throw new Error('Mapping basic collaboration question failed');
+      const reactions = await getReactionsForEntity(
+        dbClient,
+        ObjectType.COLLABORATION_QUESTION,
+        questionData?.documentId,
+      );
       return { ...basicQuestion, reactions };
     });
 
@@ -113,13 +120,14 @@ export async function getBasicCollaborationQuestionStartingFromWithAdditionalDat
 export async function getPlatformFeedbackCollaborationQuestion() {
   try {
     const response = await strapiGraphQLFetcher(GetPlatformFeedbackCollaborationQuestion);
-    if (!response.collaborationQuestions?.data || !response.collaborationQuestions.data.length) return;
-    const questionData = response.collaborationQuestions.data[0];
-    if (!questionData.attributes.project?.data) throw new Error('Collaboration question is not linked to a project');
+    if (!response.collaborationQuestions || !response.collaborationQuestions.length) return;
+    const questionData = response.collaborationQuestions[0];
+    if (!questionData.project) throw new Error('Collaboration question is not linked to a project');
+    const project = questionData.project;
 
     const collaborationQuestion = {
-      collaborationQuestionId: questionData.id,
-      projectId: questionData.attributes.project.data.id,
+      collaborationQuestionId: questionData.documentId,
+      projectId: project.documentId,
     };
 
     return collaborationQuestion;
@@ -149,7 +157,7 @@ export const countCollaborationQuestionsForProject = async (projectId: string) =
     const response = await strapiGraphQLFetcher(GetCollaborationQuestionsCountProjectIdQuery, {
       projectId,
     });
-    const countResult = response.collaborationQuestions?.meta.pagination.total;
+    const countResult = response.collaborationQuestions_connection?.pageInfo.total;
 
     return { status: StatusCodes.OK, data: countResult };
   } catch (err) {
