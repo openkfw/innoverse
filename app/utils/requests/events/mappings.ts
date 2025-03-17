@@ -1,35 +1,47 @@
 import { ResultOf } from 'gql.tada';
 
 import { Event } from '@/common/types';
+import { RequestError } from '@/entities/error';
+import { strapiError } from '@/utils/errors';
 import { toDate } from '@/utils/helpers';
+import getLogger from '@/utils/logger';
 import { EventFragment } from '@/utils/requests/events/queries';
 import { mapToImageUrl, mapToUser } from '@/utils/requests/innoUsers/mappings';
 
+const logger = getLogger();
+
 export async function mapToEvents(events: ResultOf<typeof EventFragment>[] | undefined) {
-  return events?.map(mapToEvent) ?? [];
+  const mappedEvents = events?.map(mapToEvent) ?? [];
+  return mappedEvents.filter((e) => e !== undefined) as Event[];
 }
 
-export function mapToEvent(eventData: ResultOf<typeof EventFragment>): Event {
-  const attributes = eventData.attributes;
-  const author = attributes.author?.data;
-  const projectId = attributes.project?.data?.id;
-  const projectName = attributes.project?.data?.attributes.title;
-  const endTime = attributes.endTime ?? attributes.startTime;
-  const themes = attributes.Themes?.filter((t) => t?.theme).map((t) => t?.theme) as string[];
+export function mapToEvent(eventData: ResultOf<typeof EventFragment>): Event | undefined {
+  try {
+    const author = eventData.author;
+    const endTime = eventData.endTime ?? eventData.startTime;
+    const themes = eventData.Themes?.filter((t) => t?.theme).map((t) => t?.theme) as string[];
+    const project = eventData.project;
 
-  return {
-    id: eventData.id,
-    title: attributes.title,
-    projectName,
-    description: attributes.description ?? undefined,
-    startTime: new Date(attributes.startTime),
-    endTime: new Date(endTime),
-    author: author && author.attributes ? mapToUser(author) : undefined,
-    image: mapToImageUrl(attributes.image),
-    themes: themes,
-    type: attributes.type ?? undefined,
-    location: attributes.location ?? undefined,
-    projectId: projectId ?? '',
-    updatedAt: toDate(attributes.updatedAt),
-  };
+    if (!project) {
+      throw new Error('Event contained no project data');
+    }
+    return {
+      id: eventData.documentId,
+      title: eventData.title,
+      projectId: project.documentId,
+      projectName: project.title,
+      description: eventData.description ?? undefined,
+      startTime: new Date(eventData.startTime),
+      endTime: new Date(endTime),
+      author: author && author ? mapToUser(author) : undefined,
+      image: mapToImageUrl(eventData.image),
+      themes: themes,
+      type: eventData.type ?? undefined,
+      location: eventData.location ?? undefined,
+      updatedAt: toDate(eventData.updatedAt),
+    };
+  } catch (err) {
+    const error = strapiError('Mapping event', err as RequestError, eventData.documentId);
+    logger.error(error);
+  }
 }

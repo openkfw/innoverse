@@ -7,11 +7,8 @@ import { escapeRedisTextSeparators, filterDuplicateEntries } from '@/utils/newsF
 import { NewsType, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
 
-import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
 import { searchNewsComments } from './services/commentsService';
-import getLogger from '@/utils/logger';
-
-const logger = getLogger();
+import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
 
 interface RedisJson {
   [key: string]: any;
@@ -169,7 +166,7 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
 
       query = commentsQuery;
       idx = commentsIndex;
-      let commentsSearchOptions: SearchOptions = {
+      const commentsSearchOptions: SearchOptions = {
         ...searchOptions,
         PARAMS: commentsParameters,
       };

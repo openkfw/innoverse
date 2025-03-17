@@ -3,23 +3,17 @@ import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
 export const OpportunityFragment = graphql(
   `
-    fragment Opportunity on OpportunityEntity @_unmask {
-      id
-      attributes {
-        title
-        description
-        contactPerson {
-          data {
-            ...InnoUser
-          }
-        }
-        updatedAt
-        expense
-        participants {
-          data {
-            ...InnoUser
-          }
-        }
+    fragment Opportunity on Opportunity @_unmask {
+      documentId
+      title
+      description
+      contactPerson {
+        ...InnoUser
+      }
+      updatedAt
+      expense
+      participants {
+        ...InnoUser
       }
     }
   `,
@@ -29,10 +23,8 @@ export const OpportunityFragment = graphql(
 export const GetOpportunitiesByProjectIdQuery = graphql(
   `
     query GetOpportunities($projectId: ID) {
-      opportunities(filters: { project: { id: { eq: $projectId } } }) {
-        data {
-          ...Opportunity
-        }
+      opportunities(filters: { project: { documentId: { eq: $projectId } } }) {
+        ...Opportunity
       }
     }
   `,
@@ -42,10 +34,8 @@ export const GetOpportunitiesByProjectIdQuery = graphql(
 export const GetOpportunitiesByIdQuery = graphql(
   `
     query GetOpportunities($opportunityId: ID) {
-      opportunities(filters: { id: { eq: $opportunityId } }) {
-        data {
-          ...Opportunity
-        }
+      opportunities(filters: { documentId: { eq: $opportunityId } }) {
+        ...Opportunity
       }
     }
   `,
@@ -54,41 +44,26 @@ export const GetOpportunitiesByIdQuery = graphql(
 
 export const GetBasicOpportunityByIdQuery = graphql(
   `
-    query GetBasicOpportunityById($opportunityId: ID) {
-      opportunity(id: $opportunityId) {
-        data {
-          id
-          attributes {
-            title
-            description
-            contactPerson {
-              data {
-                ...InnoUser
-              }
-            }
-            project {
-              data {
-                id
-                attributes {
-                  title
-                }
-              }
-            }
-          }
+    query GetBasicOpportunityById($opportunityId: ID!) {
+      opportunity(documentId: $opportunityId) {
+        ...Opportunity
+        project {
+          documentId
+          title
         }
       }
     }
   `,
-  [InnoUserFragment],
+  [OpportunityFragment],
 );
 
 export const GetOpportunityWithParticipantQuery = graphql(
   `
     query GetOpportunities($opportunityId: ID!, $userId: String) {
-      opportunities(filters: { id: { eq: $opportunityId }, and: { participants: { providerId: { eq: $userId } } } }) {
-        data {
-          ...Opportunity
-        }
+      opportunities(
+        filters: { documentId: { eq: $opportunityId }, and: { participants: { providerId: { eq: $userId } } } }
+      ) {
+        ...Opportunity
       }
     }
   `,
@@ -98,10 +73,8 @@ export const GetOpportunityWithParticipantQuery = graphql(
 export const UpdateOpportunityParticipantsQuery = graphql(
   `
     query UpdateOpportunity($opportunityId: ID!, $userId: ID!) {
-      updateOpportunityParticipants(id: $opportunityId, participantId: $userId) {
-        data {
-          ...Opportunity
-        }
+      updateOpportunityParticipants(documentId: $opportunityId, participantId: $userId) {
+        ...Opportunity
       }
     }
   `,
@@ -110,11 +83,9 @@ export const UpdateOpportunityParticipantsQuery = graphql(
 
 export const GetOpportunityCountProjectIdQuery = graphql(`
   query GetOpportunities($projectId: ID) {
-    opportunities(filters: { project: { id: { eq: $projectId } } }) {
-      meta {
-        pagination {
-          total
-        }
+    opportunities_connection(filters: { project: { documentId: { eq: $projectId } } }) {
+      pageInfo {
+        total
       }
     }
   }
@@ -124,9 +95,7 @@ export const GetUpdatedOpportunitiesQuery = graphql(
   `
     query GetUpdatedOpportunities($from: DateTime) {
       opportunities(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {
-        data {
-          ...Opportunity
-        }
+        ...Opportunity
       }
     }
   `,

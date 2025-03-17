@@ -34,7 +34,7 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
       avatarId: uploadedImage ? (uploadedImage.id as unknown as string) : null,
     });
 
-    const userData = response.createInnoUser?.data;
+    const userData = response.createInnoUser;
     if (!userData) throw new Error('Response contained no user data');
     const createdUser = mapToUser(userData);
     return createdUser;
@@ -48,7 +48,7 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
 export async function getInnoUserByEmail(email: string) {
   try {
     const response = await strapiGraphQLFetcher(GetInnoUserByEmailQuery, { email });
-    const user = mapFirstToUser(response.innoUsers?.data);
+    const user = mapFirstToUser(response.innoUsers);
     return user;
   } catch (err) {
     const error = strapiError('Getting Inno user by email', err as RequestError, email);
@@ -60,7 +60,7 @@ export async function getInnoUserByEmail(email: string) {
 export async function getInnoUserByProviderId(providerId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetInnoUserByProviderIdQuery, { providerId });
-    const user = mapFirstToUserOrThrow(response.innoUsers?.data);
+    const user = mapFirstToUserOrThrow(response.innoUsers);
     return user;
   } catch (err) {
     const error = strapiError('Getting Inno user by providerId', err as RequestError, providerId);
@@ -73,8 +73,8 @@ export async function getEmailsByUsernames(usernames: string[]): Promise<string[
   try {
     const response = await strapiGraphQLFetcher(GetEmailsByUsernamesQuery, { usernames });
 
-    const emails = response.innoUsers?.data
-      ?.map((user) => user.attributes.email)
+    const emails = response.innoUsers
+      ?.map((user) => user.email)
       .filter((email): email is string => email !== null && email !== undefined);
 
     return emails ?? [];
@@ -87,7 +87,7 @@ export async function getEmailsByUsernames(usernames: string[]): Promise<string[
 export async function getInnoUserByUsername(username: string): Promise<User | null> {
   try {
     const response = await strapiGraphQLFetcher(GetInnoUserByUsernameQuery, { username });
-    const user = mapFirstToUser(response?.innoUsers?.data);
+    const user = mapFirstToUser(response?.innoUsers);
     return user || null;
   } catch (error) {
     console.error('Error fetching user by username:', error);
@@ -101,7 +101,7 @@ async function getAllInnoUserNames() {
     if (!response) {
       throw new Error('No users data available');
     }
-    const users = response.map((user) => ({ username: user.attributes.username }));
+    const users = response.map((user) => ({ username: user.username }));
     return users;
   } catch (err) {
     const error = strapiError('Getting All Inno users', err as RequestError);
@@ -113,11 +113,11 @@ async function getAllInnoUserNames() {
 async function getAllInnoUsers() {
   try {
     const response = await strapiGraphQLFetcher(GetAllInnoUsers, { limit: 1000 });
-    if (!response.innoUsers?.data) {
+    if (!response.innoUsers) {
       throw new Error('No users data available');
     }
 
-    return response.innoUsers.data;
+    return response.innoUsers;
   } catch (err) {
     const error = strapiError('Getting All Inno users', err as RequestError);
     logger.error(error);
@@ -155,7 +155,7 @@ export async function updateInnoUserUsername(userId: string, username: string) {
       username,
     });
 
-    const updatedUserData = response.updateInnoUser?.data;
+    const updatedUserData = response.updateInnoUser;
     if (!updatedUserData) throw new Error('Failed to update user username');
 
     return mapToUser(updatedUserData);
@@ -174,7 +174,7 @@ async function generateUniqueUsername(email: string): Promise<string> {
   while (true) {
     try {
       const response = await strapiGraphQLFetcher(GetInnoUserByUsernameQuery, { username });
-      if (!response?.innoUsers?.data.length) break;
+      if (!response?.innoUsers.length) break;
 
       username = `${baseUsername}${count}`;
       count++;

@@ -28,17 +28,18 @@ export const updateUserComment = withAuth(
   },
 );
 
-export const removeUserComment = withAuth(
-  async (user: UserSession, body: { commentId: string; objectType: ObjectType.POST | ObjectType.UPDATE }) => {
-    try {
-      await removeComment({ user, commentId: body.commentId });
-      return {
-        status: StatusCodes.OK,
-      };
-    } catch (err) {
-      return {
-        status: StatusCodes.INTERNAL_SERVER_ERROR,
-      };
-    }
-  },
-);
+export const removeUserComment = async (body: {
+  commentId: string;
+  objectType: ObjectType.POST | ObjectType.UPDATE;
+}) => {
+  try {
+    await removeComment({ commentId: body.commentId });
+    return {
+      status: StatusCodes.OK,
+    };
+  } catch (err) {
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+    };
+  }
+};

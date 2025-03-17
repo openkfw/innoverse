@@ -12,7 +12,8 @@ const logger = getLogger();
 export async function getProjectQuestionsByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetQuestionsByProjectIdQuery, { projectId });
-    const questions = response.questions?.data.map(mapToQuestion) ?? [];
+    if (!response.questions) throw 'Response contained no questions';
+    const questions = response.questions.map((question) => mapToQuestion(question)) ?? [];
     return questions;
   } catch (err) {
     const error = strapiError('Getting all project questions', err as RequestError, projectId);

@@ -1,11 +1,11 @@
 import { getServerSession } from 'next-auth';
 import { StatusCodes } from 'http-status-codes';
 
+import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import { UserSession } from '@/common/types';
 import { createInnoUserIfNotExist } from '@/utils/requests/innoUsers/requests';
 
 import getLogger from './logger';
-import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 
 export interface AuthResponse<TArgs> {
   status: StatusCodes;

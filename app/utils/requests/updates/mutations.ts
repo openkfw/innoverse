@@ -4,10 +4,8 @@ import { ProjectUpdateFragment } from '@/utils/requests/updates/queries';
 export const DeleteProjectUpdateMutation = graphql(
   `
     mutation DeleteProjectUpdate($updateId: ID!) {
-      deleteUpdate(id: $updateId) {
-        data {
-          ...ProjectUpdate
-        }
+      deleteUpdate(documentId: $updateId) {
+        documentId
       }
     }
   `,
@@ -32,9 +30,7 @@ export const CreateProjectUpdateMutation = graphql(
           anonymous: $anonymous
         }
       ) {
-        data {
-          ...ProjectUpdate
-        }
+        ...ProjectUpdate
       }
     }
   `,
@@ -44,10 +40,8 @@ export const CreateProjectUpdateMutation = graphql(
 export const UpdateProjectUpdateMutation = graphql(
   `
     mutation UpdateProjectUpdate($updateId: ID!, $comment: String) {
-      updateUpdate(id: $updateId, data: { comment: $comment }) {
-        data {
-          ...ProjectUpdate
-        }
+      updateUpdate(documentId: $updateId, data: { comment: $comment }) {
+        ...ProjectUpdate
       }
     }
   `,

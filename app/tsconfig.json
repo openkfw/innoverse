@@ -22,7 +22,10 @@
       {
         "name": "@0no-co/graphqlsp",
         "schema": "../strapi/types/schema.graphql",
-        "tadaOutputLocation": "./types/strapi-graphql-env.d.ts"
+        "tadaOutputLocation": "./types/strapi-graphql-env.d.ts",
+        "config": {
+          "maybeValue": "T"
+        }
       }
     ],
     "paths": {

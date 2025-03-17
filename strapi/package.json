@@ -18,18 +18,17 @@
     "strapi": "strapi"
   },
   "dependencies": {
-    "@strapi/plugin-graphql": "4.25.9",
-    "@strapi/plugin-i18n": "4.25.9",
-    "@strapi/plugin-users-permissions": "4.25.9",
-    "@strapi/strapi": "4.25.9",
-    "@strapi/typescript-utils": "^5.7.0",
-    "@strapi/utils": "4.25.8",
+    "@strapi/typescript-utils": "5.9.0",
+    "@strapi/plugin-graphql": "5.9.0",
+    "@strapi/plugin-users-permissions": "5.9.0",
+    "@strapi/strapi": "5.9.0",
+    "@strapi/utils": "5.9.0",
     "better-sqlite3": "^11.7.2",
     "pg": "8.8.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^5.3.4",
-    "styled-components": "^5.3.11",
+    "react-router-dom": "^6.0.0",
+    "styled-components": "^6.0.0",
     "typescript": "^5.7.2"
   },
   "engines": {
@@ -42,21 +41,16 @@
   },
   "pnpm": {
     "overrides": {
-      "cookie@<0.7.0": ">=0.7.0",
-      "tar@<6.2.1": ">=6.2.1",
-      "ws@>=8.0.0 <8.17.1": ">=8.17.1",
-      "vite@>=5.0.0 <=5.1.7": ">=6.0.9",
-      "sharp": "0.33.3",
       "esbuild": ">=0.25.0",
-      "koa": ">=2.15.4"
+      "koa": ">=2.15.4",
+      "sharp": "^0.33.5"
     },
     "auditConfig": {
       "ignoreCves": [
-        "CVE-2023-49803",
-        "CVE-2024-4068",
-        "CVE-2024-4067",
-        "CVE-2022-24434",
         "CVE-2025-27152",
+        "CVE-2025-22150",
+        "CVE-2025-24010",
+        "CVE-2024-53382",
         "CVE-2025-27789"
       ]
     }
