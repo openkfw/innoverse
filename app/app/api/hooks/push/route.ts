@@ -1,10 +1,10 @@
+import { headers } from 'next/headers';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import { literal, number, object, string, z } from 'zod';
 
 import { serverConfig } from '@/config/server';
-import { onStrapiEvent } from '@/utils/strapiEvents/strapiEventHandler';
-import { headers } from 'next/headers';
 import getLogger from '@/utils/logger';
+import { onStrapiEvent } from '@/utils/strapiEvents/strapiEventHandler';
 
 const logger = getLogger();
 
