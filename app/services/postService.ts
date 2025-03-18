@@ -22,10 +22,7 @@ import {
 } from '@/utils/requests/posts/requests';
 import { updateCommentObjectId } from '@/repository/db/comment';
 import { deletePostFromDb, getAllPostsFromDb } from '@/repository/db/posts';
-import { serverConfig } from '@/config/server';
-import dayjs from 'dayjs';
-import { now } from 'lodash';
-import { aggregatePosts } from '@/utils/newsFeed/newsFeedSync';
+import { sync as synchronizeNewsFeed } from '@/utils/newsFeed/newsFeedSync';
 
 const logger = getLogger();
 
@@ -149,7 +146,7 @@ export const createNewsFeedEntryForPost = async (post: Post, author?: User) => {
   const followers = await mapToRedisUsers(followerIds);
 
   //todo fix type
-  const postAuthor = author ?? (await getInnoUserByProviderId(post.author));
+  const postAuthor = author ?? (await getInnoUserByProviderId(post.author.providerId ?? ''));
   const postWithAuthor = { ...post, author: postAuthor, objectType: ObjectType.POST };
   return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers, comments);
 };
@@ -163,7 +160,15 @@ export const movePostsToSTrapi = async () => {
   // getPosts();
 };
 
-const movePostToStrapi = async (post) => {
+const movePostToStrapi = async (post: {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  author: string;
+  anonymous: boolean;
+  likedBy: string[];
+  content: string;
+}) => {
   const oldPostId = post.id;
   const createdPost = await createPostInStrapi({
     comment: post.content,
@@ -181,5 +186,6 @@ const movePostToStrapi = async (post) => {
   await updateReactionObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST);
 
   await deletePostFromDb(dbClient, oldPostId);
+  await synchronizeNewsFeed();
   return createdPost;
 };
