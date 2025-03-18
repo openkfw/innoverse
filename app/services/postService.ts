@@ -180,10 +180,11 @@ const movePostToStrapi = async (post: {
     logger.error(`Failed to move post with id ${oldPostId} to Strapi`);
     return null;
   }
-
-  await updateFollowObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST);
-  await updateCommentObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST);
-  await updateReactionObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST);
+  await Promise.all([
+    updateFollowObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST),
+    updateCommentObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST),
+    updateReactionObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST),
+  ]);
 
   await deletePostFromDb(dbClient, oldPostId);
   await synchronizeNewsFeed();
