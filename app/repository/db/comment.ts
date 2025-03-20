@@ -206,3 +206,20 @@ export async function isCommentLikedBy(client: PrismaClient, commentId: string, 
   });
   return likedCommentsCount > 0;
 }
+
+export const updateCommentsId = async (
+  client: PrismaClient,
+  id: string,
+  documentId: string,
+  objectType: ObjectType,
+) => {
+  return await client.comment.updateMany({
+    where: {
+      objectId: id,
+      objectType: objectType as PrismaObjectType,
+    },
+    data: {
+      objectId: documentId,
+    },
+  });
+};
