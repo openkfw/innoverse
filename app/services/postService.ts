@@ -44,16 +44,17 @@ export const addPost = async ({ content, user, anonymous }: AddPost) => {
     anonymous: anonymous ?? false,
   });
   if (createdPost) {
-    //todo error handling
     await addPostToCache({ ...createdPost, author: user, objectType: ObjectType.POST });
+    return createdPost;
   }
-  return createdPost;
 };
 
 export const updatePost = async ({ postId, content, user }: UpdatePost) => {
   const updatedPost = await updatePostInStrapi(postId, content);
-  await updatePostInCache({ post: updatedPost, user }); //todo fix type
-  return updatedPost;
+  if (updatedPost) {
+    await updatePostInCache({ post: updatedPost, user });
+    return updatedPost;
+  }
 };
 
 export const deletePost = async ({ postId }: DeletePost) => {

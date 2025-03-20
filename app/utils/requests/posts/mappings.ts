@@ -9,21 +9,20 @@ export async function mapToPosts(updates: ResultOf<typeof PostFragment>[] | unde
   return updates?.map(mapToPost) ?? [];
 }
 
-export function mapToPost(updateData: ResultOf<typeof PostFragment>): Post {
-  const attributes = updateData.attributes;
-  const author = attributes.author?.data;
+export function mapToPost(postData: ResultOf<typeof PostFragment>): Post {
+  const author = postData.author;
 
   if (!author) {
     throw new Error('Update contained no author');
   }
 
   return {
-    id: updateData.id,
-    content: attributes.comment || '',
-    updatedAt: toDate(attributes.updatedAt),
-    createdAt: toDate(attributes.createdAt),
+    id: postData.documentId,
+    content: postData.comment || '',
+    updatedAt: toDate(postData.updatedAt),
+    createdAt: toDate(postData.createdAt),
     author: mapToUser(author),
-    anonymous: updateData.attributes.anonymous ?? false,
+    anonymous: postData.anonymous ?? false,
     objectType: ObjectType.POST,
     likedBy: [],
   };

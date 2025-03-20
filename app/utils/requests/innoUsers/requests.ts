@@ -73,7 +73,7 @@ export async function getInnoUserByProviderId(providerId: string) {
 export async function getInnoUsersByProviderIds(providerIds: string[]) {
   try {
     const response = await strapiGraphQLFetcher(GetInnoUsersByProviderIdsQuery, { providerIds });
-    return response.innoUsers?.data.map(mapToUser) ?? [];
+    return response.innoUsers?.map(mapToUser) ?? [];
   } catch (err) {
     const error = strapiError('Getting Inno user by providerId', err as RequestError, providerIds.join(', '));
     logger.error(error);
