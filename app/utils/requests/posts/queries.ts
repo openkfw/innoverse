@@ -3,18 +3,14 @@ import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
 
 export const PostFragment = graphql(
   `
-    fragment Post on PostEntity @_unmask {
-      id
-      attributes {
-        comment
-        updatedAt
-        createdAt
-        anonymous
-        author {
-          data {
-            ...InnoUser
-          }
-        }
+    fragment Post on Post @_unmask {
+      documentId
+      comment
+      updatedAt
+      createdAt
+      anonymous
+      author {
+        ...InnoUser
       }
     }
   `,
@@ -25,9 +21,7 @@ export const GetPostsQuery = graphql(
   `
     query GetPosts($limit: Int) {
       posts(sort: "updatedAt:desc", pagination: { limit: $limit }) {
-        data {
-          ...Post
-        }
+        ...Post
       }
     }
   `,
@@ -37,10 +31,8 @@ export const GetPostsQuery = graphql(
 export const GetPostByIdQuery = graphql(
   `
     query GetPostById($id: ID!) {
-      post(id: $id) {
-        data {
-          ...Post
-        }
+      post(documentId: $id) {
+        ...Post
       }
     }
   `,
@@ -50,10 +42,8 @@ export const GetPostByIdQuery = graphql(
 export const GetPostsByIdsQuery = graphql(
   `
     query GetPosts($ids: [ID], $sort: String! = "updatedAt:desc") {
-      posts(sort: [$sort], filters: { id: { in: $ids } }) {
-        data {
-          ...Post
-        }
+      posts(sort: [$sort], filters: { documentId: { in: $ids } }) {
+        ...Post
       }
     }
   `,
@@ -64,9 +54,7 @@ export const GetPostsPageQuery = graphql(
   `
     query GetPosts($page: Int, $pageSize: Int, $sort: String!) {
       posts(pagination: { page: $page, pageSize: $pageSize }, sort: [$sort]) {
-        data {
-          ...Post
-        }
+        ...Post
       }
     }
   `,
@@ -80,9 +68,7 @@ export const GetPostsStartingFromQuery = graphql(
         filters: { or: [{ updatedAt: { gte: $from } }, { createdAt: { gte: $from } }] }
         pagination: { page: $page, pageSize: $pageSize }
       ) {
-        data {
-          ...Post
-        }
+        ...Post
       }
     }
   `,

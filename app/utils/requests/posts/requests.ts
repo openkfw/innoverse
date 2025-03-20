@@ -20,25 +20,10 @@ import { findReaction } from '@/repository/db/reaction';
 
 const logger = getLogger();
 
-export async function getPosts(limit = 100) {
-  try {
-    const response = await strapiGraphQLFetcher(GetUpdatesQuery, { limit });
-    const updatesData = response.updates?.data;
-    if (!updatesData) throw new Error('Response contained no updates');
-
-    const updates = updatesData.map(mapToProjectUpdate);
-    // const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
-    return updates;
-  } catch (err) {
-    const error = strapiError('Getting all project updates', err as RequestError);
-    logger.error(error);
-  }
-}
-
 export async function getPostById(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetPostByIdQuery, { id });
-    const postData = response.post?.data;
+    const postData = response.post;
     if (!postData) return null;
     const post = mapToPost(postData);
     return post;
@@ -57,7 +42,7 @@ export async function createPostInStrapi(body: { comment: string; authorId: stri
       anonymous: body.anonymous,
     });
 
-    const postData = response.createPost?.data;
+    const postData = response.createPost;
     if (!postData) throw 'Response contained no update';
 
     const post = mapToPost(postData);
@@ -71,10 +56,9 @@ export async function createPostInStrapi(body: { comment: string; authorId: stri
 export async function deletePostFromStrapi(id: string) {
   try {
     const response = await strapiGraphQLFetcher(DeletePostMutation, { postId: id });
-    const postData = response.deletePost?.data;
+    const postData = response.deletePost;
     if (!postData) throw new Error('Response contained no removed post');
-    const removedPost = mapToPost(postData);
-    return removedPost;
+    return postData.documentId;
   } catch (err) {
     const error = strapiError('Removing post', err as RequestError, id);
     logger.error(error);
@@ -87,7 +71,7 @@ export async function updatePostInStrapi(id: string, comment: string) {
       postId: id,
       comment,
     });
-    const updatedUpdate = response.updatePost?.data;
+    const updatedUpdate = response.updatePost;
     if (!updatedUpdate) throw new Error('Response contained no updated post');
     const update = mapToPost(updatedUpdate);
     return update;
@@ -120,17 +104,19 @@ export const findReactionByUser = withAuth(
 export async function getPostsStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetPostsStartingFromQuery, { from, page, pageSize });
-    const posts = await mapToPosts(response.posts?.data);
+    if (!response?.posts) throw new Error('Response contained no posts');
 
-    const newsComments = await getCommentsStartingFrom(dbClient, from, ObjectType.POST);
+    const posts = await mapToPosts(response.posts);
+
+    const postComments = await getCommentsStartingFrom(dbClient, from, ObjectType.POST);
     // Get unique ids of updates
     const postsIds = getUniqueValues(
-      newsComments.map((comment) => comment?.objectId).filter((id): id is string => id !== undefined),
+      postComments.map((comment) => comment?.objectId).filter((id): id is string => id !== undefined),
     );
 
     if (postsIds.length > 0) {
       const res = await strapiGraphQLFetcher(GetPostsByIdsQuery, { ids: postsIds });
-      const postsWithComments = await mapToPosts(res.posts?.data);
+      const postsWithComments = await mapToPosts(res.posts);
 
       const combinedUpdates = [...posts, ...postsWithComments];
       const uniquePosts = combinedUpdates.filter(

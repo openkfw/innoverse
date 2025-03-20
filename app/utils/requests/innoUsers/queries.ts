@@ -43,9 +43,7 @@ export const GetInnoUsersByProviderIdsQuery = graphql(
   `
     query GetInnoUsers($providerIds: [String!]) {
       innoUsers(filters: { providerId: { in: $providerIds } }) {
-        data {
-          ...InnoUser
-        }
+        ...InnoUser
       }
     }
   `,

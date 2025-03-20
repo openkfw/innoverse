@@ -13,10 +13,12 @@
   "pluginOptions": {},
   "attributes": {
     "comment": {
-      "type": "text"
+      "type": "text",
+      "required": true
     },
     "anonymous": {
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     },
     "author": {
       "type": "relation",

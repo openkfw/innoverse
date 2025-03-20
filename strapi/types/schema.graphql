@@ -28,7 +28,6 @@ input BooleanFilterInput {
 }
 
 type CollaborationQuestion {
-  attributes: CollaborationQuestion! @deprecated(reason: "Use root level fields instead")
   authors(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
   authors_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
   createdAt: DateTime
@@ -333,7 +332,6 @@ type Error {
 
 type Event {
   Themes(filters: ComponentThemeThemeFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [ComponentThemeTheme]
-  attributes: Event! @deprecated(reason: "Use root level fields instead")
   author: InnoUser
   createdAt: DateTime
   data: Event! @deprecated(reason: "Use root level fields instead")
@@ -436,7 +434,7 @@ input FloatFilterInput {
   startsWith: Float
 }
 
-union GenericMorph = CollaborationQuestion | ComponentDescriptionDescription | ComponentImageImage | ComponentResponseOptionsResponseOptions | ComponentSliderTextSliderText | ComponentTagsTags | ComponentThemeTheme | ComponentUserAuthor | Event | I18NLocale | InnoUser | Opportunity | Project | Question | ReviewWorkflowsWorkflow | ReviewWorkflowsWorkflowStage | SurveyQuestion | Update | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser
+union GenericMorph = CollaborationQuestion | ComponentDescriptionDescription | ComponentImageImage | ComponentResponseOptionsResponseOptions | ComponentSliderTextSliderText | ComponentTagsTags | ComponentThemeTheme | ComponentUserAuthor | Event | I18NLocale | InnoUser | Opportunity | Post | Project | Question | ReviewWorkflowsWorkflow | ReviewWorkflowsWorkflowStage | SurveyQuestion | Update | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser
 
 type I18NLocale {
   attributes: I18NLocale! @deprecated(reason: "Use root level fields instead")
@@ -695,6 +693,7 @@ type Mutation {
   createEvent(data: EventInput!, status: PublicationStatus = PUBLISHED): Event
   createInnoUser(data: InnoUserInput!, status: PublicationStatus = PUBLISHED): InnoUser
   createOpportunity(data: OpportunityInput!, status: PublicationStatus = PUBLISHED): Opportunity
+  createPost(data: PostInput!, status: PublicationStatus = PUBLISHED): Post
   createProject(data: ProjectInput!, status: PublicationStatus = PUBLISHED): Project
   createQuestion(data: QuestionInput!, status: PublicationStatus = PUBLISHED): Question
   createReviewWorkflowsWorkflow(data: ReviewWorkflowsWorkflowInput!, status: PublicationStatus = PUBLISHED): ReviewWorkflowsWorkflow
@@ -711,6 +710,7 @@ type Mutation {
   deleteEvent(documentId: ID!): DeleteMutationResponse
   deleteInnoUser(documentId: ID!): DeleteMutationResponse
   deleteOpportunity(documentId: ID!): DeleteMutationResponse
+  deletePost(documentId: ID!): DeleteMutationResponse
   deleteProject(documentId: ID!): DeleteMutationResponse
   deleteQuestion(documentId: ID!): DeleteMutationResponse
   deleteReviewWorkflowsWorkflow(documentId: ID!): DeleteMutationResponse
@@ -743,6 +743,7 @@ type Mutation {
   updateEvent(data: EventInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): Event
   updateInnoUser(data: InnoUserInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): InnoUser
   updateOpportunity(data: OpportunityInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): Opportunity
+  updatePost(data: PostInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): Post
   updateProject(data: ProjectInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): Project
   updateQuestion(data: QuestionInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): Question
   updateReviewWorkflowsWorkflow(data: ReviewWorkflowsWorkflowInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): ReviewWorkflowsWorkflow
@@ -766,7 +767,6 @@ type Opportunity {
   description: String
   documentId: ID!
   expense: String
-  id: ID! @deprecated(reason: "Use `documentId` instead")
   participants(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
   participants_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
   project: Project
@@ -838,9 +838,11 @@ input PaginationArg {
 
 type Post {
   anonymous: Boolean
-  author: InnoUserEntityResponse
-  comment: String
+  author: InnoUser
+  comment: String!
   createdAt: DateTime
+  documentId: ID!
+  publishedAt: DateTime
   updatedAt: DateTime
 }
 
@@ -850,12 +852,12 @@ type PostEntity {
 }
 
 type PostEntityResponse {
-  data: PostEntity
+  data: Post
 }
 
 type PostEntityResponseCollection {
-  data: [PostEntity!]!
-  meta: ResponseCollectionMeta!
+  nodes: [Post!]!
+  pageInfo: Pagination!
 }
 
 input PostFiltersInput {
@@ -864,9 +866,10 @@ input PostFiltersInput {
   author: InnoUserFiltersInput
   comment: StringFilterInput
   createdAt: DateTimeFilterInput
-  id: IDFilterInput
+  documentId: IDFilterInput
   not: PostFiltersInput
   or: [PostFiltersInput]
+  publishedAt: DateTimeFilterInput
   updatedAt: DateTimeFilterInput
 }
 
@@ -874,10 +877,11 @@ input PostInput {
   anonymous: Boolean
   author: ID
   comment: String
+  publishedAt: DateTime
 }
 
 type PostRelationResponseCollection {
-  data: [PostEntity!]!
+  nodes: [Post!]!
 }
 
 type Project {
@@ -981,6 +985,9 @@ type Query {
   opportunities(filters: OpportunityFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [Opportunity]!
   opportunities_connection(filters: OpportunityFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): OpportunityEntityResponseCollection
   opportunity(documentId: ID!, status: PublicationStatus = PUBLISHED): Opportunity
+  post(documentId: ID!, status: PublicationStatus = PUBLISHED): Post
+  posts(filters: PostFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [Post!]!
+  posts_connection(filters: PostFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): PostEntityResponseCollection
   project(documentId: ID!, status: PublicationStatus = PUBLISHED): Project
   projects(filters: ProjectFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [Project]!
   projects_connection(filters: ProjectFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): ProjectEntityResponseCollection
@@ -1012,7 +1019,6 @@ type Query {
 }
 
 type Question {
-  attributes: Question! @deprecated(reason: "Use root level fields instead")
   authors(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
   authors_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
   createdAt: DateTime
