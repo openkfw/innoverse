@@ -31,6 +31,7 @@ type NonNullableFieldsType = {
     | 'team'
     | 'authors'
     | 'updates'
+    | 'posts'
     | 'participants'
     | 'events'
     | 'innoUsers'
