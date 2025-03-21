@@ -52,6 +52,20 @@ export async function removeReactionFromDb(
   });
 }
 
+export async function removeAllReactionsbyObjectIdAndType(
+  client: PrismaClient,
+  objectId: string,
+  objectType: ObjectType,
+): Promise<number> {
+  const result = await client.reaction.deleteMany({
+    where: {
+      objectId,
+      objectType: objectType as PrismaObjectType,
+    },
+  });
+  return result.count;
+}
+
 export async function findReaction(
   client: PrismaClient,
   reactedBy: string,
