@@ -8,6 +8,11 @@ import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
 import {
+  CreateInnoUserMutation,
+  UpdateInnoUserMutation,
+  UpdateInnoUserUsernameMutation,
+} from '@/utils/requests/innoUsers/mutations';
+import {
   GetAllInnoUsers,
   GetEmailsByUsernamesQuery,
   GetInnoUserByEmailQuery,
@@ -15,11 +20,6 @@ import {
   GetInnoUserByUsernameQuery,
   GetInnoUsersByProviderIdsQuery,
 } from '@/utils/requests/innoUsers/queries';
-import {
-  CreateInnoUserMutation,
-  UpdateInnoUserMutation,
-  UpdateInnoUserUsernameMutation,
-} from '@/utils/requests/innoUsers/mutations';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 const logger = getLogger();
@@ -52,7 +52,7 @@ export async function updateInnoUser(body: UpdateInnoUser) {
   try {
     const handleResponse = async (body: Omit<UpdateInnoUser, 'name'>) => {
       const response = await strapiGraphQLFetcher(UpdateInnoUserMutation, body);
-      const userData = response.updateInnoUser?.data;
+      const userData = response.updateInnoUser;
       if (!userData) throw new Error('Response contained no user data');
       return mapToUser(userData);
     };
