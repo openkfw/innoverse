@@ -4,9 +4,7 @@ import { RequestError } from '@/entities/error';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { mapToProjectUpdate } from '@/utils/requests/updates/mappings';
 import { CreatePostMutation, DeletePostMutation, UpdatePostMutation } from '@/utils/requests/posts/mutations';
-import { GetUpdatesQuery } from '@/utils/requests/updates/queries';
 import { mapToPost, mapToPosts } from './mappings';
 import { getInnoUserByProviderId } from '../innoUsers/requests';
 import { GetPostByIdQuery, GetPostsByIdsQuery, GetPostsStartingFromQuery } from './queries';
@@ -43,7 +41,7 @@ export async function createPostInStrapi(body: { comment: string; authorId: stri
     });
 
     const postData = response.createPost;
-    if (!postData) throw 'Response contained no update';
+    if (!postData) throw 'Response contained no post';
 
     const post = mapToPost(postData);
     return post;
@@ -71,10 +69,10 @@ export async function updatePostInStrapi(id: string, comment: string) {
       postId: id,
       comment,
     });
-    const updatedUpdate = response.updatePost;
-    if (!updatedUpdate) throw new Error('Response contained no updated post');
-    const update = mapToPost(updatedUpdate);
-    return update;
+    const updatedPost = response.updatePost;
+    if (!updatedPost) throw new Error('Response contained no updated post');
+    const post = mapToPost(updatedPost);
+    return post;
   } catch (err) {
     const error = strapiError('Updating post', err as RequestError, id);
     logger.error(error);
@@ -109,7 +107,7 @@ export async function getPostsStartingFrom({ from, page, pageSize }: StartPagina
     const posts = await mapToPosts(response.posts);
 
     const postComments = await getCommentsStartingFrom(dbClient, from, ObjectType.POST);
-    // Get unique ids of updates
+    // Get unique ids of posts
     const postsIds = getUniqueValues(
       postComments.map((comment) => comment?.objectId).filter((id): id is string => id !== undefined),
     );
@@ -120,7 +118,7 @@ export async function getPostsStartingFrom({ from, page, pageSize }: StartPagina
 
       const combinedUpdates = [...posts, ...postsWithComments];
       const uniquePosts = combinedUpdates.filter(
-        (update, index, self) => index === self.findIndex((t) => t.id === update.id),
+        (post, index, self) => index === self.findIndex((t) => t.id === post.id),
       );
       return uniquePosts;
     }

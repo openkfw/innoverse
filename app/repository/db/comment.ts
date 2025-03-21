@@ -133,6 +133,20 @@ export async function deleteCommentInDb(client: PrismaClient, commentId: string)
   }
 }
 
+export async function removeAllCommentsByObjectIdAndType(
+  client: PrismaClient,
+  objectId: string,
+  objectType: ObjectType,
+) {
+  const result = await client.comment.deleteMany({
+    where: {
+      objectId,
+      objectType: objectType as PrismaObjectType,
+    },
+  });
+  return result.count;
+}
+
 export async function getCommentsStartingFrom(client: PrismaClient, from: Date, objectType: ObjectType) {
   try {
     return await client.comment.findMany({

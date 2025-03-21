@@ -1,9 +1,17 @@
 'use server';
 
 import { ObjectType, Post, User, UserSession } from '@/common/types';
-import { getFollowedByForEntity, updateFollowObjectId } from '@/repository/db/follow';
+import {
+  getFollowedByForEntity,
+  removeAllFollowsByObjectIdAndType,
+  updateFollowObjectId,
+} from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
-import { getReactionsForEntity, updateReactionObjectId } from '@/repository/db/reaction';
+import {
+  getReactionsForEntity,
+  removeAllReactionsbyObjectIdAndType,
+  updateReactionObjectId,
+} from '@/repository/db/reaction';
 import { InnoPlatformError, redisError } from '@/utils/errors';
 import { getPromiseResults, getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
@@ -20,8 +28,8 @@ import {
   getPostById,
   updatePostInStrapi,
 } from '@/utils/requests/posts/requests';
-import { updateCommentObjectId } from '@/repository/db/comment';
-import { deletePostFromDb, getAllPostsFromDb } from '@/repository/db/posts';
+import { removeAllCommentsByObjectIdAndType, updateCommentObjectId } from '@/repository/db/comment';
+import { getAllPostsFromDb } from '@/repository/db/posts';
 import { sync as synchronizeNewsFeed } from '@/utils/newsFeed/newsFeedSync';
 
 const logger = getLogger();
@@ -59,7 +67,13 @@ export const updatePost = async ({ postId, content, user }: UpdatePost) => {
 
 export const deletePost = async ({ postId }: DeletePost) => {
   const deletedPost = await deletePostFromStrapi(postId);
-  await deletePostFromCache(postId);
+  await Promise.all([
+    deletePostFromCache(postId),
+    removeAllReactionsbyObjectIdAndType(dbClient, postId, ObjectType.POST),
+    removeAllCommentsByObjectIdAndType(dbClient, postId, ObjectType.POST),
+    removeAllFollowsByObjectIdAndType(dbClient, postId, ObjectType.POST),
+  ]);
+
   return deletedPost;
 };
 
@@ -146,7 +160,6 @@ export const createNewsFeedEntryForPost = async (post: Post, author?: User) => {
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
   const followers = await mapToRedisUsers(followerIds);
 
-  //todo fix type
   const postAuthor = author ?? (await getInnoUserByProviderId(post.author.providerId ?? ''));
   const postWithAuthor = { ...post, author: postAuthor, objectType: ObjectType.POST };
   return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers, comments);
@@ -158,7 +171,6 @@ export const movePostsToSTrapi = async () => {
   const posts = await getAllPostsFromDb(dbClient);
   const mapPosts = posts.map(async (post) => movePostToStrapi(post));
   return await getPromiseResults(mapPosts);
-  // getPosts();
 };
 
 const movePostToStrapi = async (post: {
@@ -187,7 +199,7 @@ const movePostToStrapi = async (post: {
     updateReactionObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST),
   ]);
 
-  await deletePostFromDb(dbClient, oldPostId);
+  await deletePost({ postId: oldPostId });
   await synchronizeNewsFeed();
   return createdPost;
 };

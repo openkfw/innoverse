@@ -5,15 +5,15 @@ import { toDate } from '@/utils/helpers';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { PostFragment } from '@/utils/requests/posts/queries';
 
-export async function mapToPosts(updates: ResultOf<typeof PostFragment>[] | undefined) {
-  return updates?.map(mapToPost) ?? [];
+export async function mapToPosts(posts: ResultOf<typeof PostFragment>[] | undefined) {
+  return posts?.map(mapToPost) ?? [];
 }
 
 export function mapToPost(postData: ResultOf<typeof PostFragment>): Post {
   const author = postData.author;
 
   if (!author) {
-    throw new Error('Update contained no author');
+    throw new Error('Post contained no author');
   }
 
   return {

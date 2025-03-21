@@ -141,6 +141,20 @@ export async function removeFollowFromDb(
   }
 }
 
+export async function removeAllFollowsByObjectIdAndType(
+  client: PrismaClient,
+  objectId: string,
+  objectType: ObjectType,
+) {
+  const result = await client.follow.deleteMany({
+    where: {
+      objectId,
+      objectType: objectType as PrismaObjectType,
+    },
+  });
+  return result.count;
+}
+
 export async function addFollowToDb(
   client: PrismaClient,
   followedBy: string,

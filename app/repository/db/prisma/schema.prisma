@@ -51,7 +51,7 @@ model CommentLike {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  comment   Comment @relation(fields: [commentId], references: [id])
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId String
 
   likedBy   String // user id  
