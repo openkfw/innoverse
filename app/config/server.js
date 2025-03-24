@@ -85,7 +85,7 @@ const serverEnvConfig = createEnvConfig({
     },
     NEWS_FEED_SYNC_MONTHS: {
       stages: runtimeStages,
-      defaultRule: z.string().default('12'),
+      defaultRule: z.string().default('36'),
       required: true,
     },
 

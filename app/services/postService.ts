@@ -29,7 +29,7 @@ import {
   updatePostInStrapi,
 } from '@/utils/requests/posts/requests';
 import { removeAllCommentsByObjectIdAndType, updateCommentObjectId } from '@/repository/db/comment';
-import { getAllPostsFromDb } from '@/repository/db/posts';
+import { deletePostFromDb, getAllPostsFromDb } from '@/repository/db/posts';
 import { sync as synchronizeNewsFeed } from '@/utils/newsFeed/newsFeedSync';
 
 const logger = getLogger();
@@ -169,8 +169,16 @@ const getRedisKey = (postId: string) => `${NewsType.POST}:${postId}`;
 
 export const movePostsToSTrapi = async () => {
   const posts = await getAllPostsFromDb(dbClient);
+  logger.info(`Moving ${posts.length} posts to strapi?`);
   const mapPosts = posts.map(async (post) => movePostToStrapi(post));
-  return await getPromiseResults(mapPosts);
+  const result = await getPromiseResults(mapPosts);
+  if (result.length) {
+    logger.info(`Move completed, moved ${result.length} posts, syncronizing news feed`);
+
+    await synchronizeNewsFeed(0, true);
+  }
+  await synchronizeNewsFeed(0, true);
+  return result;
 };
 
 const movePostToStrapi = async (post: {
@@ -199,7 +207,6 @@ const movePostToStrapi = async (post: {
     updateReactionObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST),
   ]);
 
-  await deletePost({ postId: oldPostId });
-  await synchronizeNewsFeed();
+  await deletePostFromDb(dbClient, oldPostId);
   return createdPost;
 };

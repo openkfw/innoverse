@@ -1,11 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
-import { ObjectType } from '@/common/types';
 import { dbError, InnoPlatformError } from '@/utils/errors';
-import { getUniqueValues } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-
-import { getCommentsStartingFrom } from './comment';
 
 const logger = getLogger();
 
