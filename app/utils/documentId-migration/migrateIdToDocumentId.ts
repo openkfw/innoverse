@@ -38,47 +38,67 @@ export const GetCollectionsIds = graphql(`
   }
 `);
 
+const isMigrationApplied = (migrationApplied: (boolean | undefined)[]) => {
+  return migrationApplied.some((applied) => applied);
+};
+
+async function migrateCollection(
+  items: {
+    documentId: string;
+    id: string;
+  }[],
+  objectType: ObjectType,
+) {
+  return isMigrationApplied(
+    await Promise.all(items.map(async (item) => await migrateIdToDocumentId(item, objectType))),
+  );
+}
+
 const migrate = async () => {
   const response = await strapiGraphQLFetcher(GetCollectionsIds, { limit: 1000 });
   const { updates, events, surveyQuestions, projects, collaborationQuestions } = response;
   // Migrate Updates
-  updates.map(async (item) => {
-    await migrateIdToDocumentId(item, ObjectType.UPDATE);
-  });
-
+  const migratedUpdates = await migrateCollection(updates, ObjectType.UPDATE);
   // Migrate Events
-  events.map(async (item) => {
-    await migrateIdToDocumentId(item, ObjectType.EVENT);
-  });
-
+  const migratedEvents = await migrateCollection(events, ObjectType.EVENT);
   // Migrate Projects
-  projects.map(async (item) => {
-    await migrateIdToDocumentId(item, ObjectType.PROJECT);
-  });
-
+  const migratedProjects = await migrateCollection(projects, ObjectType.PROJECT);
   // Migrate Collaboration questions
-  collaborationQuestions.map(async (item) => {
-    await migrateIdToDocumentId(item, ObjectType.COLLABORATION_QUESTION);
-  });
-
+  const migratedCollaborationQuestions = await migrateCollection(
+    collaborationQuestions,
+    ObjectType.COLLABORATION_QUESTION,
+  );
   // Migrate Survey questions
-  surveyQuestions.map(async (item) => {
-    await migrateIdToDocumentId(item, ObjectType.SURVEY_QUESTION);
-  });
+  const migratedSurveyQuestions = await migrateCollection(surveyQuestions, ObjectType.SURVEY_QUESTION);
+
+  if (
+    migratedUpdates ||
+    migratedEvents ||
+    migratedProjects ||
+    migratedSurveyQuestions ||
+    migratedCollaborationQuestions
+  ) {
+    return true;
+  }
+  return false;
 };
 
 export const migrateIdsToDocumentIds = async () => {
   logger.info('Starting migration of object ids to document ids');
-  await migrate();
+  const migrationApplied = await migrate();
   logger.info('Ending migration of object ids to document ids');
   // Synchronize the news feed cache after the migration
-  await synchronizeNewsFeed(0, true);
+  if (migrationApplied) {
+    await synchronizeNewsFeed(0, true);
+  }
 };
 
 const migrateIdToDocumentId = async (item: { documentId: string; id: string }, objectType: ObjectType) => {
   try {
+    let migrationApplied = false;
     const updatedReactions = await updateReactionsId(dbClient, item.id, item.documentId, objectType);
     if (updatedReactions.count > 0) {
+      migrationApplied = true;
       logger.info(
         `Successfully updated reactions with object id: ${item.id} to documentId: ${item.documentId} of type ${objectType}`,
       );
@@ -86,6 +106,7 @@ const migrateIdToDocumentId = async (item: { documentId: string; id: string }, o
 
     const updatedComments = await updateCommentsId(dbClient, item.id, item.documentId, objectType);
     if (updatedComments.count > 0) {
+      migrationApplied = true;
       logger.info(
         `Successfully updated comments with object id: ${item.id} to documentId: ${item.documentId} of type ${objectType}`,
       );
@@ -93,6 +114,7 @@ const migrateIdToDocumentId = async (item: { documentId: string; id: string }, o
 
     const updatedFollows = await updateFollowsId(dbClient, item.id, item.documentId, objectType);
     if (updatedFollows.count > 0) {
+      migrationApplied = true;
       logger.info(
         `Successfully updated follows with object id: ${item.id} to documentId: ${item.documentId} of type ${objectType}`,
       );
@@ -100,6 +122,7 @@ const migrateIdToDocumentId = async (item: { documentId: string; id: string }, o
 
     const updatedObjectLikes = await updateLikesIds(dbClient, item.id, item.documentId, objectType);
     if (updatedObjectLikes.count > 0) {
+      migrationApplied = true;
       logger.info(
         `Successfully updated likes with object id: ${item.id} to documentId: ${item.documentId} of type ${objectType}`,
       );
@@ -109,11 +132,13 @@ const migrateIdToDocumentId = async (item: { documentId: string; id: string }, o
     if (objectType === ObjectType.PROJECT) {
       const updateSurveyVotes = await updateSurveyVotesIds(dbClient, item.id, item.documentId);
       if (updateSurveyVotes.count > 0) {
+        migrationApplied = true;
         logger.info(
           `Successfully updated survey votes with object id: ${item.id} to documentId: ${item.documentId} of type ${objectType}`,
         );
       }
     }
+    return migrationApplied;
   } catch (err) {
     logger.error(`Failed to update records with object id: ${item.id}`, err);
   }
