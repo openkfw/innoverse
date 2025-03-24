@@ -15,6 +15,7 @@ export enum RedisIndex {
   UPDATED_AT = 'idx:updatedAt',
   SYNCED_AT = 'idx:syncedAt:status',
   UPDATED_AT_TYPE_PROJECT_ID_COMMENTS = 'idx:updatedAt:type:projectId:comments',
+  AUTHOR = 'idx:author',
 }
 
 export const getRedisClient = async () => {
@@ -139,6 +140,25 @@ const createIndices = async (client: RedisClient) => {
     on: {
       ON: 'HASH',
       PREFIX: 'comment:',
+    },
+  });
+
+  await createIndexOrCatch({
+    client,
+    index: RedisIndex.AUTHOR,
+    schema: {
+      '$.item.author.id': {
+        type: SchemaFieldTypes.TAG,
+        AS: 'authorId',
+      },
+      '$.item.team[*].id': {
+        type: SchemaFieldTypes.TAG,
+        AS: 'teamAuthorId',
+      },
+      '$.item.authors[*].id': {
+        type: SchemaFieldTypes.TAG,
+        AS: 'authorsId',
+      },
     },
   });
 };

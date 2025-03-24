@@ -7,6 +7,7 @@ import { RequestError } from '@/entities/error';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
+import { batchUpdateInnoUserInCache } from '@/utils/newsFeed/redis/redisService';
 import { getInnoUserByProviderId, updateInnoUser } from '@/utils/requests/innoUsers/requests';
 import { validateParams } from '@/utils/validationHelper';
 
@@ -50,6 +51,7 @@ export const updateUserProfile = withAuth(
         name: author.name,
         oldImageId: author.imageId,
       });
+      await batchUpdateInnoUserInCache(updatedUser);
       return {
         status: StatusCodes.OK,
         data: updatedUser,

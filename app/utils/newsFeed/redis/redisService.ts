@@ -1,6 +1,7 @@
 'use server';
 import { AggregateGroupByReducers, AggregateSteps, SearchOptions } from 'redis';
 
+import { User } from '@/common/types';
 import { redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
 import { escapeRedisTextSeparators, filterDuplicateEntries } from '@/utils/newsFeed/redis/helpers';
@@ -329,3 +330,45 @@ export const getNewsFeed = async (options?: GetItemsOptions) => {
 };
 
 const getKeyForNewsFeedEntry = (entry: RedisNewsFeedEntry) => `${entry.type}:${entry.item.id}`;
+
+export async function batchUpdateInnoUserInCache(updatedInnoUser: User) {
+  // const query = '(@authorId:{$userId}) | (@authorsId:{$userId}) | (@teamAuthorId:{$userId})';
+  const query = `(@authorId:{${updatedInnoUser.id}}) | (@authorsId:{${updatedInnoUser.id}}) | (@teamAuthorId:{${updatedInnoUser.id}})`;
+  const parameters: SearchOptions['PARAMS'] = {};
+  parameters['userId'] = escapeRedisTextSeparators(updatedInnoUser.id as string);
+  console.log('parameters', parameters);
+  const searchOptions: SearchOptions = {
+    PARAMS: parameters,
+  };
+  try {
+    const redisClient = await getRedisClient();
+    console.log('updating the inno user in cache', updatedInnoUser, query, searchOptions);
+    // Start a transaction
+
+    const items = await redisClient.ft.search(RedisIndex.AUTHOR, query, searchOptions);
+    console.log('transation items', items);
+
+    const transaction = redisClient.multi();
+    for (const item of Object.values(items.documents)) {
+      console.log('user item', item, item.id);
+      // const path = `$.item.team[?(@.id==${updatedInnoUser.id})]`;
+      // console.log('path', path);
+
+      // transaction.json.set(item.id, path, updatedInnoUser);
+      transaction.json.set(item.id, '.item.author', updatedInnoUser);
+    }
+
+    // Execute the transaction - one redis request
+    await transaction.exec().catch((err) => {
+      console.log(err);
+    });
+    console.log('Batch update completed');
+
+    await redisClient.quit();
+  } catch (err) {
+    const error = err as Error;
+    error.cause = `${error.message}; Index: ${RedisIndex.AUTHOR}; Query: ${query}`;
+    const extendedError = redisError('Failed to get items from redis', err as Error);
+    throw extendedError;
+  }
+}
