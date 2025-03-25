@@ -28,6 +28,7 @@ input BooleanFilterInput {
 }
 
 type CollaborationQuestion {
+  attributes: CollaborationQuestion! @deprecated(reason: "Use root level fields instead")
   authors(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
   authors_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
   createdAt: DateTime
@@ -332,6 +333,7 @@ type Error {
 
 type Event {
   Themes(filters: ComponentThemeThemeFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [ComponentThemeTheme]
+  attributes: Event! @deprecated(reason: "Use root level fields instead")
   author: InnoUser
   createdAt: DateTime
   data: Event! @deprecated(reason: "Use root level fields instead")
@@ -767,6 +769,7 @@ type Opportunity {
   description: String
   documentId: ID!
   expense: String
+  id: ID! @deprecated(reason: "Use `documentId` instead")
   participants(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
   participants_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
   project: Project
@@ -838,10 +841,13 @@ input PaginationArg {
 
 type Post {
   anonymous: Boolean
+  attributes: Post! @deprecated(reason: "Use root level fields instead")
   author: InnoUser
   comment: String!
   createdAt: DateTime
+  data: Post! @deprecated(reason: "Use root level fields instead")
   documentId: ID!
+  id: ID! @deprecated(reason: "Use `documentId` instead")
   publishedAt: DateTime
   updatedAt: DateTime
 }
@@ -856,6 +862,8 @@ type PostEntityResponse {
 }
 
 type PostEntityResponseCollection {
+  data: [Post!]! @deprecated(reason: "Use `nodes` field instead")
+  meta: ResponseCollectionMeta! @deprecated(reason: "Use the `pageInfo` field instead")
   nodes: [Post!]!
   pageInfo: Pagination!
 }
@@ -881,6 +889,7 @@ input PostInput {
 }
 
 type PostRelationResponseCollection {
+  data: [Post!]! @deprecated(reason: "Use `nodes` field instead")
   nodes: [Post!]!
 }
 
@@ -986,7 +995,7 @@ type Query {
   opportunities_connection(filters: OpportunityFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): OpportunityEntityResponseCollection
   opportunity(documentId: ID!, status: PublicationStatus = PUBLISHED): Opportunity
   post(documentId: ID!, status: PublicationStatus = PUBLISHED): Post
-  posts(filters: PostFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [Post!]!
+  posts(filters: PostFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [Post]!
   posts_connection(filters: PostFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): PostEntityResponseCollection
   project(documentId: ID!, status: PublicationStatus = PUBLISHED): Project
   projects(filters: ProjectFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [Project]!
@@ -1019,6 +1028,7 @@ type Query {
 }
 
 type Question {
+  attributes: Question! @deprecated(reason: "Use root level fields instead")
   authors(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
   authors_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
   createdAt: DateTime
