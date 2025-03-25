@@ -160,7 +160,11 @@ export const createNewsFeedEntryForPost = async (post: Post, author?: User) => {
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
   const followers = await mapToRedisUsers(followerIds);
 
-  const postAuthor = author ?? (await getInnoUserByProviderId(post.author.providerId ?? ''));
+  const postAuthor = author || (post.author.providerId && (await getInnoUserByProviderId(post.author.providerId)));
+  if (!postAuthor) {
+    logger.error(`Failed to find user for post with id ${post.id}`);
+    throw new Error(`Failed to find user for post`);
+  }
   const postWithAuthor = { ...post, author: postAuthor, objectType: ObjectType.POST };
   return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers, comments);
 };
@@ -169,7 +173,7 @@ const getRedisKey = (postId: string) => `${NewsType.POST}:${postId}`;
 
 export const movePostsToSTrapi = async () => {
   const posts = await getAllPostsFromDb(dbClient);
-  logger.info(`Moving ${posts.length} posts to strapi?`);
+  logger.info(`Moving ${posts.length} posts to strapi`);
   const mapPosts = posts.map(async (post) => movePostToStrapi(post));
   const result = await getPromiseResults(mapPosts);
   if (result.length) {
