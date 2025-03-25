@@ -147,15 +147,15 @@ const createIndices = async (client: RedisClient) => {
     client,
     index: RedisIndex.AUTHOR,
     schema: {
-      '$.item.author.id': {
+      '$.item.author.providerId': {
         type: SchemaFieldTypes.TAG,
         AS: 'authorId',
       },
-      '$.item.team[*].id': {
+      '$.item.team[*].providerId': {
         type: SchemaFieldTypes.TAG,
         AS: 'teamAuthorId',
       },
-      '$.item.authors[*].id': {
+      '$.item.authors[*].providerId': {
         type: SchemaFieldTypes.TAG,
         AS: 'authorsId',
       },

@@ -225,3 +225,7 @@ type ImageFormats = {
   xsmall?: ImageFormat;
   thumbnail?: ImageFormat;
 };
+
+type RedisJsonValue = string | number | boolean | null | RedisJsonArray;
+
+export interface RedisJsonArray extends Array<RedisJsonValue> {}

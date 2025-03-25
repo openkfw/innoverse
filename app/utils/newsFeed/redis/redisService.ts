@@ -5,11 +5,20 @@ import { User } from '@/common/types';
 import { redisError } from '@/utils/errors';
 import { getUnixTimestamp } from '@/utils/helpers';
 import { escapeRedisTextSeparators, filterDuplicateEntries } from '@/utils/newsFeed/redis/helpers';
-import { NewsType, RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
+import {
+  NewsType,
+  RedisCollaborationQuestion,
+  RedisJsonArray,
+  RedisNewsFeedEntry,
+  RedisProject,
+  RedisSync,
+  RedisUser,
+} from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
 
 import { searchNewsComments } from './services/commentsService';
 import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
+import { mapImageUrlToRelativeUrl } from './mappings';
 
 interface RedisJson {
   [key: string]: any;
@@ -331,44 +340,60 @@ export const getNewsFeed = async (options?: GetItemsOptions) => {
 
 const getKeyForNewsFeedEntry = (entry: RedisNewsFeedEntry) => `${entry.type}:${entry.item.id}`;
 
-export async function batchUpdateInnoUserInCache(updatedInnoUser: User) {
-  // const query = '(@authorId:{$userId}) | (@authorsId:{$userId}) | (@teamAuthorId:{$userId})';
-  const query = `(@authorId:{${updatedInnoUser.id}}) | (@authorsId:{${updatedInnoUser.id}}) | (@teamAuthorId:{${updatedInnoUser.id}})`;
-  const parameters: SearchOptions['PARAMS'] = {};
-  parameters['userId'] = escapeRedisTextSeparators(updatedInnoUser.id as string);
-  console.log('parameters', parameters);
-  const searchOptions: SearchOptions = {
-    PARAMS: parameters,
-  };
+export async function batchUpdateInnoUserInCache(
+  updatedInnoUser: Pick<User, 'providerId' | 'role' | 'department' | 'image'>,
+) {
+  console.log('updatedInnoUser', updatedInnoUser);
+  const paramProviderId = escapeRedisTextSeparators(updatedInnoUser.providerId as string);
+  const query = `(@authorId:{${paramProviderId}}) | (@authorsId:{${paramProviderId}}) | (@teamAuthorId:{${paramProviderId}})`;
+
+  function updateRedisJsonArray<T extends { providerId?: string }>(
+    arr: RedisUser[],
+    updateItem: Pick<User, 'providerId' | 'role' | 'department' | 'image'>,
+  ) {
+    return arr.map((item) =>
+      item.providerId === updateItem.providerId
+        ? {
+            ...item,
+            role: updateItem.role,
+            department: updateItem.department,
+            image: mapImageUrlToRelativeUrl(updateItem.image),
+          }
+        : item,
+    ) as unknown as RedisJsonArray;
+  }
+
   try {
     const redisClient = await getRedisClient();
-    console.log('updating the inno user in cache', updatedInnoUser, query, searchOptions);
-    // Start a transaction
-
-    const items = await redisClient.ft.search(RedisIndex.AUTHOR, query, searchOptions);
-    console.log('transation items', items);
-
+    const result = await redisClient.ft.search(RedisIndex.AUTHOR, query);
     const transaction = redisClient.multi();
-    for (const item of Object.values(items.documents)) {
-      console.log('user item', item, item.id);
-      // const path = `$.item.team[?(@.id==${updatedInnoUser.id})]`;
-      // console.log('path', path);
 
-      // transaction.json.set(item.id, path, updatedInnoUser);
-      transaction.json.set(item.id, '.item.author', updatedInnoUser);
+    const entries = result.documents as unknown as { id: string; value: RedisNewsFeedEntry }[];
+    for (const entry of Object.values(entries)) {
+      // followedBy
+      let item = entry.value.item;
+      const type = entry.value.type;
+      transaction.json.set(entry.id, '$.item.followedBy', updateRedisJsonArray(item.followedBy, updatedInnoUser));
+      // author
+      if ('author' in item && item.author?.providerId === updatedInnoUser.providerId) {
+        transaction.json.set(entry.id, '$.item.author', updatedInnoUser);
+      }
+      // team
+      if (type === NewsType.PROJECT) {
+        item = item as RedisProject;
+        transaction.json.set(entry.id, '$.item.team', updateRedisJsonArray(item.team, updatedInnoUser));
+      }
+      // authors
+      else if (type === NewsType.COLLABORATION_QUESTION) {
+        item = item as RedisCollaborationQuestion;
+        transaction.json.set(entry.id, '$.item.authors', updateRedisJsonArray(item.authors, updatedInnoUser));
+      }
     }
-
-    // Execute the transaction - one redis request
-    await transaction.exec().catch((err) => {
-      console.log(err);
-    });
-    console.log('Batch update completed');
-
-    await redisClient.quit();
+    await transaction.exec();
   } catch (err) {
     const error = err as Error;
-    error.cause = `${error.message}; Index: ${RedisIndex.AUTHOR}; Query: ${query}`;
-    const extendedError = redisError('Failed to get items from redis', err as Error);
+    error.cause = error.message;
+    const extendedError = redisError('Failed to execute the inno user update transaction', err as Error);
     throw extendedError;
   }
 }
