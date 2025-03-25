@@ -1,4 +1,6 @@
-import { ObjectType, PrismaClient } from '@prisma/client';
+import { ObjectType as PrismaObjectType, PrismaClient } from '@prisma/client';
+
+import { ObjectType } from '@/common/types';
 
 export async function getProjectLikes(client: PrismaClient, objectId: string, limit?: number) {
   const query: any = {
@@ -57,8 +59,20 @@ export async function addLike(client: PrismaClient, objectId: string, objectType
     },
     create: {
       objectId,
-      objectType,
+      objectType: objectType as PrismaObjectType,
       likedBy,
     },
   });
 }
+
+export const updateLikesIds = async (client: PrismaClient, id: string, documentId: string, objectType: ObjectType) => {
+  return await client.objectLike.updateMany({
+    where: {
+      objectId: id,
+      objectType: objectType as PrismaObjectType,
+    },
+    data: {
+      objectId: documentId,
+    },
+  });
+};

@@ -8,19 +8,23 @@ import { serverConfig } from '@/config/server';
 
 export async function register() {
   // required as on bootstrap runs in  runtime 'edge'. App runs in runtime 'nodejs'
-  if (process.env.NEXT_RUNTIME === 'nodejs' && serverConfig.NODE_ENV === 'production') {
-    registerOTel({
-      serviceName: serverConfig.APP_INSIGHTS_SERVICE_NAME,
-      traceExporter: new AzureMonitorTraceExporter({
-        connectionString: clientConfig.NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING,
-      }),
-      instrumentationConfig: {
-        fetch: {
-          attributesFromRequestHeaders: {
-            'graphql.operation.name': 'graphql-operation-name',
+  if (process.env.NEXT_RUNTIME === 'nodejs') {
+    if (serverConfig.NODE_ENV === 'production') {
+      registerOTel({
+        serviceName: serverConfig.APP_INSIGHTS_SERVICE_NAME,
+        traceExporter: new AzureMonitorTraceExporter({
+          connectionString: clientConfig.NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING,
+        }),
+        instrumentationConfig: {
+          fetch: {
+            attributesFromRequestHeaders: {
+              'graphql.operation.name': 'graphql-operation-name',
+            },
           },
         },
-      },
-    });
+      });
+    }
+    const { migrateIdsToDocumentIds } = await import('./utils/documentId-migration/migrateIdToDocumentId');
+    migrateIdsToDocumentIds();
   }
 }

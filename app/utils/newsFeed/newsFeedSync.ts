@@ -39,7 +39,7 @@ import {
 const logger = getLogger();
 const maxSyncRetries = 3;
 
-export const sync = async (retry?: number): Promise<RedisSync> => {
+export const sync = async (retry?: number, syncAll: boolean = false): Promise<RedisSync> => {
   const now = new Date();
   retry ??= 0;
 
@@ -47,9 +47,11 @@ export const sync = async (retry?: number): Promise<RedisSync> => {
     logger.info(`Starting news feed synchronization at ${now.toISOString()} (retry: ${retry}) ...`);
     const redisClient = await getRedisClient();
     const lastSync = await getLatestSuccessfulNewsFeedSync(redisClient);
-    const syncFrom = lastSync
-      ? unixTimestampToDate(lastSync.syncedAt)
-      : dayjs(now).subtract(serverConfig.NEWS_FEED_SYNC_MONTHS, 'months').toDate();
+    const syncFrom = syncAll
+      ? dayjs(now).subtract(36, 'months').toDate()
+      : lastSync
+        ? unixTimestampToDate(lastSync.syncedAt)
+        : dayjs(now).subtract(serverConfig.NEWS_FEED_SYNC_MONTHS, 'months').toDate();
 
     logger.info(`Sync news feed items starting from ${syncFrom.toISOString()} ...`);
 

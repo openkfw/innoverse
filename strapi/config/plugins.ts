@@ -5,6 +5,7 @@ export default {
       artifacts: {
         schema: "/opt/app/types/schema.graphql",
       },
+      v4CompatibilityMode: true,
     },
   },
   healthcheck: {
