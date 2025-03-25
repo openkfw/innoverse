@@ -47,7 +47,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
       </Typography>
       <Card sx={{ height: project?.team?.length > 2 ? '209px' : 'fit-content', ...cardStyles }} elevation={0}>
         <CardContent sx={cardContentStyles}>
-          <ProgressBar active={project.status} />
+          <ProgressBar active={project.stage} />
           <Stack sx={descriptionWrapperStyles}>
             <Typography variant="body1" sx={descriptionStyles}>
               {parseStringForLinks(project.summary)}

@@ -319,7 +319,7 @@ enum ENUM_EVENT_TYPE {
   Remote_und_In_office
 }
 
-enum ENUM_PROJECT_STATUS {
+enum ENUM_PROJECT_STAGE {
   Exploration
   Konzeption
   Live
@@ -908,7 +908,7 @@ type Project {
   projectStart: Date!
   publishedAt: DateTime
   shortTitle: String
-  status: ENUM_PROJECT_STATUS!
+  stage: ENUM_PROJECT_STAGE!
   summary: String!
   team(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
   team_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
@@ -945,7 +945,7 @@ input ProjectFiltersInput {
   projectStart: DateFilterInput
   publishedAt: DateTimeFilterInput
   shortTitle: StringFilterInput
-  status: StringFilterInput
+  stage: StringFilterInput
   summary: StringFilterInput
   team: InnoUserFiltersInput
   title: StringFilterInput
@@ -961,7 +961,7 @@ input ProjectInput {
   projectStart: Date
   publishedAt: DateTime
   shortTitle: String
-  status: ENUM_PROJECT_STATUS
+  stage: ENUM_PROJECT_STAGE
   summary: String
   team: [ID]
   title: String

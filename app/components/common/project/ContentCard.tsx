@@ -16,7 +16,7 @@ export interface ContentCardProps {
   title: JSX.Element | string;
   header: JSX.Element | string;
   description: JSX.Element | string;
-  status: JSX.Element | string;
+  stage: JSX.Element | string;
   sx?: React.CSSProperties;
 }
 
@@ -86,7 +86,7 @@ export default function ContentCard(props: ContentCardProps) {
           </Typography>
         </div>
 
-        <Box sx={statusStyles}>{props.status}</Box>
+        <Box sx={stageStyles}>{props.stage}</Box>
       </CardContent>
     </Card>
   );
@@ -143,7 +143,7 @@ const descriptionStyles = {
   WebkitLineClamp: 2,
 };
 
-const statusStyles = {
+const stageStyles = {
   marginTop: 'auto',
   paddingTop: 3,
   display: 'flex',

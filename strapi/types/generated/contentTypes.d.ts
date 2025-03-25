@@ -598,7 +598,7 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 30;
       }>;
-    status: Schema.Attribute.Enumeration<
+    stage: Schema.Attribute.Enumeration<
       ['Exploration', 'Konzeption', 'Proof of Concept', 'Live']
     > &
       Schema.Attribute.Required &

@@ -40,7 +40,7 @@ export const CardSkeleton = (props: SkeletonProps) => {
           {props.size.height > 500 ? <Skeleton width="90%" /> : undefined}
         </>
       }
-      status={
+      stage={
         <Typography sx={{ width: '80%' }} variant="h4">
           <Skeleton sx={{ bgcolor: 'grey.400' }} />
         </Typography>
