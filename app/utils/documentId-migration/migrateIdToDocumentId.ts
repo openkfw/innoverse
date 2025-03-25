@@ -1,6 +1,6 @@
 import { ObjectType } from '@/common/types';
-import { updateCommentsId } from '@/repository/db/comment';
-import { updateFollowsId } from '@/repository/db/follow';
+import { updateCommentObjectId } from '@/repository/db/comment';
+import { updateFollowObjectId } from '@/repository/db/follow';
 import { updateLikesIds } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
 import { updateReactionsId } from '@/repository/db/reaction';
@@ -104,7 +104,7 @@ const migrateIdToDocumentId = async (item: { documentId: string; id: string }, o
       );
     }
 
-    const updatedComments = await updateCommentsId(dbClient, item.id, item.documentId, objectType);
+    const updatedComments = await updateCommentObjectId(dbClient, item.id, item.documentId, objectType);
     if (updatedComments.count > 0) {
       migrationApplied = true;
       logger.info(
@@ -112,7 +112,7 @@ const migrateIdToDocumentId = async (item: { documentId: string; id: string }, o
       );
     }
 
-    const updatedFollows = await updateFollowsId(dbClient, item.id, item.documentId, objectType);
+    const updatedFollows = await updateFollowObjectId(dbClient, item.id, item.documentId, objectType);
     if (updatedFollows.count > 0) {
       migrationApplied = true;
       logger.info(

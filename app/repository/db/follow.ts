@@ -192,17 +192,6 @@ export async function addFollowToDb(
   }
 }
 
-export const updateFollowsId = async (client: PrismaClient, id: string, documentId: string, objectType: ObjectType) => {
-  return await client.follow.updateMany({
-    where: {
-      objectId: id,
-      objectType: objectType as PrismaObjectType,
-    },
-    data: {
-      objectId: documentId,
-    },
-  });
-};
 export async function updateFollowObjectId(
   client: PrismaClient,
   oldObjectId: string,
