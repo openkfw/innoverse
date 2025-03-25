@@ -25,11 +25,17 @@ export async function countComments(client: PrismaClient, objectId: string) {
   }
 }
 
-export async function getCommentsByObjectId(client: PrismaClient, objectId: string, sort: 'asc' | 'desc' = 'desc') {
+export async function getCommentsByObjectIdAndType(
+  client: PrismaClient,
+  objectId: string,
+  objectType: ObjectType,
+  sort: 'asc' | 'desc' = 'desc',
+) {
   try {
     return await client.comment.findMany({
       where: {
         objectId,
+        objectType: objectType as PrismaObjectType,
       },
       orderBy: {
         createdAt: sort,
@@ -127,6 +133,20 @@ export async function deleteCommentInDb(client: PrismaClient, commentId: string)
   }
 }
 
+export async function removeAllCommentsByObjectIdAndType(
+  client: PrismaClient,
+  objectId: string,
+  objectType: ObjectType,
+) {
+  const result = await client.comment.deleteMany({
+    where: {
+      objectId,
+      objectType: objectType as PrismaObjectType,
+    },
+  });
+  return result.count;
+}
+
 export async function getCommentsStartingFrom(client: PrismaClient, from: Date, objectType: ObjectType) {
   try {
     return await client.comment.findMany({
@@ -207,19 +227,19 @@ export async function isCommentLikedBy(client: PrismaClient, commentId: string, 
   return likedCommentsCount > 0;
 }
 
-export const updateCommentsId = async (
+export async function updateCommentObjectId(
   client: PrismaClient,
-  id: string,
-  documentId: string,
+  oldObjectId: string,
+  newObjectId: string,
   objectType: ObjectType,
-) => {
-  return await client.comment.updateMany({
+) {
+  return client.comment.updateMany({
     where: {
-      objectId: id,
+      objectId: oldObjectId,
       objectType: objectType as PrismaObjectType,
     },
     data: {
-      objectId: documentId,
+      objectId: newObjectId,
     },
   });
-};
+}

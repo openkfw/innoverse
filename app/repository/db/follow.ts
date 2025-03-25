@@ -141,6 +141,20 @@ export async function removeFollowFromDb(
   }
 }
 
+export async function removeAllFollowsByObjectIdAndType(
+  client: PrismaClient,
+  objectId: string,
+  objectType: ObjectType,
+) {
+  const result = await client.follow.deleteMany({
+    where: {
+      objectId,
+      objectType: objectType as PrismaObjectType,
+    },
+  });
+  return result.count;
+}
+
 export async function addFollowToDb(
   client: PrismaClient,
   followedBy: string,
@@ -178,14 +192,19 @@ export async function addFollowToDb(
   }
 }
 
-export const updateFollowsId = async (client: PrismaClient, id: string, documentId: string, objectType: ObjectType) => {
-  return await client.follow.updateMany({
+export async function updateFollowObjectId(
+  client: PrismaClient,
+  oldObjectId: string,
+  newObjectId: string,
+  objectType: ObjectType,
+) {
+  return client.follow.updateMany({
     where: {
-      objectId: id,
+      objectId: oldObjectId,
       objectType: objectType as PrismaObjectType,
     },
     data: {
-      objectId: documentId,
+      objectId: newObjectId,
     },
   });
-};
+}

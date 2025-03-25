@@ -1,14 +1,19 @@
 'use server';
 
-import type { Post as PrismaPost } from '@prisma/client';
-
 import { ObjectType, Post, User, UserSession } from '@/common/types';
-import { getFollowedByForEntity } from '@/repository/db/follow';
-import { addPostToDb, deletePostFromDb, getPostById, handlePostLikeInDb, updatePostInDb } from '@/repository/db/posts';
+import {
+  getFollowedByForEntity,
+  removeAllFollowsByObjectIdAndType,
+  updateFollowObjectId,
+} from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
-import { getReactionsForEntity } from '@/repository/db/reaction';
+import {
+  getReactionsForEntity,
+  removeAllReactionsbyObjectIdAndType,
+  updateReactionObjectId,
+} from '@/repository/db/reaction';
 import { InnoPlatformError, redisError } from '@/utils/errors';
-import { getUnixTimestamp } from '@/utils/helpers';
+import { getPromiseResults, getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapPostToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
 import { NewsType, RedisNewsComment, RedisPost } from '@/utils/newsFeed/redis/models';
@@ -17,6 +22,15 @@ import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@
 import { deleteCommentsInCache } from '@/utils/newsFeed/redis/services/commentsService';
 import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import {
+  createPostInStrapi,
+  deletePostFromStrapi,
+  getPostById,
+  updatePostInStrapi,
+} from '@/utils/requests/posts/requests';
+import { removeAllCommentsByObjectIdAndType, updateCommentObjectId } from '@/repository/db/comment';
+import { deletePostFromDb, getAllPostsFromDb } from '@/repository/db/posts';
+import { sync as synchronizeNewsFeed } from '@/utils/newsFeed/newsFeedSync';
 
 const logger = getLogger();
 
@@ -29,34 +43,38 @@ type UpdatePostInCache = {
   user: UserSession;
 };
 
-type UpvotePost = { postId: string; user: UserSession };
-
 type DeletePost = { postId: string };
 
 export const addPost = async ({ content, user, anonymous }: AddPost) => {
-  const createdPost = await addPostToDb(dbClient, content, user.providerId, anonymous ?? false);
-  await addPostToCache({ ...createdPost, author: user, objectType: ObjectType.POST });
-  return createdPost;
+  const createdPost = await createPostInStrapi({
+    comment: content,
+    authorId: user.providerId,
+    anonymous: anonymous ?? false,
+  });
+  if (createdPost) {
+    await addPostToCache({ ...createdPost, author: user, objectType: ObjectType.POST });
+    return createdPost;
+  }
 };
 
 export const updatePost = async ({ postId, content, user }: UpdatePost) => {
-  const updatedPost = await updatePostInDb(dbClient, postId, content);
-  await updatePostInCache({ post: updatedPost, user });
-  return updatedPost;
+  const updatedPost = await updatePostInStrapi(postId, content);
+  if (updatedPost) {
+    await updatePostInCache({ post: updatedPost, user });
+    return updatedPost;
+  }
 };
 
 export const deletePost = async ({ postId }: DeletePost) => {
-  const deletedPost = await deletePostFromDb(dbClient, postId);
-  await deletePostFromCache(postId);
-  return deletedPost;
-};
+  const deletedPost = await deletePostFromStrapi(postId);
+  await Promise.all([
+    deletePostFromCache(postId),
+    removeAllReactionsbyObjectIdAndType(dbClient, postId, ObjectType.POST),
+    removeAllCommentsByObjectIdAndType(dbClient, postId, ObjectType.POST),
+    removeAllFollowsByObjectIdAndType(dbClient, postId, ObjectType.POST),
+  ]);
 
-export const handleUpvotePost = async ({ postId, user }: UpvotePost) => {
-  const updatedPost = await handlePostLikeInDb(dbClient, postId, user.providerId);
-  if (updatedPost) {
-    await updatePostInCache({ post: updatedPost, user });
-  }
-  return updatedPost;
+  return deletedPost;
 };
 
 export const addPostToCache = async (post: Post) => {
@@ -121,7 +139,7 @@ export const getNewsFeedEntryForPost = async (
 
 export const createNewsFeedEntryForPostById = async (postId: string, author?: User) => {
   try {
-    const post = await getPostById(dbClient, postId);
+    const post = await getPostById(postId);
 
     if (!post) {
       logger.warn(`Failed to create news feed cache entry for post with id ${postId}: Post not found`);
@@ -136,15 +154,63 @@ export const createNewsFeedEntryForPostById = async (postId: string, author?: Us
   }
 };
 
-export const createNewsFeedEntryForPost = async (post: PrismaPost, author?: User) => {
-  const comments = await getRedisNewsCommentsWithResponses(post.id);
+export const createNewsFeedEntryForPost = async (post: Post, author?: User) => {
+  const comments = await getRedisNewsCommentsWithResponses(post.id, ObjectType.POST);
   const reactions = await getReactionsForEntity(dbClient, ObjectType.POST, post.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
   const followers = await mapToRedisUsers(followerIds);
 
-  const postAuthor = author ?? (await getInnoUserByProviderId(post.author));
+  const postAuthor = author || (post.author.providerId && (await getInnoUserByProviderId(post.author.providerId)));
+  if (!postAuthor) {
+    logger.error(`Failed to find user for post with id ${post.id}`);
+    throw new Error(`Failed to find user for post`);
+  }
   const postWithAuthor = { ...post, author: postAuthor, objectType: ObjectType.POST };
   return mapPostToRedisNewsFeedEntry(postWithAuthor, reactions, followers, comments);
 };
 
 const getRedisKey = (postId: string) => `${NewsType.POST}:${postId}`;
+
+export const movePostsToSTrapi = async () => {
+  const posts = await getAllPostsFromDb(dbClient);
+  logger.info(`Moving ${posts.length} posts to strapi`);
+  const mapPosts = posts.map(async (post) => movePostToStrapi(post));
+  const result = await getPromiseResults(mapPosts);
+  if (result.length) {
+    logger.info(`Move completed, moved ${result.length} posts, syncronizing news feed`);
+
+    await synchronizeNewsFeed(0, true);
+  }
+  await synchronizeNewsFeed(0, true);
+  return result;
+};
+
+const movePostToStrapi = async (post: {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  author: string;
+  anonymous: boolean;
+  likedBy: string[];
+  content: string;
+}) => {
+  const oldPostId = post.id;
+  const createdPost = await createPostInStrapi({
+    comment: post.content,
+    authorId: post.author,
+    anonymous: post.anonymous,
+  });
+
+  if (!createdPost) {
+    logger.error(`Failed to move post with id ${oldPostId} to Strapi`);
+    return null;
+  }
+  await Promise.all([
+    updateFollowObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST),
+    updateCommentObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST),
+    updateReactionObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST),
+  ]);
+
+  await deletePostFromDb(dbClient, oldPostId);
+  return createdPost;
+};

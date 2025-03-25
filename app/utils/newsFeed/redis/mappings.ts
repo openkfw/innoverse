@@ -29,7 +29,7 @@ import {
   RedisSurveyQuestion,
   RedisUser,
 } from '@/utils/newsFeed/redis/models';
-import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import { getInnoUserByProviderId, getInnoUsersByProviderIds } from '@/utils/requests/innoUsers/requests';
 
 export const mapPostToRedisNewsFeedEntry = (
   post: Post,
@@ -363,12 +363,7 @@ export const mapDBCommentToRedisComment = async (newsComment: CommentDB): Promis
 };
 
 export const mapToRedisUsers = async (userIds: string[]) => {
-  return await getPromiseResults(userIds.map(mapToRedisUser));
-};
-
-export const mapToRedisUser = async (userId: string): Promise<RedisUser> => {
-  const user = await getInnoUserByProviderId(userId);
-  return user;
+  return await getInnoUsersByProviderIds(userIds);
 };
 
 const mapImageFormatsToRelativeUrls = (imageFormats: ImageFormats) => {

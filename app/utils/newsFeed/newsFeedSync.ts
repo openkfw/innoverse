@@ -4,7 +4,6 @@ import { ObjectType } from '@/common/types';
 import { serverConfig } from '@/config/server';
 import { getCommentsStartingFrom } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
-import { getPostsStartingFrom } from '@/repository/db/posts';
 import dbClient from '@/repository/db/prisma/prisma';
 import { createNewsFeedEntryForComment } from '@/services/collaborationCommentService';
 import { createNewsFeedEntryForEvent } from '@/services/eventService';
@@ -35,6 +34,7 @@ import {
   transactionalDeleteItemsFromRedis,
   transactionalSaveNewsFeedEntry,
 } from './redis/redisService';
+import { getPostsStartingFrom } from '../requests/posts/requests';
 
 const logger = getLogger();
 const maxSyncRetries = 3;
@@ -46,12 +46,9 @@ export const sync = async (retry?: number, syncAll: boolean = false): Promise<Re
   try {
     logger.info(`Starting news feed synchronization at ${now.toISOString()} (retry: ${retry}) ...`);
     const redisClient = await getRedisClient();
+    const syncAllDate = dayjs(now).subtract(serverConfig.NEWS_FEED_SYNC_MONTHS, 'months').toDate();
     const lastSync = await getLatestSuccessfulNewsFeedSync(redisClient);
-    const syncFrom = syncAll
-      ? dayjs(now).subtract(36, 'months').toDate()
-      : lastSync
-        ? unixTimestampToDate(lastSync.syncedAt)
-        : dayjs(now).subtract(serverConfig.NEWS_FEED_SYNC_MONTHS, 'months').toDate();
+    const syncFrom = syncAll ? syncAllDate : lastSync ? unixTimestampToDate(lastSync.syncedAt) : syncAllDate;
 
     logger.info(`Sync news feed items starting from ${syncFrom.toISOString()} ...`);
 
@@ -157,9 +154,14 @@ const removeKeysAndSaveNewEntriesAsTransaction = async (
   );
 };
 
-const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
+export const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
   // posts fetched from prisma, hence no pagination required
-  const posts = await getPostsStartingFrom(dbClient, from);
+  const posts = await fetchPages({
+    fetcher: async (page, pageSize) => {
+      console.log(from, page, pageSize);
+      return (await getPostsStartingFrom({ from, page, pageSize })) ?? [];
+    },
+  });
   if (posts.length === 0) {
     logger.info('No posts found to sync');
   }
@@ -167,7 +169,7 @@ const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNewsFeedEn
   const newsFeedEntries = await getPromiseResults(mapEntries);
 
   newsFeedEntries.map(async (entry) => {
-    const comments = await saveEntryNewsComments(entry);
+    const comments = await saveEntryNewsComments(entry, ObjectType.POST);
     entry.item.comments = comments;
   });
   return newsFeedEntries.filter((entry): entry is RedisNewsFeedEntry => entry !== null);
@@ -197,7 +199,7 @@ const aggregateProjectUpdates = async ({ from }: { from: Date }): Promise<RedisN
   const newsFeedEntries = await getPromiseResults(createdProjectUpdates);
 
   newsFeedEntries.map(async (entry) => {
-    const comments = await saveEntryNewsComments(entry);
+    const comments = await saveEntryNewsComments(entry, ObjectType.UPDATE);
     entry.item.comments = comments;
   });
   return newsFeedEntries;
