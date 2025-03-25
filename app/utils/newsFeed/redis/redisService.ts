@@ -343,7 +343,6 @@ const getKeyForNewsFeedEntry = (entry: RedisNewsFeedEntry) => `${entry.type}:${e
 export async function batchUpdateInnoUserInCache(
   updatedInnoUser: Pick<User, 'providerId' | 'role' | 'department' | 'image'>,
 ) {
-  console.log('updatedInnoUser', updatedInnoUser);
   const paramProviderId = escapeRedisTextSeparators(updatedInnoUser.providerId as string);
   const query = `(@authorId:{${paramProviderId}}) | (@authorsId:{${paramProviderId}}) | (@teamAuthorId:{${paramProviderId}})`;
 
