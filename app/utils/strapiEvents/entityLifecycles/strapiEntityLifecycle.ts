@@ -1,7 +1,7 @@
 import { StrapiModel } from '../strapiEventHandler';
 
 export interface StrapiEntry {
-  id: string | number;
+  documentId: string | number;
 }
 
 export class StrapiEntityLifecycle {
