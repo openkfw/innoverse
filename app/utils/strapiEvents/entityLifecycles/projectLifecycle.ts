@@ -15,24 +15,24 @@ import { StrapiEntityLifecycle, StrapiEntry } from '@/utils/strapiEvents/entityL
 const logger = getLogger();
 export class ProjectLifecycle extends StrapiEntityLifecycle {
   public override async onUpdate(entry: StrapiEntry): Promise<void> {
-    const projectId = entry.id.toString();
+    const projectId = entry.documentId.toString();
     await this.notifyFollowers(projectId);
     await this.saveProjectToCache(projectId, { createIfNew: false });
   }
 
   public override async onPublish(entry: StrapiEntry): Promise<void> {
-    const projectId = entry.id.toString();
+    const projectId = entry.documentId.toString();
     await this.notifyFollowers(projectId);
     await this.saveProjectToCache(projectId);
   }
 
   public override async onDelete(entry: StrapiEntry): Promise<void> {
-    const projectId = entry.id.toString();
+    const projectId = entry.documentId.toString();
     await this.deleteProjectFromCache(projectId);
   }
 
   public override async onUnpublish(entry: StrapiEntry): Promise<void> {
-    const projectId = entry.id.toString();
+    const projectId = entry.documentId.toString();
     this.deleteProjectFromCache(projectId);
   }
 

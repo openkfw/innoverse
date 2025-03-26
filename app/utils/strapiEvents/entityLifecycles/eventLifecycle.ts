@@ -16,23 +16,23 @@ const logger = getLogger();
 
 export class EventLifecycle extends StrapiEntityLifecycle {
   public override async onUpdate(entry: StrapiEntry): Promise<void> {
-    const eventId = entry.id.toString();
+    const eventId = entry.documentId.toString();
     await this.saveEventToCache(eventId, { createIfNew: false });
   }
 
   public override async onDelete(entry: StrapiEntry): Promise<void> {
-    const eventId = entry.id.toString();
+    const eventId = entry.documentId.toString();
     await this.deleteEventFromCache(eventId);
   }
 
   public override async onPublish(entry: StrapiEntry): Promise<void> {
-    const eventId = entry.id.toString();
+    const eventId = entry.documentId.toString();
     await this.notifyAll();
     await this.saveEventToCache(eventId);
   }
 
   public override async onUnpublish(entry: StrapiEntry): Promise<void> {
-    const eventId = entry.id.toString();
+    const eventId = entry.documentId.toString();
     await this.notifyAll();
     await this.deleteEventFromCache(eventId);
   }
