@@ -2,32 +2,20 @@
 
 import { useState } from 'react';
 
-import Avatar from '@mui/material/Avatar';
-import Badge from '@mui/material/Badge';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
-import { styled } from '@mui/material/styles';
 
 import { UserSession } from '@/common/types';
-import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
-import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
+import AvatarWithBadge from '../common/AvatarWithBadge';
 
 import UserMenu from './UserMenu';
 
 interface LoggedInMenuProps {
-  user: UserSession | undefined;
+  user?: UserSession;
   isUserLoading: boolean;
 }
-
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  '& .MuiBadge-badge': {
-    backgroundColor: theme.palette.secondary.main,
-    color: theme.palette.secondary.main,
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-  },
-}));
 
 export default function LoggedInMenu({ user, isUserLoading }: LoggedInMenuProps) {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -46,29 +34,17 @@ export default function LoggedInMenu({ user, isUserLoading }: LoggedInMenuProps)
     },
   };
 
-  if (isUserLoading) {
-    return (
-      <IconButton>
-        <CircularProgress size={32} color="secondary" aria-label="loading" />
-      </IconButton>
-    );
-  }
   return (
     <>
+      {isUserLoading && (
+        <IconButton>
+          <CircularProgress size={32} color="secondary" aria-label="loading" />
+        </IconButton>
+      )}
       {user && (
         <div data-testid="user-menu">
           <IconButton sx={menuItemStyle} onClick={handleOpenUserMenu}>
-            <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'top', horizontal: 'right' }} variant="dot">
-              {user.image ? (
-                <Avatar
-                  sx={{ width: 32, height: 32 }}
-                  src={user.image}
-                  alt={m.components_layout_loggedInMenu_imageAlt()}
-                />
-              ) : (
-                <AvatarInitialsIcon name={user.name} size={32} />
-              )}
-            </StyledBadge>
+            <AvatarWithBadge />
           </IconButton>
           <UserMenu user={user} anchorElUser={anchorElUser} setAnchorElUser={setAnchorElUser} />
         </div>

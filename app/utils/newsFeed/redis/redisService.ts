@@ -9,6 +9,7 @@ import {
   NewsType,
   RedisCollaborationQuestion,
   RedisJsonArray,
+  RedisJsonValue,
   RedisNewsFeedEntry,
   RedisProject,
   RedisSync,
@@ -340,25 +341,30 @@ export const getNewsFeed = async (options?: GetItemsOptions) => {
 
 const getKeyForNewsFeedEntry = (entry: RedisNewsFeedEntry) => `${entry.type}:${entry.item.id}`;
 
-function updateInnoUserJsonArray(
+const updateRedisInnoUserArray = (
   arr: RedisUser[],
   updateItem: Pick<User, 'providerId' | 'role' | 'department' | 'image'>,
-) {
+) => {
   return arr.map((item) =>
-    item.providerId === updateItem.providerId
-      ? {
-          ...item,
-          role: updateItem.role,
-          department: updateItem.department,
-          image: mapImageUrlToRelativeUrl(updateItem.image),
-        }
-      : item,
+    item.providerId === updateItem.providerId ? updateRedisInnoUser(item, updateItem) : item,
   ) as unknown as RedisJsonArray;
-}
+};
 
-export async function batchUpdateInnoUserInCache(
+const updateRedisInnoUser = (
+  item: RedisUser,
+  updateItem: Pick<User, 'providerId' | 'role' | 'department' | 'image'>,
+) => {
+  return {
+    ...item,
+    role: updateItem.role,
+    department: updateItem.department,
+    image: mapImageUrlToRelativeUrl(updateItem.image),
+  } as unknown as RedisJsonValue;
+};
+
+export const batchUpdateInnoUserInCache = async (
   updatedInnoUser: Pick<User, 'providerId' | 'role' | 'department' | 'image'>,
-) {
+) => {
   const paramProviderId = escapeRedisTextSeparators(updatedInnoUser.providerId as string);
   const query = `(@authorId:{${paramProviderId}}) | (@authorsId:{${paramProviderId}}) | (@teamAuthorId:{${paramProviderId}})`;
 
@@ -372,20 +378,20 @@ export async function batchUpdateInnoUserInCache(
       // followedBy
       let item = entry.value.item;
       const type = entry.value.type;
-      transaction.json.set(entry.id, '$.item.followedBy', updateInnoUserJsonArray(item.followedBy, updatedInnoUser));
+      transaction.json.set(entry.id, '$.item.followedBy', updateRedisInnoUserArray(item.followedBy, updatedInnoUser));
       // author
-      if ('author' in item && item.author?.providerId === updatedInnoUser.providerId) {
-        transaction.json.set(entry.id, '$.item.author', updatedInnoUser);
+      if ('author' in item && item.author && item.author.providerId === updatedInnoUser.providerId) {
+        transaction.json.set(entry.id, '$.item.author', updateRedisInnoUser(item.author, updatedInnoUser));
       }
       // team
       if (type === NewsType.PROJECT) {
         item = item as RedisProject;
-        transaction.json.set(entry.id, '$.item.team', updateInnoUserJsonArray(item.team, updatedInnoUser));
+        transaction.json.set(entry.id, '$.item.team', updateRedisInnoUserArray(item.team, updatedInnoUser));
       }
       // authors
       else if (type === NewsType.COLLABORATION_QUESTION) {
         item = item as RedisCollaborationQuestion;
-        transaction.json.set(entry.id, '$.item.authors', updateInnoUserJsonArray(item.authors, updatedInnoUser));
+        transaction.json.set(entry.id, '$.item.authors', updateRedisInnoUserArray(item.authors, updatedInnoUser));
       }
     }
     await transaction.exec();
@@ -395,4 +401,4 @@ export async function batchUpdateInnoUserInCache(
     const extendedError = redisError('Failed to execute the inno user update transaction', err as Error);
     throw extendedError;
   }
-}
+};

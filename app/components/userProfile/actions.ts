@@ -53,9 +53,9 @@ export const updateUserProfile = withAuth(
       });
       await batchUpdateInnoUserInCache({
         providerId: updatedUser.providerId,
-        role: parsedData.role,
-        department: parsedData.department,
-        image: parsedData.image,
+        role: updatedUser.role,
+        department: updatedUser.department,
+        image: updatedUser.image,
       });
       return {
         status: StatusCodes.OK,
