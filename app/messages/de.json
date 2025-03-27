@@ -347,7 +347,7 @@
   "components_projectdetails_collaborationColumn_participate": "Teilnehmen",
 
   "components_projectdetails_heroSection_imageAlt": "Projekt",
-  "components_projectdetails_heroSection_status": "Status",
+  "components_projectdetails_heroSection_stage": "Phase",
 
   "components_projectdetails_projectInfoCardSmall_info": "Info",
   "components_projectdetails_projectInfoCardSmall_team": "Team",
@@ -356,7 +356,7 @@
 
   "components_projectDetails_projectProgress_imageAlt": "Bild",
 
-  "components_projectdetails_projectStageCard_infoStatus": "Info & Status der Initiative",
+  "components_projectdetails_projectStageCard_infoStage": "Info & Phase der Initiative",
   "components_projectdetails_projectStageCard_readMore": "Weiterlesen",
 
   "components_projectdetails_tabView_innoInfos": "Inno-Infos",

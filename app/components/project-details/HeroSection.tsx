@@ -72,7 +72,7 @@ export default function HeroSection(props: HeroSectionProps) {
             )}
             <Grid item sx={statusContainerStyles}>
               <Typography variant="overline" sx={statusStyles}>
-                {m.components_projectdetails_heroSection_status()}
+                {m.components_projectdetails_heroSection_stage()}
               </Typography>
               <ProgressBar active={stage} />
             </Grid>

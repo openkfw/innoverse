@@ -43,7 +43,7 @@ const ProjectStageCard = (props: TimingDataProps) => {
   return (
     <>
       <Typography variant="overline" sx={titleStyles}>
-        {m.components_projectdetails_projectStageCard_infoStatus()}
+        {m.components_projectdetails_projectStageCard_infoStage()}
       </Typography>
       <Card sx={{ height: project?.team?.length > 2 ? '209px' : 'fit-content', ...cardStyles }} elevation={0}>
         <CardContent sx={cardContentStyles}>
