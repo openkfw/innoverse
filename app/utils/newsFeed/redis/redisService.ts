@@ -340,27 +340,27 @@ export const getNewsFeed = async (options?: GetItemsOptions) => {
 
 const getKeyForNewsFeedEntry = (entry: RedisNewsFeedEntry) => `${entry.type}:${entry.item.id}`;
 
+function updateInnoUserJsonArray(
+  arr: RedisUser[],
+  updateItem: Pick<User, 'providerId' | 'role' | 'department' | 'image'>,
+) {
+  return arr.map((item) =>
+    item.providerId === updateItem.providerId
+      ? {
+          ...item,
+          role: updateItem.role,
+          department: updateItem.department,
+          image: mapImageUrlToRelativeUrl(updateItem.image),
+        }
+      : item,
+  ) as unknown as RedisJsonArray;
+}
+
 export async function batchUpdateInnoUserInCache(
   updatedInnoUser: Pick<User, 'providerId' | 'role' | 'department' | 'image'>,
 ) {
   const paramProviderId = escapeRedisTextSeparators(updatedInnoUser.providerId as string);
   const query = `(@authorId:{${paramProviderId}}) | (@authorsId:{${paramProviderId}}) | (@teamAuthorId:{${paramProviderId}})`;
-
-  function updateRedisJsonArray<T extends { providerId?: string }>(
-    arr: RedisUser[],
-    updateItem: Pick<User, 'providerId' | 'role' | 'department' | 'image'>,
-  ) {
-    return arr.map((item) =>
-      item.providerId === updateItem.providerId
-        ? {
-            ...item,
-            role: updateItem.role,
-            department: updateItem.department,
-            image: mapImageUrlToRelativeUrl(updateItem.image),
-          }
-        : item,
-    ) as unknown as RedisJsonArray;
-  }
 
   try {
     const redisClient = await getRedisClient();
@@ -372,7 +372,7 @@ export async function batchUpdateInnoUserInCache(
       // followedBy
       let item = entry.value.item;
       const type = entry.value.type;
-      transaction.json.set(entry.id, '$.item.followedBy', updateRedisJsonArray(item.followedBy, updatedInnoUser));
+      transaction.json.set(entry.id, '$.item.followedBy', updateInnoUserJsonArray(item.followedBy, updatedInnoUser));
       // author
       if ('author' in item && item.author?.providerId === updatedInnoUser.providerId) {
         transaction.json.set(entry.id, '$.item.author', updatedInnoUser);
@@ -380,12 +380,12 @@ export async function batchUpdateInnoUserInCache(
       // team
       if (type === NewsType.PROJECT) {
         item = item as RedisProject;
-        transaction.json.set(entry.id, '$.item.team', updateRedisJsonArray(item.team, updatedInnoUser));
+        transaction.json.set(entry.id, '$.item.team', updateInnoUserJsonArray(item.team, updatedInnoUser));
       }
       // authors
       else if (type === NewsType.COLLABORATION_QUESTION) {
         item = item as RedisCollaborationQuestion;
-        transaction.json.set(entry.id, '$.item.authors', updateRedisJsonArray(item.authors, updatedInnoUser));
+        transaction.json.set(entry.id, '$.item.authors', updateInnoUserJsonArray(item.authors, updatedInnoUser));
       }
     }
     await transaction.exec();
