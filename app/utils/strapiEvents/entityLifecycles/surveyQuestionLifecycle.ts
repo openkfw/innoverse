@@ -21,24 +21,24 @@ const logger = getLogger();
 
 export class SurveyQuestionLifecycle extends StrapiEntityLifecycle {
   public override async onPublish(entry: StrapiEntry): Promise<void> {
-    const surveyId = entry.id.toString();
+    const surveyId = entry.documentId.toString();
     await this.notifyFollowers(surveyId);
     await this.createUpdateForNewSurvey(surveyId);
     await this.saveSurveyQuestionToCache(surveyId);
   }
 
   public override async onUpdate(entry: StrapiEntry): Promise<void> {
-    const surveyId = entry.id.toString();
+    const surveyId = entry.documentId.toString();
     await this.saveSurveyQuestionToCache(surveyId, { createIfNew: false });
   }
 
   public override async onDelete(entry: StrapiEntry): Promise<void> {
-    const surveyId = entry.id.toString();
+    const surveyId = entry.documentId.toString();
     await this.deleteSurveyQuestionFromCache(surveyId);
   }
 
   public override async onUnpublish(entry: StrapiEntry): Promise<void> {
-    const surveyId = entry.id.toString();
+    const surveyId = entry.documentId.toString();
     this.deleteSurveyQuestionFromCache(surveyId);
   }
 

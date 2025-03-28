@@ -15,7 +15,7 @@ const bodySchema = z.object({
     .or(literal('entry.publish'))
     .or(literal('entry.unpublish')),
   model: string(),
-  entry: object({ id: string().or(number()) }),
+  entry: object({ documentId: string().or(number()) }),
 });
 
 //For information about how the rules work & the challenges head to: ***URL_REMOVED***
