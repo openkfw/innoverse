@@ -61,14 +61,14 @@ export default function UserInfo() {
       formData.append('image', image);
     }
 
-    const { data: updatedUser, status } = await updateUserProfile({
+    const result = await updateUserProfile({
       role: userData.role,
       department: userData.department,
       image: formData,
     });
 
-    if (status === StatusCodes.OK) {
-      await updateUser(updatedUser as UserSession);
+    if (result.status === StatusCodes.OK) {
+      await updateUser(result.data);
       successMessage({ message: m.components_profilePage_form_updateUserForm_success() });
       return;
     } else {
