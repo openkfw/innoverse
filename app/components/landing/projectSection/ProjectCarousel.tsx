@@ -47,7 +47,7 @@ export default function ProjectCarousel({ isLoading, projects }: ProjectCarousel
                 contributors={project.team}
                 title={project.title}
                 summary={project.summary}
-                status={project.status}
+                stage={project.stage}
                 size={cardSize}
               />
             )}

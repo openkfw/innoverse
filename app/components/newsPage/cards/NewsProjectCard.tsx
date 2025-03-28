@@ -55,7 +55,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
             }}
           />
           <Box sx={progressBarMobileStyles}>
-            <ProgressBar active={project.status} />
+            <ProgressBar active={project.stage} />
           </Box>
         </CardMedia>
 
@@ -76,7 +76,7 @@ function NewsProjectCard(props: NewsProjectCardProps) {
         </CardContent>
       </Box>
       <Box sx={progressBarStyles}>
-        <ProgressBar active={project.status} />
+        <ProgressBar active={project.stage} />
       </Box>
       <NewsCardActions entry={entry} hideControls />
     </>

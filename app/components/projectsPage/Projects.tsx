@@ -69,7 +69,7 @@ const ProjectsList = () => {
         contributors={p.team}
         title={p.title}
         summary={p.summary}
-        status={p.status}
+        stage={p.stage}
         size={cardSize}
         sx={{ flexGrow: 1, maxWidth: 466 }}
       />

@@ -65,7 +65,7 @@ export const mapToBasicProject = (projectData: ResultOf<typeof ProjectFragment>)
     projectName: projectData.title,
     projectStart: formatDate(projectData.projectStart) ?? undefined,
     shortTitle: projectData.shortTitle ?? undefined,
-    status: mapToProjectStatus(projectData.status),
+    stage: mapToProjectStatus(projectData.stage),
     description: { tags: descriptionTags, text: projectData.description.text },
     author: projectData.author ? mapToUser(projectData.author) : undefined,
     team: projectData.team?.map(mapToUser) ?? [],
@@ -82,8 +82,8 @@ export const mapToLike = (likes: LikeDB[]): Like[] => {
   }));
 };
 
-const mapToProjectStatus = (status: 'Exploration' | 'Konzeption' | 'Live' | 'Proof_of_Concept'): PROJECT_PROGRESS => {
-  switch (status) {
+const mapToProjectStatus = (stage: 'Exploration' | 'Konzeption' | 'Live' | 'Proof_of_Concept'): PROJECT_PROGRESS => {
+  switch (stage) {
     case 'Exploration':
       return PROJECT_PROGRESS.EXPLORATION;
     case 'Konzeption':

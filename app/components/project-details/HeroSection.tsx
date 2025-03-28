@@ -23,7 +23,7 @@ interface HeroSectionProps {
 
 export default function HeroSection(props: HeroSectionProps) {
   const { project } = props;
-  const { title, author, status, image } = project;
+  const { title, author, stage, image } = project;
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const heroImage = getImageByBreakpoint(isSmallScreen, image) || defaultImage;
 
@@ -72,9 +72,9 @@ export default function HeroSection(props: HeroSectionProps) {
             )}
             <Grid item sx={statusContainerStyles}>
               <Typography variant="overline" sx={statusStyles}>
-                {m.components_projectdetails_heroSection_status()}
+                {m.components_projectdetails_heroSection_stage()}
               </Typography>
-              <ProgressBar active={status} />
+              <ProgressBar active={stage} />
             </Grid>
           </Grid>
         </Card>

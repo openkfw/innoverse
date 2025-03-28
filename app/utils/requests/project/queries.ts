@@ -8,7 +8,7 @@ export const ProjectFragment = graphql(
       title
       shortTitle
       summary
-      status
+      stage
       featured
       projectStart
       updatedAt
@@ -57,7 +57,7 @@ export const GetProjectsBySearchStringQuery = graphql(
             { team: { name: { containsi: $searchString } } }
             { description: { text: { containsi: $searchString } } }
             { description: { tags: { tag: { containsi: $searchString } } } }
-            { status: { containsi: $searchString } }
+            { stage: { containsi: $searchString } }
           ]
         }
         pagination: { page: $page, pageSize: $pageSize }

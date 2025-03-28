@@ -17,13 +17,13 @@ interface ProjectCardProps {
   contributors: { name: string }[];
   title: string;
   summary: string;
-  status: string;
+  stage: string;
   size: { height: number; width: number };
   sx?: React.CSSProperties;
 }
 
 export default function ProjectCard(props: ProjectCardProps) {
-  const { id, img, imageHeight, contributors, title, summary, status, size, sx } = props;
+  const { id, img, imageHeight, contributors, title, summary, stage, size, sx } = props;
 
   return (
     <ContentCard
@@ -39,9 +39,9 @@ export default function ProjectCard(props: ProjectCardProps) {
         </Typography>
       }
       description={summary}
-      status={
+      stage={
         <Box sx={{ overflow: 'visible' }}>
-          <ProgressBar active={status} />
+          <ProgressBar active={stage} />
         </Box>
       }
     />

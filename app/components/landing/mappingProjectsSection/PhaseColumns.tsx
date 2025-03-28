@@ -70,7 +70,7 @@ const PhaseColumnHeader = ({ title, description, icon, isFirstStep }: MappingDat
 };
 
 const PhaseColumFooter = ({ phaseName, projects }: { projects: BasicProject[]; phaseName: string }) => {
-  const getProjectsInPhase = (phase: string) => projects.filter((p) => p.status.replace(/_/g, ' ') === phase);
+  const getProjectsInPhase = (phase: string) => projects.filter((p) => p.stage.replace(/_/g, ' ') === phase);
 
   return (
     <Box sx={footerWrapperStyles}>
