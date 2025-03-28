@@ -383,7 +383,7 @@ const mapUserImagesToRelativeUrls = (users: (User | RedisUser)[]) => {
   return users;
 };
 
-const mapImageUrlToRelativeUrl = (imageUrl: string | undefined): string | undefined => {
+export const mapImageUrlToRelativeUrl = (imageUrl: string | undefined): string | undefined => {
   if (!imageUrl) return undefined;
 
   if (!URL.canParse(imageUrl, clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT)) {

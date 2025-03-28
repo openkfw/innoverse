@@ -7,7 +7,6 @@ import { signOut } from 'next-auth/react';
 
 import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from '@mui/icons-material/Menu';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
@@ -19,6 +18,7 @@ import { useUser } from '@/app/contexts/user-context';
 import { clientConfig } from '@/config/client';
 import * as m from '@/src/paraglide/messages.js';
 
+import AvatarWithBadge from '../common/AvatarWithBadge';
 import FeedbackSection from '../landing/feedbackSection/FeedbackSection';
 
 import { Headers } from './Layout';
@@ -53,7 +53,8 @@ export default function TopBarMobile({ pages }: TopBarProps) {
       <nav>
         <List sx={listStyles}>
           <ListItem sx={{ ...listItemStyles, marginBottom: 2 }}>
-            <Avatar /> <Typography variant="body1"> {user?.name}</Typography>
+            <AvatarWithBadge />
+            <Typography variant="body1"> {user?.name}</Typography>
           </ListItem>
           {pages.map((page) =>
             page.link ? (
@@ -77,6 +78,9 @@ export default function TopBarMobile({ pages }: TopBarProps) {
             style={{ textDecoration: 'none', color: 'common.white' }}
           >
             <ListItem sx={listItemStyles}>Content Editor</ListItem>
+          </Link>
+          <Link href="/profile" style={{ textDecoration: 'none', color: 'common.white' }} onClick={handleMenuToggle}>
+            <ListItem sx={listItemStyles}>{m.components_layout_userMenu_profile()}</ListItem>
           </Link>
           <ListItem sx={listItemStyles} onClick={() => signOut()}>
             {m.components_layout_topBarMobile_signOut()}

@@ -13,6 +13,11 @@ const bundleAnalyzer = withBundleAnalyzer();
 const nextConfig: NextConfig = {
   output: 'standalone',
   reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      bodySizeLimit: `${clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT}mb`,
+    },
+  },
   images: {
     remotePatterns: [
       {

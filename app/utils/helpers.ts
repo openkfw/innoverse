@@ -180,3 +180,12 @@ export const toDate = (date: string | Date | null) => (date ? new Date(date) : n
 export function getUniqueValues<T>(arr: T[]) {
   return Array.from(new Set(arr));
 }
+
+export function bytesToMegabytes(bytes: number | string): number {
+  const bytesNumber = typeof bytes === 'string' ? parseFloat(bytes) : bytes;
+  if (isNaN(bytesNumber)) {
+    return 0;
+  }
+  const bytesInMegabyte = 1024 * 1024;
+  return bytesNumber / bytesInMegabyte;
+}

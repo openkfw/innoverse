@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import Grid from '@mui/material/Grid';
+import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
 import * as m from '@/src/paraglide/messages.js';
@@ -10,20 +10,16 @@ const footerNav: { label: string; link: string }[] = [];
 
 function Footer() {
   return (
-    <Grid container spacing={3} sx={footerStyle}>
-      <Grid item>
-        <Typography sx={typographyStyle}>
-          {m.components_layout_footer_innoVerse()} {new Date().getFullYear()}{' '}
-        </Typography>
-      </Grid>
+    <Container maxWidth="lg" sx={footerStyle}>
+      <Typography sx={typographyStyle}>
+        {m.components_layout_footer_innoVerse()} {new Date().getFullYear()}{' '}
+      </Typography>
       {footerNav.map((item, key) => (
-        <Grid key={key} item>
-          <Link href={item.link} rel="noopener noreferrer" target="_blank" style={{ textDecoration: 'none' }}>
-            <Typography sx={{ ...typographyStyle, ...linkStyles }}>{item.label}</Typography>
-          </Link>
-        </Grid>
+        <Link key={key} href={item.link} rel="noopener noreferrer" target="_blank" style={{ textDecoration: 'none' }}>
+          <Typography sx={{ ...typographyStyle, ...linkStyles }}>{item.label}</Typography>
+        </Link>
       ))}
-    </Grid>
+    </Container>
   );
 }
 
@@ -31,13 +27,13 @@ export default Footer;
 
 // Footer styles
 const footerStyle = {
-  paddingLeft: 24,
+  paddingTop: '100px',
+  paddingBottom: '63px',
   [theme.breakpoints.down('sm')]: {
-    paddingLeft: 9,
+    paddingTop: '24px',
+    display: 'flex',
+    justifyContent: 'center',
   },
-  marginTop: 0,
-  paddingTop: 6,
-  paddingBottom: 5,
 };
 
 const typographyStyle = {

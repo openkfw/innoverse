@@ -5,6 +5,7 @@
 
   "app_export_page_export": "Export",
 
+  "app_user_profile": "Benutzerprofil",
   "app_news_page_news": "News",
   "app_project_page_projects": "Initiativen",
   "app_news_page_imageAlt": "News Hintergrund",
@@ -407,5 +408,16 @@
   "components_updates_updatesTab_noNews": "Es gibt noch keine Neuigkeiten zu diesem Projekt. Klick hier um eine hinzuzufügen.",
   "components_updates_updatesTab_addNewNews": "Halte Dein Publikum auf dem Laufenden! Klicke hier, um eine Neuigkeit hinzuzufügen.",
 
-  "components_common_form_MultilineMentionInput_loading": "Lädt..."
+  "components_common_form_MultilineMentionInput_loading": "Lädt...",
+  "components_profilePage_form_updateUserForm_success": "Benutzerinformationen wurden erfolgreich gespeichert",
+  "components_profilePage_form_updateUserForm_error": "Benutzerinformationen konnten nicht gespeichert werden",
+  "components_profilePage_form_updateUserForm_name": "Name",
+  "components_profilePage_form_updateUserForm_email": "E-mail",
+  "components_profilePage_form_updateUserForm_role": "Rolle",
+  "components_profilePage_form_updateUserForm_department": "Abteilung",
+  "components_profilePage_form_updateUserForm_placeholder": "Foto hochladen",
+  "components_profilePage_form_updateUserForm_save": "Speichern",
+  "components_common_formValidation_messages_required_field": "Erforderlich",
+  "components_common_formValidation_messages_invalid_date": "Datum ist ungültig",
+  "components_common_formValidation_messages_invalid_file_size": "Ihre Datei ist größer als das erlaubte Limit von {fileSize}MB!"
 }

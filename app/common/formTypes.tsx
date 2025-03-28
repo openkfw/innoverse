@@ -7,11 +7,13 @@ export interface FormInputProps {
   setValue?: any;
   options?: Option[];
   readOnly?: boolean;
+  disabled?: boolean;
   placeholder?: string;
   disableFuture?: boolean;
   endAdornment?: JSX.Element;
   sx?: SxProps;
   inputPropsSx?: any;
+  secondary?: boolean;
 }
 
 export interface MultilineFormInputProps extends FormInputProps {

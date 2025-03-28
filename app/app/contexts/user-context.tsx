@@ -13,11 +13,13 @@ interface CustomSession extends Session {
 interface UserContextInterface {
   user: UserSession | undefined;
   isLoading: boolean;
+  updateUser: (user: UserSession) => Promise<void>;
 }
 
 const defaultState: UserContextInterface = {
   user: undefined,
   isLoading: true,
+  updateUser: async (_: UserSession) => {},
 };
 
 const UserContext = createContext(defaultState);
@@ -26,7 +28,7 @@ export const UserContextProvider = ({ children }: { children: React.ReactNode })
   const [state, setState] = useState(defaultState.user);
   const [isLoading, setIsLoading] = useState<boolean>(defaultState.isLoading);
 
-  const { data: currentSession } = useSession();
+  const { data: currentSession, update: sessionUpdate } = useSession();
   const { session: sessionCookie } = parseCookies();
 
   useEffect(() => {
@@ -60,8 +62,14 @@ export const UserContextProvider = ({ children }: { children: React.ReactNode })
     }
   }, [currentSession, sessionCookie]);
 
+  const updateUser = async (updatedUser: UserSession) => {
+    await sessionUpdate(updatedUser);
+    setState(currentSession?.user as UserSession);
+  };
+
   const contextObject: UserContextInterface = {
     user: state,
+    updateUser,
     isLoading,
   };
 

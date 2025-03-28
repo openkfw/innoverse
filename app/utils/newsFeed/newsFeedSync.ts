@@ -158,7 +158,6 @@ export const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNew
   // posts fetched from prisma, hence no pagination required
   const posts = await fetchPages({
     fetcher: async (page, pageSize) => {
-      console.log(from, page, pageSize);
       return (await getPostsStartingFrom({ from, page, pageSize })) ?? [];
     },
   });

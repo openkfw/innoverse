@@ -3,10 +3,20 @@ import { Controller } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 
 import { FormInputProps } from '@/common/formTypes';
+import { mergeStyles } from '@/utils/helpers';
 
 import { inputStyle } from './formStyle';
 
-export const TextInputField = ({ name, control, label, readOnly = false, sx }: FormInputProps) => {
+export const TextInputField = ({
+  name,
+  control,
+  label,
+  readOnly = false,
+  disabled = false,
+  sx,
+  secondary = false,
+}: FormInputProps) => {
+  const style = secondary ? inputStyle(secondary) : inputStyle();
   return (
     <Controller
       name={name}
@@ -14,14 +24,16 @@ export const TextInputField = ({ name, control, label, readOnly = false, sx }: F
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
-          sx={{ ...inputStyle, ...sx }}
+          sx={mergeStyles(style, sx)}
           helperText={error ? error.message : null}
           size="small"
           error={!!error}
           label={label}
           InputProps={{
-            readOnly,
+            readOnly: readOnly,
           }}
+          disabled={disabled}
+          fullWidth
         />
       )}
     />

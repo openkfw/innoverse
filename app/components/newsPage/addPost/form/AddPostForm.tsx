@@ -118,7 +118,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
             label={m.components_newsPage_addPost_form_addPostForm_projectLabel()}
             options={[{ label: '-optional-', id: '' }, ...projectOptions]}
             readOnly={!projectOptions}
-            sx={inputStyle}
+            sx={inputStyle()}
             startAdornment={
               !projectOptions && (
                 <Box sx={{ pt: 1 }}>

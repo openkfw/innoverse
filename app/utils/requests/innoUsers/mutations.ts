@@ -1,5 +1,7 @@
 import { graphql } from '@/types/graphql';
 
+import { InnoUserFragment } from './queries';
+
 export const CreateInnoUserMutation = graphql(`
   mutation PostInnoUser(
     $providerId: String
@@ -32,12 +34,24 @@ export const CreateInnoUserMutation = graphql(`
       email
       username
       avatar {
+        documentId
         formats
         url
       }
     }
   }
 `);
+
+export const UpdateInnoUserMutation = graphql(
+  `
+    mutation PostInnoUser($id: ID!, $role: String, $department: String, $avatarId: ID) {
+      updateInnoUser(documentId: $id, data: { role: $role, department: $department, avatar: $avatarId }) {
+        ...InnoUser
+      }
+    }
+  `,
+  [InnoUserFragment],
+);
 
 export const CreateOpportunityParticipantMutation = graphql(`
   mutation PostInnoUser(
@@ -88,6 +102,7 @@ export const UpdateInnoUserUsernameMutation = graphql(`
       department
       email
       avatar {
+        documentId
         formats
         url
       }
