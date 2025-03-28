@@ -21,6 +21,7 @@ import {
   GetInnoUsersByProviderIdsQuery,
 } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
+import { FormData, request } from 'undici';
 
 const logger = getLogger();
 
@@ -250,7 +251,7 @@ async function uploadImage(imageUrl: string, fileName: string) {
       formData.append('files', myBlob, fileName);
       formData.append('ref', 'api::event.event');
       formData.append('field', 'image');
-      return await fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
+      return await request(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
@@ -262,7 +263,7 @@ async function uploadImage(imageUrl: string, fileName: string) {
           throw new Error('Error while uploading image');
         })
         .then((response) => {
-          return response.json();
+          return response.body.json();
         })
         .then((result) => {
           return result as UploadImageResponse[];
@@ -327,7 +328,7 @@ export async function uploadFileImage(image: Blob, fileName: string) {
   formData.append('ref', 'api::event.event');
   formData.append('field', 'image');
 
-  return await fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
+  return await request(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
@@ -339,7 +340,7 @@ export async function uploadFileImage(image: Blob, fileName: string) {
       throw new Error('Error while uploading image');
     })
     .then((response) => {
-      return response.json();
+      return response.body.json();
     })
     .then((result) => {
       return result as UploadImageResponse[];
