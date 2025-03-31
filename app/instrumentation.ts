@@ -29,4 +29,9 @@ export async function register() {
     const { movePostsToSTrapi } = await import('./services/postService');
     movePostsToSTrapi();
   }
+
+  if (process.env.NEXT_RUNTIME === 'nodejs') {
+    const { populateEmailPreferencesForExistingUsers } = await import('@/utils/notification/emailPreferences');
+    await populateEmailPreferencesForExistingUsers();
+  }
 }
