@@ -17,18 +17,19 @@ import { bytesToMegabytes } from '@/utils/helpers';
 import ImagePreview from './ImagePreview';
 
 interface ImageDropzoneFieldProps extends FormInputProps {
-  setValue: (name: any, value: File | null, options?: { shouldDirty: boolean }) => void;
+  setValue: (name: any, value: Blob | null, options?: { shouldDirty: boolean }) => void;
 }
 
 export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFieldProps) => {
   const [file, setFile] = useState<string | null>();
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
+    (acceptedFiles: Blob[]) => {
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
-        setFile(URL.createObjectURL(file));
-        setValue(name, file, { shouldDirty: true });
+        const blobFile = new Blob([file], { type: file.type });
+        setFile(URL.createObjectURL(blobFile));
+        setValue(name, blobFile, { shouldDirty: true });
       }
     },
 
@@ -40,7 +41,7 @@ export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFie
     setValue(name, null, { shouldDirty: true });
   };
 
-  const fileValidator = (file: File) => {
+  const fileValidator = (file: Blob) => {
     if (bytesToMegabytes(file.size) > clientConfig.NEXT_PUBLIC_BODY_SIZE_LIMIT) {
       return {
         code: 'invalid-file-size',
@@ -57,7 +58,7 @@ export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFie
       render={({ field: { onBlur, value } }) => (
         <>
           <Dropzone
-            onDrop={async (acceptedFiles: File[]) => {
+            onDrop={async (acceptedFiles) => {
               onDrop(acceptedFiles);
             }}
             validator={fileValidator}

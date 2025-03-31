@@ -22,7 +22,7 @@ export const handleUpdateUserSessionForm = userSessionSchemaForm.extend({
   image: z.union([
     z.null(),
     z.string(),
-    z.instanceof(File).refine((file) => bytesToMegabytes(file.size) < MAX_FILE_SIZE, invalid_file_size(MAX_FILE_SIZE)),
+    z.instanceof(Blob).refine((file) => bytesToMegabytes(file.size) < MAX_FILE_SIZE, invalid_file_size(MAX_FILE_SIZE)),
   ]),
 });
 
