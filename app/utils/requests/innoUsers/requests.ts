@@ -5,6 +5,7 @@ import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { RequestError } from '@/entities/error';
 import { strapiError } from '@/utils/errors';
+import { base64ToBlob, isBase64String } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapFirstToUser, mapFirstToUserOrThrow, mapToUser } from '@/utils/requests/innoUsers/mappings';
 import {
@@ -57,7 +58,7 @@ export async function updateInnoUser(body: UpdateInnoUser) {
       if (!userData) throw new Error('Response contained no user data');
       return mapToUser(userData);
     };
-    const userImage = body.image.get('image');
+    const { image: userImage } = body;
 
     // if the userImage is null and the avatar was defined before, delete the avatar
     if (userImage === null && body.oldImageId) {
@@ -65,16 +66,16 @@ export async function updateInnoUser(body: UpdateInnoUser) {
       return await handleResponse({ ...body, avatarId: null });
     }
 
-    // if the userImage is defined, upload the avatar
-    if (userImage instanceof Blob) {
+    // if the userImage is defined and base64 string, upload the avatar
+    if (userImage && isBase64String(userImage)) {
       if (body.oldImageId) {
         await deleteFileImage(body.oldImageId);
       }
-      const uploadedImages = await uploadFileImage(userImage as Blob, `avatar-${body.name}`);
+      const blobUserImage = await base64ToBlob(userImage);
+      const uploadedImages = await uploadFileImage(blobUserImage, `avatar-${body.name}`);
       const uploadedImage = uploadedImages ? uploadedImages[0] : null;
       return await handleResponse({ ...body, avatarId: uploadedImage && (uploadedImage.id as string) });
     }
-
     // if the image is not changed, update other user info
     return await handleResponse(body);
   } catch (err) {

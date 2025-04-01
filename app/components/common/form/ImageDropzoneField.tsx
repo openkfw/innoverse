@@ -27,9 +27,8 @@ export const ImageDropzoneField = ({ name, control, setValue }: ImageDropzoneFie
     (acceptedFiles: Blob[]) => {
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
-        const blobFile = new Blob([file], { type: file.type });
-        setFile(URL.createObjectURL(blobFile));
-        setValue(name, blobFile, { shouldDirty: true });
+        setFile(URL.createObjectURL(file));
+        setValue(name, file, { shouldDirty: true });
       }
     },
 

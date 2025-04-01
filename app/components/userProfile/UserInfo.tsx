@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import { useUser } from '@/app/contexts/user-context';
 import { UserSession } from '@/common/types';
 import * as m from '@/src/paraglide/messages.js';
+import { blobToBase64 } from '@/utils/helpers';
 
 import { errorMessage, successMessage } from '../common/CustomToast';
 import { ImageDropzoneField } from '../common/form/ImageDropzoneField';
@@ -56,15 +57,13 @@ export default function UserInfo() {
 
   const onSubmit: SubmitHandler<UserSessionFormValidationSchema> = async (submitData) => {
     const { image, ...userData } = submitData;
-    const formData = new FormData();
-    if (image !== null) {
-      formData.append('image', image);
-    }
+    const userImage = image instanceof Blob ? await blobToBase64(image) : null;
 
     const { data: updatedUser, status } = await updateUserProfile({
       role: userData.role,
       department: userData.department,
-      image: formData,
+      // Include the image in the request only if it's null or a Blob, indicating it has been modified
+      ...(typeof image !== 'string' && { image: userImage }),
     });
 
     if (status === StatusCodes.OK) {
