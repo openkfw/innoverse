@@ -104,7 +104,7 @@ export type RedisProject = RedisItem & {
   title: string;
   shortTitle?: string;
   featured: boolean;
-  status: PROJECT_PROGRESS;
+  stage: PROJECT_PROGRESS;
   image?: ImageFormats;
   summary: string;
   projectStart?: string;

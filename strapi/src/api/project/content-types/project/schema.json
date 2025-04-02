@@ -27,21 +27,11 @@
       "multiple": false,
       "required": false,
       "description": "Please choose an image that is not transparent. It might not provide the necessary contrast on the page.",
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
+      "allowedTypes": ["images", "files", "videos", "audios"]
     },
-    "status": {
+    "stage": {
       "type": "enumeration",
-      "enum": [
-        "Exploration",
-        "Konzeption",
-        "Proof of Concept",
-        "Live"
-      ],
+      "enum": ["Exploration", "Konzeption", "Proof of Concept", "Live"],
       "required": true,
       "default": "Exploration"
     },

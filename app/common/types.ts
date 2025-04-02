@@ -156,7 +156,7 @@ export type BasicProject = CommonNewsFeedProps & {
   title: string;
   shortTitle?: string;
   featured: boolean;
-  status: PROJECT_PROGRESS;
+  stage: PROJECT_PROGRESS;
   image?: ImageFormats;
   summary: string;
   projectStart?: string;
@@ -297,7 +297,7 @@ export type ProjectByIdQueryResult = {
   title: string;
   shortTitle: string;
   featured: boolean;
-  status: PROJECT_PROGRESS;
+  stage: PROJECT_PROGRESS;
   image?: string;
   summary: string;
   projectStart: string;
