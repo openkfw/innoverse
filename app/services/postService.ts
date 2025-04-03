@@ -181,7 +181,6 @@ export const movePostsToSTrapi = async () => {
 
     await synchronizeNewsFeed(0, true);
   }
-  await synchronizeNewsFeed(0, true);
   return result;
 };
 

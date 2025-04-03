@@ -56,6 +56,7 @@ export enum InteractionType {
   DISMISS_NOTIFICATION_BANNER = 'dismiss-notification-banner',
   ADD_POST = 'add-post',
   SHOW_PAST_EVENTS = 'show-past-events',
+  DAILY_CHECKIN = 'daily-check-in',
 }
 
 export default function InteractionButton(props: InteractionButtonProps) {
@@ -132,6 +133,7 @@ export default function InteractionButton(props: InteractionButtonProps) {
     if (interactionType === InteractionType.ADD_POST) return m.components_common_interactionButton_addUpdate();
     if (interactionType === InteractionType.SHOW_PAST_EVENTS)
       return m.components_projectdetails_events_filteringPanel_previousTopics();
+    if (interactionType === InteractionType.DAILY_CHECKIN) return m.components_common_interactionButton_dailyCheckin();
   };
 
   const getButtonTextClicked = () => {
