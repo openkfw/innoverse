@@ -189,3 +189,34 @@ export function bytesToMegabytes(bytes: number | string): number {
   const bytesInMegabyte = 1024 * 1024;
   return bytesNumber / bytesInMegabyte;
 }
+
+export const blobToBase64 = (blob: Blob): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = () => {
+      const base64String = reader.result?.toString();
+      resolve(base64String || '');
+    };
+    reader.onerror = reject;
+  });
+};
+
+export const base64ToBlob = async (base64String: string): Promise<Blob> => {
+  return await fetch(base64String)
+    .catch((e) => {
+      throw new Error('Error while fetching the base64 image:', e);
+    })
+    .then((response) => {
+      return response.blob();
+    });
+};
+
+export const isBase64String = (str: string): boolean => {
+  try {
+    const split = str.split(',')[1];
+    return btoa(atob(split)) === split;
+  } catch (e) {
+    return false;
+  }
+};

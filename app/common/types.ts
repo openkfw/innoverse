@@ -337,7 +337,7 @@ export type UpdateInnoUser = {
   role?: string;
   department?: string;
   oldImageId?: string;
-  image: FormData;
+  image?: string | null;
   avatarId?: string | null;
 };
 

@@ -27,7 +27,7 @@ export const handleUpdateUserSessionForm = userSessionSchemaForm.extend({
 });
 
 export const handleUpdateUserSession = userSessionSchema.extend({
-  image: z.instanceof(FormData),
+  image: z.string().nullable().optional(),
 });
 
 export type UserSessionFormValidationSchema = z.infer<typeof handleUpdateUserSessionForm>;
