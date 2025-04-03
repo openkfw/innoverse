@@ -27,6 +27,60 @@ input BooleanFilterInput {
   startsWith: Boolean
 }
 
+type CheckinQuestion {
+  attributes: CheckinQuestion! @deprecated(reason: "Use root level fields instead")
+  createdAt: DateTime
+  data: CheckinQuestion! @deprecated(reason: "Use root level fields instead")
+  documentId: ID!
+  id: ID! @deprecated(reason: "Use `documentId` instead")
+  publishedAt: DateTime
+  question: String!
+  updatedAt: DateTime
+  validFrom: Date!
+  validTo: Date!
+}
+
+type CheckinQuestionEntity {
+  attributes: CheckinQuestion
+  id: ID
+}
+
+type CheckinQuestionEntityResponse {
+  data: CheckinQuestion
+}
+
+type CheckinQuestionEntityResponseCollection {
+  data: [CheckinQuestion!]! @deprecated(reason: "Use `nodes` field instead")
+  meta: ResponseCollectionMeta! @deprecated(reason: "Use the `pageInfo` field instead")
+  nodes: [CheckinQuestion!]!
+  pageInfo: Pagination!
+}
+
+input CheckinQuestionFiltersInput {
+  and: [CheckinQuestionFiltersInput]
+  createdAt: DateTimeFilterInput
+  documentId: IDFilterInput
+  not: CheckinQuestionFiltersInput
+  or: [CheckinQuestionFiltersInput]
+  publishedAt: DateTimeFilterInput
+  question: StringFilterInput
+  updatedAt: DateTimeFilterInput
+  validFrom: DateFilterInput
+  validTo: DateFilterInput
+}
+
+input CheckinQuestionInput {
+  publishedAt: DateTime
+  question: String
+  validFrom: Date
+  validTo: Date
+}
+
+type CheckinQuestionRelationResponseCollection {
+  data: [CheckinQuestion!]! @deprecated(reason: "Use `nodes` field instead")
+  nodes: [CheckinQuestion!]!
+}
+
 type CollaborationQuestion {
   attributes: CollaborationQuestion! @deprecated(reason: "Use root level fields instead")
   authors(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
@@ -436,7 +490,7 @@ input FloatFilterInput {
   startsWith: Float
 }
 
-union GenericMorph = CollaborationQuestion | ComponentDescriptionDescription | ComponentImageImage | ComponentResponseOptionsResponseOptions | ComponentSliderTextSliderText | ComponentTagsTags | ComponentThemeTheme | ComponentUserAuthor | Event | I18NLocale | InnoUser | Opportunity | Post | Project | Question | ReviewWorkflowsWorkflow | ReviewWorkflowsWorkflowStage | SurveyQuestion | Update | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser
+union GenericMorph = CheckinQuestion | CollaborationQuestion | ComponentDescriptionDescription | ComponentImageImage | ComponentResponseOptionsResponseOptions | ComponentSliderTextSliderText | ComponentTagsTags | ComponentThemeTheme | ComponentUserAuthor | Event | I18NLocale | InnoUser | Opportunity | Post | Project | Question | ReviewWorkflowsWorkflow | ReviewWorkflowsWorkflowStage | SurveyQuestion | Update | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser
 
 type I18NLocale {
   attributes: I18NLocale! @deprecated(reason: "Use root level fields instead")
@@ -691,6 +745,7 @@ input LongFilterInput {
 type Mutation {
   """Change user password. Confirm with the current password."""
   changePassword(currentPassword: String!, password: String!, passwordConfirmation: String!): UsersPermissionsLoginPayload
+  createCheckinQuestion(data: CheckinQuestionInput!, status: PublicationStatus = PUBLISHED): CheckinQuestion
   createCollaborationQuestion(data: CollaborationQuestionInput!, status: PublicationStatus = PUBLISHED): CollaborationQuestion
   createEvent(data: EventInput!, status: PublicationStatus = PUBLISHED): Event
   createInnoUser(data: InnoUserInput!, status: PublicationStatus = PUBLISHED): InnoUser
@@ -708,6 +763,7 @@ type Mutation {
 
   """Create a new user"""
   createUsersPermissionsUser(data: UsersPermissionsUserInput!): UsersPermissionsUserEntityResponse!
+  deleteCheckinQuestion(documentId: ID!): DeleteMutationResponse
   deleteCollaborationQuestion(documentId: ID!): DeleteMutationResponse
   deleteEvent(documentId: ID!): DeleteMutationResponse
   deleteInnoUser(documentId: ID!): DeleteMutationResponse
@@ -741,6 +797,7 @@ type Mutation {
   Reset user password. Confirm with a code (resetToken from forgotPassword)
   """
   resetPassword(code: String!, password: String!, passwordConfirmation: String!): UsersPermissionsLoginPayload
+  updateCheckinQuestion(data: CheckinQuestionInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): CheckinQuestion
   updateCollaborationQuestion(data: CollaborationQuestionInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): CollaborationQuestion
   updateEvent(data: EventInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): Event
   updateInnoUser(data: InnoUserInput!, documentId: ID!, status: PublicationStatus = PUBLISHED): InnoUser
@@ -978,6 +1035,9 @@ enum PublicationStatus {
 }
 
 type Query {
+  checkinQuestion(documentId: ID!, status: PublicationStatus = PUBLISHED): CheckinQuestion
+  checkinQuestions(filters: CheckinQuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [CheckinQuestion]!
+  checkinQuestions_connection(filters: CheckinQuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): CheckinQuestionEntityResponseCollection
   collaborationQuestion(documentId: ID!, status: PublicationStatus = PUBLISHED): CollaborationQuestion
   collaborationQuestions(filters: CollaborationQuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): [CollaborationQuestion]!
   collaborationQuestions_connection(filters: CollaborationQuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], status: PublicationStatus = PUBLISHED): CollaborationQuestionEntityResponseCollection

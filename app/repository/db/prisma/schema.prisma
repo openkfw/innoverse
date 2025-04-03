@@ -109,6 +109,17 @@ model SurveyVote {
   @@map(name: "survey_votes")
 }
 
+model CheckinVote{
+  id        String   @id @default(uuid())
+  createdAt DateTime @updatedAt @default(now())
+
+  vote             Int // vote - scale from 1 to 5
+  checkinQuestionId String // voted survey question
+  votedBy          String // id of author
+
+  @@unique(fields: [votedBy, checkinQuestionId])
+}
+
 enum ObjectType {
   UPDATE
   EVENT
