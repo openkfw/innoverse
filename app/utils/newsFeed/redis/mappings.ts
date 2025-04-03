@@ -13,7 +13,7 @@ import {
 } from '@/common/types';
 import { clientConfig } from '@/config/client';
 import { CommentDB } from '@/repository/db/utils/types';
-import { getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
+import { getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
   NewsType,
