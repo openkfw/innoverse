@@ -85,6 +85,7 @@
   "components_common_interactionButton_liked": "Gefällt mir",
   "components_common_interactionButton_unfollow": "Entfolgen",
   "components_common_interactionButton_applied": "Angewandt",
+  "components_common_interactionButton_dailyCheckin": "Daily Check-in",
 
   "components_common_textCard_showAll": "... alles anzeigen",
 
@@ -205,6 +206,11 @@
   "components_layout_userMenu_profile": "Profil",
   "components_layout_userMenu_notification": "Benachrichtigungen",
   "components_layout_userMenu_signOut": "Ausloggen",
+
+  "components_layout_checkinSection_saveCheckin_toastSuccess": "Danke für Dein Check-in",
+  "components_layout_checkinSection_saveCheckin_toastError": "Check-in konnte nicht gespeichert werden! Bitte versuche es später erneut.",
+  "components_layout_checkinSection_checkinSection_title": "Stimme für dein daily Check-in ab",
+  "components_layout_checkinSection_checkinSection_description": "Wähle auf einer Skala von 1-5 (1: stimme nicht zu – 5: stimme voll und ganz zu)",
 
   "components_login_credentialsLoginForm_useOtherAccount": "Anderen Account verwenden",
   "components_login_credentialsLoginForm_username": "Benutzername",

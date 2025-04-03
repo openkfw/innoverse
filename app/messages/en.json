@@ -83,6 +83,7 @@
   "components_common_interactionButton_liked": "Liked",
   "components_common_interactionButton_unfollow": "Unfollow",
   "components_common_interactionButton_applied": "Applied",
+  "components_common_interactionButton_dailyCheckin": "Daily Check-in",
 
   "components_common_textCard_showAll": "... show all",
 
@@ -146,6 +147,7 @@
 
   "components_landing_feedbackSection_feedbackSection_toastSuccess": "Thank you for your feedback",
   "components_landing_feedbackSection_feedbackSection_toastError": "Feedback could not be saved! Please try again later.",
+  "components_landing_checkinSection_checkinSection_toastError": "Daily Check-in could not be saved! Please try again later.",
   "components_landing_feedbackSection_feedbackSection_giveFeedback": "Give us feedback",
   "components_landing_feedbackSection_feedbackSection_importantFeedbackMessage": "Your feedback is important! Share your experiences with the new innovation platform to improve and optimize it. Any feedback is welcome!",
   "components_landing_feedbackSection_feedbackSection_placeholderFeedback": "You can add your feedback here.",
@@ -205,6 +207,11 @@
   "components_layout_userMenu_profile": "Profile",
   "components_layout_userMenu_notification": "Notifications",
   "components_layout_userMenu_signOut": "Sign out",
+
+  "components_layout_checkinSection_saveCheckin_toastSuccess": "Thank-your for your Check-in",
+  "components_layout_checkinSection_saveCheckin_toastError": "Check-in could not be saved. Try again later!",
+  "components_layout_checkinSection_checkinSection_title": "Submit your daily vote",
+  "components_layout_checkinSection_checkinSection_description": "Select on a scale from 1-5 (1: do not agree – 5: fully agree)",
 
   "components_login_credentialsLoginForm_useOtherAccount": "Use another account",
   "components_login_credentialsLoginForm_username": "Username",

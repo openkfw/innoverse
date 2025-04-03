@@ -12,6 +12,7 @@ import { useUser } from '@/app/contexts/user-context';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
+import CheckinSection from './dailyCheckinSection/CheckinSection';
 import { Headers } from './Layout';
 import LoggedInMenu from './LoggedInMenu';
 
@@ -61,7 +62,7 @@ export default function TopBar({ pages }: TopBarProps) {
               width: '100%',
             }}
           >
-            <Box sx={{ width: 245, display: 'block' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Link href="/">
                 <Image
                   src={logo}
@@ -75,6 +76,7 @@ export default function TopBar({ pages }: TopBarProps) {
                   }}
                 />
               </Link>
+              <CheckinSection />
             </Box>
 
             <nav>

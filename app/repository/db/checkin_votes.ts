@@ -17,7 +17,7 @@ export async function getCheckinAndUserVote(client: PrismaClient, checkinQuestio
   });
 }
 
-export async function addCheckinVote(client: PrismaClient, checkinQuestionId: string, votedBy: string, vote: number) {
+export async function addCheckinVote(client: PrismaClient, checkinQuestionId: string, vote: number, votedBy: string) {
   return client.checkinVote.upsert({
     where: {
       votedBy_checkinQuestionId: {
@@ -35,6 +35,16 @@ export async function addCheckinVote(client: PrismaClient, checkinQuestionId: st
       votedBy,
       vote,
     },
+  });
+}
+
+export async function addCheckinVotes(
+  client: PrismaClient,
+  votes: { checkinQuestionId: string; vote: number; votedBy: string }[],
+) {
+  return client.checkinVote.createMany({
+    data: votes,
+    skipDuplicates: true,
   });
 }
 

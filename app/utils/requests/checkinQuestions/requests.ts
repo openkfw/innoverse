@@ -10,6 +10,9 @@ import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 import { GetCheckinQuestionByIdQuery, GetCheckinQuestionByValidDates } from './queries';
+import { getCheckinAndUserVote } from '@/repository/db/checkin_votes';
+import { getPromiseResults } from '@/utils/helpers';
+import dbClient from '@/repository/db/prisma/prisma';
 
 const logger = getLogger();
 
@@ -37,22 +40,35 @@ export const findUserVote = withAuth(async (user: UserSession, body: { votes: Su
   };
 });
 
-export async function getCheckinQuestionsByValidDates(validFrom: Date, validTo: Date) {
+export const getCurrentCheckinQuestions = withAuth(async (user: UserSession) => {
   try {
-    const response = await strapiGraphQLFetcher(GetCheckinQuestionByValidDates, { validFrom, validTo });
+    const currentDate = new Date().toISOString().split('T')[0];
+    const response = await strapiGraphQLFetcher(GetCheckinQuestionByValidDates, { currentDate });
     const checkinQuestionsData = response.checkinQuestions;
 
     if (!checkinQuestionsData) throw new Error('Response contained no check-in question data');
 
-    // const mapToEntities = checkinQuestionsData.map(async (surveyQuestionData) => {
-    //   const votes = await getSurveyVotes(dbClient, surveyQuestionData.documentId);
-    //   const surveyQuestion = mapToSurveyQuestion(surveyQuestionData, votes);
-    //   return surveyQuestion;
-    // });
-    // const surveyQuestions = await getPromiseResults(mapToEntities);
-    return checkinQuestionsData;
+    const mapQuestionWithUserVote = checkinQuestionsData.map(async (checkinQuestionData) => {
+      if (checkinQuestionData) {
+        const vote = await getCheckinAndUserVote(dbClient, checkinQuestionData.documentId, user.providerId);
+        return {
+          checkinQuestionId: checkinQuestionData.documentId,
+          question: checkinQuestionData.question,
+          vote: vote?.vote || null,
+        };
+      }
+    });
+    const data = await getPromiseResults(mapQuestionWithUserVote);
+    return {
+      status: StatusCodes.OK,
+      data,
+    };
   } catch (err) {
-    const error = strapiError('Getting upcoming check-in questions', err as RequestError);
+    const error = strapiError('Getting current check-in questions', err as RequestError);
     logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Getting current check-in questions failed',
+    };
   }
-}
+});
