@@ -22,13 +22,11 @@ export const GetCheckinQuestionByIdQuery = graphql(
   [CheckinQuestionFragment],
 );
 
-export const GetCheckinQuestionByValidDates = graphql(
-  `
-    query GetCheckinQuestionByValidDates($validFrom: Date, $validTo: Date) {
-      checkinQuestions(filters: { validFrom: { eq: $validFrom }, validTo: { eq: $validTo } }) {
-        ...CheckinQuestion
-      }
+export const GetCheckinQuestionByValidDates = graphql(`
+  query GetCheckinQuestionByValidDates($currentDate: Date) {
+    checkinQuestions(filters: { validFrom: { lte: $currentDate }, validTo: { gte: $currentDate } }) {
+      documentId
+      question
     }
-  `,
-  [CheckinQuestionFragment],
-);
+  }
+`);
