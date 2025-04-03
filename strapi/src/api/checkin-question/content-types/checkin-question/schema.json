@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "checkin_questions",
+  "info": {
+    "singularName": "checkin-question",
+    "pluralName": "checkin-questions",
+    "displayName": "CheckinQuestion",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "question": {
+      "type": "text",
+      "required": true
+    },
+    "validFrom": {
+      "type": "date",
+      "required": true
+    },
+    "validTo": {
+      "type": "date",
+      "required": true
+    }
+  }
+}
