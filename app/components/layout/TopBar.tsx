@@ -63,7 +63,7 @@ export default function TopBar({ pages }: TopBarProps) {
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Link href="/">
+              <Link href="/" style={{ width: '35%', height: '35%' }}>
                 <Image
                   src={logo}
                   alt={m.components_layout_topBar_imageAlt()}
@@ -71,8 +71,8 @@ export default function TopBar({ pages }: TopBarProps) {
                   width={245}
                   height={26}
                   style={{
-                    width: '60%',
-                    height: '60%',
+                    width: '100%',
+                    height: '100%',
                   }}
                 />
               </Link>

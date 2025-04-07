@@ -23,7 +23,6 @@ export async function getCheckinQuestionById(id: string) {
 
     if (!data) throw new Error('Response contained no check-in question data');
 
-    // const surveyQuestion = mapToBasicSurveyQuestion(data);
     return data;
   } catch (err) {
     const error = strapiError('Getting basic check-in question by id', err as RequestError, id);

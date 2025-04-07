@@ -89,6 +89,6 @@ export const graphql = initGraphQLTada<{
   introspection: IntrospectionWithPatchedStrapiTypes;
   scalars: {
     DateTime: Date | string;
-    Date: Date;
+    Date: Date | string;
   };
 }>();

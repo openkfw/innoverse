@@ -98,11 +98,11 @@ function CheckinSection() {
   };
 
   return (
-    <Box sx={feedbackSectionStyles}>
+    <Box sx={checkinSectionStyles}>
       {!hideButton && (
         <InteractionButton
           onClick={handleOpen}
-          sx={feedbackButtonStyles}
+          sx={checkinButtonStyles}
           onIconClick={hideFeedbackButton}
           interactionType={InteractionType.DAILY_CHECKIN}
         />
@@ -158,16 +158,17 @@ function CheckinSection() {
 export default CheckinSection;
 
 // Check-in Section Styles
-const feedbackSectionStyles = {
-  width: '100%',
-  paddingRight: '32px',
+const checkinSectionStyles = {
+  px: '5px',
 };
 
-const feedbackButtonStyles = {
-  color: 'black',
-  backgroundColor: 'white',
+const checkinButtonStyles = {
+  color: 'white',
+  backgroundColor: 'primary.light',
   borderColor: 'secondary.main',
-  border: '2px solid',
+  border: '1.5px solid',
+  borderRadius: '8px',
+  pl: '-10',
 
   [theme.breakpoints.down('sm')]: {
     right: 'unset',
