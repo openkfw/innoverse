@@ -17,19 +17,19 @@ const logger = getLogger();
 
 export class UpdateLifecycle extends StrapiEntityLifecycle {
   public override async onCreate(entry: StrapiEntry): Promise<void> {
-    const updateId = entry.id.toString();
+    const updateId = entry.documentId.toString();
     await this.notifyAll();
     await this.saveUpdateToCache(updateId);
   }
 
   public override async onUpdate(entry: StrapiEntry): Promise<void> {
-    const updateId = entry.id.toString();
+    const updateId = entry.documentId.toString();
     await this.notifyAll();
     await this.saveUpdateToCache(updateId);
   }
 
   public override async onDelete(entry: StrapiEntry): Promise<void> {
-    const updateId = entry.id.toString();
+    const updateId = entry.documentId.toString();
     await this.notifyAll();
     await this.deleteUpdateFromCache(updateId);
   }

@@ -15,23 +15,23 @@ const logger = getLogger();
 
 export class CollaborationQuestionLifecycle extends StrapiEntityLifecycle {
   public override async onUpdate(entry: StrapiEntry): Promise<void> {
-    const questionId = entry.id.toString();
+    const questionId = entry.documentId.toString();
     await this.saveQuestionToCache(questionId, { createIfNew: false });
   }
 
   public override async onDelete(entry: StrapiEntry): Promise<void> {
-    const questionId = entry.id.toString();
+    const questionId = entry.documentId.toString();
     await this.deleteQuestionFromCache(questionId);
   }
 
   public override async onPublish(entry: StrapiEntry): Promise<void> {
-    const questionId = entry.id.toString();
+    const questionId = entry.documentId.toString();
     await this.notifyFollowers(questionId);
     await this.saveQuestionToCache(questionId);
   }
 
   public override async onUnpublish(entry: StrapiEntry): Promise<void> {
-    const questionId = entry.id.toString();
+    const questionId = entry.documentId.toString();
     this.deleteQuestionFromCache(questionId);
   }
 

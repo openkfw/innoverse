@@ -33,7 +33,7 @@ const entityLifecyclesByModelName: {
 
 export const onStrapiEvent = async (event: StrapiEvent, model: string, entry: StrapiEntry) => {
   if (!entityLifecyclesByModelName[model]) {
-    logger.warn(`Received unhandled strapi event: Event=${event} Model=${model} EntryId=${entry.id}`);
+    logger.warn(`Received unhandled strapi event: Event=${event} Model=${model} EntryId=${entry.documentId}`);
     return Promise.resolve();
   }
 

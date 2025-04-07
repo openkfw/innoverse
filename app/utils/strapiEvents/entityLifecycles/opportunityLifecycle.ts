@@ -12,7 +12,7 @@ const logger = getLogger();
 
 export class OpportunityLifecycle extends StrapiEntityLifecycle {
   public override async onPublish(entry: StrapiEntry): Promise<void> {
-    const opportunityId = entry.id.toString();
+    const opportunityId = entry.documentId.toString();
     await this.notifyFollowers(opportunityId);
     await this.createUpdateForNewOpportunity(opportunityId);
   }
