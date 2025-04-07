@@ -57,7 +57,7 @@ export const CommentCardHeader = ({ content, avatar }: CommentCardHeaderProps) =
       }
       subheader={
         author && (
-          <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: '14px', ml: '16px' }}>
+          <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: '14px' }}>
             {author.role}
           </Typography>
         )

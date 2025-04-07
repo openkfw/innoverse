@@ -1,5 +1,7 @@
 'use server';
 
+import { FormData, request } from 'undici';
+
 import { Mention, UpdateInnoUser, UploadImageResponse, User, UserSession } from '@/common/types';
 import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
@@ -22,7 +24,6 @@ import {
   GetInnoUsersByProviderIdsQuery,
 } from '@/utils/requests/innoUsers/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { FormData, request } from 'undici';
 
 const logger = getLogger();
 
@@ -52,21 +53,25 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
 
 export async function updateInnoUser(body: UpdateInnoUser) {
   try {
-    const handleResponse = async (body: Omit<UpdateInnoUser, 'name'>) => {
+    const handleResponse = async (body: Omit<UpdateInnoUser, 'name' | 'image'>) => {
       const response = await strapiGraphQLFetcher(UpdateInnoUserMutation, body);
       const userData = response.updateInnoUser;
       if (!userData) throw new Error('Response contained no user data');
       return mapToUser(userData);
     };
     const { image: userImage } = body;
+    const updateUserBody = { id: body.id, role: body.role, department: body.department };
 
-    // if the userImage is null and the avatar was defined before, delete the avatar
+    // If userImage is null and avatar existed, delete the avatar
     if (userImage === null && body.oldImageId) {
       await deleteFileImage(body.oldImageId);
-      return await handleResponse({ ...body, avatarId: null });
+      return await handleResponse({
+        ...updateUserBody,
+        avatarId: null,
+      });
     }
 
-    // if the userImage is defined and base64 string, upload the avatar
+    // If userImage is a defined base64 string, upload as avatar
     if (userImage && isBase64String(userImage)) {
       if (body.oldImageId) {
         await deleteFileImage(body.oldImageId);
@@ -74,9 +79,12 @@ export async function updateInnoUser(body: UpdateInnoUser) {
       const blobUserImage = await base64ToBlob(userImage);
       const uploadedImages = await uploadFileImage(blobUserImage, `avatar-${body.name}`);
       const uploadedImage = uploadedImages ? uploadedImages[0] : null;
-      return await handleResponse({ ...body, avatarId: uploadedImage && (uploadedImage.id as string) });
+      return await handleResponse({
+        ...updateUserBody,
+        avatarId: uploadedImage && (uploadedImage.id as string),
+      });
     }
-    // if the image is not changed, update other user info
+    // If image is unchanged, update only other user info
     return await handleResponse(body);
   } catch (err) {
     const error = strapiError('Update Inno User', err as RequestError, body.name);
@@ -273,7 +281,7 @@ async function uploadImage(imageUrl: string, fileName: string) {
 }
 
 export async function deleteFileImage(imageId: string) {
-  return await fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload/files/${encodeURIComponent(imageId)}`, {
+  return await fetch(`${clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT}/api/upload/files/${imageId}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
@@ -287,7 +295,7 @@ export async function deleteFileImage(imageId: string) {
       return response.json();
     })
     .then((result) => {
-      return result as UploadImageResponse[];
+      return result;
     });
 }
 

@@ -26,7 +26,8 @@ export function mapToUser(userData: ResultOf<typeof InnoUserFragment | null>): U
     email: userData.email ?? undefined,
     providerId: userData.providerId ?? undefined,
     image: mapToAvatarUrl(userData.avatar),
-    imageId: userData.avatar?.documentId,
+    // Upload API expects legacy integer ID; fails with Strapi 5's new documentId
+    imageId: userData.avatar?.id,
   };
 }
 
