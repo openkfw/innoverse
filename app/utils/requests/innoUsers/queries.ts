@@ -11,6 +11,7 @@ export const InnoUserFragment = graphql(`
     department
     email
     avatar {
+      id
       documentId
       url
       formats

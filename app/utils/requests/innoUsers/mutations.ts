@@ -34,6 +34,7 @@ export const CreateInnoUserMutation = graphql(`
       email
       username
       avatar {
+        id
         documentId
         formats
         url
@@ -102,6 +103,7 @@ export const UpdateInnoUserUsernameMutation = graphql(`
       department
       email
       avatar {
+        id
         documentId
         formats
         url
