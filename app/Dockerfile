@@ -13,6 +13,7 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 FROM node:18-alpine AS builder
 ARG BUILDTIMESTAMP
 ARG CI_COMMIT_SHA
+ARG BODY_SIZE_LIMIT
 
 # Install pnpm
 RUN npm install -g pnpm
@@ -24,6 +25,8 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 ENV NEXT_PUBLIC_BUILDTIMESTAMP ${BUILDTIMESTAMP}
 ENV NEXT_PUBLIC_CI_COMMIT_SHA ${CI_COMMIT_SHA}
+ENV NEXT_PUBLIC_BODY_SIZE_LIMIT ${BODY_SIZE_LIMIT}
+
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 
@@ -45,6 +48,7 @@ ARG CI_COMMIT_SHA
 
 ENV NEXT_PUBLIC_BUILDTIMESTAMP ${BUILDTIMESTAMP}
 ENV NEXT_PUBLIC_CI_COMMIT_SHA ${CI_COMMIT_SHA}
+ENV NEXT_PUBLIC_BODY_SIZE_LIMIT ${BODY_SIZE_LIMIT}
 
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
