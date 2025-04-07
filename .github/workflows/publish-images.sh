@@ -47,7 +47,7 @@ done
 
 # Check if required variables are set
 if [ -z "$IMAGE_NAME" ] || [ -z "$PRIVATE_REGISTRY_URL" ] || [ -z "$PRIVATE_REGISTRY_PASSWORD" ] || [ -z "$PRIVATE_REGISTRY_USERNAME" ] \
-|| [ -z "$PUBLIC_REGISTRY_URL" ] || [ -z "$PUBLIC_REGISTRY_PASSWORD" ] || [ -z "$PUBLIC_REGISTRY_USERNAME" ]; then
+|| [ -z "$PUBLIC_REGISTRY_URL" ] || [ -z "$PUBLIC_REGISTRY_PASSWORD" ] || [ -z "$BODY_SIZE_LIMIT" ] || [ -z "$PUBLIC_REGISTRY_USERNAME" ]; then
     echo "Error: Missing required parameters."
     Help
     exit 1
@@ -80,6 +80,7 @@ export CI_COMMIT_SHA=$(git rev-parse HEAD)
 docker build \
     --tag "$TEMP_TAG" \
     --build-arg BUILDTIMESTAMP=$BUILDTIMESTAMP \
+    --build-arg BODY_SIZE_LIMIT=$BODY_SIZE_LIMIT \
     --build-arg CI_COMMIT_SHA=$CI_COMMIT_SHA \
     -f Dockerfile .
 
