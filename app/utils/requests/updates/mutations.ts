@@ -1,16 +1,13 @@
 import { graphql } from '@/types/graphql';
 import { ProjectUpdateFragment } from '@/utils/requests/updates/queries';
 
-export const DeleteProjectUpdateMutation = graphql(
-  `
-    mutation DeleteProjectUpdate($updateId: ID!) {
-      deleteUpdate(documentId: $updateId) {
-        documentId
-      }
+export const DeleteProjectUpdateMutation = graphql(`
+  mutation DeleteProjectUpdate($updateId: ID!) {
+    deleteUpdate(documentId: $updateId) {
+      documentId
     }
-  `,
-  [ProjectUpdateFragment],
-);
+  }
+`);
 
 export const CreateProjectUpdateMutation = graphql(
   `
