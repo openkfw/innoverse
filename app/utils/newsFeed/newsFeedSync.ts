@@ -23,6 +23,7 @@ import { getProjectsStartingFrom } from '@/utils/requests/project/requests';
 import { mapToComment } from '../requests/comments/mapping';
 import { saveEntryNewsComments } from '../requests/comments/requests';
 import { getEventsStartingFrom } from '../requests/events/requests';
+import { getPostsStartingFrom } from '../requests/posts/requests';
 import { getSurveyQuestionsStartingFrom } from '../requests/surveyQuestions/requests';
 import { getProjectUpdatesStartingFrom } from '../requests/updates/requests';
 
@@ -34,7 +35,6 @@ import {
   transactionalDeleteItemsFromRedis,
   transactionalSaveNewsFeedEntry,
 } from './redis/redisService';
-import { getPostsStartingFrom } from '../requests/posts/requests';
 
 const logger = getLogger();
 const maxSyncRetries = 3;

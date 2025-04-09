@@ -10,7 +10,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import PersonIcon from '@mui/icons-material/Person';
-import SendIcon from '@mui/icons-material/Send';
+import SendIcon from '@mui/icons-material/SendOutlined';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import Box from '@mui/material/Box';
 import Button, { ButtonProps } from '@mui/material/Button';

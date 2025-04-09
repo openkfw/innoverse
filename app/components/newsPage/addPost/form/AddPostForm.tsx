@@ -110,15 +110,15 @@ export default function AddPostForm(props: AddUpdateFormProps) {
         />
       </form>
 
-      <Stack spacing={2} direction={{ sm: 'column', md: 'row' }}>
+      <Stack spacing={3} direction={{ sm: 'column', md: 'row' }}>
         {!defaultFormValues?.project && (
           <AutocompleteDropdownField
             name={PROJECT}
             control={control}
             label={m.components_newsPage_addPost_form_addPostForm_projectLabel()}
-            options={[{ label: '-optional-', id: '' }, ...projectOptions]}
+            options={[{ label: m.components_newsPage_addPost_form_addPostForm_label(), id: '' }, ...projectOptions]}
             readOnly={!projectOptions}
-            sx={inputStyle()}
+            sx={{ ...inputStyle }}
             startAdornment={
               !projectOptions && (
                 <Box sx={{ pt: 1 }}>
@@ -129,7 +129,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
           />
         )}
 
-        <Box sx={actionConainerStyles}>
+        <Box sx={actionContainerStyles}>
           <CheckboxInputField
             name={ANONYMOUS}
             control={control}
@@ -191,7 +191,7 @@ const closeIconStyles = {
   fontSize: '18px',
 };
 
-const actionConainerStyles = {
+const actionContainerStyles = {
   display: { xs: 'flex', md: 'flex' },
   gap: { xs: 0, md: '24px' },
   justifyContent: { xs: 'space-between', md: 'flex-start' },

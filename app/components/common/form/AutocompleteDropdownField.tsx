@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import { FormInputProps, Option } from '@/common/formTypes';
 import * as m from '@/src/paraglide/messages.js';
 
-import { formLabelStyle } from './formStyle';
+import { formLabelStyle, inputLabelStyle } from './formStyle';
 
 type DropdownFieldProps = FormInputProps & { startAdornment: React.ReactNode };
 
@@ -19,6 +19,7 @@ export const AutocompleteDropdownField = ({
   control,
   label,
   options,
+  secondary,
   readOnly = false,
   startAdornment,
   sx,
@@ -46,7 +47,7 @@ export const AutocompleteDropdownField = ({
                 <TextField
                   {...params}
                   label={label}
-                  sx={{ color: 'text.primary' }}
+                  sx={inputLabelStyle(secondary)}
                   helperText={m.components_common_form_autoCompleteDropdownField_helpText()}
                   FormHelperTextProps={{ sx: helperTextStyles }}
                   error={!!error}

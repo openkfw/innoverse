@@ -2,49 +2,65 @@
 
 import { SxProps } from '@mui/material/styles';
 
+const textColor = (secondary?: boolean) => (secondary ? 'common.white' : 'common.black');
+
 export const formLabelStyle = {
-  color: 'primary.main',
+  color: 'common.black',
   fontFamily: 'SansDefaultMed',
   fontSize: '14px',
   '&.Mui-focused': {
-    color: 'primary.main',
+    color: 'common.black',
   },
 };
+
+export const inputLabelStyle = (secondary?: boolean) => ({
+  '& .MuiInputLabel-root': {
+    color: textColor(secondary),
+  },
+  '& .MuiInputLabel-root.Mui-focused': {
+    color: secondary ? 'common.white' : 'primary.main',
+  },
+});
 
 export const inputStyle = (secondary?: boolean) => {
   return {
     '& .MuiFormLabel-root': {
-      color: secondary ? 'common.white' : 'primary.main',
+      color: textColor(secondary),
       fontFamily: 'SansDefaultMed',
       fontSize: '14px',
       '&.Mui-focused': {
-        color: secondary ? 'common.white' : 'primary.main',
+        color: textColor(secondary),
       },
     },
+    '&.Mui-focused': {
+      color: textColor(secondary),
+    },
     '& + .MuiAutocomplete-popper .MuiAutocomplete-option': {
-      color: !secondary && 'primary.main',
+      color: textColor(secondary),
       fontFamily: 'SansDefaultMed',
       fontSize: '14px',
       '&.Mui-focused': {
-        color: secondary ? 'common.white' : 'primary.main',
+        color: textColor(secondary),
       },
     },
     '& + .MuiTypography-root': {
-      color: secondary ? 'common.white' : 'primary.main',
+      color: textColor(secondary),
       fontFamily: '***FONT_REMOVED***',
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
-        borderColor: 'common.white',
+        borderColor: textColor(secondary),
       },
       '&:hover fieldset': {
-        borderColor: 'common.white',
+        borderColor: textColor(secondary),
       },
       '&.Mui-focused fieldset': {
-        borderColor: 'action.hover',
+        color: textColor(secondary),
+        border: '2px solid',
+        borderColor: textColor(secondary),
       },
       '& input': {
-        color: 'common.white',
+        color: textColor(secondary),
       },
     },
   } as SxProps;

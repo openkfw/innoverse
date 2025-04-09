@@ -27,6 +27,7 @@ const palette: DefaultPaletteOptions = {
   },
   common: {
     white: '#FFFFFF',
+    black: 'rgba(0, 0, 0, 0.56)',
   },
   action: {
     active: '#0000008F',
