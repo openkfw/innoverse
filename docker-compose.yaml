@@ -54,6 +54,7 @@ services:
         # used for display an innoverse version
         CI_COMMIT_SHA: "LOCAL"
         BUILDTIMESTAMP: 0
+        BODY_SIZE_LIMIT: 2
     env_file:
       - ./app/.env
     environment:
