@@ -23,7 +23,7 @@ export const CommentCardHeader = ({ content, avatar }: CommentCardHeaderProps) =
         sx={cardHeaderStyles}
         avatar={
           <AvatarInitialsIcon
-            name={m.components_newsPage_cards_newsCard_anonymous()}
+            name={m.components_common_anonymous_author()}
             size={32}
             sx={{ border: '2px solid white' }}
           />
@@ -31,7 +31,7 @@ export const CommentCardHeader = ({ content, avatar }: CommentCardHeaderProps) =
         title={
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography variant="subtitle2" color="primary.dark" sx={{ fontSize: '14px' }} data-testid="author">
-              {m.components_newsPage_cards_newsCard_anonymous()}
+              {m.components_common_anonymous_author()}
             </Typography>
             <Typography variant="caption" color="secondary.contrastText" data-testid="date" suppressHydrationWarning>
               {formatDateWithTimestamp(updatedAt)}

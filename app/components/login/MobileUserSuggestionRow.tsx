@@ -1,12 +1,10 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { signIn } from 'next-auth/react';
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import ClearIcon from '@mui/icons-material/Clear';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
@@ -16,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import * as m from '@/src/paraglide/messages.js';
 import { getProviderLabel } from '@/utils/helpers';
 
-import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
+import AvatarIcon from '../common/AvatarIcon';
 import CustomDialog from '../common/CustomDialog';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
@@ -42,13 +40,7 @@ export default function MobileUserSuggestionRow(props: UserSuggestionRowProps) {
   return (
     <>
       <Stack direction="row" spacing={1}>
-        {image ? (
-          <Avatar sx={{ width: 25, height: 25, border: '2px solid white' }}>
-            <Image src={image} alt={m.components_login_mobileUserSuggestionRow_imageAlt()} fill sizes="33vw" />
-          </Avatar>
-        ) : (
-          <AvatarInitialsIcon name={name} size={25} sx={{ border: '2px solid white' }} />
-        )}
+        <AvatarIcon user={{ name, image }} size={25} />
         <Typography
           variant="body2"
           sx={{ color: 'text.primary', fontWeight: 300, fontSize: '14px', alignSelf: 'center' }}

@@ -1,12 +1,10 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { signIn } from 'next-auth/react';
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import ClearIcon from '@mui/icons-material/Clear';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
@@ -16,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import * as m from '@/src/paraglide/messages.js';
 import { getProviderLabel } from '@/utils/helpers';
 
-import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
+import AvatarIcon from '../common/AvatarIcon';
 import CustomDialog from '../common/CustomDialog';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
@@ -51,13 +49,7 @@ export default function UserSuggestionRow(props: UserSuggestionRowProps) {
       <Grid container justifyItems="space-between">
         <Grid container item direction="row" xs={6} spacing={1}>
           <Grid item>
-            {image ? (
-              <Avatar sx={{ width: 40, height: 40, border: '2px solid white' }}>
-                <Image src={image} alt={m.app_contexts_newsFilterContext_refetchingNewsError()} fill sizes="33vw" />
-              </Avatar>
-            ) : (
-              <AvatarInitialsIcon name={name} size={40} sx={{ border: '2px solid white' }} />
-            )}
+            <AvatarIcon user={{ name, image }} size={40} />
           </Grid>
           <Grid container item direction="column" spacing={1} xs={8} justifyContent="center">
             <Grid item>

@@ -30,8 +30,6 @@
   "components_collaboration_collaborationTab_survey": "Umfrage",
   "components_collaboration_collaborationTab_helpUs": "Hilf uns bei diesen Fragen",
 
-  "components_collaboration_shareOpinionCard_imageAlt": "avatar",
-
   "components_collaboration_comments_collaborationCommentCard_upvoteError": "Der Kommentar konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",
   "components_collaboration_comments_collaborationCommentCard_updateError": "Der Kommentar konnte nicht aktualisiert werden. Bitte versuche es später noch einmal.",
   "components_collaboration_comments_collaborationCommentCard_deleteError": "Der Kommentar konnte nicht gelöscht werden. Bitte versuche es später noch einmal.",
@@ -65,8 +63,6 @@
 
   "components_collaboration_survey_voteResultCard_deleteVote": "Mein Votum entfernen",
   "components_collaboration_survey_voteResultCard_showResults": "Um die Ergebnisse zu sehen, bitte gib deine Stimme ab.",
-
-  "components_common_avatarIcon_imageAlt": "avatar",
 
   "components_common_breadCrumbsNav_breadcrumbs": "Startseite",
 
@@ -198,8 +194,6 @@
   "components_layout_layout_news": "News",
   "components_layout_layout_aiAssistant": "AI Assistent",
 
-  "components_layout_loggedInMenu_imageAlt": "avatar",
-
   "components_layout_topBar_imageAlt": "Logo",
 
   "components_layout_topBarMobile_signOut": "Ausloggen",
@@ -221,7 +215,6 @@
   "components_login_loginDialog_login": "Einloggen",
   "components_login_loginDialog_loginMessage": "Melde dich an um fortzufahren",
 
-  "components_login_mobileUserSuggestionRow_imageAlt": "avatar",
   "components_login_mobileUserSuggestionRow_notYouSuggestion": "Nicht du? Mit einem anderen Account einloggen.",
   "components_login_mobileUserSuggestionRow_confirmation": "Bestätigung",
   "components_login_mobileUserSuggestionRow_confirmationMessage": "Bitte bestätige das Entfernen von dem User",
@@ -229,8 +222,6 @@
   "components_login_signInOptions_failedSignInError": "Login Daten konnten nicht geladen werden. Bitte versuche es später noch einmal.",
   "components_login_signInOptions_signInProviderError": "Es konnten keine Login Provider gefunden werden. Bitte versuche es später noch einmal.",
   "components_login_signInOptions_sessionInfoError": "Es konnten keine Session Informationen abgerufen werden. Bitte versuche es später noch einmal.",
-
-  "components_login_userSuggestionRow_imageAlt": "avatar",
   "components_login_userSuggestionRow_notYouSuggestion": "Nicht du? Mit einem anderen Account einloggen.",
   "components_login_userSuggestionRow_confirmation": "Bestätigung",
   "components_login_userSuggestionRow_confirmationMessage": "Bitte bestätige das Entfernen von dem User",
@@ -305,8 +296,6 @@
   "components_newsPage_cards_newsCard_error_update": "Der Beitrag konnte nicht aktualisiert werden. Bitte versuche es noch einmal",
 
   "components_newsPage_cards_newsCard_error_delete": "Der Beitrag konnte nicht gelöscht werden. Bitte versuche es noch einmal",
-
-  "components_newsPage_cards_newsCard_anonymous": "Anonym",
 
   "components_newsPage_cards_commentCard_error_update": "Der Kommentar konnte nicht aktualisiert werden. Bitte versuche es noch einmal",
 
@@ -419,5 +408,7 @@
   "components_profilePage_form_updateUserForm_save": "Speichern",
   "components_common_formValidation_messages_required_field": "Erforderlich",
   "components_common_formValidation_messages_invalid_date": "Datum ist ungültig",
-  "components_common_formValidation_messages_invalid_file_size": "Ihre Datei ist größer als das erlaubte Limit von {fileSize}MB!"
+  "components_common_formValidation_messages_invalid_file_size": "Ihre Datei ist größer als das erlaubte Limit von {fileSize}MB!",
+  "components_common_avatarIcon_imageAlt": "avatar",
+  "components_common_anonymous_author": "Anonym"
 }

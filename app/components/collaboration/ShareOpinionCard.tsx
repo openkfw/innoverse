@@ -1,13 +1,9 @@
-import Image from 'next/image';
-
-import Avatar from '@mui/material/Avatar';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 
 import { useUser } from '@/app/contexts/user-context';
-import * as m from '@/src/paraglide/messages.js';
 
-import AvatarInitialsIcon from '../common/AvatarInitialsIcon';
+import AvatarIcon from '../common/AvatarIcon';
 import InteractionButton, { InteractionType } from '../common/InteractionButton';
 
 type ShareOpinionCardProps = {
@@ -23,20 +19,7 @@ export const ShareOpinionCard = ({ projectName, handleClick }: ShareOpinionCardP
         <Card sx={cardStyles}>
           <CardHeader
             sx={cardHeaderStyles}
-            avatar={
-              user.image ? (
-                <Avatar sx={avatarStyles}>
-                  <Image
-                    src={user.image}
-                    alt={m.components_collaboration_shareOpinionCard_imageAlt()}
-                    fill
-                    sizes="33vw"
-                  />
-                </Avatar>
-              ) : (
-                <AvatarInitialsIcon name={user.name} size={32} />
-              )
-            }
+            avatar={<AvatarIcon user={user} size={32} />}
             title={
               <InteractionButton
                 projectName={projectName}
@@ -62,9 +45,4 @@ const cardHeaderStyles = {
   '& .MuiCardHeader-avatar': {
     marginRight: '8px',
   },
-};
-
-const avatarStyles = {
-  width: 32,
-  height: 32,
 };
