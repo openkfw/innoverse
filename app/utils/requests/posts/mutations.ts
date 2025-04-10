@@ -1,16 +1,13 @@
 import { graphql } from '@/types/graphql';
 import { PostFragment } from '@/utils/requests/posts/queries';
 
-export const DeletePostMutation = graphql(
-  `
-    mutation DeletePost($postId: ID!) {
-      deletePost(documentId: $postId) {
-        documentId
-      }
+export const DeletePostMutation = graphql(`
+  mutation DeletePost($postId: ID!) {
+    deletePost(documentId: $postId) {
+      documentId
     }
-  `,
-  [PostFragment],
-);
+  }
+`);
 
 export const CreatePostMutation = graphql(
   `
