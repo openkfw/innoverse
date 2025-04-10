@@ -64,15 +64,3 @@ export async function addLike(client: PrismaClient, objectId: string, objectType
     },
   });
 }
-
-export const updateLikesIds = async (client: PrismaClient, id: string, documentId: string, objectType: ObjectType) => {
-  return await client.objectLike.updateMany({
-    where: {
-      objectId: id,
-      objectType: objectType as PrismaObjectType,
-    },
-    data: {
-      objectId: documentId,
-    },
-  });
-};
