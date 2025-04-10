@@ -29,9 +29,6 @@
   "components_collaboration_collaborationTab_opportunities": "Opportunities",
   "components_collaboration_collaborationTab_survey": "Survey",
   "components_collaboration_collaborationTab_helpUs": "Help us with these questions",
-
-  "components_collaboration_shareOpinionCard_imageAlt": "avatar",
-
   "components_collaboration_comments_collaborationCommentCard_upvoteError": "Failed to upvote collaboration comment. Please try again later.",
   "components_collaboration_comments_collaborationCommentCard_updateError": "Failed to update collaboration comment. Please try again later.",
   "components_collaboration_comments_collaborationCommentCard_deleteError": "Failed to delete collaboration comment. Please try again later.",
@@ -65,9 +62,6 @@
 
   "components_collaboration_survey_voteResultCard_deleteVote": "Remove my vote",
   "components_collaboration_survey_voteResultCard_showResults": "To see the results, please cast your vote.",
-
-  "components_common_avatarIcon_imageAlt": "avatar",
-
   "components_common_breadCrumbsNav_breadcrumbs": "Home",
 
   "components_common_commentCardHeaderSecondary_imageAlt": "badge",
@@ -221,7 +215,7 @@
   "components_login_loginDialog_login": "Login",
   "components_login_loginDialog_loginMessage": "Log in to continue",
 
-  "components_login_mobileUserSuggestionRow_imageAlt": "avatar",
+  "components_common_avatarIcon_imageAlt": "avatar",
   "components_login_mobileUserSuggestionRow_notYouSuggestion": "Not you? Log in with another account.",
   "components_login_mobileUserSuggestionRow_confirmation": "Confirmation",
   "components_login_mobileUserSuggestionRow_confirmationMessage": "Please confirm the removal of the user",
@@ -305,8 +299,6 @@
   "components_newsPage_cards_newsCard_error_update": "Failed to update news. Please try again.",
 
   "components_newsPage_cards_newsCard_error_delete": "Failed to delete news. Please try again.",
-
-  "components_newsPage_cards_newsCard_anonymous": "Anonymous",
 
   "components_newsPage_cards_commentCard_error_update": "Failed to update comment. Please try again.",
 
@@ -419,5 +411,6 @@
   "components_profilePage_form_updateUserForm_save": "Save",
   "components_common_formValidation_messages_required_field": "Required",
   "components_common_formValidation_messages_invalid_date": "Invalid date",
-  "components_common_formValidation_messages_invalid_file_size": "File size exceeds the allowed limit {fileSize}MB!"
+  "components_common_formValidation_messages_invalid_file_size": "File size exceeds the allowed limit {fileSize}MB!",
+  "components_common_anonymous_author": "Anonymous"
 }

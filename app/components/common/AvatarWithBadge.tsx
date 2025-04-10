@@ -1,11 +1,9 @@
-import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 
 import { useUser } from '@/app/contexts/user-context';
-import * as m from '@/src/paraglide/messages.js';
 
-import AvatarInitialsIcon from './AvatarInitialsIcon';
+import AvatarIcon from './AvatarIcon';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -21,11 +19,7 @@ const AvatarWithBadge = () => {
   return (
     user && (
       <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'top', horizontal: 'right' }} variant="dot">
-        {user.image ? (
-          <Avatar sx={{ width: 32, height: 32 }} src={user.image} alt={m.components_layout_loggedInMenu_imageAlt()} />
-        ) : (
-          <AvatarInitialsIcon name={user.name} size={32} />
-        )}
+        <AvatarIcon user={user} size={32} />
       </StyledBadge>
     )
   );

@@ -8,7 +8,7 @@ import { UserAvatar, UserAvatarProps } from '@/components/common/UserAvatar';
 import * as m from '@/src/paraglide/messages.js';
 import { formatDateWithTimestamp } from '@/utils/helpers';
 
-import AvatarInitialsIcon from './AvatarInitialsIcon';
+import AvatarIcon from './AvatarIcon';
 
 interface CommentCardHeaderSecondaryProps {
   content: {
@@ -26,11 +26,11 @@ export const CommentCardHeaderSecondary = ({ content, sx }: CommentCardHeaderSec
     return (
       <CardHeader
         sx={{ ...cardHeaderStyles, ...sx }}
-        avatar={<AvatarInitialsIcon name={m.components_newsPage_cards_newsCard_anonymous()} size={32} />}
+        avatar={<AvatarIcon size={32} anonymous />}
         title={
           <Stack direction="row" spacing={1} justifyContent="space-between" sx={cardHeaderTitleStyles}>
             <Typography variant="subtitle2" color="primary.dark">
-              {m.components_newsPage_cards_newsCard_anonymous()}
+              {m.components_common_anonymous_author()}
             </Typography>
             <Typography variant="caption" color="secondary.contrastText" data-testid="date" suppressHydrationWarning>
               {formatDateWithTimestamp(updatedAt)}
