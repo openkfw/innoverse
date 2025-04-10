@@ -145,19 +145,3 @@ export const updateReactionsId = async (
     },
   });
 };
-export async function updateReactionObjectId(
-  client: PrismaClient,
-  oldObjectId: string,
-  newObjectId: string,
-  objectType: ObjectType,
-) {
-  return client.reaction.updateMany({
-    where: {
-      objectId: oldObjectId,
-      objectType: objectType as PrismaObjectType,
-    },
-    data: {
-      objectId: newObjectId,
-    },
-  });
-}

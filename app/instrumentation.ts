@@ -26,7 +26,5 @@ export async function register() {
     }
     const { migrateIdsToDocumentIds } = await import('./utils/documentId-migration/migrateIdToDocumentId');
     migrateIdsToDocumentIds();
-    const { movePostsToSTrapi } = await import('./services/postService');
-    movePostsToSTrapi();
   }
 }
