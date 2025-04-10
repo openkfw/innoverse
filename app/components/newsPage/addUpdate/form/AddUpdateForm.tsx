@@ -114,7 +114,6 @@ export default function AddUpdateForm({
                 </Box>
               )
             }
-            sx={inputStyle}
           />
         )}
       </Stack>
@@ -129,13 +128,6 @@ export default function AddUpdateForm({
     </Stack>
   );
 }
-
-const inputStyle = {
-  width: '100%',
-  '& .MuiInputLabel-root': {
-    color: 'primary.main',
-  },
-};
 
 const formStyles = {
   borderTop: '1px solid rgba(0, 90, 140, 0.10)',
