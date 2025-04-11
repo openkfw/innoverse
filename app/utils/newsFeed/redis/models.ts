@@ -69,7 +69,7 @@ export type RedisItem = {
 export type RedisPost = RedisItem & {
   createdAt: number;
   author: RedisUser;
-  content: string;
+  comment: string;
   likedBy: string[];
   anonymous: boolean;
 };

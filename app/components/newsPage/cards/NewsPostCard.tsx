@@ -3,17 +3,17 @@ import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import Typography from '@mui/material/Typography';
 
-import { useUser } from '@/app/contexts/user-context';
-import { NewsFeedEntry, Post, UserSession } from '@/common/types';
+import { NewsFeedEntry, Post } from '@/common/types';
 import CardContentWrapper from '@/components/common/CardContentWrapper';
 import { CommentCardHeader } from '@/components/common/CommentCardHeader';
 import { errorMessage } from '@/components/common/CustomToast';
 import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
 import { parseStringForLinks } from '@/components/common/LinkString';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
-import { updatePost } from '@/services/postService';
 import * as m from '@/src/paraglide/messages.js';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
+
+import { handleUpdatePost } from '../addPost/form/actions';
 
 import { NewsCardActions } from './common/NewsCardActions';
 
@@ -27,15 +27,12 @@ function NewsPostCard({ entry }: NewsPostCardProps) {
 
   const state = useEditingState();
   const editingInteractions = useEditingInteractions();
-  const { user } = useUser();
 
-  const handleUpdate = async (updatedText: string, user?: UserSession) => {
+  const handleUpdate = async (updatedText: string) => {
     try {
-      if (user) {
-        await updatePost({ postId: post.id, content: updatedText, user });
-        setPost({ ...post, content: updatedText });
-        editingInteractions.onSubmit();
-      }
+      await handleUpdatePost({ comment: updatedText, postId: post.id });
+      setPost({ ...post, comment: updatedText });
+      editingInteractions.onSubmit();
     } catch (error) {
       console.error('Error updating post:', error);
       errorMessage({ message: m.components_newsPage_cards_newsCard_error_update() });
@@ -48,8 +45,8 @@ function NewsPostCard({ entry }: NewsPostCardProps) {
 
   return state.isEditing(post) ? (
     <WriteCommentCard
-      content={{ ...post, text: post.content }}
-      onSubmit={(updatedText) => handleUpdate(updatedText, user)}
+      content={{ ...post, text: post.comment }}
+      onSubmit={(updatedText) => handleUpdate(updatedText)}
       onDiscard={editingInteractions.onCancel}
     />
   ) : (
@@ -57,7 +54,7 @@ function NewsPostCard({ entry }: NewsPostCardProps) {
       <CommentCardHeader content={post} avatar={{ size: 32 }} />
       <CardContentWrapper>
         <Typography color="text.primary" variant="body1" data-testid="text">
-          {parseStringForLinks(post.content)}
+          {parseStringForLinks(post.comment)}
         </Typography>
       </CardContentWrapper>
       <NewsCardActions entry={entry} />

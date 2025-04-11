@@ -18,7 +18,7 @@ export function mapToPost(postData: ResultOf<typeof PostFragment>): Post {
 
   return {
     id: postData.documentId,
-    content: postData.comment || '',
+    comment: postData.comment || '',
     updatedAt: toDate(postData.updatedAt),
     createdAt: toDate(postData.createdAt),
     author: mapToUser(author),

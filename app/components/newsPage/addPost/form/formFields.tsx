@@ -1,5 +1,5 @@
 const formFieldNames = {
-  CONTENT: 'content',
+  COMMENT: 'comment',
   PROJECT: 'project',
   ANONYMOUS: 'anonymous',
 };

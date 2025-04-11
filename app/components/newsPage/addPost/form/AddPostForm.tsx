@@ -12,7 +12,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Option } from '@/common/formTypes';
-import { ObjectType, Post, ProjectUpdate } from '@/common/types';
+import { Post, ProjectUpdate } from '@/common/types';
 import { errorMessage, successMessage } from '@/components/common/CustomToast';
 import { AutocompleteDropdownField } from '@/components/common/form/AutocompleteDropdownField';
 import { CheckboxInputField } from '@/components/common/form/CheckboxInputField';
@@ -23,30 +23,30 @@ import * as m from '@/src/paraglide/messages.js';
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
 import { handleProjectUpdate } from '../../addUpdate/form/actions';
 
-import { handlePost } from './actions';
+import { handleCreatePost } from './actions';
 import formFieldNames from './formFields';
 import { handleUpdateSchema, UpdateFormValidationSchema } from './validationSchema';
 
 export interface FormData {
-  content: string;
+  comment: string;
   project: { id?: string; label?: string } | null;
   anonymous: boolean;
 }
 
 export interface PostFormData {
-  content: string;
+  comment: string;
   anonymous?: boolean;
 }
 
 const defaultValues = {
-  content: '',
+  comment: '',
   project: { id: '', label: m.components_newsPage_addPost_form_addPostForm_label() },
   anonymous: false,
 };
 
-const { PROJECT, CONTENT, ANONYMOUS } = formFieldNames;
+const { PROJECT, COMMENT, ANONYMOUS } = formFieldNames;
 
-interface AddUpdateFormProps {
+interface AddPostFormProps {
   onAddPost: (post: Post) => void;
   onAddUpdate: (update: ProjectUpdate) => void;
   handleClose: () => void;
@@ -54,7 +54,7 @@ interface AddUpdateFormProps {
   projectOptions: Option[];
 }
 
-export default function AddPostForm(props: AddUpdateFormProps) {
+export default function AddPostForm(props: AddPostFormProps) {
   const { onAddPost, onAddUpdate, handleClose, defaultFormValues, projectOptions } = props;
 
   const { handleSubmit, control, formState } = useForm<FormData>({
@@ -64,10 +64,10 @@ export default function AddPostForm(props: AddUpdateFormProps) {
   });
 
   const onSubmit: SubmitHandler<UpdateFormValidationSchema> = async (data) => {
-    const { content, project, anonymous } = data;
+    const { comment, project, anonymous } = data;
 
     if (project && project.id) {
-      const response = await handleProjectUpdate({ comment: content, projectId: project.id, anonymous });
+      const response = await handleProjectUpdate({ comment, projectId: project.id, anonymous });
       if (response.status === StatusCodes.OK && response.data) {
         successMessage({ message: 'Neuigkeit wurde erstellt' });
         onAddUpdate(response.data);
@@ -77,11 +77,10 @@ export default function AddPostForm(props: AddUpdateFormProps) {
         });
       }
     } else {
-      const response = await handlePost({ content, anonymous });
+      const response = await handleCreatePost({ comment, anonymous });
       if (response.status === StatusCodes.OK && response.data) {
-        const post: Post = { ...response.data, objectType: ObjectType.POST };
         successMessage({ message: 'Post wurde erstellt' });
-        onAddPost(post);
+        onAddPost(response.data);
       } else {
         errorMessage({
           message: m.components_newsPage_addPost_form_addPostForm_createError(),
@@ -102,7 +101,7 @@ export default function AddPostForm(props: AddUpdateFormProps) {
 
       <form>
         <MultilineTextInputField
-          name={CONTENT}
+          name={COMMENT}
           control={control}
           placeholder={m.components_newsPage_addPost_form_addPostForm_addPost()}
           sx={multilineTextStyles}
