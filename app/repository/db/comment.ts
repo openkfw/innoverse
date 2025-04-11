@@ -226,20 +226,3 @@ export async function isCommentLikedBy(client: PrismaClient, commentId: string, 
   });
   return likedCommentsCount > 0;
 }
-
-export async function updateCommentObjectId(
-  client: PrismaClient,
-  oldObjectId: string,
-  newObjectId: string,
-  objectType: ObjectType,
-) {
-  return client.comment.updateMany({
-    where: {
-      objectId: oldObjectId,
-      objectType: objectType as PrismaObjectType,
-    },
-    data: {
-      objectId: newObjectId,
-    },
-  });
-}

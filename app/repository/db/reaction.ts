@@ -128,36 +128,3 @@ export async function countNumberOfReactions(client: PrismaClient, objectType: O
     },
   });
 }
-
-export const updateReactionsId = async (
-  client: PrismaClient,
-  id: string,
-  documentId: string,
-  objectType: ObjectType,
-) => {
-  return await client.reaction.updateMany({
-    where: {
-      objectId: id,
-      objectType: objectType as PrismaObjectType,
-    },
-    data: {
-      objectId: documentId,
-    },
-  });
-};
-export async function updateReactionObjectId(
-  client: PrismaClient,
-  oldObjectId: string,
-  newObjectId: string,
-  objectType: ObjectType,
-) {
-  return client.reaction.updateMany({
-    where: {
-      objectId: oldObjectId,
-      objectType: objectType as PrismaObjectType,
-    },
-    data: {
-      objectId: newObjectId,
-    },
-  });
-}

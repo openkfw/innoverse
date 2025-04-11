@@ -68,14 +68,3 @@ export async function getSuveyQuestionAndUserVote(client: PrismaClient, surveyQu
     },
   });
 }
-
-export const updateSurveyVotesIds = async (client: PrismaClient, id: string, documentId: string) => {
-  return await client.surveyVote.updateMany({
-    where: {
-      projectId: id,
-    },
-    data: {
-      projectId: documentId,
-    },
-  });
-};

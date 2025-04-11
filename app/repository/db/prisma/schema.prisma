@@ -109,17 +109,6 @@ model SurveyVote {
   @@map(name: "survey_votes")
 }
 
-model Post {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
-
-  likedBy   String[] // ids of users
-  author      String // id of author
-  content     String
-  anonymous Boolean @default(false)
-}
-
 enum ObjectType {
   UPDATE
   EVENT

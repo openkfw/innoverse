@@ -1,19 +1,11 @@
 'use server';
 
 import { ObjectType, Post, User, UserSession } from '@/common/types';
-import {
-  getFollowedByForEntity,
-  removeAllFollowsByObjectIdAndType,
-  updateFollowObjectId,
-} from '@/repository/db/follow';
+import { getFollowedByForEntity, removeAllFollowsByObjectIdAndType } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
-import {
-  getReactionsForEntity,
-  removeAllReactionsbyObjectIdAndType,
-  updateReactionObjectId,
-} from '@/repository/db/reaction';
+import { getReactionsForEntity, removeAllReactionsbyObjectIdAndType } from '@/repository/db/reaction';
 import { InnoPlatformError, redisError } from '@/utils/errors';
-import { getPromiseResults, getUnixTimestamp } from '@/utils/helpers';
+import { getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapPostToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
 import { NewsType, RedisNewsComment, RedisPost } from '@/utils/newsFeed/redis/models';
@@ -28,9 +20,7 @@ import {
   getPostById,
   updatePostInStrapi,
 } from '@/utils/requests/posts/requests';
-import { removeAllCommentsByObjectIdAndType, updateCommentObjectId } from '@/repository/db/comment';
-import { deletePostFromDb, getAllPostsFromDb } from '@/repository/db/posts';
-import { sync as synchronizeNewsFeed } from '@/utils/newsFeed/newsFeedSync';
+import { removeAllCommentsByObjectIdAndType } from '@/repository/db/comment';
 
 const logger = getLogger();
 
@@ -170,46 +160,3 @@ export const createNewsFeedEntryForPost = async (post: Post, author?: User) => {
 };
 
 const getRedisKey = (postId: string) => `${NewsType.POST}:${postId}`;
-
-export const movePostsToSTrapi = async () => {
-  const posts = await getAllPostsFromDb(dbClient);
-  logger.info(`Moving ${posts.length} posts to strapi`);
-  const mapPosts = posts.map(async (post) => movePostToStrapi(post));
-  const result = await getPromiseResults(mapPosts);
-  if (result.length) {
-    logger.info(`Move completed, moved ${result.length} posts, syncronizing news feed`);
-
-    await synchronizeNewsFeed(0, true);
-  }
-  return result;
-};
-
-const movePostToStrapi = async (post: {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  author: string;
-  anonymous: boolean;
-  likedBy: string[];
-  content: string;
-}) => {
-  const oldPostId = post.id;
-  const createdPost = await createPostInStrapi({
-    comment: post.content,
-    authorId: post.author,
-    anonymous: post.anonymous,
-  });
-
-  if (!createdPost) {
-    logger.error(`Failed to move post with id ${oldPostId} to Strapi`);
-    return null;
-  }
-  await Promise.all([
-    updateFollowObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST),
-    updateCommentObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST),
-    updateReactionObjectId(dbClient, oldPostId, createdPost.id, ObjectType.POST),
-  ]);
-
-  await deletePostFromDb(dbClient, oldPostId);
-  return createdPost;
-};
