@@ -1,6 +1,7 @@
 'use server';
 
-import { ObjectType, Post, User, UserSession } from '@/common/types';
+import { ObjectType, Post, User } from '@/common/types';
+import { removeAllCommentsByObjectIdAndType } from '@/repository/db/comment';
 import { getFollowedByForEntity, removeAllFollowsByObjectIdAndType } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity, removeAllReactionsbyObjectIdAndType } from '@/repository/db/reaction';
@@ -20,35 +21,34 @@ import {
   getPostById,
   updatePostInStrapi,
 } from '@/utils/requests/posts/requests';
-import { removeAllCommentsByObjectIdAndType } from '@/repository/db/comment';
 
 const logger = getLogger();
 
-type AddPost = { content: string; user: UserSession; anonymous?: boolean };
+type CreatePost = {
+  comment: string;
+  authorId: string;
+  anonymous?: boolean;
+};
 
-type UpdatePost = { postId: string; content: string; user: UserSession };
+type UpdatePost = { postId: string; comment: string; user: User };
 
 type UpdatePostInCache = {
-  post: { id: string; content?: string; likedBy?: string[]; comments?: RedisNewsComment[] };
-  user: UserSession;
+  post: { id: string; comment?: string; likedBy?: string[]; comments?: RedisNewsComment[] };
+  user: User;
 };
 
 type DeletePost = { postId: string };
 
-export const addPost = async ({ content, user, anonymous }: AddPost) => {
-  const createdPost = await createPostInStrapi({
-    comment: content,
-    authorId: user.providerId,
-    anonymous: anonymous ?? false,
-  });
+export const createPost = async (post: CreatePost) => {
+  const createdPost = await createPostInStrapi(post);
   if (createdPost) {
-    await addPostToCache({ ...createdPost, author: user, objectType: ObjectType.POST });
+    await addPostToCache(createdPost);
     return createdPost;
   }
 };
 
-export const updatePost = async ({ postId, content, user }: UpdatePost) => {
-  const updatedPost = await updatePostInStrapi(postId, content);
+export const updatePost = async ({ postId, comment, user }: UpdatePost) => {
+  const updatedPost = await updatePostInStrapi(postId, comment);
   if (updatedPost) {
     await updatePostInCache({ post: updatedPost, user });
     return updatedPost;
@@ -86,7 +86,7 @@ export const updatePostInCache = async ({ post, user }: UpdatePostInCache) => {
 
     if (!newsFeedEntry) return;
     const cachedItem = newsFeedEntry.item as RedisPost;
-    cachedItem.content = post.content ?? cachedItem.content;
+    cachedItem.comment = post.comment ?? cachedItem.comment;
     cachedItem.likedBy = post.likedBy ?? cachedItem.likedBy;
     newsFeedEntry.item = cachedItem;
     newsFeedEntry.updatedAt = getUnixTimestamp(new Date());

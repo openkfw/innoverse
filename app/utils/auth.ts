@@ -38,7 +38,7 @@ export function withAuth<TArgs, TReturn>(func: (user: UserSession, body: TArgs) 
     }
 
     try {
-      return func(sessionUser, args) as Promise<AuthResponse<TReturn>>;
+      return func(session.user, args) as Promise<AuthResponse<TReturn>>;
     } catch (err) {
       logger.error(err);
       return {

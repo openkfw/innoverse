@@ -413,7 +413,7 @@ export type Event = CommonNewsFeedProps & {
 export type Post = CommonNewsFeedProps & {
   id: string;
   author: User;
-  content: string;
+  comment: string;
   likedBy: string[];
   anonymous: boolean;
   createdAt: Date;

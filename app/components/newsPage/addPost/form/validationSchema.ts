@@ -3,15 +3,21 @@ import { z } from 'zod';
 import { required_field } from '@/common/formValidation';
 
 export const handleUpdateSchema = z.object({
-  content: z.string().min(1, required_field),
+  comment: z.string().min(1, required_field),
   project: z.object({ id: z.string().optional(), label: z.string().optional() }).nullable(),
   anonymous: z.boolean().optional(),
 });
 
-export const handlePostSchema = z.object({
-  content: z.string().min(1, required_field),
+export const handleCreatePostSchema = z.object({
+  comment: z.string().min(1, required_field),
+  anonymous: z.boolean().optional(),
+});
+
+export const handleUpdatePostSchema = z.object({
+  comment: z.string().min(1, required_field),
   anonymous: z.boolean().optional(),
 });
 
 export type UpdateFormValidationSchema = z.infer<typeof handleUpdateSchema>;
-export type PostFormValidationSchema = z.infer<typeof handlePostSchema>;
+export type CreatePostValidationSchema = z.infer<typeof handleCreatePostSchema>;
+export type UpdatePostValidationSchema = z.infer<typeof handleUpdatePostSchema>;

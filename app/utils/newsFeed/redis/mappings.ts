@@ -13,7 +13,7 @@ import {
 } from '@/common/types';
 import { clientConfig } from '@/config/client';
 import { CommentDB } from '@/repository/db/utils/types';
-import { getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
+import { getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
   NewsType,
@@ -46,7 +46,7 @@ export const mapPostToRedisNewsFeedEntry = (
     updatedAt: item.updatedAt,
     item,
     type: NewsType.POST,
-    search: escapeRedisTextSeparators(item.content || ''),
+    search: escapeRedisTextSeparators(item.comment || ''),
   };
 };
 
@@ -211,7 +211,7 @@ export const mapToRedisPost = (
   return {
     id: post.id,
     author: post.author,
-    content: post.content,
+    comment: post.comment,
     reactions: reactions,
     likedBy: post.likedBy,
     updatedAt: getUnixTimestamp(post.updatedAt),

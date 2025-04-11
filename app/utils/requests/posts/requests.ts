@@ -14,8 +14,6 @@ import getLogger from '@/utils/logger';
 import { CreatePostMutation, DeletePostMutation, UpdatePostMutation } from '@/utils/requests/posts/mutations';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
-import { getInnoUserByProviderId } from '../innoUsers/requests';
-
 import { mapToPost, mapToPosts } from './mappings';
 import { GetPostByIdQuery, GetPostsByIdsQuery, GetPostsStartingFromQuery } from './queries';
 
@@ -34,13 +32,12 @@ export async function getPostById(id: string) {
   }
 }
 
-export async function createPostInStrapi(body: { comment: string; authorId: string; anonymous: boolean }) {
+export async function createPostInStrapi(body: { comment: string; authorId: string; anonymous?: boolean }) {
   try {
-    const user = await getInnoUserByProviderId(body.authorId);
     const response = await strapiGraphQLFetcher(CreatePostMutation, {
-      authorId: user.id || '0',
+      authorId: body.authorId,
       comment: body.comment,
-      anonymous: body.anonymous,
+      anonymous: body.anonymous ?? false,
     });
 
     const postData = response.createPost;

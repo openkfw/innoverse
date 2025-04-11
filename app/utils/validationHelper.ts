@@ -23,3 +23,23 @@ export const validateParams = (schema: ZodType, body: any) => {
   }
   return { status: StatusCodes.OK, data: validatedParams.data };
 };
+
+export const validateAndReturn = <T>(
+  schema: ZodType,
+  body: any,
+):
+  | { isValid: true; data: T }
+  | { isValid: false; response: { status: StatusCodes; errors: any; message?: string } } => {
+  const validated = validateParams(schema, body);
+  if (validated.status !== StatusCodes.OK) {
+    return {
+      isValid: false,
+      response: {
+        status: validated.status,
+        errors: validated.errors,
+        message: validated.message,
+      },
+    };
+  }
+  return { isValid: true, data: validated.data };
+};
