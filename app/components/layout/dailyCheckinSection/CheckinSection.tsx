@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { StatusCodes } from 'http-status-codes';
 
@@ -14,58 +14,14 @@ import CustomDialog from '@/components/common/CustomDialog';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
-import { getCurrentCheckinQuestions } from '@/utils/requests/checkinQuestions/requests';
 
 import { saveDailyCheckin } from './actions';
+import { useDailyCheckin } from '@/app/contexts/daily-checkin-context';
 
-interface CheckinQuestionWithVote {
-  checkinQuestionId: string;
-  question: string;
-  vote: number | null;
-}
-
-const marks = [
-  {
-    value: 1,
-    label: '1',
-  },
-  {
-    value: 2,
-    label: '2',
-  },
-  {
-    value: 3,
-    label: '3',
-  },
-  {
-    value: 4,
-    label: '4',
-  },
-  {
-    value: 5,
-    label: '5',
-  },
-];
 function CheckinSection() {
   const [open, openDialog] = useState(false);
   const [hideButton, setHideButton] = useState(false);
-
-  const [checkinQuestions, setCheckinQuestions] = useState<CheckinQuestionWithVote[]>();
-  const [dailyCheckinVotes, setDailyCheckinVotes] = useState<{ checkinQuestionId: string; vote: number }[]>([]);
-
-  useEffect(() => {
-    async function loadAndSetCheckinQuestion() {
-      const response = await getCurrentCheckinQuestions({});
-
-      if (!response || !response.data) {
-        toast.error(m.components_layout_checkinSection_saveCheckin_toastError());
-      } else {
-        setCheckinQuestions(response.data);
-      }
-    }
-
-    loadAndSetCheckinQuestion();
-  }, []);
+  const { setDailyCheckinVotes, dailyCheckinVotes, checkinQuestions } = useDailyCheckin();
 
   function handleOpen() {
     openDialog(true);
@@ -132,7 +88,7 @@ function CheckinSection() {
               <Box sx={{ my: 2, px: 1 }}>
                 <Slider
                   step={1}
-                  marks={marks}
+                  marks={[...Array(5)].map((_, i) => ({ value: i + 1, label: i + 1 }))}
                   min={1}
                   max={5}
                   size="medium"

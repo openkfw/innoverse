@@ -109,7 +109,7 @@ model SurveyVote {
   @@map(name: "survey_votes")
 }
 
-model CheckinVote{
+model CheckinVote {
   id        String   @id @default(uuid())
   createdAt DateTime @updatedAt @default(now())
 

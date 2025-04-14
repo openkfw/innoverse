@@ -21,6 +21,7 @@ import { reactPlugin } from '@/utils/instrumentation/AppInsights';
 import Footer from './Footer';
 import TopBar from './TopBar';
 import TopBarMobile from './TopBarMobile';
+import { DailyCheckinContextProvider } from '@/app/contexts/daily-checkin-context';
 
 export type Headers = {
   text: string;
@@ -57,9 +58,11 @@ export default function Layout({ children }: PropsWithChildren) {
           <SWRProvider>
             <MentionsContextProvider>
               <UserContextProvider>
-                <NotificationContextProvider>
-                  <AppLayout>{children}</AppLayout>
-                </NotificationContextProvider>
+                <DailyCheckinContextProvider>
+                  <NotificationContextProvider>
+                    <AppLayout>{children}</AppLayout>
+                  </NotificationContextProvider>
+                </DailyCheckinContextProvider>
               </UserContextProvider>
             </MentionsContextProvider>
           </SWRProvider>
