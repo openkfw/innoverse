@@ -1,6 +1,6 @@
 {
   "name": "strapi-project",
-  "version": "1.4.1",
+  "version": "1.4.0",
   "private": true,
   "description": "A Strapi application",
   "license": "MIT",
