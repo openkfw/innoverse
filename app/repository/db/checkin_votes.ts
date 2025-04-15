@@ -8,32 +8,20 @@ export async function getCheckinVotes(client: PrismaClient, checkinQuestionId: s
   });
 }
 
-export async function getCheckinAndUserVote(client: PrismaClient, checkinQuestionId: string, votedBy: string) {
-  return client.checkinVote.findFirst({
+export async function isCheckinQuestionVotedBy(client: PrismaClient, checkinQuestionId: string, votedBy: string) {
+  const vote = await client.checkinVote.findFirst({
     where: {
       checkinQuestionId,
       votedBy,
     },
   });
+  return vote !== null;
 }
 
-export async function addCheckinVote(client: PrismaClient, checkinQuestionId: string, vote: number, votedBy: string) {
-  return client.checkinVote.upsert({
+export async function getCheckinQuestionVoteHistory(client: PrismaClient, checkinQuestionId: string) {
+  return client.checkinVote.findMany({
     where: {
-      votedBy_checkinQuestionId: {
-        checkinQuestionId,
-        votedBy,
-      },
-    },
-    update: {
       checkinQuestionId,
-      votedBy,
-      vote,
-    },
-    create: {
-      checkinQuestionId,
-      votedBy,
-      vote,
     },
   });
 }

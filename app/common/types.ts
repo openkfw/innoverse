@@ -489,11 +489,14 @@ export type UploadImageResponse = {
   updatedAt: string;
 };
 
-export type CheckinQuestionWithVote = {
+export type CheckinQuestion = {
   checkinQuestionId: string;
   question: string;
-  vote: number | null;
-}
+  voteHistory?: {
+    createdAt: Date;
+    vote: number;
+  }[];
+};
 
 export enum SortValues {
   DESC = 'DESC',
