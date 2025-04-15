@@ -10,13 +10,13 @@ import FormGroup from '@mui/material/FormGroup';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 
+import { useDailyCheckin } from '@/app/contexts/daily-checkin-context';
 import CustomDialog from '@/components/common/CustomDialog';
 import InteractionButton, { InteractionType } from '@/components/common/InteractionButton';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { saveDailyCheckin } from './actions';
-import { useDailyCheckin } from '@/app/contexts/daily-checkin-context';
 import CheckinLineChart from './CheckinLineChart';
 
 interface CheckinQuestionItemProps {
