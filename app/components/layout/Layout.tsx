@@ -7,6 +7,7 @@ import { AppInsightsContext, AppInsightsErrorBoundary } from '@microsoft/applica
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { DailyCheckinContextProvider } from '@/app/contexts/daily-checkin-context';
 import { MentionsContextProvider } from '@/app/contexts/mentions-context';
 import { NotificationContextProvider } from '@/app/contexts/notification-context';
 import { UserContextProvider } from '@/app/contexts/user-context';
@@ -21,7 +22,6 @@ import { reactPlugin } from '@/utils/instrumentation/AppInsights';
 import Footer from './Footer';
 import TopBar from './TopBar';
 import TopBarMobile from './TopBarMobile';
-import { DailyCheckinContextProvider } from '@/app/contexts/daily-checkin-context';
 
 export type Headers = {
   text: string;
