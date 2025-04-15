@@ -10,9 +10,10 @@ import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 import { GetCheckinQuestionByIdQuery, GetCheckinQuestionByValidDates } from './queries';
-import { getCheckinAndUserVote } from '@/repository/db/checkin_votes';
+import { isCheckinQuestionVotedBy, getCheckinQuestionVoteHistory } from '@/repository/db/checkin_votes';
 import { getPromiseResults } from '@/utils/helpers';
 import dbClient from '@/repository/db/prisma/prisma';
+import { PrismaClient } from '@prisma/client';
 
 const logger = getLogger();
 
@@ -49,15 +50,30 @@ export const getCurrentCheckinQuestions = withAuth(async (user: UserSession) => 
 
     const mapQuestionWithUserVote = checkinQuestionsData.map(async (checkinQuestionData) => {
       if (checkinQuestionData) {
-        const vote = await getCheckinAndUserVote(dbClient, checkinQuestionData.documentId, user.providerId);
-        return {
-          checkinQuestionId: checkinQuestionData.documentId,
-          question: checkinQuestionData.question,
-          vote: vote?.vote || null,
-        };
+        const isVotedby = await isCheckinQuestionVotedBy(dbClient, checkinQuestionData.documentId, user.providerId);
+        if (isVotedby) {
+          const voteHistory = await getSortedVoteHistory(dbClient, checkinQuestionData.documentId);
+
+          return {
+            checkinQuestionId: checkinQuestionData.documentId,
+            question: checkinQuestionData.question,
+            voteHistory,
+          };
+        } else {
+          return {
+            checkinQuestionId: checkinQuestionData.documentId,
+            question: checkinQuestionData.question,
+          };
+        }
       }
     });
-    const data = await getPromiseResults(mapQuestionWithUserVote);
+
+    const results = await getPromiseResults(mapQuestionWithUserVote);
+    const data = results.sort((a, b) => {
+      const aHasHistory = !!a.voteHistory?.length;
+      const bHasHistory = !!b.voteHistory?.length;
+      return Number(aHasHistory) - Number(bHasHistory);
+    });
     return {
       status: StatusCodes.OK,
       data,
@@ -71,3 +87,11 @@ export const getCurrentCheckinQuestions = withAuth(async (user: UserSession) => 
     };
   }
 });
+
+const getSortedVoteHistory = async (dbClient: PrismaClient, documentId: string) => {
+  const voteHistory = await getCheckinQuestionVoteHistory(dbClient, documentId);
+  const simplifiedAndSortedVotes = voteHistory
+    .map(({ createdAt, vote }) => ({ createdAt, vote }))
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  return simplifiedAndSortedVotes;
+};

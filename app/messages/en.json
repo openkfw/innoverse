@@ -212,6 +212,7 @@
   "components_layout_checkinSection_saveCheckin_toastError": "Check-in could not be saved. Try again later!",
   "components_layout_checkinSection_checkinSection_title": "Submit your daily vote",
   "components_layout_checkinSection_checkinSection_description": "Select on a scale from 1-5 (1: do not agree – 5: fully agree)",
+  "components_layout_checkinSection_checkinSection_averagePerQuestion": "Average per question",
 
   "components_login_credentialsLoginForm_useOtherAccount": "Use another account",
   "components_login_credentialsLoginForm_username": "Username",
