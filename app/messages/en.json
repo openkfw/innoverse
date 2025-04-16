@@ -211,7 +211,11 @@
   "components_layout_checkinSection_saveCheckin_toastSuccess": "Thank-your for your Check-in",
   "components_layout_checkinSection_saveCheckin_toastError": "Check-in could not be saved. Try again later!",
   "components_layout_checkinSection_checkinSection_title": "Submit your daily vote",
+  "components_layout_checkinSection_voteHistory_title": "This is the vote history",
+
   "components_layout_checkinSection_checkinSection_description": "Select on a scale from 1-5 (1: do not agree – 5: fully agree)",
+  "components_layout_checkinSection_voteHistory_description": "This is the history of the votes for the current check-in questions",
+
   "components_layout_checkinSection_checkinSection_averagePerQuestion": "Average per question",
 
   "components_login_credentialsLoginForm_useOtherAccount": "Use another account",
