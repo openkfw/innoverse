@@ -8,11 +8,21 @@ export async function getCheckinVotes(client: PrismaClient, checkinQuestionId: s
   });
 }
 
-export async function isCheckinQuestionVotedBy(client: PrismaClient, checkinQuestionId: string, votedBy: string) {
+export async function isCheckinQuestionVotedByToday(client: PrismaClient, checkinQuestionId: string, votedBy: string) {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
   const vote = await client.checkinVote.findFirst({
     where: {
       checkinQuestionId,
       votedBy,
+      createdAt: {
+        gte: startOfDay,
+        lte: endOfDay,
+      },
     },
   });
   return vote !== null;

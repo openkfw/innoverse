@@ -25,10 +25,12 @@ const CheckinLineChart = ({ voteHistory }: CheckinLineChartProps) => {
       xAxis={[{ scaleType: 'point', data: xAxisData }]}
       series={[
         {
+          curve: 'linear',
           data: yAxisData,
           label: 'Vote',
         },
       ]}
+      slotProps={{ legend: { hidden: true } }}
       tooltip={{ trigger: 'item' }}
       height={250}
       width={400}

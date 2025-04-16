@@ -210,7 +210,11 @@
   "components_layout_checkinSection_saveCheckin_toastSuccess": "Danke für Dein Check-in",
   "components_layout_checkinSection_saveCheckin_toastError": "Check-in konnte nicht gespeichert werden! Bitte versuche es später erneut.",
   "components_layout_checkinSection_checkinSection_title": "Stimme für dein daily Check-in ab",
+  "components_layout_checkinSection_voteHistory_title": "Das ist die Vote History",
+
   "components_layout_checkinSection_checkinSection_description": "Wähle auf einer Skala von 1-5 (1: stimme nicht zu – 5: stimme voll und ganz zu)",
+  "components_layout_checkinSection_voteHistory_description": "Das ist der Verlauf der Antworten der aktuellen Check-in Fragen",
+
   "components_layout_checkinSection_checkinSection_averagePerQuestion": "Durchschnitt pro Frage",
 
   "components_login_credentialsLoginForm_useOtherAccount": "Anderen Account verwenden",

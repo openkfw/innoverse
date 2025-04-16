@@ -10,7 +10,7 @@ import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 import { GetCheckinQuestionByIdQuery, GetCheckinQuestionByValidDates } from './queries';
-import { isCheckinQuestionVotedBy, getCheckinQuestionVoteHistory } from '@/repository/db/checkin_votes';
+import { isCheckinQuestionVotedByToday, getCheckinQuestionVoteHistory } from '@/repository/db/checkin_votes';
 import { getPromiseResults } from '@/utils/helpers';
 import dbClient from '@/repository/db/prisma/prisma';
 import { PrismaClient } from '@prisma/client';
@@ -42,24 +42,16 @@ export const findUserVote = withAuth(async (user: UserSession, body: { votes: Su
 
 export const getCurrentCheckinQuestions = withAuth(async (user: UserSession) => {
   try {
-    const currentDate = new Date().toISOString().split('T')[0];
-    const response = await strapiGraphQLFetcher(GetCheckinQuestionByValidDates, { currentDate });
-    const checkinQuestionsData = response.checkinQuestions;
-
-    if (!checkinQuestionsData) throw new Error('Response contained no check-in question data');
+    const checkinQuestionsData = await getStrapiCheckinQuestions();
 
     const mapQuestionWithUserVote = checkinQuestionsData.map(async (checkinQuestionData) => {
       if (checkinQuestionData) {
-        const isVotedby = await isCheckinQuestionVotedBy(dbClient, checkinQuestionData.documentId, user.providerId);
-        if (isVotedby) {
-          const voteHistory = await getSortedVoteHistory(dbClient, checkinQuestionData.documentId);
-
-          return {
-            checkinQuestionId: checkinQuestionData.documentId,
-            question: checkinQuestionData.question,
-            voteHistory,
-          };
-        } else {
+        const hasVotedToday = await isCheckinQuestionVotedByToday(
+          dbClient,
+          checkinQuestionData.documentId,
+          user.providerId,
+        );
+        if (!hasVotedToday) {
           return {
             checkinQuestionId: checkinQuestionData.documentId,
             question: checkinQuestionData.question,
@@ -68,12 +60,7 @@ export const getCurrentCheckinQuestions = withAuth(async (user: UserSession) => 
       }
     });
 
-    const results = await getPromiseResults(mapQuestionWithUserVote);
-    const data = results.sort((a, b) => {
-      const aHasHistory = !!a.voteHistory?.length;
-      const bHasHistory = !!b.voteHistory?.length;
-      return Number(aHasHistory) - Number(bHasHistory);
-    });
+    const data = await getPromiseResults(mapQuestionWithUserVote);
     return {
       status: StatusCodes.OK,
       data,
@@ -84,6 +71,45 @@ export const getCurrentCheckinQuestions = withAuth(async (user: UserSession) => 
     return {
       status: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'Getting current check-in questions failed',
+    };
+  }
+});
+
+const getStrapiCheckinQuestions = async () => {
+  const currentDate = new Date().toISOString().split('T')[0];
+  const response = await strapiGraphQLFetcher(GetCheckinQuestionByValidDates, { currentDate });
+  const checkinQuestionsData = response.checkinQuestions;
+
+  if (!checkinQuestionsData) throw new Error('Response contained no check-in question data');
+  return checkinQuestionsData;
+};
+
+export const getCheckinQuestionsHistory = withAuth(async (user: UserSession) => {
+  try {
+    const checkinQuestionsData = await getStrapiCheckinQuestions();
+    const mapQuestionWithUserVote = checkinQuestionsData.map(async (checkinQuestionData) => {
+      if (checkinQuestionData) {
+        const voteHistory = await getSortedVoteHistory(dbClient, checkinQuestionData.documentId);
+
+        return {
+          checkinQuestionId: checkinQuestionData.documentId,
+          question: checkinQuestionData.question,
+          voteHistory,
+        };
+      }
+    });
+
+    const data = await getPromiseResults(mapQuestionWithUserVote);
+    return {
+      status: StatusCodes.OK,
+      data,
+    };
+  } catch (err) {
+    const error = strapiError('Getting current check-in question history', err as RequestError);
+    logger.error(error);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: 'Getting current check-in question history failed',
     };
   }
 });

@@ -5,9 +5,7 @@ import { toast } from 'react-toastify';
 import { StatusCodes } from 'http-status-codes';
 
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import FormGroup from '@mui/material/FormGroup';
-import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 
 import { useDailyCheckin } from '@/app/contexts/daily-checkin-context';
@@ -17,20 +15,14 @@ import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { saveDailyCheckin } from './actions';
-import CheckinLineChart from './CheckinLineChart';
-
-interface CheckinQuestionItemProps {
-  question: {
-    question: string;
-    checkinQuestionId: string;
-  };
-  onVoteChange: (questionId: string, value: number) => void;
-}
+import CheckinQuestionList from './CheckinQuestionList';
+import CheckinQuestionVoteHistory from './CheckinQuestionVoteHistory';
 
 function CheckinSection() {
   const [open, openDialog] = useState(false);
   const [hideButton, setHideButton] = useState(false);
-  const { setDailyCheckinVotes, dailyCheckinVotes, checkinQuestions, refetchCheckinQuestions } = useDailyCheckin();
+  const { setDailyCheckinVotes, dailyCheckinVotes, checkinQuestionsToAnswer, voteHistory, refetchCheckinQuestions } =
+    useDailyCheckin();
 
   function handleOpen() {
     openDialog(true);
@@ -39,10 +31,6 @@ function CheckinSection() {
   function handleClose() {
     openDialog(false);
     setDailyCheckinVotes([]);
-  }
-
-  function hideFeedbackButton() {
-    setHideButton(true);
   }
 
   const handleVoteChange = (checkinQuestionId: string, newValue: number) => {
@@ -63,13 +51,25 @@ function CheckinSection() {
     }
   };
 
+  const getTitle = () => {
+    return checkinQuestionsToAnswer.length
+      ? m.components_layout_checkinSection_checkinSection_title()
+      : m.components_layout_checkinSection_voteHistory_title();
+  };
+
+  const getSubtitle = () => {
+    return checkinQuestionsToAnswer.length
+      ? m.components_layout_checkinSection_checkinSection_description()
+      : m.components_layout_checkinSection_voteHistory_description();
+  };
+
+  //todo hide button if no questions
   return (
     <Box sx={checkinSectionStyles}>
       {!hideButton && (
         <InteractionButton
           onClick={handleOpen}
           sx={checkinButtonStyles}
-          onIconClick={hideFeedbackButton}
           interactionType={InteractionType.DAILY_CHECKIN}
         />
       )}
@@ -79,29 +79,21 @@ function CheckinSection() {
         handleClose={handleClose}
         title={
           <Typography variant="caption" sx={titleStyles} component="div">
-            {m.components_layout_checkinSection_checkinSection_title()}
+            {getTitle()}
           </Typography>
         }
         subtitle={
           <Typography variant="subtitle1" sx={subtitleStyles} component="div">
-            {m.components_layout_checkinSection_checkinSection_description()}
+            {getSubtitle()}
           </Typography>
         }
       >
         <FormGroup>
-          {checkinQuestions?.map((question, index) => (
-            <Box key={index}>
-              <Divider textAlign="left" />
-              <Typography variant="body1" color="text.primary" sx={{ pt: 1 }}>
-                {question.question}
-              </Typography>
-              {question.voteHistory?.length ? (
-                <CheckinLineChart voteHistory={question.voteHistory} />
-              ) : (
-                <CheckinQuestionItem question={question} onVoteChange={handleVoteChange} />
-              )}
-            </Box>
-          ))}
+          {checkinQuestionsToAnswer.length ? (
+            <CheckinQuestionList checkinQuestions={checkinQuestionsToAnswer} handleVoteChange={handleVoteChange} />
+          ) : (
+            <CheckinQuestionVoteHistory voteHistory={voteHistory} />
+          )}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
             <InteractionButton
               onClick={() => submitVote()}
@@ -115,21 +107,6 @@ function CheckinSection() {
     </Box>
   );
 }
-
-const CheckinQuestionItem = ({ question, onVoteChange }: CheckinQuestionItemProps) => {
-  return (
-    <Box sx={{ my: 2, px: 1 }}>
-      <Slider
-        step={1}
-        marks={[...Array(5)].map((_, i) => ({ value: i + 1, label: i + 1 }))}
-        min={1}
-        max={5}
-        size="medium"
-        onChange={(event, newValue) => onVoteChange(question.checkinQuestionId, newValue as number)}
-      />
-    </Box>
-  );
-};
 
 export default CheckinSection;
 
