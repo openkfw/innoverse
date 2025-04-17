@@ -1,24 +1,35 @@
+import { UserVote, VoteAverage } from '@/common/types';
 import { LineChart } from '@mui/x-charts/LineChart';
 
 interface CheckinLineChartProps {
-  voteHistory: {
-    createdAt: string | Date;
-    vote: number;
-  }[];
+  voteHistory: VoteAverage[];
+  userVoteHistory: UserVote[];
 }
 
-const CheckinLineChart = ({ voteHistory }: CheckinLineChartProps) => {
-  const xAxisData = voteHistory.map((item) =>
-    new Date(item.createdAt).toLocaleString(undefined, {
+const CheckinLineChart = ({ voteHistory, userVoteHistory }: CheckinLineChartProps) => {
+  const formatDate = (date: Date) =>
+    new Date(date).toLocaleDateString(undefined, {
       month: 'short',
       day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    }),
+    });
+
+  const xAxisData = [...voteHistory, ...userVoteHistory]
+    .map((item) => formatDate(item.answeredOn))
+    .filter((value, index, self) => self.indexOf(value) === index)
+    .sort((a, b) => {
+      const aDate = new Date(`${a}, 2000`);
+      const bDate = new Date(`${b}, 2000`);
+      return aDate.getTime() - bDate.getTime();
+    });
+
+  const voteHistoryMap = Object.fromEntries(voteHistory.map((item) => [formatDate(item.answeredOn), item._avg.vote]));
+
+  const userVoteHistoryMap = Object.fromEntries(
+    userVoteHistory.map((item) => [formatDate(item.answeredOn), item.vote]),
   );
 
-  const yAxisData = voteHistory.map((item) => item.vote);
+  const voteHistoryData = xAxisData.map((date) => voteHistoryMap[date] ?? null);
+  const userHistoryData = xAxisData.map((date) => userVoteHistoryMap[date] ?? null);
 
   return (
     <LineChart
@@ -26,14 +37,19 @@ const CheckinLineChart = ({ voteHistory }: CheckinLineChartProps) => {
       series={[
         {
           curve: 'linear',
-          data: yAxisData,
-          label: 'Vote',
+          data: voteHistoryData,
+          label: 'History per question',
+        },
+        {
+          curve: 'linear',
+          data: userHistoryData,
+          label: 'Your vote',
         },
       ]}
-      slotProps={{ legend: { hidden: true } }}
+      slotProps={{ legend: { hidden: false } }}
       tooltip={{ trigger: 'item' }}
-      height={250}
-      width={400}
+      height={300}
+      width={500}
     />
   );
 };

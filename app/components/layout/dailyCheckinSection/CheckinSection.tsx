@@ -20,9 +20,13 @@ import CheckinQuestionVoteHistory from './CheckinQuestionVoteHistory';
 
 function CheckinSection() {
   const [open, openDialog] = useState(false);
-  const [hideButton, setHideButton] = useState(false);
-  const { setDailyCheckinVotes, dailyCheckinVotes, checkinQuestionsToAnswer, voteHistory, refetchCheckinQuestions } =
-    useDailyCheckin();
+  const {
+    setDailyCheckinVotes,
+    dailyCheckinVotes,
+    checkinQuestionsToAnswer,
+    questionsHistory,
+    refetchCheckinQuestions,
+  } = useDailyCheckin();
 
   function handleOpen() {
     openDialog(true);
@@ -63,10 +67,9 @@ function CheckinSection() {
       : m.components_layout_checkinSection_voteHistory_description();
   };
 
-  //todo hide button if no questions
   return (
     <Box sx={checkinSectionStyles}>
-      {!hideButton && (
+      {(checkinQuestionsToAnswer.length > 0 || questionsHistory.length > 0) && (
         <InteractionButton
           onClick={handleOpen}
           sx={checkinButtonStyles}
@@ -92,16 +95,18 @@ function CheckinSection() {
           {checkinQuestionsToAnswer.length ? (
             <CheckinQuestionList checkinQuestions={checkinQuestionsToAnswer} handleVoteChange={handleVoteChange} />
           ) : (
-            <CheckinQuestionVoteHistory voteHistory={voteHistory} />
+            <CheckinQuestionVoteHistory questionsHistory={questionsHistory} />
           )}
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <InteractionButton
-              onClick={() => submitVote()}
-              interactionType={InteractionType.COMMENT_SEND}
-              sx={buttonStyles}
-              disabled={!dailyCheckinVotes.length}
-            />
-          </Box>
+          {checkinQuestionsToAnswer.length > 0 && (
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <InteractionButton
+                onClick={() => submitVote()}
+                interactionType={InteractionType.COMMENT_SEND}
+                sx={buttonStyles}
+                disabled={!dailyCheckinVotes.length}
+              />
+            </Box>
+          )}
         </FormGroup>
       </CustomDialog>
     </Box>
