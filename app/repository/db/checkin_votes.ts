@@ -29,9 +29,32 @@ export async function isCheckinQuestionVotedByToday(client: PrismaClient, checki
 }
 
 export async function getCheckinQuestionVoteHistory(client: PrismaClient, checkinQuestionId: string) {
+  return client.checkinVote.groupBy({
+    by: ['checkinQuestionId', 'answeredOn'],
+    where: {
+      checkinQuestionId,
+    },
+    _avg: {
+      vote: true,
+    },
+    orderBy: {
+      answeredOn: 'asc',
+    },
+  });
+}
+
+export async function getCheckinQuestionUserVoteHistory(
+  client: PrismaClient,
+  checkinQuestionId: string,
+  votedBy: string,
+) {
   return client.checkinVote.findMany({
     where: {
       checkinQuestionId,
+      votedBy,
+    },
+    orderBy: {
+      answeredOn: 'asc',
     },
   });
 }

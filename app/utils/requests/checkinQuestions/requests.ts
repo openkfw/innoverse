@@ -10,7 +10,11 @@ import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 import { GetCheckinQuestionByIdQuery, GetCheckinQuestionByValidDates } from './queries';
-import { isCheckinQuestionVotedByToday, getCheckinQuestionVoteHistory } from '@/repository/db/checkin_votes';
+import {
+  isCheckinQuestionVotedByToday,
+  getCheckinQuestionVoteHistory,
+  getCheckinQuestionUserVoteHistory,
+} from '@/repository/db/checkin_votes';
 import { getPromiseResults } from '@/utils/helpers';
 import dbClient from '@/repository/db/prisma/prisma';
 import { PrismaClient } from '@prisma/client';
@@ -89,12 +93,18 @@ export const getCheckinQuestionsHistory = withAuth(async (user: UserSession) => 
     const checkinQuestionsData = await getStrapiCheckinQuestions();
     const mapQuestionWithUserVote = checkinQuestionsData.map(async (checkinQuestionData) => {
       if (checkinQuestionData) {
-        const voteHistory = await getSortedVoteHistory(dbClient, checkinQuestionData.documentId);
+        const voteHistory = await getCheckinQuestionVoteHistory(dbClient, checkinQuestionData.documentId);
+        const userVoteHistory = await getCheckinQuestionUserVoteHistory(
+          dbClient,
+          checkinQuestionData.documentId,
+          user.providerId,
+        );
 
         return {
           checkinQuestionId: checkinQuestionData.documentId,
           question: checkinQuestionData.question,
           voteHistory,
+          userVoteHistory,
         };
       }
     });
@@ -113,11 +123,3 @@ export const getCheckinQuestionsHistory = withAuth(async (user: UserSession) => 
     };
   }
 });
-
-const getSortedVoteHistory = async (dbClient: PrismaClient, documentId: string) => {
-  const voteHistory = await getCheckinQuestionVoteHistory(dbClient, documentId);
-  const simplifiedAndSortedVotes = voteHistory
-    .map(({ createdAt, vote }) => ({ createdAt, vote }))
-    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-  return simplifiedAndSortedVotes;
-};

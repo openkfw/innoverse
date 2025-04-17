@@ -112,12 +112,13 @@ model SurveyVote {
 model CheckinVote {
   id        String   @id @default(uuid())
   createdAt DateTime @updatedAt @default(now())
+  answeredOn  DateTime @default(now()) @db.Date
 
   vote             Int // vote - scale from 1 to 5
   checkinQuestionId String // voted check-in question
   votedBy          String // id of author
 
-  @@unique(fields: [votedBy, checkinQuestionId, createdAt])
+  @@unique(fields: [votedBy, checkinQuestionId, answeredOn])
 }
 
 enum ObjectType {

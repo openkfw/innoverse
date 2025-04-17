@@ -492,10 +492,20 @@ export type UploadImageResponse = {
 export type CheckinQuestion = {
   checkinQuestionId: string;
   question: string;
-  voteHistory?: {
-    createdAt: Date;
-    vote: number;
-  }[];
+  voteHistory?: VoteAverage[];
+  userVoteHistory?: UserVote[];
+};
+
+export type VoteAverage = {
+  answeredOn: Date;
+  _avg: {
+    vote: number | null;
+  };
+};
+
+export type UserVote = {
+  answeredOn: Date;
+  vote: number;
 };
 
 export enum SortValues {
