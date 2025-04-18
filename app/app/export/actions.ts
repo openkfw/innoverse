@@ -7,6 +7,9 @@ import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { getProjects } from '@/utils/requests/project/requests';
 import { checkCredentials, getOverallStats, getProjectsStats } from '@/utils/requests/statistics/requests';
+import { getAllCheckinQuestions } from '@/utils/requests/checkinQuestions/requests';
+import dbClient from '@/repository/db/prisma/prisma';
+import { getCheckinQuestionVoteHistory } from '@/repository/db/checkin_votes';
 
 const logger = getLogger();
 
@@ -63,5 +66,40 @@ export const generateProjectsStatistics = async (body: { username: string; passw
   return {
     status: StatusCodes.OK,
     data: json2csv(result),
+  };
+};
+
+export const generateDailyCheckinStatistics = async (body: { username: string; password: string }) => {
+  const { username, password } = body;
+
+  if (!checkCredentials(username, password)) {
+    logger.error('Invalid credentials for downloading feedback');
+    return {
+      status: StatusCodes.UNAUTHORIZED,
+      data: 'Invalid credentials',
+    };
+  }
+
+  const questions = await getAllCheckinQuestions();
+
+  const questionStats = questions
+    .map((q) => {
+      if (q) {
+        return getCheckinQuestionVoteHistory(dbClient, q.documentId);
+      }
+    })
+    .filter((value) => value !== undefined);
+
+  if (!questionStats) {
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      data: 'Could not find questions',
+    };
+  }
+  const projectsStatistics = await getPromiseResults(questionStats);
+
+  return {
+    status: StatusCodes.OK,
+    data: json2csv(projectsStatistics),
   };
 };
