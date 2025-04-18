@@ -1,5 +1,6 @@
-import { UserVote, VoteAverage } from '@/common/types';
 import { LineChart } from '@mui/x-charts/LineChart';
+
+import { UserVote, VoteAverage } from '@/common/types';
 
 interface CheckinLineChartProps {
   voteHistory: VoteAverage[];

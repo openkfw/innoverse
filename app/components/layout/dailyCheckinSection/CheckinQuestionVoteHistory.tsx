@@ -1,5 +1,7 @@
-import { CheckinQuestion } from '@/common/types';
 import { Box, Divider, Typography } from '@mui/material';
+
+import { CheckinQuestion } from '@/common/types';
+
 import CheckinLineChart from './CheckinLineChart';
 
 const CheckinQuestionVoteHistory = ({ questionsHistory }: { questionsHistory: CheckinQuestion[] }) => {
