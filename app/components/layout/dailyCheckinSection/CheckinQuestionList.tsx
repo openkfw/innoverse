@@ -1,6 +1,7 @@
-import { CheckinQuestion } from '@/common/types';
 import { Box, Divider, Typography } from '@mui/material';
 import Slider from '@mui/material/Slider';
+
+import { CheckinQuestion } from '@/common/types';
 
 const CheckinQuestionList = ({
   checkinQuestions,
