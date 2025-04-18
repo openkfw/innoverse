@@ -9,7 +9,7 @@ import { strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
-import { GetCheckinQuestionByIdQuery, GetCheckinQuestionByValidDates } from './queries';
+import { GetAllCheckinQuestions, GetCheckinQuestionByIdQuery, GetCheckinQuestionByValidDates } from './queries';
 import {
   isCheckinQuestionVotedByToday,
   getCheckinQuestionVoteHistory,
@@ -17,7 +17,6 @@ import {
 } from '@/repository/db/checkin_votes';
 import { getPromiseResults } from '@/utils/helpers';
 import dbClient from '@/repository/db/prisma/prisma';
-import { PrismaClient } from '@prisma/client';
 
 const logger = getLogger();
 
@@ -46,7 +45,7 @@ export const findUserVote = withAuth(async (user: UserSession, body: { votes: Su
 
 export const getCurrentCheckinQuestions = withAuth(async (user: UserSession) => {
   try {
-    const checkinQuestionsData = await getStrapiCheckinQuestions();
+    const checkinQuestionsData = await getStrapiCheckinQuestionsByCurrentDate();
 
     const mapQuestionWithUserVote = checkinQuestionsData.map(async (checkinQuestionData) => {
       if (checkinQuestionData) {
@@ -79,7 +78,7 @@ export const getCurrentCheckinQuestions = withAuth(async (user: UserSession) => 
   }
 });
 
-const getStrapiCheckinQuestions = async () => {
+const getStrapiCheckinQuestionsByCurrentDate = async () => {
   const currentDate = new Date().toISOString().split('T')[0];
   const response = await strapiGraphQLFetcher(GetCheckinQuestionByValidDates, { currentDate });
   const checkinQuestionsData = response.checkinQuestions;
@@ -90,7 +89,7 @@ const getStrapiCheckinQuestions = async () => {
 
 export const getCheckinQuestionsHistory = withAuth(async (user: UserSession) => {
   try {
-    const checkinQuestionsData = await getStrapiCheckinQuestions();
+    const checkinQuestionsData = await getStrapiCheckinQuestionsByCurrentDate();
     const mapQuestionWithUserVote = checkinQuestionsData.map(async (checkinQuestionData) => {
       if (checkinQuestionData) {
         const voteHistory = await getCheckinQuestionVoteHistory(dbClient, checkinQuestionData.documentId);
@@ -123,3 +122,11 @@ export const getCheckinQuestionsHistory = withAuth(async (user: UserSession) => 
     };
   }
 });
+
+export const getAllCheckinQuestions = async () => {
+  const response = await strapiGraphQLFetcher(GetAllCheckinQuestions);
+  const checkinQuestionsData = response.checkinQuestions;
+
+  if (!checkinQuestionsData) throw new Error('Response contained no check-in question data');
+  return checkinQuestionsData;
+};

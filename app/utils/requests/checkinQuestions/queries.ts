@@ -30,3 +30,13 @@ export const GetCheckinQuestionByValidDates = graphql(`
     }
   }
 `);
+export const GetAllCheckinQuestions = graphql(
+  `
+    query GetAllCheckinQuestions {
+      checkinQuestions {
+        ...CheckinQuestion
+      }
+    }
+  `,
+  [CheckinQuestionFragment],
+);
