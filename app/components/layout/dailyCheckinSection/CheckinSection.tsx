@@ -93,19 +93,19 @@ function CheckinSection() {
       >
         <FormGroup>
           {checkinQuestionsToAnswer.length ? (
-            <CheckinQuestionList checkinQuestions={checkinQuestionsToAnswer} handleVoteChange={handleVoteChange} />
+            <>
+              <CheckinQuestionList checkinQuestions={checkinQuestionsToAnswer} handleVoteChange={handleVoteChange} />
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                <InteractionButton
+                  onClick={() => submitVote()}
+                  interactionType={InteractionType.COMMENT_SEND}
+                  sx={buttonStyles}
+                  disabled={!dailyCheckinVotes.length}
+                />
+              </Box>
+            </>
           ) : (
             <CheckinQuestionVoteHistory questionsHistory={questionsHistory} />
-          )}
-          {checkinQuestionsToAnswer.length > 0 && (
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <InteractionButton
-                onClick={() => submitVote()}
-                interactionType={InteractionType.COMMENT_SEND}
-                sx={buttonStyles}
-                disabled={!dailyCheckinVotes.length}
-              />
-            </Box>
           )}
         </FormGroup>
       </CustomDialog>

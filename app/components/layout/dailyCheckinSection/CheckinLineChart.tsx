@@ -16,12 +16,7 @@ const CheckinLineChart = ({ voteHistory, userVoteHistory }: CheckinLineChartProp
 
   const xAxisData = [...voteHistory, ...userVoteHistory]
     .map((item) => formatDate(item.answeredOn))
-    .filter((value, index, self) => self.indexOf(value) === index)
-    .sort((a, b) => {
-      const aDate = new Date(`${a}, 2000`);
-      const bDate = new Date(`${b}, 2000`);
-      return aDate.getTime() - bDate.getTime();
-    });
+    .filter((value, index, self) => self.indexOf(value) === index);
 
   const voteHistoryMap = Object.fromEntries(voteHistory.map((item) => [formatDate(item.answeredOn), item._avg.vote]));
 
