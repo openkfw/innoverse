@@ -6,7 +6,11 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
-import { generatePlatformStatistics, generateProjectsStatistics } from '@/app/export/actions';
+import {
+  generateDailyCheckinStatistics,
+  generatePlatformStatistics,
+  generateProjectsStatistics,
+} from '@/app/export/actions';
 import { errorMessage, infoMessage } from '@/components/common/CustomToast';
 import * as m from '@/src/paraglide/messages.js';
 import { getFeedback } from '@/utils/requests/statistics/requests';
@@ -71,6 +75,25 @@ const ExportFeedback = () => {
     link.click();
   };
 
+  const handleDownloadDailyCheckinData = async () => {
+    const checkinData = await generateDailyCheckinStatistics({
+      username,
+      password,
+    });
+    if (checkinData.status === StatusCodes.UNAUTHORIZED) {
+      errorMessage({ message: 'Invalid credentials!' });
+      return;
+    } else if (checkinData.status === StatusCodes.INTERNAL_SERVER_ERROR) {
+      errorMessage({ message: 'Could not download daily checkin data!' });
+      return;
+    }
+    infoMessage({ message: m.components_export_exportFeedback_downloadProjectStats() });
+    const link = document.createElement('a');
+    link.href = 'data:text/csv;charset=utf-8,' + checkinData.data;
+    link.download = 'daily_checkin_statistics.csv';
+    link.click();
+  };
+
   return (
     <>
       <TextField
@@ -95,6 +118,9 @@ const ExportFeedback = () => {
         </Button>
         <Button variant="contained" color="primary" onClick={handleDownloadProjectStats}>
           {m.components_export_exportFeedback_projectStats()}
+        </Button>
+        <Button variant="contained" color="primary" onClick={handleDownloadDailyCheckinData}>
+          {'export daily check-in data'}
         </Button>
       </Stack>
     </>

@@ -369,6 +369,38 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCheckinQuestionCheckinQuestion
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'checkin_questions';
+  info: {
+    description: '';
+    displayName: 'CheckinQuestion';
+    pluralName: 'checkin-questions';
+    singularName: 'checkin-question';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::checkin-question.checkin-question'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    question: Schema.Attribute.Text & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    validFrom: Schema.Attribute.Date & Schema.Attribute.Required;
+    validTo: Schema.Attribute.Date & Schema.Attribute.Required;
+  };
+}
+
 export interface ApiCollaborationQuestionCollaborationQuestion
   extends Struct.CollectionTypeSchema {
   collectionName: 'collaboration_questions';
@@ -1230,6 +1262,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::checkin-question.checkin-question': ApiCheckinQuestionCheckinQuestion;
       'api::collaboration-question.collaboration-question': ApiCollaborationQuestionCollaborationQuestion;
       'api::event.event': ApiEventEvent;
       'api::inno-user.inno-user': ApiInnoUserInnoUser;

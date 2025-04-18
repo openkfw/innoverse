@@ -7,6 +7,7 @@ import { AppInsightsContext, AppInsightsErrorBoundary } from '@microsoft/applica
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { DailyCheckinContextProvider } from '@/app/contexts/daily-checkin-context';
 import { MentionsContextProvider } from '@/app/contexts/mentions-context';
 import { NotificationContextProvider } from '@/app/contexts/notification-context';
 import { UserContextProvider } from '@/app/contexts/user-context';
@@ -57,9 +58,11 @@ export default function Layout({ children }: PropsWithChildren) {
           <SWRProvider>
             <MentionsContextProvider>
               <UserContextProvider>
-                <NotificationContextProvider>
-                  <AppLayout>{children}</AppLayout>
-                </NotificationContextProvider>
+                <DailyCheckinContextProvider>
+                  <NotificationContextProvider>
+                    <AppLayout>{children}</AppLayout>
+                  </NotificationContextProvider>
+                </DailyCheckinContextProvider>
               </UserContextProvider>
             </MentionsContextProvider>
           </SWRProvider>

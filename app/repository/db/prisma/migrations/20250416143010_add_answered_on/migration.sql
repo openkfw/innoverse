@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "CheckinVote" ADD COLUMN     "answeredOn" DATE NOT NULL DEFAULT CURRENT_TIMESTAMP;
