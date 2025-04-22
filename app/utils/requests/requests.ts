@@ -10,10 +10,12 @@ import { findUserSurveyVote } from '@/repository/db/survey_votes';
 import { getPromiseResults, groupBy } from '@/utils/helpers';
 
 import { withAuth } from '../auth';
-import { dbError, InnoPlatformError } from '../errors';
+import { dbError, InnoPlatformError, strapiError } from '../errors';
 import getLogger from '../logger';
 
 import { findReactionByUser } from './updates/requests';
+import { getInnoUserByProviderId } from './innoUsers/requests';
+import { RequestError } from '@/entities/error';
 
 const logger = getLogger();
 
@@ -131,3 +133,15 @@ export const findSurveyUserVote = withAuth(async (user: UserSession, body: { obj
     throw err;
   }
 });
+
+export const getAuthorOrError = async (user: UserSession) => {
+  const author = await getInnoUserByProviderId(user.providerId);
+  if (!author) {
+    const error = strapiError(`Getting InnoUser by id ${user.providerId}`, {
+      info: 'InnoUser does not exist',
+    } as RequestError);
+    logger.error(error);
+    return null;
+  }
+  return author;
+};

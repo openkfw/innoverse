@@ -1,7 +1,14 @@
-import { CollaborationComment, CollaborationQuestion, Comment, CommentLike, ObjectType } from '@/common/types';
+import { Comment, CommentLike, ObjectType } from '@/common/types';
 import { CommentDB, CommentLikeDB } from '@/repository/db/utils/types';
 import { getPromiseResults } from '@/utils/helpers';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+
+export const mapToComments = async (comments: CommentDB[], currentUser?: string): Promise<Comment[]> => {
+  const getComments = comments.map(async (comment) => {
+    return await mapToComment(comment, currentUser);
+  });
+  return await getPromiseResults(getComments);
+};
 
 export const mapToComment = async (comment: CommentDB, currentUser?: string): Promise<Comment> => {
   const author = await getInnoUserByProviderId(comment.author);
@@ -27,36 +34,6 @@ export const mapToComment = async (comment: CommentDB, currentUser?: string): Pr
     ...(comment.likes && { likes: mapLikes(comment.likes) }),
     commentCount: comment.responses.length,
   };
-};
-
-export const mapToCollaborationComment = async (
-  comment: CommentDB & { isLikedByUser?: boolean },
-  question?: CollaborationQuestion,
-): Promise<CollaborationComment> => {
-  const author = await getInnoUserByProviderId(comment.author);
-
-  return {
-    id: comment.id,
-    createdAt: comment.createdAt,
-    updatedAt: comment.updatedAt,
-    text: comment.text,
-    author,
-    projectId: comment.objectId,
-    likedBy: comment.likes.map((like) => like.likedBy),
-    anonymous: comment.anonymous || false,
-    question,
-    projectName: question?.projectName || '',
-    commentCount: comment.responses.length,
-    isLikedByUser: comment.isLikedByUser || false,
-  };
-};
-
-export const mapToCollaborationComments = async (
-  comments: CommentDB[],
-  question: CollaborationQuestion,
-): Promise<CollaborationComment[]> => {
-  const getCollaborationComments = comments.map(async (comment) => await mapToCollaborationComment(comment, question));
-  return await getPromiseResults(getCollaborationComments);
 };
 
 const mapLikes = (likes: CommentLikeDB[]): CommentLike[] => {

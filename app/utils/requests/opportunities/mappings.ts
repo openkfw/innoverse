@@ -1,6 +1,6 @@
 import { ResultOf } from 'gql.tada';
 
-import { Opportunity } from '@/common/types';
+import { ObjectType, Opportunity } from '@/common/types';
 import { toDate } from '@/utils/helpers';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { OpportunityFragment } from '@/utils/requests/opportunities/queries';
@@ -29,5 +29,6 @@ export function mapToOpportunity(
     participants: participants ? participants.map(mapToUser) : [],
     hasApplied,
     updatedAt: toDate(opportunityData.updatedAt),
+    objectType: ObjectType.OPPORTUNITY,
   };
 }

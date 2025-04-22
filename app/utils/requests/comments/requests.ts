@@ -106,11 +106,18 @@ const getResponsesForComment = (
     .map((response) => ({ ...response, comments: [] }));
 };
 
-export async function saveEntryNewsComments(entry: RedisNewsFeedEntry, objectType: ObjectType) {
+async function saveEntryNewsComments(entry: RedisNewsFeedEntry, objectType: ObjectType) {
   const redisClient = await getRedisClient();
   const comments = await getRedisNewsCommentsWithResponses(entry.item.id, objectType);
   if (comments.length > 0) {
     return await saveComments(redisClient, entry, comments);
   }
   return [];
+}
+
+export async function saveNewsFeedEntriesComments(newsFeedEntries: RedisNewsFeedEntry[], objectType: ObjectType) {
+  newsFeedEntries.map(async (entry) => {
+    const comments = await saveEntryNewsComments(entry, objectType);
+    entry.item.comments = comments;
+  });
 }
