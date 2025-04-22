@@ -4,6 +4,7 @@ import {
   BasicProject,
   CollaborationQuestion,
   Comment,
+  CommentWithResponses,
   EventWithAdditionalData,
   Follow,
   Like,
@@ -33,7 +34,7 @@ export const mapToProject = ({
   questions: ProjectQuestion[];
   surveyQuestions: SurveyQuestion[];
   collaborationQuestions: CollaborationQuestion[];
-  comments: Comment[];
+  comments: CommentWithResponses[];
   followers: Follow[];
   updates: ProjectUpdateWithAdditionalData[];
   likes: Like[];
@@ -72,6 +73,7 @@ export const mapToBasicProject = (projectData: ResultOf<typeof ProjectFragment>)
     image: mapToImageUrl(projectData.image),
     featured: projectData.featured,
     updatedAt: toDate(projectData.updatedAt),
+    objectType: ObjectType.PROJECT,
   };
 };
 

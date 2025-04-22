@@ -170,25 +170,6 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
   };
 };
 
-export const mapCollaborationCommentToRedisNewsFeedEntry = (
-  comment: Comment,
-  question: BasicCollaborationQuestion,
-  reactions: RedisReaction[],
-  followedBy: RedisUser[],
-): RedisNewsFeedEntry => {
-  const item = mapToRedisCollaborationComment(comment, question, reactions, followedBy);
-  item.author.image = mapImageUrlToRelativeUrl(item.author.image);
-  item.question.authors = mapUserImagesToRelativeUrls(item.question.authors);
-  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
-
-  return {
-    updatedAt: getUnixTimestamp(comment.createdAt),
-    item: item,
-    type: NewsType.COLLABORATION_COMMENT,
-    search: escapeRedisTextSeparators((item.question || '') + ' ' + (item.text || '')),
-  };
-};
-
 export const mapRedisNewsFeedEntryToProjectUpdate = (item: RedisProjectUpdate): ProjectUpdate => {
   return {
     ...item,
@@ -335,7 +316,7 @@ export const mapCommentWithResponsesToRedisNewsComments = (comments: CommentWith
   return comments.map(mapToRedisNewsComment);
 };
 
-const mapToRedisNewsComment = (comment: CommentWithResponses): RedisNewsComment => {
+export const mapToRedisNewsComment = (comment: CommentWithResponses): RedisNewsComment => {
   return {
     id: comment.id,
     text: comment.text,
@@ -403,8 +384,6 @@ export const mapImageUrlToRelativeUrl = (imageUrl: string | undefined): string |
 
 export const getNewsTypeByString = (type: string) => {
   switch (type) {
-    case ObjectType.COLLABORATION_COMMENT:
-      return NewsType.COLLABORATION_COMMENT;
     case ObjectType.COLLABORATION_QUESTION:
       return NewsType.COLLABORATION_QUESTION;
     case ObjectType.PROJECT:

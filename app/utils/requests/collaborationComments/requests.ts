@@ -2,18 +2,8 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { CollaborationComment, Comment, UserSession } from '@/common/types';
-import {
-  collaborationCommentResponseLikedBySchema,
-  getCollaborationCommentResponsesSchema,
-  getCollaborationCommentsSchema,
-} from '@/components/collaboration/comments/validationSchema';
-import {
-  getCommentResponseCount,
-  getCommentsByAdditionalObjectId,
-  getCommentsByParentId,
-  isCommentLikedBy,
-} from '@/repository/db/comment';
+import { getCollaborationCommentsSchema } from '@/components/collaboration/comments/validationSchema';
+import { getCommentResponseCount, getCommentsByAdditionalObjectId } from '@/repository/db/comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
@@ -21,8 +11,6 @@ import { getPromiseResults, sortDateByCreatedAtAsc } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 import { validateParams } from '@/utils/validationHelper';
-
-import { mapToComment } from '../comments/mapping';
 
 const logger = getLogger();
 
@@ -67,54 +55,3 @@ export const getProjectCollaborationComments = async (body: { projectId: string;
     };
   }
 };
-
-export const getProjectCollaborationCommentResponses = withAuth(
-  async (user: UserSession, body: { comment: CollaborationComment }) => {
-    const validatedParams = validateParams(getCollaborationCommentResponsesSchema, body);
-
-    if (validatedParams.status !== StatusCodes.OK) {
-      return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-      };
-    }
-
-    const responses = await getCommentsByParentId(dbClient, body.comment.id);
-
-    const responsePromises = responses.map(async (response) => mapToComment(response, user.providerId));
-
-    const commentResponses = (await getPromiseResults(responsePromises)) as Comment[];
-
-    return {
-      status: StatusCodes.OK,
-      data: sortDateByCreatedAtAsc(commentResponses),
-    };
-  },
-);
-
-export const isProjectCollaborationCommentResponseLikedBy = withAuth(
-  async (user: UserSession, body: { responseId: string }) => {
-    try {
-      const validatedParams = validateParams(collaborationCommentResponseLikedBySchema, body);
-      if (validatedParams.status === StatusCodes.OK) {
-        const result = await isCommentLikedBy(dbClient, body.responseId, user.providerId);
-        return {
-          status: StatusCodes.OK,
-          data: result,
-        };
-      }
-      return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-      };
-    } catch (err) {
-      const error: InnoPlatformError = dbError(
-        `Checking if user ${user.providerId} has liked response ${body.responseId}`,
-        err as Error,
-        user.providerId,
-      );
-      logger.error(error);
-      throw err;
-    }
-  },
-);
