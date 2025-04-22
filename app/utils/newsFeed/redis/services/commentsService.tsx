@@ -206,6 +206,10 @@ export async function searchNewsComments(
   const itemTypes = [
     { newsType: NewsType.POST, objectType: ObjectType.POST },
     { newsType: NewsType.UPDATE, objectType: ObjectType.UPDATE },
+    { newsType: NewsType.EVENT, objectType: ObjectType.EVENT },
+    { newsType: NewsType.PROJECT, objectType: ObjectType.PROJECT },
+    { newsType: NewsType.COLLABORATION_QUESTION, objectType: ObjectType.COLLABORATION_QUESTION },
+    { newsType: NewsType.SURVEY_QUESTION, objectType: ObjectType.SURVEY_QUESTION },
   ];
   const result = await Promise.all(
     itemTypes.map(async (itemType, id) => {

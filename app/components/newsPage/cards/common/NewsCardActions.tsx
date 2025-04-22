@@ -7,7 +7,6 @@ import Grid from '@mui/material/Grid';
 
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { NewsFeedEntry, ObjectType } from '@/common/types';
-import { deleteProjectCollaborationComment } from '@/components/collaboration/comments/actions';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
 import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
 import { useEditingInteractions, useRespondingInteractions } from '@/components/common/editing/editing-context';
@@ -20,16 +19,13 @@ import theme from '@/styles/theme';
 import { NewsFeedReactionCard } from '../../../collaboration/emojiReactions/cards/NewsFeedReactionCard';
 import { errorMessage } from '../../../common/CustomToast';
 import FollowButtonWithLink from '../../../common/FollowButtonWithLink';
-import { useNewsCollabCommentCard } from '../NewsCollabCommentCard';
 
 interface NewsCardActionsProps {
   entry: NewsFeedEntry;
-  hideControls?: boolean;
 }
 
-export const NewsCardActions = ({ entry, hideControls = false }: NewsCardActionsProps) => {
+export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
   const { id, followedByUser, projectId = '' } = entry.item;
-  const { displayEditingControls } = useNewsCollabCommentCard({ entry });
 
   const { toggleFollow, removeEntry } = useNewsFeed();
   const appInsights = useAppInsightsContext();
@@ -67,9 +63,6 @@ export const NewsCardActions = ({ entry, hideControls = false }: NewsCardActions
         case ObjectType.POST:
           await deletePost({ postId: entry.item.id });
           break;
-        case ObjectType.COLLABORATION_COMMENT:
-          await deleteProjectCollaborationComment({ commentId: entry.item.id });
-          break;
         case ObjectType.UPDATE:
           await deleteProjectUpdate(entry.item.id);
           break;
@@ -94,14 +87,8 @@ export const NewsCardActions = ({ entry, hideControls = false }: NewsCardActions
         <Grid item xs={12} sx={footerStyles}>
           <NewsFeedReactionCard entry={entry} />
           <Box sx={actionStyles}>
-            {!hideControls && (
-              <>
-                <ResponseControls onResponse={() => respondingInteractions.onStart(entry.item)} />
-                {displayEditingControls && (
-                  <EditControls onDelete={handleDelete} onEdit={() => editingInteractions.onStart(entry.item)} />
-                )}
-              </>
-            )}
+            <ResponseControls onResponse={() => respondingInteractions.onStart(entry.item)} />
+            <EditControls onDelete={handleDelete} onEdit={() => editingInteractions.onStart(entry.item)} />
             <FollowButtonWithLink isSelected={followedByUser ?? false} entry={entry} onIconClick={handleToggleFollow} />
           </Box>
         </Grid>

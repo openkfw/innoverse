@@ -8,7 +8,7 @@ import { addUserComment } from '@/components/newsPage/threads/actions';
 interface NewsCommentThreadProps {
   item: { id: string; objectType: ObjectType; projectId?: string };
   comment: CommentWithResponses;
-  commentType: ObjectType.POST | ObjectType.UPDATE;
+  commentType: ObjectType;
   level: number;
   onDelete: () => void;
   onUpdate: (updatedComment: CommentWithResponses) => void;

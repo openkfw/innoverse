@@ -6,28 +6,36 @@ import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { Comment, Project, ProjectQuestion } from '@/common/types';
+import { CommentWithResponses, ObjectType, Project, ProjectQuestion } from '@/common/types';
 import { UnsavedEditingChangesDialog } from '@/components/common/editing/UnsavedChangesDialog';
+import { addUserComment } from '@/components/newsPage/threads/actions';
 import * as m from '@/src/paraglide/messages.js';
 import { sortDateByCreatedAtAsc } from '@/utils/helpers';
 
 import WriteTextCard from '../../common/editing/writeText/WriteTextCard';
 
-import { addProjectComment } from './actions';
-import { ProjectCommentCard } from './ProjectCommentCard';
+import { ProjectComments } from './ProjectComments';
 
 const CommentsSection = ({ project }: { project: Project }) => {
   const [questions] = useState<ProjectQuestion[]>(project.questions);
-  const [comments, setComments] = useState<Comment[]>(project.comments);
+  const [comments, setComments] = useState<CommentWithResponses[]>(project.comments);
 
-  const deleteComment = (comment: Comment) => {
+  const deleteComment = (comment: CommentWithResponses) => {
     setComments((old) => old.filter((c) => c.id !== comment.id));
   };
 
-  const addComment = async (comment: string) => {
-    const { data: newComment } = await addProjectComment({ projectId: project.id, comment: comment });
-    if (!newComment) return;
-    setComments((comments) => sortDateByCreatedAtAsc([...comments, newComment]));
+  const addComment = async (text: string) => {
+    const comment = await addUserComment({
+      comment: text,
+      objectId: project.id,
+      objectType: ObjectType.PROJECT,
+      projectId: project.id,
+    });
+
+    const data = comment ? { ...comment.data, comments: [] } : undefined;
+    if (data) {
+      setComments((comments) => sortDateByCreatedAtAsc([...comments, data as CommentWithResponses]));
+    }
   };
 
   return (
@@ -57,14 +65,8 @@ const CommentsSection = ({ project }: { project: Project }) => {
       </Typography>
 
       <Stack spacing={3}>
-        {comments.map((comment) => (
-          <ProjectCommentCard
-            key={comment.id}
-            comment={comment}
-            projectName={project.title}
-            onDelete={() => deleteComment(comment)}
-          />
-        ))}
+        {/* TODO: onDelete, onUpdate */}
+        <ProjectComments comments={comments} onDelete={(comment) => deleteComment(comment)} onUpdate={() => {}} />
         <WriteTextCard
           metadata={{ projectName: project.title }}
           onSubmit={addComment}

@@ -25,7 +25,7 @@ import { addCommentLike, deleteCommentLike } from '../threads/actions';
 
 interface NewsCommentCardProps {
   comment: CommonCommentProps;
-  objectType: ObjectType.POST | ObjectType.UPDATE;
+  objectType: ObjectType;
   displayResponseControls: boolean;
   onDelete: () => void;
   onUpdate: (text: string) => void;
@@ -65,7 +65,7 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
   );
 };
 
-const useNewsCommentCard = (props: NewsCommentCardProps) => {
+export const useNewsCommentCard = (props: NewsCommentCardProps) => {
   const { comment, objectType, displayResponseControls, onDelete, onUpdate } = props;
   const [isCommentLiked, setIsCommentLiked] = useState<boolean>(comment.isLikedByUser || false);
   const [commentLikeCount, setCommentLikeCount] = useState<number>(comment?.likes?.length || 0);
