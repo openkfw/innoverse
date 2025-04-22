@@ -14,6 +14,7 @@ import {
 import { errorMessage, infoMessage } from '@/components/common/CustomToast';
 import * as m from '@/src/paraglide/messages.js';
 import { getFeedback } from '@/utils/requests/statistics/requests';
+import { inputStyle } from '../common/form/formStyle';
 
 const ExportFeedback = () => {
   const [username, setUsername] = useState('');
@@ -25,6 +26,11 @@ const ExportFeedback = () => {
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
+  };
+
+  const resetCredentials = () => {
+    setUsername('');
+    setPassword('');
   };
 
   const handleDownloadPlatformFeedback = async () => {
@@ -57,6 +63,7 @@ const ExportFeedback = () => {
     link.href = 'data:text/csv;charset=utf-8,' + platformStats.data;
     link.download = 'overall_platform_statistics.csv';
     link.click();
+    resetCredentials();
   };
 
   const handleDownloadProjectStats = async () => {
@@ -73,6 +80,7 @@ const ExportFeedback = () => {
     link.href = 'data:text/csv;charset=utf-8,' + projectStats.data;
     link.download = 'project_statistics.csv';
     link.click();
+    resetCredentials();
   };
 
   const handleDownloadDailyCheckinData = async () => {
@@ -92,18 +100,21 @@ const ExportFeedback = () => {
     link.href = 'data:text/csv;charset=utf-8,' + checkinData.data;
     link.download = 'daily_checkin_statistics.csv';
     link.click();
+    resetCredentials();
   };
 
   return (
     <>
       <TextField
         inputProps={{ style: { color: 'white' } }}
+        sx={inputStyle(true)}
         label={m.components_export_exportFeedback_username()}
         value={username}
         onChange={handleUsernameChange}
       />
       <TextField
         inputProps={{ style: { color: 'white' } }}
+        sx={inputStyle(true)}
         label={m.components_export_exportFeedback_password()}
         type="password"
         value={password}
