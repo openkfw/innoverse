@@ -56,7 +56,7 @@ const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, 
 
   return (
     <div
-      {...restProps}
+      {...props}
       ref={ref}
       style={appliedStyle}
       onMouseOverCapture={(e) => {
@@ -66,7 +66,7 @@ const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, 
         if (allowAnimation && !disableTransition) e.currentTarget.style.transform = 'translateX(0px)';
       }}
     >
-      <Avatar {...props} />
+      <Avatar {...restProps} />
     </div>
   );
 });
