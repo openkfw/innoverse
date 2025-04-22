@@ -24,8 +24,6 @@ export default function NewsFeedTypeFilter(props: NewsFeedTypeFilterProps) {
 
   const getLabel = (objectType: ObjectType) => {
     switch (objectType) {
-      case ObjectType.COLLABORATION_COMMENT:
-        return m.components_newsFeed_newsFeedTypeFilter_comments();
       case ObjectType.EVENT:
         return m.components_newsFeed_newsFeedTypeFilter_events();
       case ObjectType.COLLABORATION_QUESTION:

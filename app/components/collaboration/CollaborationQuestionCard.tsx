@@ -12,7 +12,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { useProject } from '@/app/contexts/project-context';
-import { CollaborationComment, CollaborationQuestion } from '@/common/types';
+import { CollaborationQuestion, ObjectType } from '@/common/types';
 import { UserAvatar } from '@/components/common/UserAvatar';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
@@ -21,8 +21,8 @@ import { sortDateByCreatedAtDesc } from '@/utils/helpers';
 import { errorMessage } from '../common/CustomToast';
 import WriteTextCard from '../common/editing/writeText/WriteTextCard';
 import { parseStringForLinks } from '../common/LinkString';
+import { addUserComment } from '../newsPage/threads/actions';
 
-import { addProjectCollaborationComment } from './comments/actions';
 import { CollaborationComments } from './comments/CollaborationComments';
 import { ShareOpinionCard } from './ShareOpinionCard';
 
@@ -33,22 +33,16 @@ interface CollaborationQuestionCardProps {
   projectName?: string;
 }
 
-type CollaborationCommentWithDate = CollaborationComment & {
-  createdAt: Date;
-  updatedAt: Date;
-};
-
 export const CollaborationQuestionCard = ({
   content,
-  projectId,
-  questionId,
   projectName,
+  questionId,
+  projectId,
 }: CollaborationQuestionCardProps) => {
   const { title, description, authors, comments: projectComments } = content;
+  const sortedProjectComments = sortDateByCreatedAtDesc(projectComments);
   const { setCollaborationCommentsAmount } = useProject();
-  const sortedProjectComments = sortDateByCreatedAtDesc(projectComments as CollaborationCommentWithDate[]);
-
-  const [comments, setComments] = useState<CollaborationComment[]>(sortedProjectComments);
+  const [comments, setComments] = useState(sortedProjectComments);
   const [writeNewComment, setWriteNewComment] = useState(false);
   const appInsights = useAppInsightsContext();
 
@@ -79,13 +73,15 @@ export const CollaborationQuestionCard = ({
     setWriteNewComment(true);
   };
 
-  const handleDeleteComment = (comment: CollaborationComment) => {
-    setComments((old) => old.filter((c) => c.id !== comment.id));
-  };
-
   const handleComment = async (comment: string) => {
     try {
-      const { data: newComment } = await addProjectCollaborationComment({ projectId, questionId, comment });
+      const { data: newComment } = await addUserComment({
+        comment,
+        objectId: questionId,
+        objectType: ObjectType.COLLABORATION_QUESTION,
+        additionalObjectId: projectId,
+        additionalObjectType: ObjectType.PROJECT,
+      });
       if (!newComment) {
         console.error('No comment was returned by the server.');
         errorMessage({ message: m.components_collaboration_collaborationQuestionCard_postError() });
@@ -95,7 +91,7 @@ export const CollaborationQuestionCard = ({
         });
         return;
       }
-      const newComments = [newComment, ...comments];
+      const newComments = [{ ...newComment, comments: [] }, ...comments];
       setComments(newComments);
       setCollaborationCommentsAmount(newComments.length);
     } catch (error) {
@@ -147,11 +143,8 @@ export const CollaborationQuestionCard = ({
               ) : (
                 <ShareOpinionCard projectName={projectName} handleClick={handleShareOpinion} />
               )}
-              <CollaborationComments
-                comments={comments}
-                projectName={projectName}
-                onDeleteComment={handleDeleteComment}
-              />
+
+              <CollaborationComments comments={comments} projectName={projectName} onDelete={() => {}} />
             </Stack>
           ) : (
             <WriteTextCard sx={newCommentStyle} metadata={{ projectName }} onSubmit={handleComment} />
