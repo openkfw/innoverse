@@ -1,6 +1,7 @@
 import { LineChart } from '@mui/x-charts/LineChart';
 
 import { UserVote, VoteAverage } from '@/common/types';
+import { formatDateToString } from '@/utils/helpers';
 
 interface CheckinLineChartProps {
   voteHistory: VoteAverage[];
@@ -8,20 +9,16 @@ interface CheckinLineChartProps {
 }
 
 const CheckinLineChart = ({ voteHistory, userVoteHistory }: CheckinLineChartProps) => {
-  const formatDate = (date: Date) =>
-    new Date(date).toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-    });
-
   const xAxisData = [...voteHistory, ...userVoteHistory]
-    .map((item) => formatDate(item.answeredOn))
+    .map((item) => formatDateToString(item.answeredOn))
     .filter((value, index, self) => self.indexOf(value) === index);
 
-  const voteHistoryMap = Object.fromEntries(voteHistory.map((item) => [formatDate(item.answeredOn), item._avg.vote]));
+  const voteHistoryMap = Object.fromEntries(
+    voteHistory.map((item) => [formatDateToString(item.answeredOn), item._avg.vote]),
+  );
 
   const userVoteHistoryMap = Object.fromEntries(
-    userVoteHistory.map((item) => [formatDate(item.answeredOn), item.vote]),
+    userVoteHistory.map((item) => [formatDateToString(item.answeredOn), item.vote]),
   );
 
   const voteHistoryData = xAxisData.map((date) => voteHistoryMap[date] ?? null);

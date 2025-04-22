@@ -3,7 +3,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { json2csv } from 'json-2-csv';
 
-import { getPromiseResults } from '@/utils/helpers';
+import { formatDateToString, getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { getProjects } from '@/utils/requests/project/requests';
 import { checkCredentials, getOverallStats, getProjectsStats } from '@/utils/requests/statistics/requests';
@@ -15,7 +15,7 @@ const logger = getLogger();
 
 export const generatePlatformStatistics = async (body: { username: string; password: string }) => {
   const { username, password } = body;
-  if (!checkCredentials(username, password)) {
+  if (!(await checkCredentials(username, password))) {
     logger.error('Invalid credentials for downloading platform statistics');
     return {
       status: StatusCodes.UNAUTHORIZED,
@@ -38,7 +38,7 @@ export const generateProjectsStatistics = async (body: { username: string; passw
     projectLikes: number;
   }
 
-  if (!checkCredentials(username, password)) {
+  if (!(await checkCredentials(username, password))) {
     logger.error('Invalid credentials for downloading feedback');
     return {
       status: StatusCodes.UNAUTHORIZED,
@@ -72,7 +72,7 @@ export const generateProjectsStatistics = async (body: { username: string; passw
 export const generateDailyCheckinStatistics = async (body: { username: string; password: string }) => {
   const { username, password } = body;
 
-  if (!checkCredentials(username, password)) {
+  if (!(await checkCredentials(username, password))) {
     logger.error('Invalid credentials for downloading feedback');
     return {
       status: StatusCodes.UNAUTHORIZED,
@@ -82,24 +82,34 @@ export const generateDailyCheckinStatistics = async (body: { username: string; p
 
   const questions = await getAllCheckinQuestions();
 
-  const questionStats = questions
-    .map((q) => {
-      if (q) {
-        return getCheckinQuestionVoteHistory(dbClient, q.documentId);
-      }
-    })
-    .filter((value) => value !== undefined);
+  const voteHistoryPromises = questions.map(async (question) => {
+    if (!question) return;
+    const history = await getCheckinQuestionVoteHistory(dbClient, question.documentId);
+    if (!history) return;
 
-  if (!questionStats) {
+    return history.map((h) => ({
+      questionId: question.documentId,
+      question: question.question,
+      validFrom: question.validFrom,
+      validTo: question.validTo,
+      answeredOn: formatDateToString(h.answeredOn),
+      average: h._avg.vote,
+      numberOfVotes: h._count.votedBy,
+    }));
+  });
+
+  const historyResults = await getPromiseResults(voteHistoryPromises);
+
+  const res = historyResults.flat();
+  if (!res) {
     return {
       status: StatusCodes.INTERNAL_SERVER_ERROR,
       data: 'Could not find questions',
     };
   }
-  const projectsStatistics = await getPromiseResults(questionStats);
 
   return {
     status: StatusCodes.OK,
-    data: json2csv(projectsStatistics),
+    data: json2csv(res),
   };
 };

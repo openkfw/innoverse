@@ -103,6 +103,13 @@ export function formatDate(dateString: string | Date, locale = 'de-DE') {
   return getFormattedDate(date, locale);
 }
 
+export function formatDateToString(date: Date) {
+  return new Date(date).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
 export function formatDateWithTimestamp(dateString: string | Date, locale = 'de-DE') {
   if (!dateString || isNaN(new Date(dateString).getTime())) {
     return null;

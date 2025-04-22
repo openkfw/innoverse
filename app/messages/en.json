@@ -130,6 +130,7 @@
   "components_export_exportFeedback_platformFeedback": "Download platform feedback",
   "components_export_exportFeedback_overallStats": "Download overall statistics",
   "components_export_exportFeedback_projectStats": "Download project statistics",
+  "components_export_exportFeedback_dailyCheckin": "Download Daily Check-in statistics",
 
   "components_landing_eventsSection_eventCard_imageAlt": "Event image",
 

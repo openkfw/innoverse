@@ -37,6 +37,9 @@ export async function getCheckinQuestionVoteHistory(client: PrismaClient, checki
     _avg: {
       vote: true,
     },
+    _count: {
+      votedBy: true,
+    },
     orderBy: {
       answeredOn: 'asc',
     },

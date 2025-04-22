@@ -19,7 +19,7 @@ const add = (acc: number, el: { _count: number }) => acc + el._count;
 export const getFeedback = async (body: { username: string; password: string }) => {
   try {
     const { username, password } = body;
-    if (!checkCredentials(username, password)) {
+    if (!(await checkCredentials(username, password))) {
       logger.error('Invalid credentials for downloading feedback');
       return {
         status: StatusCodes.UNAUTHORIZED,

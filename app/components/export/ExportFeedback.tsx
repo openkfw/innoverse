@@ -120,7 +120,7 @@ const ExportFeedback = () => {
           {m.components_export_exportFeedback_projectStats()}
         </Button>
         <Button variant="contained" color="primary" onClick={handleDownloadDailyCheckinData}>
-          {'export daily check-in data'}
+          {m.components_export_exportFeedback_dailyCheckin()}
         </Button>
       </Stack>
     </>
