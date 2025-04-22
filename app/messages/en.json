@@ -250,7 +250,6 @@
   "components_newsFeed_newsFeedSearchFilter_search": "Search",
   "components_newsFeed_newsFeedSearchFilter_searchField_minLength": "Enter at least 2 characters",
 
-  "components_newsFeed_newsFeedTypeFilter_comments": "Comments",
   "components_newsFeed_newsFeedTypeFilter_events": "Events",
   "components_newsFeed_newsFeedTypeFilter_questions": "Questions",
   "components_newsFeed_newsFeedTypeFilter_opportunities": "Opportunities",

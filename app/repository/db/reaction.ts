@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 
 import { ObjectType } from '@/common/types';
 
-export type ReactionObjectType = 'UPDATE' | 'EVENT' | 'COLLABORATION_COMMENT' | 'COLLABORATION_QUESTION';
+export type ReactionObjectType = 'UPDATE' | 'EVENT' | 'COLLABORATION_QUESTION';
 
 export async function addReactionToDb(
   client: PrismaClient,
