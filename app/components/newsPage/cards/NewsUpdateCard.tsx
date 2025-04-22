@@ -16,25 +16,21 @@ import { appInsights } from '@/utils/instrumentation/AppInsights';
 import { NewsCardActions } from './common/NewsCardActions';
 
 interface UpdateCardProps {
-  onUpdate: (updatedText: string) => void;
   noClamp?: boolean;
   entry: NewsFeedEntry;
 }
 
-export const NewsUpdateCard = (props: UpdateCardProps) => {
-  const { entry, onUpdate, noClamp = false } = props;
-
-  const initialUpdate = entry.item as ProjectUpdate;
-  const [update, setUpdate] = useState(initialUpdate);
+const NewsUpdateCard = (props: UpdateCardProps) => {
+  const { entry, noClamp = false } = props;
+  const [item, setItem] = useState(entry.item as ProjectUpdate);
 
   const state = useEditingState();
   const editingInteractions = useEditingInteractions();
 
   const handleUpdate = async (updatedText: string) => {
     try {
-      await updateProjectUpdate({ updateId: update.id, comment: updatedText });
-      setUpdate({ ...update, comment: updatedText });
-      onUpdate(updatedText);
+      await updateProjectUpdate({ updateId: item.id, comment: updatedText });
+      setItem({ ...item, comment: updatedText });
       editingInteractions.onSubmit();
     } catch (error) {
       console.error('Error updating project update:', error);
@@ -46,22 +42,24 @@ export const NewsUpdateCard = (props: UpdateCardProps) => {
     }
   };
 
-  return state.isEditing(update) ? (
+  return state.isEditing(item) ? (
     <WriteCommentCard
       content={{
-        author: update.author,
-        updatedAt: update.updatedAt,
-        text: update.comment,
-        anonymous: update.anonymous,
+        author: item.author,
+        updatedAt: item.updatedAt,
+        text: item.comment,
+        anonymous: item.anonymous,
       }}
       onSubmit={handleUpdate}
       onDiscard={editingInteractions.onCancel}
     />
   ) : (
     <>
-      <CommentCardHeader content={update} avatar={{ size: 32 }} />
-      <UpdateCardContent update={update} noClamp={noClamp} />
+      <CommentCardHeader content={item} avatar={{ size: 32 }} />
+      <UpdateCardContent update={item} noClamp={noClamp} />
       <NewsCardActions entry={entry} />
     </>
   );
 };
+
+export default NewsUpdateCard;

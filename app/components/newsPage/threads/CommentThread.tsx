@@ -8,30 +8,38 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 
-import { User } from '@/common/types';
+import { ObjectType, User } from '@/common/types';
 import WriteCommentResponseCard from '@/components/common/comments/WriteCommentResponseCard';
 import { errorMessage } from '@/components/common/CustomToast';
 import { CommentThreadSkeleton } from '@/components/newsPage/cards/skeletons/CommentThreadSkeleton';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
-import { AuthResponse } from '@/utils/auth';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
+import { getCommentsByObjectId } from '@/utils/requests/comments/requests';
 
 import { useRespondingState } from '../../common/editing/editing-context';
 
+import { addUserComment } from './actions';
+
 interface CommentThreadProps<TComment> {
-  comment: { id: string; comments?: TComment[]; author?: User; anonymous?: boolean; commentCount?: number };
-  card: React.ReactNode;
+  item: {
+    id: string;
+    comments?: TComment[];
+    author?: User;
+    anonymous?: boolean;
+    commentCount?: number;
+    projectId?: string;
+  };
+  itemType: ObjectType;
+  card?: React.ReactNode;
   disableDivider?: boolean;
   indentComments?: React.CSSProperties['paddingLeft'];
-  fetchComments: () => Promise<TComment[] | undefined>;
   renderComment: (
     comment: TComment,
     idx: number,
     deleteComment: () => void,
     updateComment: (comment: TComment) => void,
   ) => React.ReactNode;
-  addComment: (text: string) => Promise<AuthResponse<TComment>>;
 }
 
 interface ThreadComment {
@@ -39,6 +47,8 @@ interface ThreadComment {
   createdAt: Date;
   author?: User;
   anonymous?: boolean;
+  objectType: ObjectType;
+  objectId: string;
   comments?: ThreadComment[];
 }
 
@@ -50,7 +60,7 @@ type CommentState<TComment> =
 
 export const CommentThread = <TComment extends ThreadComment>(props: CommentThreadProps<TComment>) => {
   const {
-    comment,
+    item,
     card,
     comments,
     indentComments,
@@ -60,7 +70,7 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
     commentCount,
     loadComments,
     collapseComments,
-    handleComment,
+    handleAddComment,
     updateComment,
     deleteComment,
     renderComment,
@@ -70,7 +80,7 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
     <Stack spacing={2}>
       <div>{card}</div>
       {showDivider && <Divider />}
-      <WriteCommentResponseCard comment={comment} onRespond={handleComment} sx={{ mb: 1, pl: indentComments }} />
+      <WriteCommentResponseCard comment={item} onRespond={handleAddComment} sx={{ mb: 1, pl: indentComments }} />
       {showLoadCommentsButton && (
         <Button
           startIcon={<AddIcon color="primary" fontSize="large" />}
@@ -96,7 +106,7 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
         <Stack spacing={2} sx={{ pl: indentComments }}>
           {comments.data.map(
             (comment, idx) =>
-              typeof comment != 'string' && renderComment(comment, idx, () => deleteComment(comment), updateComment),
+              typeof comment != 'string' && renderComment(comment, idx, () => deleteComment, updateComment),
           )}
         </Stack>
       )}
@@ -105,9 +115,9 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
 };
 
 const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadProps<TComment>) => {
-  const { comment, card, disableDivider, indentComments, fetchComments, renderComment, addComment } = props;
+  const { item, itemType, card, disableDivider, indentComments, renderComment } = props;
   const [comments, setComments] = useState<CommentState<TComment>>({ isVisible: false, isLoading: false });
-  const initialCommentCount = comment.comments?.length ?? comment.commentCount ?? 0;
+  const initialCommentCount = item.comments?.length ?? item.commentCount ?? 0;
   const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
   const [commentsExist, setCommentsExist] = useState<boolean>(initialCommentCount > 0);
 
@@ -115,13 +125,13 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
 
   /* TODO: Temporary solution till the comments are loaded from redis */
   useEffect(() => {
-    if (comment.comments) {
-      const searchedComments = comment.comments.filter((comment) => typeof comment != 'string');
+    if (item.comments) {
+      const searchedComments = item.comments.filter((comment) => typeof comment != 'string');
       if (searchedComments.length > 0) {
         setComments({ isVisible: true, data: searchedComments });
       }
     }
-  }, [comment.comments]);
+  }, [item.comments]);
 
   const loadComments = async () => {
     setComments({ isLoading: true });
@@ -137,13 +147,25 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     setComments({ isVisible: false, data: [] });
   };
 
-  const handleComment = async (commentText: string) => {
+  const addComment = async (text: string) => {
+    const comment = await addUserComment({
+      comment: text,
+      objectId: item.id,
+      objectType: itemType,
+      ...(item.projectId && { projectId: item.projectId }),
+    });
+    const data = comment.data ? { ...comment.data, comments: [] } : undefined;
+    return { ...comment, data };
+  };
+
+  const handleAddComment = async (commentText: string) => {
     try {
       const currentComments = comments.data ?? (await fetchSortedComments());
       if (!currentComments) return;
 
       const result = await addComment(commentText);
-      const createdComment = result?.data;
+      // TODO: fix type
+      const createdComment = result?.data as unknown as TComment;
       if (!createdComment) return;
 
       const newComments = [createdComment, ...currentComments];
@@ -180,6 +202,12 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     setCommentCount(newComments.length + commentResponsesLength);
   };
 
+  const fetchComments = async () => {
+    const result = await getCommentsByObjectId({ objectId: item.id, objectType: itemType });
+    // TODO: fix type
+    return result.data as unknown as TComment[];
+  };
+
   const fetchSortedComments = async () => {
     try {
       const comments = await fetchComments();
@@ -197,19 +225,20 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
   };
 
   const sortComments = (comments: TComment[]) => comments.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
-  const searchedResult = comment.comments && comment.comments.length > 0 && typeof comment.comments[0] !== 'string';
+  const searchedResult = item.comments && item.comments.length > 0 && typeof item.comments[0] !== 'string';
 
   return {
-    comment,
+    item,
+    itemType,
     card,
     comments,
     indentComments,
     showLoadCommentsButton: !searchedResult && !comments.isVisible && !comments.isLoading && commentsExist,
     showCloseThreadButton: !searchedResult && comments.isVisible && !comments.isLoading && commentsExist,
-    showDivider: !disableDivider && (commentsExist || state.isEditing(comment)),
+    showDivider: !disableDivider && (commentsExist || state.isEditing(item)),
     commentCount,
     setCommentCount,
-    handleComment,
+    handleAddComment,
     deleteComment,
     updateComment,
     loadComments,

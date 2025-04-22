@@ -2,35 +2,15 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { UserSession } from '@/common/types';
-import { RequestError } from '@/entities/error';
 import { createPost, updatePost } from '@/services/postService';
 import { withAuth } from '@/utils/auth';
-import { InnoPlatformError, strapiError } from '@/utils/errors';
-import getLogger from '@/utils/logger';
-import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
+import { getAuthorOrError } from '@/utils/requests/requests';
 import { validateAndReturn } from '@/utils/validationHelper';
 
 import { PostFormData } from './AddPostForm';
 import { handleCreatePostSchema, handleUpdatePostSchema } from './validationSchema';
 
-const logger = getLogger();
-
-const createInnoPlatformError = (userId: string, message: string): InnoPlatformError => {
-  return strapiError(`Creating a post by user ${userId}`, { info: message } as RequestError);
-};
-
-const getAuthorOrError = async (user: UserSession) => {
-  const author = await getInnoUserByProviderId(user.providerId);
-  if (!author) {
-    const error = createInnoPlatformError(user.providerId, 'InnoUser does not exist');
-    logger.error(error);
-    return null;
-  }
-  return author;
-};
-
-export const handleCreatePost = withAuth(async (user, body: Omit<PostFormData, 'authorId' | 'author'>) => {
+export const handlePostCreate = withAuth(async (user, body: Omit<PostFormData, 'authorId' | 'author'>) => {
   const validated = validateAndReturn<Omit<PostFormData, 'authorId' | 'author'>>(handleCreatePostSchema, body);
   if (!validated.isValid) return validated.response;
   const author = await getAuthorOrError(user);
@@ -56,8 +36,8 @@ export const handleCreatePost = withAuth(async (user, body: Omit<PostFormData, '
   };
 });
 
-export const handleUpdatePost = withAuth(async (user, body: { postId: string; comment: string }) => {
-  const validated = validateAndReturn<{ comment: string; postId: string }>(handleUpdatePostSchema, body);
+export const handlePostUpdate = withAuth(async (user, body: { itemId: string; comment: string }) => {
+  const validated = validateAndReturn<{ comment: string; itemId: string }>(handleUpdatePostSchema, body);
   if (!validated.isValid) return validated.response;
 
   const author = await getAuthorOrError(user);
@@ -68,7 +48,7 @@ export const handleUpdatePost = withAuth(async (user, body: { postId: string; co
     };
   }
   const updatedPost = await updatePost({
-    postId: body.postId,
+    postId: body.itemId,
     comment: body.comment,
     user: author,
   });

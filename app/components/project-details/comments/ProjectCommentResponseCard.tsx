@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
@@ -11,32 +13,30 @@ import * as m from '@/src/paraglide/messages.js';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
-interface ProjectCommentCardProps {
+interface ProjectCommentResponseCardProps {
   comment: CommentWithResponses;
   projectName?: string;
-  onDelete: () => void;
-  onUpdate: (updatedComment: CommentWithResponses) => void;
 }
 
-export const ProjectCommentCard = (props: ProjectCommentCardProps) => {
-  const { comment, projectName, isLiked, toggleCommentLike, updateComment, deleteComment, commentLikeCount } =
-    useProjectComment(props);
+export const ProjectCommentResponseCard = (props: ProjectCommentResponseCardProps) => {
+  const { projectName } = props;
+  const { comment, isLiked, toggleCommentLike, updateComment, deleteComment, commentLikeCount } =
+    useProjectCommentResponse(props);
 
   return (
     <CommentCard
-      comment={comment}
+      comment={{ ...comment, text: comment.text }}
       projectName={projectName}
       isLiked={isLiked ?? false}
       onLikeToggle={toggleCommentLike}
-      onEdit={updateComment}
       onDelete={deleteComment}
+      onEdit={updateComment}
       commentLikeCount={commentLikeCount}
-      enableResponses
     />
   );
 };
 
-function useProjectComment(props: ProjectCommentCardProps) {
+function useProjectCommentResponse(props: ProjectCommentResponseCardProps) {
   const [comment, setComment] = useState(props.comment);
   const [isLiked, setIsLiked] = useState<boolean>(props.comment.isLikedByUser || false);
   const [commentLikeCount, setCommentLikeCount] = useState<number>(props.comment?.likes?.length || 0);
@@ -55,10 +55,10 @@ function useProjectComment(props: ProjectCommentCardProps) {
         setCommentLikeCount(commentLikeCount + 1);
       }
     } catch (error) {
-      console.error('Error while liking project comment:', error);
+      console.error('Error while liking project comment response:', error);
       errorMessage({ message: m.components_projectdetails_comments_projectCommentCard_updateError() });
       appInsights.trackException({
-        exception: new Error('Failed to like project comment.', { cause: error }),
+        exception: new Error('Failed to like project comment response.', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
     }
@@ -74,10 +74,10 @@ function useProjectComment(props: ProjectCommentCardProps) {
       setComment({ ...comment, text: updatedText });
       interactions.onSubmit();
     } catch (error) {
-      console.error('Error updating collaboration comment:', error);
+      console.error('Error updating project comment:', error);
       errorMessage({ message: m.components_collaboration_comments_collaborationCommentResponseCard_updateError() });
       appInsights.trackException({
-        exception: new Error('Failed to update collaboration comment.', { cause: error }),
+        exception: new Error('Failed to update project comment response.', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
     }
@@ -86,12 +86,11 @@ function useProjectComment(props: ProjectCommentCardProps) {
   const deleteComment = async () => {
     try {
       await removeUserComment({ commentId: comment.id, objectType: ObjectType.PROJECT });
-      props.onDelete();
     } catch (error) {
-      console.error('Error deleting collaboration comment:', error);
+      console.error('Error deleting project comment:', error);
       errorMessage({ message: m.components_collaboration_comments_collaborationCommentResponseCard_deleteError() });
       appInsights.trackException({
-        exception: new Error('Failed to delete collaboration comment response.', { cause: error }),
+        exception: new Error('Failed to delete project comment response.', { cause: error }),
         severityLevel: SeverityLevel.Error,
       });
     }
@@ -104,6 +103,5 @@ function useProjectComment(props: ProjectCommentCardProps) {
     updateComment,
     deleteComment,
     commentLikeCount,
-    projectName: props.projectName,
   };
 }

@@ -5,7 +5,6 @@ import { serverConfig } from '@/config/server';
 import { getCommentsStartingFrom } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
-import { createNewsFeedEntryForComment } from '@/services/collaborationCommentService';
 import { createNewsFeedEntryForEvent } from '@/services/eventService';
 import { createNewsFeedEntryForPost } from '@/services/postService';
 import { createNewsFeedEntryForProject } from '@/services/projectService';
@@ -20,8 +19,7 @@ import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient'
 import { getBasicCollaborationQuestionStartingFromWithAdditionalData } from '@/utils/requests/collaborationQuestions/requests';
 import { getProjectsStartingFrom } from '@/utils/requests/project/requests';
 
-import { mapToComment } from '../requests/comments/mapping';
-import { saveEntryNewsComments } from '../requests/comments/requests';
+import { saveNewsFeedEntriesComments } from '../requests/comments/requests';
 import { getEventsStartingFrom } from '../requests/events/requests';
 import { getPostsStartingFrom } from '../requests/posts/requests';
 import { getSurveyQuestionsStartingFrom } from '../requests/surveyQuestions/requests';
@@ -59,7 +57,6 @@ export const sync = async (retry?: number, syncAll: boolean = false): Promise<Re
       aggregateProjectEvents({ from: syncFrom }),
       aggregatePosts({ from: syncFrom }),
       aggregateCollaborationQuestions({ from: syncFrom }),
-      aggregateCollaborationComments({ from: syncFrom }),
     ];
 
     const settledItems = await Promise.allSettled(getItems);
@@ -167,23 +164,7 @@ export const aggregatePosts = async ({ from }: { from: Date }): Promise<RedisNew
   const mapEntries = posts.map(async (post) => createNewsFeedEntryForPost(post));
   const newsFeedEntries = await getPromiseResults(mapEntries);
 
-  newsFeedEntries.map(async (entry) => {
-    const comments = await saveEntryNewsComments(entry, ObjectType.POST);
-    entry.item.comments = comments;
-  });
-  return newsFeedEntries.filter((entry): entry is RedisNewsFeedEntry => entry !== null);
-};
-
-export const aggregateCollaborationComments = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
-  // collaboration comments fetched from prisma, hence no pagination required
-  const comments = await getCommentsStartingFrom(dbClient, from, ObjectType.COLLABORATION_COMMENT);
-  if (comments.length === 0) {
-    logger.info('No collaboration comments found to sync');
-  }
-  const mapToNewsFeedEntries = comments.map(async (comment) =>
-    createNewsFeedEntryForComment(await mapToComment(comment)),
-  );
-  const newsFeedEntries = await getPromiseResults(mapToNewsFeedEntries);
+  await saveNewsFeedEntriesComments(newsFeedEntries, ObjectType.POST);
   return newsFeedEntries.filter((entry): entry is RedisNewsFeedEntry => entry !== null);
 };
 
@@ -196,11 +177,7 @@ const aggregateProjectUpdates = async ({ from }: { from: Date }): Promise<RedisN
 
   const createdProjectUpdates = projectUpdates.map((update) => createNewsFeedEntryForProjectUpdate(update));
   const newsFeedEntries = await getPromiseResults(createdProjectUpdates);
-
-  newsFeedEntries.map(async (entry) => {
-    const comments = await saveEntryNewsComments(entry, ObjectType.UPDATE);
-    entry.item.comments = comments;
-  });
+  await saveNewsFeedEntriesComments(newsFeedEntries, ObjectType.UPDATE);
   return newsFeedEntries;
 };
 
@@ -213,6 +190,7 @@ const aggregateProjectEvents = async ({ from }: { from: Date }): Promise<RedisNe
 
   const createdEvents = events.map((event) => createNewsFeedEntryForEvent(event));
   const newsFeedEntries = await getPromiseResults(createdEvents);
+  await saveNewsFeedEntriesComments(newsFeedEntries, ObjectType.EVENT);
   return newsFeedEntries;
 };
 
@@ -226,6 +204,7 @@ const aggregateProjects = async ({ from }: { from: Date }): Promise<RedisNewsFee
 
   const createdProjects = projects.map((project) => createNewsFeedEntryForProject(project));
   const newsFeedEntries = await getPromiseResults(createdProjects);
+  await saveNewsFeedEntriesComments(newsFeedEntries, ObjectType.PROJECT);
   return newsFeedEntries;
 };
 
@@ -238,6 +217,7 @@ const aggregateSurveyQuestions = async ({ from }: { from: Date }): Promise<Redis
 
   const createNewsFeedEntries = surveys.map((survey) => createNewsFeedEntryForSurveyQuestion(survey));
   const newsFeedEntries = await getPromiseResults(createNewsFeedEntries);
+  await saveNewsFeedEntriesComments(newsFeedEntries, ObjectType.SURVEY_QUESTION);
   return newsFeedEntries;
 };
 
@@ -255,5 +235,6 @@ const aggregateCollaborationQuestions = async ({ from }: { from: Date }): Promis
   });
 
   const newsFeedEntries = await getPromiseResults(mapToRedisNewsFeedEntries);
+  await saveNewsFeedEntriesComments(newsFeedEntries, ObjectType.COLLABORATION_QUESTION);
   return newsFeedEntries;
 };

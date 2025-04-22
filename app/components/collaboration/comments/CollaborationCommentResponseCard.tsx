@@ -4,46 +4,43 @@ import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
-import { Comment } from '@/common/types';
+import { CommentWithResponses, ObjectType } from '@/common/types';
 import { errorMessage } from '@/components/common/CustomToast';
 import { useEditingInteractions } from '@/components/common/editing/editing-context';
+import { removeUserComment, updateUserComment } from '@/components/newsPage/cards/actions';
 import { addCommentLike, deleteCommentLike } from '@/components/newsPage/threads/actions';
 import * as m from '@/src/paraglide/messages.js';
 
 import { CommentCard } from '../../common/comments/CommentCard';
 
-import { deleteProjectCollaborationCommentResponse, updateProjectCollaborationCommentResponse } from './actions';
-
 interface CollaborationCommentResponseCardProps {
-  response: Comment;
+  comment: CommentWithResponses;
   projectName?: string;
   onDelete: () => void;
 }
 
 export const CollaborationCommentResponseCard = (props: CollaborationCommentResponseCardProps) => {
   const { projectName } = props;
-  const { response, isLiked, toggleCommentLike, updateResponse, deleteResponse, commentLikeCount } =
-    useCollaborationCommentResponseCard(props);
+  const { comment, isLiked, toggleCommentLike, updateComment, deleteComment, commentLikeCount } =
+    useCollaborationCommentResponse(props);
 
   return (
-    <>
-      <CommentCard
-        comment={{ ...response, text: response.text }}
-        projectName={projectName}
-        isLiked={isLiked ?? false}
-        onLikeToggle={toggleCommentLike}
-        onDelete={deleteResponse}
-        onEdit={updateResponse}
-        commentLikeCount={commentLikeCount}
-      />
-    </>
+    <CommentCard
+      comment={{ ...comment, text: comment.text }}
+      projectName={projectName}
+      isLiked={isLiked ?? false}
+      onLikeToggle={toggleCommentLike}
+      onDelete={deleteComment}
+      onEdit={updateComment}
+      commentLikeCount={commentLikeCount}
+    />
   );
 };
 
-export function useCollaborationCommentResponseCard(props: CollaborationCommentResponseCardProps) {
-  const [response, setResponse] = useState(props.response);
-  const [isLiked, setIsLiked] = useState<boolean>(props.response.isLikedByUser || false);
-  const [commentLikeCount, setCommentLikeCount] = useState<number>(props.response?.likes?.length || 0);
+function useCollaborationCommentResponse(props: CollaborationCommentResponseCardProps) {
+  const [comment, setComment] = useState(props.comment);
+  const [isLiked, setIsLiked] = useState<boolean>(props.comment.isLikedByUser || false);
+  const [commentLikeCount, setCommentLikeCount] = useState<number>(props.comment?.likes?.length || 0);
   const appInsights = useAppInsightsContext();
   const interactions = useEditingInteractions();
 
@@ -51,11 +48,11 @@ export function useCollaborationCommentResponseCard(props: CollaborationCommentR
     try {
       if (isLiked) {
         setIsLiked(false);
-        deleteCommentLike(response.id);
+        deleteCommentLike(comment.id);
         setCommentLikeCount(commentLikeCount - 1);
       } else {
         setIsLiked(true);
-        addCommentLike(response.id);
+        addCommentLike(comment.id);
         setCommentLikeCount(commentLikeCount + 1);
       }
     } catch (error) {
@@ -68,10 +65,14 @@ export function useCollaborationCommentResponseCard(props: CollaborationCommentR
     }
   };
 
-  const updateResponse = async (updatedText: string) => {
+  const updateComment = async (updatedText: string) => {
     try {
-      await updateProjectCollaborationCommentResponse({ responseId: response.id, updatedText });
-      setResponse({ ...response, text: updatedText });
+      await updateUserComment({
+        commentId: comment.id,
+        content: updatedText,
+        objectType: ObjectType.COLLABORATION_QUESTION,
+      });
+      setComment({ ...comment, text: updatedText });
       interactions.onSubmit();
     } catch (error) {
       console.error('Error updating collaboration comment:', error);
@@ -83,9 +84,9 @@ export function useCollaborationCommentResponseCard(props: CollaborationCommentR
     }
   };
 
-  const deleteResponse = () => {
+  const deleteComment = async () => {
     try {
-      deleteProjectCollaborationCommentResponse({ responseId: response.id });
+      await removeUserComment({ commentId: comment.id, objectType: ObjectType.COLLABORATION_QUESTION });
       props.onDelete();
     } catch (error) {
       console.error('Error deleting collaboration comment:', error);
@@ -98,11 +99,11 @@ export function useCollaborationCommentResponseCard(props: CollaborationCommentR
   };
 
   return {
-    response,
+    comment,
     isLiked,
     toggleCommentLike,
-    updateResponse,
-    deleteResponse,
+    updateComment,
+    deleteComment,
     commentLikeCount,
   };
 }

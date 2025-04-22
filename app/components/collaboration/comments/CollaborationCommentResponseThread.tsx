@@ -1,41 +1,25 @@
-import { StatusCodes } from 'http-status-codes';
-
-import { Comment } from '@/common/types';
+import { CommentWithResponses, ObjectType } from '@/common/types';
 import { CollaborationCommentResponseCard } from '@/components/collaboration/comments/CollaborationCommentResponseCard';
 import { CommentThread } from '@/components/newsPage/threads/CommentThread';
 
 interface CollaborationCommentResponseThreadProps {
-  response: Comment;
+  comment: CommentWithResponses;
   onDelete: () => void;
 }
 
 export const CollaborationCommentResponseThread = (props: CollaborationCommentResponseThreadProps) => {
-  const { response, onDelete } = props;
-  const { fetchComments, addComment } = useCollaborationCommentResponseThread();
+  const { comment, onDelete } = props;
 
   return (
     <CommentThread
-      comment={{ id: response.id, author: response.author }}
-      card={<CollaborationCommentResponseCard response={response} onDelete={onDelete} />}
-      fetchComments={fetchComments}
+      card={<CollaborationCommentResponseCard comment={comment} onDelete={onDelete} />}
       renderComment={(_comment, _idx, _deleteComment) => <></>}
-      addComment={addComment}
+      item={{
+        id: comment.id,
+        author: comment.author,
+        commentCount: comment.commentCount,
+      }}
+      itemType={ObjectType.COLLABORATION_QUESTION}
     />
   );
 };
-
-export function useCollaborationCommentResponseThread() {
-  const fetchComments = async () => {
-    const comments: { id: string; createdAt: Date; commentCount: number }[] = [];
-    return comments;
-  };
-
-  const addComment = async (_response: string) => {
-    return { status: StatusCodes.OK, data: { id: '0', createdAt: new Date(), commentCount: 0 } };
-  };
-
-  return {
-    fetchComments,
-    addComment,
-  };
-}

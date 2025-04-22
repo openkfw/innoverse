@@ -7,7 +7,6 @@ import { RedisNewsFeedEntry } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 
-import { getNewsFeedEntryForComment } from './collaborationCommentService';
 import { getNewsFeedEntryForCollaborationQuestion } from './collaborationQuestionService';
 import { getNewsFeedEntryForProjectEvent } from './eventService';
 import { getNewsFeedEntryForPost } from './postService';
@@ -101,8 +100,6 @@ export const getNewsFeedEntry = async (object: { objectId: string; objectType: O
       return await getNewsFeedEntryForProjectEvent(redisClient, object.objectId);
     case ObjectType.UPDATE:
       return await getNewsFeedEntryForProjectUpdate(redisClient, object.objectId);
-    case ObjectType.COLLABORATION_COMMENT:
-      return await getNewsFeedEntryForComment(redisClient, { user, commentId: object.objectId });
     case ObjectType.COLLABORATION_QUESTION:
       return await getNewsFeedEntryForCollaborationQuestion(redisClient, object.objectId);
     case ObjectType.POST:
@@ -118,7 +115,7 @@ export const getNewsFeedEntry = async (object: { objectId: string; objectType: O
 const followNewsFeedEntriesWithProject = async ({ projectId, user }: { projectId: string; user: User }) => {
   try {
     const redisClient = await getRedisClient();
-    const newsFeedEntries = await getNewsFeedEntriesForProject(redisClient, { projectId });
+    const newsFeedEntries = await getNewsFeedEntriesForProject({ projectId });
     newsFeedEntries?.forEach(async (entry) => await addFollowToCacheForNewsFeedEntry(redisClient, entry, user));
   } catch (err) {
     const error: InnoPlatformError = redisError(
@@ -133,7 +130,7 @@ const followNewsFeedEntriesWithProject = async ({ projectId, user }: { projectId
 const unfollowNewsFeedEntriesWithProject = async ({ projectId, user }: { projectId: string; user: User }) => {
   try {
     const redisClient = await getRedisClient();
-    const projectNewsFeedEntries = await getNewsFeedEntriesForProject(redisClient, { projectId });
+    const projectNewsFeedEntries = await getNewsFeedEntriesForProject({ projectId });
     projectNewsFeedEntries.forEach(
       async (entry) => await removeFollowFromCacheForNewsFeedEntry(redisClient, entry, user),
     );

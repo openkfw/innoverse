@@ -6,25 +6,25 @@ import AddIcon from '@mui/icons-material/Add';
 import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
 
-import { CollaborationComment } from '@/common/types';
+import { CommentWithResponses } from '@/common/types';
 import { TransparentButton } from '@/components/common/TransparentButton';
 import * as m from '@/src/paraglide/messages.js';
 
 import { CollaborationCommentThread } from './CollaborationCommentThread';
 
 interface CommentsProps {
-  comments: CollaborationComment[];
+  comments: CommentWithResponses[];
   projectName?: string;
-  onDeleteComment: (comment: CollaborationComment) => void;
+  onDelete: () => void;
 }
 
 const MAX_NUM_OF_COMMENTS = 2;
 
 export const CollaborationComments = (props: CommentsProps) => {
-  const { comments, projectName, onDeleteComment } = props;
+  const { comments, projectName } = props;
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const [maxVisibleComments, setMaxVisibleComments] = useState<CollaborationComment[]>();
-  const [remainingComments, setRemainingComments] = useState<CollaborationComment[]>();
+  const [maxVisibleComments, setMaxVisibleComments] = useState<CommentWithResponses[]>();
+  const [remainingComments, setRemainingComments] = useState<CommentWithResponses[]>();
   const [lengthOfNotShownComments, setLengthOfNotShownComments] = useState<number>();
 
   const handleToggle = () => {
@@ -44,7 +44,7 @@ export const CollaborationComments = (props: CommentsProps) => {
           key={comment.id}
           comment={comment}
           projectName={projectName}
-          onDelete={() => onDeleteComment(comment)}
+          onDelete={props.onDelete}
         />
       ))}
 
@@ -55,7 +55,7 @@ export const CollaborationComments = (props: CommentsProps) => {
               key={comment.id}
               comment={comment}
               projectName={projectName}
-              onDelete={() => onDeleteComment(comment)}
+              onDelete={props.onDelete}
             />
           </Collapse>
         ))}
