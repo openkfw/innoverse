@@ -24,6 +24,7 @@ import FeedbackSection from '../landing/feedbackSection/FeedbackSection';
 import { Headers } from './Layout';
 
 import logo from '/public/images/logo.svg';
+import CheckinSection from './dailyCheckinSection/CheckinSection';
 
 interface TopBarProps {
   pages: Headers[];
@@ -112,6 +113,7 @@ export default function TopBarMobile({ pages }: TopBarProps) {
             />
           </Link>
         </Box>
+        <CheckinSection />
 
         <IconButton
           onClick={handleMenuToggle}

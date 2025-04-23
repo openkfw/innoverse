@@ -2,6 +2,7 @@ import { LineChart } from '@mui/x-charts/LineChart';
 
 import { UserVote, VoteAverage } from '@/common/types';
 import { formatDateToString } from '@/utils/helpers';
+import theme from '@/styles/theme';
 
 interface CheckinLineChartProps {
   voteHistory: VoteAverage[];
@@ -24,6 +25,9 @@ const CheckinLineChart = ({ voteHistory, userVoteHistory }: CheckinLineChartProp
   const voteHistoryData = xAxisData.map((date) => voteHistoryMap[date] ?? null);
   const userHistoryData = xAxisData.map((date) => userVoteHistoryMap[date] ?? null);
 
+  const width = theme.breakpoints.down('sm') ? 300 : 500;
+  const height = theme.breakpoints.down('sm') ? 250 : 300;
+
   return (
     <LineChart
       xAxis={[{ scaleType: 'point', data: xAxisData }]}
@@ -41,8 +45,8 @@ const CheckinLineChart = ({ voteHistory, userVoteHistory }: CheckinLineChartProp
       ]}
       slotProps={{ legend: { hidden: false } }}
       tooltip={{ trigger: 'item' }}
-      height={300}
-      width={500}
+      height={height}
+      width={width}
     />
   );
 };

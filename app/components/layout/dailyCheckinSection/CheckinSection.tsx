@@ -129,9 +129,6 @@ const checkinButtonStyles = {
   pl: '-10',
 
   [theme.breakpoints.down('sm')]: {
-    right: 'unset',
-    left: 32,
-    bottom: 48,
     padding: '8px 16px',
   },
 };
