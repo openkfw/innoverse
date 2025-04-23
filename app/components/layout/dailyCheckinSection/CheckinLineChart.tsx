@@ -1,8 +1,8 @@
 import { LineChart } from '@mui/x-charts/LineChart';
 
 import { UserVote, VoteAverage } from '@/common/types';
-import { formatDateToString } from '@/utils/helpers';
 import theme from '@/styles/theme';
+import { formatDateToString } from '@/utils/helpers';
 
 interface CheckinLineChartProps {
   voteHistory: VoteAverage[];

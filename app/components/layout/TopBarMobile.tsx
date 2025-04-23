@@ -21,10 +21,10 @@ import * as m from '@/src/paraglide/messages.js';
 import AvatarWithBadge from '../common/AvatarWithBadge';
 import FeedbackSection from '../landing/feedbackSection/FeedbackSection';
 
+import CheckinSection from './dailyCheckinSection/CheckinSection';
 import { Headers } from './Layout';
 
 import logo from '/public/images/logo.svg';
-import CheckinSection from './dailyCheckinSection/CheckinSection';
 
 interface TopBarProps {
   pages: Headers[];
