@@ -2,6 +2,7 @@
 CREATE TABLE "CheckinVote" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "answeredOn" DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "vote" INTEGER NOT NULL,
     "checkinQuestionId" TEXT NOT NULL,
     "votedBy" TEXT NOT NULL,
@@ -10,4 +11,4 @@ CREATE TABLE "CheckinVote" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "CheckinVote_votedBy_checkinQuestionId_key" ON "CheckinVote"("votedBy", "checkinQuestionId");
+CREATE UNIQUE INDEX "CheckinVote_votedBy_checkinQuestionId_answeredOn_key" ON "CheckinVote"("votedBy", "checkinQuestionId", "answeredOn");
