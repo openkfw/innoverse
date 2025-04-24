@@ -9,7 +9,6 @@ import { withAuth } from '@/utils/auth';
 export const updateUserComment = withAuth(
   async (user: UserSession, body: { commentId: string; content: string; objectType: ObjectType }) => {
     try {
-      console.log('Updating user comment', body);
       await updateComment({
         commentId: body.commentId,
         content: body.content,
