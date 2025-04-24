@@ -110,7 +110,7 @@ const CollaborationQuestionsSection = ({ project }: { project: Project }) => {
           <CollaborationQuestionCard
             key={idx}
             projectName={project.title}
-            content={question}
+            item={question}
             projectId={project.id}
             questionId={question.id}
           />

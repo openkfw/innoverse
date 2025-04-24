@@ -11,7 +11,6 @@ import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { getProjectCollaborationComments } from '@/utils/requests/collaborationComments/requests';
 import { mapToCollaborationQuestion } from '@/utils/requests/collaborationQuestions/mappings';
 import {
   GetCollaborationQuesstionsStartingFromQuery,
