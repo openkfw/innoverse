@@ -111,6 +111,7 @@ export async function updateCommentInDb(client: PrismaClient, commentId: string,
       data: {
         text: updatedText,
       },
+      ...defaultParams,
     });
   } catch (err) {
     const error: InnoPlatformError = dbError(`Update comment with id: ${commentId}`, err as Error, commentId);

@@ -22,7 +22,7 @@ import theme from '@/styles/theme';
 import { parseStringForLinks } from '../common/LinkString';
 import MuiMarkdownSection from '../common/MuiMarkdownSection';
 
-import CommentsSection from './comments/CommentsSection';
+import ProjectCommentsSection from './comments/ProjectCommentsSection';
 import { UserInformation } from './AuthorInformation';
 import { ProjectTags } from './ProjectTags';
 
@@ -68,7 +68,7 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
         <Divider sx={{ width: { xs: '100%', lg: '70%' } }} />
         <ProjectTags tags={project.description.tags} />
         {project.author && <UserInformation projectName={projectName} user={project.author} />}
-        <CommentsSection project={project} />
+        <ProjectCommentsSection project={project} />
       </Stack>
     </Card>
   );

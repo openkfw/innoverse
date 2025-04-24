@@ -4,13 +4,10 @@ import { Comment, ObjectType, UserSession } from '@/common/types';
 import { addCommentToDb, deleteCommentInDb, updateCommentInDb } from '@/repository/db/comment';
 import { getFollowers } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
+import { CommentDB } from '@/repository/db/utils/types';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
-import {
-  getNewsTypeByString,
-  mapDBCommentToRedisComment,
-  mapToRedisNewsComment,
-} from '@/utils/newsFeed/redis/mappings';
+import { getNewsTypeByString, mapDBCommentToRedisComment } from '@/utils/newsFeed/redis/mappings';
 import {
   addNewsCommentToCache,
   deleteNewsCommentInCache,
@@ -18,10 +15,6 @@ import {
 } from '@/utils/newsFeed/redis/services/commentsService';
 import { NotificationTopic, notifyFollowers } from '@/utils/notification/notificationSender';
 import { mapToComment } from '@/utils/requests/comments/mapping';
-
-import { updatePostInCache } from './postService';
-import { updateProjectUpdateInCache } from './updateService';
-import { CommentDB } from '@/repository/db/utils/types';
 
 const logger = getLogger();
 
@@ -81,11 +74,8 @@ export const addComment = async (body: AddComment): Promise<Comment> => {
 };
 
 export const updateComment = async ({ commentId, content }: UpdateComment) => {
-  console.log('updating commment', commentId);
   const result = await updateCommentInDb(dbClient, commentId, content);
-  // TODO: fix any
-  console.log('updateComment', result);
-  await updateCommentInCache(result as any);
+  await updateCommentInCache(result);
   return result;
 };
 
@@ -99,7 +89,6 @@ export const removeComment = async ({ commentId }: RemoveComment) => {
 
 const updateCommentInCache = async (newsCommentDb: CommentDB) => {
   const redisNewsComment = await mapDBCommentToRedisComment(newsCommentDb);
-  console.log('updateCommentInCache', redisNewsComment);
   await updateNewsCommentInCache(redisNewsComment);
 };
 

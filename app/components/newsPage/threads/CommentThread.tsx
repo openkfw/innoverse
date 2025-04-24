@@ -8,9 +8,10 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 
-import { ObjectType, User } from '@/common/types';
+import { CommentWithResponses, ObjectType, User } from '@/common/types';
 import WriteCommentResponseCard from '@/components/common/comments/WriteCommentResponseCard';
 import { errorMessage } from '@/components/common/CustomToast';
+import WriteTextCard from '@/components/common/editing/writeText/WriteTextCard';
 import { CommentThreadSkeleton } from '@/components/newsPage/cards/skeletons/CommentThreadSkeleton';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
@@ -21,10 +22,10 @@ import { useRespondingState } from '../../common/editing/editing-context';
 
 import { addUserComment } from './actions';
 
-interface CommentThreadProps<TComment> {
+interface CommentThreadProps {
   item: {
     id: string;
-    comments?: TComment[];
+    comments?: CommentWithResponses[];
     author?: User;
     anonymous?: boolean;
     commentCount?: number;
@@ -34,31 +35,22 @@ interface CommentThreadProps<TComment> {
   card?: React.ReactNode;
   disableDivider?: boolean;
   indentComments?: React.CSSProperties['paddingLeft'];
-  renderComment: (
-    comment: TComment,
+  renderComment?: (
+    comment: CommentWithResponses,
     idx: number,
     deleteComment: () => void,
-    updateComment: (comment: TComment) => void,
+    updateComment: (comment: CommentWithResponses) => void,
   ) => React.ReactNode;
+  enableEditing?: boolean;
 }
 
-interface ThreadComment {
-  id: string;
-  createdAt: Date;
-  author?: User;
-  anonymous?: boolean;
-  objectType: ObjectType;
-  objectId: string;
-  comments?: ThreadComment[];
-}
-
-type CommentState<TComment> =
+type CommentState =
   | { isVisible: false; isLoading: false; data?: undefined }
   | { isVisible?: false; isLoading: true; data?: undefined }
-  | { isVisible: true; isLoading?: false; data: TComment[] }
-  | { isVisible: false; isLoading?: false; data: TComment[] };
+  | { isVisible: true; isLoading?: false; data: CommentWithResponses[] }
+  | { isVisible: false; isLoading?: false; data: CommentWithResponses[] };
 
-export const CommentThread = <TComment extends ThreadComment>(props: CommentThreadProps<TComment>) => {
+export const CommentThread = (props: CommentThreadProps) => {
   const {
     item,
     card,
@@ -74,12 +66,14 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
     updateComment,
     deleteComment,
     renderComment,
+    enableEditing,
   } = useCommentThread(props);
 
   return (
     <Stack spacing={2}>
       <div>{card}</div>
       {showDivider && <Divider />}
+      {enableEditing && <WriteTextCard onSubmit={handleAddComment} sx={{ width: '622px', maxWidth: '100%' }} />}
       <WriteCommentResponseCard comment={item} onRespond={handleAddComment} sx={{ mb: 1, pl: indentComments }} />
       {showLoadCommentsButton && (
         <Button
@@ -106,7 +100,9 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
         <Stack spacing={2} sx={{ pl: indentComments }}>
           {comments.data.map(
             (comment, idx) =>
-              typeof comment != 'string' && renderComment(comment, idx, () => deleteComment, updateComment),
+              typeof comment != 'string' &&
+              renderComment &&
+              renderComment(comment, idx, () => deleteComment, updateComment),
           )}
         </Stack>
       )}
@@ -114,9 +110,9 @@ export const CommentThread = <TComment extends ThreadComment>(props: CommentThre
   );
 };
 
-const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadProps<TComment>) => {
-  const { item, itemType, card, disableDivider, indentComments, renderComment } = props;
-  const [comments, setComments] = useState<CommentState<TComment>>({ isVisible: false, isLoading: false });
+export const useCommentThread = (props: CommentThreadProps) => {
+  const { item, itemType, card, disableDivider, indentComments, renderComment, enableEditing } = props;
+  const [comments, setComments] = useState<CommentState>({ isVisible: false, isLoading: false });
   const initialCommentCount = item.comments?.length ?? item.commentCount ?? 0;
   const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
   const [commentsExist, setCommentsExist] = useState<boolean>(initialCommentCount > 0);
@@ -154,8 +150,11 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
       objectType: itemType,
       ...(item.projectId && { projectId: item.projectId }),
     });
-    const data = comment.data ? { ...comment.data, comments: [] } : undefined;
-    return { ...comment, data };
+    if (!comment.data) return undefined;
+    return {
+      ...comment.data,
+      comments: [],
+    };
   };
 
   const handleAddComment = async (commentText: string) => {
@@ -163,9 +162,7 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
       const currentComments = comments.data ?? (await fetchSortedComments());
       if (!currentComments) return;
 
-      const result = await addComment(commentText);
-      // TODO: fix type
-      const createdComment = result?.data as unknown as TComment;
+      const createdComment = await addComment(commentText);
       if (!createdComment) return;
 
       const newComments = [createdComment, ...currentComments];
@@ -182,14 +179,14 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     }
   };
 
-  const deleteComment = (comment: TComment) => {
+  const deleteComment = (comment: CommentWithResponses) => {
     const filteredComments = comments.data?.filter((r) => r.id !== comment.id) ?? [];
     setComments({ isVisible: true, data: filteredComments });
     setCommentCount(commentCount - 1);
     if (filteredComments.length === 0) setCommentsExist(false);
   };
 
-  const updateComment = (comment: TComment) => {
+  const updateComment = (comment: CommentWithResponses) => {
     if (!comments.data) return;
     const idx = comments.data.findIndex((r) => r.id === comment.id);
     if (idx < 0) {
@@ -204,8 +201,7 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
 
   const fetchComments = async () => {
     const result = await getCommentsByObjectId({ objectId: item.id, objectType: itemType });
-    // TODO: fix type
-    return result.data as unknown as TComment[];
+    return result.data;
   };
 
   const fetchSortedComments = async () => {
@@ -224,7 +220,8 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     }
   };
 
-  const sortComments = (comments: TComment[]) => comments.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+  const sortComments = (comments: CommentWithResponses[]) =>
+    comments.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
   const searchedResult = item.comments && item.comments.length > 0 && typeof item.comments[0] !== 'string';
 
   return {
@@ -244,6 +241,7 @@ const useCommentThread = <TComment extends ThreadComment>(props: CommentThreadPr
     loadComments,
     collapseComments,
     renderComment,
+    enableEditing,
   };
 };
 
