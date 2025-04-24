@@ -149,6 +149,10 @@ export const useCommentThread = (props: CommentThreadProps) => {
       objectId: item.id,
       objectType: itemType,
       ...(item.projectId && { projectId: item.projectId }),
+      ...(itemType === ObjectType.COLLABORATION_QUESTION && {
+        additionalObjectId: item.projectId,
+        additionalObjectType: ObjectType.PROJECT,
+      }),
     });
     if (!comment.data) return undefined;
     return {
