@@ -54,9 +54,14 @@ const CustomDialog: FC<CustomDialogProps> = ({
     <Dialog
       open={open}
       onClose={handleClose}
-      PaperProps={{ sx: mergeStyles(paperPropsStyle, sx) }}
+      PaperProps={{
+        sx: mergeStyles(paperPropsStyle, sx),
+      }}
       TransitionComponent={Transition}
       maxWidth={false}
+      slotProps={{
+        backdrop: { style: { backdropFilter: 'blur(1px)' } },
+      }}
     >
       {closeIcon && (
         <DialogActions sx={dialogActionsStyle}>
@@ -68,7 +73,7 @@ const CustomDialog: FC<CustomDialogProps> = ({
 
       <DialogTitle sx={dialogTitleStyle}>
         <Box sx={titleSx}>{title}</Box>
-        <Box>{subtitle}</Box>
+        {subtitle && <Box>{subtitle}</Box>}
       </DialogTitle>
 
       <DialogContent sx={dialogContentStyle}>{children}</DialogContent>
@@ -105,10 +110,11 @@ export const closeIconButtonStyle = {
 };
 
 const dialogTitleStyle = {
+  padding: 3,
   paddingBottom: 1,
   margin: 0,
   color: 'primary.main',
-  backgroundColor: 'white',
+  backgroundColor: 'common.white',
   borderTopLeftRadius: '16px',
   borderTopRightRadius: '16px',
   border: 'none',
@@ -125,7 +131,7 @@ const dialogActionsStyle = {
 
 const dialogContentStyle = {
   margin: 0,
-  backgroundColor: 'white',
+  backgroundColor: 'common.white',
   borderBottomLeftRadius: '16px',
   borderBottomRightRadius: '16px',
   border: 'none',

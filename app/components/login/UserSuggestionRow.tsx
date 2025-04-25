@@ -53,7 +53,13 @@ export default function UserSuggestionRow(props: UserSuggestionRowProps) {
           </Grid>
           <Grid container item direction="column" spacing={1} xs={8} justifyContent="center">
             <Grid item>
-              <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 300 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.primary',
+                  fontWeight: 300,
+                }}
+              >
                 {name}
               </Typography>
             </Grid>
