@@ -1,6 +1,8 @@
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { LineChart } from '@mui/x-charts/LineChart';
 
 import { UserVote, VoteAverage } from '@/common/types';
+import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { formatDateToString } from '@/utils/helpers';
 
@@ -25,8 +27,10 @@ const CheckinLineChart = ({ voteHistory, userVoteHistory }: CheckinLineChartProp
   const voteHistoryData = xAxisData.map((date) => voteHistoryMap[date] ?? null);
   const userHistoryData = xAxisData.map((date) => userVoteHistoryMap[date] ?? null);
 
-  const width = theme.breakpoints.down('sm') ? 300 : 500;
-  const height = theme.breakpoints.down('sm') ? 250 : 300;
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const width = isSmallScreen ? 300 : 500;
+  const height = isSmallScreen ? 250 : 300;
 
   return (
     <LineChart
@@ -35,12 +39,12 @@ const CheckinLineChart = ({ voteHistory, userVoteHistory }: CheckinLineChartProp
         {
           curve: 'linear',
           data: voteHistoryData,
-          label: 'History per question',
+          label: m.components_layout_checkinSection_voteHistory_label_history(),
         },
         {
           curve: 'linear',
           data: userHistoryData,
-          label: 'Your vote',
+          label: m.components_layout_checkinSection_voteHistory_label_userVote(),
         },
       ]}
       slotProps={{ legend: { hidden: false } }}

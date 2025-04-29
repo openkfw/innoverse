@@ -216,7 +216,8 @@
   "components_layout_checkinSection_checkinSection_description": "Wähle auf einer Skala von 1-5 (1: stimme nicht zu – 5: stimme voll und ganz zu)",
   "components_layout_checkinSection_voteHistory_description": "Das ist der Verlauf der Antworten der aktuellen Check-in Fragen",
 
-  "components_layout_checkinSection_checkinSection_averagePerQuestion": "Durchschnitt pro Frage",
+  "components_layout_checkinSection_voteHistory_label_history": "Durchschnitt",
+  "components_layout_checkinSection_voteHistory_label_userVote": "Deine Antwort",
 
   "components_login_credentialsLoginForm_useOtherAccount": "Anderen Account verwenden",
   "components_login_credentialsLoginForm_username": "Benutzername",

@@ -127,7 +127,9 @@ const checkinButtonStyles = {
   border: '1.5px solid',
   borderRadius: '8px',
   pl: '-10',
-
+  '&:hover': {
+    border: '1.5px solid',
+  },
   [theme.breakpoints.down('sm')]: {
     padding: '8px 16px',
   },

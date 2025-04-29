@@ -1,4 +1,6 @@
-import { Box, Divider, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
 
 import { CheckinQuestion } from '@/common/types';
 
@@ -13,10 +15,8 @@ const CheckinQuestionVoteHistory = ({ questionsHistory }: { questionsHistory: Ch
           <Typography variant="body1" color="text.primary" sx={{ pt: 1 }}>
             {question.question}
           </Typography>
-          {question.voteHistory?.length && question.userVoteHistory?.length ? (
+          {question.voteHistory?.length && question.userVoteHistory?.length && (
             <CheckinLineChart voteHistory={question.voteHistory} userVoteHistory={question.userVoteHistory} />
-          ) : (
-            <Box />
           )}
         </Box>
       ))}

@@ -1,5 +1,7 @@
-import { Box, Divider, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
 import Slider from '@mui/material/Slider';
+import Typography from '@mui/material/Typography';
 
 import { CheckinQuestion } from '@/common/types';
 
