@@ -14,15 +14,15 @@ export default function LoginDialog({ providers }: LoginDialogProps) {
     <CustomDialog
       open={true}
       title={m.components_login_loginDialog_login()}
+      titleSx={titleStyles}
       closeIcon={false}
       sx={{
-        backdropFilter: 'blur(4px)',
-        background: 'rgba(0, 0, 0, 0.12)',
-        top: '8%',
-        padding: { xs: 0, lg: 3 },
-        borderRadius: '24px',
+        backdropFilter: 'blur(20px)',
+        padding: { xs: 0 },
+        borderRadius: '16px',
         width: { xs: '100%' },
         maxWidth: { xs: '650px' },
+        backgroundColor: 'common.white',
       }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, lg: 2 } }}>
@@ -34,3 +34,13 @@ export default function LoginDialog({ providers }: LoginDialogProps) {
     </CustomDialog>
   );
 }
+
+const titleStyles = {
+  fontSize: 15,
+  fontWeight: 400,
+  lineHeight: '169%',
+  letterSpacing: 1,
+  textTransform: 'uppercase',
+  color: 'primary.light',
+  fontFamily: 'SansDefaultMed',
+};
