@@ -17,7 +17,7 @@ export interface AuthResponse<TArgs> {
 const logger = getLogger();
 
 export function withAuth<TArgs, TReturn>(func: (user: UserSession, body: TArgs) => Promise<AuthResponse<TReturn>>) {
-  return async function (args: TArgs) {
+  return async function (args?: TArgs) {
     const session = await getServerSession(authOptions);
     if (!session) {
       return {
@@ -38,7 +38,7 @@ export function withAuth<TArgs, TReturn>(func: (user: UserSession, body: TArgs) 
     }
 
     try {
-      return func(session.user, args) as Promise<AuthResponse<TReturn>>;
+      return func(session.user, args as TArgs) as Promise<AuthResponse<TReturn>>;
     } catch (err) {
       logger.error(err);
       return {

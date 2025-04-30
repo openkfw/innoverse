@@ -51,7 +51,7 @@ export const DailyCheckinContextProvider = ({ children }: { children: React.Reac
     if (questionResponse.data && questionResponse.data.length) {
       setCheckinQuestionsToAnswer(questionResponse.data);
     } else {
-      const historyResponse = await getCheckinQuestionsHistory({});
+      const historyResponse = await getCheckinQuestionsHistory();
       if (historyResponse?.data?.length) {
         setQuestionsHistory(historyResponse.data);
         setCheckinQuestionsToAnswer([]);
