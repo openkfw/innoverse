@@ -7,9 +7,6 @@ export default withAuth({
       req.nextUrl.pathname === '/api/health' ||
       req.nextUrl.pathname === '/api/hooks/push' ||
       req.nextUrl.pathname === '/api/notification/update-subscription' ||
-      req.nextUrl.pathname === '/api/redis/save' ||
-      req.nextUrl.pathname === '/api/redis/full-refresh' ||
-      req.nextUrl.pathname === '/api/redis/delete' ||
       req.nextUrl.pathname === '/api/liveness' ||
       req.nextUrl.pathname === '/api/readiness' ||
       req.nextUrl.pathname === '/manifest.json' ||

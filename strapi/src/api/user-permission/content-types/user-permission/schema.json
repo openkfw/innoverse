@@ -1,0 +1,21 @@
+{
+  "kind": "singleType",
+  "collectionName": "user_permissions",
+  "info": {
+    "singularName": "user-permission",
+    "pluralName": "user-permissions",
+    "displayName": "UserPermission",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "cacheUpdatePermissions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::inno-user.inno-user"
+    }
+  }
+}
