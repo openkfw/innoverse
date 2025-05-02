@@ -6,14 +6,11 @@ import { User } from '@/common/types';
 import { CommentCardHeaderSecondary } from '@/components/common/CommentCardHeaderSecondary';
 import { CommentFooter } from '@/components/common/comments/CommentFooter';
 import CustomButton from '@/components/common/CustomButton';
-import {
-  useEditingInteractions,
-  useEditingState,
-  useRespondingInteractions,
-} from '@/components/common/editing/editing-context';
+import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
 import WriteTextCard from '@/components/common/editing/writeText/WriteTextCard';
 import * as m from '@/src/paraglide/messages.js';
 
+import { useRespondingInteractions } from '../editing/responding-context';
 import { TextCard } from '../TextCard';
 
 interface CommentCardProps {
@@ -78,7 +75,7 @@ export const CommentCard = (props: CommentCardProps) => {
           onLike={onLikeToggle}
           onEdit={() => editingInteractions.onStart(comment)}
           onDelete={onDelete}
-          onResponse={enableResponses ? () => respondingInteractions.onStart(comment) : undefined}
+          onResponse={enableResponses ? () => respondingInteractions.onStart(comment, 'comment') : undefined}
         />
       }
     />

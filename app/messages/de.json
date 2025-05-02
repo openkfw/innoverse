@@ -378,9 +378,6 @@
 
   "components_projectdetails_comments_projectCommentCard_updateError": "Der Kommentar konnte nicht aktualisiert werden. Bitte versuche es später noch einmal.",
 
-  "components_projectdetails_comments_voteComponent_upvoteError": "Der Kommentar konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",
-  "components_projectdetails_comments_voteComponent_answer": "antworten",
-
   "components_projectDetails_events_eventCard_imageAlt": "Event Bild",
 
   "components_projectdetails_events_eventFilterException_filterNoEvents": "Mit diesem Filter wurden keine Events gefunden.",

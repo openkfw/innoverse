@@ -303,7 +303,7 @@ export async function fetchMentionData(search: string): Promise<Mention[]> {
   try {
     const data = await getAllInnoUserNames();
 
-    const formattedData = data.map((user) => ({ username: user.username as string }));
+    const formattedData = data.map((user) => ({ username: user.username }));
     return formattedData.filter((user) => user.username?.toLowerCase().includes(search.toLowerCase()));
   } catch (error) {
     console.error('Failed to load users:', error);

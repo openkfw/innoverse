@@ -382,9 +382,6 @@
 
   "components_projectdetails_comments_projectCommentCard_updateError": "Failed to update collaboration comment response. Please try again later.",
 
-  "components_projectdetails_comments_voteComponent_upvoteError": "Failed to upvote comment. Please try again later.",
-  "components_projectdetails_comments_voteComponent_answer": "reply",
-
   "components_projectDetails_events_eventCard_imageAlt": "Event image",
 
   "components_projectdetails_events_eventFilterException_filterNoEvents": "No events found with this filter.",

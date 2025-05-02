@@ -682,7 +682,7 @@ type InnoUser {
   ): QuestionRelationResponseCollection
   role: String
   updatedAt: DateTime
-  username: String
+  username: String!
 }
 
 type InnoUserEntity {

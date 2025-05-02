@@ -85,7 +85,6 @@ function MultilineMentionInput({
                 }}
               />
             </MentionsInput>
-
             {endAdornment && <div style={{ position: 'absolute', right: 22, bottom: 16 }}>{endAdornment}</div>}
             {error && <p style={{ color: 'red', position: 'absolute', bottom: -20 }}>{error.message}</p>}
           </Box>
