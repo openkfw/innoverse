@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import AddIcon from '@mui/icons-material/Add';
@@ -7,18 +7,17 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
 import { CommentWithResponses, ObjectType, User } from '@/common/types';
 import WriteCommentResponseCard from '@/components/common/comments/WriteCommentResponseCard';
 import { errorMessage } from '@/components/common/CustomToast';
-import WriteTextCard from '@/components/common/editing/writeText/WriteTextCard';
+import { useRespondingInteractions, useRespondingState } from '@/components/common/editing/responding-context';
 import { CommentThreadSkeleton } from '@/components/newsPage/cards/skeletons/CommentThreadSkeleton';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
 import { getCommentsByObjectId } from '@/utils/requests/comments/requests';
-
-import { useRespondingState } from '../../common/editing/editing-context';
 
 import { addUserComment } from './actions';
 
@@ -41,7 +40,9 @@ interface CommentThreadProps {
     deleteComment: () => void,
     updateComment: (comment: CommentWithResponses) => void,
   ) => React.ReactNode;
-  enableEditing?: boolean;
+  enableCommenting?: boolean;
+  showCommentCount?: boolean;
+  maxNumberOfComments?: number;
 }
 
 type CommentState =
@@ -49,6 +50,12 @@ type CommentState =
   | { isVisible?: false; isLoading: true; data?: undefined }
   | { isVisible: true; isLoading?: false; data: CommentWithResponses[] }
   | { isVisible: false; isLoading?: false; data: CommentWithResponses[] };
+
+const countComments = (commentsList: CommentWithResponses[] = []): number =>
+  commentsList.reduce(
+    (total, comment) => total + 1 + countComments(Array.isArray(comment.comments) ? comment.comments : []),
+    0,
+  );
 
 export const CommentThread = (props: CommentThreadProps) => {
   const {
@@ -66,15 +73,32 @@ export const CommentThread = (props: CommentThreadProps) => {
     updateComment,
     deleteComment,
     renderComment,
-    enableEditing,
+    enableCommenting,
+    showCommentCount,
   } = useCommentThread(props);
+  const respondingInteractions = useRespondingInteractions();
+
+  useEffect(() => {
+    if (props.item && enableCommenting) {
+      respondingInteractions.onStart(props.item, 'reply');
+    }
+  }, [props.item, respondingInteractions, enableCommenting]);
 
   return (
     <Stack spacing={2}>
       <div>{card}</div>
       {showDivider && <Divider />}
-      {enableEditing && <WriteTextCard onSubmit={handleAddComment} sx={{ width: '622px', maxWidth: '100%' }} />}
-      <WriteCommentResponseCard comment={item} onRespond={handleAddComment} sx={{ mb: 1, pl: indentComments }} />
+      {showCommentCount && (
+        <Typography variant="caption" color="text.secondary" sx={{ marginTop: 1, marginBottom: 3 }}>
+          {commentCount} {m.components_projectdetails_comments_commentsSection_comments()}
+        </Typography>
+      )}
+      <WriteCommentResponseCard
+        enableCommenting={enableCommenting}
+        comment={item}
+        onRespond={handleAddComment}
+        sx={{ mb: 1, pl: indentComments }}
+      />
       {showLoadCommentsButton && (
         <Button
           startIcon={<AddIcon color="primary" fontSize="large" />}
@@ -102,7 +126,12 @@ export const CommentThread = (props: CommentThreadProps) => {
             (comment, idx) =>
               typeof comment != 'string' &&
               renderComment &&
-              renderComment(comment, idx, () => deleteComment, updateComment),
+              renderComment(
+                comment,
+                idx,
+                () => deleteComment(comment),
+                (updatedComment) => updateComment(updatedComment),
+              ),
           )}
         </Stack>
       )}
@@ -111,23 +140,53 @@ export const CommentThread = (props: CommentThreadProps) => {
 };
 
 export const useCommentThread = (props: CommentThreadProps) => {
-  const { item, itemType, card, disableDivider, indentComments, renderComment, enableEditing } = props;
+  const {
+    item,
+    itemType,
+    card,
+    disableDivider,
+    indentComments,
+    renderComment,
+    enableCommenting,
+    maxNumberOfComments,
+    showCommentCount = false,
+  } = props;
   const [comments, setComments] = useState<CommentState>({ isVisible: false, isLoading: false });
   const initialCommentCount = item.comments?.length ?? item.commentCount ?? 0;
   const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
   const [commentsExist, setCommentsExist] = useState<boolean>(initialCommentCount > 0);
 
+  const totalComments = useMemo(() => {
+    if (!showCommentCount) return initialCommentCount;
+    return countComments(comments.data ?? []);
+  }, [comments.data, showCommentCount, initialCommentCount]);
+
+  useEffect(() => {
+    if (showCommentCount) {
+      setCommentCount(totalComments);
+    }
+  }, [showCommentCount, totalComments]);
+
   const state = useRespondingState();
 
   /* TODO: Temporary solution till the comments are loaded from redis */
-  useEffect(() => {
-    if (item.comments) {
-      const searchedComments = item.comments.filter((comment) => typeof comment != 'string');
-      if (searchedComments.length > 0) {
-        setComments({ isVisible: true, data: searchedComments });
-      }
-    }
-  }, [item.comments]);
+  // useEffect(() => {
+  //   if (item.comments) {
+  //     const searchedComments = item.comments.filter((comment) => typeof comment != 'string');
+  //     if (searchedComments.length > 0) {
+  //       setComments({ isVisible: true, data: searchedComments });
+  //     }
+  //   }
+  // }, [item.comments]);
+
+  // useEffect(() => {
+  //   console.log('setting false visible');
+  //   if (maxNumberOfComments && maxNumberOfComments > 0 && comments.data) {
+  //     setComments({ isVisible: false, data: comments.data });
+  //   }
+  // }, [maxNumberOfComments]);
+
+  console.log('comments DATA', comments.data);
 
   const loadComments = async () => {
     setComments({ isLoading: true });
@@ -182,7 +241,6 @@ export const useCommentThread = (props: CommentThreadProps) => {
       });
     }
   };
-
   const deleteComment = (comment: CommentWithResponses) => {
     const filteredComments = comments.data?.filter((r) => r.id !== comment.id) ?? [];
     setComments({ isVisible: true, data: filteredComments });
@@ -226,7 +284,9 @@ export const useCommentThread = (props: CommentThreadProps) => {
 
   const sortComments = (comments: CommentWithResponses[]) =>
     comments.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
-  const searchedResult = item.comments && item.comments.length > 0 && typeof item.comments[0] !== 'string';
+
+  // TODO: fix search result
+  // const searchedResult = item.comments && item.comments.length > 0 && typeof item.comments[0] !== 'string';
 
   return {
     item,
@@ -234,9 +294,9 @@ export const useCommentThread = (props: CommentThreadProps) => {
     card,
     comments,
     indentComments,
-    showLoadCommentsButton: !searchedResult && !comments.isVisible && !comments.isLoading && commentsExist,
-    showCloseThreadButton: !searchedResult && comments.isVisible && !comments.isLoading && commentsExist,
-    showDivider: !disableDivider && (commentsExist || state.isEditing(item)),
+    showLoadCommentsButton: !comments.isVisible && !comments.isLoading && commentsExist,
+    showCloseThreadButton: comments.isVisible && !comments.isLoading && commentsExist,
+    showDivider: !disableDivider && (commentsExist || state.isResponding(item, 'comment')),
     commentCount,
     setCommentCount,
     handleAddComment,
@@ -245,7 +305,9 @@ export const useCommentThread = (props: CommentThreadProps) => {
     loadComments,
     collapseComments,
     renderComment,
-    enableEditing,
+    enableCommenting,
+    showCommentCount,
+    maxNumberOfComments,
   };
 };
 

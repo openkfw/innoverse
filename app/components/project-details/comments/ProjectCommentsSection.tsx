@@ -6,20 +6,12 @@ import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { CommentWithResponses, ObjectType, Project, ProjectQuestion } from '@/common/types';
+import { ObjectType, Project, ProjectQuestion } from '@/common/types';
 import NewsItemThread from '@/components/newsPage/threads/NewsItemThread';
 import * as m from '@/src/paraglide/messages.js';
 
-function countComments(comments: CommentWithResponses[] = []): number {
-  return comments.reduce((total, comment) => {
-    const replies = comment.comments || [];
-    return total + 1 + countComments(replies);
-  }, 0);
-}
-
 const ProjectCommentsSection = ({ project }: { project: Project }) => {
   const [questions] = useState<ProjectQuestion[]>(project.questions);
-  const commentCount = countComments(project.comments);
 
   return (
     <Stack sx={containerStyles} direction="column">
@@ -43,17 +35,15 @@ const ProjectCommentsSection = ({ project }: { project: Project }) => {
         </List>
       </Stack>
 
-      <Typography variant="caption" color="text.secondary" sx={{ marginTop: 1, marginBottom: 3 }}>
-        {commentCount} {m.components_projectdetails_comments_commentsSection_comments()}
-      </Typography>
-
       <Stack spacing={3}>
         <NewsItemThread
           entry={{
             item: project,
             type: ObjectType.PROJECT,
           }}
-          enableEditing={true}
+          enableCommenting={true}
+          showCommentCount={true}
+          maxNumberOfComments={5}
         />
       </Stack>
     </Stack>

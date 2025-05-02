@@ -9,7 +9,8 @@ import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { NewsFeedEntry, ObjectType } from '@/common/types';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
 import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
-import { useEditingInteractions, useRespondingInteractions } from '@/components/common/editing/editing-context';
+import { useEditingInteractions } from '@/components/common/editing/editing-context';
+import { useRespondingInteractions } from '@/components/common/editing/responding-context';
 import { handleFollow, handleRemoveFollower } from '@/components/project-details/likes-follows/actions';
 import { deletePost } from '@/services/postService';
 import { deleteProjectUpdate } from '@/services/updateService';
@@ -87,7 +88,7 @@ export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
         <Grid item xs={12} sx={footerStyles}>
           <NewsFeedReactionCard entry={entry} />
           <Box sx={actionStyles}>
-            <ResponseControls onResponse={() => respondingInteractions.onStart(entry.item)} />
+            <ResponseControls onResponse={() => respondingInteractions.onStart(entry.item, 'comment')} />
             <EditControls onDelete={handleDelete} onEdit={() => editingInteractions.onStart(entry.item)} />
             <FollowButtonWithLink isSelected={followedByUser ?? false} entry={entry} onIconClick={handleToggleFollow} />
           </Box>

@@ -9,6 +9,7 @@ import { Project } from '@/common/types';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
+import { EditingContextProvider } from '../common/editing/editing-context';
 import { UnsavedEditingChangesDialog } from '../common/editing/UnsavedChangesDialog';
 import EmptyTabContent from '../project-details/EmptyTabContent';
 
@@ -41,19 +42,19 @@ export const CollaborationTab = ({ project, ...otherProps }: CollaborationTabPro
   }
 
   return (
-    <Card sx={containerStyles}>
-      <Box sx={colorOverlayStyles} />
-
-      <CardContent style={{ padding: 0 }}>
-        <Box sx={cardContentStyles}>
-          <OpportunitiesSection project={project} />
-          <SurveyQuestionsSection project={project} />
-          <CollaborationQuestionsSection project={project} />
-        </Box>
-      </CardContent>
-
-      <UnsavedEditingChangesDialog />
-    </Card>
+    <EditingContextProvider>
+      <Card sx={containerStyles}>
+        <Box sx={colorOverlayStyles} />
+        <CardContent style={{ padding: 0 }}>
+          <Box sx={cardContentStyles}>
+            <OpportunitiesSection project={project} />
+            <SurveyQuestionsSection project={project} />
+            <CollaborationQuestionsSection project={project} />
+          </Box>
+        </CardContent>
+        <UnsavedEditingChangesDialog />
+      </Card>
+    </EditingContextProvider>
   );
 };
 
@@ -65,13 +66,11 @@ const OpportunitiesSection = ({ project }: { project: Project }) => {
       <Typography color="primary.main" sx={titleStyles} id="opportunities-section">
         {m.components_collaboration_collaborationTab_opportunities()}
       </Typography>
-
       <Stack sx={gridStyles} spacing={{ xs: 6, md: 10 }}>
         {project.opportunities.map((opportunity, idx) => (
           <OpportunityCard key={idx} opportunity={opportunity} projectName={project.title} />
         ))}
       </Stack>
-
       <Divider textAlign="left" sx={dividerStyles} />
     </>
   );
@@ -91,7 +90,6 @@ const SurveyQuestionsSection = ({ project }: { project: Project }) => {
           <SurveyCard key={idx} surveyQuestion={surveyQuestion} projectId={project.id} />
         ))}
       </Stack>
-
       <Divider textAlign="left" sx={dividerStyles} />
     </>
   );

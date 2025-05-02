@@ -5,15 +5,17 @@ import { NewsCommentThread } from '@/components/newsPage/threads/NewsCommentThre
 interface NewsItemThreadProps {
   entry: NewsFeedEntry;
   Card?: React.ElementType<{ entry: NewsFeedEntry }>;
-  enableEditing?: boolean;
+  enableCommenting?: boolean;
   maxNumberOfComments?: number;
   disableDivider?: boolean;
+  showCommentCount?: boolean;
 }
 
 const NewsItemThread = ({
   entry,
   Card,
-  enableEditing = false,
+  enableCommenting = false,
+  showCommentCount = false,
   maxNumberOfComments,
   disableDivider,
 }: NewsItemThreadProps) => {
@@ -22,8 +24,10 @@ const NewsItemThread = ({
       item={entry.item}
       itemType={entry.type}
       card={Card ? <Card entry={entry} /> : <></>}
-      enableEditing={enableEditing}
+      enableCommenting={enableCommenting}
       disableDivider={disableDivider}
+      showCommentCount={showCommentCount}
+      maxNumberOfComments={maxNumberOfComments}
       renderComment={(comment, idx, deleteComment, updateComment) => (
         <NewsCommentThread
           key={`${idx}-${comment.id}`}
@@ -33,7 +37,6 @@ const NewsItemThread = ({
           level={1}
           onDelete={deleteComment}
           onUpdate={updateComment}
-          maxNumberOfComments={maxNumberOfComments}
         />
       )}
     />

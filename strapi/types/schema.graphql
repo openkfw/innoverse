@@ -594,7 +594,7 @@ type InnoUser {
   questions_connection(filters: QuestionFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): QuestionRelationResponseCollection
   role: String
   updatedAt: DateTime
-  username: String
+  username: String!
 }
 
 type InnoUserEntity {

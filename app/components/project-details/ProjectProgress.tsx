@@ -19,6 +19,8 @@ import { Project } from '@/common/types';
 import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
+import { EditingContextProvider } from '../common/editing/editing-context';
+import { UnsavedEditingChangesDialog } from '../common/editing/UnsavedChangesDialog';
 import { parseStringForLinks } from '../common/LinkString';
 import MuiMarkdownSection from '../common/MuiMarkdownSection';
 
@@ -62,15 +64,18 @@ export const ProjectProgress = (props: ProjectProgressProps) => {
   const { project, projectName } = props;
 
   return (
-    <Card sx={wrapperStyle}>
-      <Stack sx={contentStyle}>
-        <ProjectDescription project={project} />
-        <Divider sx={{ width: { xs: '100%', lg: '70%' } }} />
-        <ProjectTags tags={project.description.tags} />
-        {project.author && <UserInformation projectName={projectName} user={project.author} />}
-        <ProjectCommentsSection project={project} />
-      </Stack>
-    </Card>
+    <EditingContextProvider>
+      <Card sx={wrapperStyle}>
+        <Stack sx={contentStyle}>
+          <ProjectDescription project={project} />
+          <Divider sx={{ width: { xs: '100%', lg: '70%' } }} />
+          <ProjectTags tags={project.description.tags} />
+          {project.author && <UserInformation projectName={projectName} user={project.author} />}
+          <ProjectCommentsSection project={project} />
+        </Stack>
+        <UnsavedEditingChangesDialog />
+      </Card>
+    </EditingContextProvider>
   );
 };
 
