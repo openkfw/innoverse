@@ -239,33 +239,6 @@ export const mapToRedisCollaborationQuestion = (
   };
 };
 
-export const mapToRedisCollaborationComment = (
-  comment: Comment,
-  question: BasicCollaborationQuestion,
-  reactions: RedisReaction[],
-  followedBy: RedisUser[],
-): RedisCollaborationComment => {
-  return {
-    id: comment.id,
-    createdAt: getUnixTimestamp(comment.createdAt),
-    updatedAt: getUnixTimestamp(comment.createdAt),
-    projectId: comment.objectId,
-    author: comment.author,
-    text: comment.text,
-    question: {
-      id: question.id,
-      authors: question.authors,
-      description: question.description,
-      title: question.title,
-    },
-    commentCount: comment.commentCount,
-    likedBy: comment.likedBy,
-    isLikedByUser: comment.isLikedByUser,
-    reactions: reactions,
-    followedBy: followedBy,
-  };
-};
-
 const mapToRedisProject = (
   project: BasicProject,
   reactions: RedisReaction[],

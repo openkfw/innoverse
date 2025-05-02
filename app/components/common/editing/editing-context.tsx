@@ -2,6 +2,7 @@
 
 import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react';
 
+import { RespondingContext, useResponding, useRespondingContext } from './responding-context';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 
 interface EditingState {
@@ -18,7 +19,6 @@ interface EditingState {
     onSubmit: () => void;
   };
 }
-
 interface ItemWithId {
   id: string;
 }
@@ -27,7 +27,7 @@ interface Interaction {
   itemId: string;
 }
 
-const defaultState: EditingState = {
+const editingDefaultState: EditingState = {
   unsavedChangesDialog: {
     element: <></>,
     isOpen: false,
@@ -42,14 +42,18 @@ const defaultState: EditingState = {
   },
 };
 
-const EditingContext = createContext(defaultState);
-const RespondingContext = createContext(defaultState);
+const EditingContext = createContext(editingDefaultState);
 
-export const EditingContextProvider = ({ children }: PropsWithChildren) => (
-  <EditingContext.Provider value={useEditingContext()}>
-    <RespondingContext.Provider value={useEditingContext()}>{children}</RespondingContext.Provider>
-  </EditingContext.Provider>
-);
+export const EditingContextProvider = ({ children }: PropsWithChildren) => {
+  const editingContextValue = useEditingContext();
+  const respondingContextValue = useRespondingContext();
+
+  return (
+    <EditingContext.Provider value={editingContextValue}>
+      <RespondingContext.Provider value={respondingContextValue}>{children}</RespondingContext.Provider>
+    </EditingContext.Provider>
+  );
+};
 
 function useEditingContext() {
   const [interaction, setInteraction] = useState<Interaction>();
@@ -132,9 +136,7 @@ function useEditingContext() {
 
   return contextObject;
 }
-
 const useEditing = () => useContext(EditingContext);
-const useResponding = () => useContext(RespondingContext);
 
 export const useEditingState = () => {
   const editing = useEditing();
@@ -144,16 +146,6 @@ export const useEditingState = () => {
 export const useEditingInteractions = () => {
   const editing = useEditing();
   return editing.interactions;
-};
-
-export const useRespondingState = () => {
-  const responding = useResponding();
-  return responding.state;
-};
-
-export const useRespondingInteractions = () => {
-  const responding = useResponding();
-  return responding.interactions;
 };
 
 export const useUnsavedChangesDialog = () => {

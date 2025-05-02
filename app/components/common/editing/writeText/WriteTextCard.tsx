@@ -42,6 +42,7 @@ interface WriteTextCardProps {
   getSubmitButton?: (disabled: boolean) => JSX.Element;
   disableAvatar?: boolean;
   disabled?: boolean;
+  placeholder?: string;
   sx?: SxProps;
 }
 
@@ -57,13 +58,13 @@ const WriteTextCard = ({
   defaultValues,
   disableAvatar = false,
   disabled = false,
+  placeholder = m.components_common_editing_writetext_writeTextCard_placeholder(),
   avatar,
   sx,
 }: WriteTextCardProps) => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const appInsights = useAppInsightsContext();
-  const placeholder = m.components_common_editing_writetext_writeTextCard_placeholder();
 
   const form = useForm<TextFormData>({
     defaultValues: {
@@ -109,7 +110,7 @@ const WriteTextCard = ({
     <>
       {user && (
         <Stack direction="row" spacing={1} sx={sx}>
-          {!disableAvatar && <AvatarIcon user={user} size={32} {...avatar} />}
+          {!disableAvatar && <AvatarIcon user={user} size={24} {...avatar} />}
           <form style={{ width: '100%' }}>
             <MultilineMentionInput
               rows={4}
