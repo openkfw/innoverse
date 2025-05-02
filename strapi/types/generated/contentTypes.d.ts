@@ -766,7 +766,7 @@ export interface ApiUserPermissionUserPermission
     draftAndPublish: true;
   };
   attributes: {
-    cacheUpdatePermissions: Schema.Attribute.Relation<
+    cachePermissions: Schema.Attribute.Relation<
       'oneToMany',
       'api::inno-user.inno-user'
     >;

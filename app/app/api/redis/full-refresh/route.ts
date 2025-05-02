@@ -2,7 +2,7 @@ import { sync as synchronizeNewsFeed } from '@/utils/newsFeed/newsFeedSync';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/options';
 import { StatusCodes } from 'http-status-codes';
-import { hasCacheUpdatePermissions } from '@/utils/requests/userPermissions/requests';
+import { hasCachePermissions } from '@/utils/requests/userPermissions/requests';
 
 export async function GET() {
   try {
@@ -10,8 +10,8 @@ export async function GET() {
     if (session == undefined) {
       return Response.json({ error: 'User is not authenticated' }, { status: StatusCodes.UNAUTHORIZED });
     }
-    const isUserInCacheUpdates = await hasCacheUpdatePermissions(session.user.providerId);
-    if (!isUserInCacheUpdates) {
+    const userHasCachePermissions = await hasCachePermissions(session.user.providerId);
+    if (!userHasCachePermissions) {
       return Response.json({ error: 'User is not allowed' }, { status: StatusCodes.UNAUTHORIZED });
     } else {
       const sync = await synchronizeNewsFeed(0, true);

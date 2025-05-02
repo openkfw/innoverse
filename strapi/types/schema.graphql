@@ -1982,18 +1982,9 @@ type UploadFileRelationResponseCollection {
 }
 
 type UserPermission {
-  attributes: UserPermission!
-    @deprecated(reason: "Use root level fields instead")
-  cacheUpdatePermissions(
-    filters: InnoUserFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-  ): [InnoUser]!
-  cacheUpdatePermissions_connection(
-    filters: InnoUserFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-  ): InnoUserRelationResponseCollection
+  attributes: UserPermission! @deprecated(reason: "Use root level fields instead")
+  cachePermissions(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): [InnoUser]!
+  cachePermissions_connection(filters: InnoUserFiltersInput, pagination: PaginationArg = {}, sort: [String] = []): InnoUserRelationResponseCollection
   createdAt: DateTime
   data: UserPermission! @deprecated(reason: "Use root level fields instead")
   documentId: ID!
@@ -2021,7 +2012,7 @@ type UserPermissionEntityResponseCollection {
 
 input UserPermissionFiltersInput {
   and: [UserPermissionFiltersInput]
-  cacheUpdatePermissions: InnoUserFiltersInput
+  cachePermissions: InnoUserFiltersInput
   createdAt: DateTimeFilterInput
   not: UserPermissionFiltersInput
   or: [UserPermissionFiltersInput]
@@ -2030,7 +2021,7 @@ input UserPermissionFiltersInput {
 }
 
 input UserPermissionInput {
-  cacheUpdatePermissions: [ID]
+  cachePermissions: [ID]
   publishedAt: DateTime
 }
 

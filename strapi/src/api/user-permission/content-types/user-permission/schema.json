@@ -12,7 +12,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "cacheUpdatePermissions": {
+    "cachePermissions": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::inno-user.inno-user"

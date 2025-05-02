@@ -1,9 +1,9 @@
 import { graphql } from '@/types/graphql';
 
-export const cacheUpdatePermissionForUser = graphql(`
-  query getCacheUpdatePermissionForUser($providerId: String!) {
+export const cachePermissionForUser = graphql(`
+  query getCachePermissionForUser($providerId: String!) {
     userPermission {
-      cacheUpdatePermissions(filters: { providerId: { eq: $providerId } }) {
+      cachePermissions(filters: { providerId: { eq: $providerId } }) {
         documentId
         providerId
         username
