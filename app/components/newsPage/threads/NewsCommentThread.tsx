@@ -12,7 +12,6 @@ interface NewsCommentThreadProps {
   level: number;
   onDelete: () => void;
   onUpdate: (updatedComment: CommentWithResponses) => void;
-  maxNumberOfComments?: number;
 }
 
 export const NewsCommentThread = (props: NewsCommentThreadProps) => {
