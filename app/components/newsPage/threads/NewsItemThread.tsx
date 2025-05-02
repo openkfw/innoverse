@@ -16,7 +16,7 @@ const NewsItemThread = ({
   Card,
   enableCommenting = false,
   showCommentCount = false,
-  maxNumberOfComments,
+  maxNumberOfComments = 0,
   disableDivider,
 }: NewsItemThreadProps) => {
   return (

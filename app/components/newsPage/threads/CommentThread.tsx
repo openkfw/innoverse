@@ -9,6 +9,7 @@ import Stack from '@mui/material/Stack';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
+import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { CommentWithResponses, ObjectType, User } from '@/common/types';
 import WriteCommentResponseCard from '@/components/common/comments/WriteCommentResponseCard';
 import { errorMessage } from '@/components/common/CustomToast';
@@ -68,21 +69,24 @@ export const CommentThread = (props: CommentThreadProps) => {
     showCloseThreadButton,
     commentCount,
     loadComments,
-    collapseComments,
     handleAddComment,
     updateComment,
     deleteComment,
     renderComment,
     enableCommenting,
     showCommentCount,
+    maxNumberOfComments,
+    visibleComments,
+    setShowAllComments,
   } = useCommentThread(props);
   const respondingInteractions = useRespondingInteractions();
 
   useEffect(() => {
-    if (props.item && enableCommenting) {
-      respondingInteractions.onStart(props.item, 'reply');
+    if (maxNumberOfComments > 0) loadComments();
+    if (item && enableCommenting) {
+      respondingInteractions.onStart(item, 'respond');
     }
-  }, [props.item, respondingInteractions, enableCommenting]);
+  }, [item]);
 
   return (
     <Stack spacing={2}>
@@ -99,42 +103,45 @@ export const CommentThread = (props: CommentThreadProps) => {
         onRespond={handleAddComment}
         sx={{ mb: 1, pl: indentComments }}
       />
-      {showLoadCommentsButton && (
-        <Button
-          startIcon={<AddIcon color="primary" fontSize="large" />}
-          sx={{ ...transparentButtonStyles, pl: indentComments }}
-          style={{ marginBottom: 2 }}
-          onClick={loadComments}
-        >
-          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} ({commentCount})
-        </Button>
-      )}
-      {showCloseThreadButton && (
-        <Button
-          startIcon={<RemoveIcon color="primary" fontSize="large" />}
-          sx={{ ...transparentButtonStyles, pl: indentComments }}
-          style={{ marginBottom: 2 }}
-          onClick={collapseComments}
-        >
-          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showLess()}
-        </Button>
-      )}
       {comments.isLoading && <CommentThreadSkeleton sx={{ pl: indentComments, mt: 2 }} />}
-      {comments.isVisible && (
-        <Stack spacing={2} sx={{ pl: indentComments }}>
-          {comments.data.map(
-            (comment, idx) =>
-              typeof comment != 'string' &&
-              renderComment &&
-              renderComment(
-                comment,
-                idx,
-                () => deleteComment(comment),
-                (updatedComment) => updateComment(updatedComment),
-              ),
-          )}
-        </Stack>
-      )}
+
+      <Stack spacing={2} sx={{ pl: indentComments }}>
+        {visibleComments.map(
+          (comment, idx) =>
+            typeof comment != 'string' &&
+            renderComment &&
+            renderComment(
+              comment,
+              idx,
+              () => deleteComment(comment),
+              (updatedComment) => updateComment(updatedComment),
+            ),
+        )}
+        {showLoadCommentsButton && (
+          <Button
+            startIcon={<AddIcon color="primary" fontSize="large" />}
+            sx={{ ...transparentButtonStyles }}
+            onClick={async () => {
+              if (maxNumberOfComments === 0 && !comments.data) {
+                await loadComments();
+              }
+              setShowAllComments(true);
+            }}
+          >
+            {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} (
+            {commentCount - maxNumberOfComments})
+          </Button>
+        )}
+        {showCloseThreadButton && (
+          <Button
+            startIcon={<RemoveIcon color="primary" fontSize="large" />}
+            sx={{ ...transparentButtonStyles }}
+            onClick={() => setShowAllComments(false)}
+          >
+            {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showLess()}
+          </Button>
+        )}
+      </Stack>
     </Stack>
   );
 };
@@ -148,13 +155,25 @@ export const useCommentThread = (props: CommentThreadProps) => {
     indentComments,
     renderComment,
     enableCommenting,
-    maxNumberOfComments,
+    maxNumberOfComments = 0,
     showCommentCount = false,
   } = props;
   const [comments, setComments] = useState<CommentState>({ isVisible: false, isLoading: false });
-  const initialCommentCount = item.comments?.length ?? item.commentCount ?? 0;
+  const initialCommentCount = item.commentCount ?? item.comments?.length ?? 0;
   const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
-  const [commentsExist, setCommentsExist] = useState<boolean>(initialCommentCount > 0);
+  const [showAllComments, setShowAllComments] = useState(false);
+  const { isSearchFilterActive } = useNewsFeed();
+
+  const commentsExist = useMemo(
+    () => (comments.data?.length ?? 0) > 0 || initialCommentCount > 0,
+    [comments.data, initialCommentCount],
+  );
+
+  const visibleComments = useMemo(() => {
+    if (!comments.isVisible || !comments.data) return [];
+    if (showAllComments || isSearchFilterActive) return comments.data;
+    return comments.data.slice(0, maxNumberOfComments);
+  }, [comments, maxNumberOfComments, showAllComments, isSearchFilterActive]);
 
   const totalComments = useMemo(() => {
     if (!showCommentCount) return initialCommentCount;
@@ -170,23 +189,14 @@ export const useCommentThread = (props: CommentThreadProps) => {
   const state = useRespondingState();
 
   /* TODO: Temporary solution till the comments are loaded from redis */
-  // useEffect(() => {
-  //   if (item.comments) {
-  //     const searchedComments = item.comments.filter((comment) => typeof comment != 'string');
-  //     if (searchedComments.length > 0) {
-  //       setComments({ isVisible: true, data: searchedComments });
-  //     }
-  //   }
-  // }, [item.comments]);
-
-  // useEffect(() => {
-  //   console.log('setting false visible');
-  //   if (maxNumberOfComments && maxNumberOfComments > 0 && comments.data) {
-  //     setComments({ isVisible: false, data: comments.data });
-  //   }
-  // }, [maxNumberOfComments]);
-
-  console.log('comments DATA', comments.data);
+  useEffect(() => {
+    if (item.comments && isSearchFilterActive) {
+      const searchedComments = item.comments.filter((comment) => typeof comment != 'string');
+      if (searchedComments.length > 0) {
+        setComments({ isVisible: true, data: searchedComments });
+      }
+    }
+  }, [item.comments, isSearchFilterActive]);
 
   const loadComments = async () => {
     setComments({ isLoading: true });
@@ -196,10 +206,6 @@ export const useCommentThread = (props: CommentThreadProps) => {
     } else {
       setComments({ isVisible: false, isLoading: false });
     }
-  };
-
-  const collapseComments = () => {
-    setComments({ isVisible: false, data: [] });
   };
 
   const addComment = async (text: string) => {
@@ -231,7 +237,6 @@ export const useCommentThread = (props: CommentThreadProps) => {
       const newComments = [createdComment, ...currentComments];
       setComments({ isVisible: true, data: newComments });
       setCommentCount(commentCount + 1);
-      setCommentsExist(true);
     } catch (error) {
       console.error('Error adding comment:', error);
       errorMessage({ message: m.components_newsPage_thread_add_comment_error() });
@@ -245,7 +250,6 @@ export const useCommentThread = (props: CommentThreadProps) => {
     const filteredComments = comments.data?.filter((r) => r.id !== comment.id) ?? [];
     setComments({ isVisible: true, data: filteredComments });
     setCommentCount(commentCount - 1);
-    if (filteredComments.length === 0) setCommentsExist(false);
   };
 
   const updateComment = (comment: CommentWithResponses) => {
@@ -285,17 +289,14 @@ export const useCommentThread = (props: CommentThreadProps) => {
   const sortComments = (comments: CommentWithResponses[]) =>
     comments.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
 
-  // TODO: fix search result
-  // const searchedResult = item.comments && item.comments.length > 0 && typeof item.comments[0] !== 'string';
-
   return {
     item,
     itemType,
     card,
     comments,
     indentComments,
-    showLoadCommentsButton: !comments.isVisible && !comments.isLoading && commentsExist,
-    showCloseThreadButton: comments.isVisible && !comments.isLoading && commentsExist,
+    showLoadCommentsButton: !comments.isLoading && !showAllComments && commentsExist && !isSearchFilterActive,
+    showCloseThreadButton: showAllComments && commentsExist,
     showDivider: !disableDivider && (commentsExist || state.isResponding(item, 'comment')),
     commentCount,
     setCommentCount,
@@ -303,11 +304,12 @@ export const useCommentThread = (props: CommentThreadProps) => {
     deleteComment,
     updateComment,
     loadComments,
-    collapseComments,
     renderComment,
+    setShowAllComments,
     enableCommenting,
     showCommentCount,
     maxNumberOfComments,
+    visibleComments,
   };
 };
 
