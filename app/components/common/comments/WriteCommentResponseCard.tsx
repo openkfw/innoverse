@@ -30,12 +30,12 @@ const WriteCommentResponseCard = ({
   const handleResponse = async (comment: string) => {
     setDisabled(true);
     await onRespond(comment);
-    respondingInteractions.onSubmit(enableCommenting ? 'reply' : 'comment');
+    respondingInteractions.onSubmit(enableCommenting ? 'respond' : 'comment');
     setDisabled(false);
   };
 
   return (
-    respondingState.isResponding(comment, enableCommenting ? 'reply' : 'comment') && (
+    respondingState.isResponding(comment, enableCommenting ? 'respond' : 'comment') && (
       <WriteTextCard
         sx={sx}
         metadata={{ projectName }}

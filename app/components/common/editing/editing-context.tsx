@@ -5,6 +5,12 @@ import { createContext, PropsWithChildren, useCallback, useContext, useMemo, use
 import { RespondingContext, useResponding, useRespondingContext } from './responding-context';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 
+interface ItemWithId {
+  id: string;
+}
+interface Interaction {
+  itemId: string;
+}
 interface EditingState {
   unsavedChangesDialog: {
     element: JSX.Element;
@@ -19,30 +25,14 @@ interface EditingState {
     onSubmit: () => void;
   };
 }
-interface ItemWithId {
-  id: string;
-}
 
-interface Interaction {
-  itemId: string;
-}
-
-const editingDefaultState: EditingState = {
-  unsavedChangesDialog: {
-    element: <></>,
-    isOpen: false,
-  },
-  state: {
-    isEditing: () => false,
-  },
-  interactions: {
-    onStart: () => {},
-    onCancel: () => {},
-    onSubmit: () => {},
-  },
+const defaultEditingState: EditingState = {
+  unsavedChangesDialog: { element: <></>, isOpen: false },
+  state: { isEditing: () => false },
+  interactions: { onStart: () => {}, onCancel: () => {}, onSubmit: () => {} },
 };
 
-const EditingContext = createContext(editingDefaultState);
+const EditingContext = createContext<EditingState>(defaultEditingState);
 
 export const EditingContextProvider = ({ children }: PropsWithChildren) => {
   const editingContextValue = useEditingContext();
@@ -55,29 +45,27 @@ export const EditingContextProvider = ({ children }: PropsWithChildren) => {
   );
 };
 
-function useEditingContext() {
+function useEditingContext(): EditingState {
   const [interaction, setInteraction] = useState<Interaction>();
   const [pendingInteraction, setPendingInteraction] = useState<Interaction>();
   const [openUnsavedChangesDialog, setOpenUnsavedChangesDialog] = useState(false);
-
-  const finalizeInteraction = useCallback(() => {
-    setOpenUnsavedChangesDialog(false);
-    setInteraction(undefined);
-    setPendingInteraction(undefined);
-  }, []);
 
   const dismissDialog = useCallback(() => {
     setOpenUnsavedChangesDialog(false);
     setPendingInteraction(undefined);
   }, []);
 
+  const finalizeInteraction = useCallback(() => {
+    setInteraction(undefined);
+    setPendingInteraction(undefined);
+    setOpenUnsavedChangesDialog(false);
+  }, []);
+
   const initiateInteraction = useCallback(
     (item: ItemWithId) => {
       if (interaction?.itemId === item.id) {
         setInteraction(undefined);
-        return;
-      }
-      if (interaction) {
+      } else if (interaction) {
         setPendingInteraction({ itemId: item.id });
         setOpenUnsavedChangesDialog(true);
       } else {
@@ -90,11 +78,7 @@ function useEditingContext() {
 
   const tryDiscardOrPrompt = useCallback(
     ({ showPrompt }: { showPrompt: boolean }) => {
-      if (showPrompt) {
-        setOpenUnsavedChangesDialog(true);
-      } else {
-        finalizeInteraction();
-      }
+      showPrompt ? setOpenUnsavedChangesDialog(true) : finalizeInteraction();
     },
     [finalizeInteraction],
   );
@@ -124,7 +108,7 @@ function useEditingContext() {
       isEditing: (item: ItemWithId) => interaction?.itemId === item.id,
     },
     interactions: {
-      onStart: (item: ItemWithId) => initiateInteraction(item),
+      onStart: initiateInteraction,
       onCancel: ({ isDirty }) => tryDiscardOrPrompt({ showPrompt: isDirty ?? true }),
       onSubmit: finalizeInteraction,
     },
@@ -133,20 +117,13 @@ function useEditingContext() {
       isOpen: openUnsavedChangesDialog,
     },
   };
-
   return contextObject;
 }
 const useEditing = () => useContext(EditingContext);
 
-export const useEditingState = () => {
-  const editing = useEditing();
-  return editing.state;
-};
+export const useEditingState = () => useEditing().state;
 
-export const useEditingInteractions = () => {
-  const editing = useEditing();
-  return editing.interactions;
-};
+export const useEditingInteractions = () => useEditing().interactions;
 
 export const useUnsavedChangesDialog = () => {
   const editing = useEditing();

@@ -12,7 +12,7 @@ interface Interaction {
   itemId: string;
 }
 
-type InteractionType = 'reply' | 'comment';
+type InteractionType = 'respond' | 'comment';
 
 interface RespondingState {
   unsavedChangesDialog: {
@@ -60,7 +60,7 @@ export function useRespondingContext(): RespondingState {
 
   const isResponding = useCallback(
     (item: ItemWithId, type: InteractionType): boolean => {
-      if (type === 'reply') {
+      if (type === 'respond') {
         return replyInteractions.some((interaction) => interaction.itemId === item.id);
       } else {
         return commentInteraction?.itemId === item.id;
@@ -82,10 +82,10 @@ export function useRespondingContext(): RespondingState {
   const initiateInteraction = useCallback(
     (item: ItemWithId, type: InteractionType) => {
       const currentInteraction =
-        type === 'reply' ? replyInteractions.find((i) => i.itemId === item.id) : commentInteraction;
+        type === 'respond' ? replyInteractions.find((i) => i.itemId === item.id) : commentInteraction;
 
       if (currentInteraction) {
-        if (type === 'reply') {
+        if (type === 'respond') {
           setReplyInteractions((prevInteractions) =>
             prevInteractions.filter((interaction) => interaction.itemId !== item.id),
           );
@@ -95,7 +95,7 @@ export function useRespondingContext(): RespondingState {
         }
       } else {
         // If no interaction exists, add a new one
-        if (type === 'reply') {
+        if (type === 'respond') {
           setReplyInteractions((prevInteractions) => [...prevInteractions, { itemId: item.id }]);
         } else {
           setCommentInteraction({ itemId: item.id });
@@ -103,7 +103,7 @@ export function useRespondingContext(): RespondingState {
         dismissDialog();
       }
     },
-    [replyInteractions, commentInteraction, dismissDialog],
+    [replyInteractions, commentInteraction],
   );
 
   const tryDiscardOrPrompt = useCallback(
@@ -120,7 +120,7 @@ export function useRespondingContext(): RespondingState {
   const applyPendingOrFinalize = useCallback(() => {
     if (pendingInteraction) {
       const { type, interaction } = pendingInteraction;
-      if (type === 'reply') {
+      if (type === 'respond') {
         setReplyInteractions((prevInteractions) => [...prevInteractions, interaction]);
       }
       if (type === 'comment') {

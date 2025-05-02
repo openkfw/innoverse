@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
@@ -55,6 +55,7 @@ interface NewsFeedContextInterface {
   setFilters: (filters: NewsFeedFilters) => void;
   loadNextPage: () => Promise<void>;
   toggleFollow: (entry: NewsFeedEntry) => void;
+  isSearchFilterActive: boolean;
 }
 
 const defaultState: NewsFeedContextInterface = {
@@ -73,6 +74,7 @@ const defaultState: NewsFeedContextInterface = {
   setFilters: () => {},
   loadNextPage: () => Promise.resolve(),
   toggleFollow: (_: NewsFeedEntry) => {},
+  isSearchFilterActive: false,
 };
 
 interface NewsFeedContextProviderProps {
@@ -217,6 +219,10 @@ export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextP
     }
   };
 
+  const isSearchFilterActive = useMemo(() => {
+    return filters.searchString.length > 0;
+  }, [filters]);
+
   const toggleFollow = (entry: NewsFeedEntry) => {
     const isFollowedByUser = !(entry.item.followedByUser ?? false);
     const projectId = entry.item.projectId;
@@ -269,6 +275,7 @@ export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextP
     toggleSort,
     setFilters: updateFilters,
     loadNextPage,
+    isSearchFilterActive,
   };
 
   return <NewsFeedContext.Provider value={contextObject}> {children}</NewsFeedContext.Provider>;
