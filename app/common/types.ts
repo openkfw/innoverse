@@ -489,6 +489,25 @@ export type UploadImageResponse = {
   updatedAt: string;
 };
 
+export type CheckinQuestion = {
+  checkinQuestionId: string;
+  question: string;
+  voteHistory?: VoteAverage[];
+  userVoteHistory?: UserVote[];
+};
+
+export type VoteAverage = {
+  answeredOn: Date;
+  _avg: {
+    vote: number | null;
+  };
+};
+
+export type UserVote = {
+  answeredOn: Date;
+  vote: number;
+};
+
 export enum SortValues {
   DESC = 'DESC',
   ASC = 'ASC',

@@ -6,10 +6,16 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
-import { generatePlatformStatistics, generateProjectsStatistics } from '@/app/export/actions';
+import {
+  generateDailyCheckinStatistics,
+  generatePlatformStatistics,
+  generateProjectsStatistics,
+} from '@/app/export/actions';
 import { errorMessage, infoMessage } from '@/components/common/CustomToast';
 import * as m from '@/src/paraglide/messages.js';
 import { getFeedback } from '@/utils/requests/statistics/requests';
+
+import { inputStyle } from '../common/form/formStyle';
 
 const ExportFeedback = () => {
   const [username, setUsername] = useState('');
@@ -21,6 +27,11 @@ const ExportFeedback = () => {
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
+  };
+
+  const resetCredentials = () => {
+    setUsername('');
+    setPassword('');
   };
 
   const handleDownloadPlatformFeedback = async () => {
@@ -53,6 +64,7 @@ const ExportFeedback = () => {
     link.href = 'data:text/csv;charset=utf-8,' + platformStats.data;
     link.download = 'overall_platform_statistics.csv';
     link.click();
+    resetCredentials();
   };
 
   const handleDownloadProjectStats = async () => {
@@ -69,18 +81,41 @@ const ExportFeedback = () => {
     link.href = 'data:text/csv;charset=utf-8,' + projectStats.data;
     link.download = 'project_statistics.csv';
     link.click();
+    resetCredentials();
+  };
+
+  const handleDownloadDailyCheckinData = async () => {
+    const checkinData = await generateDailyCheckinStatistics({
+      username,
+      password,
+    });
+    if (checkinData.status === StatusCodes.UNAUTHORIZED) {
+      errorMessage({ message: 'Invalid credentials!' });
+      return;
+    } else if (checkinData.status === StatusCodes.INTERNAL_SERVER_ERROR) {
+      errorMessage({ message: 'Could not download daily checkin data!' });
+      return;
+    }
+    infoMessage({ message: m.components_export_exportFeedback_downloadProjectStats() });
+    const link = document.createElement('a');
+    link.href = 'data:text/csv;charset=utf-8,' + checkinData.data;
+    link.download = 'daily_checkin_statistics.csv';
+    link.click();
+    resetCredentials();
   };
 
   return (
     <>
       <TextField
         inputProps={{ style: { color: 'white' } }}
+        sx={inputStyle(true)}
         label={m.components_export_exportFeedback_username()}
         value={username}
         onChange={handleUsernameChange}
       />
       <TextField
         inputProps={{ style: { color: 'white' } }}
+        sx={inputStyle(true)}
         label={m.components_export_exportFeedback_password()}
         type="password"
         value={password}
@@ -95,6 +130,9 @@ const ExportFeedback = () => {
         </Button>
         <Button variant="contained" color="primary" onClick={handleDownloadProjectStats}>
           {m.components_export_exportFeedback_projectStats()}
+        </Button>
+        <Button variant="contained" color="primary" onClick={handleDownloadDailyCheckinData}>
+          {m.components_export_exportFeedback_dailyCheckin()}
         </Button>
       </Stack>
     </>
