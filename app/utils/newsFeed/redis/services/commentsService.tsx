@@ -1,9 +1,9 @@
-import { SearchOptions } from 'redis';
+import { AggregateGroupByReducers, AggregateSteps, SearchOptions } from 'redis';
 
 import { InnoPlatformError, redisError } from '@/utils/errors';
 import { getPromiseResults, getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
+import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/requests';
 
 import { NewsType, RedisNewsComment, RedisNewsFeedEntry } from '../models';
 import { getRedisClient, RedisClient, RedisIndex } from '../redisClient';
@@ -184,15 +184,76 @@ export async function getNewsFeedEntryWithComments(
   const entry = await getNewsFeedEntryByKey(client, `${itemType.newsType}:${entryId}`);
   if (entry) {
     // TODO: return the comments from Redis Cache instead of the DB
-    const comments = await getRedisNewsCommentsWithResponses(entry.item.id, itemType.objectType);
+    const comments = await getCommentsByObjectIdWithResponses(entry.item.id, itemType.objectType);
     return { ...entry, item: { ...entry.item, comments } } as RedisNewsFeedEntry;
   }
 }
 
 async function searchComments(client: RedisClient, index: RedisIndex, query: string, searchOptions: SearchOptions) {
-  const comments = await client.ft.search(index, query, searchOptions);
+  const countResults = await client.ft.aggregate(index, query, {
+    STEPS: [
+      {
+        type: AggregateSteps.GROUPBY,
+        properties: ['@itemId'],
+        REDUCE: [
+          {
+            type: AggregateGroupByReducers.FIRST_VALUE,
+            property: '@comment',
+            AS: 'firstComment',
+          },
+        ],
+      },
+    ],
+    PARAMS: searchOptions.PARAMS,
+    DIALECT: 2,
+  });
+
+  const sortBy = searchOptions.SORTBY;
+  const totalGroups = countResults.total;
+  const offset = searchOptions.LIMIT?.from as number;
+  let adjustedLimit = searchOptions.LIMIT ?? { from: 0, size: 0 };
+  if (totalGroups <= offset) {
+    adjustedLimit = { from: 0, size: 0 };
+  }
+
+  // @ts-ignore
+  const comments = await client.ft.aggregate(index, query, {
+    STEPS: [
+      {
+        type: AggregateSteps.SORTBY,
+        BY: '@updatedAt',
+        DIRECTION: sortBy,
+      },
+      {
+        type: AggregateSteps.GROUPBY,
+        properties: ['@itemId'],
+        REDUCE: [
+          {
+            type: AggregateGroupByReducers.FIRST_VALUE,
+            property: '@comment',
+            AS: 'comment',
+          },
+          {
+            type: AggregateGroupByReducers.FIRST_VALUE,
+            property: '@type',
+            AS: 'itemType',
+          },
+        ],
+      },
+      {
+        type: AggregateSteps.LIMIT,
+        from: adjustedLimit.from,
+        size: adjustedLimit.size,
+      },
+    ],
+    PARAMS: searchOptions.PARAMS,
+    DIALECT: 2,
+  });
+
   if (comments) {
-    return comments.documents.map((doc) => doc.value.itemId as string);
+    return comments.results.map((result: Record<string, any>) => {
+      return { itemId: result.itemId, type: result.itemType };
+    });
   }
   return [];
 }
@@ -212,13 +273,14 @@ export async function searchNewsComments(
     { newsType: NewsType.SURVEY_QUESTION, objectType: ObjectType.SURVEY_QUESTION },
   ];
   const result = await Promise.all(
-    itemTypes.map(async (itemType, id) => {
+    itemTypes.map(async (itemType) => {
       const resultComments = await searchComments(client, index, query, searchOptions);
       const result = await Promise.all(
-        resultComments.map(async (itemId) => {
-          const res = await getNewsFeedEntryWithComments(client, itemType, itemId);
+        resultComments.map(async (item) => {
+          const res = await getNewsFeedEntryWithComments(client, itemType, item.itemId);
+
           if (res) {
-            return { id: `${id}`, value: res };
+            return { id: `${item.type}:${item.itemId}`, value: res };
           }
         }),
       );
