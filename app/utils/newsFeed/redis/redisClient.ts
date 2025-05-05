@@ -136,6 +136,10 @@ const createIndices = async (client: RedisClient) => {
         type: SchemaFieldTypes.TAG,
         AS: 'projectId',
       },
+      itemId: {
+        type: SchemaFieldTypes.TAG,
+        AS: 'itemId',
+      },
     },
     on: {
       ON: 'HASH',
