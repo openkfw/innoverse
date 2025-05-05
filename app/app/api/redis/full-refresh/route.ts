@@ -1,8 +1,10 @@
-import { sync as synchronizeNewsFeed } from '@/utils/newsFeed/newsFeedSync';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/options';
 import { StatusCodes } from 'http-status-codes';
+
+import { sync as synchronizeNewsFeed } from '@/utils/newsFeed/newsFeedSync';
 import { hasCachePermissions } from '@/utils/requests/userPermissions/requests';
+
+import { authOptions } from '../../auth/[...nextauth]/options';
 
 export async function GET() {
   try {

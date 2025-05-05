@@ -1,7 +1,9 @@
+import { getServerSession } from 'next-auth';
+import { StatusCodes } from 'http-status-codes';
+
 import { countNewsFeedEntriesByProjectIds, countNewsFeedEntriesByType } from '@/utils/newsFeed/redis/redisService';
 import { hasCachePermissions } from '@/utils/requests/userPermissions/requests';
-import { StatusCodes } from 'http-status-codes';
-import { getServerSession } from 'next-auth';
+
 import { authOptions } from '../../auth/[...nextauth]/options';
 
 export async function GET() {
