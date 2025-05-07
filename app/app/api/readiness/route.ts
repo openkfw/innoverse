@@ -21,9 +21,6 @@ export async function GET() {
     },
     {
       status: statusCode,
-      headers: {
-        'Content-Type': 'application/json',
-      },
     },
   );
 }

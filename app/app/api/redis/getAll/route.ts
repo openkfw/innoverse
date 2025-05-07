@@ -22,7 +22,6 @@ export async function GET() {
         { status: 200, result: { type: result1, projectIds: result2 } },
         {
           headers: {
-            'Content-Type': 'application/json',
             'Cache-Control': 'no-store',
           },
         },

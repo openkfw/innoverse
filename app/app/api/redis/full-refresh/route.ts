@@ -19,7 +19,6 @@ export async function GET() {
       const sync = await synchronizeNewsFeed(0, true);
       return Response.json(sync, {
         headers: {
-          'Content-Type': 'application/json',
           'Cache-Control': 'no-store',
         },
       });
