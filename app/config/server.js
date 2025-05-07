@@ -78,11 +78,6 @@ const serverEnvConfig = createEnvConfig({
       regex: /^(redis):\/\//,
       required: true,
     },
-    NEWS_FEED_SYNC_SECRET: {
-      stages: runtimeStages,
-      defaultRule: z.string().default(''),
-      required: true,
-    },
     NEWS_FEED_SYNC_MONTHS: {
       stages: runtimeStages,
       defaultRule: z.string().default('36'),

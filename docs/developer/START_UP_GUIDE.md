@@ -76,9 +76,7 @@ now your app should be reachable under [http://localhost:3000](http://localhost:
 
 ### News Feed
 
-The news feed uses Redis as a cache and should be refreshed manually or via a CURL command periodically. For this the API endpoint `/api/redis/full-refresh` is used. The caller must present a secret passed via the Authorization HTTP Header.
-The secret can be defined in the environment variable `NEWS_FEED_SYNC_SECRET`. The duration specifying the number of months of data to be synchronized can be configured using the `NEWS_FEED_SYNC_MONTHS` variable.
-You can find an Azure Function App which can handle the refresh for you. The Function App could be a good starting point if you want to deploy an automated task which handles the refresh for you. You can find the Function App in `tasks/news-feed/refresh`
+The news feed uses Redis as a cache. If needed, the cache can be refreshed and will be recreated manually. For this the API endpoint `/api/redis/full-refresh` can be used. To be allowed to call this endpoint, the allowed users must be added in Strapi in the Single Type "UserPermission" in the "cachePermissions" list.
 
 #### CMS Setup
 
@@ -115,7 +113,6 @@ The main focus should here be the `client` report, as we do not use any edge fun
 | DATABASE_URL                                 | Y        | -       | Runtime   | Innoverse |
 | REDIS_URL                                    | Y        | -       | Runtime   | Innoverse |
 | NEXTAUTH_URL                                 | Y        | -       | Runtime   | Innoverse |
-| NEWS_FEED_SYNC_SECRET                        | Y        | -       | Runtime   | Innoverse |
 | NEWS_FEED_SYNC_MONTHS                        | Y        | -       | Runtime   | Innoverse |
 | STRAPI_TOKEN                                 | Y        | -       | Runtime   | Innoverse |
 | HTTP_BASIC_AUTH                              | Y        | -       | Runtime   | Innoverse |
