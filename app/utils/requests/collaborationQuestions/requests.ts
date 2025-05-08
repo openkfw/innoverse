@@ -11,7 +11,6 @@ import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { getProjectCollaborationComments } from '@/utils/requests/collaborationComments/requests';
 import { mapToCollaborationQuestion } from '@/utils/requests/collaborationQuestions/mappings';
 import {
   GetCollaborationQuesstionsStartingFromQuery,
@@ -23,6 +22,7 @@ import {
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 import { mapToBasicCollaborationQuestion } from './mappings';
+import { getCommentsByObjectIdWithResponses } from '../comments/requests';
 
 const logger = getLogger();
 
@@ -32,18 +32,17 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
     const questionsData = response.collaborationQuestions ?? [];
 
     const mapToEntities = questionsData.map(async (questionData) => {
-      const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData?.documentId });
-      const comments = getComments.data ?? [];
+      const { documentId } = questionData;
+      const comments = await getCommentsByObjectIdWithResponses(documentId, ObjectType.COLLABORATION_QUESTION);
 
       const getCommentsWithLike = comments.map(async (comment) => {
-        const { data: isLikedByUser } = await isCollaborationCommentLikedByUser({ commentId: comment.id });
+        const { data: isLikedByUser } = await isCommentLikedByUser({ commentId: comment.id });
         return { ...comment, isLikedByUser };
       });
 
       const commentsWithUserLike = await getPromiseResults(getCommentsWithLike);
       return mapToCollaborationQuestion(questionData, commentsWithUserLike);
     });
-
     const collaborationQuestions = await getPromiseResults(mapToEntities);
     return collaborationQuestions;
   } catch (err) {
@@ -137,7 +136,7 @@ export async function getPlatformFeedbackCollaborationQuestion() {
   }
 }
 
-export const isCollaborationCommentLikedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
+export const isCommentLikedByUser = withAuth(async (user: UserSession, body: { commentId: string }) => {
   try {
     const isLikedBy = await isCommentLikedBy(dbClient, body.commentId, user.providerId);
     return { status: StatusCodes.OK, data: isLikedBy };

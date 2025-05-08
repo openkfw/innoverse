@@ -2,9 +2,9 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { UserSession } from '@/common/types';
+import { ObjectType, UserSession } from '@/common/types';
 import { handleFeedbackSchema } from '@/components/landing/feedbackSection/validationSchema';
-import { addCollaborationComment } from '@/services/collaborationCommentService';
+import { addUserComment } from '@/components/newsPage/threads/actions';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
@@ -22,14 +22,14 @@ export const saveFeedback = withAuth(
       if (validatedParams.status === StatusCodes.OK && question) {
         const { feedback, showOnProjectPage } = body;
 
-        await addCollaborationComment({
-          comment: {
-            projectId: question.projectId,
-            questionId: question.collaborationQuestionId,
-            text: feedback,
-            anonymous: showOnProjectPage,
-          },
-          user,
+        await addUserComment({
+          projectId: question.projectId,
+          comment: feedback,
+          objectId: question.collaborationQuestionId,
+          objectType: ObjectType.COLLABORATION_QUESTION,
+          additionalObjectId: question.projectId,
+          additionalObjectType: ObjectType.PROJECT,
+          anonymous: showOnProjectPage,
         });
         return {
           status: StatusCodes.OK,

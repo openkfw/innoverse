@@ -10,7 +10,6 @@ import Typography from '@mui/material/Typography';
 
 import { useNewsFeed } from '@/app/contexts/news-feed-context';
 import { ObjectType } from '@/common/types';
-import { NewsCollaborationCommentThread } from '@/components/newsPage/threads/NewsCollaborationCommentThread';
 import * as m from '@/src/paraglide/messages.js';
 
 import { CommonSkeleton } from '../common/skeletons/CommonSkeleton';
@@ -18,10 +17,11 @@ import { CommonSkeleton } from '../common/skeletons/CommonSkeleton';
 import NewsCardWrapper from './cards/common/NewsCardWrapper';
 import NewsCollabQuestionCard from './cards/NewsCollabQuestionCard';
 import NewsEventCard from './cards/NewsEventCard';
+import NewsPostCard from './cards/NewsPostCard';
 import NewsProjectCard from './cards/NewsProjectCard';
 import NewsSurveyCard from './cards/NewsSurveyCard';
-import { NewsPostThread } from './threads/NewsPostThread';
-import { NewsUpdateThread } from './threads/NewsUpdateThread';
+import NewsUpdateCard from './cards/NewsUpdateCard';
+import NewsItemThread from './threads/NewsItemThread';
 
 interface NewsProps {
   sx?: SxProps;
@@ -63,39 +63,26 @@ export const NewsFeed = (props: NewsProps) => {
 const NewsFeedContent = () => {
   const { feed } = useNewsFeed();
 
+  const cardComponentMap = {
+    [ObjectType.UPDATE]: NewsUpdateCard,
+    [ObjectType.PROJECT]: NewsProjectCard,
+    [ObjectType.EVENT]: NewsEventCard,
+    [ObjectType.COLLABORATION_QUESTION]: NewsCollabQuestionCard,
+    [ObjectType.SURVEY_QUESTION]: NewsSurveyCard,
+    [ObjectType.POST]: NewsPostCard,
+  };
+
   return (
     <Stack spacing={2} direction="column">
-      {feed.map((entry, key) => (
-        <NewsCardWrapper key={key}>
-          {(() => {
-            switch (entry.type) {
-              case ObjectType.UPDATE:
-                return <NewsUpdateThread entry={entry} key={`${key}-${entry.item.id}`} />;
-
-              case ObjectType.PROJECT:
-                return <NewsProjectCard entry={entry} />;
-
-              case ObjectType.EVENT:
-                return <NewsEventCard entry={entry} />;
-
-              case ObjectType.COLLABORATION_QUESTION:
-                return <NewsCollabQuestionCard entry={entry} />;
-
-              case ObjectType.COLLABORATION_COMMENT:
-                return <NewsCollaborationCommentThread entry={entry} />;
-
-              case ObjectType.SURVEY_QUESTION:
-                return <NewsSurveyCard entry={entry} />;
-
-              case ObjectType.POST:
-                return <NewsPostThread entry={entry} key={`${key}-${entry.item.id}`} />;
-
-              default:
-                return null;
-            }
-          })()}
-        </NewsCardWrapper>
-      ))}
+      {feed.map((entry) => {
+        const Card = cardComponentMap[entry.type];
+        if (!Card) return null;
+        return (
+          <NewsCardWrapper key={`${entry.type}-${entry.item.id}`}>
+            <NewsItemThread Card={Card} entry={entry} />
+          </NewsCardWrapper>
+        );
+      })}
     </Stack>
   );
 };

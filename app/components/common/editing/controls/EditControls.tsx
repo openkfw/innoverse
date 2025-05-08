@@ -56,7 +56,7 @@ export const EditControls = (props: EditControlsProps) => {
   };
 
   return (
-    <Stack direction={'row'}>
+    <Stack direction="row">
       <IconButton onClick={handleMenuOpen} aria-label="more options" sx={menuIconButtonStyles}>
         <MoreVertIcon sx={{ color: '#41484C' }} />
       </IconButton>
@@ -91,7 +91,6 @@ export const EditControls = (props: EditControlsProps) => {
           </ListItemText>
         </MenuItem>
       </Menu>
-
       <ConfirmDeleteDialog open={openDeleteDialog} onConfirm={confirmDelete} onCancel={cancelDelete} />
     </Stack>
   );
