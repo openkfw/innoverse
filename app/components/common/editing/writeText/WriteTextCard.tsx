@@ -39,7 +39,7 @@ interface WriteTextCardProps {
     projectName?: string;
   };
   avatar?: UserAvatarProps;
-  submitButton?: React.ReactNode;
+  getSubmitButton?: (disabled: boolean) => JSX.Element;
   disableAvatar?: boolean;
   disabled?: boolean;
   sx?: SxProps;
@@ -53,7 +53,7 @@ const WriteTextCard = ({
   metadata,
   onSubmit,
   onDiscard,
-  submitButton,
+  getSubmitButton,
   defaultValues,
   disableAvatar = false,
   disabled = false,
@@ -146,7 +146,9 @@ const WriteTextCard = ({
             </IconButton>
           ) : (
             <div onClick={form.handleSubmit(submit)}>
-              {submitButton ?? (
+              {getSubmitButton ? (
+                getSubmitButton(!formState.isValid)
+              ) : (
                 <InteractionButton
                   projectName={metadata?.projectName}
                   interactionType={InteractionType.COMMENT_SEND}

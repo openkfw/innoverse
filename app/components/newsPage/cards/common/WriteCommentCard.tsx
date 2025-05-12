@@ -22,18 +22,23 @@ export const WriteCommentCard = ({ content, onSubmit, onDiscard }: WriteCommentC
         defaultValues={{ text: content.text }}
         disableAvatar
         sx={{ mt: 2 }}
-        submitButton={
-          <CustomButton
-            themeVariant="secondary"
-            sx={{ mr: 0 }}
-            style={{ marginRight: 0 }}
-            startIcon={<CheckIcon style={{ marginRight: 0 }} sx={{ ml: 1, pr: 0 }} />}
-            endIcon={<></>}
-          >
-            {m.components_newsPage_cards_common_writeCommentCard_done()}
-          </CustomButton>
-        }
+        getSubmitButton={getSubmitButton}
       />
     </>
+  );
+};
+
+const getSubmitButton = (disabled: boolean) => {
+  return (
+    <CustomButton
+      themeVariant="secondary"
+      sx={{ mr: 0 }}
+      style={{ marginRight: 0 }}
+      disabled={disabled}
+      startIcon={<CheckIcon style={{ marginRight: 0 }} sx={{ ml: 1, pr: 0 }} />}
+      endIcon={<></>}
+    >
+      {m.components_newsPage_cards_common_writeCommentCard_done()}
+    </CustomButton>
   );
 };
