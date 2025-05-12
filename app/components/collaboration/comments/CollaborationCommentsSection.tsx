@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 
 import { CollaborationQuestion, ObjectType } from '@/common/types';
@@ -20,7 +18,7 @@ const CollaborationCommentsSection = (props: CommentsProps) => {
         type: ObjectType.COLLABORATION_QUESTION,
       }}
       enableCommenting={true}
-      maxNumberOfComments={1}
+      maxNumberOfComments={2}
       disableDivider
     />
   );

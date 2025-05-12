@@ -21,8 +21,9 @@ import {
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
-import { mapToBasicCollaborationQuestion } from './mappings';
 import { getCommentsByObjectIdWithResponses } from '../comments/requests';
+
+import { mapToBasicCollaborationQuestion } from './mappings';
 
 const logger = getLogger();
 

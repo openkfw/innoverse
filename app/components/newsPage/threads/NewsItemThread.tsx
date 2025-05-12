@@ -11,23 +11,13 @@ interface NewsItemThreadProps {
   showCommentCount?: boolean;
 }
 
-const NewsItemThread = ({
-  entry,
-  Card,
-  enableCommenting = false,
-  showCommentCount = false,
-  maxNumberOfComments = 0,
-  disableDivider,
-}: NewsItemThreadProps) => {
+const NewsItemThread = ({ entry, Card, ...rest }: NewsItemThreadProps) => {
   return (
     <CommentThread
       item={entry.item}
       itemType={entry.type}
       card={Card ? <Card entry={entry} /> : <></>}
-      enableCommenting={enableCommenting}
-      disableDivider={disableDivider}
-      showCommentCount={showCommentCount}
-      maxNumberOfComments={maxNumberOfComments}
+      {...rest}
       renderComment={(comment, idx, deleteComment, updateComment) => (
         <NewsCommentThread
           key={`${idx}-${comment.id}`}
