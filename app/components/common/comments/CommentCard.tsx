@@ -64,17 +64,7 @@ export const CommentCard = (props: CommentCardProps) => {
       onDiscard={editingInteractions.onCancel}
       defaultValues={{ text: comment.text }}
       metadata={{ projectName }}
-      submitButton={
-        <CustomButton
-          themeVariant="secondary"
-          sx={{ mr: 0 }}
-          style={{ marginRight: 0 }}
-          startIcon={<CheckIcon style={{ marginRight: 0 }} sx={{ ml: 1, pr: 0 }} />}
-          endIcon={<></>}
-        >
-          {m.components_common_comments_commentCard_done()}
-        </CustomButton>
-      }
+      getSubmitButton={getSubmitButton}
     />
   ) : (
     <TextCard
@@ -92,5 +82,20 @@ export const CommentCard = (props: CommentCardProps) => {
         />
       }
     />
+  );
+};
+
+const getSubmitButton = (disabled: boolean) => {
+  return (
+    <CustomButton
+      themeVariant="secondary"
+      sx={{ mr: 0 }}
+      style={{ marginRight: 0 }}
+      disabled={disabled}
+      startIcon={<CheckIcon style={{ marginRight: 0 }} sx={{ ml: 1, pr: 0 }} />}
+      endIcon={<></>}
+    >
+      {m.components_common_comments_commentCard_done()}
+    </CustomButton>
   );
 };
