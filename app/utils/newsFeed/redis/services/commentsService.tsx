@@ -1,5 +1,6 @@
 import { AggregateGroupByReducers, AggregateSteps, SearchOptions } from 'redis';
 
+import { ObjectType } from '@/common/types';
 import { InnoPlatformError, redisError } from '@/utils/errors';
 import { getPromiseResults, getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
@@ -8,7 +9,6 @@ import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/re
 import { NewsType, RedisNewsComment, RedisNewsFeedEntry } from '../models';
 import { getRedisClient, RedisClient, RedisIndex } from '../redisClient';
 import { getNewsFeedEntryByKey } from '../redisService';
-import { ObjectType } from '@/common/types';
 
 const logger = getLogger();
 
@@ -216,8 +216,9 @@ async function searchComments(client: RedisClient, index: RedisIndex, query: str
     adjustedLimit = { from: 0, size: 0 };
   }
 
-  // @ts-ignore
-  const comments = await client.ft.aggregate(index, query, {
+  // The "SORTBY" is not allowed as a STEP, but the aggregation does not work without this step
+  // Typescript marks this as a warning, so the workaround is to cast the type to "any"
+  const options: any = {
     STEPS: [
       {
         type: AggregateSteps.SORTBY,
@@ -248,11 +249,15 @@ async function searchComments(client: RedisClient, index: RedisIndex, query: str
     ],
     PARAMS: searchOptions.PARAMS,
     DIALECT: 2,
-  });
+  };
+  const comments = await client.ft.aggregate(index, query, options);
 
   if (comments) {
-    return comments.results.map((result: Record<string, any>) => {
-      return { itemId: result.itemId, type: result.itemType };
+    return comments.results.map((result) => {
+      return {
+        itemId: result['itemId'],
+        type: result['itemType'],
+      } as { itemId: string; type: string };
     });
   }
   return [];

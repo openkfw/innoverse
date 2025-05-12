@@ -35,17 +35,15 @@ const ProjectCommentsSection = ({ project }: { project: Project }) => {
         </List>
       </Stack>
 
-      <Stack spacing={3}>
-        <NewsItemThread
-          entry={{
-            item: project,
-            type: ObjectType.PROJECT,
-          }}
-          enableCommenting={true}
-          showCommentCount={true}
-          maxNumberOfComments={5}
-        />
-      </Stack>
+      <NewsItemThread
+        entry={{
+          item: project,
+          type: ObjectType.PROJECT,
+        }}
+        enableCommenting={true}
+        showCommentCount={true}
+        maxNumberOfComments={5}
+      />
     </Stack>
   );
 };
@@ -53,7 +51,6 @@ const ProjectCommentsSection = ({ project }: { project: Project }) => {
 export default ProjectCommentsSection;
 
 // Comment  Section Styles
-
 const containerStyles = {
   mt: 3,
   ml: 1,
