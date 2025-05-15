@@ -140,6 +140,56 @@ const serverEnvConfig = createEnvConfig({
       defaultRule: z.string().optional(),
     },
 
+    // SMTP
+    EMAIL_USER: {
+      stages: ['production'],
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+    EMAIL_PASS: {
+      stages: ['production'],
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+    EMAIL_HOST: {
+      stages: ['production'],
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+    EMAIL_PORT: {
+      stages: ['production'],
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+
+    // Elaine
+    ELAINE_ENDPOINT: {
+      stages: runtimeStages,
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+    ELAINE_USER: {
+      stages: runtimeStages,
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+    ELAINE_PASS: {
+      stages: runtimeStages,
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+    ELAINE_WEEKLY_TEMPLATE_ID: {
+      stages: runtimeStages,
+      //integer from string
+      defaultRule: z.number({ coerce: true }).int().default(-1),
+      required: true,
+    },
+    NOTIFICATION_EMAIL_FROM: {
+      stages: runtimeStages,
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+
     // Application Insights
     APP_INSIGHTS_SERVICE_NAME: {
       stages: runtimeStages,
@@ -206,6 +256,7 @@ const serverEnvConfig = createEnvConfig({
       errorMessage:
         'Looks like the required environment variables for push-notifications are not set in the UI but in the server (or vice versa)',
     },
+
     {
       variables: [
         'APP_INSIGHTS_SERVICE_NAME',
