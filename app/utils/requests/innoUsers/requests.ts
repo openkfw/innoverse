@@ -19,6 +19,7 @@ import {
 } from '@/utils/requests/innoUsers/mutations';
 import {
   GetAllInnoUsers,
+  GetInnoUsersByIdsQuery,
   GetEmailsByUsernamesQuery,
   GetInnoUserByEmailQuery,
   GetInnoUserByProviderIdQuery,
@@ -47,7 +48,7 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
     const createdUser = mapToUser(userData);
 
     if (createdUser.email)
-      await updateEmailPreferencesForUser(dbClient, userData.id, {
+      await updateEmailPreferencesForUser(dbClient, userData.documentId, {
         email: createdUser.email,
         username,
         weekly: true,
@@ -366,4 +367,15 @@ export async function uploadFileImage(image: Blob, fileName: string) {
     .then((result) => {
       return result as UploadImageResponse[];
     });
+}
+
+export async function getInnoUsersByIds(ids: string[]): Promise<User[]> {
+  try {
+    const response = await strapiGraphQLFetcher(GetInnoUsersByIdsQuery, { ids });
+    const users = response.innoUsers.map(mapToUser);
+    return users;
+  } catch (error) {
+    console.error('Failed to fetch users by ids:', error);
+    throw error;
+  }
 }

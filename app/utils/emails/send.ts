@@ -1,93 +1,120 @@
 import { encode } from 'next-auth/jwt';
-import { render } from '@react-email/components';
-import nodemailer from 'nodemailer';
-import Mail from 'nodemailer/lib/mailer';
 
 import { serverConfig } from '@/config/server';
-import SMTPPool from 'nodemailer/lib/smtp-pool';
 
-declare module 'nodemailer' {
-  function getTestMessageUrl(info: SMTPPool.SentMessageInfo): string | false;
-}
+type EmailParams = {
+  from: string;
+  to: string;
+  subject: string;
+  body: string;
+};
 
-const dkim = !!serverConfig.DKIM_DOMAIN
-  ? {
-      domainName: serverConfig.DKIM_DOMAIN,
-      keySelector: serverConfig.DKIM_KEY_SELECTOR,
-      privateKey: serverConfig.DKIM_PRIVATE_KEY,
-    }
-  : undefined;
+export async function sendEmail({ from, to, subject, body }: EmailParams, templateId: number) {
+  const url = `${serverConfig.ELAINE_ENDPOINT}/api_sendSingleTransaction`;
+  const user = serverConfig.ELAINE_USER;
+  const pass = serverConfig.ELAINE_PASS;
 
-const transporter = nodemailer.createTransport({
-  host: serverConfig.EMAIL_HOST,
-  port: serverConfig.EMAIL_PORT,
-  secure: serverConfig.EMAIL_PORT === 465,
-  auth: {
-    user: serverConfig.EMAIL_USER,
-    pass: serverConfig.EMAIL_PASS,
-  },
-  dkim,
-  pool: true,
-});
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    Authorization: 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64'),
+  };
 
-if (['development', 'test'].includes(process.env.NODE_ENV)) {
-  const testAccount = await nodemailer.createTestAccount();
+  const content = {
+    c_email: to,
+    t_subject: subject,
+    t_html: body,
+    t_sender: from,
+    t_sendername: 'InnoVerse',
+  };
 
-  console.error('Using test email credentials: \n', testAccount);
+  const json = [{ content }, templateId];
 
-  const { transporter: testTransporter } = nodemailer.createTransport({
-    host: testAccount.smtp.host,
-    port: testAccount.smtp.port,
-    auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
-    },
-    dkim,
-    pool: true,
+  const req_body = new URLSearchParams({
+    json: JSON.stringify(json),
+  });
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: req_body,
   });
 
-  transporter.transporter = testTransporter;
+  if (!response.ok) {
+    console.error('Error sending single email:', response.statusText);
+    throw new Error(`Error sending bulk email: ${response.statusText}`);
+  }
+  // JSON response ususally means an error occurred
+  if (response.headers.get('content-type')?.includes('application/json')) {
+    const data = await response.json();
+    console.error('Error sending single email:', data);
+    throw new Error(`Error sending single email: ${data}`);
+  }
+  // Successful response will return a table
+  const text = await response.text();
+  console.log('Single email sent:', text);
+  return text;
 }
 
-// verify connection configuration
-transporter.verify((error: unknown) => {
-  if (error) {
-    console.log(error);
-  } else {
-    console.log('SMTP server is ready to take messages');
-  }
-});
+export async function sendBulkEmail(emails: EmailParams[], templateId: number) {
+  // if (serverConfig.NODE_ENV !== 'production') {
+  //   const { sendSMTP } = await import('./smtp');
+  //   return Promise.all(emails.map(({ from, to, subject, body }) => sendSMTP(from, to, subject, body)));
+  // }
 
-/**
- * Send an email using the nodemailer transporter
- * @param from The email address to send from, supports name format like '"Maddison Foo Koch" <maddison53@ethereal.email>'
- * @param to The email address(es) to send to as a comma separated list like 'bar@example.com, baz@example.com'
- * @param subject The subject of the email
- * @param body The HTML content of the email
- */
-export async function sendEmail(
-  from: string,
-  to: string,
-  subject: string,
-  body: string | React.ReactElement,
-  opts: Mail.Options = {},
-) {
-  try {
-    const html = typeof body === 'string' ? body : await render(body);
-    const info = await transporter.sendMail({ from, to, subject, html, ...opts });
+  const url = `${serverConfig.ELAINE_ENDPOINT}/bulk/api_sendSingleTransaction`;
+  const user = serverConfig.ELAINE_USER;
+  const pass = serverConfig.ELAINE_PASS;
 
-    if (['development', 'test'].includes(process.env.NODE_ENV))
-      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    else console.log('Message sent: %s', info.messageId);
-  } catch (error) {
-    if (error instanceof Error && 'responseCode' in error && error.responseCode === 429) {
-      console.error('Rate limited by email provider, retrying in 10 seconds');
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-      await sendEmail(from, to, subject, body, opts);
-    } else {
-      console.error('Error sending email:', error);
-    }
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    Authorization: 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64'),
+  };
+
+  const json = emails.map(({ from, to, subject, body }) => {
+    const content = {
+      c_email: to,
+      t_subject: subject,
+      t_html: body,
+      t_sender: from,
+      t_sendername: 'InnoVerse',
+    };
+
+    return [{ content }, templateId];
+  });
+
+  const body = new URLSearchParams({
+    json: JSON.stringify([json, false]),
+  });
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body,
+  });
+
+  if (!response.ok) {
+    console.error('Error sending bulk email:', response.statusText);
+    throw new Error(`Error sending bulk email: ${response.statusText}`);
   }
+  // JSON response on bulk endpoint ususally means an error occurred
+  if (response.headers.get('content-type')?.includes('application/json')) {
+    const data = await response.json();
+    console.error('Error sending bulk email:', data);
+    throw new Error(`Error sending bulk email: ${data}`);
+  }
+  // Successful response will return a table
+  const text = await response.text();
+  const data = parseResultTable(text);
+  console.log('Bulk email sent:', data);
+  return data;
+}
+
+function parseResultTable(html: string) {
+  // structure: <table><tr><td>0</td><td>1072163</td></tr><tr><td>1</td><td>1072164</td></tr></table>
+  const data = html.match(/<tr><td>(\d+)<\/td><td>(\d+)<\/td><\/tr>/g);
+  if (!data) return [];
+  return data.map((row) => {
+    const [, id, result] = row.match(/<tr><td>(\d+)<\/td><td>(\d+)<\/td><\/tr>/) ?? [];
+    return { id: parseInt(id, 10), result: parseInt(result, 10) };
+  });
 }
 
 export async function generateUnsubscribeUrl(email: string, sub: string, name: string) {
