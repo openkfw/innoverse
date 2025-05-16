@@ -49,7 +49,7 @@ interface CommentThreadProps {
 type CommentState =
   | { isVisible: false; isLoading: false; isExpanded?: false; data?: undefined }
   | { isVisible?: false; isLoading: true; isExpanded?: false; data?: undefined }
-  | { isVisible: true; isLoading?: false; isExpanded?: true | false; data: CommentWithResponses[] }
+  | { isVisible: true; isLoading?: false; isExpanded?: boolean; data: CommentWithResponses[] }
   | { isVisible: false; isLoading?: false; isExpanded?: false; data: CommentWithResponses[] };
 
 export const CommentThread = (props: CommentThreadProps) => {
@@ -149,7 +149,11 @@ export const useCommentThread = (props: CommentThreadProps) => {
     maxNumberOfComments = 0,
     showCommentCount = false,
   } = props;
-  const [comments, setComments] = useState<CommentState>({ isVisible: false, isLoading: false, isExpanded: false });
+  const [comments, setComments] = useState<CommentState>({
+    isVisible: false,
+    isLoading: false,
+    isExpanded: false,
+  });
   const [totalCommentCount, setTotalCommentCount] = useState<number>(() => {
     if (typeof item.commentCount === 'number') return item.commentCount;
     if (Array.isArray(item.comments) && item.comments.every((c) => typeof c === 'string')) {
@@ -157,9 +161,14 @@ export const useCommentThread = (props: CommentThreadProps) => {
     }
     return 0;
   });
+  const [remainingCommentCount, setRemainingCommentCount] = useState<number | null>(null);
 
   const { isSearchFilterActive } = useNewsFeed();
   const state = useRespondingState();
+
+  const getVisibleCountWithResponses = (comments: CommentWithResponses[]) => {
+    return comments.reduce((acc, comment) => acc + 1 + (comment.comments?.length || 0), 0);
+  };
 
   const commentsExist = useMemo(
     () => (comments.data?.length ?? 0) > 0 || totalCommentCount > 0,
@@ -174,27 +183,25 @@ export const useCommentThread = (props: CommentThreadProps) => {
     let totalVisible = 0;
     for (const comment of comments.data) {
       if (totalVisible + 1 > maxNumberOfComments) break;
-
       result.push(comment);
       totalVisible += 1;
     }
     return result;
   }, [comments.isExpanded, comments.data, maxNumberOfComments, isSearchFilterActive]);
 
-  const visibleCountWithResponses = visibleComments.reduce((acc, comment) => {
-    return acc + 1 + (comment.comments?.length ?? 0);
-  }, 0);
-  const remainingCommentCount = totalCommentCount - visibleCountWithResponses;
+  useEffect(() => {
+    if (remainingCommentCount === null && totalCommentCount !== null) {
+      setRemainingCommentCount(Math.max(0, totalCommentCount - maxNumberOfComments));
+    }
+  }, [remainingCommentCount, totalCommentCount, maxNumberOfComments]);
 
   useEffect(() => {
-    if (item.comments && isSearchFilterActive) {
-      const searchedComments = item.comments.filter((comment) => typeof comment !== 'string');
-      if (searchedComments.length > 0) {
-        setComments({ isVisible: true, data: searchedComments, isLoading: false, isExpanded: true });
-        setTotalCommentCount(searchedComments.length);
-      }
+    if (totalCommentCount !== null && visibleComments !== null) {
+      const visibleWithResponses = getVisibleCountWithResponses(visibleComments);
+      const remaining = Math.max(0, totalCommentCount - visibleWithResponses);
+      setRemainingCommentCount(remaining);
     }
-  }, [item.comments, isSearchFilterActive]);
+  }, [totalCommentCount, visibleComments]);
 
   const fetchComments = async (limit?: number) => {
     const result = await getCommentsByObjectId({ objectId: item.id, objectType: itemType, limit });
@@ -277,6 +284,7 @@ export const useCommentThread = (props: CommentThreadProps) => {
         isExpanded: comments.isExpanded,
       });
       setTotalCommentCount((prev) => prev + 1);
+      setRemainingCommentCount(null);
     } catch (error) {
       console.error('Error adding comment:', error);
       errorMessage({ message: m.components_newsPage_thread_add_comment_error() });
@@ -293,6 +301,7 @@ export const useCommentThread = (props: CommentThreadProps) => {
     const totalToRemove = 1 + responsesCount;
     setTotalCommentCount((prev) => Math.max(0, prev - totalToRemove));
     setComments({ isVisible: true, data: filtered, isExpanded: comments.isExpanded });
+    setRemainingCommentCount(null);
   };
 
   const updateComment = (comment: CommentWithResponses) => {
@@ -318,7 +327,8 @@ export const useCommentThread = (props: CommentThreadProps) => {
       !comments.isLoading &&
       !comments.isExpanded &&
       commentsExist &&
-      totalCommentCount - maxNumberOfComments > 0 &&
+      remainingCommentCount !== null &&
+      remainingCommentCount > 0 &&
       !isSearchFilterActive,
     showCloseThreadButton: comments.isVisible && commentsExist && comments.isExpanded,
     showDivider: !disableDivider && (commentsExist || state.isResponding(item, 'comment')),

@@ -33,56 +33,52 @@ export async function getCommentsByObjectIdAndType(
   sort: 'asc' | 'desc' = 'desc',
 ) {
   try {
-    // TODO: refactor
-    const totalCount = await client.comment.count({
-      where: {
-        objectId,
-        objectType: objectType as PrismaObjectType,
-      },
-    });
-    const rootComments = await client.comment.findMany({
-      where: {
-        objectId,
-        objectType: objectType as PrismaObjectType,
-        parentId: null,
-      },
-      orderBy: { createdAt: sort },
-      ...(limit && { take: limit }),
-      ...defaultParams,
-    });
-    if (rootComments.length === 0) {
+    const baseFilter = {
+      objectId,
+      objectType: objectType as PrismaObjectType,
+    };
+
+    const [totalCount, rootComments] = await Promise.all([
+      client.comment.count({ where: baseFilter }),
+      client.comment.findMany({
+        where: {
+          ...baseFilter,
+          // Get only root comments if the limit is set
+          ...(limit ? { parentId: null } : {}),
+        },
+        orderBy: { createdAt: sort },
+        ...(limit ? { take: limit } : {}),
+        ...defaultParams,
+      }),
+    ]);
+    if (!rootComments.length) {
       return { comments: [], totalCount };
     }
 
-    const rootIds = rootComments.map((c) => c.id);
-    const childComments = await client.comment.findMany({
-      where: {
-        objectId,
-        objectType: objectType as PrismaObjectType,
-        parentId: { in: rootIds },
-      },
-      orderBy: { createdAt: sort },
-      ...defaultParams,
-    });
-
-    const comments: typeof rootComments = [];
-    for (const root of rootComments) {
-      comments.push(root);
-      const children = childComments.filter((c) => c.parentId === root.id);
-      comments.push(...children);
+    let comments: typeof rootComments = rootComments;
+    // If limit is set, we need to get the child comments for the root comments
+    if (limit) {
+      const rootIds = rootComments.map((c) => c.id);
+      const childComments = await client.comment.findMany({
+        where: {
+          ...baseFilter,
+          parentId: { in: rootIds },
+        },
+        orderBy: { createdAt: sort },
+        ...defaultParams,
+      });
+      comments = rootComments.flatMap((root) => {
+        const responses = childComments.filter((c) => c.parentId === root.id);
+        return [root, ...responses];
+      });
     }
-
-    return {
-      comments,
-      totalCount,
-    };
+    return { comments, totalCount };
   } catch (err) {
     const error: InnoPlatformError = dbError(`Get comments by object with id: ${objectId}`, err as Error, objectId);
     logger.error(error);
     throw err;
   }
 }
-
 export async function getCommentById(client: PrismaClient, commentId: string) {
   try {
     return await client.comment.findFirst({
