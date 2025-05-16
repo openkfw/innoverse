@@ -6,14 +6,28 @@ import { ObjectType, UserSession } from '@/common/types';
 import { findFollowedObjectIds, isFollowedBy } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { findsReactionsForObjects } from '@/repository/db/reaction';
-import { findUserSurveyVote } from '@/repository/db/survey_votes';
+import { findUserSurveyVote, getSurveyVotes } from '@/repository/db/survey_votes';
 import { getPromiseResults, groupBy } from '@/utils/helpers';
 
 import { withAuth } from '../auth';
-import { dbError, InnoPlatformError } from '../errors';
+import { dbError, InnoPlatformError, strapiError } from '../errors';
 import getLogger from '../logger';
 
-import { findReactionByUser } from './updates/requests';
+import { getProjectCollaborationComments } from './collaborationComments/requests';
+import { mapToCollaborationQuestion } from './collaborationQuestions/mappings';
+import { isCollaborationCommentLikedByUser } from './collaborationQuestions/requests';
+import { mapToOpportunity } from './opportunities/mappings';
+import { userParticipatesInOpportunity } from './opportunities/requests';
+import { findReactionByUser, getUpdatesWithAdditionalData } from './updates/requests';
+import { GetProjectData } from './graphqlQueries';
+import strapiGraphQLFetcher from './strapiGraphQLFetcher';
+import { mapToQuestion } from './questions/mappings';
+import { RequestError } from '@/entities/error';
+import { findUserVote, getSurveyQuestionsWithAdditionalData } from './surveyQuestions/requests';
+import { mapToSurveyQuestion, mapToSurveyQuestions } from './surveyQuestions/mappings';
+import { mapToProjectUpdates } from './updates/mappings';
+import { mapToEvents } from './events/mappings';
+import { getEventsWithAdditionalData } from './events/requests';
 
 const logger = getLogger();
 
@@ -131,3 +145,74 @@ export const findSurveyUserVote = withAuth(async (user: UserSession, body: { obj
     throw err;
   }
 });
+
+export const getProjectData = async (projectId: string) => {
+  try {
+    const response = await strapiGraphQLFetcher(GetProjectData, { projectId, now: new Date() });
+
+    // Collaboration questions
+    const collaborationQuestions = await getPromiseResults(
+      response.collaborationQuestions.map(async (questionData) => {
+        const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData?.documentId });
+        const comments = getComments.data ?? [];
+        const getCommentsWithLike = comments.map(async (comment) => {
+          const { data: isLikedByUser } = await isCollaborationCommentLikedByUser({ commentId: comment.id });
+          return { ...comment, isLikedByUser };
+        });
+        const commentsWithUserLike = await getPromiseResults(getCommentsWithLike);
+        return mapToCollaborationQuestion(questionData, commentsWithUserLike);
+      }),
+    );
+
+    // Opportunities
+    const opportunities = await getPromiseResults(
+      response.opportunities.map(async (opportunityData) => {
+        const { data: isParticipant } = await userParticipatesInOpportunity({
+          opportunityId: opportunityData.documentId,
+        });
+        return mapToOpportunity(opportunityData, isParticipant);
+      }),
+    );
+
+    // Questions
+    const questions = response.questions.map((question) => mapToQuestion(question));
+
+    // Survey questions
+    const surveyQuestions = mapToSurveyQuestions(response.surveyQuestions);
+    const surveyQuestionsWithAdditionalData = await getSurveyQuestionsWithAdditionalData(surveyQuestions);
+
+    // Updates
+    const updates = mapToProjectUpdates(response.updates);
+    const updatesWithAdditionalData = await getUpdatesWithAdditionalData(updates);
+
+    // Future Events
+    const futureEvents = mapToEvents(response.futureEvents);
+    const futureEventsWithAdditionalData = await getEventsWithAdditionalData(futureEvents);
+
+    // Past Events
+    const pastEvents = mapToEvents(response.pastEvents);
+    const pastEventsWithAdditionalData = await getEventsWithAdditionalData(pastEvents);
+
+    return {
+      collaborationQuestions,
+      opportunities,
+      questions,
+      surveyQuestions: surveyQuestionsWithAdditionalData,
+      updates: updatesWithAdditionalData,
+      futureEvents: futureEventsWithAdditionalData,
+      pastEvents: pastEventsWithAdditionalData,
+    };
+  } catch (err) {
+    const error = strapiError('Getting project data by project id', err as RequestError, projectId);
+    logger.error(error);
+  }
+  return {
+    collaborationQuestions: [],
+    updates: [],
+    opportunities: [],
+    questions: [],
+    surveyQuestions: [],
+    futureEvents: [],
+    pastEvents: [],
+  };
+};
