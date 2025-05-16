@@ -18,9 +18,9 @@ const NewsItemThread = ({ entry, Card, ...rest }: NewsItemThreadProps) => {
       itemType={entry.type}
       card={Card ? <Card entry={entry} /> : <></>}
       {...rest}
-      renderComment={(comment, idx, deleteComment, updateComment) => (
+      renderComment={(comment, _idx, deleteComment, updateComment) => (
         <NewsCommentThread
-          key={`${idx}-${comment.id}`}
+          key={`${comment.objectType}-${comment.id}`}
           item={entry.item}
           comment={comment}
           commentType={entry.type}

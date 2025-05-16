@@ -18,7 +18,7 @@ const CollaborationCommentsSection = (props: CommentsProps) => {
         type: ObjectType.COLLABORATION_QUESTION,
       }}
       enableCommenting={true}
-      maxNumberOfComments={2}
+      maxNumberOfComments={1}
       disableDivider
     />
   );

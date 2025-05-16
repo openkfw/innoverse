@@ -42,7 +42,7 @@ const ProjectCommentsSection = ({ project }: { project: Project }) => {
         }}
         enableCommenting={true}
         showCommentCount={true}
-        maxNumberOfComments={5}
+        maxNumberOfComments={1}
       />
     </Stack>
   );

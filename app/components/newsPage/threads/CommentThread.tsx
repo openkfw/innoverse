@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
 
 import AddIcon from '@mui/icons-material/Add';
@@ -47,10 +47,10 @@ interface CommentThreadProps {
 }
 
 type CommentState =
-  | { isVisible: false; isLoading: false; data?: undefined }
-  | { isVisible?: false; isLoading: true; data?: undefined }
-  | { isVisible: true; isLoading?: false; data: CommentWithResponses[] }
-  | { isVisible: false; isLoading?: false; data: CommentWithResponses[] };
+  | { isVisible: false; isLoading: false; isExpanded?: false; data?: undefined }
+  | { isVisible?: false; isLoading: true; isExpanded?: false; data?: undefined }
+  | { isVisible: true; isLoading?: false; isExpanded?: true | false; data: CommentWithResponses[] }
+  | { isVisible: false; isLoading?: false; isExpanded?: false; data: CommentWithResponses[] };
 
 export const CommentThread = (props: CommentThreadProps) => {
   const {
@@ -70,14 +70,15 @@ export const CommentThread = (props: CommentThreadProps) => {
     showCommentCount,
     maxNumberOfComments,
     visibleComments,
-    setShowAllComments,
+    remainingCommentCount,
     totalCommentCountWithResponses,
+    toggleComments,
   } = useCommentThread(props);
   const respondingInteractions = useRespondingInteractions();
 
   useEffect(() => {
     async function fetchData() {
-      if (maxNumberOfComments > 0) await loadComments();
+      if (maxNumberOfComments > 0) await loadComments(maxNumberOfComments);
       if (item && enableCommenting) {
         respondingInteractions.onStart(item, 'respond');
       }
@@ -101,7 +102,24 @@ export const CommentThread = (props: CommentThreadProps) => {
         sx={{ mb: 1, pl: indentComments }}
       />
       {comments.isLoading && <CommentThreadSkeleton sx={{ pl: indentComments, mt: 2 }} />}
-
+      {showLoadCommentsButton && (
+        <Button
+          startIcon={<AddIcon color="primary" fontSize="large" />}
+          sx={{ ...transparentButtonStyles }}
+          onClick={toggleComments}
+        >
+          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} ({remainingCommentCount})
+        </Button>
+      )}
+      {showCloseThreadButton && (
+        <Button
+          startIcon={<RemoveIcon color="primary" fontSize="large" />}
+          sx={{ ...transparentButtonStyles }}
+          onClick={toggleComments}
+        >
+          {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showLess()}
+        </Button>
+      )}
       <Stack spacing={2} sx={{ pl: indentComments }}>
         {visibleComments.map(
           (comment, idx) =>
@@ -113,30 +131,6 @@ export const CommentThread = (props: CommentThreadProps) => {
               () => deleteComment(comment),
               (updatedComment) => updateComment(updatedComment),
             ),
-        )}
-        {showLoadCommentsButton && (
-          <Button
-            startIcon={<AddIcon color="primary" fontSize="large" />}
-            sx={{ ...transparentButtonStyles }}
-            onClick={async () => {
-              if (maxNumberOfComments === 0 && !comments.data) {
-                await loadComments();
-              }
-              setShowAllComments(true);
-            }}
-          >
-            {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showMore()} (
-            {totalCommentCountWithResponses - maxNumberOfComments})
-          </Button>
-        )}
-        {showCloseThreadButton && (
-          <Button
-            startIcon={<RemoveIcon color="primary" fontSize="large" />}
-            sx={{ ...transparentButtonStyles }}
-            onClick={() => setShowAllComments(false)}
-          >
-            {m.components_newsPage_cards_common_threads_itemWithCommentsThread_showLess()}
-          </Button>
         )}
       </Stack>
     </Stack>
@@ -155,8 +149,7 @@ export const useCommentThread = (props: CommentThreadProps) => {
     maxNumberOfComments = 0,
     showCommentCount = false,
   } = props;
-  const [comments, setComments] = useState<CommentState>({ isVisible: false, isLoading: false });
-  const [showAllComments, setShowAllComments] = useState(false);
+  const [comments, setComments] = useState<CommentState>({ isVisible: false, isLoading: false, isExpanded: false });
   const [totalCommentCount, setTotalCommentCount] = useState<number>(() => {
     if (typeof item.commentCount === 'number') return item.commentCount;
     if (Array.isArray(item.comments) && item.comments.every((c) => typeof c === 'string')) {
@@ -166,23 +159,7 @@ export const useCommentThread = (props: CommentThreadProps) => {
   });
 
   const { isSearchFilterActive } = useNewsFeed();
-
-  const countComments = useCallback(
-    (commentsList: CommentWithResponses[] = []): number =>
-      commentsList.reduce((total, comment) => total + 1 + countComments(comment.comments ?? []), 0),
-    [],
-  );
-
-  // Update count of the comments only when needed
-  useEffect(() => {
-    if (
-      typeof item.commentCount !== 'number' &&
-      (!Array.isArray(item.comments) || !item.comments.every((c) => typeof c === 'string')) &&
-      comments.data
-    ) {
-      setTotalCommentCount(countComments(comments.data));
-    }
-  }, [comments.data, countComments, item.commentCount, item.comments]);
+  const state = useRespondingState();
 
   const commentsExist = useMemo(
     () => (comments.data?.length ?? 0) > 0 || totalCommentCount > 0,
@@ -190,42 +167,45 @@ export const useCommentThread = (props: CommentThreadProps) => {
   );
 
   const visibleComments = useMemo(() => {
-    if (!comments.isVisible || !comments.data) return [];
-    if (showAllComments || isSearchFilterActive) return comments.data;
+    if (!comments.data) return [];
+    if (comments.isExpanded || isSearchFilterActive) return comments.data;
 
     const result: CommentWithResponses[] = [];
     let totalVisible = 0;
     for (const comment of comments.data) {
-      const count = 1 + (comment.comments?.length ?? 0);
-      if (totalVisible + count > maxNumberOfComments) break;
+      if (totalVisible + 1 > maxNumberOfComments) break;
 
       result.push(comment);
-      totalVisible += count;
+      totalVisible += 1;
     }
     return result;
-  }, [comments.isVisible, comments.data, maxNumberOfComments, showAllComments, isSearchFilterActive]);
+  }, [comments.isExpanded, comments.data, maxNumberOfComments, isSearchFilterActive]);
 
-  const state = useRespondingState();
+  const visibleCountWithResponses = visibleComments.reduce((acc, comment) => {
+    return acc + 1 + (comment.comments?.length ?? 0);
+  }, 0);
+  const remainingCommentCount = totalCommentCount - visibleCountWithResponses;
 
   useEffect(() => {
     if (item.comments && isSearchFilterActive) {
       const searchedComments = item.comments.filter((comment) => typeof comment !== 'string');
       if (searchedComments.length > 0) {
-        setComments({ isVisible: true, data: searchedComments });
-        setTotalCommentCount(countComments(searchedComments));
+        setComments({ isVisible: true, data: searchedComments, isLoading: false, isExpanded: true });
+        setTotalCommentCount(searchedComments.length);
       }
     }
-  }, [item.comments, isSearchFilterActive, countComments]);
+  }, [item.comments, isSearchFilterActive]);
 
-  const fetchComments = async () => {
-    const result = await getCommentsByObjectId({ objectId: item.id, objectType: itemType });
-    return result.data;
+  const fetchComments = async (limit?: number) => {
+    const result = await getCommentsByObjectId({ objectId: item.id, objectType: itemType, limit });
+    return { comments: result.data?.comments, totalCount: result.data?.totalCount };
   };
 
-  const fetchSortedComments = async () => {
+  const fetchSortedComments = async (limit?: number) => {
     try {
-      const comments = await fetchComments();
-      if (!comments) return;
+      const { comments, totalCount } = await fetchComments(limit);
+      if (!comments || !totalCount) return;
+      setTotalCommentCount(totalCount);
       return comments;
     } catch (error) {
       console.error('Error fetching comments:', error);
@@ -237,14 +217,35 @@ export const useCommentThread = (props: CommentThreadProps) => {
     }
   };
 
-  const loadComments = async () => {
-    setComments({ isLoading: true });
-    const comments = await fetchSortedComments();
-    if (comments) {
-      setComments({ isVisible: true, data: comments });
-      setTotalCommentCount(countComments(comments));
+  const toggleComments = async () => {
+    if (!comments.isExpanded) {
+      await loadComments();
     } else {
-      setComments({ isVisible: false, isLoading: false });
+      setComments((prev) => ({
+        ...prev,
+        isExpanded: false,
+      }));
+    }
+  };
+
+  const loadComments = async (limit?: number) => {
+    setComments({ isLoading: true });
+    const comments = await fetchSortedComments(limit);
+    if (comments) {
+      setComments((prev) => ({
+        ...prev,
+        data: comments,
+        isVisible: true,
+        isExpanded: !limit,
+        isLoading: false,
+      }));
+    } else {
+      setComments((prev) => ({
+        ...prev,
+        isLoading: false,
+        isVisible: false,
+        isExpanded: false,
+      }));
     }
   };
 
@@ -267,12 +268,14 @@ export const useCommentThread = (props: CommentThreadProps) => {
     try {
       const currentComments = comments.data ?? (await fetchSortedComments());
       if (!currentComments) return;
-
       const createdComment = await addComment(commentText);
       if (!createdComment) return;
-
       const newComments = [createdComment, ...currentComments];
-      setComments({ isVisible: true, data: newComments });
+      setComments({
+        data: newComments,
+        isVisible: true,
+        isExpanded: comments.isExpanded,
+      });
       setTotalCommentCount((prev) => prev + 1);
     } catch (error) {
       console.error('Error adding comment:', error);
@@ -286,17 +289,23 @@ export const useCommentThread = (props: CommentThreadProps) => {
 
   const deleteComment = (comment: CommentWithResponses) => {
     const filtered = comments.data?.filter((c) => c.id !== comment.id) ?? [];
-    setComments({ isVisible: true, data: filtered });
-    setTotalCommentCount((prev) => Math.max(0, prev - 1));
+    const responsesCount = Array.isArray(comment.comments) ? comment.comments.length : 0;
+    const totalToRemove = 1 + responsesCount;
+    setTotalCommentCount((prev) => Math.max(0, prev - totalToRemove));
+    setComments({ isVisible: true, data: filtered, isExpanded: comments.isExpanded });
   };
 
   const updateComment = (comment: CommentWithResponses) => {
     if (!comments.data) return;
     const idx = comments.data.findIndex((r) => r.id === comment.id);
     if (idx < 0) return;
-    const updated = [...comments.data];
-    updated[idx] = comment;
-    setComments({ data: updated, isVisible: true });
+    const updatedComments = [...comments.data];
+    updatedComments[idx] = comment;
+    const totalResponses = updatedComments.reduce((sum, c) => {
+      return sum + (Array.isArray(c.comments) ? c.comments.length : 0);
+    }, 0);
+    setTotalCommentCount(updatedComments.length + totalResponses);
+    setComments({ data: updatedComments, isVisible: true, isExpanded: comments.isExpanded });
   };
 
   return {
@@ -307,22 +316,23 @@ export const useCommentThread = (props: CommentThreadProps) => {
     indentComments,
     showLoadCommentsButton:
       !comments.isLoading &&
-      !showAllComments &&
+      !comments.isExpanded &&
       commentsExist &&
       totalCommentCount - maxNumberOfComments > 0 &&
       !isSearchFilterActive,
-    showCloseThreadButton: showAllComments && commentsExist,
+    showCloseThreadButton: comments.isVisible && commentsExist && comments.isExpanded,
     showDivider: !disableDivider && (commentsExist || state.isResponding(item, 'comment')),
     handleAddComment,
     deleteComment,
     updateComment,
     loadComments,
     renderComment,
-    setShowAllComments,
+    toggleComments,
     enableCommenting,
     showCommentCount,
     maxNumberOfComments,
     visibleComments,
+    remainingCommentCount,
     totalCommentCountWithResponses: totalCommentCount,
   };
 };

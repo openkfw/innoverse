@@ -29,19 +29,53 @@ export async function getCommentsByObjectIdAndType(
   client: PrismaClient,
   objectId: string,
   objectType: ObjectType,
+  limit?: number,
   sort: 'asc' | 'desc' = 'desc',
 ) {
   try {
-    return await client.comment.findMany({
+    // TODO: refactor
+    const totalCount = await client.comment.count({
       where: {
         objectId,
         objectType: objectType as PrismaObjectType,
       },
-      orderBy: {
-        createdAt: sort,
+    });
+    const rootComments = await client.comment.findMany({
+      where: {
+        objectId,
+        objectType: objectType as PrismaObjectType,
+        parentId: null,
       },
+      orderBy: { createdAt: sort },
+      ...(limit && { take: limit }),
       ...defaultParams,
     });
+    if (rootComments.length === 0) {
+      return { comments: [], totalCount };
+    }
+
+    const rootIds = rootComments.map((c) => c.id);
+    const childComments = await client.comment.findMany({
+      where: {
+        objectId,
+        objectType: objectType as PrismaObjectType,
+        parentId: { in: rootIds },
+      },
+      orderBy: { createdAt: sort },
+      ...defaultParams,
+    });
+
+    const comments: typeof rootComments = [];
+    for (const root of rootComments) {
+      comments.push(root);
+      const children = childComments.filter((c) => c.parentId === root.id);
+      comments.push(...children);
+    }
+
+    return {
+      comments,
+      totalCount,
+    };
   } catch (err) {
     const error: InnoPlatformError = dbError(`Get comments by object with id: ${objectId}`, err as Error, objectId);
     logger.error(error);

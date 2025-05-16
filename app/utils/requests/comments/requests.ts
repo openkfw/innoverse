@@ -17,16 +17,17 @@ import { mapToComment } from '@/utils/requests/comments/mapping';
 const logger = getLogger();
 
 export const getCommentsByObjectId = withAuth(
-  async (user: UserSession, body: { objectId: string; objectType: ObjectType }) => {
+  async (user: UserSession, body: { objectId: string; objectType: ObjectType; limit?: number }) => {
     try {
-      const commensWithResponses = await getCommentsByObjectIdWithResponses(
+      const commentsWithResponses = await getCommentsByObjectIdWithResponses(
         body.objectId,
         body.objectType,
+        body.limit,
         user.providerId,
       );
       return {
         status: StatusCodes.OK,
-        data: commensWithResponses,
+        data: commentsWithResponses,
       };
     } catch (err) {
       const error: InnoPlatformError = dbError(
@@ -45,8 +46,8 @@ export const getCommentsByObjectId = withAuth(
 
 export const getRedisNewsCommentsWithResponses = async (objectId: string, objectType: ObjectType) => {
   try {
-    const commensWithResponses = await getCommentsByObjectIdWithResponses(objectId, objectType);
-    return mapCommentWithResponsesToRedisNewsComments(commensWithResponses);
+    const { comments: commentsWithResponses } = await getCommentsByObjectIdWithResponses(objectId, objectType);
+    return mapCommentWithResponsesToRedisNewsComments(commentsWithResponses);
   } catch (err) {
     const error: InnoPlatformError = dbError(`Getting news comment by id: ${objectId}`, err as Error, objectId);
     logger.error(error);
@@ -54,10 +55,22 @@ export const getRedisNewsCommentsWithResponses = async (objectId: string, object
   }
 };
 
-export const getCommentsByObjectIdWithResponses = async (objectId: string, objectType: ObjectType, userId?: string) => {
-  const dbComments = await getCommentsByObjectIdAndType(dbClient, objectId, objectType);
+export const getCommentsByObjectIdWithResponses = async (
+  objectId: string,
+  objectType: ObjectType,
+  limit?: number,
+  userId?: string,
+) => {
+  const { comments: dbComments, totalCount } = await getCommentsByObjectIdAndType(
+    dbClient,
+    objectId,
+    objectType,
+    limit,
+  );
+
   const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment, userId)));
-  return setResponses(comments);
+
+  return { comments: setResponses(comments), totalCount };
 };
 
 const setResponses = (comments: CommonCommentProps[]) => {

@@ -26,7 +26,6 @@ export const LikeControl = ({ onLike, isSelected, likeNumber }: LikeControlProps
       sx={mergeStyles(iconButtonOnlyStyles, isSelected ? buttonStylesSelected : buttonStyles)}
     >
       {isSelected ? <FavoriteIcon sx={iconStyles} /> : <FavoriteBorderOutlinedIcon sx={iconStyles} />}
-
       {likeNumber > 0 && <LikeCount />}
     </Button>
   );

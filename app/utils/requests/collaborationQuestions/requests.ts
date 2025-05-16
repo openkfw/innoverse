@@ -34,7 +34,7 @@ export async function getCollaborationQuestionsByProjectId(projectId: string) {
 
     const mapToEntities = questionsData.map(async (questionData) => {
       const { documentId } = questionData;
-      const comments = await getCommentsByObjectIdWithResponses(documentId, ObjectType.COLLABORATION_QUESTION);
+      const { comments } = await getCommentsByObjectIdWithResponses(documentId, ObjectType.COLLABORATION_QUESTION);
 
       const getCommentsWithLike = comments.map(async (comment) => {
         const { data: isLikedByUser } = await isCommentLikedByUser({ commentId: comment.id });

@@ -1,4 +1,4 @@
-import { Comment, CommentLike, ObjectType } from '@/common/types';
+import { Comment, CommentLike, CommentWithResponses, ObjectType } from '@/common/types';
 import { CommentDB, CommentLikeDB } from '@/repository/db/utils/types';
 import { getPromiseResults } from '@/utils/helpers';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';

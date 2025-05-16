@@ -37,8 +37,6 @@
   "components_collaboration_comments_collaborationCommentResponseCard_upvoteError": "Failed to upvote collaboration comment response. Please try again later.",
   "components_collaboration_comments_collaborationCommentResponseCard_deleteError": "Failed to delete collaboration comment response. Please try again later.",
 
-  "components_collaboration_comments_collaborationComments_showMoreComments": "show more comments",
-
   "components_collaboration_comments_collaborationCommentThread_showComments": "Show comments",
   "components_collaboration_comments_collaborationCommentThread_loadError": "Failed to load comment responses. Please try again.",
   "components_collaboration_comments_collaborationCommentThread_submitError": "Submitting your response failed. Please try again.",
@@ -304,7 +302,7 @@
   "components_newsPage_cards_common_writeCommentCard_done": "Done",
 
   "components_newsPage_cards_common_threads_itemWithCommentsThread_showMore": "Show more comments",
-  "components_newsPage_cards_common_threads_itemWithCommentsThread_showLess": "Collapse comments",
+  "components_newsPage_cards_common_threads_itemWithCommentsThread_showLess": "Show less comments",
 
   "components_newsPage_cards_newsCard_error_update": "Failed to update news. Please try again.",
 
