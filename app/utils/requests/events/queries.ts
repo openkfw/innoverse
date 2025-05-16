@@ -42,6 +42,17 @@ export const GetEventByIdQuery = graphql(
   [EventFragment],
 );
 
+export const GetUpcomingEventsQuery = graphql(
+  `
+    query GetUpcomingEvents($now: DateTime) {
+      events(filters: { startTime: { gte: $now } }, sort: "startTime:asc") {
+        ...Event
+      }
+    }
+  `,
+  [EventFragment],
+);
+
 export const GetEventsPageQuery = graphql(
   `
     query getEvents($projectId: ID!, $page: Int, $pageSize: Int) {
@@ -83,6 +94,16 @@ export const GetFutureEventsPageQuery = graphql(
   `,
   [EventFragment],
 );
+
+export const GetFutureEventCountQuery = graphql(`
+  query getEventCount($projectId: ID!, $now: DateTime) {
+    events_connection(filters: { project: { documentId: { eq: $projectId } }, startTime: { gte: $now } }) {
+      pageInfo {
+        total
+      }
+    }
+  }
+`);
 
 export const GetEventsStartingFromQuery = graphql(
   `

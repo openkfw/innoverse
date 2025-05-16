@@ -2,14 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import {
-  BasicSurveyQuestion,
-  ObjectType,
-  StartPagination,
-  SurveyQuestion,
-  SurveyVote,
-  UserSession,
-} from '@/common/types';
+import { ObjectType, StartPagination, SurveyVote, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
@@ -22,6 +15,7 @@ import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { mapToBasicSurveyQuestion, mapToSurveyQuestion } from '@/utils/requests/surveyQuestions/mappings';
 import {
   GetSurveyQuestionsByProjectIdQuery,
+  GetSurveyQuestionsCountByProjectIdQuery,
   GetSurveysStartingFromQuery,
 } from '@/utils/requests/surveyQuestions/queries';
 
@@ -75,12 +69,26 @@ export const findUserVote = withAuth(async (user: UserSession, body: { votes: Su
   };
 });
 
+export const countSurveyQuestionsForProject = async (projectId: string) => {
+  try {
+    const response = await strapiGraphQLFetcher(GetSurveyQuestionsCountByProjectIdQuery, { projectId });
+    const countResult = response.surveyQuestions_connection?.pageInfo.total;
+
+    return { status: StatusCodes.OK, data: countResult };
+  } catch (err) {
+    const error = strapiError('Error fetching survey questions count for project', err as RequestError);
+    logger.error(error);
+    throw err;
+  }
+};
+
 export async function getSurveyQuestionByIdWithReactions(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetSurveyQuestionByIdQuery, { id });
     if (!response?.surveyQuestion) throw new Error('Response contained no survey question');
     const surveyQuestionResponse = response.surveyQuestion;
-    const surveyQuestion = mapToSurveyQuestion(surveyQuestionResponse);
+    const votes = await getSurveyVotes(dbClient, surveyQuestionResponse.documentId);
+    const surveyQuestion = mapToSurveyQuestion(surveyQuestionResponse, votes);
     if (!surveyQuestion) throw new Error('Mapping survey question failed');
     const reactions = await getReactionsForEntity(dbClient, ObjectType.SURVEY_QUESTION, surveyQuestion.id);
     return { ...surveyQuestion, reactions };
@@ -123,22 +131,4 @@ export async function getSurveyQuestionsStartingFrom({ from, page, pageSize }: S
     const error = strapiError('Getting upcoming survey questions', err as RequestError);
     logger.error(error);
   }
-}
-
-export async function getSurveyQuestionsWithAdditionalData(surveys: BasicSurveyQuestion[]) {
-  const getAdditionalData = surveys.map(getSurveyQuestionWithAdditionalData);
-  const surveyQuestionsWithAdditionalData = await getPromiseResults(getAdditionalData);
-  return surveyQuestionsWithAdditionalData;
-}
-
-export async function getSurveyQuestionWithAdditionalData(
-  surveyQuestion: BasicSurveyQuestion,
-): Promise<SurveyQuestion> {
-  const votes = await getSurveyVotes(dbClient, surveyQuestion.id);
-  const userVote = await findUserVote({ votes });
-  return {
-    ...surveyQuestion,
-    votes,
-    userVote: userVote.data ?? null,
-  };
 }

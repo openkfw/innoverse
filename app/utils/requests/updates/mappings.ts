@@ -10,7 +10,7 @@ import { ProjectUpdateFragment } from '@/utils/requests/updates/queries';
 
 const logger = getLogger();
 
-export function mapToProjectUpdates(updates: ResultOf<typeof ProjectUpdateFragment>[] | undefined) {
+export async function mapToProjectUpdates(updates: ResultOf<typeof ProjectUpdateFragment>[] | undefined) {
   const mappedUpdates = updates?.map(mapToProjectUpdate) ?? [];
   return mappedUpdates.filter((e) => e !== undefined) as ProjectUpdate[];
 }

@@ -11,7 +11,7 @@ import { VoteResultCard } from './VoteResultCard';
 interface SurveyResponsePickerProps {
   responseOptions: ResponseOption[];
   handleVote: (vote: string) => Promise<void>;
-  selectedOption: string | null;
+  selectedOption: string | undefined;
   votesPerOption: { option: string; votes: number; percentage: number }[];
   sx?: SxProps;
   fill?: boolean;

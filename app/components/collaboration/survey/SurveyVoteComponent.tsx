@@ -7,7 +7,7 @@ import palette from '@/styles/palette';
 
 interface SurveyVoteComponentProps {
   response: ResponseOption;
-  selectedOption: string | null;
+  selectedOption: string | undefined;
   fillPercentage: number;
 }
 export const SurveyVoteComponent = (props: SurveyVoteComponentProps) => {

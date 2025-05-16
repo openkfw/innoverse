@@ -8,7 +8,7 @@ import * as m from '@/src/paraglide/messages.js';
 
 interface VoteResultCardProps {
   handleVote: (vote: string) => Promise<void>;
-  selectedOption: string | null;
+  selectedOption: string | undefined;
   votesPerOption: { option: string; votes: number; percentage: number }[];
 }
 

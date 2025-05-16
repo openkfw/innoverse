@@ -10,7 +10,7 @@ import { mapToImageUrl, mapToUser } from '@/utils/requests/innoUsers/mappings';
 
 const logger = getLogger();
 
-export function mapToEvents(events: ResultOf<typeof EventFragment>[] | undefined) {
+export async function mapToEvents(events: ResultOf<typeof EventFragment>[] | undefined) {
   const mappedEvents = events?.map(mapToEvent) ?? [];
   return mappedEvents.filter((e) => e !== undefined) as Event[];
 }

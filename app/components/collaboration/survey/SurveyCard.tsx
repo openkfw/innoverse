@@ -122,12 +122,12 @@ function useSurveyCard({ projectId, surveyQuestion }: SurveyCardProps) {
 
   const updateVoteState = (vote: string) => {
     if (selectedOption === vote) {
-      setSelectedOption(null);
+      setSelectedOption(undefined);
       voteSetter('DECREMENT', vote);
     } else {
       setSelectedOption(vote);
       voteSetter('INCREMENT', vote);
-      if (hasVoted && selectedOption) {
+      if (hasVoted) {
         voteSetter('DECREMENT', selectedOption);
       }
     }

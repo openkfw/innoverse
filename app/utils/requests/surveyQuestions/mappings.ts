@@ -9,16 +9,11 @@ import { SurveyQuestionFragment } from '@/utils/requests/surveyQuestions/queries
 
 const logger = getLogger();
 
-export const mapToSurveyQuestions = (
-  surveyQuestions: ResultOf<typeof SurveyQuestionFragment>[] | undefined,
-): SurveyQuestion[] => {
-  const mappedSurveyQuestions = surveyQuestions?.map(mapToSurveyQuestion) ?? [];
-  return mappedSurveyQuestions.filter((e) => e !== undefined) as SurveyQuestion[];
-};
-
 export const mapToSurveyQuestion = (
   surveyQuestionData: ResultOf<typeof SurveyQuestionFragment>,
-): BasicSurveyQuestion | undefined => {
+  votes: SurveyVote[],
+  userVote?: SurveyVote | undefined,
+): SurveyQuestion | undefined => {
   try {
     const responseOptions = surveyQuestionData.responseOptions.filter((option) => option?.responseOption) as {
       responseOption: string;
@@ -33,6 +28,8 @@ export const mapToSurveyQuestion = (
       projectName: project.title,
       question: surveyQuestionData.question,
       responseOptions: responseOptions,
+      votes,
+      userVote: userVote?.vote,
       updatedAt: toDate(surveyQuestionData.updatedAt),
       createdAt: toDate(surveyQuestionData.createdAt),
     };
