@@ -16,10 +16,8 @@ import {
   GetEventByIdQuery,
   GetEventsPageQuery,
   GetEventsStartingFromQuery,
-  GetFutureEventCountQuery,
   GetFutureEventsPageQuery,
   GetPastEventsPageQuery,
-  GetUpcomingEventsQuery,
 } from '@/utils/requests/events/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { findReactionByUser } from '@/utils/requests/updates/requests';
@@ -60,29 +58,6 @@ export async function getEventsStartingFrom({ from, page, pageSize }: StartPagin
     return events;
   } catch (err) {
     const error = strapiError('Getting upcoming events', err as RequestError);
-    logger.error(error);
-  }
-}
-
-export async function getUpcomingEvents() {
-  try {
-    const now = new Date();
-    const response = await strapiGraphQLFetcher(GetUpcomingEventsQuery, { now });
-    const events = mapToEvents(response.events);
-    return events;
-  } catch (err) {
-    const error = strapiError('Getting upcoming events', err as RequestError);
-    logger.error(error);
-  }
-}
-
-export async function getCountOfFutureEvents(projectId: string) {
-  try {
-    const now = new Date();
-    const response = await strapiGraphQLFetcher(GetFutureEventCountQuery, { projectId, now });
-    return (response.events_connection && response.events_connection?.pageInfo.total) ?? 0;
-  } catch (err) {
-    const error = strapiError('Getting count of future events', err as RequestError);
     logger.error(error);
   }
 }
@@ -157,26 +132,6 @@ export async function getEventWithAdditionalData(
     throw err;
   }
 }
-
-export const countFutureEventsForProject = async (body: { projectId: string }) => {
-  try {
-    const validatedParams = validateParams(eventSchema, body);
-
-    if (validatedParams.status !== StatusCodes.OK) {
-      return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-      };
-    }
-
-    const countResult = await getCountOfFutureEvents(body.projectId);
-    return { status: StatusCodes.OK, data: countResult };
-  } catch (err) {
-    const error = strapiError('Error fetching future events count for project', err as RequestError);
-    logger.error(error);
-    throw err;
-  }
-};
 
 export const getAllEventsForProjectFilter = withAuth(
   async (

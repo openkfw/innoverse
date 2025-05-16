@@ -122,6 +122,7 @@ export const createNewsFeedEntryForSurveyQuestionById = async (objectId: string)
     return null;
   }
 
+  //TODO: fix BasicSurveyQuestion type
   return await createNewsFeedEntryForSurveyQuestion(survey);
 };
 

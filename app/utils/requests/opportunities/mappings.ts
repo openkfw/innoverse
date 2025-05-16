@@ -19,13 +19,10 @@ export function mapToOpportunity(
 ): Opportunity {
   const contactPerson = opportunityData.contactPerson;
   const participants = opportunityData.participants;
-
   return {
     id: opportunityData.documentId,
     ...opportunityData,
-    description: opportunityData.description ?? undefined,
-    expense: opportunityData.expense ?? undefined,
-    contactPerson: contactPerson ? mapToUser(contactPerson) : undefined,
+    contactPerson: contactPerson ? mapToUser(contactPerson) : null,
     participants: participants ? participants.map(mapToUser) : [],
     hasApplied,
     updatedAt: toDate(opportunityData.updatedAt),

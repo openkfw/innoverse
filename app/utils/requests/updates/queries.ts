@@ -124,16 +124,6 @@ export const GetUpdatesPageQuery = graphql(
   [ProjectUpdateFragment],
 );
 
-export const GetUpdateCountQuery = graphql(`
-  query getUpdateCount($projectId: ID!) {
-    updates_connection(filters: { project: { documentId: { eq: $projectId } } }) {
-      pageInfo {
-        total
-      }
-    }
-  }
-`);
-
 export const GetUpdatesStartingFromQuery = graphql(
   `
     query GetUpdatesStartingFrom($from: DateTime, $page: Int, $pageSize: Int) {

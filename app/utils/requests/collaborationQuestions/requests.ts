@@ -17,7 +17,6 @@ import {
   GetCollaborationQuesstionsStartingFromQuery,
   GetCollaborationQuestionByIdQuery,
   GetCollaborationQuestionsByProjectIdQuery,
-  GetCollaborationQuestionsCountProjectIdQuery,
   GetPlatformFeedbackCollaborationQuestion,
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
@@ -151,18 +150,3 @@ export const isCollaborationCommentLikedByUser = withAuth(async (user: UserSessi
     throw err;
   }
 });
-
-export const countCollaborationQuestionsForProject = async (projectId: string) => {
-  try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestionsCountProjectIdQuery, {
-      projectId,
-    });
-    const countResult = response.collaborationQuestions_connection?.pageInfo.total;
-
-    return { status: StatusCodes.OK, data: countResult };
-  } catch (err) {
-    const error = strapiError('Error fetching collaboration questions count for project', err as RequestError);
-    logger.error(error);
-    throw err;
-  }
-};

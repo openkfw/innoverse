@@ -45,16 +45,6 @@ export const GetSurveyQuestionsByProjectIdQuery = graphql(
   [SurveyQuestionFragment],
 );
 
-export const GetSurveyQuestionsCountByProjectIdQuery = graphql(`
-  query GetSurveyQuestions($projectId: ID) {
-    surveyQuestions_connection(filters: { project: { documentId: { eq: $projectId } } }) {
-      pageInfo {
-        total
-      }
-    }
-  }
-`);
-
 export const GetUpdatedSurveysQuery = graphql(`
   query GetUpdatedSurveys($from: DateTime) {
     surveyQuestions(filters: { createdAt: { gte: $from }, or: { updatedAt: { gte: $from } } }) {

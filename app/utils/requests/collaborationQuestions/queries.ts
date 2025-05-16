@@ -55,16 +55,6 @@ export const GetPlatformFeedbackCollaborationQuestion = graphql(`
   }
 `);
 
-export const GetCollaborationQuestionsCountProjectIdQuery = graphql(`
-  query GetCollaborationQuestions($projectId: ID) {
-    collaborationQuestions_connection(filters: { project: { documentId: { eq: $projectId } } }) {
-      pageInfo {
-        total
-      }
-    }
-  }
-`);
-
 export const GetCollaborationQuesstionsStartingFromQuery = graphql(
   `
     query GetUpdatedCollaborationQuestions($from: DateTime, $page: Int, $pageSize: Int) {

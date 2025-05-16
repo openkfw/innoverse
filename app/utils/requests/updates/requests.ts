@@ -33,7 +33,6 @@ import {
 } from '@/utils/requests/updates/mutations';
 import {
   GetUpdateByIdQuery,
-  GetUpdateCountQuery,
   GetUpdatesByIdsQuery,
   GetUpdatesByProjectIdQuery,
   GetUpdatesPageByProjectsTitlesAndTopicsQuery,
@@ -43,7 +42,6 @@ import {
   GetUpdatesQuery,
   GetUpdatesStartingFromQuery,
 } from '@/utils/requests/updates/queries';
-import { validateParams } from '@/utils/validationHelper';
 
 const logger = getLogger();
 
@@ -51,7 +49,7 @@ export async function getProjectUpdates(limit = 100) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesQuery, { limit });
     if (!response.updates) throw new Error('Response contained no updates');
-    const updates = await mapToProjectUpdates(response.updates);
+    const updates = mapToProjectUpdates(response.updates);
     const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
     return updatesWithAdditionalData;
   } catch (err) {
@@ -318,28 +316,6 @@ export const findReactionByUser = withAuth(
     }
   },
 );
-
-export const countUpdatesForProject = async (body: { projectId: string }) => {
-  try {
-    const validatedParams = validateParams(handleProjectUpdatesSchema, body);
-
-    if (validatedParams.status !== StatusCodes.OK) {
-      return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-      };
-    }
-
-    const response = await strapiGraphQLFetcher(GetUpdateCountQuery, { projectId: body.projectId });
-    const countResult = response.updates_connection?.pageInfo.total ?? 0;
-
-    return { status: StatusCodes.OK, data: countResult };
-  } catch (err) {
-    const error = strapiError('Getting count of updates', err as RequestError);
-    logger.error(error);
-    throw err;
-  }
-};
 
 export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
