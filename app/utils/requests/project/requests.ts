@@ -31,8 +31,6 @@ import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { getSurveyQuestionsByProjectId } from '@/utils/requests/surveyQuestions/requests';
 import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
 
-import { getCommentsByObjectId } from '../comments/requests';
-
 const logger = getLogger();
 
 export async function getProjectTitleById(id: string) {
@@ -69,7 +67,7 @@ export async function getProjectById(id: string) {
     const response = await strapiGraphQLFetcher(GetProjectByIdQuery, { id });
     const projectData = response.project;
     if (!projectData) throw new Error('Response contained no project data');
-    const { data: comments } = await getCommentsByObjectId({ objectId: id, objectType: ObjectType.PROJECT });
+
     const likes = await getProjectLikes(dbClient, id);
     const followers = await getProjectFollowers(dbClient, id);
     const { data: isLiked } = await isProjectLikedByUser({ projectId: id });
@@ -92,7 +90,7 @@ export async function getProjectById(id: string) {
       questions,
       surveyQuestions,
       collaborationQuestions,
-      comments: comments ?? [],
+      comments: [],
       followers: followers.map(mapFollow),
       likes: mapToLike(likes),
       isLiked: isLiked ?? false,

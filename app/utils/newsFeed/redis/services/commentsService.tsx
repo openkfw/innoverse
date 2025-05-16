@@ -67,8 +67,15 @@ export async function addNewsCommentToCache(body: AddNewsComment) {
   const redisClient = await getRedisClient();
   const { newsType, newsId, comment } = body;
   await addNewsCommentToRedisCache(redisClient, body);
-  await redisClient.json.arrAppend(`${newsType}:${newsId}`, '.item.comments', comment.id);
-  await redisClient.json.set(`${newsType}:${newsId}`, '.item.updatedAt', comment.updatedAt);
+  const key = `${newsType}:${newsId}`;
+  const commentsPath = '.item.comments';
+  try {
+    await redisClient.json.get(key, { path: commentsPath });
+  } catch (err) {
+    await redisClient.json.set(key, commentsPath, []);
+  }
+  await redisClient.json.arrAppend(key, commentsPath, comment.id);
+  await redisClient.json.set(key, '.item.updatedAt', comment.updatedAt);
 }
 
 export async function deleteNewsCommentInCache(newsType: NewsType, newsId: string, commentId: string) {
@@ -184,7 +191,7 @@ export async function getNewsFeedEntryWithComments(
   const entry = await getNewsFeedEntryByKey(client, `${itemType.newsType}:${entryId}`);
   if (entry) {
     // TODO: return the comments from Redis Cache instead of the DB
-    const comments = await getCommentsByObjectIdWithResponses(entry.item.id, itemType.objectType);
+    const { comments } = await getCommentsByObjectIdWithResponses(entry.item.id, itemType.objectType);
     return { ...entry, item: { ...entry.item, comments } } as RedisNewsFeedEntry;
   }
 }

@@ -38,8 +38,6 @@
   "components_collaboration_comments_collaborationCommentResponseCard_upvoteError": "Die Antwort konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",
   "components_collaboration_comments_collaborationCommentResponseCard_deleteError": "Die Antwort konnte nicht gelöscht werden. Bitte versuche es später noch einmal.",
 
-  "components_collaboration_comments_collaborationComments_showMoreComments": "weitere Kommentare anzeigen",
-
   "components_collaboration_comments_collaborationCommentThread_showComments": "Kommentare anzeigen",
   "components_collaboration_comments_collaborationCommentThread_loadError": "Antworten konnten nicht geladen werden. Bitte versuche es noch einmal.",
   "components_collaboration_comments_collaborationCommentThread_submitError": "Deine Antwort konnte nicht gesendet werden. Bitte versuche es noch einmal.",
@@ -300,7 +298,7 @@
   "components_newsPage_cards_common_writeCommentCard_done": "Fertig",
 
   "components_newsPage_cards_common_threads_itemWithCommentsThread_showMore": "weitere Kommentare anzeigen",
-  "components_newsPage_cards_common_threads_itemWithCommentsThread_showLess": "Zusammenklappen",
+  "components_newsPage_cards_common_threads_itemWithCommentsThread_showLess": "weniger Kommentare anzeigen",
 
   "components_newsPage_cards_newsCard_error_update": "Der Beitrag konnte nicht aktualisiert werden. Bitte versuche es noch einmal",
 
