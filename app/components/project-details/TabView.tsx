@@ -15,7 +15,6 @@ import * as m from '@/src/paraglide/messages.js';
 import theme from '@/styles/theme';
 
 import { CollaborationTab } from '../collaboration/CollaborationTab';
-import { EditingContextProvider } from '../common/editing/editing-context';
 import { UpdatesTab } from '../updates/UpdatesTab';
 
 import { EventsTab } from './events/EventsTab';
@@ -237,10 +236,8 @@ function CustomTabPanel(props: TabPanelProps) {
   const { children, value, id, index, ...other } = props;
 
   return (
-    <EditingContextProvider>
-      <div role="tabpanel" hidden={value !== index} id={id} aria-labelledby={`tab-${id}`} {...other}>
-        <Box sx={{ paddingTop: 3 }}>{children}</Box>
-      </div>
-    </EditingContextProvider>
+    <div role="tabpanel" hidden={value !== index} id={id} aria-labelledby={`tab-${id}`} {...other}>
+      <Box sx={{ paddingTop: 3 }}>{children}</Box>
+    </div>
   );
 }

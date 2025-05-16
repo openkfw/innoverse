@@ -25,7 +25,7 @@ function NewsCollabQuestionCard(props: NewsCollabQuestionCardProps) {
         {parseStringForLinks(description)}
       </Typography>
 
-      <NewsCardActions entry={entry} hideControls />
+      <NewsCardActions entry={entry} />
     </>
   );
 }

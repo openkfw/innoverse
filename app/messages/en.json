@@ -37,8 +37,6 @@
   "components_collaboration_comments_collaborationCommentResponseCard_upvoteError": "Failed to upvote collaboration comment response. Please try again later.",
   "components_collaboration_comments_collaborationCommentResponseCard_deleteError": "Failed to delete collaboration comment response. Please try again later.",
 
-  "components_collaboration_comments_collaborationComments_showMoreComments": "show more comments",
-
   "components_collaboration_comments_collaborationCommentThread_showComments": "Show comments",
   "components_collaboration_comments_collaborationCommentThread_loadError": "Failed to load comment responses. Please try again.",
   "components_collaboration_comments_collaborationCommentThread_submitError": "Submitting your response failed. Please try again.",
@@ -108,9 +106,6 @@
 
   "components_common_editing_controls_editControls_edit": "edit",
   "components_common_editing_controls_editControls_delete": "delete",
-
-  "components_common_editing_controls_editMoreDialog_edit": "edit",
-  "components_common_editing_controls_editMoreDialog_delete": "delete",
 
   "components_common_editing_writetext_writeTextCard_failedSubmit": "Failed to submit your contribution. Please try again later.",
   "components_common_editing_writetext_writeTextCard_placeholder": "Share your advice and thoughts on this topic to benefit your colleagues with your expertise.",
@@ -250,7 +245,6 @@
   "components_newsFeed_newsFeedSearchFilter_search": "Search",
   "components_newsFeed_newsFeedSearchFilter_searchField_minLength": "Enter at least 2 characters",
 
-  "components_newsFeed_newsFeedTypeFilter_comments": "Comments",
   "components_newsFeed_newsFeedTypeFilter_events": "Events",
   "components_newsFeed_newsFeedTypeFilter_questions": "Questions",
   "components_newsFeed_newsFeedTypeFilter_opportunities": "Opportunities",
@@ -308,7 +302,7 @@
   "components_newsPage_cards_common_writeCommentCard_done": "Done",
 
   "components_newsPage_cards_common_threads_itemWithCommentsThread_showMore": "Show more comments",
-  "components_newsPage_cards_common_threads_itemWithCommentsThread_showLess": "Collapse comments",
+  "components_newsPage_cards_common_threads_itemWithCommentsThread_showLess": "Show less comments",
 
   "components_newsPage_cards_newsCard_error_update": "Failed to update news. Please try again.",
 
@@ -385,9 +379,6 @@
   "components_projectdetails_comments_commentsSection_comments": "Comments",
 
   "components_projectdetails_comments_projectCommentCard_updateError": "Failed to update collaboration comment response. Please try again later.",
-
-  "components_projectdetails_comments_voteComponent_upvoteError": "Failed to upvote comment. Please try again later.",
-  "components_projectdetails_comments_voteComponent_answer": "reply",
 
   "components_projectDetails_events_eventCard_imageAlt": "Event image",
 

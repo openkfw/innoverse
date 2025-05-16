@@ -7,10 +7,7 @@ import { removeComment, updateComment } from '@/services/commentService';
 import { withAuth } from '@/utils/auth';
 
 export const updateUserComment = withAuth(
-  async (
-    user: UserSession,
-    body: { commentId: string; content: string; objectType: ObjectType.POST | ObjectType.UPDATE },
-  ) => {
+  async (user: UserSession, body: { commentId: string; content: string; objectType: ObjectType }) => {
     try {
       await updateComment({
         commentId: body.commentId,
@@ -28,10 +25,7 @@ export const updateUserComment = withAuth(
   },
 );
 
-export const removeUserComment = async (body: {
-  commentId: string;
-  objectType: ObjectType.POST | ObjectType.UPDATE;
-}) => {
+export const removeUserComment = async (body: { commentId: string; objectType: ObjectType }) => {
   try {
     await removeComment({ commentId: body.commentId });
     return {

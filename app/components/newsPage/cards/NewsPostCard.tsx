@@ -13,7 +13,7 @@ import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommen
 import * as m from '@/src/paraglide/messages.js';
 import { appInsights } from '@/utils/instrumentation/AppInsights';
 
-import { handleUpdatePost } from '../addPost/form/actions';
+import { handlePostUpdate } from '../addPost/form/actions';
 
 import { NewsCardActions } from './common/NewsCardActions';
 
@@ -22,16 +22,15 @@ interface NewsPostCardProps {
 }
 
 function NewsPostCard({ entry }: NewsPostCardProps) {
-  const initialPost = entry.item as Post;
-  const [post, setPost] = useState(initialPost);
+  const [item, setItem] = useState(entry.item as Post);
 
   const state = useEditingState();
   const editingInteractions = useEditingInteractions();
 
-  const handleUpdate = async (updatedText: string) => {
+  const handleUpdateComment = async (updatedText: string) => {
     try {
-      await handleUpdatePost({ comment: updatedText, postId: post.id });
-      setPost({ ...post, comment: updatedText });
+      await handlePostUpdate({ itemId: entry.item.id, comment: updatedText });
+      setItem({ ...item, comment: updatedText });
       editingInteractions.onSubmit();
     } catch (error) {
       console.error('Error updating post:', error);
@@ -43,18 +42,18 @@ function NewsPostCard({ entry }: NewsPostCardProps) {
     }
   };
 
-  return state.isEditing(post) ? (
+  return state.isEditing(item) ? (
     <WriteCommentCard
-      content={{ ...post, text: post.comment }}
-      onSubmit={(updatedText) => handleUpdate(updatedText)}
+      content={{ ...item, text: item.comment }}
+      onSubmit={(updatedText) => handleUpdateComment(updatedText)}
       onDiscard={editingInteractions.onCancel}
     />
   ) : (
     <>
-      <CommentCardHeader content={post} avatar={{ size: 32 }} />
+      <CommentCardHeader content={item} avatar={{ size: 32 }} />
       <CardContentWrapper>
         <Typography color="text.primary" variant="body1" data-testid="text">
-          {parseStringForLinks(post.comment)}
+          {parseStringForLinks(item.comment)}
         </Typography>
       </CardContentWrapper>
       <NewsCardActions entry={entry} />

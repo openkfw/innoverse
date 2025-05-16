@@ -1,6 +1,6 @@
 import { ResultOf } from 'gql.tada';
 
-import { BasicSurveyQuestion, SurveyQuestion, SurveyVote } from '@/common/types';
+import { BasicSurveyQuestion, ObjectType, SurveyQuestion, SurveyVote } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import { strapiError } from '@/utils/errors';
 import { toDate } from '@/utils/helpers';
@@ -32,6 +32,7 @@ export const mapToSurveyQuestion = (
       userVote: userVote?.vote,
       updatedAt: toDate(surveyQuestionData.updatedAt),
       createdAt: toDate(surveyQuestionData.createdAt),
+      objectType: ObjectType.SURVEY_QUESTION,
     };
   } catch (err) {
     const error = strapiError('Mapping survey question', err as RequestError, surveyQuestionData.documentId);
@@ -54,6 +55,7 @@ export const mapToBasicSurveyQuestion = (
       projectName: project.title,
       updatedAt: toDate(surveyQuestionData.updatedAt),
       createdAt: toDate(surveyQuestionData.createdAt),
+      objectType: ObjectType.SURVEY_QUESTION,
     };
   } catch (err) {
     const error = strapiError('Mapping basic survey question', err as RequestError, surveyQuestionData.documentId);

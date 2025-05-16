@@ -2,7 +2,6 @@ import { Follow as PrismaFollow, Reaction as PrismaReaction } from '@prisma/clie
 import { StatusCodes } from 'http-status-codes';
 
 import {
-  CollaborationComment,
   CollaborationQuestion,
   Comment,
   Event,
@@ -38,7 +37,6 @@ export const MappedRedisType: Record<NewsType, ObjectType> = {
   [NewsType.SURVEY_QUESTION]: ObjectType.SURVEY_QUESTION,
   [NewsType.OPPORTUNITY]: ObjectType.OPPORTUNITY,
   [NewsType.PROJECT]: ObjectType.PROJECT,
-  [NewsType.COLLABORATION_COMMENT]: ObjectType.COLLABORATION_COMMENT,
 };
 
 type RedisNewsFeedEntryWithAdditionalData = RedisNewsFeedEntry & {
@@ -105,8 +103,6 @@ const mapRedisItem = (entry: RedisNewsFeedEntryWithAdditionalData, user: UserSes
   switch (entry.type) {
     case NewsType.UPDATE:
       return { type: ObjectType.UPDATE, item: mappedItem as ProjectUpdate };
-    case NewsType.COLLABORATION_COMMENT:
-      return { type: ObjectType.COLLABORATION_COMMENT, item: mappedItem as CollaborationComment };
     case NewsType.COLLABORATION_QUESTION:
       return { type: ObjectType.COLLABORATION_QUESTION, item: mappedItem as CollaborationQuestion };
     case NewsType.EVENT:
@@ -143,9 +139,6 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
       if (item.comments && item.comments.length > 0 && typeof item.comments[0] != 'string') {
         item.comments = mapComments(item.comments);
       }
-      break;
-    case NewsType.COLLABORATION_COMMENT:
-      item.author.image = mapUrlToStrapiUrl(item.author.image);
       break;
     case NewsType.COLLABORATION_QUESTION:
       item.authors = mapUserImagesToStrapiUrls(item.authors);

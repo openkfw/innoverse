@@ -23,7 +23,7 @@ import * as m from '@/src/paraglide/messages.js';
 import { MultilineTextInputField } from '../../../common/form/MultilineTextInputField';
 import { handleProjectUpdate } from '../../addUpdate/form/actions';
 
-import { handleCreatePost } from './actions';
+import { handlePostCreate } from './actions';
 import formFieldNames from './formFields';
 import { handleUpdateSchema, UpdateFormValidationSchema } from './validationSchema';
 
@@ -77,7 +77,7 @@ export default function AddPostForm(props: AddPostFormProps) {
         });
       }
     } else {
-      const response = await handleCreatePost({ comment, anonymous });
+      const response = await handlePostCreate({ comment, anonymous });
       if (response.status === StatusCodes.OK && response.data) {
         successMessage({ message: 'Post wurde erstellt' });
         onAddPost(response.data);

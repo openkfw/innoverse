@@ -4,18 +4,25 @@ import React, { useState } from 'react';
 import { SxProps } from '@mui/material/styles';
 
 import { User } from '@/common/types';
-import { useRespondingInteractions, useRespondingState } from '@/components/common/editing/editing-context';
 
+import { useRespondingInteractions, useRespondingState } from '../editing/responding-context';
 import WriteTextCard from '../editing/writeText/WriteTextCard';
 
 interface WriteCommentResponseCardProps {
   comment: { id: string; author?: User; anonymous?: boolean };
   projectName?: string;
   onRespond: (response: string) => Promise<void>;
+  enableCommenting?: boolean;
   sx?: SxProps;
 }
 
-const WriteCommentResponseCard = ({ comment, projectName, onRespond, sx }: WriteCommentResponseCardProps) => {
+const WriteCommentResponseCard = ({
+  comment,
+  projectName,
+  onRespond,
+  enableCommenting,
+  sx,
+}: WriteCommentResponseCardProps) => {
   const [disabled, setDisabled] = useState(false);
   const respondingState = useRespondingState();
   const respondingInteractions = useRespondingInteractions();
@@ -23,12 +30,12 @@ const WriteCommentResponseCard = ({ comment, projectName, onRespond, sx }: Write
   const handleResponse = async (comment: string) => {
     setDisabled(true);
     await onRespond(comment);
-    respondingInteractions.onSubmit();
+    respondingInteractions.onSubmit(enableCommenting ? 'respond' : 'comment');
     setDisabled(false);
   };
 
   return (
-    respondingState.isEditing(comment) && (
+    respondingState.isResponding(comment, enableCommenting ? 'respond' : 'comment') && (
       <WriteTextCard
         sx={sx}
         metadata={{ projectName }}
@@ -36,7 +43,7 @@ const WriteCommentResponseCard = ({ comment, projectName, onRespond, sx }: Write
         onDiscard={respondingInteractions.onCancel}
         disabled={disabled}
         defaultValues={{
-          text: !comment.anonymous && comment.author ? `@[${comment.author.username}] ` : '',
+          text: !comment.anonymous && !enableCommenting && comment.author ? `@[${comment.author.username}] ` : '',
         }}
       />
     )
