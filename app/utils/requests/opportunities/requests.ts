@@ -6,14 +6,12 @@ import { BasicOpportunity, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
-import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { mapFirstToOpportunity, mapToOpportunity } from '@/utils/requests/opportunities/mappings';
 import {
   GetBasicOpportunityByIdQuery,
   GetOpportunitiesByIdQuery,
-  GetOpportunitiesByProjectIdQuery,
   GetOpportunityCountProjectIdQuery,
   GetOpportunityWithParticipantQuery,
   UpdateOpportunityParticipantsQuery,
@@ -21,26 +19,6 @@ import {
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 const logger = getLogger();
-
-export async function getOpportunitiesByProjectId(projectId: string) {
-  try {
-    const response = await strapiGraphQLFetcher(GetOpportunitiesByProjectIdQuery, { projectId });
-    const opportunitiesData = response.opportunities ?? [];
-
-    const mapToEntities = opportunitiesData.map(async (opportunityData) => {
-      const { data: isParticipant } = await userParticipatesInOpportunity({
-        opportunityId: opportunityData.documentId,
-      });
-      return mapToOpportunity(opportunityData, isParticipant);
-    });
-
-    const opportunities = await getPromiseResults(mapToEntities);
-    return opportunities;
-  } catch (err) {
-    const error = strapiError('Getting project opportunities by project id', err as RequestError, projectId);
-    logger.error(error);
-  }
-}
 
 export async function getOpportunityById(opportunityId: string) {
   try {

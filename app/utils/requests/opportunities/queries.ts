@@ -20,17 +20,6 @@ export const OpportunityFragment = graphql(
   [InnoUserFragment],
 );
 
-export const GetOpportunitiesByProjectIdQuery = graphql(
-  `
-    query GetOpportunities($projectId: ID) {
-      opportunities(filters: { project: { documentId: { eq: $projectId } } }) {
-        ...Opportunity
-      }
-    }
-  `,
-  [OpportunityFragment],
-);
-
 export const GetOpportunitiesByIdQuery = graphql(
   `
     query GetOpportunities($opportunityId: ID) {
