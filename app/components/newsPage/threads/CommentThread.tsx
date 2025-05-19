@@ -211,7 +211,7 @@ export const useCommentThread = (props: CommentThreadProps) => {
   const fetchSortedComments = async (limit?: number) => {
     try {
       const { comments, totalCount } = await fetchComments(limit);
-      if (!comments || !totalCount) return;
+      if (!comments || totalCount == null || isNaN(totalCount)) return;
       setTotalCommentCount(totalCount);
       return comments;
     } catch (error) {
@@ -273,16 +273,15 @@ export const useCommentThread = (props: CommentThreadProps) => {
 
   const handleAddComment = async (commentText: string) => {
     try {
-      const currentComments = comments.data ?? (await fetchSortedComments());
-      if (!currentComments) return;
       const createdComment = await addComment(commentText);
       if (!createdComment) return;
-      const newComments = [createdComment, ...currentComments];
-      setComments({
-        data: newComments,
+
+      setComments((prev) => ({
+        data: [createdComment, ...(prev?.data ?? [])],
         isVisible: true,
-        isExpanded: comments.isExpanded,
-      });
+        isExpanded: prev?.isExpanded ?? false,
+      }));
+
       setTotalCommentCount((prev) => prev + 1);
       setRemainingCommentCount(null);
     } catch (error) {
