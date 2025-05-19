@@ -12,8 +12,6 @@ export function mapToOpportunity(
   const contactPerson = opportunityData.contactPerson;
   const participants = opportunityData.participants;
 
-  console.log('contactPerson', opportunityData.documentId, contactPerson, opportunityData.updatedAt);
-
   return {
     id: opportunityData.documentId,
     ...opportunityData,

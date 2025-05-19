@@ -15,7 +15,7 @@ import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { getSurveyVotes } from '@/repository/db/survey_votes';
 import { withAuth } from '@/utils/auth';
-import { strapiError } from '@/utils/errors';
+import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
@@ -135,12 +135,22 @@ export async function getSurveyQuestionsWithAdditionalData(surveys: BasicSurveyQ
 export async function getSurveyQuestionWithAdditionalData(
   surveyQuestion: BasicSurveyQuestion,
 ): Promise<SurveyQuestion> {
-  const votes = await getSurveyVotes(dbClient, surveyQuestion.id);
-  const userVote = await findUserVote({ votes });
-  return {
-    ...surveyQuestion,
-    votes,
-    userVote: userVote.data?.vote ?? undefined,
-    responseOptions: surveyQuestion.responseOptions ?? [],
-  };
+  try {
+    const votes = await getSurveyVotes(dbClient, surveyQuestion.id);
+    const userVote = await findUserVote({ votes });
+    return {
+      ...surveyQuestion,
+      votes,
+      userVote: userVote.data?.vote ?? undefined,
+      responseOptions: surveyQuestion.responseOptions ?? [],
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Getting additional data for survey question with id: ${surveyQuestion.id}`,
+      err as Error,
+      surveyQuestion.id,
+    );
+    logger.error(error);
+    throw err;
+  }
 }

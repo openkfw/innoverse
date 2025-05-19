@@ -177,7 +177,6 @@ export const getProjectData = async (projectId: string) => {
         return mapToCollaborationQuestion(questionData, commentsWithUserLike);
       }),
     );
-
     // Opportunities
     const opportunities = await getPromiseResults(
       response.opportunities.map(async (opportunityData) => {
@@ -187,22 +186,17 @@ export const getProjectData = async (projectId: string) => {
         return mapToOpportunity(opportunityData, isParticipant);
       }),
     );
-
     // Questions
     const questions = response.questions.map((question) => mapToQuestion(question));
-
     // Survey questions
     const surveyQuestions = mapToBasicSurveyQuestions(response.surveyQuestions);
     const surveyQuestionsWithAdditionalData = await getSurveyQuestionsWithAdditionalData(surveyQuestions);
-
     // Updates
     const updates = mapToProjectUpdates(response.updates);
     const updatesWithAdditionalData = await getUpdatesWithAdditionalData(updates);
-
     // Future Events
     const futureEvents = mapToEvents(response.futureEvents);
     const futureEventsWithAdditionalData = await getEventsWithAdditionalData(futureEvents);
-
     // Past Events
     const pastEvents = mapToEvents(response.pastEvents);
     const pastEventsWithAdditionalData = await getEventsWithAdditionalData(pastEvents);
