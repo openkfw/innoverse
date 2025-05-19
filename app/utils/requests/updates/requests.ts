@@ -33,7 +33,6 @@ import {
 } from '@/utils/requests/updates/mutations';
 import {
   GetUpdateByIdQuery,
-  GetUpdateCountQuery,
   GetUpdatesByIdsQuery,
   GetUpdatesByProjectIdQuery,
   GetUpdatesPageByProjectsTitlesAndTopicsQuery,
@@ -319,32 +318,10 @@ export const findReactionByUser = withAuth(
   },
 );
 
-export const countUpdatesForProject = async (body: { projectId: string }) => {
-  try {
-    const validatedParams = validateParams(handleProjectUpdatesSchema, body);
-
-    if (validatedParams.status !== StatusCodes.OK) {
-      return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-      };
-    }
-
-    const response = await strapiGraphQLFetcher(GetUpdateCountQuery, { projectId: body.projectId });
-    const countResult = response.updates_connection?.pageInfo.total ?? 0;
-
-    return { status: StatusCodes.OK, data: countResult };
-  } catch (err) {
-    const error = strapiError('Getting count of updates', err as RequestError);
-    logger.error(error);
-    throw err;
-  }
-};
-
 export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: StartPagination) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesStartingFromQuery, { from, page, pageSize });
-    const updates = await mapToProjectUpdates(response.updates);
+    const updates = mapToProjectUpdates(response.updates);
 
     const newsComments = await getCommentsStartingFrom(dbClient, from, ObjectType.UPDATE);
     // Get unique ids of updates

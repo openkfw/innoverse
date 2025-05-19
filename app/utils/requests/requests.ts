@@ -22,15 +22,16 @@ import { isCollaborationCommentLikedByUser } from './collaborationQuestions/requ
 import { mapToOpportunity } from './opportunities/mappings';
 import { userParticipatesInOpportunity } from './opportunities/requests';
 import { findReactionByUser, getUpdatesWithAdditionalData } from './updates/requests';
-import { GetProjectData } from './graphqlQueries';
+import { GetCountsForProject, GetMainPageData, GetProjectData } from './graphqlQueries';
 import strapiGraphQLFetcher from './strapiGraphQLFetcher';
 import { mapToQuestion } from './questions/mappings';
 import { RequestError } from '@/entities/error';
-import { findUserVote, getSurveyQuestionsWithAdditionalData } from './surveyQuestions/requests';
-import { mapToSurveyQuestion, mapToSurveyQuestions } from './surveyQuestions/mappings';
+import { getSurveyQuestionsWithAdditionalData } from './surveyQuestions/requests';
 import { mapToProjectUpdates } from './updates/mappings';
 import { mapToEvents } from './events/mappings';
 import { getEventsWithAdditionalData } from './events/requests';
+import { mapToBasicProject } from './project/mappings';
+import { mapToBasicSurveyQuestions } from './surveyQuestions/mappings';
 
 const logger = getLogger();
 
@@ -191,7 +192,7 @@ export const getProjectData = async (projectId: string) => {
     const questions = response.questions.map((question) => mapToQuestion(question));
 
     // Survey questions
-    const surveyQuestions = mapToSurveyQuestions(response.surveyQuestions);
+    const surveyQuestions = mapToBasicSurveyQuestions(response.surveyQuestions);
     const surveyQuestionsWithAdditionalData = await getSurveyQuestionsWithAdditionalData(surveyQuestions);
 
     // Updates
@@ -227,5 +228,36 @@ export const getProjectData = async (projectId: string) => {
     surveyQuestions: [],
     futureEvents: [],
     pastEvents: [],
+  };
+};
+
+export const getCountsForProject = async (projectId: string) => {
+  const response = await strapiGraphQLFetcher(GetCountsForProject, { projectId, now: new Date() });
+  return {
+    eventCount: response.events_connection?.pageInfo.total ?? 0,
+    updateCount: response.updates_connection?.pageInfo.total ?? 0,
+    collaborationQuestionCount: response.collaborationQuestions_connection?.pageInfo.total ?? 0,
+    opportunityCount: response.opportunities_connection?.pageInfo.total ?? 0,
+    surveyQuestionCount: response.surveyQuestions_connection?.pageInfo.total ?? 0,
+  };
+};
+
+export const getMainData = async () => {
+  const response = await strapiGraphQLFetcher(GetMainPageData, { now: new Date(), updatesLimit: 10 });
+
+  const futureEvents = mapToEvents(response.futureEvents);
+  const futureEventsWithAdditionalData = await getEventsWithAdditionalData(futureEvents);
+
+  const updates = mapToProjectUpdates(response.updates);
+  const updatesWithAdditionalData = await getUpdatesWithAdditionalData(updates);
+
+  const projects = response.projects.map(mapToBasicProject) ?? [];
+  const featuredProjects = response.featuredProjects.map(mapToBasicProject) ?? [];
+
+  return {
+    futureEvents: futureEventsWithAdditionalData,
+    updates: updatesWithAdditionalData,
+    projects,
+    featuredProjects,
   };
 };

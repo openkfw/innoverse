@@ -8,28 +8,16 @@ import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
-import { mapFirstToOpportunity, mapToOpportunity } from '@/utils/requests/opportunities/mappings';
+import { mapToOpportunity } from '@/utils/requests/opportunities/mappings';
 import {
   GetBasicOpportunityByIdQuery,
   GetOpportunitiesByIdQuery,
-  GetOpportunityCountProjectIdQuery,
   GetOpportunityWithParticipantQuery,
   UpdateOpportunityParticipantsQuery,
 } from '@/utils/requests/opportunities/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 const logger = getLogger();
-
-export async function getOpportunityById(opportunityId: string) {
-  try {
-    const response = await strapiGraphQLFetcher(GetOpportunitiesByIdQuery, { opportunityId });
-    const opportunity = mapFirstToOpportunity(response.opportunities);
-    return opportunity;
-  } catch (err) {
-    const error = strapiError('Getting an opporunity', err as RequestError, opportunityId);
-    logger.error(error);
-  }
-}
 
 export async function getBasicOpportunityById(opportunityId: string) {
   try {
@@ -113,16 +101,3 @@ export const userParticipatesInOpportunity = withAuth(async (user: UserSession, 
     throw err;
   }
 });
-
-export const countOpportunitiesForProject = async (projectId: string) => {
-  try {
-    const response = await strapiGraphQLFetcher(GetOpportunityCountProjectIdQuery, { projectId });
-    const countResult = response.opportunities_connection?.pageInfo.total;
-
-    return { status: StatusCodes.OK, data: countResult };
-  } catch (err) {
-    const error = strapiError('Error fetching opportunities count for project', err as RequestError);
-    logger.error(error);
-    throw err;
-  }
-};

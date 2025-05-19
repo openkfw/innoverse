@@ -22,7 +22,6 @@ import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { mapToBasicSurveyQuestion, mapToSurveyQuestion } from '@/utils/requests/surveyQuestions/mappings';
 import {
   GetSurveyQuestionsByProjectIdQuery,
-  GetSurveyQuestionsCountByProjectIdQuery,
   GetSurveysStartingFromQuery,
 } from '@/utils/requests/surveyQuestions/queries';
 
@@ -76,25 +75,13 @@ export const findUserVote = withAuth(async (user: UserSession, body: { votes: Su
   };
 });
 
-export const countSurveyQuestionsForProject = async (projectId: string) => {
-  try {
-    const response = await strapiGraphQLFetcher(GetSurveyQuestionsCountByProjectIdQuery, { projectId });
-    const countResult = response.surveyQuestions_connection?.pageInfo.total;
-
-    return { status: StatusCodes.OK, data: countResult };
-  } catch (err) {
-    const error = strapiError('Error fetching survey questions count for project', err as RequestError);
-    logger.error(error);
-    throw err;
-  }
-};
-
 export async function getSurveyQuestionByIdWithReactions(id: string) {
   try {
     const response = await strapiGraphQLFetcher(GetSurveyQuestionByIdQuery, { id });
     if (!response?.surveyQuestion) throw new Error('Response contained no survey question');
     const surveyQuestionResponse = response.surveyQuestion;
-    const surveyQuestion = mapToSurveyQuestion(surveyQuestionResponse);
+    const votes = await getSurveyVotes(dbClient, surveyQuestionResponse.documentId);
+    const surveyQuestion = mapToSurveyQuestion(surveyQuestionResponse, votes);
     if (!surveyQuestion) throw new Error('Mapping survey question failed');
     const reactions = await getReactionsForEntity(dbClient, ObjectType.SURVEY_QUESTION, surveyQuestion.id);
     return { ...surveyQuestion, reactions };
@@ -153,6 +140,7 @@ export async function getSurveyQuestionWithAdditionalData(
   return {
     ...surveyQuestion,
     votes,
-    userVote: userVote.data ?? null,
+    userVote: userVote.data?.vote ?? undefined,
+    responseOptions: surveyQuestion.responseOptions ?? [],
   };
 }

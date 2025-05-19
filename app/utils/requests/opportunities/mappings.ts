@@ -5,14 +5,6 @@ import { toDate } from '@/utils/helpers';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { OpportunityFragment } from '@/utils/requests/opportunities/queries';
 
-export function mapFirstToOpportunity(opportunities: ResultOf<typeof OpportunityFragment>[] | undefined) {
-  if (!opportunities || !opportunities.length) {
-    throw new Error('Response contained no opportunities');
-  }
-  const opportunity = opportunities[0];
-  return mapToOpportunity(opportunity);
-}
-
 export function mapToOpportunity(
   opportunityData: ResultOf<typeof OpportunityFragment>,
   hasApplied: boolean = false,

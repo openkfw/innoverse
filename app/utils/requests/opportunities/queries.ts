@@ -70,16 +70,6 @@ export const UpdateOpportunityParticipantsQuery = graphql(
   [OpportunityFragment],
 );
 
-export const GetOpportunityCountProjectIdQuery = graphql(`
-  query GetOpportunities($projectId: ID) {
-    opportunities_connection(filters: { project: { documentId: { eq: $projectId } } }) {
-      pageInfo {
-        total
-      }
-    }
-  }
-`);
-
 export const GetUpdatedOpportunitiesQuery = graphql(
   `
     query GetUpdatedOpportunities($from: DateTime) {

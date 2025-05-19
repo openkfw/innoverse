@@ -33,33 +33,12 @@ export const GetCollaborationQuestionByIdQuery = graphql(
   [CollaborationQuestionFragment],
 );
 
-export const GetCollaborationQuestionsByProjectIdQuery = graphql(
-  `
-    query GetCollaborationQuestions($projectId: ID) {
-      collaborationQuestions(filters: { project: { documentId: { eq: $projectId } } }) {
-        ...CollaborationQuestion
-      }
-    }
-  `,
-  [CollaborationQuestionFragment],
-);
-
 export const GetPlatformFeedbackCollaborationQuestion = graphql(`
   query GetPlatformFeedbackCollaborationQuestion {
     collaborationQuestions(filters: { isPlatformFeedback: { eq: true } }) {
       documentId
       project {
         documentId
-      }
-    }
-  }
-`);
-
-export const GetCollaborationQuestionsCountProjectIdQuery = graphql(`
-  query GetCollaborationQuestions($projectId: ID) {
-    collaborationQuestions_connection(filters: { project: { documentId: { eq: $projectId } } }) {
-      pageInfo {
-        total
       }
     }
   }

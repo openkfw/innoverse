@@ -79,7 +79,7 @@ export type SurveyQuestion = CommonNewsFeedProps & {
   question: string;
   responseOptions: ResponseOption[];
   votes: SurveyVote[];
-  userVote: string | null;
+  userVote?: string;
 };
 
 export type BasicSurveyQuestion = CommonNewsFeedProps & {

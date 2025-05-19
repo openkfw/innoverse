@@ -1,4 +1,3 @@
-import { getPromiseResults } from '@/utils/helpers';
 import { PrismaClient, SurveyVote } from '@prisma/client';
 
 export async function getSurveyVotes(client: PrismaClient, surveyQuestionId: string) {

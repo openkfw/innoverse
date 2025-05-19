@@ -9,14 +9,11 @@ import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
-import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapToCollaborationQuestion } from '@/utils/requests/collaborationQuestions/mappings';
 import {
   GetCollaborationQuesstionsStartingFromQuery,
   GetCollaborationQuestionByIdQuery,
-  GetCollaborationQuestionsByProjectIdQuery,
-  GetCollaborationQuestionsCountProjectIdQuery,
   GetPlatformFeedbackCollaborationQuestion,
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
@@ -151,18 +148,3 @@ export const isCommentLikedByUser = withAuth(async (user: UserSession, body: { c
     throw err;
   }
 });
-
-export const countCollaborationQuestionsForProject = async (projectId: string) => {
-  try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestionsCountProjectIdQuery, {
-      projectId,
-    });
-    const countResult = response.collaborationQuestions_connection?.pageInfo.total;
-
-    return { status: StatusCodes.OK, data: countResult };
-  } catch (err) {
-    const error = strapiError('Error fetching collaboration questions count for project', err as RequestError);
-    logger.error(error);
-    throw err;
-  }
-};

@@ -6,6 +6,7 @@ import { OpportunityFragment } from './opportunities/queries';
 import { SurveyQuestionFragment } from './surveyQuestions/queries';
 import { InnoUserFragment } from './innoUsers/queries';
 import { EventFragment } from './events/queries';
+import { ProjectFragment } from './project/queries';
 
 export const GetProjectData = graphql(
   `
@@ -52,4 +53,57 @@ export const GetProjectData = graphql(
     InnoUserFragment,
     EventFragment,
   ],
+);
+
+export const GetCountsForProject = graphql(
+  `
+    query getCountsProject($projectId: ID!, $now: DateTime) {
+      events_connection(filters: { project: { documentId: { eq: $projectId } }, startTime: { gte: $now } }) {
+        pageInfo {
+          total
+        }
+      }
+      updates_connection(filters: { project: { documentId: { eq: $projectId } } }) {
+        pageInfo {
+          total
+        }
+      }
+      opportunities_connection(filters: { project: { documentId: { eq: $projectId } } }) {
+        pageInfo {
+          total
+        }
+      }
+      collaborationQuestions_connection(filters: { project: { documentId: { eq: $projectId } } }) {
+        pageInfo {
+          total
+        }
+      }
+      surveyQuestions_connection(filters: { project: { documentId: { eq: $projectId } } }) {
+        pageInfo {
+          total
+        }
+      }
+    }
+  `,
+  [],
+);
+
+export const GetMainPageData = graphql(
+  `
+    query getMainPageData($now: DateTime, $updatesLimit: Int, $sort: String! = "updatedAt:desc") {
+      projects(sort: [$sort]) {
+        ...Project
+      }
+      featuredProjects: projects(filters: { featured: { eq: true } }, sort: [$sort]) {
+        ...Project
+      }
+      futureEvents: events(filters: { startTime: { gte: $now } }, sort: "startTime:asc") {
+        ...Event
+      }
+      updates(sort: "updatedAt:desc", pagination: { limit: $updatesLimit }) {
+        ...ProjectUpdate
+      }
+    }
+  `,
+  [ProjectFragment, EventFragment, ProjectUpdateFragment],
 );
