@@ -9,7 +9,7 @@ import { mapToRedisUsers, mapUpdateToRedisNewsFeedEntry } from '@/utils/newsFeed
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { NotificationRequest, sendPushNotifications } from '@/utils/notification/notificationSender';
-import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
+import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/requests';
 import { getProjectUpdateByIdWithReactions } from '@/utils/requests/updates/requests';
 import { StrapiEntityLifecycle, StrapiEntry } from '@/utils/strapiEvents/entityLifecycles/strapiEntityLifecycle';
 
@@ -77,15 +77,9 @@ export class UpdateLifecycle extends StrapiEntityLifecycle {
       const followerIds = await getFollowedByForEntity(dbClient, ObjectType.UPDATE, updateId);
       const followers = await mapToRedisUsers(followerIds);
       const updateWithReactions = mapObjectWithReactions(update);
-      const comments = await getRedisNewsCommentsWithResponses(update.id, ObjectType.UPDATE);
-      const commentsIds = comments.map((comment) => comment.id);
+      const { comments } = await getCommentsByObjectIdWithResponses(update.id, ObjectType.UPDATE);
 
-      const newsFeedEntry = mapUpdateToRedisNewsFeedEntry(
-        updateWithReactions,
-        update.reactions,
-        followers,
-        commentsIds,
-      );
+      const newsFeedEntry = mapUpdateToRedisNewsFeedEntry(updateWithReactions, update.reactions, followers, comments);
       await saveNewsFeedEntry(redisClient, newsFeedEntry);
     } catch (err) {
       const error: InnoPlatformError = dbError(`Save update to cache with id: ${updateId}`, err as Error, updateId);

@@ -1,7 +1,6 @@
 import {
   BasicCollaborationQuestion,
   BasicProject,
-  Comment,
   CommentWithResponses,
   Event,
   ImageFormats,
@@ -17,7 +16,6 @@ import { getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
   NewsType,
-  RedisCollaborationComment,
   RedisCollaborationQuestion,
   RedisNewsComment,
   RedisNewsFeedEntry,
@@ -35,7 +33,7 @@ export const mapPostToRedisNewsFeedEntry = (
   post: Post,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  comments: RedisNewsComment[],
+  comments: CommentWithResponses[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisPost(post, reactions, followedBy, comments);
 
@@ -54,8 +52,9 @@ export const mapSurveyQuestionToRedisNewsFeedEntry = (
   surveyQuestion: SurveyQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisNewsFeedEntry => {
-  const item = mapToRedisSurveyQuestion(surveyQuestion, reactions, followedBy);
+  const item = mapToRedisSurveyQuestion(surveyQuestion, reactions, followedBy, comments);
 
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
@@ -71,8 +70,9 @@ export const mapProjectToRedisNewsFeedEntry = (
   project: BasicProject,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisNewsFeedEntry => {
-  const item = mapToRedisProject(project, reactions, followedBy);
+  const item = mapToRedisProject(project, reactions, followedBy, comments);
 
   if (item.image) {
     project.image = mapImageFormatsToRelativeUrls(item.image);
@@ -105,7 +105,7 @@ export const mapUpdateToRedisNewsFeedEntry = (
   update: ProjectUpdate,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  comments: string[],
+  comments: CommentWithResponses[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisProjectUpdate(update, reactions, followedBy, comments);
   item.author.image = mapImageUrlToRelativeUrl(item.author.image);
@@ -123,19 +123,16 @@ export const mapEventToRedisNewsFeedEntry = async (
   event: Event,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): Promise<RedisNewsFeedEntry> => {
-  const item = mapToRedisProjectEvent(event, reactions, followedBy);
-
+  const item = mapToRedisProjectEvent(event, reactions, followedBy, comments);
   if (item.image) {
     item.image = mapImageFormatsToRelativeUrls(item.image);
   }
-
   if (item.author) {
     item.author.image = mapImageUrlToRelativeUrl(item.author.image);
   }
-
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
-
   return {
     updatedAt: item.updatedAt,
     item: item,
@@ -156,8 +153,9 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
   question: BasicCollaborationQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisNewsFeedEntry => {
-  const item = mapToRedisCollaborationQuestion(question, reactions, followedBy);
+  const item = mapToRedisCollaborationQuestion(question, reactions, followedBy, comments);
 
   item.authors = mapUserImagesToRelativeUrls(question.authors);
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
@@ -187,7 +185,7 @@ export const mapToRedisPost = (
   post: Post,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  comments: RedisNewsComment[],
+  comments: CommentWithResponses[],
 ): RedisPost => {
   return {
     id: post.id,
@@ -199,7 +197,7 @@ export const mapToRedisPost = (
     createdAt: getUnixTimestamp(post.createdAt),
     followedBy,
     anonymous: post.anonymous,
-    comments,
+    comments: mapCommentWithResponsesToRedisNewsComments(comments),
   };
 };
 
@@ -207,6 +205,7 @@ export const mapToRedisSurveyQuestion = (
   surveyQuestion: SurveyQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisSurveyQuestion => {
   return {
     id: surveyQuestion.id,
@@ -218,6 +217,7 @@ export const mapToRedisSurveyQuestion = (
     reactions: reactions,
     updatedAt: getUnixTimestamp(surveyQuestion.updatedAt),
     followedBy,
+    comments: mapCommentWithResponsesToRedisNewsComments(comments),
   };
 };
 
@@ -225,6 +225,7 @@ export const mapToRedisCollaborationQuestion = (
   question: BasicCollaborationQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisCollaborationQuestion => {
   return {
     id: question.id,
@@ -236,6 +237,7 @@ export const mapToRedisCollaborationQuestion = (
     description: question.description,
     reactions,
     followedBy,
+    comments: mapCommentWithResponsesToRedisNewsComments(comments),
   };
 };
 
@@ -243,6 +245,7 @@ const mapToRedisProject = (
   project: BasicProject,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisProject => {
   return {
     ...project,
@@ -251,6 +254,7 @@ const mapToRedisProject = (
     createdAt: getUnixTimestamp(project.createdAt),
     reactions,
     followedBy,
+    comments: mapCommentWithResponsesToRedisNewsComments(comments),
   };
 };
 
@@ -258,7 +262,7 @@ export const mapToRedisProjectUpdate = (
   update: ProjectUpdate,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  comments: string[],
+  comments: CommentWithResponses[],
 ): RedisProjectUpdate => {
   return {
     ...update,
@@ -274,6 +278,7 @@ const mapToRedisProjectEvent = (
   event: Event,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisProjectEvent => {
   return {
     ...event,
@@ -282,6 +287,7 @@ const mapToRedisProjectEvent = (
     projectId: event.projectId,
     reactions,
     followedBy,
+    comments: mapCommentWithResponsesToRedisNewsComments(comments),
   };
 };
 

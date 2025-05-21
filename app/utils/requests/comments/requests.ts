@@ -131,8 +131,13 @@ async function saveEntryNewsComments(entry: RedisNewsFeedEntry, objectType: Obje
 export async function saveNewsFeedEntriesComments(newsFeedEntries: RedisNewsFeedEntry[], objectType: ObjectType) {
   await Promise.all(
     newsFeedEntries.map(async (entry) => {
-      const comments = await saveEntryNewsComments(entry, objectType);
-      entry.item.comments = comments;
+      try {
+        console.info(`Saving comments for entry ${entry.item.id} of type ${objectType}`);
+        const comments = await saveEntryNewsComments(entry, objectType);
+        entry.item.comments = comments;
+      } catch (err) {
+        console.error(`Failed to save comments for entry ${entry.item.id} of type ${objectType}`, err);
+      }
     }),
   );
 }

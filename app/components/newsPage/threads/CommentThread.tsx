@@ -162,6 +162,7 @@ export const useCommentThread = (props: CommentThreadProps) => {
     return 0;
   });
   const [remainingCommentCount, setRemainingCommentCount] = useState<number | null>(null);
+  const [searchedResult, setSearchedResult] = useState(false);
 
   const { isSearchFilterActive } = useNewsFeed();
   const state = useRespondingState();
@@ -177,7 +178,7 @@ export const useCommentThread = (props: CommentThreadProps) => {
 
   const visibleComments = useMemo(() => {
     if (!comments.data) return [];
-    if (comments.isExpanded || isSearchFilterActive) return comments.data;
+    if (comments.isExpanded || (isSearchFilterActive && searchedResult)) return comments.data;
 
     const result: CommentWithResponses[] = [];
     let totalVisible = 0;
@@ -188,6 +189,15 @@ export const useCommentThread = (props: CommentThreadProps) => {
     }
     return result;
   }, [comments.isExpanded, comments.data, maxNumberOfComments, isSearchFilterActive]);
+
+  useEffect(() => {
+    if (!item.comments || !isSearchFilterActive) return;
+    const hasSearchedComments = item.comments.some((comment) => typeof comment !== 'string');
+    if (hasSearchedComments) {
+      setComments({ isVisible: true, data: item.comments });
+    }
+    setSearchedResult(hasSearchedComments);
+  }, [isSearchFilterActive, item.comments]);
 
   useEffect(() => {
     if (remainingCommentCount === null && totalCommentCount !== null) {
@@ -238,6 +248,7 @@ export const useCommentThread = (props: CommentThreadProps) => {
   const loadComments = async (limit?: number) => {
     setComments({ isLoading: true });
     const comments = await fetchSortedComments(limit);
+    console.log('loadComments', comments);
     if (comments) {
       setComments((prev) => ({
         ...prev,
@@ -328,7 +339,7 @@ export const useCommentThread = (props: CommentThreadProps) => {
       commentsExist &&
       remainingCommentCount !== null &&
       remainingCommentCount > 0 &&
-      !isSearchFilterActive,
+      !searchedResult,
     showCloseThreadButton: comments.isVisible && commentsExist && comments.isExpanded,
     showDivider: !disableDivider && (commentsExist || state.isResponding(item, 'comment')),
     handleAddComment,

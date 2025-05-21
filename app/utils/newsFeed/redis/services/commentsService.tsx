@@ -124,8 +124,6 @@ export async function saveComments(redisClient: RedisClient, entry: RedisNewsFee
     });
     queue = queue.flatMap((comment) => comment.comments) as RedisNewsComment[];
   }
-  const redisKey = `${entry.type}:${entry.item.id}`;
-  await setCommentsIdsToEntry(redisClient, redisKey, commentsIds);
   return commentsIds;
 }
 
@@ -290,13 +288,11 @@ export async function searchNewsComments(
       const result = await Promise.all(
         resultComments.map(async (item) => {
           const res = await getNewsFeedEntryWithComments(client, itemType, item.itemId);
-
           if (res) {
             return { id: `${item.type}:${item.itemId}`, value: res };
           }
         }),
       );
-
       return { documents: result.filter((res) => res !== undefined) };
     }),
   );

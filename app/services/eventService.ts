@@ -9,6 +9,7 @@ import { mapEventToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/
 import { NewsType } from '@/utils/newsFeed/redis/models';
 import { RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { getNewsFeedEntryByKey } from '@/utils/newsFeed/redis/redisService';
+import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/requests';
 import { getEventById } from '@/utils/requests/events/requests';
 
 const logger = getLogger();
@@ -29,11 +30,12 @@ const createNewsFeedEntryForEventById = async (eventId: string) => {
 };
 
 export const createNewsFeedEntryForEvent = async (event: Event) => {
+  const { comments } = await getCommentsByObjectIdWithResponses(event.id, ObjectType.EVENT);
   const eventReactions = await getReactionsForEntity(dbClient, ObjectType.EVENT, event.id);
   const projectFollowedBy = await mapToRedisUsers(
     await getFollowedByForEntity(dbClient, ObjectType.PROJECT, event.projectId),
   );
-  return mapEventToRedisNewsFeedEntry(event, eventReactions, projectFollowedBy);
+  return mapEventToRedisNewsFeedEntry(event, eventReactions, projectFollowedBy, comments);
 };
 
 const getRedisKey = (eventId: string) => `${NewsType.EVENT}:${eventId}`;

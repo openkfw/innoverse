@@ -9,6 +9,7 @@ import { mapEventToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { NotificationRequest, sendPushNotifications } from '@/utils/notification/notificationSender';
+import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/requests';
 import { getEventByIdWithReactions } from '@/utils/requests/events/requests';
 import { StrapiEntityLifecycle, StrapiEntry } from '@/utils/strapiEvents/entityLifecycles/strapiEntityLifecycle';
 
@@ -79,10 +80,11 @@ export class EventLifecycle extends StrapiEntityLifecycle {
       if (!cachedEvent) return;
     }
 
+    const { comments } = await getCommentsByObjectIdWithResponses(event.id, ObjectType.EVENT);
     const followerIds = await getFollowedByForEntity(dbClient, ObjectType.EVENT, eventId);
     const followers = await mapToRedisUsers(followerIds);
     const eventWithReactions = mapObjectWithReactions(event);
-    const newsFeedEntry = await mapEventToRedisNewsFeedEntry(eventWithReactions, event.reactions, followers);
+    const newsFeedEntry = await mapEventToRedisNewsFeedEntry(eventWithReactions, event.reactions, followers, comments);
     await saveNewsFeedEntry(redisClient, newsFeedEntry);
   };
 

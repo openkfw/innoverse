@@ -10,6 +10,7 @@ import { mapSurveyQuestionToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/
 import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { NotificationRequest, sendPushNotifications } from '@/utils/notification/notificationSender';
+import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/requests';
 import { getProjectAuthorIdByProjectId } from '@/utils/requests/project/requests';
 import {
   getBasicSurveyQuestionById,
@@ -117,12 +118,14 @@ export class SurveyQuestionLifecycle extends StrapiEntityLifecycle {
       if (!cachedQuestion) return;
     }
 
+    const { comments } = await getCommentsByObjectIdWithResponses(surveyId, ObjectType.SURVEY_QUESTION);
     const followerIds = await getFollowedByForEntity(dbClient, ObjectType.SURVEY_QUESTION, surveyId);
     const followers = await mapToRedisUsers(followerIds);
     const newsFeedEntry = mapSurveyQuestionToRedisNewsFeedEntry(
       mapObjectWithReactions(surveyQuestion),
       surveyQuestion.reactions,
       followers,
+      comments,
     );
     await saveNewsFeedEntry(redisClient, newsFeedEntry);
   };

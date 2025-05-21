@@ -85,7 +85,7 @@ export async function getBasicCollaborationQuestionByIdWithAdditionalData(id: st
   }
 }
 
-export async function getBasicCollaborationQuestionStartingFromWithAdditionalData({
+export async function getCollaborationQuestionStartingFromWithAdditionalData({
   from,
   page,
   pageSize,

@@ -16,6 +16,7 @@ import {
   performRedisTransaction,
   transactionalSaveNewsFeedEntry,
 } from '@/utils/newsFeed/redis/redisService';
+import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/requests';
 import { getSurveyQuestionById } from '@/utils/requests/surveyQuestions/requests';
 
 import { notifyFollowers } from '../utils/notification/notificationSender';
@@ -126,10 +127,11 @@ export const createNewsFeedEntryForSurveyQuestionById = async (objectId: string)
 };
 
 export const createNewsFeedEntryForSurveyQuestion = async (survey: SurveyQuestion) => {
+  const { comments } = await getCommentsByObjectIdWithResponses(survey.id, ObjectType.SURVEY_QUESTION);
   const surveyReactions = await getReactionsForEntity(dbClient, ObjectType.SURVEY_QUESTION, survey.id);
   const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, survey.projectId);
   const mappedSProjectFollowedBy = await mapToRedisUsers(projectFollowedBy);
-  return mapSurveyQuestionToRedisNewsFeedEntry(survey, surveyReactions, mappedSProjectFollowedBy);
+  return mapSurveyQuestionToRedisNewsFeedEntry(survey, surveyReactions, mappedSProjectFollowedBy, comments);
 };
 
 const notifySurveyFollowers = async (surveyQuestionId: string) => {

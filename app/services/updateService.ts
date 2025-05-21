@@ -16,7 +16,7 @@ import { NewsType, RedisNewsComment, RedisProjectUpdate } from '@/utils/newsFeed
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { deleteCommentsInCache } from '@/utils/newsFeed/redis/services/commentsService';
-import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
+import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/requests';
 import {
   createProjectUpdateInStrapi,
   deleteProjectUpdateInStrapi,
@@ -119,10 +119,9 @@ export const createNewsFeedEntryForProjectUpdate = async (update: ProjectUpdate)
     const updateReactions = await getReactionsForEntity(dbClient, ObjectType.UPDATE, update.id);
     const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, update.projectId);
     const mappedUpdateFollowedBy = await mapToRedisUsers(projectFollowedBy);
-    const comments = await getRedisNewsCommentsWithResponses(update.id, ObjectType.UPDATE);
-    const commentsIds = comments.map((comment) => comment.id);
+    const { comments } = await getCommentsByObjectIdWithResponses(update.id, ObjectType.UPDATE);
 
-    return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, commentsIds);
+    return mapUpdateToRedisNewsFeedEntry(update, updateReactions, mappedUpdateFollowedBy, comments);
   } catch (err) {
     const error: InnoPlatformError = dbError(
       `Creating news feed entry for project update with id: ${update.projectId}`,

@@ -9,6 +9,7 @@ import { getRedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { NotificationRequest, sendPushNotifications } from '@/utils/notification/notificationSender';
 import { getBasicCollaborationQuestionByIdWithAdditionalData } from '@/utils/requests/collaborationQuestions/requests';
+import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/requests';
 import { StrapiEntityLifecycle, StrapiEntry } from '@/utils/strapiEvents/entityLifecycles/strapiEntityLifecycle';
 
 const logger = getLogger();
@@ -86,9 +87,15 @@ export class CollaborationQuestionLifecycle extends StrapiEntityLifecycle {
       if (!cachedQuestion) return;
     }
 
+    const { comments } = await getCommentsByObjectIdWithResponses(question.id, ObjectType.COLLABORATION_QUESTION);
     const followerIds = await getFollowedByForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, question.id);
     const followers = await mapToRedisUsers(followerIds);
-    const newsFeedEntry = mapCollaborationQuestionToRedisNewsFeedEntry(question, question.reactions, followers);
+    const newsFeedEntry = mapCollaborationQuestionToRedisNewsFeedEntry(
+      question,
+      question.reactions,
+      followers,
+      comments,
+    );
     await saveNewsFeedEntry(redisClient, newsFeedEntry);
   };
 

@@ -125,6 +125,7 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
   switch (type) {
     case NewsType.SURVEY_QUESTION:
       const userVote = item.votes.find((vote) => vote.votedBy === user.providerId);
+      mapComments(item);
       return mapObjectWithReactions({
         ...item,
         userVote: userVote?.vote,
@@ -136,24 +137,22 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
       });
     case NewsType.POST:
       item.author.image = mapUrlToStrapiUrl(item.author.image);
-      if (item.comments && item.comments.length > 0 && typeof item.comments[0] != 'string') {
-        item.comments = mapComments(item.comments);
-      }
+      mapComments(item);
       break;
     case NewsType.COLLABORATION_QUESTION:
       item.authors = mapUserImagesToStrapiUrls(item.authors);
+      mapComments(item);
       break;
     case NewsType.OPPORTUNITY:
       if (item.contactPerson) {
         item.contactPerson.image = mapUrlToStrapiUrl(item.contactPerson.image);
       }
+      mapComments(item);
       break;
     case NewsType.UPDATE:
       item.author.image = mapUrlToStrapiUrl(item.author.image);
       // TODO: check if the comment is not just the id returned from Redis Cache -> will be changed once the comments will be fetched from Redis
-      if (item.comments && item.comments.length > 0 && typeof item.comments[0] != 'string') {
-        item.comments = mapComments(item.comments);
-      }
+      mapComments(item);
       break;
     case NewsType.PROJECT:
       item.team = mapUserImagesToStrapiUrls(item.team);
@@ -161,12 +160,14 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
       if (item.author) {
         item.author.image = mapUrlToStrapiUrl(item.author.image);
       }
+      mapComments(item);
       break;
     case NewsType.EVENT:
       item.image = mapImageFormatsToStrapiUrls(item.image);
       if (item.author) {
         item.author.image = mapUrlToStrapiUrl(item.author.image);
       }
+      mapComments(item);
       break;
   }
 
@@ -179,13 +180,20 @@ const mapItem = (redisFeedEntry: RedisNewsFeedEntryWithAdditionalData, user: Use
   }) as NewsFeedEntry['item'];
 };
 
-const mapComments = (comments: RedisHashedNewsComment[]): Comment[] => {
+const mapComments = (item: RedisNewsFeedEntry['item']) => {
+  if (item.comments && item.comments.length > 0 && typeof item.comments[0] != 'string') {
+    item.comments = mapSearchedComments(item.comments);
+  }
+  return item;
+};
+
+const mapSearchedComments = (comments: RedisHashedNewsComment[]): Comment[] => {
   return comments.map((comment: RedisHashedNewsComment) => {
     return {
       ...comment,
       objectId: comment.itemId,
       objectType: MappedRedisType[comment.itemType],
-      comments: comment.comments ? mapComments(comment.comments) : [],
+      comments: comment.comments ? mapSearchedComments(comment.comments) : [],
       updatedAt: unixTimestampToDate(comment.updatedAt),
       createdAt: unixTimestampToDate(comment.createdAt),
     } as unknown as Comment;

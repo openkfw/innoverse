@@ -2,9 +2,7 @@ import dayjs from 'dayjs';
 
 import { ObjectType } from '@/common/types';
 import { serverConfig } from '@/config/server';
-import { getCommentsStartingFrom } from '@/repository/db/comment';
-import { getFollowedByForEntity } from '@/repository/db/follow';
-import dbClient from '@/repository/db/prisma/prisma';
+import { createNewsFeedEntryForCollaborationQuestion } from '@/services/collaborationQuestionService';
 import { createNewsFeedEntryForEvent } from '@/services/eventService';
 import { createNewsFeedEntryForPost } from '@/services/postService';
 import { createNewsFeedEntryForProject } from '@/services/projectService';
@@ -13,10 +11,9 @@ import { createNewsFeedEntryForProjectUpdate } from '@/services/updateService';
 import { redisError } from '@/utils/errors';
 import { fetchPages, getPromiseResults, getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
-import { mapCollaborationQuestionToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFeed/redis/mappings';
 import { RedisNewsFeedEntry, RedisSync } from '@/utils/newsFeed/redis/models';
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
-import { getBasicCollaborationQuestionStartingFromWithAdditionalData } from '@/utils/requests/collaborationQuestions/requests';
+import { getCollaborationQuestionStartingFromWithAdditionalData } from '@/utils/requests/collaborationQuestions/requests';
 import { getProjectsStartingFrom } from '@/utils/requests/project/requests';
 
 import { saveNewsFeedEntriesComments } from '../requests/comments/requests';
@@ -67,14 +64,12 @@ export const sync = async (retry?: number, syncAll: boolean = false): Promise<Re
     const failedItemsToSync = settledItems.filter(
       (result): result is PromiseRejectedResult => result.status === 'rejected',
     );
-
     if (failedItemsToSync.length) {
       logger.warn('Failed to load items for sync:', failedItemsToSync);
     }
 
     const affectedKeys = await getNewsFeedEntryKeys({ redisClient, from: syncFrom, to: now });
     const entriesToAdd = itemsToSync.flatMap((items) => items);
-
     if (!affectedKeys.length && !entriesToAdd.length) {
       logger.info('Found no items to delete or add, saving sync to redis and stopping ...');
       const sync = createSuccessfulSync(now, 0);
@@ -224,17 +219,13 @@ const aggregateSurveyQuestions = async ({ from }: { from: Date }): Promise<Redis
 const aggregateCollaborationQuestions = async ({ from }: { from: Date }): Promise<RedisNewsFeedEntry[]> => {
   const questions = await fetchPages({
     fetcher: async (page, pageSize) => {
-      return (await getBasicCollaborationQuestionStartingFromWithAdditionalData({ from, page, pageSize })) ?? [];
+      return (await getCollaborationQuestionStartingFromWithAdditionalData({ from, page, pageSize })) ?? [];
     },
   });
-
-  const mapToRedisNewsFeedEntries = questions.map(async (question) => {
-    const followerIds = await getFollowedByForEntity(dbClient, ObjectType.COLLABORATION_QUESTION, question.id);
-    const followers = await mapToRedisUsers(followerIds);
-    return mapCollaborationQuestionToRedisNewsFeedEntry(question, question.reactions, followers);
-  });
-
-  const newsFeedEntries = await getPromiseResults(mapToRedisNewsFeedEntries);
+  const createdCollaborationQuestions = questions.map((question) =>
+    createNewsFeedEntryForCollaborationQuestion(question),
+  );
+  const newsFeedEntries = await getPromiseResults(createdCollaborationQuestions);
   await saveNewsFeedEntriesComments(newsFeedEntries, ObjectType.COLLABORATION_QUESTION);
   return newsFeedEntries;
 };
