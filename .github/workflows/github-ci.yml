@@ -93,7 +93,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: docker-practice/actions-setup-docker@master
+      - uses: docker/setup-docker-action@v4
       - uses: ./.github/workflows/build
 
   notification:
