@@ -14,6 +14,9 @@ import { dbError, InnoPlatformError } from '../errors';
 import getLogger from '../logger';
 
 import { findReactionByUser } from './updates/requests';
+import strapiGraphQLFetcher from './strapiGraphQLFetcher';
+import { GetLatestNewsQuery } from './queries';
+import { mapToUser } from './innoUsers/mappings';
 
 const logger = getLogger();
 
@@ -95,7 +98,7 @@ export const getUserReactionsForObjects = withAuth(async (user: UserSession, bod
 
 export const findReactedByUser = withAuth(async (user: UserSession, body: ItemObject) => {
   try {
-    const { data: reactionForUser } = await findReactionByUser({
+    const reactionForUser = await findReactionByUser({
       objectType: body.objectType,
       objectId: body.objectId,
     });
@@ -131,3 +134,61 @@ export const findSurveyUserVote = withAuth(async (user: UserSession, body: { obj
     throw err;
   }
 });
+
+const addType = <T, R extends string>(data: T[], newsType: R) => data.map((item) => ({ ...item, newsType }));
+
+export const getLatestNews = async (after: Date, limit = 5) => {
+  const { updates, events, surveyQuestions, collaborationQuestions } = await strapiGraphQLFetcher(GetLatestNewsQuery, {
+    after,
+    limit,
+  });
+  // const comments = await getCommentsStartingFrom(
+  //   dbClient,
+  //   after,
+  //   ObjectType.PROJECT,
+  //   ObjectType.COLLABORATION_QUESTION,
+  // );
+  // const collaborationComments = comments.map(({ objectId, ...rest }) => ({
+  //   ...rest,
+  //   project: { documentId: objectId },
+  // }));
+
+  const news = [
+    // ...addType(collaborationComments, 'collaborationComment'),
+    ...addType(updates, 'update'),
+    ...addType(events, 'event'),
+    ...addType(surveyQuestions, 'surveyQuestion'),
+    ...addType(collaborationQuestions, 'collaborationQuestion'),
+  ].sort((a, b) => new Date(b.updatedAt ?? 0).getTime() - new Date(a.updatedAt ?? 0).getTime());
+
+  const reactions = await dbClient.reaction.groupBy({
+    by: ['objectId', 'nativeSymbol'],
+    _count: {
+      nativeSymbol: true,
+    },
+    where: {
+      objectType: {
+        in: [ObjectType.UPDATE, ObjectType.SURVEY_QUESTION, ObjectType.COLLABORATION_QUESTION, ObjectType.EVENT],
+      },
+      objectId: {
+        in: news.map(({ documentId }) => documentId),
+      },
+    },
+  });
+
+  const reactionsById = reactions.reduce<Record<string, { emoji: string; count: number }[]>>(
+    (acc, { objectId, nativeSymbol, _count }) => {
+      acc[objectId] ??= [];
+      acc[objectId].push({ emoji: nativeSymbol, count: _count.nativeSymbol });
+      return acc;
+    },
+    {},
+  );
+
+  return news.map((item) => ({
+    ...item,
+    reactions: reactionsById[item.documentId] ?? [],
+    author: 'author' in item && !!item.author && mapToUser(item.author),
+    updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
+  }));
+};
