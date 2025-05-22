@@ -1,7 +1,6 @@
 import {
   BasicCollaborationQuestion,
   BasicProject,
-  Comment,
   CommentWithResponses,
   Event,
   ImageFormats,
@@ -17,7 +16,6 @@ import { getUnixTimestamp, unixTimestampToDate } from '@/utils/helpers';
 import { escapeRedisTextSeparators } from '@/utils/newsFeed/redis/helpers';
 import {
   NewsType,
-  RedisCollaborationComment,
   RedisCollaborationQuestion,
   RedisNewsComment,
   RedisNewsFeedEntry,
@@ -35,7 +33,7 @@ export const mapPostToRedisNewsFeedEntry = (
   post: Post,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  comments: RedisNewsComment[],
+  comments: CommentWithResponses[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisPost(post, reactions, followedBy, comments);
 
@@ -54,8 +52,9 @@ export const mapSurveyQuestionToRedisNewsFeedEntry = (
   surveyQuestion: SurveyQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisNewsFeedEntry => {
-  const item = mapToRedisSurveyQuestion(surveyQuestion, reactions, followedBy);
+  const item = mapToRedisSurveyQuestion(surveyQuestion, reactions, followedBy, comments);
 
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
 
@@ -71,8 +70,9 @@ export const mapProjectToRedisNewsFeedEntry = (
   project: BasicProject,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisNewsFeedEntry => {
-  const item = mapToRedisProject(project, reactions, followedBy);
+  const item = mapToRedisProject(project, reactions, followedBy, comments);
 
   if (item.image) {
     project.image = mapImageFormatsToRelativeUrls(item.image);
@@ -105,7 +105,7 @@ export const mapUpdateToRedisNewsFeedEntry = (
   update: ProjectUpdate,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  comments: string[],
+  comments: CommentWithResponses[],
 ): RedisNewsFeedEntry => {
   const item = mapToRedisProjectUpdate(update, reactions, followedBy, comments);
   item.author.image = mapImageUrlToRelativeUrl(item.author.image);
@@ -123,19 +123,16 @@ export const mapEventToRedisNewsFeedEntry = async (
   event: Event,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): Promise<RedisNewsFeedEntry> => {
-  const item = mapToRedisProjectEvent(event, reactions, followedBy);
-
+  const item = mapToRedisProjectEvent(event, reactions, followedBy, comments);
   if (item.image) {
     item.image = mapImageFormatsToRelativeUrls(item.image);
   }
-
   if (item.author) {
     item.author.image = mapImageUrlToRelativeUrl(item.author.image);
   }
-
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
-
   return {
     updatedAt: item.updatedAt,
     item: item,
@@ -156,8 +153,9 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
   question: BasicCollaborationQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisNewsFeedEntry => {
-  const item = mapToRedisCollaborationQuestion(question, reactions, followedBy);
+  const item = mapToRedisCollaborationQuestion(question, reactions, followedBy, comments);
 
   item.authors = mapUserImagesToRelativeUrls(question.authors);
   item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
@@ -167,25 +165,6 @@ export const mapCollaborationQuestionToRedisNewsFeedEntry = (
     item: item,
     type: NewsType.COLLABORATION_QUESTION,
     search: escapeRedisTextSeparators((item.title || '') + ' ' + (item.description || '')),
-  };
-};
-
-export const mapCollaborationCommentToRedisNewsFeedEntry = (
-  comment: Comment,
-  question: BasicCollaborationQuestion,
-  reactions: RedisReaction[],
-  followedBy: RedisUser[],
-): RedisNewsFeedEntry => {
-  const item = mapToRedisCollaborationComment(comment, question, reactions, followedBy);
-  item.author.image = mapImageUrlToRelativeUrl(item.author.image);
-  item.question.authors = mapUserImagesToRelativeUrls(item.question.authors);
-  item.followedBy = mapUserImagesToRelativeUrls(item.followedBy ?? []);
-
-  return {
-    updatedAt: getUnixTimestamp(comment.createdAt),
-    item: item,
-    type: NewsType.COLLABORATION_COMMENT,
-    search: escapeRedisTextSeparators((item.question || '') + ' ' + (item.text || '')),
   };
 };
 
@@ -206,7 +185,7 @@ export const mapToRedisPost = (
   post: Post,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  comments: RedisNewsComment[],
+  comments: CommentWithResponses[],
 ): RedisPost => {
   return {
     id: post.id,
@@ -218,7 +197,7 @@ export const mapToRedisPost = (
     createdAt: getUnixTimestamp(post.createdAt),
     followedBy,
     anonymous: post.anonymous,
-    comments,
+    comments: mapCommentWithResponsesToRedisNewsComments(comments),
   };
 };
 
@@ -226,6 +205,7 @@ export const mapToRedisSurveyQuestion = (
   surveyQuestion: SurveyQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisSurveyQuestion => {
   return {
     id: surveyQuestion.id,
@@ -237,6 +217,7 @@ export const mapToRedisSurveyQuestion = (
     reactions: reactions,
     updatedAt: getUnixTimestamp(surveyQuestion.updatedAt),
     followedBy,
+    comments: mapCommentWithResponsesToRedisNewsComments(comments),
   };
 };
 
@@ -244,6 +225,7 @@ export const mapToRedisCollaborationQuestion = (
   question: BasicCollaborationQuestion,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisCollaborationQuestion => {
   return {
     id: question.id,
@@ -255,33 +237,7 @@ export const mapToRedisCollaborationQuestion = (
     description: question.description,
     reactions,
     followedBy,
-  };
-};
-
-export const mapToRedisCollaborationComment = (
-  comment: Comment,
-  question: BasicCollaborationQuestion,
-  reactions: RedisReaction[],
-  followedBy: RedisUser[],
-): RedisCollaborationComment => {
-  return {
-    id: comment.id,
-    createdAt: getUnixTimestamp(comment.createdAt),
-    updatedAt: getUnixTimestamp(comment.createdAt),
-    projectId: comment.objectId,
-    author: comment.author,
-    text: comment.text,
-    question: {
-      id: question.id,
-      authors: question.authors,
-      description: question.description,
-      title: question.title,
-    },
-    commentCount: comment.commentCount,
-    likedBy: comment.likedBy,
-    isLikedByUser: comment.isLikedByUser,
-    reactions: reactions,
-    followedBy: followedBy,
+    comments: mapCommentWithResponsesToRedisNewsComments(comments),
   };
 };
 
@@ -289,6 +245,7 @@ const mapToRedisProject = (
   project: BasicProject,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisProject => {
   return {
     ...project,
@@ -297,6 +254,7 @@ const mapToRedisProject = (
     createdAt: getUnixTimestamp(project.createdAt),
     reactions,
     followedBy,
+    comments: mapCommentWithResponsesToRedisNewsComments(comments),
   };
 };
 
@@ -304,7 +262,7 @@ export const mapToRedisProjectUpdate = (
   update: ProjectUpdate,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
-  comments: string[],
+  comments: CommentWithResponses[],
 ): RedisProjectUpdate => {
   return {
     ...update,
@@ -320,6 +278,7 @@ const mapToRedisProjectEvent = (
   event: Event,
   reactions: RedisReaction[],
   followedBy: RedisUser[],
+  comments: CommentWithResponses[],
 ): RedisProjectEvent => {
   return {
     ...event,
@@ -328,6 +287,7 @@ const mapToRedisProjectEvent = (
     projectId: event.projectId,
     reactions,
     followedBy,
+    comments: mapCommentWithResponsesToRedisNewsComments(comments),
   };
 };
 
@@ -335,7 +295,7 @@ export const mapCommentWithResponsesToRedisNewsComments = (comments: CommentWith
   return comments.map(mapToRedisNewsComment);
 };
 
-const mapToRedisNewsComment = (comment: CommentWithResponses): RedisNewsComment => {
+export const mapToRedisNewsComment = (comment: CommentWithResponses): RedisNewsComment => {
   return {
     id: comment.id,
     text: comment.text,
@@ -403,8 +363,6 @@ export const mapImageUrlToRelativeUrl = (imageUrl: string | undefined): string |
 
 export const getNewsTypeByString = (type: string) => {
   switch (type) {
-    case ObjectType.COLLABORATION_COMMENT:
-      return NewsType.COLLABORATION_COMMENT;
     case ObjectType.COLLABORATION_QUESTION:
       return NewsType.COLLABORATION_QUESTION;
     case ObjectType.PROJECT:

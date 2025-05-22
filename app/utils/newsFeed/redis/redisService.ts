@@ -18,8 +18,8 @@ import {
 import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from '@/utils/newsFeed/redis/redisClient';
 
 import { searchNewsComments } from './services/commentsService';
-import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
 import { mapImageUrlToRelativeUrl } from './mappings';
+import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
 
 interface RedisJson {
   [key: string]: any;

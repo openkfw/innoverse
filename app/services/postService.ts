@@ -13,7 +13,7 @@ import { NewsType, RedisNewsComment, RedisPost } from '@/utils/newsFeed/redis/mo
 import { getRedisClient, RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { deleteItemFromRedis, getNewsFeedEntryByKey, saveNewsFeedEntry } from '@/utils/newsFeed/redis/redisService';
 import { deleteCommentsInCache } from '@/utils/newsFeed/redis/services/commentsService';
-import { getRedisNewsCommentsWithResponses } from '@/utils/requests/comments/requests';
+import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/requests';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 import {
   createPostInStrapi,
@@ -145,7 +145,7 @@ export const createNewsFeedEntryForPostById = async (postId: string, author?: Us
 };
 
 export const createNewsFeedEntryForPost = async (post: Post, author?: User) => {
-  const comments = await getRedisNewsCommentsWithResponses(post.id, ObjectType.POST);
+  const { comments } = await getCommentsByObjectIdWithResponses(post.id, ObjectType.POST);
   const reactions = await getReactionsForEntity(dbClient, ObjectType.POST, post.id);
   const followerIds = await getFollowedByForEntity(dbClient, ObjectType.POST, post.id);
   const followers = await mapToRedisUsers(followerIds);

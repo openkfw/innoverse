@@ -29,26 +29,56 @@ export async function getCommentsByObjectIdAndType(
   client: PrismaClient,
   objectId: string,
   objectType: ObjectType,
+  limit?: number,
   sort: 'asc' | 'desc' = 'desc',
 ) {
   try {
-    return await client.comment.findMany({
-      where: {
-        objectId,
-        objectType: objectType as PrismaObjectType,
-      },
-      orderBy: {
-        createdAt: sort,
-      },
-      ...defaultParams,
-    });
+    const baseFilter = {
+      objectId,
+      objectType: objectType as PrismaObjectType,
+    };
+
+    const [totalCount, rootComments] = await Promise.all([
+      client.comment.count({ where: baseFilter }),
+      client.comment.findMany({
+        where: {
+          ...baseFilter,
+          // Get only root comments if the limit is set
+          ...(limit ? { parentId: null } : {}),
+        },
+        orderBy: { createdAt: sort },
+        ...(limit ? { take: limit } : {}),
+        ...defaultParams,
+      }),
+    ]);
+    if (!rootComments.length) {
+      return { comments: [], totalCount };
+    }
+
+    let comments: typeof rootComments = rootComments;
+    // If limit is set, we need to get the child comments for the root comments
+    if (limit) {
+      const rootIds = rootComments.map((c) => c.id);
+      const childComments = await client.comment.findMany({
+        where: {
+          ...baseFilter,
+          parentId: { in: rootIds },
+        },
+        orderBy: { createdAt: sort },
+        ...defaultParams,
+      });
+      comments = rootComments.flatMap((root) => {
+        const responses = childComments.filter((c) => c.parentId === root.id);
+        return [root, ...responses];
+      });
+    }
+    return { comments, totalCount };
   } catch (err) {
     const error: InnoPlatformError = dbError(`Get comments by object with id: ${objectId}`, err as Error, objectId);
     logger.error(error);
     throw err;
   }
 }
-
 export async function getCommentById(client: PrismaClient, commentId: string) {
   try {
     return await client.comment.findFirst({
@@ -111,6 +141,7 @@ export async function updateCommentInDb(client: PrismaClient, commentId: string,
       data: {
         text: updatedText,
       },
+      ...defaultParams,
     });
   } catch (err) {
     const error: InnoPlatformError = dbError(`Update comment with id: ${commentId}`, err as Error, commentId);

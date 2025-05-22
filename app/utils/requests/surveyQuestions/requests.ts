@@ -108,7 +108,7 @@ export async function getSurveyQuestionById(id: string) {
     if (!surveyQuestion) throw new Error('Mapping survey question failed');
     return surveyQuestion;
   } catch (err) {
-    const error = strapiError('Getting project update by id', err as RequestError, id);
+    const error = strapiError('Getting survey question by id', err as RequestError, id);
     logger.error(error);
   }
 }

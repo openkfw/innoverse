@@ -6,7 +6,6 @@ export enum NewsType {
   EVENT = 'event',
   POST = 'post',
   COLLABORATION_QUESTION = 'collaboration-question',
-  COLLABORATION_COMMENT = 'collaboration-comment',
   SURVEY_QUESTION = 'survey-question',
   OPPORTUNITY = 'opportunity',
   PROJECT = 'project',
@@ -27,10 +26,6 @@ type RedisNewsFeedTypeEntry =
   | {
       type: NewsType.PROJECT;
       item: RedisProject;
-    }
-  | {
-      type: NewsType.COLLABORATION_COMMENT;
-      item: RedisCollaborationComment;
     }
   | { type: NewsType.POST; item: RedisPost }
   | { type: NewsType.COLLABORATION_QUESTION; item: RedisCollaborationQuestion }

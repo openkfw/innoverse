@@ -38,8 +38,6 @@
   "components_collaboration_comments_collaborationCommentResponseCard_upvoteError": "Die Antwort konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",
   "components_collaboration_comments_collaborationCommentResponseCard_deleteError": "Die Antwort konnte nicht gelöscht werden. Bitte versuche es später noch einmal.",
 
-  "components_collaboration_comments_collaborationComments_showMoreComments": "weitere Kommentare anzeigen",
-
   "components_collaboration_comments_collaborationCommentThread_showComments": "Kommentare anzeigen",
   "components_collaboration_comments_collaborationCommentThread_loadError": "Antworten konnten nicht geladen werden. Bitte versuche es noch einmal.",
   "components_collaboration_comments_collaborationCommentThread_submitError": "Deine Antwort konnte nicht gesendet werden. Bitte versuche es noch einmal.",
@@ -110,9 +108,6 @@
 
   "components_common_editing_controls_editControls_edit": "bearbeiten",
   "components_common_editing_controls_editControls_delete": "löschen",
-
-  "components_common_editing_controls_editMoreDialog_edit": "bearbeiten",
-  "components_common_editing_controls_editMoreDialog_delete": "löschen",
 
   "components_common_editing_writetext_writeTextCard_failedSubmit": "Dein Beitrag konnte nicht veröffentlicht werden. Bitte versuche es später noch einmal.",
   "components_common_editing_writetext_writeTextCard_placeholder": "Teile deine Ratschläge und Gedanken zu diesem Thema mit, damit deine Kollegen von deiner Expertise profitieren können.",
@@ -246,7 +241,6 @@
   "components_newsFeed_newsFeedSearchFilter_search": "Suche",
   "components_newsFeed_newsFeedSearchFilter_searchField_minLength": "Geben Sie mindestens 2 Zeichen ein",
 
-  "components_newsFeed_newsFeedTypeFilter_comments": "Kommentare",
   "components_newsFeed_newsFeedTypeFilter_events": "Events",
   "components_newsFeed_newsFeedTypeFilter_questions": "Fragen",
   "components_newsFeed_newsFeedTypeFilter_opportunities": "Möglichkeiten",
@@ -304,7 +298,7 @@
   "components_newsPage_cards_common_writeCommentCard_done": "Fertig",
 
   "components_newsPage_cards_common_threads_itemWithCommentsThread_showMore": "weitere Kommentare anzeigen",
-  "components_newsPage_cards_common_threads_itemWithCommentsThread_showLess": "Zusammenklappen",
+  "components_newsPage_cards_common_threads_itemWithCommentsThread_showLess": "weniger Kommentare anzeigen",
 
   "components_newsPage_cards_newsCard_error_update": "Der Beitrag konnte nicht aktualisiert werden. Bitte versuche es noch einmal",
 
@@ -381,9 +375,6 @@
   "components_projectdetails_comments_commentsSection_comments": "Kommentare",
 
   "components_projectdetails_comments_projectCommentCard_updateError": "Der Kommentar konnte nicht aktualisiert werden. Bitte versuche es später noch einmal.",
-
-  "components_projectdetails_comments_voteComponent_upvoteError": "Der Kommentar konnte nicht hochgestuft werden. Bitte versuche es später noch einmal.",
-  "components_projectdetails_comments_voteComponent_answer": "antworten",
 
   "components_projectDetails_events_eventCard_imageAlt": "Event Bild",
 

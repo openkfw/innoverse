@@ -15,13 +15,24 @@ interface AddUserComment {
   comment: string;
   parentCommentId?: string;
   projectId?: string;
+  anonymous?: boolean;
+  additionalObjectId?: string;
+  additionalObjectType?: ObjectType;
 }
 
 export const addUserComment = withAuth(async (user: UserSession, body: AddUserComment) => {
-  const { comment, objectType, objectId, parentCommentId } = body;
+  const { comment, objectType, objectId, parentCommentId, anonymous, additionalObjectId, additionalObjectType } = body;
   const author = user;
-
-  const createdComment = await addComment({ author, comment, objectType, objectId, parentCommentId });
+  const createdComment = await addComment({
+    author,
+    comment,
+    objectType,
+    objectId,
+    parentCommentId,
+    anonymous,
+    additionalObjectId,
+    additionalObjectType,
+  });
 
   return {
     status: StatusCodes.OK,

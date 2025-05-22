@@ -10,6 +10,7 @@ import { mapProjectToRedisNewsFeedEntry, mapToRedisUsers } from '@/utils/newsFee
 import { NewsType } from '@/utils/newsFeed/redis/models';
 import { RedisClient } from '@/utils/newsFeed/redis/redisClient';
 import { getNewsFeedEntryByKey, getRedisNewsFeed as getNewsFeedEntries } from '@/utils/newsFeed/redis/redisService';
+import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/requests';
 import { getProjectById } from '@/utils/requests/project/requests';
 
 const logger = getLogger();
@@ -20,7 +21,7 @@ export const getNewsFeedEntryForProject = async (redisClient: RedisClient, { pro
   return cacheEntry ?? (await createNewsFeedEntryForProjectById(projectId));
 };
 
-export const getNewsFeedEntriesForProject = async (redisClient: RedisClient, { projectId }: { projectId: string }) => {
+export const getNewsFeedEntriesForProject = async ({ projectId }: { projectId: string }) => {
   const cacheEntries = await fetchPages({
     fetcher: async (page, pageSize) => {
       logger.info(`Fetching page ${page} of news feed entries for project ${projectId} ...`);
@@ -49,10 +50,11 @@ export const createNewsFeedEntryForProjectById = async (objectId: string) => {
 };
 
 export const createNewsFeedEntryForProject = async (project: BasicProject) => {
+  const { comments } = await getCommentsByObjectIdWithResponses(project.id, ObjectType.PROJECT);
   const projectReactions = await getReactionsForEntity(dbClient, ObjectType.PROJECT, project.id);
   const projectFollowedBy = await getFollowedByForEntity(dbClient, ObjectType.PROJECT, project.id);
   const mappedProjectFollowedBy = await mapToRedisUsers(projectFollowedBy);
-  return mapProjectToRedisNewsFeedEntry(project, projectReactions, mappedProjectFollowedBy);
+  return mapProjectToRedisNewsFeedEntry(project, projectReactions, mappedProjectFollowedBy, comments);
 };
 
 const getRedisKey = (id: string) => `${NewsType.PROJECT}:${id}`;

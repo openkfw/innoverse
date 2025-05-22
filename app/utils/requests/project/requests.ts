@@ -2,17 +2,15 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { Comment, ObjectType, StartPagination, UserSession } from '@/common/types';
-import { getCommentsSchema } from '@/components/project-details/comments/validationSchema';
+import { ObjectType, StartPagination, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
-import { getCommentsByObjectIdAndType, isCommentLikedBy } from '@/repository/db/comment';
+import { isCommentLikedBy } from '@/repository/db/comment';
 import { getProjectFollowers, isProjectFollowedBy } from '@/repository/db/follow';
 import { getProjectLikes, isObjectLikedBy } from '@/repository/db/like';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
-import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapFollow } from '@/utils/newsFeed/redis/redisMappings';
 import { getCollaborationQuestionsByProjectId } from '@/utils/requests/collaborationQuestions/requests';
@@ -32,9 +30,6 @@ import { getProjectQuestionsByProjectId } from '@/utils/requests/questions/reque
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { getSurveyQuestionsByProjectId } from '@/utils/requests/surveyQuestions/requests';
 import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
-import { validateParams } from '@/utils/validationHelper';
-
-import { mapToComment } from '../comments/mapping';
 
 const logger = getLogger();
 
@@ -72,9 +67,6 @@ export async function getProjectById(id: string) {
     const response = await strapiGraphQLFetcher(GetProjectByIdQuery, { id });
     const projectData = response.project;
     if (!projectData) throw new Error('Response contained no project data');
-    const projectComments = await getProjectComments({ projectId: projectData.documentId });
-
-    if (!projectComments.data) throw new Error('Failed to load project comments for project');
 
     const likes = await getProjectLikes(dbClient, id);
     const followers = await getProjectFollowers(dbClient, id);
@@ -83,7 +75,6 @@ export async function getProjectById(id: string) {
     const futureEvents = (await getProjectEventsPage(id, 2, 1, 'future')) || [];
     const pastEvents = (await getProjectEventsPage(id, 2, 1, 'past')) || [];
 
-    const comments = projectComments.data;
     const updatesWithAdditionalData = (await getUpdatesByProjectId(id)) ?? [];
     const opportunities = (await getOpportunitiesByProjectId(projectData.documentId)) ?? [];
     const questions = (await getProjectQuestionsByProjectId(projectData.documentId)) ?? [];
@@ -99,7 +90,7 @@ export async function getProjectById(id: string) {
       questions,
       surveyQuestions,
       collaborationQuestions,
-      comments,
+      comments: [],
       followers: followers.map(mapFollow),
       likes: mapToLike(likes),
       isLiked: isLiked ?? false,
@@ -237,44 +228,6 @@ export const getProjectsOptions = async () => {
       label: project.title,
     };
   });
-};
-
-export const getProjectComments = async (body: { projectId: string }) => {
-  try {
-    const validatedParams = validateParams(getCommentsSchema, body);
-    if (validatedParams.status === StatusCodes.OK) {
-      const dbComments = await getCommentsByObjectIdAndType(dbClient, body.projectId, ObjectType.PROJECT, 'asc');
-      const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment)));
-
-      const getLikes = comments.map(async (comment): Promise<Comment> => {
-        const { data: isLikedByUser } = await isProjectCommentLikedByUser({ commentId: comment.id });
-
-        return {
-          ...comment,
-          isLikedByUser,
-        };
-      });
-
-      const commentsWithUserLikes = await getPromiseResults(getLikes);
-
-      return {
-        status: StatusCodes.OK,
-        data: commentsWithUserLikes,
-      };
-    }
-    return {
-      status: validatedParams.status,
-      errors: validatedParams.errors,
-      message: validatedParams.message,
-    };
-  } catch (err) {
-    const error: InnoPlatformError = dbError('Getting Project Comments', err as Error, body.projectId);
-    logger.error(error);
-    return {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Getting Project Comments failed',
-    };
-  }
 };
 
 export async function getProjectByIdWithReactions(id: string) {

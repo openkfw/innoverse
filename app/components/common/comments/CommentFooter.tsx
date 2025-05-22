@@ -31,9 +31,8 @@ export const CommentFooter = ({
   const userIsAuthor = user?.providerId === author?.providerId;
   const displayResponseControls = !!onResponse;
   const displayEditControls = userIsAuthor && onEdit && onDelete;
-
   return (
-    <Stack direction={'row'}>
+    <Stack direction="row" spacing={2}>
       <LikeControl onLike={onLike} isSelected={isLiked} likeNumber={likeCount} />
       {displayResponseControls && <ResponseControls onResponse={onResponse} />}
       {displayEditControls && <EditControls onEdit={onEdit} onDelete={onDelete} />}

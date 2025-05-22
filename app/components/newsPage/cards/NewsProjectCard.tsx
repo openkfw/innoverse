@@ -16,28 +16,16 @@ import theme from '@/styles/theme';
 import { getImageByBreakpoint } from '@/utils/helpers';
 import { HighlightText } from '@/utils/highlightText';
 
-import CommentOverview from './common/CommentOverview';
 import { NewsCardActions } from './common/NewsCardActions';
 
 interface NewsProjectCardProps {
   entry: NewsFeedEntry;
 }
 
-function NewsProjectCard(props: NewsProjectCardProps) {
-  const { entry } = props;
-  const project = entry.item as Project;
-
+function NewsProjectCard({ entry }: NewsProjectCardProps) {
+  const item = entry.item as Project;
   const isWideScreen = useMediaQuery(theme.breakpoints.up('sm'));
-  const image = getImageByBreakpoint(!isWideScreen, project.image) || defaultImage;
-
-  if (project?.comments?.length > 0) {
-    return (
-      <>
-        <CommentOverview title={project.title} description={project.summary} image={image} />
-        <NewsCardActions entry={entry} />
-      </>
-    );
-  }
+  const image = getImageByBreakpoint(!isWideScreen, item.image) || defaultImage;
 
   return (
     <>
@@ -55,15 +43,15 @@ function NewsProjectCard(props: NewsProjectCardProps) {
             }}
           />
           <Box sx={progressBarMobileStyles}>
-            <ProgressBar active={project.stage} />
+            <ProgressBar active={item.stage} />
           </Box>
         </CardMedia>
 
         <CardContent sx={cardContentStyles}>
-          <VisibleContributors contributors={project.team} />
+          <VisibleContributors contributors={item.team} />
           <Typography variant="h5" sx={titleStyles}>
-            <Link href={`/projects/${encodeURIComponent(project.id)}`} style={linkStyles}>
-              <HighlightText text={project.title} />
+            <Link href={`/projects/${encodeURIComponent(item.id)}`} style={linkStyles}>
+              <HighlightText text={item.title} />
             </Link>
           </Typography>
           <Typography
@@ -71,14 +59,14 @@ function NewsProjectCard(props: NewsProjectCardProps) {
             sx={{ ...descriptionStyles, WebkitLineClamp: isWideScreen ? 4 : 6 }}
             data-testid="text"
           >
-            <HighlightText text={project.summary} />
+            <HighlightText text={item.summary} />
           </Typography>
         </CardContent>
       </Box>
       <Box sx={progressBarStyles}>
-        <ProgressBar active={project.stage} />
+        <ProgressBar active={item.stage} />
       </Box>
-      <NewsCardActions entry={entry} hideControls />
+      <NewsCardActions entry={entry} />
     </>
   );
 }

@@ -8,7 +8,7 @@ import { addUserComment } from '@/components/newsPage/threads/actions';
 interface NewsCommentThreadProps {
   item: { id: string; objectType: ObjectType; projectId?: string };
   comment: CommentWithResponses;
-  commentType: ObjectType.POST | ObjectType.UPDATE;
+  commentType: ObjectType;
   level: number;
   onDelete: () => void;
   onUpdate: (updatedComment: CommentWithResponses) => void;
@@ -16,13 +16,12 @@ interface NewsCommentThreadProps {
 
 export const NewsCommentThread = (props: NewsCommentThreadProps) => {
   const { comment, level } = props;
-
   const updateComment = (updatedText: string) => {
     props.onUpdate({ ...comment, text: updatedText });
   };
 
-  const handleDeleteResponse = (response: CommentWithResponses) => {
-    const responses = comment.comments.filter((r) => r.id !== response.id);
+  const handleDeleteResponse = (responseId: string) => {
+    const responses = comment.comments.filter((r) => r.id !== responseId);
     const updatedComment = { ...comment, comments: responses };
     props.onUpdate(updatedComment);
   };
@@ -72,7 +71,7 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
               comment={response}
               commentType={props.commentType}
               level={level + 1}
-              onDelete={() => handleDeleteResponse(response)}
+              onDelete={() => handleDeleteResponse(response.id)}
               onUpdate={handleUpdateResponse}
             />
           ))}

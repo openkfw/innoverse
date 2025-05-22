@@ -1,21 +1,18 @@
 import { ResultOf } from 'gql.tada';
 
-import { BasicCollaborationQuestion, CollaborationQuestion } from '@/common/types';
+import { BasicCollaborationQuestion, CollaborationQuestion, CommentWithResponses, ObjectType } from '@/common/types';
 import { RequestError } from '@/entities/error';
-import { CommentDB } from '@/repository/db/utils/types';
 import { strapiError } from '@/utils/errors';
 import { toDate } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { CollaborationQuestionFragment } from '@/utils/requests/collaborationQuestions/queries';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 
-import { mapToCollaborationComments } from '../comments/mapping';
-
 const logger = getLogger();
 
 export const mapToCollaborationQuestion = async (
   questionData: ResultOf<typeof CollaborationQuestionFragment>,
-  dbComments: CommentDB[],
+  comments: CommentWithResponses[],
 ): Promise<CollaborationQuestion | undefined> => {
   try {
     const project = questionData.project;
@@ -31,12 +28,11 @@ export const mapToCollaborationQuestion = async (
       isPlatformFeedback: questionData.isPlatformFeedback,
       title: questionData.title,
       updatedAt: toDate(questionData.updatedAt),
-      comments: [],
     };
-    const comments = await mapToCollaborationComments(dbComments, question);
     return {
       ...question,
       comments,
+      objectType: ObjectType.COLLABORATION_QUESTION,
     };
   } catch (err) {
     const error = strapiError('Mapping collaboration question', err as RequestError, questionData.documentId);

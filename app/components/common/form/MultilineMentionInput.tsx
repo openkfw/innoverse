@@ -85,7 +85,6 @@ function MultilineMentionInput({
                 }}
               />
             </MentionsInput>
-
             {endAdornment && <div style={{ position: 'absolute', right: 22, bottom: 16 }}>{endAdornment}</div>}
             {error && <p style={{ color: 'red', position: 'absolute', bottom: -20 }}>{error.message}</p>}
           </Box>
@@ -103,7 +102,6 @@ const mentionInputStyle = {
     position: 'relative',
   },
   highlightedInput: {
-    backgroundColor: 'rgba(250,249,246,255)',
     color: '#398357',
     zIndex: 1,
     position: 'relative',

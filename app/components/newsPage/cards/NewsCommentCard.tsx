@@ -10,11 +10,8 @@ import { errorMessage } from '@/components/common/CustomToast';
 import { EditControls } from '@/components/common/editing/controls/EditControls';
 import { LikeControl } from '@/components/common/editing/controls/LikeControl';
 import { ResponseControls } from '@/components/common/editing/controls/ResponseControl';
-import {
-  useEditingInteractions,
-  useEditingState,
-  useRespondingInteractions,
-} from '@/components/common/editing/editing-context';
+import { useEditingInteractions, useEditingState } from '@/components/common/editing/editing-context';
+import { useRespondingInteractions } from '@/components/common/editing/responding-context';
 import { TextCard } from '@/components/common/TextCard';
 import { removeUserComment, updateUserComment } from '@/components/newsPage/cards/actions';
 import { WriteCommentCard } from '@/components/newsPage/cards/common/WriteCommentCard';
@@ -25,9 +22,9 @@ import { addCommentLike, deleteCommentLike } from '../threads/actions';
 
 interface NewsCommentCardProps {
   comment: CommonCommentProps;
-  objectType: ObjectType.POST | ObjectType.UPDATE;
+  objectType: ObjectType;
   displayResponseControls: boolean;
-  onDelete: () => void;
+  onDelete: (commentId: string) => void;
   onUpdate: (text: string) => void;
 }
 
@@ -65,8 +62,8 @@ export const NewsCommentCard = (props: NewsCommentCardProps) => {
   );
 };
 
-const useNewsCommentCard = (props: NewsCommentCardProps) => {
-  const { comment, objectType, displayResponseControls, onDelete, onUpdate } = props;
+export const useNewsCommentCard = (props: NewsCommentCardProps) => {
+  const { comment, objectType, displayResponseControls, onUpdate } = props;
   const [isCommentLiked, setIsCommentLiked] = useState<boolean>(comment.isLikedByUser || false);
   const [commentLikeCount, setCommentLikeCount] = useState<number>(comment?.likes?.length || 0);
 
@@ -92,7 +89,7 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
   const handleDelete = async () => {
     try {
       await removeUserComment({ commentId: comment.id, objectType });
-      onDelete();
+      props.onDelete(comment.id);
     } catch (error) {
       console.error('Error deleting comment:', error);
       errorMessage({ message: m.components_newsPage_cards_commentCard_error_delete() });
@@ -124,7 +121,7 @@ const useNewsCommentCard = (props: NewsCommentCardProps) => {
     displayResponseControls,
     isEditing: state.isEditing(comment),
     startEdit: () => editingInteractions.onStart(comment),
-    startResponse: () => respondingInteractions.onStart(comment),
+    startResponse: () => respondingInteractions.onStart(comment, 'comment'),
     cancelEdit: editingInteractions.onCancel,
     updateComment: handleUpdate,
     deleteComment: handleDelete,

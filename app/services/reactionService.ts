@@ -1,7 +1,6 @@
 import { ObjectType, Reaction, User } from '@/common/types';
 import dbClient from '@/repository/db/prisma/prisma';
 import { addReactionToDb, removeReactionFromDb } from '@/repository/db/reaction';
-import { getNewsFeedEntryForComment } from '@/services/collaborationCommentService';
 import { getNewsFeedEntryForCollaborationQuestion } from '@/services/collaborationQuestionService';
 import { getNewsFeedEntryForProjectEvent } from '@/services/eventService';
 import { getNewsFeedEntryForPost } from '@/services/postService';
@@ -135,8 +134,6 @@ export const getItemForEntityWithReactions = async (
       return await getNewsFeedEntryForProjectEvent(redisClient, reaction.objectId);
     case ObjectType.UPDATE:
       return await getNewsFeedEntryForProjectUpdate(redisClient, reaction.objectId);
-    case ObjectType.COLLABORATION_COMMENT:
-      return await getNewsFeedEntryForComment(redisClient, { user, commentId: reaction.objectId });
     case ObjectType.COLLABORATION_QUESTION:
       return await getNewsFeedEntryForCollaborationQuestion(redisClient, reaction.objectId);
     case ObjectType.POST:

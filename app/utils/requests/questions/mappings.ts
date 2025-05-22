@@ -1,6 +1,6 @@
 import { ResultOf } from 'gql.tada';
 
-import { ProjectQuestion } from '@/common/types';
+import { ObjectType, ProjectQuestion } from '@/common/types';
 import { toDate } from '@/utils/helpers';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { InnoUserFragment } from '@/utils/requests/innoUsers/queries';
@@ -15,6 +15,7 @@ type ProjectQuestionData = {
 export const mapToQuestion = (questionData: ProjectQuestionData): ProjectQuestion => {
   return {
     id: questionData.documentId,
+    objectType: ObjectType.COLLABORATION_QUESTION,
     authors: questionData.authors?.map(mapToUser) ?? [],
     title: questionData.title,
     updatedAt: toDate(questionData.updatedAt),

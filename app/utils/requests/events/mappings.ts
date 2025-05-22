@@ -1,6 +1,6 @@
 import { ResultOf } from 'gql.tada';
 
-import { Event } from '@/common/types';
+import { Event, ObjectType } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import { strapiError } from '@/utils/errors';
 import { toDate } from '@/utils/helpers';
@@ -27,6 +27,7 @@ export function mapToEvent(eventData: ResultOf<typeof EventFragment>): Event | u
     }
     return {
       id: eventData.documentId,
+      objectType: ObjectType.EVENT,
       title: eventData.title,
       projectId: project.documentId,
       projectName: project.title,
