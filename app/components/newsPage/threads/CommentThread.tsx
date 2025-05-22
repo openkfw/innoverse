@@ -248,7 +248,6 @@ export const useCommentThread = (props: CommentThreadProps) => {
   const loadComments = async (limit?: number) => {
     setComments({ isLoading: true });
     const comments = await fetchSortedComments(limit);
-    console.log('loadComments', comments);
     if (comments) {
       setComments((prev) => ({
         ...prev,
