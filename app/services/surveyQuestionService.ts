@@ -122,7 +122,6 @@ export const createNewsFeedEntryForSurveyQuestionById = async (objectId: string)
     logger.warn(`Failed to create news feed cache entry for survey question with id '${objectId}'`);
     return null;
   }
-
   return await createNewsFeedEntryForSurveyQuestion(survey);
 };
 

@@ -20,7 +20,7 @@ const ProjectContext = createContext(defaultState);
 
 export const ProjectContextProvider = ({ project, children }: { project: Project; children: React.ReactNode }) => {
   const [collaborationCommentsAmount, setCollaborationCommentsAmount] = useState<number>(
-    project.collaborationQuestions.reduce((sum, comment) => sum + comment.comments.length, 0),
+    project.collaborationQuestions.reduce((sum, comment) => sum + (comment.comments?.length ?? 0), 0),
   );
 
   const contextObject: ProjectContextInterface = {

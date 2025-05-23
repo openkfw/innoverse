@@ -10,10 +10,16 @@ import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 
 const logger = getLogger();
 
-export const mapToCollaborationQuestion = async (
+export const mapToCollaborationQuestions = (
+  opportunities: ResultOf<typeof CollaborationQuestionFragment>[],
+): CollaborationQuestion[] => {
+  const mappedCollaborationQuestions = opportunities?.map(mapToCollaborationQuestion) ?? [];
+  return mappedCollaborationQuestions.filter((e) => e !== undefined) as CollaborationQuestion[];
+};
+
+export const mapToCollaborationQuestion = (
   questionData: ResultOf<typeof CollaborationQuestionFragment>,
-  comments: CommentWithResponses[],
-): Promise<CollaborationQuestion | undefined> => {
+): CollaborationQuestion | undefined => {
   try {
     const project = questionData.project;
     if (!project) {
@@ -31,7 +37,6 @@ export const mapToCollaborationQuestion = async (
     };
     return {
       ...question,
-      comments,
       objectType: ObjectType.COLLABORATION_QUESTION,
     };
   } catch (err) {

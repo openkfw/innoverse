@@ -2,55 +2,32 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { BasicCollaborationQuestion, ObjectType, StartPagination, UserSession } from '@/common/types';
+import {
+  BasicCollaborationQuestion,
+  CollaborationQuestion,
+  ObjectType,
+  StartPagination,
+  UserSession,
+} from '@/common/types';
 import { RequestError } from '@/entities/error';
 import { isCommentLikedBy } from '@/repository/db/comment';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
-import { InnoPlatformError, strapiError } from '@/utils/errors';
-import { getPromiseResults } from '@/utils/helpers';
+import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
-import { mapToCollaborationQuestion } from '@/utils/requests/collaborationQuestions/mappings';
 import {
   GetCollaborationQuesstionsStartingFromQuery,
   GetCollaborationQuestionByIdQuery,
-  GetCollaborationQuestionsByProjectIdQuery,
-  GetCollaborationQuestionsCountProjectIdQuery,
   GetPlatformFeedbackCollaborationQuestion,
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
+import { mapToBasicCollaborationQuestion } from './mappings';
+import { getPromiseResults } from '@/utils/helpers';
 import { getCommentsByObjectIdWithResponses } from '../comments/requests';
 
-import { mapToBasicCollaborationQuestion } from './mappings';
-
 const logger = getLogger();
-
-export async function getCollaborationQuestionsByProjectId(projectId: string) {
-  try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestionsByProjectIdQuery, { projectId });
-    const questionsData = response.collaborationQuestions ?? [];
-
-    const mapToEntities = questionsData.map(async (questionData) => {
-      const { documentId } = questionData;
-      const { comments } = await getCommentsByObjectIdWithResponses(documentId, ObjectType.COLLABORATION_QUESTION);
-
-      const getCommentsWithLike = comments.map(async (comment) => {
-        const { data: isLikedByUser } = await isCommentLikedByUser({ commentId: comment.id });
-        return { ...comment, isLikedByUser };
-      });
-
-      const commentsWithUserLike = await getPromiseResults(getCommentsWithLike);
-      return mapToCollaborationQuestion(questionData, commentsWithUserLike);
-    });
-    const collaborationQuestions = await getPromiseResults(mapToEntities);
-    return collaborationQuestions;
-  } catch (err) {
-    const error = strapiError('Getting all collaboration questions', err as RequestError, projectId);
-    logger.error(error);
-  }
-}
 
 export async function getBasicCollaborationQuestionById(id: string): Promise<BasicCollaborationQuestion | undefined> {
   try {
@@ -152,17 +129,33 @@ export const isCommentLikedByUser = withAuth(async (user: UserSession, body: { c
   }
 });
 
-export const countCollaborationQuestionsForProject = async (projectId: string) => {
-  try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestionsCountProjectIdQuery, {
-      projectId,
-    });
-    const countResult = response.collaborationQuestions_connection?.pageInfo.total;
+export async function getCollaborationQuestionsWithAdditionalData(collaborationQuestion: CollaborationQuestion[]) {
+  const getAdditionalData = collaborationQuestion.map(getCollaborationQuestionWithAdditionalData);
+  const collabQuestionsWithAdditionalData = await getPromiseResults(getAdditionalData);
+  return collabQuestionsWithAdditionalData;
+}
 
-    return { status: StatusCodes.OK, data: countResult };
+export async function getCollaborationQuestionWithAdditionalData(
+  collaborationQuestion: CollaborationQuestion,
+): Promise<CollaborationQuestion> {
+  try {
+    const { comments } = await getCommentsByObjectIdWithResponses(
+      collaborationQuestion.id,
+      ObjectType.COLLABORATION_QUESTION,
+    );
+    const getCommentsWithLike = comments.map(async (comment) => {
+      const { data: isLikedByUser } = await isCommentLikedByUser({ commentId: comment.id });
+      return { ...comment, isLikedByUser };
+    });
+    const commentsWithUserLike = await getPromiseResults(getCommentsWithLike);
+    return { ...collaborationQuestion, comments: commentsWithUserLike };
   } catch (err) {
-    const error = strapiError('Error fetching collaboration questions count for project', err as RequestError);
+    const error: InnoPlatformError = dbError(
+      `Getting additional data for collaboration question with id: ${collaborationQuestion.id}`,
+      err as Error,
+      collaborationQuestion.id,
+    );
     logger.error(error);
     throw err;
   }
-};
+}
