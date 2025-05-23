@@ -106,8 +106,8 @@
   "components_common_editing_unsavedChangesDialog_cancel": "Abbrechen",
   "components_common_editing_unsavedChangesDialog_confirmThrow": "Verwerfen",
 
-  "components_common_editing_controls_editControls_edit": "bearbeiten",
-  "components_common_editing_controls_editControls_delete": "löschen",
+  "components_common_editing_controls_editControls_edit": "Bearbeiten",
+  "components_common_editing_controls_editControls_delete": "Löschen",
 
   "components_common_editing_writetext_writeTextCard_failedSubmit": "Dein Beitrag konnte nicht veröffentlicht werden. Bitte versuche es später noch einmal.",
   "components_common_editing_writetext_writeTextCard_placeholder": "Teile deine Ratschläge und Gedanken zu diesem Thema mit, damit deine Kollegen von deiner Expertise profitieren können.",

@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import EditIcon from '@mui/icons-material/EditOutlined';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -13,8 +15,6 @@ import Typography from '@mui/material/Typography';
 
 import * as m from '@/src/paraglide/messages.js';
 
-import DeleteFilledIcon from '../../../icons/DeleteFilled';
-import EditFilledIcon from '../../../icons/EditFilled';
 import { ConfirmDeleteDialog } from '../ConfirmDeleteDialog';
 
 interface EditControlsProps {
@@ -57,8 +57,8 @@ export const EditControls = (props: EditControlsProps) => {
 
   return (
     <Stack direction="row">
-      <IconButton onClick={handleMenuOpen} aria-label="more options" sx={menuIconButtonStyles}>
-        <MoreVertIcon sx={{ color: '#41484C' }} />
+      <IconButton onClick={handleMenuOpen} aria-label="more options" sx={menuIconButtonStyles(anchorEl !== null)}>
+        <MoreVertIcon sx={iconStyles} />
       </IconButton>
 
       <Menu
@@ -71,10 +71,10 @@ export const EditControls = (props: EditControlsProps) => {
       >
         <MenuItem onClick={handleEdit}>
           <ListItemIcon>
-            <EditFilledIcon color="#41484C" />
+            <EditIcon sx={iconStyles} />
           </ListItemIcon>
           <ListItemText>
-            <Typography sx={listItemTypographyStyles}>
+            <Typography variant="body2" sx={listItemTypographyStyles}>
               {m.components_common_editing_controls_editControls_edit()}
             </Typography>
           </ListItemText>
@@ -82,10 +82,10 @@ export const EditControls = (props: EditControlsProps) => {
 
         <MenuItem onClick={handleDelete}>
           <ListItemIcon>
-            <DeleteFilledIcon color="#41484C" />
+            <DeleteIcon sx={iconStyles} />
           </ListItemIcon>
           <ListItemText>
-            <Typography sx={listItemTypographyStyles}>
+            <Typography variant="body2" sx={listItemTypographyStyles}>
               {m.components_common_editing_controls_editControls_delete()}
             </Typography>
           </ListItemText>
@@ -97,7 +97,7 @@ export const EditControls = (props: EditControlsProps) => {
 };
 
 // Edit Controls Styles
-const menuIconButtonStyles = {
+const menuIconButtonStyles = (open: boolean) => ({
   width: '32px',
   height: '32px',
   maxWidth: '32px',
@@ -107,9 +107,9 @@ const menuIconButtonStyles = {
   justifyContent: 'center',
   alignItems: 'center',
   borderRadius: '48px',
-  border: '1px solid #D8DFE3',
+  border: `1px solid ${open ? '#6D767D' : '#D8DFE3'}`,
   backgroundColor: 'transparent',
-};
+});
 
 const menuSlotPropsStyles = {
   paper: {
@@ -134,10 +134,9 @@ const menuSlotPropsStyles = {
 };
 
 const listItemTypographyStyles = {
-  fontSize: '16px',
-  fontWeight: 400,
-  lineHeight: '24px',
-  letterSpacing: '0.15px',
-  textAlign: 'left',
   color: 'text.primary',
+};
+
+const iconStyles = {
+  color: '#41484C',
 };
