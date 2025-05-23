@@ -9,6 +9,7 @@ export enum ObjectType {
   OPPORTUNITY = 'OPPORTUNITY',
   COLLABORATION_QUESTION = 'COLLABORATION_QUESTION',
   COMMENT = 'COMMENT',
+  PROJECT_QUESTION = 'PROJECT_QUESTION',
 }
 
 export type NewsFeedEntry =
@@ -348,7 +349,7 @@ export type CollaborationQuestion = CommonNewsFeedProps & {
   isPlatformFeedback: boolean;
   description: string;
   authors: User[];
-  comments: CommentWithResponses[];
+  comments?: CommentWithResponses[];
   projectId: string;
   projectName: string;
 };

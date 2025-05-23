@@ -11,6 +11,7 @@ export const OpportunityFragment = graphql(
         ...InnoUser
       }
       updatedAt
+      createdAt
       expense
       participants {
         ...InnoUser

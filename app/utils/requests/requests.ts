@@ -14,22 +14,21 @@ import { dbError, InnoPlatformError, strapiError } from '../errors';
 import getLogger from '../logger';
 
 import { getInnoUserByProviderId } from './innoUsers/requests';
-import { mapToCollaborationQuestion } from './collaborationQuestions/mappings';
-import { mapToOpportunity } from './opportunities/mappings';
-import { userParticipatesInOpportunity } from './opportunities/requests';
+import { mapToCollaborationQuestions } from './collaborationQuestions/mappings';
+import { mapToOpportunities } from './opportunities/mappings';
+import { getOpportunitiesWithAdditionalData } from './opportunities/requests';
 import { findReactionByUser, getUpdatesWithAdditionalData } from './updates/requests';
 import { GetCountsForProject, GetMainPageData, GetProjectData } from './graphqlQueries';
 import strapiGraphQLFetcher from './strapiGraphQLFetcher';
-import { mapToQuestion } from './questions/mappings';
 import { RequestError } from '@/entities/error';
 import { getSurveyQuestionsWithAdditionalData } from './surveyQuestions/requests';
 import { mapToProjectUpdates } from './updates/mappings';
 import { mapToEvents } from './events/mappings';
 import { getEventsWithAdditionalData } from './events/requests';
 import { mapToBasicProject } from './project/mappings';
+import { mapToProjectQuestions } from './questions/mappings';
 import { mapToBasicSurveyQuestions } from './surveyQuestions/mappings';
-import { isCommentLikedByUser } from './collaborationQuestions/requests';
-import { getCommentsByObjectIdWithResponses } from './comments/requests';
+import { getCollaborationQuestionsWithAdditionalData } from './collaborationQuestions/requests';
 
 const logger = getLogger();
 
@@ -163,50 +162,43 @@ export const getAuthorOrError = async (user: UserSession) => {
 export const getProjectData = async (projectId: string) => {
   try {
     const response = await strapiGraphQLFetcher(GetProjectData, { projectId, now: new Date() });
-
-    // Collaboration questions
-    const collaborationQuestions = await getPromiseResults(
-      response.collaborationQuestions.map(async (questionData) => {
-        const { comments } = await getCommentsByObjectIdWithResponses(
-          questionData.documentId,
-          ObjectType.COLLABORATION_QUESTION,
-        );
-        const getCommentsWithLike = comments.map(async (comment) => {
-          const { data: isLikedByUser } = await isCommentLikedByUser({ commentId: comment.id });
-          return { ...comment, isLikedByUser };
-        });
-        const commentsWithUserLike = await getPromiseResults(getCommentsWithLike);
-        return mapToCollaborationQuestion(questionData, commentsWithUserLike);
-      }),
-    );
-    // Opportunities
-    const opportunities = await getPromiseResults(
-      response.opportunities.map(async (opportunityData) => {
-        const { data: isParticipant } = await userParticipatesInOpportunity({
-          opportunityId: opportunityData.documentId,
-        });
-        return mapToOpportunity(opportunityData, isParticipant);
-      }),
-    );
-    // Questions
-    const questions = response.questions.map((question) => mapToQuestion(question));
-    // Survey questions
-    const surveyQuestions = mapToBasicSurveyQuestions(response.surveyQuestions);
-    const surveyQuestionsWithAdditionalData = await getSurveyQuestionsWithAdditionalData(surveyQuestions);
-    // Updates
-    const updates = mapToProjectUpdates(response.updates);
-    const updatesWithAdditionalData = await getUpdatesWithAdditionalData(updates);
-    // Future Events
-    const futureEvents = mapToEvents(response.futureEvents);
-    const futureEventsWithAdditionalData = await getEventsWithAdditionalData(futureEvents);
-    // Past Events
-    const pastEvents = mapToEvents(response.pastEvents);
-    const pastEventsWithAdditionalData = await getEventsWithAdditionalData(pastEvents);
-
-    return {
+    const [
       collaborationQuestions,
       opportunities,
-      questions,
+      surveyQuestions,
+      updates,
+      futureEvents,
+      pastEvents,
+      projectQuestions,
+    ] = [
+      mapToCollaborationQuestions(response.collaborationQuestions),
+      mapToOpportunities(response.opportunities),
+      mapToBasicSurveyQuestions(response.surveyQuestions),
+      mapToProjectUpdates(response.updates),
+      mapToEvents(response.futureEvents),
+      mapToEvents(response.pastEvents),
+      mapToProjectQuestions(response.questions),
+    ];
+
+    const [
+      surveyQuestionsWithAdditionalData,
+      updatesWithAdditionalData,
+      futureEventsWithAdditionalData,
+      pastEventsWithAdditionalData,
+      opportunitiesWithAdditionalData,
+      collaborationQuestionsWithAdditionalData,
+    ] = await Promise.all([
+      getSurveyQuestionsWithAdditionalData(surveyQuestions),
+      getUpdatesWithAdditionalData(updates),
+      getEventsWithAdditionalData(futureEvents),
+      getEventsWithAdditionalData(pastEvents),
+      getOpportunitiesWithAdditionalData(opportunities),
+      getCollaborationQuestionsWithAdditionalData(collaborationQuestions),
+    ]);
+    return {
+      collaborationQuestions: collaborationQuestionsWithAdditionalData,
+      opportunities: opportunitiesWithAdditionalData,
+      questions: projectQuestions,
       surveyQuestions: surveyQuestionsWithAdditionalData,
       updates: updatesWithAdditionalData,
       futureEvents: futureEventsWithAdditionalData,

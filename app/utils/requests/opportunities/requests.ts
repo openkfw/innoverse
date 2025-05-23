@@ -2,20 +2,20 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { BasicOpportunity, UserSession } from '@/common/types';
+import { BasicOpportunity, Opportunity, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import { withAuth } from '@/utils/auth';
-import { InnoPlatformError, strapiError } from '@/utils/errors';
+import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { mapToOpportunity } from '@/utils/requests/opportunities/mappings';
 import {
   GetBasicOpportunityByIdQuery,
-  GetOpportunitiesByIdQuery,
   GetOpportunityWithParticipantQuery,
   UpdateOpportunityParticipantsQuery,
 } from '@/utils/requests/opportunities/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
+import { getPromiseResults } from '@/utils/helpers';
 
 const logger = getLogger();
 
@@ -101,3 +101,29 @@ export const userParticipatesInOpportunity = withAuth(async (user: UserSession, 
     throw err;
   }
 });
+
+export async function getOpportunitiesWithAdditionalData(opportunities: Opportunity[]) {
+  const getAdditionalData = opportunities.map(getOpportunityWithAdditionalData);
+  const opportunitiesWithAdditionalData = await getPromiseResults(getAdditionalData);
+  return opportunitiesWithAdditionalData;
+}
+
+export async function getOpportunityWithAdditionalData(opportunity: Opportunity): Promise<Opportunity> {
+  try {
+    const { data: isParticipant } = await userParticipatesInOpportunity({
+      opportunityId: opportunity.id,
+    });
+    return {
+      ...opportunity,
+      hasApplied: isParticipant,
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Getting additional data for opportunity with id: ${opportunity.id}`,
+      err as Error,
+      opportunity.id,
+    );
+    logger.error(error);
+    throw err;
+  }
+}

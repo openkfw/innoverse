@@ -7,6 +7,7 @@ import { SurveyQuestionFragment } from './surveyQuestions/queries';
 import { InnoUserFragment } from './innoUsers/queries';
 import { EventFragment } from './events/queries';
 import { ProjectFragment } from './project/queries';
+import { ProjectQuestionFragment } from './questions/queries';
 
 export const GetProjectData = graphql(
   `
@@ -24,12 +25,7 @@ export const GetProjectData = graphql(
         ...SurveyQuestion
       }
       questions(filters: { project: { documentId: { eq: $projectId } } }) {
-        documentId
-        title
-        authors {
-          ...InnoUser
-        }
-        updatedAt
+        ...Question
       }
       futureEvents: events(
         filters: { project: { documentId: { eq: $projectId } }, startTime: { gte: $now } }
@@ -50,6 +46,7 @@ export const GetProjectData = graphql(
     ProjectUpdateFragment,
     OpportunityFragment,
     SurveyQuestionFragment,
+    ProjectQuestionFragment,
     InnoUserFragment,
     EventFragment,
   ],
