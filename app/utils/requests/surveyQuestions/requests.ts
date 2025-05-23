@@ -20,10 +20,7 @@ import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { mapToBasicSurveyQuestion, mapToSurveyQuestion } from '@/utils/requests/surveyQuestions/mappings';
-import {
-  GetSurveyQuestionsByProjectIdQuery,
-  GetSurveysStartingFromQuery,
-} from '@/utils/requests/surveyQuestions/queries';
+import { GetSurveysStartingFromQuery } from '@/utils/requests/surveyQuestions/queries';
 
 import { GetSurveyQuestionByIdQuery } from './queries';
 
@@ -40,28 +37,6 @@ export async function getBasicSurveyQuestionById(id: string) {
     return surveyQuestion;
   } catch (err) {
     const error = strapiError('Getting basic survey question by id', err as RequestError, id);
-    logger.error(error);
-  }
-}
-
-export async function getSurveyQuestionsByProjectId(projectId: string) {
-  try {
-    const response = await strapiGraphQLFetcher(GetSurveyQuestionsByProjectIdQuery, { projectId });
-    const surveyQuestionsData = response.surveyQuestions;
-
-    if (!surveyQuestionsData) throw new Error('Response contained no survey question data');
-
-    const mapToEntities = surveyQuestionsData.map(async (surveyQuestionData) => {
-      const votes = await getSurveyVotes(dbClient, surveyQuestionData.documentId);
-      const userVote = await findUserVote({ votes });
-      const surveyQuestion = mapToSurveyQuestion(surveyQuestionData, votes, userVote.data);
-      return surveyQuestion;
-    });
-
-    const surveyQuestions = await getPromiseResults(mapToEntities);
-    return surveyQuestions;
-  } catch (err) {
-    const error = strapiError('Getting all survey questions', err as RequestError, projectId);
     logger.error(error);
   }
 }

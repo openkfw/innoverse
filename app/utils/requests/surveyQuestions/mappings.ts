@@ -35,6 +35,7 @@ export const mapToSurveyQuestion = (
       projectName: project.title,
       question: surveyQuestionData.question,
       responseOptions: responseOptions,
+      votes: votes,
       updatedAt: toDate(surveyQuestionData.updatedAt),
       createdAt: toDate(surveyQuestionData.createdAt),
       objectType: ObjectType.SURVEY_QUESTION,

@@ -13,12 +13,8 @@ import { withAuth } from '../auth';
 import { dbError, InnoPlatformError, strapiError } from '../errors';
 import getLogger from '../logger';
 
-import { findReactionByUser } from './updates/requests';
 import { getInnoUserByProviderId } from './innoUsers/requests';
-import { RequestError } from '@/entities/error';
-import { getProjectCollaborationComments } from './collaborationComments/requests';
 import { mapToCollaborationQuestion } from './collaborationQuestions/mappings';
-import { isCollaborationCommentLikedByUser } from './collaborationQuestions/requests';
 import { mapToOpportunity } from './opportunities/mappings';
 import { userParticipatesInOpportunity } from './opportunities/requests';
 import { findReactionByUser, getUpdatesWithAdditionalData } from './updates/requests';
@@ -32,6 +28,8 @@ import { mapToEvents } from './events/mappings';
 import { getEventsWithAdditionalData } from './events/requests';
 import { mapToBasicProject } from './project/mappings';
 import { mapToBasicSurveyQuestions } from './surveyQuestions/mappings';
+import { isCommentLikedByUser } from './collaborationQuestions/requests';
+import { getCommentsByObjectIdWithResponses } from './comments/requests';
 
 const logger = getLogger();
 
@@ -160,6 +158,8 @@ export const getAuthorOrError = async (user: UserSession) => {
     return null;
   }
   return author;
+};
+
 export const getProjectData = async (projectId: string) => {
   try {
     const response = await strapiGraphQLFetcher(GetProjectData, { projectId, now: new Date() });
@@ -167,10 +167,12 @@ export const getProjectData = async (projectId: string) => {
     // Collaboration questions
     const collaborationQuestions = await getPromiseResults(
       response.collaborationQuestions.map(async (questionData) => {
-        const getComments = await getProjectCollaborationComments({ projectId, questionId: questionData?.documentId });
-        const comments = getComments.data ?? [];
+        const { comments } = await getCommentsByObjectIdWithResponses(
+          questionData.documentId,
+          ObjectType.COLLABORATION_QUESTION,
+        );
         const getCommentsWithLike = comments.map(async (comment) => {
-          const { data: isLikedByUser } = await isCollaborationCommentLikedByUser({ commentId: comment.id });
+          const { data: isLikedByUser } = await isCommentLikedByUser({ commentId: comment.id });
           return { ...comment, isLikedByUser };
         });
         const commentsWithUserLike = await getPromiseResults(getCommentsWithLike);

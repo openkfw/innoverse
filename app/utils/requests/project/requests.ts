@@ -73,11 +73,11 @@ export async function getProjectById(id: string) {
     const project = mapToProject({
       projectBaseData: projectData,
       ...projectStrapiData,
-      comments: projectComments.data,
       followers: followers.map(mapFollow),
       likes: mapToLike(likes),
       isLiked: isLiked ?? false,
       isFollowed: isFollowed ?? false,
+      comments: [],
     });
 
     return project;

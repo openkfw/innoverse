@@ -10,7 +10,6 @@ import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
-import { mapToCollaborationQuestion } from '@/utils/requests/collaborationQuestions/mappings';
 import {
   GetCollaborationQuesstionsStartingFromQuery,
   GetCollaborationQuestionByIdQuery,
@@ -18,36 +17,9 @@ import {
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
-import { getCommentsByObjectIdWithResponses } from '../comments/requests';
-
 import { mapToBasicCollaborationQuestion } from './mappings';
 
 const logger = getLogger();
-
-export async function getCollaborationQuestionsByProjectId(projectId: string) {
-  try {
-    const response = await strapiGraphQLFetcher(GetCollaborationQuestionsByProjectIdQuery, { projectId });
-    const questionsData = response.collaborationQuestions ?? [];
-
-    const mapToEntities = questionsData.map(async (questionData) => {
-      const { documentId } = questionData;
-      const { comments } = await getCommentsByObjectIdWithResponses(documentId, ObjectType.COLLABORATION_QUESTION);
-
-      const getCommentsWithLike = comments.map(async (comment) => {
-        const { data: isLikedByUser } = await isCommentLikedByUser({ commentId: comment.id });
-        return { ...comment, isLikedByUser };
-      });
-
-      const commentsWithUserLike = await getPromiseResults(getCommentsWithLike);
-      return mapToCollaborationQuestion(questionData, commentsWithUserLike);
-    });
-    const collaborationQuestions = await getPromiseResults(mapToEntities);
-    return collaborationQuestions;
-  } catch (err) {
-    const error = strapiError('Getting all collaboration questions', err as RequestError, projectId);
-    logger.error(error);
-  }
-}
 
 export async function getBasicCollaborationQuestionById(id: string): Promise<BasicCollaborationQuestion | undefined> {
   try {
