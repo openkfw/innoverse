@@ -104,8 +104,8 @@
   "components_common_editing_unsavedChangesDialog_cancel": "Cancel",
   "components_common_editing_unsavedChangesDialog_confirmThrow": "Discard",
 
-  "components_common_editing_controls_editControls_edit": "edit",
-  "components_common_editing_controls_editControls_delete": "delete",
+  "components_common_editing_controls_editControls_edit": "Edit",
+  "components_common_editing_controls_editControls_delete": "Delete",
 
   "components_common_editing_writetext_writeTextCard_failedSubmit": "Failed to submit your contribution. Please try again later.",
   "components_common_editing_writetext_writeTextCard_placeholder": "Share your advice and thoughts on this topic to benefit your colleagues with your expertise.",
