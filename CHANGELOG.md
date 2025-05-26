@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.5.0](https://github.com/openkfw/innoverse/compare/v1.4.1...v1.5.0) (2025-05-26)
+
+### Chore
+
+- use LOG_LEVEL variable to change the winston log level in strapi ([#230](https://github.com/openkfw/innoverse/issues/230))
+
+### Features
+
+- extend comment functionality to all object types ([#228](https://github.com/openkfw/innoverse/issues/228))
+- change style of log-in page, add style ([#229](https://github.com/openkfw/innoverse/issues/229))
+- add daily check-in feature ([#205](https://github.com/openkfw/innoverse/issues/205))
+- add endpoint for sync of cache, add permissions in strapi ([#233](https://github.com/openkfw/innoverse/issues/233))
+
+### Bug Fixes
+
+- disable submit button on empty comment while editing ([#236](https://github.com/openkfw/innoverse/issues/236))
+
+### Refactor
+
+- Move strapi requests to one single graphql request ([#238](https://github.com/openkfw/innoverse/issues/238))
+
 ## [1.4.1](https://github.com/openkfw/innoverse/compare/v1.4.0...v1.4.1) (2025-04-14)
 
 ### Chore
