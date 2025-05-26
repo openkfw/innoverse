@@ -13,9 +13,22 @@ import { withAuth } from '../auth';
 import { dbError, InnoPlatformError, strapiError } from '../errors';
 import getLogger from '../logger';
 
-import { findReactionByUser } from './updates/requests';
 import { getInnoUserByProviderId } from './innoUsers/requests';
+import { mapToCollaborationQuestions } from './collaborationQuestions/mappings';
+import { mapToOpportunities } from './opportunities/mappings';
+import { getOpportunitiesWithAdditionalData } from './opportunities/requests';
+import { findReactionByUser, getUpdatesWithAdditionalData } from './updates/requests';
+import { GetCountsForProject, GetMainPageData, GetProjectData } from './graphqlQueries';
+import strapiGraphQLFetcher from './strapiGraphQLFetcher';
 import { RequestError } from '@/entities/error';
+import { getSurveyQuestionsWithAdditionalData } from './surveyQuestions/requests';
+import { mapToProjectUpdates } from './updates/mappings';
+import { mapToEvents } from './events/mappings';
+import { getEventsWithAdditionalData } from './events/requests';
+import { mapToBasicProject } from './project/mappings';
+import { mapToProjectQuestions } from './questions/mappings';
+import { mapToBasicSurveyQuestions } from './surveyQuestions/mappings';
+import { getCollaborationQuestionsWithAdditionalData } from './collaborationQuestions/requests';
 
 const logger = getLogger();
 
@@ -144,4 +157,95 @@ export const getAuthorOrError = async (user: UserSession) => {
     return null;
   }
   return author;
+};
+
+export const getProjectData = async (projectId: string) => {
+  try {
+    const response = await strapiGraphQLFetcher(GetProjectData, { projectId, now: new Date() });
+    const [
+      collaborationQuestions,
+      opportunities,
+      surveyQuestions,
+      updates,
+      futureEvents,
+      pastEvents,
+      projectQuestions,
+    ] = [
+      mapToCollaborationQuestions(response.collaborationQuestions),
+      mapToOpportunities(response.opportunities),
+      mapToBasicSurveyQuestions(response.surveyQuestions),
+      mapToProjectUpdates(response.updates),
+      mapToEvents(response.futureEvents),
+      mapToEvents(response.pastEvents),
+      mapToProjectQuestions(response.questions),
+    ];
+
+    const [
+      surveyQuestionsWithAdditionalData,
+      updatesWithAdditionalData,
+      futureEventsWithAdditionalData,
+      pastEventsWithAdditionalData,
+      opportunitiesWithAdditionalData,
+      collaborationQuestionsWithAdditionalData,
+    ] = await Promise.all([
+      getSurveyQuestionsWithAdditionalData(surveyQuestions),
+      getUpdatesWithAdditionalData(updates),
+      getEventsWithAdditionalData(futureEvents),
+      getEventsWithAdditionalData(pastEvents),
+      getOpportunitiesWithAdditionalData(opportunities),
+      getCollaborationQuestionsWithAdditionalData(collaborationQuestions),
+    ]);
+    return {
+      collaborationQuestions: collaborationQuestionsWithAdditionalData,
+      opportunities: opportunitiesWithAdditionalData,
+      questions: projectQuestions,
+      surveyQuestions: surveyQuestionsWithAdditionalData,
+      updates: updatesWithAdditionalData,
+      futureEvents: futureEventsWithAdditionalData,
+      pastEvents: pastEventsWithAdditionalData,
+    };
+  } catch (err) {
+    const error = strapiError('Getting project data by project id', err as RequestError, projectId);
+    logger.error(error);
+  }
+  return {
+    collaborationQuestions: [],
+    updates: [],
+    opportunities: [],
+    questions: [],
+    surveyQuestions: [],
+    futureEvents: [],
+    pastEvents: [],
+  };
+};
+
+export const getCountsForProject = async (projectId: string) => {
+  const response = await strapiGraphQLFetcher(GetCountsForProject, { projectId, now: new Date() });
+  return {
+    eventCount: response.events_connection?.pageInfo.total ?? 0,
+    updateCount: response.updates_connection?.pageInfo.total ?? 0,
+    collaborationQuestionCount: response.collaborationQuestions_connection?.pageInfo.total ?? 0,
+    opportunityCount: response.opportunities_connection?.pageInfo.total ?? 0,
+    surveyQuestionCount: response.surveyQuestions_connection?.pageInfo.total ?? 0,
+  };
+};
+
+export const getMainData = async () => {
+  const response = await strapiGraphQLFetcher(GetMainPageData, { now: new Date(), updatesLimit: 10 });
+
+  const futureEvents = mapToEvents(response.futureEvents);
+  const futureEventsWithAdditionalData = await getEventsWithAdditionalData(futureEvents);
+
+  const updates = mapToProjectUpdates(response.updates);
+  const updatesWithAdditionalData = await getUpdatesWithAdditionalData(updates);
+
+  const projects = response.projects.map(mapToBasicProject) ?? [];
+  const featuredProjects = response.featuredProjects.map(mapToBasicProject) ?? [];
+
+  return {
+    futureEvents: futureEventsWithAdditionalData,
+    updates: updatesWithAdditionalData,
+    projects,
+    featuredProjects,
+  };
 };

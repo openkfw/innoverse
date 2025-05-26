@@ -9,10 +9,16 @@ import { SurveyQuestionFragment } from '@/utils/requests/surveyQuestions/queries
 
 const logger = getLogger();
 
+export const mapToBasicSurveyQuestions = (
+  surveyQuestions: ResultOf<typeof SurveyQuestionFragment>[] | undefined,
+): BasicSurveyQuestion[] => {
+  const mappedSurveyQuestions = surveyQuestions?.map(mapToBasicSurveyQuestion) ?? [];
+  return mappedSurveyQuestions.filter((e) => e !== undefined) as BasicSurveyQuestion[];
+};
+
 export const mapToSurveyQuestion = (
   surveyQuestionData: ResultOf<typeof SurveyQuestionFragment>,
   votes: SurveyVote[],
-  userVote?: SurveyVote | undefined,
 ): SurveyQuestion | undefined => {
   try {
     const responseOptions = surveyQuestionData.responseOptions.filter((option) => option?.responseOption) as {
@@ -27,12 +33,11 @@ export const mapToSurveyQuestion = (
       projectId: project.documentId,
       projectName: project.title,
       question: surveyQuestionData.question,
-      responseOptions: responseOptions,
-      votes,
-      userVote: userVote?.vote,
       updatedAt: toDate(surveyQuestionData.updatedAt),
       createdAt: toDate(surveyQuestionData.createdAt),
       objectType: ObjectType.SURVEY_QUESTION,
+      responseOptions,
+      votes,
     };
   } catch (err) {
     const error = strapiError('Mapping survey question', err as RequestError, surveyQuestionData.documentId);
@@ -44,6 +49,9 @@ export const mapToBasicSurveyQuestion = (
   surveyQuestionData: ResultOf<typeof SurveyQuestionFragment>,
 ): BasicSurveyQuestion | undefined => {
   const project = surveyQuestionData.project;
+  const responseOptions = surveyQuestionData.responseOptions.filter((option) => option?.responseOption) as {
+    responseOption: string;
+  }[];
   try {
     if (!project) {
       throw new Error('Basic survey question contained no project data');
@@ -56,6 +64,7 @@ export const mapToBasicSurveyQuestion = (
       updatedAt: toDate(surveyQuestionData.updatedAt),
       createdAt: toDate(surveyQuestionData.createdAt),
       objectType: ObjectType.SURVEY_QUESTION,
+      responseOptions,
     };
   } catch (err) {
     const error = strapiError('Mapping basic survey question', err as RequestError, surveyQuestionData.documentId);

@@ -13,9 +13,6 @@ import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { mapFollow } from '@/utils/newsFeed/redis/redisMappings';
-import { getCollaborationQuestionsByProjectId } from '@/utils/requests/collaborationQuestions/requests';
-import { getEventsWithAdditionalData, getProjectEventsPage } from '@/utils/requests/events/requests';
-import { getOpportunitiesByProjectId } from '@/utils/requests/opportunities/requests';
 import { mapToBasicProject, mapToLike, mapToProject, mapToProjects } from '@/utils/requests/project/mappings';
 import {
   GetProjectAuthorIdByProjectIdQuery,
@@ -26,10 +23,9 @@ import {
   GetProjectTitleByIdQuery,
   GetProjectTitleByIdsQuery,
 } from '@/utils/requests/project/queries';
-import { getProjectQuestionsByProjectId } from '@/utils/requests/questions/requests';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { getSurveyQuestionsByProjectId } from '@/utils/requests/surveyQuestions/requests';
-import { getUpdatesByProjectId } from '@/utils/requests/updates/requests';
+
+import { getProjectData } from '../requests';
 
 const logger = getLogger();
 
@@ -72,32 +68,16 @@ export async function getProjectById(id: string) {
     const followers = await getProjectFollowers(dbClient, id);
     const { data: isLiked } = await isProjectLikedByUser({ projectId: id });
     const { data: isFollowed } = await isProjectFollowedByUser({ projectId: id });
-    const futureEvents = (await getProjectEventsPage(id, 2, 1, 'future')) || [];
-    const pastEvents = (await getProjectEventsPage(id, 2, 1, 'past')) || [];
 
-    const updatesWithAdditionalData = (await getUpdatesByProjectId(id)) ?? [];
-    const opportunities = (await getOpportunitiesByProjectId(projectData.documentId)) ?? [];
-    const questions = (await getProjectQuestionsByProjectId(projectData.documentId)) ?? [];
-    const surveyQuestions = (await getSurveyQuestionsByProjectId(projectData.documentId)) ?? [];
-    const collaborationQuestions = (await getCollaborationQuestionsByProjectId(projectData.documentId)) ?? [];
-
-    const futureEventsWithAdditionalData = await getEventsWithAdditionalData(futureEvents);
-    const pastEventsWithAdditionalData = await getEventsWithAdditionalData(pastEvents);
-
+    const projectStrapiData = await getProjectData(projectData.documentId);
     const project = mapToProject({
       projectBaseData: projectData,
-      opportunities,
-      questions,
-      surveyQuestions,
-      collaborationQuestions,
-      comments: [],
+      ...projectStrapiData,
       followers: followers.map(mapFollow),
       likes: mapToLike(likes),
       isLiked: isLiked ?? false,
       isFollowed: isFollowed ?? false,
-      updates: updatesWithAdditionalData,
-      futureEvents: futureEventsWithAdditionalData,
-      pastEvents: pastEventsWithAdditionalData,
+      comments: [],
     });
 
     return project;

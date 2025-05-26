@@ -2,22 +2,25 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { ObjectType, StartPagination, SurveyVote, UserSession } from '@/common/types';
+import {
+  BasicSurveyQuestion,
+  ObjectType,
+  StartPagination,
+  SurveyQuestion,
+  SurveyVote,
+  UserSession,
+} from '@/common/types';
 import { RequestError } from '@/entities/error';
 import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { getSurveyVotes } from '@/repository/db/survey_votes';
 import { withAuth } from '@/utils/auth';
-import { strapiError } from '@/utils/errors';
+import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
 import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 import { mapToBasicSurveyQuestion, mapToSurveyQuestion } from '@/utils/requests/surveyQuestions/mappings';
-import {
-  GetSurveyQuestionsByProjectIdQuery,
-  GetSurveyQuestionsCountByProjectIdQuery,
-  GetSurveysStartingFromQuery,
-} from '@/utils/requests/surveyQuestions/queries';
+import { GetSurveysStartingFromQuery } from '@/utils/requests/surveyQuestions/queries';
 
 import { GetSurveyQuestionByIdQuery } from './queries';
 
@@ -38,28 +41,6 @@ export async function getBasicSurveyQuestionById(id: string) {
   }
 }
 
-export async function getSurveyQuestionsByProjectId(projectId: string) {
-  try {
-    const response = await strapiGraphQLFetcher(GetSurveyQuestionsByProjectIdQuery, { projectId });
-    const surveyQuestionsData = response.surveyQuestions;
-
-    if (!surveyQuestionsData) throw new Error('Response contained no survey question data');
-
-    const mapToEntities = surveyQuestionsData.map(async (surveyQuestionData) => {
-      const votes = await getSurveyVotes(dbClient, surveyQuestionData.documentId);
-      const userVote = await findUserVote({ votes });
-      const surveyQuestion = mapToSurveyQuestion(surveyQuestionData, votes, userVote.data);
-      return surveyQuestion;
-    });
-
-    const surveyQuestions = await getPromiseResults(mapToEntities);
-    return surveyQuestions;
-  } catch (err) {
-    const error = strapiError('Getting all survey questions', err as RequestError, projectId);
-    logger.error(error);
-  }
-}
-
 export const findUserVote = withAuth(async (user: UserSession, body: { votes: SurveyVote[] }) => {
   const userVote = body.votes.find((vote) => vote.votedBy === user.providerId);
 
@@ -68,19 +49,6 @@ export const findUserVote = withAuth(async (user: UserSession, body: { votes: Su
     data: userVote,
   };
 });
-
-export const countSurveyQuestionsForProject = async (projectId: string) => {
-  try {
-    const response = await strapiGraphQLFetcher(GetSurveyQuestionsCountByProjectIdQuery, { projectId });
-    const countResult = response.surveyQuestions_connection?.pageInfo.total;
-
-    return { status: StatusCodes.OK, data: countResult };
-  } catch (err) {
-    const error = strapiError('Error fetching survey questions count for project', err as RequestError);
-    logger.error(error);
-    throw err;
-  }
-};
 
 export async function getSurveyQuestionByIdWithReactions(id: string) {
   try {
@@ -130,5 +98,34 @@ export async function getSurveyQuestionsStartingFrom({ from, page, pageSize }: S
   } catch (err) {
     const error = strapiError('Getting upcoming survey questions', err as RequestError);
     logger.error(error);
+  }
+}
+
+export async function getSurveyQuestionsWithAdditionalData(surveys: BasicSurveyQuestion[]) {
+  const getAdditionalData = surveys.map(getSurveyQuestionWithAdditionalData);
+  const surveyQuestionsWithAdditionalData = await getPromiseResults(getAdditionalData);
+  return surveyQuestionsWithAdditionalData;
+}
+
+export async function getSurveyQuestionWithAdditionalData(
+  surveyQuestion: BasicSurveyQuestion,
+): Promise<SurveyQuestion> {
+  try {
+    const votes = await getSurveyVotes(dbClient, surveyQuestion.id);
+    const userVote = await findUserVote({ votes });
+    return {
+      ...surveyQuestion,
+      votes,
+      userVote: userVote.data?.vote ?? undefined,
+      responseOptions: surveyQuestion.responseOptions ?? [],
+    };
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Getting additional data for survey question with id: ${surveyQuestion.id}`,
+      err as Error,
+      surveyQuestion.id,
+    );
+    logger.error(error);
+    throw err;
   }
 }

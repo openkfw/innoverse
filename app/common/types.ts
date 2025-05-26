@@ -9,6 +9,7 @@ export enum ObjectType {
   OPPORTUNITY = 'OPPORTUNITY',
   COLLABORATION_QUESTION = 'COLLABORATION_QUESTION',
   COMMENT = 'COMMENT',
+  PROJECT_QUESTION = 'PROJECT_QUESTION',
 }
 
 export type NewsFeedEntry =
@@ -326,9 +327,9 @@ export type UpdateInnoUser = {
 export type Opportunity = CommonNewsFeedProps & {
   id: string;
   title: string;
-  description?: string;
-  contactPerson?: User;
-  expense?: string;
+  description: string | null;
+  contactPerson: User | null;
+  expense: string | null;
   participants: User[];
   hasApplied?: boolean;
 };
@@ -348,7 +349,7 @@ export type CollaborationQuestion = CommonNewsFeedProps & {
   isPlatformFeedback: boolean;
   description: string;
   authors: User[];
-  comments: CommentWithResponses[];
+  comments?: CommentWithResponses[];
   projectId: string;
   projectName: string;
 };

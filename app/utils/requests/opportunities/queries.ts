@@ -11,6 +11,7 @@ export const OpportunityFragment = graphql(
         ...InnoUser
       }
       updatedAt
+      createdAt
       expense
       participants {
         ...InnoUser
@@ -18,17 +19,6 @@ export const OpportunityFragment = graphql(
     }
   `,
   [InnoUserFragment],
-);
-
-export const GetOpportunitiesByProjectIdQuery = graphql(
-  `
-    query GetOpportunities($projectId: ID) {
-      opportunities(filters: { project: { documentId: { eq: $projectId } } }) {
-        ...Opportunity
-      }
-    }
-  `,
-  [OpportunityFragment],
 );
 
 export const GetOpportunitiesByIdQuery = graphql(
@@ -80,16 +70,6 @@ export const UpdateOpportunityParticipantsQuery = graphql(
   `,
   [OpportunityFragment],
 );
-
-export const GetOpportunityCountProjectIdQuery = graphql(`
-  query GetOpportunities($projectId: ID) {
-    opportunities_connection(filters: { project: { documentId: { eq: $projectId } } }) {
-      pageInfo {
-        total
-      }
-    }
-  }
-`);
 
 export const GetUpdatedOpportunitiesQuery = graphql(
   `
