@@ -7,17 +7,25 @@ import { createInnoUserIfNotExist } from '@/utils/requests/innoUsers/requests';
 
 import getLogger from './logger';
 
-export interface AuthResponse<TArgs> {
-  status: StatusCodes;
-  data?: TArgs;
+export interface AuthResponseSuccess<TReturn> {
+  status: StatusCodes.OK;
+  data: TReturn;
+}
+
+export interface AuthResponseError {
+  status: StatusCodes.UNAUTHORIZED | StatusCodes.INTERNAL_SERVER_ERROR | StatusCodes.BAD_REQUEST;
   errors?: any;
   message?: any;
 }
 
+export type AuthResponse<TReturn> = AuthResponseSuccess<TReturn> | AuthResponseError;
+
 const logger = getLogger();
 
-export function withAuth<TArgs, TReturn>(func: (user: UserSession, body: TArgs) => Promise<AuthResponse<TReturn>>) {
-  return async function (args?: TArgs) {
+export function withAuth<TArgs extends unknown[], TReturn>(
+  func: (user: UserSession, ...args: TArgs) => Promise<AuthResponseSuccess<TReturn> | AuthResponseError>,
+) {
+  return async function (...args: TArgs): Promise<AuthResponseSuccess<TReturn> | AuthResponseError> {
     const session = await getServerSession(authOptions);
     if (!session) {
       return {
@@ -38,7 +46,7 @@ export function withAuth<TArgs, TReturn>(func: (user: UserSession, body: TArgs) 
     }
 
     try {
-      return func(session.user, args as TArgs) as Promise<AuthResponse<TReturn>>;
+      return func(sessionUser, ...args);
     } catch (err) {
       logger.error(err);
       return {
