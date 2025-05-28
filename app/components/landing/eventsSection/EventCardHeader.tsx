@@ -12,21 +12,21 @@ export interface EventCardHeaderProps {
   disabled?: boolean;
 }
 
+export const renderEventType = (type: string) => {
+  switch (type) {
+    case 'In_office':
+      return 'In-office';
+    case 'Remote':
+      return 'Remote';
+    case 'Remote_und_In_office':
+      return 'Remote & In-office';
+    default:
+      return '';
+  }
+};
+
 const EventCardHeader = ({ event, disabled = false }: EventCardHeaderProps) => {
   const date = dayjs(event.startTime);
-
-  const renderEventType = (event: Event) => {
-    switch (event.type) {
-      case 'In_office':
-        return 'In-office';
-      case 'Remote':
-        return 'Remote';
-      case 'Remote_und_In_office':
-        return 'Remote und In-office';
-      default:
-        return '';
-    }
-  };
 
   return (
     <Stack direction="row" alignItems="center" justifyContent="start">
@@ -47,7 +47,7 @@ const EventCardHeader = ({ event, disabled = false }: EventCardHeaderProps) => {
         )}
         {event.type && (
           <Typography variant="subtitle1" sx={subtitleStyles}>
-            {renderEventType(event)}
+            {renderEventType(event.type)}
           </Typography>
         )}
       </Stack>
