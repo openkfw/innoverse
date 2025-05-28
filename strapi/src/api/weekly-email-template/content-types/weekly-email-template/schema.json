@@ -49,7 +49,7 @@
           "localized": true
         }
       },
-      "type": "text",
+      "type": "string",
       "required": true
     },
     "headerImage": {

@@ -191,3 +191,12 @@ export async function addFollowToDb(
     throw err;
   }
 }
+
+export async function getFollowsForUserIds(client: PrismaClient, objectType: PrismaObjectType, userIds: string[]) {
+  return client.follow.findMany({
+    where: {
+      objectType: objectType,
+      followedBy: { in: userIds },
+    },
+  });
+}

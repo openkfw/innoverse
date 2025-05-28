@@ -1,12 +1,21 @@
+'use server';
+
 import * as React from 'react';
-import { Body, Container, Head, Hr, Html, Img, Link, Preview, Section, Text } from '@react-email/components';
+import { Body, Container, Font, Head, Hr, Html, Img, Link, Preview, Section, Text } from '@react-email/components';
 
 import { serverConfig } from '@/config/server';
 import { clientConfig } from '@/config/client';
 
+// override Link with  elainenoparse="1"
+declare module 'react' {
+  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
+    elainenoparse?: string;
+  }
+}
+
+const baseImageUrl = clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT;
 // TODO: use something else???
-export const baseUrl = serverConfig.NEXTAUTH_URL;
-export const baseImageUrl = clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT;
+const baseUrl = serverConfig.NEXTAUTH_URL;
 
 export type EmailTemplateProps = {
   children: React.ReactNode;
@@ -17,8 +26,8 @@ export type EmailTemplateProps = {
     footerContactUs: string;
     footerPrivacy: string;
     footerAddress: string;
-    footerSmallLogo: string | null;
-    headerLogo: string | null;
+    footerSmallLogo: { url: string } | null;
+    headerLogo: { url: string } | null;
     lang: string;
     footerUnsubscribe: string;
     footerEmailSettings: string;
@@ -35,7 +44,7 @@ export type UnsubscribeFooterLinksProps = UnsubscribeFooterUrls & {
   settingsText: string;
 };
 
-export const UnsubscribeFooterLinks = ({
+export const UnsubscribeFooterLinks = async ({
   unsubscribeUrl,
   emailSettingsUrl,
   unsubscribeText,
@@ -51,14 +60,53 @@ export const UnsubscribeFooterLinks = ({
   </>
 );
 
-export const InnoVerseEmail = ({ children, content, includeUnsubscribe }: EmailTemplateProps) => (
+export const InnoVerseEmail = async ({ children, content, includeUnsubscribe }: EmailTemplateProps) => (
   <Html lang={content.lang}>
-    <Head />
+    <Head>
+      <Font
+        fontFamily="SansDefaultMed"
+        fallbackFontFamily={['Helvetica', 'Arial', 'sans-serif']}
+        webFont={{
+          url: baseUrl + '/fonts/Sans-Default-Reg.woff2',
+          format: 'woff2',
+        }}
+        fontWeight={400}
+        fontStyle="normal"
+      />
+      <Font
+        fontFamily="SlabReg"
+        fallbackFontFamily="serif"
+        webFont={{
+          url: baseUrl + '/fonts/Slab-Reg.woff2',
+          format: 'woff2',
+        }}
+        fontWeight={400}
+        fontStyle="normal"
+      />
+    </Head>
     <Preview>{content.preview}</Preview>
     <Body style={main}>
+      <style>
+        {`
+          /* Global Reset for Tables */
+          table {
+            border-spacing: 0;
+            width: 100%;
+          }
+          td, th {
+            padding: 0;
+            margin: 0;
+          }
+          /* Prevent unwanted spacing between cells */
+          table, td, th {
+            border: none;
+          }
+        `}
+      </style>
+
       <Container style={containerStyle}>
         <Section style={logo}>
-          <Img width={146} src={baseImageUrl + content.headerLogo} />
+          <Img width={146} src={baseImageUrl + content.headerLogo?.url} />
         </Section>
         {children}
       </Container>
@@ -73,20 +121,20 @@ export const InnoVerseEmail = ({ children, content, includeUnsubscribe }: EmailT
             settingsText={content.footerEmailSettings}
           />
         )}
-        <Link href={baseUrl} style={footerLink}>
+        <Link href={baseUrl} style={footerLink} elainenoparse="1">
           {content.footerContactUs}
         </Link>
-        <Link href={baseUrl} style={footerLink}>
+        <Link href={baseUrl} style={footerLink} elainenoparse="1">
           {content.footerPrivacy}
         </Link>
 
         <Hr style={footerDivider} />
 
-        <Img width={111} src={baseImageUrl + content.footerSmallLogo} />
+        <Img width={111} src={baseImageUrl + content.footerSmallLogo?.url} />
         <Text style={footerAddress}>
           <strong>{content.footerAddress}</strong>
         </Text>
-        <Text style={footerHeart}>{'<3'}</Text>
+        {/* <Text style={footerHeart}>{'<3'}</Text> */}
       </Section>
     </Body>
   </Html>
@@ -96,7 +144,7 @@ export default InnoVerseEmail;
 
 const main = {
   backgroundColor: '#f3f3f5',
-  fontFamily: 'HelveticaNeue,Helvetica,Arial,sans-serif',
+  fontFamily: 'SansDefaultMed,Roboto,"Helvetica Neue",Arial,sans-serif',
 };
 
 const divider = {
@@ -118,7 +166,6 @@ const footerStyle = {
 };
 
 const logo = {
-  display: 'flex',
   background: '#f3f3f5',
   padding: '20px 30px',
 };

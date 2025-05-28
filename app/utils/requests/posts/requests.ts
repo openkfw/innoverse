@@ -15,7 +15,7 @@ import { CreatePostMutation, DeletePostMutation, UpdatePostMutation } from '@/ut
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 import { mapToPost, mapToPosts } from './mappings';
-import { GetPostByIdQuery, GetPostsByIdsQuery, GetPostsStartingFromQuery } from './queries';
+import { GetPostByIdQuery, GetPostsByIdsQuery, GetPostsPageQuery, GetPostsStartingFromQuery } from './queries';
 
 const logger = getLogger();
 
@@ -127,5 +127,49 @@ export async function getPostsStartingFrom({ from, page, pageSize }: StartPagina
   } catch (err) {
     const error = strapiError(`Getting posts starting from ${from}`, err as RequestError);
     logger.error(error);
+  }
+}
+
+export async function getLatestPostsWithReactions(limit: number) {
+  try {
+    const response = await strapiGraphQLFetcher(GetPostsPageQuery, {
+      page: 1,
+      pageSize: limit,
+      sort: 'updatedAt:desc',
+    });
+    if (!response?.posts) throw new Error('Response contained no posts');
+
+    const posts = await mapToPosts(response.posts);
+
+    const reactions = await dbClient.reaction.groupBy({
+      by: ['objectId', 'nativeSymbol'],
+      _count: {
+        nativeSymbol: true,
+      },
+      where: {
+        objectType: ObjectType.POST,
+        objectId: {
+          in: posts.map((post) => post.id),
+        },
+      },
+    });
+
+    const reactionsById = reactions.reduce<Record<string, { emoji: string; count: number }[]>>(
+      (acc, { objectId, nativeSymbol, _count }) => {
+        acc[objectId] ??= [];
+        acc[objectId].push({ emoji: nativeSymbol, count: _count.nativeSymbol });
+        return acc;
+      },
+      {},
+    );
+
+    return posts.map((post) => ({
+      ...post,
+      reactions: reactionsById[post.id] ?? [],
+    }));
+  } catch (err) {
+    const error: InnoPlatformError = strapiError(`Getting latest posts with reactions`, err as RequestError);
+    logger.error(error);
+    throw err;
   }
 }

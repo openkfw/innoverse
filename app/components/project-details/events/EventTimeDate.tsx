@@ -4,6 +4,7 @@ import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { Event } from '../../../common/types';
+import { format } from 'path';
 
 export const defaultImageForEvents = '/public/images/event_image.jpg';
 
@@ -12,53 +13,38 @@ interface EventTimeDateProps {
   sx?: SxProps;
 }
 
-const EventTimeDate = (props: EventTimeDateProps) => {
-  const { event, sx } = props;
-
-  const startDay = new Date(event.startTime).toLocaleString('DE', { day: '2-digit' });
-  const startMonth = new Date(event.startTime).toLocaleString('DE', { month: 'short' });
-  const endDay = new Date(event.endTime).toLocaleString('DE', { day: '2-digit' });
-  const endMonth = new Date(event.endTime).toLocaleString('DE', { month: 'short' });
-
-  const helperStartDate = new Date(event.startTime)
+const formatDate = (datetime: Date) => {
+  const helper = new Date(datetime)
     .toLocaleDateString('DE', {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
     })
     .replace('.', ' ');
-  const startDate = helperStartDate.replace(helperStartDate.slice(7, 8), '');
+  const date = helper.replace(helper.slice(7, 8), '');
 
-  const helperEndDate = new Date(event.endTime)
-    .toLocaleDateString('DE', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    })
-    .replace('.', ' ');
-  const endDate = helperEndDate.replace(helperEndDate.slice(7, 8), '');
-
-  const startTime = new Date(event.startTime).toLocaleString('DE', { hour: 'numeric', minute: 'numeric' });
-  const endTime = new Date(event.endTime).toLocaleString('DE', { hour: 'numeric', minute: 'numeric' });
-
-  return (
-    <>
-      {startDate === endDate ? (
-        <>
-          <Typography variant="subtitle2" color="text.primary" mr={0.5} sx={sx || textStyle}>
-            {`${startTime} - ${endTime}`}
-          </Typography>
-        </>
-      ) : (
-        <>
-          <Typography variant="subtitle2" color="text.primary" mr={0.5} sx={sx || textStyle}>
-            {`${startDay} ${startMonth}, ${startTime} - ${endDay} ${endMonth}, ${endTime}`}
-          </Typography>
-        </>
-      )}
-    </>
-  );
+  const day = new Date(datetime).toLocaleString('DE', { day: '2-digit' });
+  const month = new Date(datetime).toLocaleString('DE', { month: 'short' });
+  const time = new Date(datetime).toLocaleString('DE', {
+    hour: 'numeric',
+    minute: 'numeric',
+  });
+  return { date, month, day, time };
 };
+
+export const formatDateSpan = (start: Date, end: Date) => {
+  const { date: startDate, month: startMonth, day: startDay, time: startTime } = formatDate(start);
+  const { date: endDate, month: endMonth, day: endDay, time: endTime } = formatDate(end);
+
+  if (startDate === endDate) return `${startTime} - ${endTime}`;
+  else return `${startDay} ${startMonth}, ${startTime} - ${endDay} ${endMonth}, ${endTime}`;
+};
+
+const EventTimeDate = ({ event, sx }: EventTimeDateProps) => (
+  <Typography variant="subtitle2" color="text.primary" mr={0.5} sx={sx || textStyle}>
+    {formatDateSpan(event.startTime, event.endTime)}
+  </Typography>
+);
 
 const textStyle = {
   color: 'text.primary',

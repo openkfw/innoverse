@@ -140,7 +140,7 @@ const serverEnvConfig = createEnvConfig({
       defaultRule: z.string().optional(),
     },
 
-    // Email
+    // SMTP
     EMAIL_USER: {
       stages: ['production'],
       defaultRule: z.string().default(''),
@@ -162,18 +162,32 @@ const serverEnvConfig = createEnvConfig({
       required: true,
     },
 
-    // DKIM
-    DKIM_PRIVATE_KEY: {
+    // Elaine
+    ELAINE_ENDPOINT: {
       stages: runtimeStages,
-      defaultRule: z.string().optional(),
+      defaultRule: z.string().default(''),
+      required: true,
     },
-    DKIM_KEY_SELECTOR: {
+    ELAINE_USER: {
       stages: runtimeStages,
-      defaultRule: z.string().optional(),
+      defaultRule: z.string().default(''),
+      required: true,
     },
-    DKIM_DOMAIN: {
+    ELAINE_PASS: {
       stages: runtimeStages,
-      defaultRule: z.string().optional(),
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+    ELAINE_WEEKLY_TEMPLATE_ID: {
+      stages: runtimeStages,
+      //integer from string
+      defaultRule: z.number({ coerce: true }).int().default(-1),
+      required: true,
+    },
+    NOTIFICATION_EMAIL_FROM: {
+      stages: runtimeStages,
+      defaultRule: z.string().default(''),
+      required: true,
     },
 
     // Application Insights
@@ -242,12 +256,7 @@ const serverEnvConfig = createEnvConfig({
       errorMessage:
         'Looks like the required environment variables for push-notifications are not set in the UI but in the server (or vice versa)',
     },
-    {
-      variables: ['DKIM_PRIVATE_KEY', 'DKIM_KEY_SELECTOR', 'DKIM_DOMAIN'],
-      mode: 'none_or_all',
-      stages: runtimeStages,
-      errorMessage: 'DKIM env variables not all defined',
-    },
+
     {
       variables: [
         'APP_INSIGHTS_SERVICE_NAME',
