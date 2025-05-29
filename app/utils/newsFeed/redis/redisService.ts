@@ -130,7 +130,7 @@ export const getNewsFeedEntries = async (client: RedisClient, options?: GetItems
 
   const getSearchCommentsOptions = (parameters: SearchOptions['PARAMS']) => {
     // change the index and remove the last query filter - @search
-    const index = RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_COMMENTS;
+    const index = RedisIndex.COMMENTS_SEARCH;
     const newFilters = [...filters.slice(0, -1)];
     // query parameter = searchString
     newFilters.push(`@comment:{*$query*}`);
