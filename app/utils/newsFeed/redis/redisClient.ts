@@ -14,7 +14,7 @@ export enum RedisIndex {
   UPDATED_AT_TYPE_PROJECT_ID_SEARCH = 'idx:updatedAt:type:projectId:search',
   UPDATED_AT = 'idx:updatedAt',
   SYNCED_AT = 'idx:syncedAt:status',
-  UPDATED_AT_TYPE_PROJECT_ID_COMMENTS = 'idx:updatedAt:type:projectId:comments',
+  COMMENTS_SEARCH = 'idx:updatedAt:type:projectId:comments:itemId',
   AUTHOR = 'idx:author',
 }
 
@@ -117,7 +117,7 @@ const createIndices = async (client: RedisClient) => {
 
   await createIndexOrCatch({
     client,
-    index: RedisIndex.UPDATED_AT_TYPE_PROJECT_ID_COMMENTS,
+    index: RedisIndex.COMMENTS_SEARCH,
     schema: {
       updatedAt: {
         type: SchemaFieldTypes.NUMERIC,
