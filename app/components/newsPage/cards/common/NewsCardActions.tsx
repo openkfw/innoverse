@@ -28,7 +28,7 @@ interface NewsCardActionsProps {
 export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
   const { id, followedByUser, projectId = '' } = entry.item;
 
-  const { toggleFollow, removeEntry } = useNewsFeed();
+  const { toggleFollow, removeEntry, displayEditingControls } = useNewsFeed();
   const appInsights = useAppInsightsContext();
 
   const editingInteractions = useEditingInteractions();
@@ -89,7 +89,9 @@ export const NewsCardActions = ({ entry }: NewsCardActionsProps) => {
           <NewsFeedReactionCard entry={entry} />
           <Box sx={actionStyles}>
             <ResponseControls onResponse={() => respondingInteractions.onStart(entry.item, 'comment')} />
-            <EditControls onDelete={handleDelete} onEdit={() => editingInteractions.onStart(entry.item)} />
+            {displayEditingControls(entry) && (
+              <EditControls onDelete={handleDelete} onEdit={() => editingInteractions.onStart(entry.item)} />
+            )}
             <FollowButtonWithLink isSelected={followedByUser ?? false} entry={entry} onIconClick={handleToggleFollow} />
           </Box>
         </Grid>

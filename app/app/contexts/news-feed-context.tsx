@@ -10,6 +10,8 @@ import { getNewsTypeByString } from '@/utils/newsFeed/redis/mappings';
 import { getNewsFeed } from '@/utils/newsFeed/redis/redisService';
 import { getProjectTitleById } from '@/utils/requests/project/requests';
 
+import { useUser } from './user-context';
+
 export enum SortValues {
   DESC = 'desc',
   ASC = 'asc',
@@ -56,6 +58,7 @@ interface NewsFeedContextInterface {
   loadNextPage: () => Promise<void>;
   toggleFollow: (entry: NewsFeedEntry) => void;
   isSearchFilterActive: boolean;
+  displayEditingControls: (entry: NewsFeedEntry) => boolean;
 }
 
 const defaultState: NewsFeedContextInterface = {
@@ -75,6 +78,7 @@ const defaultState: NewsFeedContextInterface = {
   loadNextPage: () => Promise.resolve(),
   toggleFollow: (_: NewsFeedEntry) => {},
   isSearchFilterActive: false,
+  displayEditingControls: (_: NewsFeedEntry) => false,
 };
 
 interface NewsFeedContextProviderProps {
@@ -89,6 +93,7 @@ interface NewsFeedContextProviderProps {
 const NewsFeedContext = createContext(defaultState);
 
 export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextProviderProps) => {
+  const { user } = useUser();
   const [newsFeedEntries, setNewsFeedEntries] = useState<NewsFeedEntry[]>(props.initiallyLoadedNewsFeed);
   const [sort, setSort] = useState<SortValues.ASC | SortValues.DESC>(defaultState.sort);
   const [filters, setFilters] = useState<NewsFeedFilters>(defaultState.filters);
@@ -258,6 +263,16 @@ export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextP
     }
   };
 
+  const displayEditingControls = (entry: NewsFeedEntry): boolean => {
+    const { item, type } = entry;
+    if (!user) return false;
+    if (type === ObjectType.POST || type === ObjectType.UPDATE) {
+      const isAuthor = 'author' in item && item.author?.providerId === user.providerId;
+      return isAuthor;
+    }
+    return false;
+  };
+
   const contextObject: NewsFeedContextInterface = {
     feed: newsFeedEntries,
     sort,
@@ -276,6 +291,7 @@ export const NewsFeedContextProvider = ({ children, ...props }: NewsFeedContextP
     setFilters: updateFilters,
     loadNextPage,
     isSearchFilterActive,
+    displayEditingControls,
   };
 
   return <NewsFeedContext.Provider value={contextObject}> {children}</NewsFeedContext.Provider>;
