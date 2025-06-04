@@ -4,7 +4,11 @@ import { StatusCodes } from 'http-status-codes';
 
 import { UpdateInnoUser, User, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
-import { getEmailPreferencesForUser, updateEmailPreferencesForUser } from '@/repository/db/email_preferences';
+import {
+  createEmailPreferencesForUser,
+  getEmailPreferencesForUser,
+  updateEmailPreferencesForUser,
+} from '@/repository/db/email_preferences';
 import dbClient from '@/repository/db/prisma/prisma';
 import { withAuth, type AuthResponse } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
@@ -94,14 +98,17 @@ export const getNotificationSettings = withAuth(async (user: UserSession) => {
   }
 
   const data = await getEmailPreferencesForUser(dbClient, author.id!);
-
-  // TODO just create them
   if (!data) {
-    const error = createInnoPlatformError('EmailPreferences does not exist');
-    logger.error(error);
+    const preferences = await createEmailPreferencesForUser(dbClient, {
+      username: author.username ?? null,
+      email: author.email ?? null,
+      userId: author.id!,
+      weekly: false,
+    });
+
     return {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      errors: 'Getting an EmailPreferences failed',
+      status: StatusCodes.OK,
+      data: preferences,
     };
   }
 
