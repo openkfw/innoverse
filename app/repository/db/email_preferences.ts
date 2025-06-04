@@ -15,6 +15,9 @@ export const updateEmailPreferencesForUser = async (
     data: payload,
   });
 
+export const createEmailPreferencesForUser = async (client: PrismaClient, data: EmailPreferencesCreatePayload) =>
+  client.emailPreferences.create({ data });
+
 export const createEmailPreferencesForUsers = async (client: PrismaClient, data: EmailPreferencesCreatePayload[]) =>
   client.emailPreferences.createMany({ data });
 
