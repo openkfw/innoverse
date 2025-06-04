@@ -89,7 +89,7 @@ export async function getUpdatesByProjectId(projectId: string) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesByProjectIdQuery, { projectId });
     if (!response.updates) throw new Error('Response contained no updates');
-    const updates = await mapToProjectUpdates(response.updates);
+    const updates = mapToProjectUpdates(response.updates);
     const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
     return updatesWithAdditionalData;
   } catch (err) {

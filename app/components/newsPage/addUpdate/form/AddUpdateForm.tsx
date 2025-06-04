@@ -121,7 +121,7 @@ export default function AddUpdateForm({
         name={ANONYMOUS}
         control={control}
         label={m.components_newsPage_addUpdate_form_addUpdateForm_anonymousPost()}
-        sx={{ width: '35%' }}
+        sx={{ width: { xs: '100%', md: '40%' } }}
       />
 
       <FormSaveButton onSave={handleSubmit(onSubmit)} disabled={!isDirty || !isValid} />

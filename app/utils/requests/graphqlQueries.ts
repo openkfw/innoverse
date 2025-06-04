@@ -11,11 +11,11 @@ import { ProjectQuestionFragment } from './questions/queries';
 
 export const GetProjectData = graphql(
   `
-    query GetProjectData($projectId: ID!, $now: DateTime) {
+    query GetProjectData($projectId: ID!, $now: DateTime, $sort: String! = "createdAt:desc") {
       collaborationQuestions(filters: { project: { documentId: { eq: $projectId } } }) {
         ...CollaborationQuestion
       }
-      updates(filters: { project: { documentId: { eq: $projectId } } }) {
+      updates(filters: { project: { documentId: { eq: $projectId } } }, sort: [$sort]) {
         ...ProjectUpdate
       }
       opportunities(filters: { project: { documentId: { eq: $projectId } } }) {
@@ -27,16 +27,10 @@ export const GetProjectData = graphql(
       questions(filters: { project: { documentId: { eq: $projectId } } }) {
         ...Question
       }
-      futureEvents: events(
-        filters: { project: { documentId: { eq: $projectId } }, startTime: { gte: $now } }
-        pagination: { page: 2, pageSize: 1 }
-      ) {
+      futureEvents: events(filters: { project: { documentId: { eq: $projectId } }, startTime: { gte: $now } }) {
         ...Event
       }
-      pastEvents: events(
-        filters: { project: { documentId: { eq: $projectId } }, startTime: { lt: $now } }
-        pagination: { page: 2, pageSize: 1 }
-      ) {
+      pastEvents: events(filters: { project: { documentId: { eq: $projectId } }, startTime: { lt: $now } }) {
         ...Event
       }
     }

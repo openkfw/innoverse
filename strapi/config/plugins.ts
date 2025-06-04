@@ -6,6 +6,7 @@ export default {
         schema: "/opt/app/types/schema.graphql",
       },
       v4CompatibilityMode: true,
+      defaultLimit: 20,
     },
   },
   healthcheck: {
