@@ -1,7 +1,6 @@
 FROM node:18-alpine
 RUN npm install -g pnpm
-ARG NODE_ENV=development
-ENV NODE_ENV=${NODE_ENV}
+ENV NODE_ENV production
 WORKDIR /opt/
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm config set fetch-retry-maxtimeout 600000 -g && pnpm install
@@ -15,6 +14,4 @@ RUN chown -R node:node /opt/app
 USER node
 RUN ["pnpm", "run", "build"]
 EXPOSE 1337
-CMD ["pnpm", "run", "develop"]
-
-# TODO: run strapi import to import the demo data
+CMD ["pnpm", "run", "start"]
