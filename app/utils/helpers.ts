@@ -226,3 +226,5 @@ export const isBase64String = (str: string): boolean => {
     return false;
   }
 };
+
+export const escapeRegexExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
