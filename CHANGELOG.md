@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.5.1](https://github.com/openkfw/innoverse/compare/v1.5.0...v1.5.1) (2025-06-04)
+
+### Bug Fixes
+
+- display editing controls only for own items ([#250](https://github.com/openkfw/innoverse/issues/250))
+- escape regex expression ([#252](https://github.com/openkfw/innoverse/issues/252))
+- news feed search not working due to missing index ([#246](https://github.com/openkfw/innoverse/issues/246))
+- increase GraphQL default result limit ([#253](https://github.com/openkfw/innoverse/issues/253))
+
 ## [1.5.0](https://github.com/openkfw/innoverse/compare/v1.4.1...v1.5.0) (2025-05-26)
 
 ### Chore
