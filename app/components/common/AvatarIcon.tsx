@@ -51,12 +51,12 @@ const Avatar = (props: AvatarIconProps) => {
 };
 
 const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, ref: LegacyRef<HTMLDivElement>) {
-  const { index, allowAnimation = false, disableTransition = false, ...restProps } = props;
+  const { index, allowAnimation = false, disableTransition = false, anonymous: _anonymous, ...refProps } = props;
   const appliedStyle = allowAnimation ? { ...hoverStyle, zIndex: index } : { zIndex: index };
 
   return (
     <div
-      {...restProps}
+      {...refProps}
       ref={ref}
       style={appliedStyle}
       onMouseOverCapture={(e) => {
@@ -66,7 +66,7 @@ const AvatarIcon = React.forwardRef(function AvatarIcon(props: AvatarIconProps, 
         if (allowAnimation && !disableTransition) e.currentTarget.style.transform = 'translateX(0px)';
       }}
     >
-      <Avatar {...restProps} />
+      <Avatar {...props} />
     </div>
   );
 });

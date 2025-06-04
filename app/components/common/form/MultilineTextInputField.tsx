@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 
 import { MultilineFormInputProps } from '@/common/formTypes';
 
-import { inputStyle } from './formStyle';
+import { inputLabelStyle } from './formStyle';
 
 export const MultilineTextInputField = ({
   name,
@@ -24,7 +24,10 @@ export const MultilineTextInputField = ({
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
-          sx={{ ...inputStyle, ...sx }}
+          sx={{
+            ...inputLabelStyle(),
+            ...sx,
+          }}
           InputLabelProps={{ shrink: true }}
           placeholder={placeholder}
           helperText={error ? error.message : null}
