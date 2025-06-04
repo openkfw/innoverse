@@ -172,15 +172,3 @@ const footerAddress = {
   lineHeight: '15px',
   color: '#9199a1',
 };
-
-const footerHeart = {
-  borderRadius: '1px',
-  border: '1px solid #d6d9dc',
-  padding: '4px 6px 3px 6px',
-  fontSize: '11px',
-  lineHeight: '11px',
-  fontFamily: 'Consolas,monospace',
-  color: '#e06c77',
-  maxWidth: 'min-content',
-  margin: '0 0 32px 0',
-};

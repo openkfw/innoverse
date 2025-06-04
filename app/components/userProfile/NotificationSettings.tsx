@@ -46,7 +46,7 @@ export default function NotificationSettings() {
       const result = await getNotificationSettings();
 
       if (result.status === StatusCodes.OK) {
-        await setState(result.data);
+        setState(result.data);
       } else {
         errorMessage({ message: m.components_profilePage_getNotificationSettings_error() });
       }
