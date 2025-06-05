@@ -5,11 +5,11 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
+import NotificationSettings from '@/components/userProfile/NotificationSettings';
 import UserInfo from '@/components/userProfile/UserInfo';
 import * as m from '@/src/paraglide/messages.js';
 
 import backgroundImage from '/public/images/news-background.png';
-import NotificationSettings from '@/components/userProfile/NotificationSettings';
 
 export const dynamic = 'force-dynamic';
 

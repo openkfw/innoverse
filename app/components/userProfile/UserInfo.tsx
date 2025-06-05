@@ -13,7 +13,6 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { useUser } from '@/app/contexts/user-context';
-import { UserSession } from '@/common/types';
 import * as m from '@/src/paraglide/messages.js';
 import { blobToBase64 } from '@/utils/helpers';
 
