@@ -11,8 +11,9 @@ import { getLatestPostsWithReactions } from '@/utils/requests/posts/requests';
 import { getLatestNews } from '@/utils/requests/requests';
 import { getFollowsForUserIds } from '@/repository/db/follow';
 import { ObjectType } from '@/common/types';
-import { render } from '@react-email/components';
 import getLogger from '@/utils/logger';
+
+import { render } from '@react-email/components';
 
 const logger = getLogger();
 
