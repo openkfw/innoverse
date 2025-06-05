@@ -502,7 +502,7 @@ export interface ApiEmailBaseTemplateEmailBaseTemplate
           localized: false;
         };
       }>;
-    footerUnsubscribe: Schema.Attribute.Text &
+    footerUnsubscribe: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -902,7 +902,7 @@ export interface ApiWeeklyEmailTemplateWeeklyEmailTemplate
           localized: false;
         };
       }>;
-    headerSubtitle: Schema.Attribute.Text &
+    headerSubtitle: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
