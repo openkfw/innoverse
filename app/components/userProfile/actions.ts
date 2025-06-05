@@ -10,14 +10,14 @@ import {
   updateEmailPreferencesForUser,
 } from '@/repository/db/email_preferences';
 import dbClient from '@/repository/db/prisma/prisma';
-import { withAuth, type AuthResponse } from '@/utils/auth';
+import { type AuthResponse, withAuth } from '@/utils/auth';
 import { InnoPlatformError, strapiError } from '@/utils/errors';
 import getLogger from '@/utils/logger';
 import { batchUpdateInnoUserInCache } from '@/utils/newsFeed/redis/redisService';
 import { getInnoUserByProviderId, updateInnoUser } from '@/utils/requests/innoUsers/requests';
 import { validateParams } from '@/utils/validationHelper';
 
-import { handleUpdateUserSession, handleUpdateNotificationSettings } from './validationSchema';
+import { handleUpdateNotificationSettings, handleUpdateUserSession } from './validationSchema';
 
 const logger = getLogger();
 

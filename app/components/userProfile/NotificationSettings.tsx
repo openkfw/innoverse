@@ -15,10 +15,10 @@ import Typography from '@mui/material/Typography';
 import * as m from '@/src/paraglide/messages.js';
 
 import { errorMessage, successMessage } from '../common/CustomToast';
-import { FormSaveButton } from '../common/form/SaveButton';
 import { CheckboxInputField } from '../common/form/CheckboxInputField';
+import { FormSaveButton } from '../common/form/SaveButton';
 
-import { updateNotificationSettings, getNotificationSettings } from './actions';
+import { getNotificationSettings, updateNotificationSettings } from './actions';
 import formFieldNames from './formFields';
 import { handleUpdateNotificationSettings, NotificationSettingsFormValidationSchema } from './validationSchema';
 
@@ -32,7 +32,7 @@ export default function NotificationSettings() {
     reset,
     handleSubmit,
     control,
-    formState: { isDirty, isValid, errors },
+    formState: { isDirty, isValid },
   } = useForm<NotificationSettingsFormValidationSchema>({
     mode: 'all',
     resolver: zodResolver(handleUpdateNotificationSettings),
