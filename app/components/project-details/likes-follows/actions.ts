@@ -21,7 +21,7 @@ export const handleLike = withAuth(async (user: UserSession, body: { projectId: 
     const validatedParams = validateParams(likeSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
       await addLike(dbClient, body.projectId, ObjectType.PROJECT, user.providerId);
-      return { status: StatusCodes.OK };
+      return { status: StatusCodes.OK, data: {} };
     }
     return {
       status: validatedParams.status,
@@ -47,7 +47,7 @@ export const handleRemoveLike = withAuth(async (user: UserSession, body: { proje
     const validatedParams = validateParams(likeSchema, body);
     if (validatedParams.status === StatusCodes.OK) {
       await deleteObjectAndUserLike(dbClient, body.projectId, user.providerId);
-      return { status: StatusCodes.OK };
+      return { status: StatusCodes.OK, data: {} };
     }
     return {
       status: validatedParams.status,

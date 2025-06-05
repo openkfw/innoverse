@@ -2,7 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { User, UserSession } from '@/common/types';
+import { UserSession } from '@/common/types';
 import { withAuth } from '@/utils/auth';
 import { getInnoUserByProviderId } from '@/utils/requests/innoUsers/requests';
 import { handleOpportunityAppliedBy, isUserParticipatingInOpportunity } from '@/utils/requests/opportunities/requests';
@@ -29,7 +29,7 @@ export const handleApplyForOpportunity = withAuth(async (user: UserSession, body
 export const hasAppliedForOpportunity = withAuth(async (user: UserSession, body: { opportunityId: string }) => {
   const validatedParams = validateParams(handleOpportunitySchema, body);
   if (validatedParams.status === StatusCodes.OK) {
-    const innoUser = (await getInnoUserByProviderId(user.providerId)) as User;
+    const innoUser = await getInnoUserByProviderId(user.providerId);
     if (innoUser) {
       const result = await isUserParticipatingInOpportunity({
         opportunityId: body.opportunityId,
@@ -37,10 +37,15 @@ export const hasAppliedForOpportunity = withAuth(async (user: UserSession, body:
       });
 
       return { status: StatusCodes.OK, data: result ?? false };
-    }
+    } else
+      return {
+        status: StatusCodes.UNAUTHORIZED,
+        errors: [{ message: 'User not found' }],
+      };
+  } else {
+    return {
+      status: validatedParams.status,
+      errors: validatedParams.errors,
+    };
   }
-  return {
-    status: validatedParams.status,
-    errors: validatedParams.errors,
-  };
 });
