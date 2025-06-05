@@ -140,7 +140,7 @@ const serverEnvConfig = createEnvConfig({
       defaultRule: z.string().optional(),
     },
 
-    // Email
+    // SMTP
     EMAIL_USER: {
       stages: ['production'],
       defaultRule: z.string().default(''),
@@ -162,18 +162,10 @@ const serverEnvConfig = createEnvConfig({
       required: true,
     },
 
-    // DKIM
-    DKIM_PRIVATE_KEY: {
+    NOTIFICATION_EMAIL_FROM: {
       stages: runtimeStages,
-      defaultRule: z.string().optional(),
-    },
-    DKIM_KEY_SELECTOR: {
-      stages: runtimeStages,
-      defaultRule: z.string().optional(),
-    },
-    DKIM_DOMAIN: {
-      stages: runtimeStages,
-      defaultRule: z.string().optional(),
+      defaultRule: z.string().default(''),
+      required: true,
     },
 
     // Application Insights
@@ -241,12 +233,6 @@ const serverEnvConfig = createEnvConfig({
       stages: runtimeStages,
       errorMessage:
         'Looks like the required environment variables for push-notifications are not set in the UI but in the server (or vice versa)',
-    },
-    {
-      variables: ['DKIM_PRIVATE_KEY', 'DKIM_KEY_SELECTOR', 'DKIM_DOMAIN'],
-      mode: 'none_or_all',
-      stages: runtimeStages,
-      errorMessage: 'DKIM env variables not all defined',
     },
     {
       variables: [

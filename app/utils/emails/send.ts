@@ -5,18 +5,13 @@ import Mail from 'nodemailer/lib/mailer';
 
 import { serverConfig } from '@/config/server';
 import SMTPPool from 'nodemailer/lib/smtp-pool';
+import getLogger from '@/utils/logger';
 
 declare module 'nodemailer' {
   function getTestMessageUrl(info: SMTPPool.SentMessageInfo): string | false;
 }
 
-const dkim = !!serverConfig.DKIM_DOMAIN
-  ? {
-      domainName: serverConfig.DKIM_DOMAIN,
-      keySelector: serverConfig.DKIM_KEY_SELECTOR,
-      privateKey: serverConfig.DKIM_PRIVATE_KEY,
-    }
-  : undefined;
+const logger = getLogger();
 
 const transporter = nodemailer.createTransport({
   host: serverConfig.EMAIL_HOST,
@@ -26,37 +21,70 @@ const transporter = nodemailer.createTransport({
     user: serverConfig.EMAIL_USER,
     pass: serverConfig.EMAIL_PASS,
   },
-  dkim,
   pool: true,
+  maxConnections: 100,
 });
 
 if (['development', 'test'].includes(process.env.NODE_ENV)) {
-  const testAccount = await nodemailer.createTestAccount();
+  if (!serverConfig.EMAIL_HOST) {
+    const testAccount = await nodemailer.createTestAccount();
 
-  console.error('Using test email credentials: \n', testAccount);
+    console.info('Using test email credentials: \n', testAccount);
 
-  const { transporter: testTransporter } = nodemailer.createTransport({
-    host: testAccount.smtp.host,
-    port: testAccount.smtp.port,
-    auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
-    },
-    dkim,
-    pool: true,
-  });
+    const { transporter: testTransporter } = nodemailer.createTransport({
+      host: testAccount.smtp.host,
+      port: testAccount.smtp.port,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass,
+      },
+      pool: true,
+    });
 
-  transporter.transporter = testTransporter;
+    transporter.transporter = testTransporter;
+  } else {
+    transporter.use('compile', (mail, callback) => {
+      if (mail.data.to) {
+        const to = Array.isArray(mail.data.to) ? mail.data.to : [mail.data.to];
+        mail.data.to = to.map((recipient) => {
+          if (typeof recipient === 'string') {
+            return recipient.replace(/@.*$/, `+${Date.now()}@sink.sendgrid.net`);
+          } else {
+            return recipient.address.replace(/@.*$/, `+${Date.now()}@sink.sendgrid.net`);
+          }
+        });
+      }
+      callback();
+    });
+  }
 }
 
 // verify connection configuration
 transporter.verify((error: unknown) => {
   if (error) {
-    console.log(error);
+    console.error(error);
   } else {
     console.log('SMTP server is ready to take messages');
   }
 });
+
+type EmailParams = {
+  from: string;
+  to: string;
+  subject: string;
+  body: string;
+  opts: Mail.Options;
+};
+
+export async function sendBulkEmail(emails: EmailParams[]) {
+  const promises = emails.map(({ from, to, subject, body, opts }) => sendEmail(from, to, subject, body, opts));
+
+  try {
+    await Promise.all(promises);
+  } catch (error) {
+    logger.error('Error sending bulk emails:', error);
+  }
+}
 
 /**
  * Send an email using the nodemailer transporter
@@ -77,15 +105,15 @@ export async function sendEmail(
     const info = await transporter.sendMail({ from, to, subject, html, ...opts });
 
     if (['development', 'test'].includes(process.env.NODE_ENV))
-      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    else console.log('Message sent: %s', info.messageId);
+      logger.info(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
+    logger.debug(`Message sent: ${info.messageId}`);
   } catch (error) {
     if (error instanceof Error && 'responseCode' in error && error.responseCode === 429) {
-      console.error('Rate limited by email provider, retrying in 10 seconds');
+      logger.error('Rate limited by email provider, retrying in 10 seconds');
       await new Promise((resolve) => setTimeout(resolve, 10000));
       await sendEmail(from, to, subject, body, opts);
     } else {
-      console.error('Error sending email:', error);
+      logger.error(`Error sending email: ${error}`);
     }
   }
 }
