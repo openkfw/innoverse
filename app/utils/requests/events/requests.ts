@@ -104,8 +104,10 @@ export async function getEventWithAdditionalData(
   item: Event | EventWithAdditionalData,
 ): Promise<EventWithAdditionalData> {
   try {
-    const { data: reactionForUser } = await findReactionByUser({ objectType: ObjectType.EVENT, objectId: item.id });
+    const reactionForUserResponse = await findReactionByUser({ objectType: ObjectType.EVENT, objectId: item.id });
     const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.EVENT, item.id);
+
+    const reactionForUser = reactionForUserResponse.status === StatusCodes.OK ? reactionForUserResponse.data : null;
 
     const reactionCount = reactionCountResult.map((r) => ({
       count: r._count.shortCode,
@@ -117,11 +119,9 @@ export async function getEventWithAdditionalData(
 
     return {
       ...item,
-      reactionForUser: reactionForUser
-        ? { ...reactionForUser, objectType: reactionForUser.objectType as ObjectType }
-        : null,
+      reactionForUser,
       reactionCount,
-    };
+    } as EventWithAdditionalData;
   } catch (err) {
     const error: InnoPlatformError = dbError(
       `Getting additional data for event with id: ${item.id}`,
