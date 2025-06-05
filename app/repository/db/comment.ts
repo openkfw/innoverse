@@ -188,10 +188,15 @@ export async function removeAllCommentsByObjectIdAndType(
   }
 }
 
-export async function getCommentsStartingFrom(client: PrismaClient, from: Date, objectType: ObjectType) {
+export async function getCommentsStartingFrom(
+  client: PrismaClient,
+  from: Date,
+  objectType: ObjectType,
+  additionalObjectType?: PrismaObjectType,
+) {
   try {
     return await client.comment.findMany({
-      where: { objectType: objectType as PrismaObjectType, updatedAt: { gte: from } },
+      where: { objectType: objectType as PrismaObjectType, additionalObjectType, updatedAt: { gte: from } },
       ...defaultParams,
     });
   } catch (err) {

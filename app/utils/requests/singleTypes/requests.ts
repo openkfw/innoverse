@@ -6,13 +6,16 @@ import {
   GetWeeklyEmailTemplateByLocaleQuery,
 } from './queries';
 import { mapSingleTypeWithLocalesToCollection } from './mappings';
+import getLogger from '@/utils/logger';
+
+const logger = getLogger();
 
 export async function getEmailBaseTemplates() {
   try {
     const { emailBaseTemplate } = await strapiGraphQLFetcher(GetEmailBaseTemplatesQuery);
     return mapSingleTypeWithLocalesToCollection(emailBaseTemplate);
   } catch (err) {
-    console.info(err);
+    logger.info(err);
     return [];
   }
 }
@@ -22,7 +25,7 @@ export async function getEmailBaseTemplate(locale: string) {
     const { emailBaseTemplate } = await strapiGraphQLFetcher(GetEmailBaseTemplateByLocaleQuery, { locale });
     return emailBaseTemplate;
   } catch (err) {
-    console.info(err);
+    logger.info(err);
     return [];
   }
 }
@@ -32,7 +35,7 @@ export async function getWeeklyEmailTemplates() {
     const { weeklyEmailTemplate } = await strapiGraphQLFetcher(GetWeeklyEmailTemplatesQuery);
     return mapSingleTypeWithLocalesToCollection(weeklyEmailTemplate);
   } catch (err) {
-    console.info(err);
+    logger.info(err);
     return [];
   }
 }
@@ -42,7 +45,7 @@ export async function getWeeklyEmailTemplate(locale: string) {
     const { weeklyEmailTemplate } = await strapiGraphQLFetcher(GetWeeklyEmailTemplateByLocaleQuery, { locale });
     return weeklyEmailTemplate;
   } catch (err) {
-    console.info(err);
+    logger.info(err);
     return [];
   }
 }

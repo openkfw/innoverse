@@ -1,3 +1,5 @@
+'use server';
+
 import { serverConfig } from '@/config/server';
 import { collectWeeklyNotificationEmails } from '@/repository/db/email_preferences';
 import dbClient from '@/repository/db/prisma/prisma';
@@ -5,38 +7,83 @@ import NotificationEmail from '@/utils/emails/notificationTemplate';
 import { generateUnsubscribeUrl, sendEmail } from '@/utils/emails/send';
 import { getEmailBaseTemplates, getWeeklyEmailTemplates } from '@/utils/requests/singleTypes/requests';
 import { groupByLocale } from '@/utils/requests/singleTypes/mappings';
+import { getLatestPostsWithReactions } from '@/utils/requests/posts/requests';
+import { getLatestNews } from '@/utils/requests/requests';
+import { getFollowsForUserIds } from '@/repository/db/follow';
+import { ObjectType } from '@/common/types';
+import { render } from '@react-email/components';
+import getLogger from '@/utils/logger';
+
+const logger = getLogger();
 
 export async function sendWeeklyEmail() {
   const baseTemplates = groupByLocale(await getEmailBaseTemplates());
   const weeklyEmailTemplates = groupByLocale(await getWeeklyEmailTemplates());
 
+  if (!baseTemplates || !weeklyEmailTemplates) {
+    logger.error('No email templates found');
+    return;
+  }
+
+  const latestPosts = await getLatestPostsWithReactions(5);
+
+  const lastWeek = new Date();
+  lastWeek.setDate(lastWeek.getDate() - 7);
+  const allNews = await getLatestNews(lastWeek);
+
   const users = (await collectWeeklyNotificationEmails(dbClient)).filter(
-    (user): user is { userId: string; email: string; username: string } => !!user.email && !!user.username,
+    (user): user is { [key in keyof typeof user]: NonNullable<(typeof user)[keyof typeof user]> } =>
+      !!user.email && !!user.username,
   );
-  console.log('Sending weekly email to', users.length, 'users');
+
+  const follows = await getFollowsForUserIds(
+    dbClient,
+    ObjectType.PROJECT,
+    users.map((user) => user.userId),
+  );
+  const followsByUserId = follows.reduce<Record<string, string[] | undefined>>((acc, follow) => {
+    return { ...acc, [follow.followedBy]: [...(acc[follow.followedBy] ?? []), follow.objectId] };
+  }, {});
+
+  logger.info(`Sending weekly email to ${users.length} users`);
+
   for (const userBatch of batch(users)) {
     await Promise.all(
       userBatch.map(async (user) => {
-        const unsubscribeUrl = await generateUnsubscribeUrl(user.email, user.userId, user.username);
-        const emailSettingsUrl = `${serverConfig.NEXTAUTH_URL}/profile`;
-        const includeUnsubscribe = { unsubscribeUrl, emailSettingsUrl };
-        const lang = 'de'; //TODO: get the user's language
-        const posts: { id: number; content: string }[] = []; //TODO: get the posts
-        const news: { id: number; content: string }[] = []; //TODO: get the news
+        const posts = latestPosts.map((post) => ({
+          ...post,
+          projectFollowed: post.followedBy?.map((follow) => follow.id).includes(user.userId),
+        }));
 
-        const content = { ...baseTemplates[lang], ...weeklyEmailTemplates[lang], lang };
-        const html = NotificationEmail({ includeUnsubscribe, content, posts, news });
+        const news = allNews
+          .filter(({ project }) => followsByUserId[user.userId]?.includes(project?.documentId ?? ''))
+          .map((newsItem) => ({
+            ...newsItem,
+            projectFollowed: true,
+          }))
+          .slice(0, 5);
+
+        const unsubscribeUrl = await generateUnsubscribeUrl(user.email, user.userId, user.username);
+        const includeUnsubscribe = { unsubscribeUrl, emailSettingsUrl: `${serverConfig.NEXTAUTH_URL}/profile` };
+
+        const lang = 'de'; //TODO: get the user's language
+        const baseTemplate = baseTemplates[lang] ?? baseTemplates['en'];
+        const weeklyEmailTemplate = weeklyEmailTemplates[lang] ?? weeklyEmailTemplates['en'];
+        const content = { ...baseTemplate, ...weeklyEmailTemplate, lang };
+        const html = await NotificationEmail({ includeUnsubscribe, content, posts, news });
+        const body = await render(html);
+
         const subject = weeklyEmailTemplates[lang].subject;
-        const from = `"InnoVerse" <${serverConfig.EMAIL_FROM ?? serverConfig.EMAIL_USER}>`;
+        const from = serverConfig.NOTIFICATION_EMAIL_FROM;
         const mailOpts = {
           list: { unsubscribe: { url: unsubscribeUrl, comment: baseTemplates[lang].footerUnsubscribe } },
         };
 
-        return sendEmail(from, user.email, subject, html, mailOpts);
+        return sendEmail(from, user.email, subject, body, mailOpts);
       }),
     );
   }
-  console.log('Weekly email sent to', users.length, 'users');
+  logger.info(`Weekly email sent to ${users.length} users`);
 }
 
 function batch<T>(arr: T[], batchSize = 10): T[][] {
