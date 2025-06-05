@@ -1,5 +1,6 @@
 'use client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { StatusCodes } from 'http-status-codes';
 
 import { CheckinQuestion } from '@/common/types';
 import { getCheckinQuestionsHistory, getCurrentCheckinQuestions } from '@/utils/requests/checkinQuestions/requests';
@@ -46,13 +47,13 @@ export const DailyCheckinContextProvider = ({ children }: { children: React.Reac
   }, []);
 
   const refetchCheckinQuestions = async () => {
-    const questionResponse = await getCurrentCheckinQuestions({});
+    const questionResponse = await getCurrentCheckinQuestions();
 
-    if (questionResponse.data && questionResponse.data.length) {
+    if (questionResponse.status === StatusCodes.OK) {
       setCheckinQuestionsToAnswer(questionResponse.data);
     } else {
       const historyResponse = await getCheckinQuestionsHistory();
-      if (historyResponse?.data?.length) {
+      if (historyResponse.status === StatusCodes.OK) {
         setQuestionsHistory(historyResponse.data);
         setCheckinQuestionsToAnswer([]);
       }

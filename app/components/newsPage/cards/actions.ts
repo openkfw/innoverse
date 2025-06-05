@@ -16,6 +16,7 @@ export const updateUserComment = withAuth(
       });
       return {
         status: StatusCodes.OK,
+        data: {},
       };
     } catch (err) {
       return {

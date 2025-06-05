@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useAppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
+import { StatusCodes } from 'http-status-codes';
 
 import Grid from '@mui/material/Grid';
 import { SxProps } from '@mui/material/styles';
@@ -33,8 +34,9 @@ const OpportunityCard = ({ opportunity, projectName }: OpportunityCardProps) => 
       setHasApplied((prev) => !prev);
       // Now wait for actual status and set it
       await handleApplyForOpportunity({ opportunityId: opportunity.id });
-      const { data } = await hasAppliedForOpportunity({ opportunityId: opportunity.id });
-      setHasApplied(data ?? false);
+      const response = await hasAppliedForOpportunity({ opportunityId: opportunity.id });
+      if (response.status === StatusCodes.OK) setHasApplied(response.data);
+      else setHasApplied(false);
     } catch (error) {
       console.error('Failed to apply for the opportunity:', error);
       errorMessage({ message: m.components_collaboration_opportunities_opportunityCard_applyError() });
