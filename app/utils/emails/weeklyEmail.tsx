@@ -4,7 +4,7 @@ import { serverConfig } from '@/config/server';
 import { collectWeeklyNotificationEmails } from '@/repository/db/email_preferences';
 import dbClient from '@/repository/db/prisma/prisma';
 import NotificationEmail from '@/utils/emails/notificationTemplate';
-import { generateUnsubscribeUrl, sendEmail } from '@/utils/emails/send';
+import { generateUnsubscribeUrl, sendBulkEmail } from '@/utils/emails/send';
 import { getEmailBaseTemplates, getWeeklyEmailTemplates } from '@/utils/requests/singleTypes/requests';
 import { groupByLocale } from '@/utils/requests/singleTypes/mappings';
 import { getLatestPostsWithReactions } from '@/utils/requests/posts/requests';
@@ -47,42 +47,42 @@ export async function sendWeeklyEmail() {
 
   logger.info(`Sending weekly email to ${users.length} users`);
 
-  for (const userBatch of batch(users)) {
-    await Promise.all(
-      userBatch.map(async (user) => {
-        const posts = latestPosts.map((post) => ({
-          ...post,
-          projectFollowed: post.followedBy?.map((follow) => follow.id).includes(user.userId),
-        }));
+  const batches = batch(users, 100).map(async (userBatch) => {
+    const emails = userBatch.map(async (user) => {
+      const posts = latestPosts.map((post) => ({
+        ...post,
+        projectFollowed: post.followedBy?.map((follow) => follow.id).includes(user.userId),
+      }));
 
-        const news = allNews
-          .filter(({ project }) => followsByUserId[user.userId]?.includes(project?.documentId ?? ''))
-          .map((newsItem) => ({
-            ...newsItem,
-            projectFollowed: true,
-          }))
-          .slice(0, 5);
+      const news = allNews
+        .filter(({ project }) => followsByUserId[user.userId]?.includes(project?.documentId ?? ''))
+        .map((newsItem) => ({
+          ...newsItem,
+          projectFollowed: true,
+        }))
+        .slice(0, 5);
 
-        const unsubscribeUrl = await generateUnsubscribeUrl(user.email, user.userId, user.username);
-        const includeUnsubscribe = { unsubscribeUrl, emailSettingsUrl: `${serverConfig.NEXTAUTH_URL}/profile` };
+      const unsubscribeUrl = await generateUnsubscribeUrl(user.email, user.userId, user.username);
+      const includeUnsubscribe = { unsubscribeUrl, emailSettingsUrl: `${serverConfig.NEXTAUTH_URL}/profile` };
 
-        const lang = 'de'; //TODO: get the user's language
-        const baseTemplate = baseTemplates[lang] ?? baseTemplates['en'];
-        const weeklyEmailTemplate = weeklyEmailTemplates[lang] ?? weeklyEmailTemplates['en'];
-        const content = { ...baseTemplate, ...weeklyEmailTemplate, lang };
-        const html = await NotificationEmail({ includeUnsubscribe, content, posts, news });
-        const body = await render(html);
+      const lang = 'de'; //TODO: get the user's language
+      const baseTemplate = baseTemplates[lang] ?? baseTemplates['en'];
+      const weeklyEmailTemplate = weeklyEmailTemplates[lang] ?? weeklyEmailTemplates['en'];
+      const content = { ...baseTemplate, ...weeklyEmailTemplate, lang };
+      const html = await NotificationEmail({ includeUnsubscribe, content, posts, news });
+      const body = await render(html);
 
-        const subject = weeklyEmailTemplates[lang].subject;
-        const from = serverConfig.NOTIFICATION_EMAIL_FROM;
-        const mailOpts = {
-          list: { unsubscribe: { url: unsubscribeUrl, comment: baseTemplates[lang].footerUnsubscribe } },
-        };
+      const subject = weeklyEmailTemplates[lang].subject;
+      const from = serverConfig.NOTIFICATION_EMAIL_FROM;
+      const mailOpts = {
+        list: { unsubscribe: { url: unsubscribeUrl, comment: baseTemplates[lang].footerUnsubscribe } },
+      };
 
-        return sendEmail(from, user.email, subject, body, mailOpts);
-      }),
-    );
-  }
+      return { from, to: user.email, subject, body, opts: mailOpts };
+    });
+    return sendBulkEmail(await Promise.all(emails));
+  });
+  await Promise.all(batches);
   logger.info(`Weekly email sent to ${users.length} users`);
 }
 
