@@ -5,6 +5,6 @@ CREATE TABLE "EmailPreferences" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "username" TEXT,
     "email" TEXT,
-    "weekly" BOOLEAN NOT NULL DEFAULT true,
+    "weeklyEmail" BOOLEAN NOT NULL DEFAULT true,
     CONSTRAINT "EmailPreferences_pkey" PRIMARY KEY ("userId")
 );

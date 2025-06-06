@@ -15,7 +15,7 @@ export const populateEmailPreferencesForExistingUsers = async () => {
     userId: user.documentId,
     email: user.email,
     username: user.username,
-    weekly: true,
+    weeklyEmail: true,
   }));
 
   await createEmailPreferencesForUsers(dbClient, emailPreferences);

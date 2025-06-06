@@ -25,6 +25,6 @@ export const emailPreferencesCount = async (client: PrismaClient) => client.emai
 
 export const collectWeeklyNotificationEmails = async (client: PrismaClient) =>
   client.emailPreferences.findMany({
-    where: { weekly: true },
+    where: { weeklyEmail: true },
     select: { userId: true, email: true, username: true },
   });

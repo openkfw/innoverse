@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     }
 
     await updateEmailPreferencesForUser(dbClient, payload.sub, {
-      weekly: false,
+      weeklyEmail: false,
     });
   } catch (err) {
     if (err instanceof Error) {
