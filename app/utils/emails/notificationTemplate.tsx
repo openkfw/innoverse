@@ -14,7 +14,6 @@ interface NotificationEmailProps {
   posts?: PostItemProps[];
   news?: NewsItemProps[];
   content: {
-    subject: string;
     headerTitle: string;
     headerSubtitle: string;
     headerImage: { url: string } | null;

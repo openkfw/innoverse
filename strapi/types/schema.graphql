@@ -600,7 +600,7 @@ input FloatFilterInput {
 }
 
 union GenericMorph =
-  | CheckinQuestion
+    CheckinQuestion
   | CollaborationQuestion
   | ComponentDescriptionDescription
   | ComponentImageImage
@@ -1432,18 +1432,6 @@ type Query {
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
   ): EventEntityResponseCollection
-  events(
-    filters: EventFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): [Event]!
-  events_connection(
-    filters: EventFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): EventEntityResponseCollection
   i18NLocale(documentId: ID!, status: PublicationStatus = PUBLISHED): I18NLocale
   i18NLocales(
     filters: I18NLocaleFiltersInput
@@ -1457,31 +1445,7 @@ type Query {
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
   ): I18NLocaleEntityResponseCollection
-  i18NLocales(
-    filters: I18NLocaleFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): [I18NLocale]!
-  i18NLocales_connection(
-    filters: I18NLocaleFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): I18NLocaleEntityResponseCollection
   innoUser(documentId: ID!, status: PublicationStatus = PUBLISHED): InnoUser
-  innoUsers(
-    filters: InnoUserFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): [InnoUser]!
-  innoUsers_connection(
-    filters: InnoUserFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): InnoUserEntityResponseCollection
   innoUsers(
     filters: InnoUserFiltersInput
     pagination: PaginationArg = {}
@@ -1511,35 +1475,7 @@ type Query {
     documentId: ID!
     status: PublicationStatus = PUBLISHED
   ): Opportunity
-  opportunities(
-    filters: OpportunityFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): [Opportunity]!
-  opportunities_connection(
-    filters: OpportunityFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): OpportunityEntityResponseCollection
-  opportunity(
-    documentId: ID!
-    status: PublicationStatus = PUBLISHED
-  ): Opportunity
   post(documentId: ID!, status: PublicationStatus = PUBLISHED): Post
-  posts(
-    filters: PostFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): [Post]!
-  posts_connection(
-    filters: PostFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): PostEntityResponseCollection
   posts(
     filters: PostFiltersInput
     pagination: PaginationArg = {}
@@ -1565,79 +1501,7 @@ type Query {
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
   ): ProjectEntityResponseCollection
-  projects(
-    filters: ProjectFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): [Project]!
-  projects_connection(
-    filters: ProjectFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): ProjectEntityResponseCollection
   question(documentId: ID!, status: PublicationStatus = PUBLISHED): Question
-  questions(
-    filters: QuestionFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): [Question]!
-  questions_connection(
-    filters: QuestionFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): QuestionEntityResponseCollection
-  reviewWorkflowsWorkflow(
-    documentId: ID!
-    status: PublicationStatus = PUBLISHED
-  ): ReviewWorkflowsWorkflow
-  reviewWorkflowsWorkflowStage(
-    documentId: ID!
-    status: PublicationStatus = PUBLISHED
-  ): ReviewWorkflowsWorkflowStage
-  reviewWorkflowsWorkflowStages(
-    filters: ReviewWorkflowsWorkflowStageFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): [ReviewWorkflowsWorkflowStage]!
-  reviewWorkflowsWorkflowStages_connection(
-    filters: ReviewWorkflowsWorkflowStageFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): ReviewWorkflowsWorkflowStageEntityResponseCollection
-  reviewWorkflowsWorkflows(
-    filters: ReviewWorkflowsWorkflowFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): [ReviewWorkflowsWorkflow]!
-  reviewWorkflowsWorkflows_connection(
-    filters: ReviewWorkflowsWorkflowFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): ReviewWorkflowsWorkflowEntityResponseCollection
-  surveyQuestion(
-    documentId: ID!
-    status: PublicationStatus = PUBLISHED
-  ): SurveyQuestion
-  surveyQuestions(
-    filters: SurveyQuestionFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): [SurveyQuestion]!
-  surveyQuestions_connection(
-    filters: SurveyQuestionFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): SurveyQuestionEntityResponseCollection
   questions(
     filters: QuestionFiltersInput
     pagination: PaginationArg = {}
@@ -1715,22 +1579,6 @@ type Query {
     sort: [String] = []
     status: PublicationStatus = PUBLISHED
   ): UpdateEntityResponseCollection
-  updateOpportunityParticipants(
-    documentId: ID!
-    participantId: ID!
-  ): Opportunity
-  updates(
-    filters: UpdateFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): [Update]!
-  updates_connection(
-    filters: UpdateFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-    status: PublicationStatus = PUBLISHED
-  ): UpdateEntityResponseCollection
   uploadFile(documentId: ID!, status: PublicationStatus = PUBLISHED): UploadFile
   uploadFiles(
     filters: UploadFileFiltersInput
@@ -1788,16 +1636,6 @@ type Query {
 
 type Question {
   attributes: Question! @deprecated(reason: "Use root level fields instead")
-  authors(
-    filters: InnoUserFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-  ): [InnoUser]!
-  authors_connection(
-    filters: InnoUserFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-  ): InnoUserRelationResponseCollection
   authors(
     filters: InnoUserFiltersInput
     pagination: PaginationArg = {}
@@ -2592,9 +2430,9 @@ type WeeklyEmailTemplate {
   locale: String
   localizations: [WeeklyEmailTemplate]!
   localizations_connection: WeeklyEmailTemplateRelationResponseCollection
-  preview: String!
+  preview: String
   publishedAt: DateTime
-  subject: String!
+  subject: String
   updatedAt: DateTime
 }
 
