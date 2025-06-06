@@ -38,9 +38,7 @@ export const validateParams = <T>(schema: ZodType<T>, body: unknown): Validation
 export const validateAndReturn = <T>(
   schema: ZodType,
   body: any,
-):
-  | { isValid: true; data: T }
-  | { isValid: false; response: { status: StatusCodes; errors: any; message?: string } } => {
+): { isValid: true; data: T } | { isValid: false; response: ValidationError<T> } => {
   const validated = validateParams(schema, body);
   if (validated.status !== StatusCodes.OK) {
     return {
