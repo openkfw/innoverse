@@ -69,11 +69,16 @@ export async function sendWeeklyEmail() {
       const lang = 'de'; //TODO: get the user's language
       const baseTemplate = baseTemplates[lang] ?? baseTemplates['en'];
       const weeklyEmailTemplate = weeklyEmailTemplates[lang] ?? weeklyEmailTemplates['en'];
-      const content = { ...baseTemplate, ...weeklyEmailTemplate, lang };
+      const content = {
+        ...baseTemplate,
+        ...weeklyEmailTemplate,
+        lang,
+        preview: weeklyEmailTemplate.preview ?? weeklyEmailTemplate.headerSubtitle,
+      };
       const html = await NotificationEmail({ includeUnsubscribe, content, posts, news });
       const body = await render(html);
 
-      const subject = weeklyEmailTemplates[lang].subject;
+      const subject = weeklyEmailTemplate.subject ?? weeklyEmailTemplate.headerTitle;
       const from = serverConfig.NOTIFICATION_EMAIL_FROM;
       const mailOpts = {
         list: { unsubscribe: { url: unsubscribeUrl, comment: baseTemplates[lang].footerUnsubscribe } },
