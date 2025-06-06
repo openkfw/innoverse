@@ -100,6 +100,7 @@ export default function NotificationSettings() {
             <form>
               <Stack spacing={2} direction="column">
                 <CheckboxInputField
+                  sx={checkboxStyles}
                   control={control}
                   name={WEEKLY_EMAIL}
                   label={m.components_profilePage_form_weeklyEmails()}
@@ -113,6 +114,16 @@ export default function NotificationSettings() {
     </Grid>
   );
 }
+
+const checkboxStyles = {
+  '& .MuiTypography-root': {
+    color: 'common.white',
+    fontSize: '16px',
+  },
+  '& .MuiCheckbox-root:not(.Mui-checked)': {
+    color: 'common.white',
+  },
+};
 
 const cardStyles = {
   px: 3,
