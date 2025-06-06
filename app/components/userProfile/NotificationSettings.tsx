@@ -26,7 +26,7 @@ const { WEEKLY_EMAIL } = formFieldNames;
 
 export default function NotificationSettings() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [state, setState] = useState<{ weekly: boolean } | undefined>(undefined);
+  const [state, setState] = useState<{ weeklyEmail: boolean } | undefined>(undefined);
 
   const {
     reset,
@@ -37,7 +37,7 @@ export default function NotificationSettings() {
     mode: 'all',
     resolver: zodResolver(handleUpdateNotificationSettings),
     defaultValues: {
-      weekly: true,
+      weeklyEmail: true,
     },
   });
 

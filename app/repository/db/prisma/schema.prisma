@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl"]
 }
 
@@ -12,39 +12,38 @@ datasource db {
 }
 
 model Comment {
-  id          String       @id @default(uuid())
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  objectType  ObjectType   
-  objectId    String       @default(uuid()) // ID of the object (if it's a post, news, project, etc)
+  id         String     @id @default(uuid())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  objectType ObjectType
+  objectId   String     @default(uuid()) // ID of the object (if it's a post, news, project, etc)
 
-  text        String       // Text of the comment
-  author      String       // ID of the author
-  reactions   Reaction[]   // Associated reactions
+  text      String // Text of the comment
+  author    String // ID of the author
+  reactions Reaction[] // Associated reactions
 
   additionalObjectType ObjectType?
-  additionalObjectId String?
-  anonymous Boolean? // in case the Feedback is set to anonymous
+  additionalObjectId   String?
+  anonymous            Boolean? // in case the Feedback is set to anonymous
 
+  parent   Comment? @relation("CommentResponseRelation", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId String? // ID of the parent comment (if it's a response)
 
-  parent      Comment?     @relation("CommentResponseRelation", fields: [parentId], references: [id], onDelete: Cascade)
-  parentId    String?      // ID of the parent comment (if it's a response)
+  responses Comment[] @relation("CommentResponseRelation") // Responses to this comment
 
-  responses   Comment[]    @relation("CommentResponseRelation") // Responses to this comment
-
-  likes       CommentLike[]
+  likes CommentLike[]
 }
 
 model ObjectLike {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  objectType  ObjectType
-  objectId String
+  objectType ObjectType
+  objectId   String
 
-  likedBy   String // user id  
+  likedBy String // user id
 
-   @@unique(fields: [objectId, likedBy])
+  @@unique(fields: [objectId, likedBy])
 }
 
 model CommentLike {
@@ -54,28 +53,29 @@ model CommentLike {
   comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId String
 
-  likedBy   String // user id  
+  likedBy String // user id
 
-   @@unique(fields: [likedBy, commentId])
+  @@unique(fields: [likedBy, commentId])
 }
 
 model Follow {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  objectId  String // followed object
+  objectId   String // followed object
   objectType ObjectType @default(PROJECT) // type of object that was followed
-  followedBy String // user id  
+  followedBy String // user id
 
-   @@unique(fields: [objectId, objectType, followedBy])
+  @@unique(fields: [objectId, objectType, followedBy])
 }
 
 model PushSubscription {
-  id        String   @id @default(uuid())
-  userId    String
-  createdAt DateTime @default(now())
-  subscription String // JSON of push subscription
+  id                 String   @id @default(uuid())
+  userId             String
+  createdAt          DateTime @default(now())
+  subscription       String // JSON of push subscription
   browserFingerprint String // Fingerprint to uniquely identify user by their browser
+
   @@unique([userId, browserFingerprint])
 }
 
@@ -99,7 +99,7 @@ model Reaction {
 
 model SurveyVote {
   id        String   @id @default(uuid())
-  createdAt DateTime @updatedAt @default(now())
+  createdAt DateTime @default(now()) @updatedAt
 
   vote             String // vote
   projectId        String // project
@@ -110,13 +110,13 @@ model SurveyVote {
 }
 
 model CheckinVote {
-  id        String   @id @default(uuid())
-  createdAt DateTime @updatedAt @default(now())
-  answeredOn  DateTime @default(now()) @db.Date
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now()) @updatedAt
+  answeredOn DateTime @default(now()) @db.Date
 
-  vote             Int // vote - scale from 1 to 5
+  vote              Int // vote - scale from 1 to 5
   checkinQuestionId String // voted check-in question
-  votedBy          String // id of author
+  votedBy           String // id of author
 
   @@unique(fields: [votedBy, checkinQuestionId, answeredOn])
 }
@@ -126,9 +126,9 @@ model EmailPreferences {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  username String?
-  email    String?
-  weekly   Boolean @default(true)
+  username    String?
+  email       String?
+  weeklyEmail Boolean @default(true)
 }
 
 enum ObjectType {

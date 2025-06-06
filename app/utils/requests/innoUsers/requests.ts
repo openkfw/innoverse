@@ -51,7 +51,7 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
       await updateEmailPreferencesForUser(dbClient, userData.documentId, {
         email: createdUser.email,
         username,
-        weekly: true,
+        weeklyEmail: true,
       });
 
     return createdUser;

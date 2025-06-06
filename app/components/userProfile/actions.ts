@@ -103,7 +103,7 @@ export const getNotificationSettings = withAuth(async (user: UserSession) => {
       username: author.username ?? null,
       email: author.email ?? null,
       userId: author.id!,
-      weekly: false,
+      weeklyEmail: false,
     });
 
     return {
@@ -118,7 +118,7 @@ export const getNotificationSettings = withAuth(async (user: UserSession) => {
   };
 });
 
-export const updateNotificationSettings = withAuth(async (user: UserSession, body: { weekly: boolean }) => {
+export const updateNotificationSettings = withAuth(async (user: UserSession, body: { weeklyEmail: boolean }) => {
   const validatedParams = validateParams(handleUpdateNotificationSettings, body);
   if (validatedParams.status !== 200) {
     return {
