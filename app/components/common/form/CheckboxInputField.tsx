@@ -19,8 +19,8 @@ export const CheckboxInputField = ({ name, control, label, sx }: FormInputProps)
           label={label}
           sx={{
             ...inputStyle,
-            ...sx,
             ...labelStyle,
+            ...sx,
           }}
           control={<Checkbox {...labelAria} checked={value} onChange={onChange} sx={{ ...inputStyle, ...iconStyle }} />}
         />

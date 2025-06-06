@@ -1,0 +1,106 @@
+{
+  "kind": "singleType",
+  "collectionName": "email_base_templates",
+  "info": {
+    "singularName": "email-base-template",
+    "pluralName": "email-base-templates",
+    "displayName": "EmailBaseTemplate",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "footerActivityNote": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "default": "Diese Email wurde aufgrund von Aktivität in InnoVerse gesendet.",
+      "required": true
+    },
+    "footerContactUs": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "default": "Kontakt",
+      "required": true
+    },
+    "footerPrivacy": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "default": "Privatsphäre",
+      "required": true
+    },
+    "footerAddress": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "default": "InnoVerse",
+      "required": true
+    },
+    "footerUnsubscribe": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "default": "Abbestellen",
+      "required": true
+    },
+    "footerEmailSettings": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "default": "Einstellungen",
+      "required": true
+    },
+    "footerSmallLogo": {
+      "type": "media",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "headerLogo": {
+      "type": "media",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

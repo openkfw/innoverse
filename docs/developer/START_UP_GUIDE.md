@@ -90,6 +90,8 @@ The news feed uses Redis as a cache. If needed, the cache can be refreshed and w
   variable `STRAPI_PUSH_NOTIFICATION_SECRET`
 - Add all the events to the webhook
 
+The webhook for weekly email notifications is created automatically, but also needs to be populated with similar values. The placeholder value in the URL needs to be replaced with the correct origin (`http://innoverse:3000`, `https://${YOUR-DOMAIN}`, etc). Currently, the authorization header reuses `STRAPI_PUSH_NOTIFICATION_SECRET`
+
 ### Azure Application Insights
 
 - Configure all required components for Azure Application Insights in the Azure Portal or via IaC.
@@ -139,5 +141,9 @@ The main focus should here be the `client` report, as we do not use any edge fun
 | NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING   | N        | -       | Buildtime | Innoverse |
 | NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY | N        | -       | Buildtime | Innoverse |
 | APP_INSIGHTS_SERVICE_NAME                    | N        | -       | Runtime   | Innoverse |
+| SMTP_HOST                                    | Y        | -       | Runtime   | Innoverse |
+| SMTP_USER                                    | Y        | -       | Runtime   | Innoverse |
+| SMTP_PASS                                    | Y        | -       | Runtime   | Innoverse |
+| NOTIFICATIONS_EMAIL_ADDRESS                  | Y        | -       | Runtime   | Innoverse |
 
 (\*) Note: At least one authentication method must be enabled

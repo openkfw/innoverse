@@ -12,7 +12,6 @@ import {
   StartPagination,
   UserSession,
 } from '@/common/types';
-import { handleProjectUpdatesSchema } from '@/components/updates/validationSchema';
 import { RequestError } from '@/entities/error';
 import { getCommentsStartingFrom } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
@@ -232,9 +231,14 @@ export async function getUpdateWithAdditionalData(
   update: ProjectUpdate | ProjectUpdateWithAdditionalData,
 ): Promise<ProjectUpdateWithAdditionalData> {
   try {
-    const { data: reactionForUser } = await findReactionByUser({ objectType: ObjectType.UPDATE, objectId: update.id });
+    const reactionForUserResponse = await findReactionByUser({ objectType: ObjectType.UPDATE, objectId: update.id });
     const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.UPDATE, update.id);
-    const { data: followedByUser } = await isProjectFollowedByUser({ projectId: update.projectId });
+    const followedByUserResponse = await isProjectFollowedByUser({ projectId: update.projectId });
+
+    const reactionForUser =
+      reactionForUserResponse.status === StatusCodes.OK && reactionForUserResponse.data
+        ? mapReaction(reactionForUserResponse.data)
+        : undefined;
 
     const reactionCount = reactionCountResult.map((r) => ({
       count: r._count.shortCode,
@@ -244,9 +248,11 @@ export async function getUpdateWithAdditionalData(
       },
     }));
 
+    const followedByUser = followedByUserResponse.status === StatusCodes.OK ? followedByUserResponse.data : false;
+
     return {
       ...update,
-      reactionForUser: reactionForUser ? mapReaction(reactionForUser) : undefined,
+      reactionForUser,
       followedByUser,
       reactionCount,
     };
@@ -263,12 +269,17 @@ export async function getUpdateWithAdditionalData(
 
 export async function getNewsFeedEntry(entry: any): Promise<NewsFeedEntry> {
   try {
-    const { data: reactionForUser } = await findReactionByUser({
+    const reactionForUserResponse = await findReactionByUser({
       objectType: ObjectType.UPDATE,
       objectId: entry.item.id,
     });
     const reactionCountResult = await countNumberOfReactions(dbClient, ObjectType.UPDATE, entry.item.id);
-    const { data: followedByUser } = await isProjectFollowedByUser({ projectId: entry.item.projectId });
+    const followedByUserResponse = await isProjectFollowedByUser({ projectId: entry.item.projectId });
+
+    const reactionForUser =
+      reactionForUserResponse.status === StatusCodes.OK && reactionForUserResponse.data
+        ? mapReaction(reactionForUserResponse.data)
+        : undefined;
 
     const reactionCount = reactionCountResult.map((r) => ({
       count: r._count.shortCode,
@@ -278,11 +289,13 @@ export async function getNewsFeedEntry(entry: any): Promise<NewsFeedEntry> {
       },
     }));
 
+    const followedByUser = followedByUserResponse.status === StatusCodes.OK ? followedByUserResponse.data : false;
+
     return {
       ...entry,
       item: {
         ...entry.item,
-        reactionForUser: reactionForUser ? mapReaction(reactionForUser) : undefined,
+        reactionForUser,
         followedByUser,
         reactionCount,
       },
