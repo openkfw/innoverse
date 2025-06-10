@@ -45,6 +45,14 @@
       "koa": ">=2.16.1",
       "sharp": "^0.33.5",
       "vite": "^5.4.19"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@apollo/protobufjs",
+      "@swc/core",
+      "better-sqlite3",
+      "core-js-pure",
+      "esbuild",
+      "sharp"
+    ]
   }
 }

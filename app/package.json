@@ -108,6 +108,13 @@
       "cookie@<0.7.0": ">=0.7.0",
       "@babel/runtime": ">=7.26.10",
       "solid-js": ">=1.9.4"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "sharp",
+      "unrs-resolver"
+    ]
   }
 }
