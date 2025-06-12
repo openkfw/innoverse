@@ -115,6 +115,11 @@
       "prisma",
       "sharp",
       "unrs-resolver"
-    ]
+    ],
+    "auditConfig": {
+      "ignoreCves": [
+        "CVE-2025-5889"
+      ]
+    }
   }
 }

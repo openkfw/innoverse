@@ -53,6 +53,11 @@
       "core-js-pure",
       "esbuild",
       "sharp"
-    ]
+    ],
+    "auditConfig": {
+      "ignoreCves": [
+        "CVE-2025-5889"
+      ]
+    }
   }
 }
