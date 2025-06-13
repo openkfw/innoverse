@@ -168,7 +168,7 @@ export const PostItem = (props: PostItemProps) => (
       </Row>
     )}
 
-    <Row style={rowStyle}>
+    <Row>
       <Text style={postContentStyle}>{props.comment}</Text>
     </Row>
 
@@ -193,10 +193,10 @@ export const NewsItem = (item: NewsItemProps) => {
 
 export const SurveyQuestionItem = (props: SurveyQuestionItemProps) => (
   <Section style={wrapperStyle}>
-    <Row style={rowStyle}>
+    <Row>
       <Text style={surveyTitleStyle}>{props.question}</Text>
     </Row>
-    <Row style={rowStyle}>
+    <Row>
       <Column valign="middle" style={surveyPlaceholderContainerStyle}>
         <Text style={surveyPlaceholderStyle}>
           Antwortmöglichkeiten und Ergebnisse auf InnoVerse verfügbar (hier&nbsp;klicken)
@@ -209,11 +209,11 @@ export const SurveyQuestionItem = (props: SurveyQuestionItemProps) => (
 
 export const CollaborationQuestionItem = (props: CollaborationQuestionItemProps) => (
   <Section style={wrapperStyle}>
-    <Row style={rowStyle}>
+    <Row>
       <Text style={questionTitleStyle}>{props.title}</Text>
     </Row>
 
-    <Row style={rowStyle}>
+    <Row>
       <Text style={questionDescriptionStyle}>{props.description}</Text>
     </Row>
 
@@ -223,7 +223,7 @@ export const CollaborationQuestionItem = (props: CollaborationQuestionItemProps)
 
 export const EventItem = (props: EventItemProps) => (
   <Section style={wrapperStyle}>
-    <Row style={rowStyle}>
+    <Row>
       <Column valign="top" style={{ width: '60px', textAlign: 'center' }}>
         <Text style={eventDateDayStyle}>{new Date(props.startTime).getDate()}</Text>
         <Text style={eventDateMonthStyle}>
@@ -238,7 +238,7 @@ export const EventItem = (props: EventItemProps) => (
         {props.type && <Text style={eventInfoStyle}> {renderEventType(props.type)} </Text>}
       </Column>
     </Row>
-    <Row style={{ ...rowStyle, marginTop: '12px' }}>
+    <Row style={{ marginTop: '12px' }}>
       {props.image && (
         <Column style={{ width: '270px' }}>
           <Img width={280} src={props.image?.url} style={{ width: '270px', height: '132px' }} />
