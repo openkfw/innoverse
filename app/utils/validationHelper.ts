@@ -6,7 +6,18 @@ import getLogger from './logger';
 
 const logger = getLogger();
 
-export const validateParams = (schema: ZodType, body: any) => {
+type ValidationSuccess<T> = {
+  status: StatusCodes.OK;
+  data: T;
+};
+
+type ValidationError<T> = {
+  status: StatusCodes.BAD_REQUEST;
+  errors: { [P in T extends any ? keyof T : never]?: string[] | undefined };
+  message: string;
+};
+
+export const validateParams = <T>(schema: ZodType<T>, body: unknown): ValidationSuccess<T> | ValidationError<T> => {
   const validatedParams = schema.safeParse(body);
 
   if (!validatedParams.success) {
@@ -27,9 +38,7 @@ export const validateParams = (schema: ZodType, body: any) => {
 export const validateAndReturn = <T>(
   schema: ZodType,
   body: any,
-):
-  | { isValid: true; data: T }
-  | { isValid: false; response: { status: StatusCodes; errors: any; message?: string } } => {
+): { isValid: true; data: T } | { isValid: false; response: ValidationError<T> } => {
   const validated = validateParams(schema, body);
   if (validated.status !== StatusCodes.OK) {
     return {

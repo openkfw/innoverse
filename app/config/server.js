@@ -140,6 +140,34 @@ const serverEnvConfig = createEnvConfig({
       defaultRule: z.string().optional(),
     },
 
+    // SMTP
+    EMAIL_USER: {
+      stages: ['production'],
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+    EMAIL_PASS: {
+      stages: ['production'],
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+    EMAIL_HOST: {
+      stages: ['production'],
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+    EMAIL_PORT: {
+      stages: ['production'],
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+
+    NOTIFICATION_EMAIL_FROM: {
+      stages: runtimeStages,
+      defaultRule: z.string().default(''),
+      required: true,
+    },
+
     // Application Insights
     APP_INSIGHTS_SERVICE_NAME: {
       stages: runtimeStages,

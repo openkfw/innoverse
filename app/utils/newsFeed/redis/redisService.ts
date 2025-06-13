@@ -20,6 +20,7 @@ import { getRedisClient, RedisClient, RedisIndex, RedisTransactionClient } from 
 import { searchNewsComments } from './services/commentsService';
 import { mapImageUrlToRelativeUrl } from './mappings';
 import { MappedRedisType, mapRedisNewsFeedEntries } from './redisMappings';
+import { StatusCodes } from 'http-status-codes';
 
 interface RedisJson {
   [key: string]: any;
@@ -335,8 +336,8 @@ export const getRedisNewsFeed = async (options?: GetItemsOptions) => {
 
 export const getNewsFeed = async (options?: GetItemsOptions) => {
   const data = await getRedisNewsFeed(options);
-  const { data: feed } = await mapRedisNewsFeedEntries(data);
-  return feed ?? [];
+  const result = await mapRedisNewsFeedEntries(data);
+  return result.status === StatusCodes.OK ? result.data : [];
 };
 
 const getKeyForNewsFeedEntry = (entry: RedisNewsFeedEntry) => `${entry.type}:${entry.item.id}`;
