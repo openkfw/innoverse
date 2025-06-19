@@ -29,6 +29,7 @@ export async function getPostById(id: string) {
   } catch (err) {
     const error = strapiError('Getting post by id', err as RequestError, id);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -48,6 +49,7 @@ export async function createPostInStrapi(body: { comment: string; authorId: stri
   } catch (err) {
     const error = strapiError('Trying to to create post', err as RequestError);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -60,6 +62,7 @@ export async function deletePostFromStrapi(id: string) {
   } catch (err) {
     const error = strapiError('Removing post', err as RequestError, id);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -76,6 +79,7 @@ export async function updatePostInStrapi(id: string, comment: string) {
   } catch (err) {
     const error = strapiError('Updating post', err as RequestError, id);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -88,7 +92,7 @@ export const findReactionByUser = withAuth(
         data: result,
       };
     } catch (err) {
-      const error: InnoPlatformError = strapiError(
+      const error = strapiError(
         `Find reaction for ${user.providerId} and ${body.objectType} ${body.objectId} `,
         err as RequestError,
         body.objectId,
@@ -127,5 +131,6 @@ export async function getPostsStartingFrom({ from, page, pageSize }: StartPagina
   } catch (err) {
     const error = strapiError(`Getting posts starting from ${from}`, err as RequestError);
     logger.error(error);
+    throw err;
   }
 }

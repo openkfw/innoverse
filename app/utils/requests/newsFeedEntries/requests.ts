@@ -43,5 +43,6 @@ export const getNewsFeedPageProps = async () => {
     };
   } catch (error) {
     logger.error('Failed to get news feed page props', error);
+    throw error;
   }
 };

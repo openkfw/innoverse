@@ -39,7 +39,7 @@ export const sendPushNotification = async (subscription: WebPushSubscription, pu
   };
   try {
     const res = await webpush.sendNotification(subscription, payload, options);
-    console.info('Send PushNotification to user: ', userId, ' with payload: ', JSON.stringify(res));
+    logger.info('Send PushNotification to user: ', userId, ' with payload: ', JSON.stringify(res));
   } catch (e) {
     const error = <WebPushError>e;
     // subscription has expired or is no longer valid
@@ -55,11 +55,7 @@ const removeExpiredPushSubscriptions = async (userId: string, subscription: webp
   try {
     await removePushSubscriptionForUser(dbClient, userId, subscription);
   } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Remove expired push subscription for user ${userId}`,
-      err as Error,
-      userId,
-    );
+    const error = dbError(`Remove expired push subscription for user ${userId}`, err as Error, userId);
     logger.error(error);
     throw err;
   }
@@ -72,11 +68,7 @@ export const subscribeToWebPush = withAuth(
       await createPushSubscriptionForUser(dbClient, user.providerId, body.browserFingerprint, subscription);
       return { status: 200 };
     } catch (err) {
-      const error: InnoPlatformError = dbError(
-        `Create push subscription for user ${user.providerId}`,
-        err as Error,
-        user.providerId,
-      );
+      const error = dbError(`Create push subscription for user ${user.providerId}`, err as Error, user.providerId);
       logger.error(error);
       throw err;
     }
@@ -89,11 +81,7 @@ export const unsubscribeFromWebPush = withAuth(async (user: UserSession, body: s
     await removePushSubscriptionForUser(dbClient, user.providerId, subscription);
     return { status: 200 };
   } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Remove push subscription for user ${user.providerId}`,
-      err as Error,
-      user.providerId,
-    );
+    const error = dbError(`Remove push subscription for user ${user.providerId}`, err as Error, user.providerId);
     logger.error(error);
     throw err;
   }

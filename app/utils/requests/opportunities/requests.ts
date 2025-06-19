@@ -6,6 +6,7 @@ import { BasicOpportunity, Opportunity, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
+import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapToUser } from '@/utils/requests/innoUsers/mappings';
 import { mapToOpportunity } from '@/utils/requests/opportunities/mappings';
@@ -15,7 +16,6 @@ import {
   UpdateOpportunityParticipantsQuery,
 } from '@/utils/requests/opportunities/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
-import { getPromiseResults } from '@/utils/helpers';
 
 const logger = getLogger();
 
@@ -41,6 +41,7 @@ export async function getBasicOpportunityById(opportunityId: string) {
   } catch (err) {
     const error = strapiError('Getting basic opportunity by id', err as RequestError, opportunityId);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -59,6 +60,7 @@ export async function isUserParticipatingInOpportunity(body: { opportunityId: st
       body.opportunityId,
     );
     logger.error(error);
+    throw err;
   }
 }
 
@@ -78,6 +80,7 @@ export async function handleOpportunityAppliedBy(body: { opportunityId: string; 
       body.opportunityId,
     );
     logger.error(error);
+    throw err;
   }
 }
 
@@ -120,7 +123,7 @@ export async function getOpportunityWithAdditionalData(opportunity: Opportunity)
   } catch (err) {
     const error: InnoPlatformError = dbError(
       `Getting additional data for opportunity with id: ${opportunity.id}`,
-      err as Error,
+      err as RequestError,
       opportunity.id,
     );
     logger.error(error);

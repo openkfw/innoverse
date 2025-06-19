@@ -15,6 +15,7 @@ import dbClient from '@/repository/db/prisma/prisma';
 import { getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
 import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
+import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import {
   GetCollaborationQuesstionsStartingFromQuery,
@@ -23,9 +24,9 @@ import {
 } from '@/utils/requests/collaborationQuestions/queries';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
-import { mapToBasicCollaborationQuestion } from './mappings';
-import { getPromiseResults } from '@/utils/helpers';
 import { getCommentsByObjectIdWithResponses } from '../comments/requests';
+
+import { mapToBasicCollaborationQuestion } from './mappings';
 
 const logger = getLogger();
 
@@ -39,6 +40,7 @@ export async function getBasicCollaborationQuestionById(id: string): Promise<Bas
   } catch (err) {
     const error = strapiError('Getting basic collaboration question by id', err as RequestError, id);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -59,6 +61,7 @@ export async function getBasicCollaborationQuestionByIdWithAdditionalData(id: st
       id,
     );
     logger.error(error);
+    throw err;
   }
 }
 
@@ -91,6 +94,7 @@ export async function getCollaborationQuestionStartingFromWithAdditionalData({
       err as RequestError,
     );
     logger.error(error);
+    throw err;
   }
 }
 
@@ -111,6 +115,7 @@ export async function getPlatformFeedbackCollaborationQuestion() {
   } catch (err) {
     const error = strapiError('Getting platform feedback collaboration question', err as RequestError);
     logger.error(error);
+    throw err;
   }
 }
 

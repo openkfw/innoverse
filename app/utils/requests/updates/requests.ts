@@ -12,14 +12,13 @@ import {
   StartPagination,
   UserSession,
 } from '@/common/types';
-import { handleProjectUpdatesSchema } from '@/components/updates/validationSchema';
 import { RequestError } from '@/entities/error';
 import { getCommentsStartingFrom } from '@/repository/db/comment';
 import { getFollowedByForEntity } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { countNumberOfReactions, findReaction, getReactionsForEntity } from '@/repository/db/reaction';
 import { withAuth } from '@/utils/auth';
-import { dbError, InnoPlatformError, strapiError } from '@/utils/errors';
+import { dbError, strapiError } from '@/utils/errors';
 import { getPromiseResults, getUniqueValues, getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { mapReaction } from '@/utils/newsFeed/redis/redisMappings';
@@ -42,7 +41,6 @@ import {
   GetUpdatesQuery,
   GetUpdatesStartingFromQuery,
 } from '@/utils/requests/updates/queries';
-import { validateParams } from '@/utils/validationHelper';
 
 const logger = getLogger();
 
@@ -50,12 +48,13 @@ export async function getProjectUpdates(limit = 100) {
   try {
     const response = await strapiGraphQLFetcher(GetUpdatesQuery, { limit });
     if (!response.updates) throw new Error('Response contained no updates');
-    const updates = await mapToProjectUpdates(response.updates);
+    const updates = mapToProjectUpdates(response.updates);
     const updatesWithAdditionalData = getUpdatesWithAdditionalData(updates);
     return updatesWithAdditionalData;
   } catch (err) {
     const error = strapiError('Getting all project updates', err as RequestError);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -68,6 +67,7 @@ export async function getProjectUpdateById(id: string) {
   } catch (err) {
     const error = strapiError('Getting project update by id', err as RequestError, id);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -82,6 +82,7 @@ export async function getProjectUpdateByIdWithReactions(id: string) {
   } catch (err) {
     const error = strapiError('Getting project update', err as RequestError);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -95,6 +96,7 @@ export async function getUpdatesByProjectId(projectId: string) {
   } catch (err) {
     const error = strapiError('Getting all project updates', err as RequestError, projectId);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -122,6 +124,7 @@ export async function createProjectUpdateInStrapi(body: {
   } catch (err) {
     const error = strapiError('Trying to to create project update', err as RequestError, body.projectId);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -134,6 +137,7 @@ export async function deleteProjectUpdateInStrapi(id: string) {
   } catch (err) {
     const error = strapiError('Removing project update', err as RequestError, id);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -150,6 +154,7 @@ export async function updateProjectUpdateInStrapi(id: string, comment: string) {
   } catch (err) {
     const error = strapiError('Updating project update', err as RequestError, id);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -174,6 +179,7 @@ export async function getProjectUpdatesPage({
   } catch (err) {
     const error = strapiError('Getting all project updates with filter', err as RequestError);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -251,11 +257,7 @@ export async function getUpdateWithAdditionalData(
       reactionCount,
     };
   } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Getting additional data for update with id: ${update.id}`,
-      err as Error,
-      update.id,
-    );
+    const error = dbError(`Getting additional data for update with id: ${update.id}`, err as Error, update.id);
     logger.error(error);
     throw err;
   }
@@ -288,11 +290,7 @@ export async function getNewsFeedEntry(entry: any): Promise<NewsFeedEntry> {
       },
     };
   } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Getting news feed entry for update with id: ${entry.item.id}`,
-      err as Error,
-      entry.item.id,
-    );
+    const error = dbError(`Getting news feed entry for update with id: ${entry.item.id}`, err as Error, entry.item.id);
     logger.error(error);
     throw err;
   }
@@ -307,7 +305,7 @@ export const findReactionByUser = withAuth(
         data: result,
       };
     } catch (err) {
-      const error: InnoPlatformError = strapiError(
+      const error = strapiError(
         `Find reaction for ${user.providerId} and ${body.objectType} ${body.objectId} `,
         err as RequestError,
         body.objectId,
@@ -331,7 +329,7 @@ export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: St
 
     if (updatesIds.length > 0) {
       const res = await strapiGraphQLFetcher(GetUpdatesByIdsQuery, { ids: updatesIds });
-      const updatesWithComments = await mapToProjectUpdates(res.updates);
+      const updatesWithComments = mapToProjectUpdates(res.updates);
 
       const combinedUpdates = [...updates, ...updatesWithComments];
       const uniqueUpdates = combinedUpdates.filter(
@@ -344,6 +342,7 @@ export async function getProjectUpdatesStartingFrom({ from, page, pageSize }: St
   } catch (err) {
     const error = strapiError(`Getting updates on news comments starting from ${from}`, err as RequestError);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -355,5 +354,6 @@ export async function getCommentsForProjectUpdateStartingFrom({ from, page, page
   } catch (err) {
     const error = strapiError('Getting updates', err as RequestError);
     logger.error(error);
+    throw err;
   }
 }

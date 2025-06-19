@@ -169,13 +169,23 @@ export async function removeAllCommentsByObjectIdAndType(
   objectId: string,
   objectType: ObjectType,
 ) {
-  const result = await client.comment.deleteMany({
-    where: {
+  try {
+    const result = await client.comment.deleteMany({
+      where: {
+        objectId,
+        objectType: objectType as PrismaObjectType,
+      },
+    });
+    return result.count;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Remove all comments by object with id: ${objectId} and type: ${objectType}`,
+      err as Error,
       objectId,
-      objectType: objectType as PrismaObjectType,
-    },
-  });
-  return result.count;
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function getCommentsStartingFrom(client: PrismaClient, from: Date, objectType: ObjectType) {
@@ -249,11 +259,21 @@ export async function getCommentsByAdditionalObjectId(
 }
 
 export async function isCommentLikedBy(client: PrismaClient, commentId: string, likedBy: string) {
-  const likedCommentsCount = await client.comment.count({
-    where: {
-      id: commentId,
-      likes: { some: { likedBy } },
-    },
-  });
-  return likedCommentsCount > 0;
+  try {
+    const likedCommentsCount = await client.comment.count({
+      where: {
+        id: commentId,
+        likes: { some: { likedBy } },
+      },
+    });
+    return likedCommentsCount > 0;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Check if comment with id: ${commentId} is liked by user with id: ${likedBy}`,
+      err as Error,
+      commentId,
+    );
+    logger.error(error);
+    throw err;
+  }
 }
