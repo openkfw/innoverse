@@ -8,7 +8,7 @@ import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { sendPushNotification } from '@/utils/notification/pushNotification';
 
-import { dbError, InnoPlatformError } from '../errors';
+import { dbError } from '../errors';
 
 const logger = getLogger();
 
@@ -78,10 +78,7 @@ const createNotificationForFollow = async (
       },
     };
   } catch (err) {
-    const error: InnoPlatformError = dbError(
-      `Create notification for follow by user ${follow.followedBy}`,
-      err as Error,
-    );
+    const error = dbError(`Create notification for follow by user ${follow.followedBy}`, err as Error);
     logger.error(error);
     throw err;
   }

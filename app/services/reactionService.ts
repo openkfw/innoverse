@@ -48,7 +48,7 @@ export const addReaction = async ({ user, reaction }: AddReaction) => {
       reaction.shortCode,
       reaction.nativeSymbol,
     );
-    addReactionToCache({ ...createdReaction, objectType: createdReaction.objectType as ObjectType }, user);
+    await addReactionToCache({ ...createdReaction, objectType: createdReaction.objectType as ObjectType }, user);
     return createdReaction;
   } catch (err) {
     const error: InnoPlatformError = dbError(
@@ -69,7 +69,7 @@ export const removeReaction = async ({ user, reaction }: RemoveReaction) => {
       reaction.objectType,
       reaction.objectId,
     );
-    removeReactionFromCache({
+    await removeReactionFromCache({
       reaction: { ...removedReaction, objectType: removedReaction.objectType as ObjectType },
       user,
     });

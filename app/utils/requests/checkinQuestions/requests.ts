@@ -4,19 +4,19 @@ import { StatusCodes } from 'http-status-codes';
 
 import { SurveyVote, UserSession } from '@/common/types';
 import { RequestError } from '@/entities/error';
+import {
+  getCheckinQuestionUserVoteHistory,
+  getCheckinQuestionVoteHistory,
+  isCheckinQuestionVotedByToday,
+} from '@/repository/db/checkin_votes';
+import dbClient from '@/repository/db/prisma/prisma';
 import { withAuth } from '@/utils/auth';
 import { strapiError } from '@/utils/errors';
+import { getPromiseResults } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import strapiGraphQLFetcher from '@/utils/requests/strapiGraphQLFetcher';
 
 import { GetAllCheckinQuestions, GetCheckinQuestionByIdQuery, GetCheckinQuestionByValidDates } from './queries';
-import {
-  isCheckinQuestionVotedByToday,
-  getCheckinQuestionVoteHistory,
-  getCheckinQuestionUserVoteHistory,
-} from '@/repository/db/checkin_votes';
-import { getPromiseResults } from '@/utils/helpers';
-import dbClient from '@/repository/db/prisma/prisma';
 
 const logger = getLogger();
 
@@ -31,6 +31,7 @@ export async function getCheckinQuestionById(id: string) {
   } catch (err) {
     const error = strapiError('Getting basic check-in question by id', err as RequestError, id);
     logger.error(error);
+    throw err;
   }
 }
 

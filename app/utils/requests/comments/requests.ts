@@ -69,7 +69,6 @@ export const getCommentsByObjectIdWithResponses = async (
   );
 
   const comments = await Promise.all(dbComments.map((comment) => mapToComment(comment, userId)));
-
   return { comments: setResponses(comments), totalCount };
 };
 
@@ -132,11 +131,11 @@ export async function saveNewsFeedEntriesComments(newsFeedEntries: RedisNewsFeed
   await Promise.all(
     newsFeedEntries.map(async (entry) => {
       try {
-        console.info(`Saving comments for entry ${entry.item.id} of type ${objectType}`);
+        logger.info(`Saving comments for entry ${entry.item.id} of type ${objectType}`);
         const comments = await saveEntryNewsComments(entry, objectType);
         entry.item.comments = comments;
       } catch (err) {
-        console.error(`Failed to save comments for entry ${entry.item.id} of type ${objectType}`, err);
+        logger.error(`Failed to save comments for entry ${entry.item.id} of type ${objectType}`, err);
       }
     }),
   );

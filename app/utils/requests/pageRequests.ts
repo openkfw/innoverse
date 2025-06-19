@@ -1,9 +1,10 @@
 import { MainPageData } from '@/common/types';
+import { RequestError } from '@/entities/error';
 import getLogger from '@/utils/logger';
 
-import { getCountsForProject, getMainData } from './requests';
 import { strapiError } from '../errors';
-import { RequestError } from '@/entities/error';
+
+import { getCountsForProject, getMainData } from './requests';
 
 const logger = getLogger();
 
@@ -41,5 +42,6 @@ export async function getMainPageData() {
   } catch (err) {
     const error = strapiError('Getting All featured projects', err as RequestError);
     logger.error(error);
+    throw err;
   }
 }

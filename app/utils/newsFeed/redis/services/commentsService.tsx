@@ -1,7 +1,7 @@
 import { AggregateGroupByReducers, AggregateSteps, SearchOptions } from 'redis';
 
 import { ObjectType } from '@/common/types';
-import { InnoPlatformError, redisError } from '@/utils/errors';
+import { redisError } from '@/utils/errors';
 import { getPromiseResults, getUnixTimestamp } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
 import { getCommentsByObjectIdWithResponses } from '@/utils/requests/comments/requests';
@@ -21,21 +21,33 @@ export type AddNewsComment = {
 };
 
 export async function setCommentsIdsToEntry(redisClient: RedisClient, redisKey: string, commentsIds: string[]) {
-  await redisClient.json.set(redisKey, '.item.comments', commentsIds);
-  await redisClient.json.set(redisKey, '.item.updatedAt', getUnixTimestamp(new Date()));
-  await redisClient.json.set(redisKey, '.item.createdAt', getUnixTimestamp(new Date()));
+  try {
+    await redisClient.json.set(redisKey, '.item.comments', commentsIds);
+    await redisClient.json.set(redisKey, '.item.updatedAt', getUnixTimestamp(new Date()));
+    await redisClient.json.set(redisKey, '.item.createdAt', getUnixTimestamp(new Date()));
+  } catch (err) {
+    const error = redisError(`Setting comments ids to entry with key: ${redisKey}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function updateNewsCommentInCache(comment: RedisNewsComment) {
-  const redisClient = await getRedisClient();
-  const hashKey = `comment:${comment.id}`;
+  try {
+    const redisClient = await getRedisClient();
+    const hashKey = `comment:${comment.id}`;
 
-  await redisClient.hSet(hashKey, {
-    id: comment.id,
-    comment: comment.text,
-    updatedAt: getUnixTimestamp(new Date()),
-    authorId: JSON.stringify(comment.author),
-  });
+    await redisClient.hSet(hashKey, {
+      id: comment.id,
+      comment: comment.text,
+      updatedAt: getUnixTimestamp(new Date()),
+      authorId: JSON.stringify(comment.author),
+    });
+  } catch (err) {
+    const error = redisError(`Updating comment with id: ${comment.id}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 }
 
 async function addNewsCommentToRedisCache(redisClient: RedisClient, body: AddNewsComment) {
@@ -57,7 +69,7 @@ async function addNewsCommentToRedisCache(redisClient: RedisClient, body: AddNew
       await redisClient.sAdd(parentIndexKey, hashKey);
     }
   } catch (err) {
-    const error: InnoPlatformError = redisError(`Saving post comments for entry with id: ${body.newsId}`, err as Error);
+    const error = redisError(`Saving post comments for entry with id: ${body.newsId}`, err as Error);
     logger.error(error);
     throw err;
   }
@@ -102,8 +114,14 @@ async function deleteCommentsIdsFromEntry(
 }
 
 async function deleteComment(redisClient: RedisClient, commentId: string) {
-  const hashKey = `comment:${commentId}`;
-  await redisClient.del(hashKey);
+  try {
+    const hashKey = `comment:${commentId}`;
+    await redisClient.del(hashKey);
+  } catch (err) {
+    const error = redisError(`Deleting comment with id: ${commentId}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 }
 
 export const deleteCommentsInCache = async (entry: RedisNewsFeedEntry) => {
@@ -146,39 +164,48 @@ export async function saveHashedComments(
       }
     }
   } catch (err) {
-    const error: InnoPlatformError = redisError(
-      `Saving comments to cache for entry with id: ${entry.item.id}`,
-      err as Error,
-    );
+    const error = redisError(`Saving comments to cache for entry with id: ${entry.item.id}`, err as Error);
     logger.error(error);
     throw err;
   }
 }
 
 export async function getRedisComment(client: RedisClient, commentId: string) {
-  const hashKey = `comment:${commentId}`;
-  const commentData = await client.hGetAll(hashKey);
-  return {
-    id: commentData.id,
-    commentId: commentData.commentId,
-    comment: commentData.comment,
-    updatedAt: getUnixTimestamp(new Date(commentData.updatedAt)),
-    author: commentData.author && JSON.parse(commentData.author),
-  };
+  try {
+    const hashKey = `comment:${commentId}`;
+    const commentData = await client.hGetAll(hashKey);
+    return {
+      id: commentData.id,
+      commentId: commentData.commentId,
+      comment: commentData.comment,
+      updatedAt: getUnixTimestamp(new Date(commentData.updatedAt)),
+      author: commentData.author && JSON.parse(commentData.author),
+    };
+  } catch (err) {
+    const error = redisError(`Getting comment with id: ${commentId}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 }
 
 const getCommentsByParentId = async (client: RedisClient, parentId: string) => {
-  const parentIndexKey = `parentId:${parentId}`;
-  const hashKeys = await client.sMembers(parentIndexKey);
+  try {
+    const parentIndexKey = `parentId:${parentId}`;
+    const hashKeys = await client.sMembers(parentIndexKey);
 
-  const items = await Promise.all(
-    hashKeys.map(async (hashKey) => {
-      const item = await client.hGetAll(hashKey);
-      return item;
-    }),
-  );
+    const items = await Promise.all(
+      hashKeys.map(async (hashKey) => {
+        const item = await client.hGetAll(hashKey);
+        return item;
+      }),
+    );
 
-  return items;
+    return items;
+  } catch (err) {
+    const error = redisError(`Getting comments by parent id: ${parentId}`, err as Error);
+    logger.error(error);
+    throw err;
+  }
 };
 
 export async function getNewsFeedEntryWithComments(
@@ -195,77 +222,83 @@ export async function getNewsFeedEntryWithComments(
 }
 
 async function searchComments(client: RedisClient, index: RedisIndex, query: string, searchOptions: SearchOptions) {
-  const countResults = await client.ft.aggregate(index, query, {
-    STEPS: [
-      {
-        type: AggregateSteps.GROUPBY,
-        properties: ['@itemId'],
-        REDUCE: [
-          {
-            type: AggregateGroupByReducers.FIRST_VALUE,
-            property: '@comment',
-            AS: 'firstComment',
-          },
-        ],
-      },
-    ],
-    PARAMS: searchOptions.PARAMS,
-    DIALECT: 2,
-  });
-
-  const sortBy = searchOptions.SORTBY;
-  const totalGroups = countResults.total;
-  const offset = searchOptions.LIMIT?.from as number;
-  let adjustedLimit = searchOptions.LIMIT ?? { from: 0, size: 0 };
-  if (totalGroups <= offset) {
-    adjustedLimit = { from: 0, size: 0 };
-  }
-
-  // The "SORTBY" is not allowed as a STEP, but the aggregation does not work without this step
-  // Typescript marks this as a warning, so the workaround is to cast the type to "any"
-  const options: any = {
-    STEPS: [
-      {
-        type: AggregateSteps.SORTBY,
-        BY: '@updatedAt',
-        DIRECTION: sortBy,
-      },
-      {
-        type: AggregateSteps.GROUPBY,
-        properties: ['@itemId'],
-        REDUCE: [
-          {
-            type: AggregateGroupByReducers.FIRST_VALUE,
-            property: '@comment',
-            AS: 'comment',
-          },
-          {
-            type: AggregateGroupByReducers.FIRST_VALUE,
-            property: '@type',
-            AS: 'itemType',
-          },
-        ],
-      },
-      {
-        type: AggregateSteps.LIMIT,
-        from: adjustedLimit.from,
-        size: adjustedLimit.size,
-      },
-    ],
-    PARAMS: searchOptions.PARAMS,
-    DIALECT: 2,
-  };
-  const comments = await client.ft.aggregate(index, query, options);
-
-  if (comments) {
-    return comments.results.map((result) => {
-      return {
-        itemId: result['itemId'],
-        type: result['itemType'],
-      } as { itemId: string; type: string };
+  try {
+    const countResults = await client.ft.aggregate(index, query, {
+      STEPS: [
+        {
+          type: AggregateSteps.GROUPBY,
+          properties: ['@itemId'],
+          REDUCE: [
+            {
+              type: AggregateGroupByReducers.FIRST_VALUE,
+              property: '@comment',
+              AS: 'firstComment',
+            },
+          ],
+        },
+      ],
+      PARAMS: searchOptions.PARAMS,
+      DIALECT: 2,
     });
+
+    const sortBy = searchOptions.SORTBY;
+    const totalGroups = countResults.total;
+    const offset = searchOptions.LIMIT?.from as number;
+    let adjustedLimit = searchOptions.LIMIT ?? { from: 0, size: 0 };
+    if (totalGroups <= offset) {
+      adjustedLimit = { from: 0, size: 0 };
+    }
+
+    // The "SORTBY" is not allowed as a STEP, but the aggregation does not work without this step
+    // Typescript marks this as a warning, so the workaround is to cast the type to "any"
+    const options: any = {
+      STEPS: [
+        {
+          type: AggregateSteps.SORTBY,
+          BY: '@updatedAt',
+          DIRECTION: sortBy,
+        },
+        {
+          type: AggregateSteps.GROUPBY,
+          properties: ['@itemId'],
+          REDUCE: [
+            {
+              type: AggregateGroupByReducers.FIRST_VALUE,
+              property: '@comment',
+              AS: 'comment',
+            },
+            {
+              type: AggregateGroupByReducers.FIRST_VALUE,
+              property: '@type',
+              AS: 'itemType',
+            },
+          ],
+        },
+        {
+          type: AggregateSteps.LIMIT,
+          from: adjustedLimit.from,
+          size: adjustedLimit.size,
+        },
+      ],
+      PARAMS: searchOptions.PARAMS,
+      DIALECT: 2,
+    };
+    const comments = await client.ft.aggregate(index, query, options);
+
+    if (comments) {
+      return comments.results.map((result) => {
+        return {
+          itemId: result['itemId'],
+          type: result['itemType'],
+        } as { itemId: string; type: string };
+      });
+    }
+    return [];
+  } catch (err) {
+    const error = redisError(`Searching comments with query: ${query}`, err as Error);
+    logger.error(error);
+    throw err;
   }
-  return [];
 }
 
 export async function searchNewsComments(

@@ -138,7 +138,8 @@ export async function getEmailsByUsernames(usernames: string[]): Promise<string[
 
     return emails ?? [];
   } catch (err) {
-    console.error('Error fetching emails by usernames:', err);
+    const error = strapiError('Getting Emails by username', err as RequestError, usernames.join(', '));
+    logger.error(error);
     throw err;
   }
 }
@@ -148,8 +149,9 @@ export async function getInnoUserByUsername(username: string): Promise<User | nu
     const response = await strapiGraphQLFetcher(GetInnoUserByUsernameQuery, { username });
     const user = mapFirstToUser(response?.innoUsers);
     return user || null;
-  } catch (error) {
-    console.error('Error fetching user by username:', error);
+  } catch (err) {
+    const error = strapiError('Getting Inno user by username', err as RequestError, username);
+    logger.error(error);
     throw error;
   }
 }
@@ -237,9 +239,9 @@ async function generateUniqueUsername(email: string): Promise<string> {
 
       username = `${baseUsername}${count}`;
       count++;
-    } catch (error) {
-      logger.error('Error checking username existence:', error);
-      throw error;
+    } catch (err) {
+      logger.error('Error checking username existence');
+      throw err;
     }
   }
 
@@ -248,9 +250,9 @@ async function generateUniqueUsername(email: string): Promise<string> {
 
 async function uploadImage(imageUrl: string, fileName: string) {
   return await fetch(imageUrl)
-    .catch((e) => {
-      logger.error('Error while fetching image:', e);
-      throw new Error('Error while fetching image');
+    .catch((error) => {
+      logger.error('Error while fetching image:', error);
+      throw error;
     })
     .then((response) => {
       return response.blob();
@@ -267,9 +269,10 @@ async function uploadImage(imageUrl: string, fileName: string) {
         },
         body: formData,
       })
-        .catch((e) => {
-          logger.error('Error while uploading image:', e);
-          throw new Error('Error while uploading image');
+        .catch((uploadError) => {
+          const error = strapiError('Failed to upload the image', uploadError as RequestError);
+          logger.error(error);
+          throw error;
         })
         .then((response) => {
           return response.body.json();
@@ -287,9 +290,10 @@ export async function deleteFileImage(imageId: string) {
       Authorization: `Bearer ${serverConfig.STRAPI_TOKEN}`,
     },
   })
-    .catch((e) => {
-      logger.error('Error while uploading image:', e);
-      throw new Error('Error while uploading image');
+    .catch((uploadError) => {
+      const error = strapiError('Deleting image', uploadError as RequestError, imageId);
+      logger.error(error);
+      throw error;
     })
     .then((response) => {
       return response.json();
@@ -306,8 +310,8 @@ export async function fetchMentionData(search: string): Promise<Mention[]> {
     const formattedData = data.map((user) => ({ username: user.username }));
     return formattedData.filter((user) => user.username?.toLowerCase().includes(search.toLowerCase()));
   } catch (error) {
-    console.error('Failed to load users:', error);
-    return [];
+    logger.error('Fetching mention data failed:', error);
+    throw error;
   }
 }
 
@@ -316,7 +320,7 @@ export async function fetchEmailsByUsernames(usernames: string[]): Promise<strin
     const emails = await getEmailsByUsernames(usernames);
     return emails;
   } catch (error) {
-    console.error('Failed to fetch emails by usernames:', error);
+    logger.error('Failed to fetch emails by usernames:', error);
     throw error;
   }
 }
@@ -326,7 +330,7 @@ export async function fetchUserByUsername(username: string): Promise<User | null
     const userData = await getInnoUserByUsername(username);
     return userData;
   } catch (error) {
-    console.error('Failed to fetch user by username:', error);
+    logger.error('Failed to fetch user by username:', error);
     return null;
   }
 }
@@ -344,9 +348,10 @@ export async function uploadFileImage(image: Blob, fileName: string) {
     },
     body: formData,
   })
-    .catch((e) => {
-      logger.error('Error while uploading image:', e);
-      throw new Error('Error while uploading image');
+    .catch((uploadError) => {
+      const error = strapiError('Failed to upload the image', uploadError as RequestError);
+      logger.error(error);
+      throw error;
     })
     .then((response) => {
       return response.body.json();
