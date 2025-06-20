@@ -34,8 +34,6 @@ const appInsights = new ApplicationInsights({
   },
 });
 
-console.log('validAppInsightsConfig', validAppInsightsConfig);
-
 if (typeof window !== 'undefined' && validAppInsightsConfig) {
   appInsights.loadAppInsights();
 }
