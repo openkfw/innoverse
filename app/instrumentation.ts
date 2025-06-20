@@ -3,13 +3,13 @@
 import { AzureMonitorTraceExporter } from '@azure/monitor-opentelemetry-exporter';
 import { registerOTel } from '@vercel/otel';
 
-import { clientConfig } from '@/config/client';
+import { clientConfig, validAppInsightsConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 
 export async function register() {
   // required as on bootstrap runs in  runtime 'edge'. App runs in runtime 'nodejs'
   if (process.env.NEXT_RUNTIME === 'nodejs') {
-    if (serverConfig.NODE_ENV === 'production') {
+    if (serverConfig.NODE_ENV === 'production' && validAppInsightsConfig) {
       registerOTel({
         serviceName: serverConfig.APP_INSIGHTS_SERVICE_NAME,
         traceExporter: new AzureMonitorTraceExporter({
