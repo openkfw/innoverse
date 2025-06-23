@@ -1,29 +1,25 @@
-import { ObjectType as PrismaObjectType, PrismaClient } from '@prisma/client';
+import { ObjectType as PrismaObjectType, PrismaClient, Prisma } from '@prisma/client';
 
 import { ObjectType } from '@/common/types';
 
 export async function getProjectLikes(client: PrismaClient, objectId: string, limit?: number) {
-  const query: any = {
+  const query: Prisma.ObjectLikeFindManyArgs = {
     where: {
       objectId,
     },
   };
-
   if (limit) query.take = limit;
-
   const res = await client.objectLike.findMany(query);
   return res;
 }
 
 export async function getUserLikes(client: PrismaClient, likedBy: string, limit?: number) {
-  const query: any = {
+  const query: Prisma.ObjectLikeFindManyArgs = {
     where: {
       likedBy,
     },
   };
-
   if (limit) query.take = limit;
-
   return client.objectLike.findMany(query);
 }
 export async function isObjectLikedBy(client: PrismaClient, objectId: string, likedBy: string) {

@@ -38,6 +38,7 @@ export async function getBasicSurveyQuestionById(id: string) {
   } catch (err) {
     const error = strapiError('Getting basic survey question by id', err as RequestError, id);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -63,6 +64,7 @@ export async function getSurveyQuestionByIdWithReactions(id: string) {
   } catch (err) {
     const error = strapiError('Getting survey question', err as RequestError);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -78,6 +80,7 @@ export async function getSurveyQuestionById(id: string) {
   } catch (err) {
     const error = strapiError('Getting survey question by id', err as RequestError, id);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -98,6 +101,7 @@ export async function getSurveyQuestionsStartingFrom({ from, page, pageSize }: S
   } catch (err) {
     const error = strapiError('Getting upcoming survey questions', err as RequestError);
     logger.error(error);
+    throw err;
   }
 }
 

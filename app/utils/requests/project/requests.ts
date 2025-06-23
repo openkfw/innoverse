@@ -101,7 +101,9 @@ export async function getProjects(
     const projects = response.projects?.map(mapToBasicProject) ?? [];
     return projects;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting projects', err as RequestError);
+    logger.error(error);
+    throw err;
   }
 }
 
@@ -129,7 +131,9 @@ export async function getProjectsBySearchString(
     const projects = response.projects?.map(mapToBasicProject) ?? [];
     return projects;
   } catch (err) {
-    console.info(err);
+    const error = strapiError('Getting projects by search string', err as RequestError, searchString);
+    logger.error(error);
+    throw err;
   }
 }
 
@@ -145,6 +149,7 @@ export async function getProjectAuthorIdByProjectId(projectId: string) {
   } catch (err) {
     const error = strapiError('Getting project author by project id', err as RequestError, projectId);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -220,6 +225,7 @@ export async function getProjectByIdWithReactions(id: string) {
   } catch (err) {
     const error = strapiError('Getting project', err as RequestError);
     logger.error(error);
+    throw err;
   }
 }
 
@@ -232,5 +238,6 @@ export async function getProjectsStartingFrom({ from, page, pageSize }: StartPag
   } catch (err) {
     const error = strapiError('Getting upcoming projects', err as RequestError);
     logger.error(error);
+    throw err;
   }
 }

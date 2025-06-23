@@ -91,27 +91,46 @@ export async function findFollowedObjectIds(
 }
 
 export async function isFollowedBy(client: PrismaClient, objectType: ObjectType, objectId: string, followedBy: string) {
-  const followedObjectCount = await client.follow.count({
-    where: {
-      objectId,
-      objectType: objectType as PrismaObjectType,
-      followedBy,
-    },
-  });
+  try {
+    const followedObjectCount = await client.follow.count({
+      where: {
+        objectId,
+        objectType: objectType as PrismaObjectType,
+        followedBy,
+      },
+    });
 
-  return followedObjectCount > 0;
+    return followedObjectCount > 0;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Check if object with id: ${objectId} of type: ${objectType} is followed by user: ${followedBy}`,
+      err as Error,
+      objectId,
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function isProjectFollowedBy(client: PrismaClient, objectId: string, followedBy: string) {
-  const followedObjectCount = await client.follow.count({
-    where: {
+  try {
+    const followedObjectCount = await client.follow.count({
+      where: {
+        objectId,
+        objectType: ObjectType.PROJECT,
+        followedBy,
+      },
+    });
+    return followedObjectCount > 0;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Check if project with id: ${objectId} is followed by user: ${followedBy}`,
+      err as Error,
       objectId,
-      objectType: ObjectType.PROJECT,
-      followedBy,
-    },
-  });
-
-  return followedObjectCount > 0;
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function removeFollowFromDb(
@@ -146,13 +165,23 @@ export async function removeAllFollowsByObjectIdAndType(
   objectId: string,
   objectType: ObjectType,
 ) {
-  const result = await client.follow.deleteMany({
-    where: {
+  try {
+    const result = await client.follow.deleteMany({
+      where: {
+        objectId,
+        objectType: objectType as PrismaObjectType,
+      },
+    });
+    return result.count;
+  } catch (err) {
+    const error: InnoPlatformError = dbError(
+      `Remove all follows by object with id: ${objectId} and type: ${objectType}`,
+      err as Error,
       objectId,
-      objectType: objectType as PrismaObjectType,
-    },
-  });
-  return result.count;
+    );
+    logger.error(error);
+    throw err;
+  }
 }
 
 export async function addFollowToDb(
