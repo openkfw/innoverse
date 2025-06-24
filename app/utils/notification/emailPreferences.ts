@@ -12,7 +12,7 @@ export const populateEmailPreferencesForExistingUsers = async () => {
   const users = await getAllInnoUsers();
 
   const emailPreferences = users.map((user) => ({
-    userId: user.documentId,
+    userId: user.providerId,
     email: user.email,
     username: user.username,
     weeklyEmail: true,

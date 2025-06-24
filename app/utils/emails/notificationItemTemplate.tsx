@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { Column, Img, Link, Row, Section, Text } from '@react-email/components';
-import { formatDateWithTimestamp } from '../helpers';
-import { User } from '@/common/types';
-import { formatDateSpan } from '@/components/project-details/events/EventTimeDate';
-import { renderEventType } from '@/components/landing/eventsSection/EventCardHeader';
-import { serverConfig } from '@/config/server';
 
-const baseUrl = serverConfig.NEXTAUTH_URL;
+import { User } from '@/common/types';
+import { renderEventType } from '@/components/landing/eventsSection/EventCardHeader';
+import { formatDateSpan } from '@/components/project-details/events/EventTimeDate';
+
+import { formatDateWithTimestamp } from '../helpers';
 
 type BaseItemProps = {
+  baseUrl: string;
+  baseImageUrl: string;
   updatedAt?: Date;
   reactions: { emoji: string; count: number }[];
   project?: { documentId: string; title: string } | null;
@@ -67,6 +68,8 @@ const bookmarkIconStyle = {
   padding: '6px',
 };
 
+const ImageAvatar = (url: string) => <Img src={url} width={40} height={40} style={{ borderRadius: '50%' }} />;
+
 const InitialsAvatar = (name: string) => (
   <div
     style={{
@@ -74,19 +77,30 @@ const InitialsAvatar = (name: string) => (
       height: '32px',
       borderRadius: '50%',
       backgroundColor: '#bdbdbd',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      fontFamily: 'SansDefaultMed, Roboto, "Helvetica Neue", Arial, sans-serif',
-      fontSize: '0.8rem',
       border: '2px solid white',
     }}
   >
-    {name[0].toUpperCase()}
+    <Row>
+      <Column
+        style={{
+          textAlign: 'center',
+          width: '100%',
+          fontFamily: 'SansDefaultMed, Roboto, "Helvetica Neue", Arial, sans-serif',
+          fontSize: '0.8rem',
+          lineHeight: '32px',
+        }}
+      >
+        {name
+          .split(' ')
+          .map((part) => part.charAt(0).toUpperCase())
+          .slice(0, 2)
+          .join('')}
+      </Column>
+    </Row>
   </div>
 );
 
-const ProjectTag = (id: string, name: string, subscribed = false) => (
+const ProjectTag = (baseUrl: string, id: string, name: string, subscribed = false) => (
   <Link style={{ display: 'inline-block' }} href={`${baseUrl}/projects/${id}`}>
     <Row
       style={{
@@ -128,7 +142,7 @@ const ProjectTag = (id: string, name: string, subscribed = false) => (
   </Link>
 );
 
-const Footer = (props: Pick<BaseItemProps, 'reactions' | 'project' | 'projectFollowed'>) => (
+const Footer = (props: Pick<BaseItemProps, 'baseUrl' | 'reactions' | 'project' | 'projectFollowed'>) => (
   <Row style={{ marginTop: '12px' }}>
     {props.reactions.map(({ emoji, count }) => (
       <Column key={emoji} style={{ width: '52px' }}>
@@ -140,7 +154,7 @@ const Footer = (props: Pick<BaseItemProps, 'reactions' | 'project' | 'projectFol
     ))}
     {props.project && (
       <Column style={{ textAlign: 'right' }}>
-        {ProjectTag(props.project.documentId, props.project.title, props.projectFollowed)}
+        {ProjectTag(props.baseUrl, props.project.documentId, props.project.title, props.projectFollowed)}
       </Column>
     )}
   </Row>
@@ -151,11 +165,9 @@ export const PostItem = (props: PostItemProps) => (
     {!!props.author && (
       <Row style={headerStyle}>
         <Column style={{ display: 'inline-block', maxHeight: '40px', maxWidth: '56px', marginRight: '8px' }}>
-          {props.author.image ? (
-            <Img src={props.author.image} width={40} height={40} />
-          ) : (
-            InitialsAvatar(props.author.name)
-          )}
+          {props.author.image
+            ? ImageAvatar(props.baseImageUrl + props.author.image)
+            : InitialsAvatar(props.author.name)}
         </Column>
         <Column style={{ display: 'inline-block' }}>
           <Text style={usernameStyle}>{props.author.name}</Text>

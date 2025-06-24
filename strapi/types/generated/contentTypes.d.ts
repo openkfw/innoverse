@@ -610,7 +610,7 @@ export interface ApiInnoUserInnoUser extends Struct.CollectionTypeSchema {
     project: Schema.Attribute.Relation<'manyToOne', 'api::project.project'>;
     projects: Schema.Attribute.Relation<'manyToOne', 'api::project.project'>;
     provider: Schema.Attribute.String;
-    providerId: Schema.Attribute.UID;
+    providerId: Schema.Attribute.UID & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     questions: Schema.Attribute.Relation<
       'manyToMany',

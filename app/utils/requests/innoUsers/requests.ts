@@ -48,7 +48,7 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
     const createdUser = mapToUser(userData);
 
     if (createdUser.email)
-      await updateEmailPreferencesForUser(dbClient, userData.documentId, {
+      await updateEmailPreferencesForUser(dbClient, userData.providerId, {
         email: createdUser.email,
         username,
         weeklyEmail: true,

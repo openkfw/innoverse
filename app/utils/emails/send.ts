@@ -2,9 +2,9 @@ import { encode } from 'next-auth/jwt';
 import { render } from '@react-email/components';
 import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
+import SMTPPool from 'nodemailer/lib/smtp-pool';
 
 import { serverConfig } from '@/config/server';
-import SMTPPool from 'nodemailer/lib/smtp-pool';
 import getLogger from '@/utils/logger';
 
 declare module 'nodemailer' {

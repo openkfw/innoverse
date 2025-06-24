@@ -97,12 +97,12 @@ export const getNotificationSettings = withAuth(async (user: UserSession) => {
     };
   }
 
-  const data = await getEmailPreferencesForUser(dbClient, author.id!);
+  const data = await getEmailPreferencesForUser(dbClient, author.providerId!);
   if (!data) {
     const preferences = await createEmailPreferencesForUser(dbClient, {
       username: author.username ?? null,
       email: author.email ?? null,
-      userId: author.id!,
+      userId: author.providerId!,
       weeklyEmail: false,
     });
 
@@ -148,7 +148,7 @@ export const updateNotificationSettings = withAuth(async (user: UserSession, bod
 
   try {
     // TODO how can the id be undefined???
-    const updatedSettings = await updateEmailPreferencesForUser(dbClient, author.id!, validatedParams.data);
+    const updatedSettings = await updateEmailPreferencesForUser(dbClient, author.providerId!, validatedParams.data);
 
     return {
       status: StatusCodes.OK,

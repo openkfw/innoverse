@@ -1,19 +1,24 @@
 'use server';
 
+import { render } from '@react-email/components';
+
+import { ObjectType } from '@/common/types';
+import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { collectWeeklyNotificationEmails } from '@/repository/db/email_preferences';
+import { getFollowsForUserIds } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import NotificationEmail from '@/utils/emails/notificationTemplate';
 import { generateUnsubscribeUrl, sendBulkEmail } from '@/utils/emails/send';
-import { getEmailBaseTemplates, getWeeklyEmailTemplates } from '@/utils/requests/singleTypes/requests';
-import { groupByLocale } from '@/utils/requests/singleTypes/mappings';
+import getLogger from '@/utils/logger';
 import { getLatestPostsWithReactions } from '@/utils/requests/posts/requests';
 import { getLatestNews } from '@/utils/requests/requests';
-import { getFollowsForUserIds } from '@/repository/db/follow';
-import { ObjectType } from '@/common/types';
-import getLogger from '@/utils/logger';
+import { groupByLocale } from '@/utils/requests/singleTypes/mappings';
+import { getEmailBaseTemplates, getWeeklyEmailTemplates } from '@/utils/requests/singleTypes/requests';
 
-import { render } from '@react-email/components';
+const baseImageUrl = clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT;
+// TODO: use something else???
+const baseUrl = serverConfig.NEXTAUTH_URL;
 
 const logger = getLogger();
 
@@ -33,8 +38,7 @@ export async function sendWeeklyEmail() {
   const allNews = await getLatestNews(lastWeek);
 
   const users = (await collectWeeklyNotificationEmails(dbClient)).filter(
-    (user): user is { [key in keyof typeof user]: NonNullable<(typeof user)[keyof typeof user]> } =>
-      !!user.email && !!user.username,
+    (user): user is { [key in keyof typeof user]: NonNullable<(typeof user)[key]> } => !!user.email && !!user.username,
   );
 
   const follows = await getFollowsForUserIds(
@@ -53,6 +57,8 @@ export async function sendWeeklyEmail() {
       const posts = latestPosts.map((post) => ({
         ...post,
         projectFollowed: post.followedBy?.map((follow) => follow.id).includes(user.userId),
+        baseUrl,
+        baseImageUrl,
       }));
 
       const news = allNews
@@ -60,11 +66,13 @@ export async function sendWeeklyEmail() {
         .map((newsItem) => ({
           ...newsItem,
           projectFollowed: true,
+          baseUrl,
+          baseImageUrl,
         }))
         .slice(0, 5);
 
       const unsubscribeUrl = await generateUnsubscribeUrl(user.email, user.userId, user.username);
-      const includeUnsubscribe = { unsubscribeUrl, emailSettingsUrl: `${serverConfig.NEXTAUTH_URL}/profile` };
+      const includeUnsubscribe = { unsubscribeUrl, emailSettingsUrl: `${baseUrl}/profile` };
 
       const lang = 'de'; //TODO: get the user's language
       const baseTemplate = baseTemplates[lang] ?? baseTemplates['en'];
@@ -75,13 +83,13 @@ export async function sendWeeklyEmail() {
         lang,
         preview: weeklyEmailTemplate.preview ?? weeklyEmailTemplate.headerSubtitle,
       };
-      const html = await NotificationEmail({ includeUnsubscribe, content, posts, news });
+      const html = await NotificationEmail({ baseUrl, baseImageUrl, includeUnsubscribe, content, posts, news });
       const body = await render(html);
 
       const subject = weeklyEmailTemplate.subject ?? weeklyEmailTemplate.headerTitle;
       const from = serverConfig.NOTIFICATION_EMAIL_FROM;
       const mailOpts = {
-        list: { unsubscribe: { url: unsubscribeUrl, comment: baseTemplates[lang].footerUnsubscribe } },
+        list: { unsubscribe: { url: unsubscribeUrl, comment: baseTemplate.footerUnsubscribe } },
       };
 
       return { from, to: user.email, subject, body, opts: mailOpts };

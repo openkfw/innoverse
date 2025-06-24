@@ -4,15 +4,14 @@ import * as React from 'react';
 import { Column, Heading, Hr, Img, Row, Section, Text } from '@react-email/components';
 
 import BaseTemplate, { EmailTemplateProps } from './baseTemplate';
-import { PostItem, type PostItemProps, NewsItem, type NewsItemProps } from './notificationItemTemplate';
-import { clientConfig } from '@/config/client';
-
-const baseImageUrl = clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT;
+import { NewsItem, type NewsItemProps, PostItem, type PostItemProps } from './notificationItemTemplate';
 
 interface NotificationEmailProps {
   includeUnsubscribe: NonNullable<EmailTemplateProps['includeUnsubscribe']>;
   posts?: PostItemProps[];
   news?: NewsItemProps[];
+  baseUrl: string;
+  baseImageUrl: string;
   content: {
     headerTitle: string;
     headerSubtitle: string;
@@ -23,10 +22,12 @@ interface NotificationEmailProps {
 export const NotificationEmail = async ({
   includeUnsubscribe,
   content,
+  baseUrl,
+  baseImageUrl,
   posts = [],
   news = [],
 }: NotificationEmailProps) => (
-  <BaseTemplate includeUnsubscribe={includeUnsubscribe} content={content}>
+  <BaseTemplate baseUrl={baseUrl} baseImageUrl={baseImageUrl} includeUnsubscribe={includeUnsubscribe} content={content}>
     <Section style={header}>
       <Row>
         <Column style={headerContent}>

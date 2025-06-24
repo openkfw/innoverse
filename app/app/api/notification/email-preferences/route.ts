@@ -35,8 +35,8 @@ export async function GET(request: NextRequest) {
       logger.error(error);
     }
 
-    redirect('/profile?emailPreferencesChanged=false');
+    redirect('/profile?emailPreferencesChanged=error');
   }
 
-  redirect('/profile?emailPreferencesChanged=true');
+  redirect('/profile?emailPreferencesChanged=success');
 }

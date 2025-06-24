@@ -39,7 +39,7 @@
     },
     "providerId": {
       "type": "uid",
-      "required": false
+      "required": true
     },
     "projects": {
       "type": "relation",

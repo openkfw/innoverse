@@ -2,7 +2,8 @@
 
 import { StatusCodes } from 'http-status-codes';
 
-import { ObjectType, User, UserSession } from '@/common/types';
+import { ObjectType, UserSession } from '@/common/types';
+import { RequestError } from '@/entities/error';
 import { findFollowedObjectIds, isFollowedBy } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { findsReactionsForObjects } from '@/repository/db/reaction';
@@ -13,26 +14,23 @@ import { withAuth } from '../auth';
 import { dbError, InnoPlatformError, strapiError } from '../errors';
 import getLogger from '../logger';
 
-import { getInnoUserByProviderId, getInnoUsersByProviderIds } from './innoUsers/requests';
 import { mapToCollaborationQuestions } from './collaborationQuestions/mappings';
-import { mapToOpportunities } from './opportunities/mappings';
-import { getOpportunitiesWithAdditionalData } from './opportunities/requests';
-import { findReactionByUser, getUpdatesWithAdditionalData } from './updates/requests';
-import { GetCountsForProject, GetMainPageData, GetProjectData } from './graphqlQueries';
-import strapiGraphQLFetcher from './strapiGraphQLFetcher';
-import { RequestError } from '@/entities/error';
-import { getSurveyQuestionsWithAdditionalData } from './surveyQuestions/requests';
-import { mapToProjectUpdates } from './updates/mappings';
+import { getCollaborationQuestionsWithAdditionalData } from './collaborationQuestions/requests';
 import { mapToEvents } from './events/mappings';
 import { getEventsWithAdditionalData } from './events/requests';
+import { mapToUser } from './innoUsers/mappings';
+import { getInnoUserByProviderId } from './innoUsers/requests';
+import { mapToOpportunities } from './opportunities/mappings';
+import { getOpportunitiesWithAdditionalData } from './opportunities/requests';
 import { mapToBasicProject } from './project/mappings';
 import { mapToProjectQuestions } from './questions/mappings';
 import { mapToBasicSurveyQuestions } from './surveyQuestions/mappings';
-import { getCollaborationQuestionsWithAdditionalData } from './collaborationQuestions/requests';
+import { getSurveyQuestionsWithAdditionalData } from './surveyQuestions/requests';
+import { mapToProjectUpdates } from './updates/mappings';
+import { findReactionByUser, getUpdatesWithAdditionalData } from './updates/requests';
+import { GetCountsForProject, GetMainPageData, GetProjectData } from './graphqlQueries';
 import { GetLatestNewsQuery } from './queries';
-import { mapToUser } from './innoUsers/mappings';
-import { getCommentsStartingFrom } from '@/repository/db/comment';
-import { getProjectTitleByIds } from './project/requests';
+import strapiGraphQLFetcher from './strapiGraphQLFetcher';
 
 const logger = getLogger();
 

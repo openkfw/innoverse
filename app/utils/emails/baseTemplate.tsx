@@ -3,16 +3,11 @@
 import * as React from 'react';
 import { Body, Container, Font, Head, Hr, Html, Img, Link, Preview, Section, Text } from '@react-email/components';
 
-import { serverConfig } from '@/config/server';
-import { clientConfig } from '@/config/client';
-
-const baseImageUrl = clientConfig.NEXT_PUBLIC_STRAPI_ENDPOINT;
-// TODO: use something else???
-const baseUrl = serverConfig.NEXTAUTH_URL;
-
 export type EmailTemplateProps = {
   children: React.ReactNode;
   includeUnsubscribe?: UnsubscribeFooterUrls;
+  baseUrl: string;
+  baseImageUrl: string;
   content: {
     preview: string;
     footerActivityNote: string;
@@ -53,7 +48,13 @@ export const UnsubscribeFooterLinks = async ({
   </>
 );
 
-export const InnoVerseEmail = async ({ children, content, includeUnsubscribe }: EmailTemplateProps) => (
+export const InnoVerseEmail = async ({
+  baseUrl,
+  baseImageUrl,
+  children,
+  content,
+  includeUnsubscribe,
+}: EmailTemplateProps) => (
   <Html lang={content.lang}>
     <Head>
       <Font
