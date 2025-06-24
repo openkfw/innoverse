@@ -240,4 +240,11 @@ if (!serverConfig.success) {
   throw new Error('There is an error with the server environment variables');
 }
 
+const isAppInsightsConfigured =
+  serverConfig.data &&
+  !!serverConfig.data.NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING &&
+  !!serverConfig.data.NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY &&
+  !!serverConfig.data.APP_INSIGHTS_SERVICE_NAME;
+
 module.exports.serverConfig = serverConfig.data;
+module.exports.isAppInsightsConfigured = isAppInsightsConfigured;

@@ -39,7 +39,7 @@ cd ./app
 pnpm run dev
 ```
 
-> **IMPORTANT:**
+> **Important:**
 > Now you need to generate & set the Strapi API Token, so the app can access the strapi data.
 
 Please go the strapi admin dashboard [http://localhost:1337/admin](http://localhost:1337/admin) and create an admin
@@ -92,11 +92,16 @@ The news feed uses Redis as a cache. If needed, the cache can be refreshed and w
 
 ### Azure Application Insights
 
+> **Optional:**
+> Application Insights is **not required** for the application to run.  
+> If telemetry and performance monitoring are not needed, you can **skip this section** entirely.  
+> Simply leave the related environment variables **unset** or remove them from the `.env` file — the app will automatically skip initializing Application Insights in that case.
+
 - Configure all required components for Azure Application Insights in the Azure Portal or via IaC.
 - Set the following environment variables in the `.env` file:
   - `NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING`: Can be found in the Azure Portal
   - `NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY`: Can be found in the Azure Portal
-  - `APP_INSIGHTS_SERVICE_NAME`: Can be chosen freely`
+  - `APP_INSIGHTS_SERVICE_NAME`: Can be chosen freely
 - Note: The logs will only be published if the environment variable `NODE_ENV` is set to `production`!
 
 ### Analyze the build
