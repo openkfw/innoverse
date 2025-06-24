@@ -78,7 +78,7 @@ const clientConfig = schema.safeParse({
   NEXT_PUBLIC_BODY_SIZE_LIMIT: env('NEXT_PUBLIC_BODY_SIZE_LIMIT'),
 });
 
-const validAppInsightsConfig =
+const isAppInsightsConfigured =
   clientConfig.data &&
   !!clientConfig.data.NEXT_PUBLIC_APP_INSIGHTS_CONNECTION_STRING &&
   !!clientConfig.data.NEXT_PUBLIC_APP_INSIGHTS_INSTRUMENTATION_KEY;
@@ -89,4 +89,4 @@ if (!clientConfig.success) {
 }
 
 module.exports.clientConfig = clientConfig.data;
-module.exports.validAppInsightsConfig = validAppInsightsConfig;
+module.exports.isAppInsightsConfigured = isAppInsightsConfigured;
