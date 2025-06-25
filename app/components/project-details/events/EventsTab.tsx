@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { StatusCodes } from 'http-status-codes';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -95,7 +96,7 @@ export const EventsTab: React.FC<EventsTabProps> = (props) => {
       timeframe: 'future',
     });
 
-    const events = result?.data ?? [];
+    const events = result.status === StatusCodes.OK ? result.data : [];
     setAllFutureEvents((prevItems) => getUniqueEvents([...prevItems, ...events]));
     setHasMoreValue(events.length > 0);
     setIndex((prevIndex) => prevIndex + events.length);
@@ -109,7 +110,7 @@ export const EventsTab: React.FC<EventsTabProps> = (props) => {
       timeframe: 'past',
     });
 
-    const events = result?.data ?? [];
+    const events = result.status === StatusCodes.OK ? result.data : [];
     setAllPastEvents((prevItems) => getUniqueEvents([...prevItems, ...events]));
     setHasMoreValuePast(events.length > 0);
     setIndexPast((prevIndexPast) => prevIndexPast + 1);

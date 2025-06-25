@@ -117,6 +117,9 @@ export async function getSurveyQuestionWithAdditionalData(
   try {
     const votes = await getSurveyVotes(dbClient, surveyQuestion.id);
     const userVote = await findUserVote({ votes });
+    if (userVote.status !== StatusCodes.OK) {
+      throw userVote.errors ?? new Error('Failed to find user vote for survey question');
+    }
     return {
       ...surveyQuestion,
       votes,
