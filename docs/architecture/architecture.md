@@ -42,6 +42,8 @@ This document outlines the architecture of the InnoVerse Platform. It provides a
 - **Access Tool:** Prisma + Prisma Studio
 - **Dev Note:** Prisma migration required (`pnpm run prisma migrate dev`)
 
+---
+
 ### 4. PostgreSQL Strapi DB
 
 - **Role:** Persistent storage for Strapi
@@ -49,7 +51,7 @@ This document outlines the architecture of the InnoVerse Platform. It provides a
 
 ---
 
-### 4. Redis (Cache Layer)
+### 5. Redis (Cache Layer)
 
 - **Role:** Caching for the News Feed
 - **Behavior:** Can be fully refreshed via `/api/redis/full-refresh`
@@ -63,7 +65,7 @@ This document outlines the architecture of the InnoVerse Platform. It provides a
 
 - **Tool:** Docker Compose
 - **Purpose:** Simplified local development of all services (App, Strapi, Redis, DB)
-- **Startup Command:** `sh startDev.sh`
+- **Startup Command:** `bash startDev.sh`
 
 ---
 
@@ -75,4 +77,4 @@ Supported auth providers via NextAuth:
 - GitLab
 - Credentials (Username/Password)
 
-Configure through relevant `NEXTAUTH_` environment variables (check [./environment_variables.md](./environment_variables.md)).
+Configure through relevant `NEXTAUTH_` environment variables (check [./environment_variables.md](../environment_variables.md)).
