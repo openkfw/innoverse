@@ -85,7 +85,7 @@ const headerContentSubtitle = {
 };
 
 const headerImageContainer = {
-  padding: '30px 10px',
+  padding: '20px 30px 15px',
 };
 
 const headerImage = {

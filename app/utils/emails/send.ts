@@ -26,6 +26,20 @@ const transporter = nodemailer.createTransport({
 });
 
 if (['development', 'test'].includes(process.env.NODE_ENV)) {
+  transporter.use('compile', (mail, callback) => {
+    if (mail.data.to) {
+      const to = Array.isArray(mail.data.to) ? mail.data.to : [mail.data.to];
+      mail.data.to = to.map((recipient) => {
+        if (typeof recipient === 'string') {
+          return recipient.replaceAll('@', '_at_') + `+${Date.now()}@sink.sendgrid.net`;
+        } else {
+          return recipient.address.replaceAll('@', '_at_') + `+${Date.now()}@sink.sendgrid.net`;
+        }
+      });
+    }
+    callback();
+  });
+
   if (!serverConfig.EMAIL_HOST) {
     const testAccount = await nodemailer.createTestAccount();
 
@@ -42,20 +56,6 @@ if (['development', 'test'].includes(process.env.NODE_ENV)) {
     });
 
     transporter.transporter = testTransporter;
-  } else {
-    transporter.use('compile', (mail, callback) => {
-      if (mail.data.to) {
-        const to = Array.isArray(mail.data.to) ? mail.data.to : [mail.data.to];
-        mail.data.to = to.map((recipient) => {
-          if (typeof recipient === 'string') {
-            return recipient.replace(/@.*$/, `+${Date.now()}@sink.sendgrid.net`);
-          } else {
-            return recipient.address.replace(/@.*$/, `+${Date.now()}@sink.sendgrid.net`);
-          }
-        });
-      }
-      callback();
-    });
   }
 }
 

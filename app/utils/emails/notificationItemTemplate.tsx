@@ -165,9 +165,7 @@ export const PostItem = (props: PostItemProps) => (
     {!!props.author && (
       <Row style={headerStyle}>
         <Column style={{ display: 'inline-block', maxHeight: '40px', maxWidth: '56px', marginRight: '8px' }}>
-          {props.author.image
-            ? ImageAvatar(props.baseImageUrl + props.author.image)
-            : InitialsAvatar(props.author.name)}
+          {props.author.image ? ImageAvatar(props.author.image) : InitialsAvatar(props.author.name)}
         </Column>
         <Column style={{ display: 'inline-block' }}>
           <Text style={usernameStyle}>{props.author.name}</Text>
@@ -253,7 +251,7 @@ export const EventItem = (props: EventItemProps) => (
     <Row style={{ marginTop: '12px' }}>
       {props.image && (
         <Column style={{ width: '270px' }}>
-          <Img width={280} src={props.image?.url} style={{ width: '270px', height: '132px' }} />
+          <Img width={280} src={props.baseImageUrl + props.image?.url} style={{ width: '270px', height: '132px' }} />
         </Column>
       )}
       <Column valign="top" style={{ textAlign: 'left' }}>
