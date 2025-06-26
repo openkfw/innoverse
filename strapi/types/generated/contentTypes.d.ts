@@ -34,6 +34,10 @@ export interface AdminApiToken extends Struct.CollectionTypeSchema {
         minLength: 1;
       }> &
       Schema.Attribute.DefaultTo<''>;
+    encryptedKey: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        minLength: 1;
+      }>;
     expiresAt: Schema.Attribute.DateTime;
     lastUsedAt: Schema.Attribute.DateTime;
     lifespan: Schema.Attribute.BigInteger;
@@ -440,6 +444,99 @@ export interface ApiCollaborationQuestionCollaborationQuestion
   };
 }
 
+export interface ApiEmailBaseTemplateEmailBaseTemplate
+  extends Struct.SingleTypeSchema {
+  collectionName: 'email_base_templates';
+  info: {
+    description: '';
+    displayName: 'EmailBaseTemplate';
+    pluralName: 'email-base-templates';
+    singularName: 'email-base-template';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    footerActivityNote: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Diese Email wurde aufgrund von Aktivit\u00E4t in InnoVerse gesendet.'>;
+    footerAddress: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'InnoVerse'>;
+    footerContactUs: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Kontakt'>;
+    footerEmailSettings: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Einstellungen'>;
+    footerPrivacy: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Privatsph\u00E4re'>;
+    footerSmallLogo: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    footerUnsubscribe: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Abbestellen'>;
+    headerLogo: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::email-base-template.email-base-template'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiEventEvent extends Struct.CollectionTypeSchema {
   collectionName: 'events';
   info: {
@@ -513,7 +610,7 @@ export interface ApiInnoUserInnoUser extends Struct.CollectionTypeSchema {
     project: Schema.Attribute.Relation<'manyToOne', 'api::project.project'>;
     projects: Schema.Attribute.Relation<'manyToOne', 'api::project.project'>;
     provider: Schema.Attribute.String;
-    providerId: Schema.Attribute.UID;
+    providerId: Schema.Attribute.UID & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     questions: Schema.Attribute.Relation<
       'manyToMany',
@@ -782,6 +879,73 @@ export interface ApiUserPermissionUserPermission
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiWeeklyEmailTemplateWeeklyEmailTemplate
+  extends Struct.SingleTypeSchema {
+  collectionName: 'weekly_email_templates';
+  info: {
+    description: '';
+    displayName: 'WeeklyEmailTemplate';
+    pluralName: 'weekly-email-templates';
+    singularName: 'weekly-email-template';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    headerImage: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    headerSubtitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Dein w\u00F6chentliches Update aus der Innovationsbubble'>;
+    headerTitle: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'News aus dem InnoVerse'>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::weekly-email-template.weekly-email-template'
+    >;
+    preview: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    subject: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1299,6 +1463,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::checkin-question.checkin-question': ApiCheckinQuestionCheckinQuestion;
       'api::collaboration-question.collaboration-question': ApiCollaborationQuestionCollaborationQuestion;
+      'api::email-base-template.email-base-template': ApiEmailBaseTemplateEmailBaseTemplate;
       'api::event.event': ApiEventEvent;
       'api::inno-user.inno-user': ApiInnoUserInnoUser;
       'api::opportunity.opportunity': ApiOpportunityOpportunity;
@@ -1308,6 +1473,7 @@ declare module '@strapi/strapi' {
       'api::survey-question.survey-question': ApiSurveyQuestionSurveyQuestion;
       'api::update.update': ApiUpdateUpdate;
       'api::user-permission.user-permission': ApiUserPermissionUserPermission;
+      'api::weekly-email-template.weekly-email-template': ApiWeeklyEmailTemplateWeeklyEmailTemplate;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

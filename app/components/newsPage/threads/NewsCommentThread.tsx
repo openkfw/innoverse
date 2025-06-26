@@ -1,3 +1,5 @@
+import { StatusCodes } from 'http-status-codes';
+
 import Stack from '@mui/material/Stack';
 
 import { CommentWithResponses, ObjectType } from '@/common/types';
@@ -35,16 +37,16 @@ export const NewsCommentThread = (props: NewsCommentThreadProps) => {
   };
 
   const handleResponse = async (response: string) => {
-    const { data: newResponse } = await addUserComment({
+    const newResponse = await addUserComment({
       comment: response,
       objectType: props.commentType,
       objectId: props.item.id,
       parentCommentId: comment?.id,
     });
 
-    if (!newResponse) return;
+    if (newResponse.status !== StatusCodes.OK) return;
 
-    const threadResponse = { ...newResponse, comments: [] };
+    const threadResponse = { ...newResponse.data, comments: [] };
     const responses = [threadResponse, ...comment.comments];
     const updatedComment = { ...comment, comments: responses };
     props.onUpdate(updatedComment);

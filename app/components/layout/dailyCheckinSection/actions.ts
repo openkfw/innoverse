@@ -28,6 +28,7 @@ export const saveDailyCheckin = withAuth(
         );
         return {
           status: StatusCodes.OK,
+          data: {},
         };
       }
       return {

@@ -41,12 +41,11 @@ export const addUserComment = withAuth(async (user: UserSession, body: AddUserCo
 });
 
 export const addCommentLike = withAuth(async (user: UserSession, commentId: string) => {
-  await addCommentLikeToDB(dbClient, commentId, user.providerId);
-
-  return { status: StatusCodes.OK };
+  const data = await addCommentLikeToDB(dbClient, commentId, user.providerId);
+  return { status: StatusCodes.OK, data };
 });
 
 export const deleteCommentLike = withAuth(async (user: UserSession, commentId: string) => {
-  await deleteCommentAndUserLike(dbClient, commentId, user.providerId);
-  return { status: StatusCodes.OK };
+  const data = await deleteCommentAndUserLike(dbClient, commentId, user.providerId);
+  return { status: StatusCodes.OK, data };
 });

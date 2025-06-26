@@ -5,6 +5,7 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 
 import BreadcrumbsNav from '@/components/common/BreadcrumbsNav';
+import NotificationSettings from '@/components/userProfile/NotificationSettings';
 import UserInfo from '@/components/userProfile/UserInfo';
 import * as m from '@/src/paraglide/messages.js';
 
@@ -33,7 +34,10 @@ async function UserProfilePage() {
         <Box style={{ position: 'relative' }}>
           <BreadcrumbsNav activePage={m.app_user_profile()} />
         </Box>
-        <UserInfo />
+        <Stack spacing={4} direction="column">
+          <UserInfo />
+          <NotificationSettings />
+        </Stack>
       </Container>
     </Stack>
   );

@@ -19,10 +19,16 @@ export const saveFeedback = withAuth(
 
     try {
       const validatedParams = validateParams(handleFeedbackSchema, body);
-      if (validatedParams.status === StatusCodes.OK && question) {
+      if (validatedParams.status !== StatusCodes.OK) {
+        return {
+          status: validatedParams.status,
+          errors: validatedParams.errors,
+          message: validatedParams.message,
+        };
+      } else if (question) {
         const { feedback, showOnProjectPage } = body;
 
-        await addUserComment({
+        const data = await addUserComment({
           projectId: question.projectId,
           comment: feedback,
           objectId: question.collaborationQuestionId,
@@ -33,13 +39,14 @@ export const saveFeedback = withAuth(
         });
         return {
           status: StatusCodes.OK,
+          data,
+        };
+      } else {
+        return {
+          status: StatusCodes.BAD_REQUEST,
+          message: 'No platform feedback question found',
         };
       }
-      return {
-        status: validatedParams.status,
-        errors: validatedParams.errors,
-        message: validatedParams.message,
-      };
     } catch (err) {
       const error: InnoPlatformError = dbError(
         `Adding feedback for the platform (ProjectId: ${question?.projectId} / QuestionId: ${question?.collaborationQuestionId} / showOnProjectPage? ${body.showOnProjectPage}) from user ${user.providerId}`,

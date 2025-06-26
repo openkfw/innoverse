@@ -149,7 +149,8 @@ export async function getCollaborationQuestionWithAdditionalData(
       ObjectType.COLLABORATION_QUESTION,
     );
     const getCommentsWithLike = comments.map(async (comment) => {
-      const { data: isLikedByUser } = await isCommentLikedByUser({ commentId: comment.id });
+      const result = await isCommentLikedByUser({ commentId: comment.id });
+      const isLikedByUser = result.status === StatusCodes.OK && result.data;
       return { ...comment, isLikedByUser };
     });
     const commentsWithUserLike = await getPromiseResults(getCommentsWithLike);

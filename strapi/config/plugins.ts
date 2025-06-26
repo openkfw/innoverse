@@ -3,7 +3,7 @@ export default {
     config: {
       generateArtifacts: true,
       artifacts: {
-        schema: "/opt/app/types/schema.graphql",
+        schema: "/tmp/schema.graphql",
       },
       v4CompatibilityMode: true,
       defaultLimit: 20,

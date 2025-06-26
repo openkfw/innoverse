@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SeverityLevel } from '@microsoft/applicationinsights-web';
+import { StatusCodes } from 'http-status-codes';
 
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -213,14 +214,11 @@ export const useCommentThread = (props: CommentThreadProps) => {
     }
   }, [totalCommentCount, visibleComments]);
 
-  const fetchComments = async (limit?: number) => {
-    const result = await getCommentsByObjectId({ objectId: item.id, objectType: itemType, limit });
-    return { comments: result.data?.comments, totalCount: result.data?.totalCount };
-  };
-
   const fetchSortedComments = async (limit?: number) => {
     try {
-      const { comments, totalCount } = await fetchComments(limit);
+      const result = await getCommentsByObjectId({ objectId: item.id, objectType: itemType, limit });
+      if (result.status !== StatusCodes.OK) return;
+      const { comments, totalCount } = result.data;
       if (!comments || totalCount == null || isNaN(totalCount)) return;
       setTotalCommentCount(totalCount);
       return comments;
@@ -267,7 +265,7 @@ export const useCommentThread = (props: CommentThreadProps) => {
   };
 
   const addComment = async (text: string) => {
-    const comment = await addUserComment({
+    const result = await addUserComment({
       comment: text,
       objectId: item.id,
       objectType: itemType,
@@ -277,8 +275,8 @@ export const useCommentThread = (props: CommentThreadProps) => {
         additionalObjectType: ObjectType.PROJECT,
       }),
     });
-    if (!comment.data) return undefined;
-    return { ...comment.data, comments: [] };
+    if (result.status !== StatusCodes.OK) return undefined;
+    return { ...result.data, comments: [] };
   };
 
   const handleAddComment = async (commentText: string) => {

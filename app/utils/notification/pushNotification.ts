@@ -66,7 +66,7 @@ export const subscribeToWebPush = withAuth(
     try {
       const subscription = JSON.parse(body.subscription);
       await createPushSubscriptionForUser(dbClient, user.providerId, body.browserFingerprint, subscription);
-      return { status: 200 };
+      return { status: StatusCodes.OK, data: {} };
     } catch (err) {
       const error = dbError(`Create push subscription for user ${user.providerId}`, err as Error, user.providerId);
       logger.error(error);
@@ -79,7 +79,7 @@ export const unsubscribeFromWebPush = withAuth(async (user: UserSession, body: s
   try {
     const subscription: webpush.PushSubscription = JSON.parse(body);
     await removePushSubscriptionForUser(dbClient, user.providerId, subscription);
-    return { status: 200 };
+    return { status: 200, data: {} };
   } catch (err) {
     const error = dbError(`Remove push subscription for user ${user.providerId}`, err as Error, user.providerId);
     logger.error(error);

@@ -13,13 +13,13 @@ interface CustomSession extends Session {
 interface UserContextInterface {
   user: UserSession | undefined;
   isLoading: boolean;
-  updateUser: (user: UserSession) => Promise<void>;
+  updateUser: (user: Partial<UserSession>) => Promise<void>;
 }
 
 const defaultState: UserContextInterface = {
   user: undefined,
   isLoading: true,
-  updateUser: async (_: UserSession) => {},
+  updateUser: async (_: Partial<UserSession>) => {},
 };
 
 const UserContext = createContext(defaultState);
@@ -62,7 +62,7 @@ export const UserContextProvider = ({ children }: { children: React.ReactNode })
     }
   }, [currentSession, sessionCookie]);
 
-  const updateUser = async (updatedUser: UserSession) => {
+  const updateUser = async (updatedUser: Partial<UserSession>) => {
     await sessionUpdate(updatedUser);
     setState(currentSession?.user as UserSession);
   };

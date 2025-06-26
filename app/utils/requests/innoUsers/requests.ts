@@ -6,6 +6,8 @@ import { Mention, UpdateInnoUser, UploadImageResponse, User, UserSession } from 
 import { clientConfig } from '@/config/client';
 import { serverConfig } from '@/config/server';
 import { RequestError } from '@/entities/error';
+import { updateEmailPreferencesForUser } from '@/repository/db/email_preferences';
+import dbClient from '@/repository/db/prisma/prisma';
 import { strapiError } from '@/utils/errors';
 import { base64ToBlob, isBase64String } from '@/utils/helpers';
 import getLogger from '@/utils/logger';
@@ -17,6 +19,7 @@ import {
 } from '@/utils/requests/innoUsers/mutations';
 import {
   GetAllInnoUsers,
+  GetInnoUsersByIdsQuery,
   GetEmailsByUsernamesQuery,
   GetInnoUserByEmailQuery,
   GetInnoUserByProviderIdQuery,
@@ -43,6 +46,14 @@ export async function createInnoUser(body: Omit<UserSession, 'image'>, image?: s
     const userData = response.createInnoUser;
     if (!userData) throw new Error('Response contained no user data');
     const createdUser = mapToUser(userData);
+
+    if (createdUser.email)
+      await updateEmailPreferencesForUser(dbClient, userData.providerId, {
+        email: createdUser.email,
+        username,
+        weeklyEmail: true,
+      });
+
     return createdUser;
   } catch (err) {
     const error = strapiError('Create Inno User', err as RequestError, body.name);
@@ -171,7 +182,7 @@ async function getAllInnoUserNames() {
   }
 }
 
-async function getAllInnoUsers() {
+export async function getAllInnoUsers() {
   try {
     const response = await strapiGraphQLFetcher(GetAllInnoUsers, { limit: 1000 });
     if (!response.innoUsers) {
@@ -359,4 +370,15 @@ export async function uploadFileImage(image: Blob, fileName: string) {
     .then((result) => {
       return result as UploadImageResponse[];
     });
+}
+
+export async function getInnoUsersByIds(ids: string[]): Promise<User[]> {
+  try {
+    const response = await strapiGraphQLFetcher(GetInnoUsersByIdsQuery, { ids });
+    const users = response.innoUsers.map(mapToUser);
+    return users;
+  } catch (error) {
+    logger.error('Failed to fetch users by ids:', error);
+    throw error;
+  }
 }

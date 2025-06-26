@@ -66,8 +66,15 @@ export async function getProjectById(id: string) {
 
     const likes = await getProjectLikes(dbClient, id);
     const followers = await getProjectFollowers(dbClient, id);
-    const { data: isLiked } = await isProjectLikedByUser({ projectId: id });
-    const { data: isFollowed } = await isProjectFollowedByUser({ projectId: id });
+    const likedResult = await isProjectLikedByUser({ projectId: id });
+    const followedResult = await isProjectFollowedByUser({ projectId: id });
+
+    if (likedResult.status !== StatusCodes.OK) {
+      throw likedResult.errors ?? new Error('Failed to check if project is liked');
+    }
+    if (followedResult.status !== StatusCodes.OK) {
+      throw followedResult.errors ?? new Error('Failed to check if project is followed');
+    }
 
     const projectStrapiData = await getProjectData(projectData.documentId);
     const project = mapToProject({
@@ -75,8 +82,8 @@ export async function getProjectById(id: string) {
       ...projectStrapiData,
       followers: followers.map(mapFollow),
       likes: mapToLike(likes),
-      isLiked: isLiked ?? false,
-      isFollowed: isFollowed ?? false,
+      isLiked: likedResult.data,
+      isFollowed: followedResult.data,
       comments: [],
     });
 

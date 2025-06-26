@@ -3,6 +3,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { ObjectType, UserSession } from '@/common/types';
+import { RequestError } from '@/entities/error';
 import { findFollowedObjectIds, isFollowedBy } from '@/repository/db/follow';
 import dbClient from '@/repository/db/prisma/prisma';
 import { findsReactionsForObjects } from '@/repository/db/reaction';
@@ -13,22 +14,23 @@ import { withAuth } from '../auth';
 import { dbError, InnoPlatformError, strapiError } from '../errors';
 import getLogger from '../logger';
 
-import { getInnoUserByProviderId } from './innoUsers/requests';
 import { mapToCollaborationQuestions } from './collaborationQuestions/mappings';
-import { mapToOpportunities } from './opportunities/mappings';
-import { getOpportunitiesWithAdditionalData } from './opportunities/requests';
-import { findReactionByUser, getUpdatesWithAdditionalData } from './updates/requests';
-import { GetCountsForProject, GetMainPageData, GetProjectData } from './graphqlQueries';
-import strapiGraphQLFetcher from './strapiGraphQLFetcher';
-import { RequestError } from '@/entities/error';
-import { getSurveyQuestionsWithAdditionalData } from './surveyQuestions/requests';
-import { mapToProjectUpdates } from './updates/mappings';
+import { getCollaborationQuestionsWithAdditionalData } from './collaborationQuestions/requests';
 import { mapToEvents } from './events/mappings';
 import { getEventsWithAdditionalData } from './events/requests';
+import { mapToUser } from './innoUsers/mappings';
+import { getInnoUserByProviderId } from './innoUsers/requests';
+import { mapToOpportunities } from './opportunities/mappings';
+import { getOpportunitiesWithAdditionalData } from './opportunities/requests';
 import { mapToBasicProject } from './project/mappings';
 import { mapToProjectQuestions } from './questions/mappings';
 import { mapToBasicSurveyQuestions } from './surveyQuestions/mappings';
-import { getCollaborationQuestionsWithAdditionalData } from './collaborationQuestions/requests';
+import { getSurveyQuestionsWithAdditionalData } from './surveyQuestions/requests';
+import { mapToProjectUpdates } from './updates/mappings';
+import { findReactionByUser, getUpdatesWithAdditionalData } from './updates/requests';
+import { GetCountsForProject, GetMainPageData, GetProjectData } from './graphqlQueries';
+import { GetLatestNewsQuery } from './queries';
+import strapiGraphQLFetcher from './strapiGraphQLFetcher';
 
 const logger = getLogger();
 
@@ -110,7 +112,7 @@ export const getUserReactionsForObjects = withAuth(async (user: UserSession, bod
 
 export const findReactedByUser = withAuth(async (user: UserSession, body: ItemObject) => {
   try {
-    const { data: reactionForUser } = await findReactionByUser({
+    const reactionForUser = await findReactionByUser({
       objectType: body.objectType,
       objectId: body.objectId,
     });
@@ -248,4 +250,50 @@ export const getMainData = async () => {
     projects,
     featuredProjects,
   };
+};
+const addType = <T, R extends string>(data: T[], newsType: R) => data.map((item) => ({ ...item, newsType }));
+
+export const getLatestNews = async (after: Date, limit = 5) => {
+  const { updates, events, surveyQuestions, collaborationQuestions } = await strapiGraphQLFetcher(GetLatestNewsQuery, {
+    after,
+    limit,
+  });
+
+  const news = [
+    ...addType(updates, 'update'),
+    ...addType(events, 'event'),
+    ...addType(surveyQuestions, 'surveyQuestion'),
+    ...addType(collaborationQuestions, 'collaborationQuestion'),
+  ].sort((a, b) => new Date(b.updatedAt ?? 0).getTime() - new Date(a.updatedAt ?? 0).getTime());
+
+  const reactions = await dbClient.reaction.groupBy({
+    by: ['objectId', 'nativeSymbol'],
+    _count: {
+      nativeSymbol: true,
+    },
+    where: {
+      objectType: {
+        in: [ObjectType.UPDATE, ObjectType.SURVEY_QUESTION, ObjectType.COLLABORATION_QUESTION, ObjectType.EVENT],
+      },
+      objectId: {
+        in: news.map(({ documentId }) => documentId),
+      },
+    },
+  });
+
+  const reactionsById = reactions.reduce<Record<string, { emoji: string; count: number }[]>>(
+    (acc, { objectId, nativeSymbol, _count }) => {
+      acc[objectId] ??= [];
+      acc[objectId].push({ emoji: nativeSymbol, count: _count.nativeSymbol });
+      return acc;
+    },
+    {},
+  );
+
+  return news.map((item) => ({
+    ...item,
+    reactions: reactionsById[item.documentId] ?? [],
+    author: 'author' in item && !!item.author && mapToUser(item.author),
+    updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
+  }));
 };

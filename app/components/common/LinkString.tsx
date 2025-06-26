@@ -6,7 +6,7 @@ import { HighlightText } from '@/utils/highlightText';
 
 export const parseStringForLinks = (text: string): React.ReactNode => {
   const urlRegex = /((?:https?:\/\/)?(?:www\.|localhost:\d{1,5})?[^\s]+\.[^\s]+|https?:\/\/localhost:\d{1,5}[^\s]*)/g;
-  const parts = text.split(urlRegex);
+  const parts = text?.split(urlRegex) ?? [];
 
   return parts.map((part, index) => {
     if ((part.match(urlRegex) && part.startsWith('http')) || part.startsWith('www')) {

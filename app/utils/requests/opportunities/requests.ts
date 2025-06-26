@@ -113,12 +113,15 @@ export async function getOpportunitiesWithAdditionalData(opportunities: Opportun
 
 export async function getOpportunityWithAdditionalData(opportunity: Opportunity): Promise<Opportunity> {
   try {
-    const { data: isParticipant } = await userParticipatesInOpportunity({
+    const result = await userParticipatesInOpportunity({
       opportunityId: opportunity.id,
     });
+    if (result.status !== StatusCodes.OK) {
+      throw result.errors ?? new Error('Failed to check if user participates in opportunity');
+    }
     return {
       ...opportunity,
-      hasApplied: isParticipant,
+      hasApplied: result.data,
     };
   } catch (err) {
     const error: InnoPlatformError = dbError(
