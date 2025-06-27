@@ -16,7 +16,8 @@ const logger = getLogger();
 const transporter = nodemailer.createTransport({
   host: serverConfig.EMAIL_HOST,
   port: serverConfig.EMAIL_PORT,
-  secure: serverConfig.EMAIL_PORT === 465,
+  secure: serverConfig.EMAIL_PORT === 465, // true for 465 (implicit TLS), false for 587 (STARTTLS)
+  requireTLS: serverConfig.EMAIL_PORT !== 465, // require TLS upgrade for all ports except 465
   auth: {
     user: serverConfig.EMAIL_USER,
     pass: serverConfig.EMAIL_PASS,
