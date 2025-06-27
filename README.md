@@ -1,28 +1,49 @@
 <img src="./docs/logo.png" alt="Project Logo" width="220"/>
 
-## Introduction
+## What is InnoVerse?
 
-Welcome to InnoVerse - the corporate innovation platform to explore and stay informed and discuss about exciting projects & initiatives in your organisation, browse the latest news and upcoming events, interact with team members, and share new updates in a collaborative and modern environment.
+**InnoVerse** is a modern platform built to foster innovation and collaboration within organizations. It helps teams stay aligned, informed, and connected around projects, events, and ideas.
+
+## Features
+
+- 🧭 Discover innovative projects and initiatives
+- 📰 Follow internal news and announcements
+- 📆 Stay updated on upcoming events
+- 💬 Collaborate and comment with your colleagues
+- 📣 Share and manage updates from all departments
 
 ## Installation
 
-If you want to get started and install InnoVerse, you can follow our [StartUp Guide]
+If you're a developer or want full control over configuration, environment variables, and local development setup, please refer to our detailed [StartUp Guide]. It covers:
+
+- Manual environment configuration
+- Running services individually
+- Advanced debugging & development tools
+- Custom authentication setup (e.g. Azure AD, GitLab)
+
+---
+
+## Quickstart
+
+Just want to get the platform running quickly?
+Use our [Docker-based setup] to spin up the InnoVerse Platform locally in minutes.
 
 ## Contributing
 
-If you want to take part and contribute to our project, you can read our [Contributing Guide] to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to InnoVerse.
+We welcome contributions from everyone! Please read our [Contributing Guide] to learn about our development workflow, coding standards, and how to propose improvements or bugfixes.
 
 ## Frequently Asked Questions
 
-If you have any questions refer to the [Q&A section of our discussions forum]
+If you encounter issues or have questions, please visit our [Q&A section](https://github.com/openkfw/innoverse/discussions/categories/q-a) or open a GitHub [Issue](https://github.com/openkfw/innoverse/issues).
 
 ## License
 
-Innoverse is [GNU GENERAL PUBLIC] licensed.
+InnoVerse is licensed under the [GNU General Public License].
 
-Innoverse is a web application and therefore does not contain any relevant data to GDPR. If relevant data is collected, the organization using the software has to ensure that the data is appropriately encoded or stored.
+> ⚠️ Note: InnoVerse does not store personal data by default. If used in GDPR-sensitive environments, the hosting organization must ensure proper data handling and compliance.
 
 [StartUp Guide]: ./docs/developer/START_UP_GUIDE.md
+[Docker-based setup]: ./docs/developer/START_UP_GUIDE.md#-quick-start-tldr)
 [Contributing Guide]: ./CONTRIBUTING_GUIDE.md
 [Q&A section of our discussions forum]: https://github.com/openkfw/innoverse/discussions/categories/q-a
 [GNU GENERAL PUBLIC]: ./LICENSE.md
