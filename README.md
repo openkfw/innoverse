@@ -43,7 +43,7 @@ InnoVerse is licensed under the [GNU General Public License].
 > ⚠️ Note: InnoVerse does not store personal data by default. If used in GDPR-sensitive environments, the hosting organization must ensure proper data handling and compliance.
 
 [StartUp Guide]: ./docs/developer/START_UP_GUIDE.md
-[Docker-based setup]: ./docs/developer/START_UP_GUIDE.md#-quick-start-tldr)
+[Docker-based setup]: ./docs/developer/START_UP_GUIDE.md#-quick-start-tldr
 [Contributing Guide]: ./CONTRIBUTING_GUIDE.md
 [Q&A section of our discussions forum]: https://github.com/openkfw/innoverse/discussions/categories/q-a
 [GNU GENERAL PUBLIC]: ./LICENSE.md
