@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.6.0](https://github.com/openkfw/innoverse/compare/v1.5.2...v1.6.0) (2025-06-30)
+
+### Chore
+
+- improve the documentation ([#267](https://github.com/openkfw/innoverse/pull/267))
+
+### Features
+
+- implement email notifications ([#131](https://github.com/openkfw/innoverse/issues/131))
+
+### Refactor
+
+- enhance error handling in services and database queries ([#262](https://github.com/openkfw/innoverse/issues/262))
+
 ## [1.5.2](https://github.com/openkfw/innoverse/compare/v1.5.1...v1.5.2) (2025-06-05)
 
 ### Bug Fixes
