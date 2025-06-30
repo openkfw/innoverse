@@ -1,6 +1,16 @@
-<img src="./docs/logo.png" alt="Project Logo" width="220"/>
+<img src="./docs/logo2.png" alt="Project Logo" width="500"/>
 
-## What is InnoVerse?
+
+
+## Does Your Company Struggle with Innovation?
+
+- Does your company struggle to drive innovation initiatives and make them successful?  
+- Are great ideas getting lost because there’s no clear process to turn them into real impact?  
+- Do your teams lack a collaborative space to share, develop, and validate innovative solutions?  
+- Is leadership missing visibility into the progress and ROI of your innovation projects?  
+- Are you ready to build a true culture of innovation that engages everyone in your organization?
+
+## InnoVerse is your solution!
 
 **InnoVerse** is a modern platform built to foster innovation and collaboration within organizations. It helps teams stay aligned, informed, and connected around projects, events, and ideas.
 
